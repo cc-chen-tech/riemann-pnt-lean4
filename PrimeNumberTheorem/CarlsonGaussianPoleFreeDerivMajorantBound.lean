@@ -102,15 +102,17 @@ private theorem two_weighted_sq_bounds
       gcongr
     _ = W * (2 * (A0 + A1) * P ^ 20) := by ring
 
-set_option maxHeartbeats 400000 in
-/-- On a radius-`1/48` ball about the indicated center strip, the exact
-pointwise derivative of the concrete Carlson Gaussian section is bounded by
-one center-dependent integrable majorant. -/
-theorem exists_carlsonGaussianDerivativeMajorant_bound_on_closedBall
+set_option maxHeartbeats 500000 in
+/-- On any sufficiently small ball staying a double-radius away from the
+strip boundary, the exact concrete derivative is bounded by one integrable
+centered Gaussian majorant. -/
+theorem exists_carlsonGaussianDerivativeMajorant_bound_on_closedBall_of_radius
     {Delta w : ℝ} {z : ℂ} {Y0 Y1 : ℕ}
     (hDelta : 0 < Delta) (hY0 : 1 ≤ Y0) (hY01 : Y0 < Y1)
-    (hzre : z.re ∈ Icc (29 / 48 : ℝ) (187 / 48)) :
-    ∃ K : ℝ, 0 ≤ K ∧ ∀ v ∈ Metric.closedBall z (1 / 48 : ℝ), ∀ t : ℝ,
+    {rho : ℝ} (hrho : 0 < rho) (hrhoSmall : rho ≤ 1 / 48)
+    (hleft : 1 / 2 + 2 * rho ≤ z.re)
+    (hright : z.re + 2 * rho ≤ 4) :
+    ∃ K : ℝ, 0 ≤ K ∧ ∀ v ∈ Metric.closedBall z rho, ∀ t : ℝ,
       ‖carlsonGaussianHilbertSectionDeriv Delta w
           (poleFreeTwoScaleMollifiedZetaError Y0 Y1) v t‖ ^ 2 ≤
         carlsonGaussianDerivativeMajorant Delta w z.im K t := by
@@ -118,8 +120,10 @@ theorem exists_carlsonGaussianDerivativeMajorant_bound_on_closedBall
       exists_norm_sq_poleFreeTwoScaleMollifiedZetaError_le_polynomial_on_half_four
         hY0 hY01 with ⟨C0, hC0, hH⟩
   rcases
-      exists_norm_sq_deriv_poleFreeTwoScaleMollifiedZetaError_le_polynomial_on_wide_inner_strip
-        hY0 hY01 with ⟨C1, hC1, hH'⟩
+      exists_norm_sq_deriv_poleFreeTwoScaleMollifiedZetaError_le_polynomial_on_compact_inner_strip
+        hY0 hY01 hrho
+          (a := z.re - rho) (b := z.re + rho) (r := rho)
+          (by linarith) (by linarith) with ⟨C1, hC1, hH'⟩
   have hDelta0 : Delta ≠ 0 := ne_of_gt hDelta
   let D0 : ℝ := |w| + 4
   let D1 : ℝ := |w| + 5
@@ -144,31 +148,32 @@ theorem exists_carlsonGaussianDerivativeMajorant_bound_on_closedBall
     positivity
   refine ⟨K, by dsimp [K]; positivity, ?_⟩
   intro v hv t
-  have hdist : dist v z ≤ (1 / 48 : ℝ) := Metric.mem_closedBall.mp hv
-  have hreDiff : |v.re - z.re| ≤ (1 / 48 : ℝ) := by
+  have hdist : dist v z ≤ rho := Metric.mem_closedBall.mp hv
+  have hreDiff : |v.re - z.re| ≤ rho := by
     calc
       |v.re - z.re| = |(v - z).re| := by simp
       _ ≤ ‖v - z‖ := Complex.abs_re_le_norm (v - z)
       _ = dist v z := by rw [dist_eq_norm]
-      _ ≤ 1 / 48 := hdist
-  have himDiff : |v.im - z.im| ≤ (1 / 48 : ℝ) := by
+      _ ≤ rho := hdist
+  have himDiff : |v.im - z.im| ≤ rho := by
     calc
       |v.im - z.im| = |(v - z).im| := by simp
       _ ≤ ‖v - z‖ := Complex.abs_im_le_norm (v - z)
       _ = dist v z := by rw [dist_eq_norm]
-      _ ≤ 1 / 48 := hdist
-  have hvreWide : v.re ∈ Icc (7 / 12 : ℝ) (47 / 12) := by
+      _ ≤ rho := hdist
+  have hvreLocal : v.re ∈ Icc (z.re - rho) (z.re + rho) := by
     rw [abs_le] at hreDiff
-    constructor <;> linarith [hzre.1, hzre.2]
+    constructor <;> linarith
   have hvreHalfFour : v.re ∈ Icc (1 / 2 : ℝ) 4 := by
-    constructor <;> linarith [hvreWide.1, hvreWide.2]
+    constructor <;> linarith [hvreLocal.1, hvreLocal.2, hleft, hright]
   have hvreAbs : |v.re| ≤ 4 := by
     rw [abs_of_nonneg (by linarith [hvreHalfFour.1])]
     exact hvreHalfFour.2
   let u : ℝ := z.im + t - w
   let e : ℝ := v.im - z.im
   let P : ℝ := 1 + |u|
-  have heAbs : |e| ≤ (1 / 48 : ℝ) := by simpa [e] using himDiff
+  have heAbs : |e| ≤ rho := by simpa [e] using himDiff
+  have heAbs48 : |e| ≤ (1 / 48 : ℝ) := heAbs.trans hrhoSmall
   have hP : 1 ≤ P := by
     dsimp [P]
     linarith [abs_nonneg u]
@@ -183,13 +188,14 @@ theorem exists_carlsonGaussianDerivativeMajorant_bound_on_closedBall
         have huw := abs_add_le u w
         linarith
   have hheight0 : |v.im + t| + 3 ≤ D0 * P := by
-    have heSmall : |e| ≤ 1 := heAbs.trans (by norm_num)
+    have heSmall : |e| ≤ 1 := heAbs48.trans (by norm_num)
     have huD : |u| ≤ D0 * |u| :=
       le_mul_of_one_le_left (abs_nonneg u) hD0
     dsimp [D0, P]
     nlinarith
-  have hheight1 : |v.im + t| + 4 ≤ D1 * P := by
-    have heSmall : |e| ≤ 1 := heAbs.trans (by norm_num)
+  have hheight1 : |v.im + t| + 3 + rho ≤ D1 * P := by
+    have heSmall : |e| ≤ 1 := heAbs48.trans (by norm_num)
+    have hrhoOne : rho ≤ 1 := hrhoSmall.trans (by norm_num)
     have huD : |u| ≤ D1 * |u| :=
       le_mul_of_one_le_left (abs_nonneg u) hD1
     dsimp [D1, P]
@@ -208,11 +214,11 @@ theorem exists_carlsonGaussianDerivativeMajorant_bound_on_closedBall
   have hHderivSq :
       ‖deriv (poleFreeTwoScaleMollifiedZetaError Y0 Y1)
           (v + I * (t : ℂ))‖ ^ 2 ≤ A1 * P ^ 20 := by
-    have hraw := hH' (s := v + I * (t : ℂ)) (by simpa using hvreWide)
+    have hraw := hH' (s := v + I * (t : ℂ)) (by simpa using hvreLocal)
     calc
       ‖deriv (poleFreeTwoScaleMollifiedZetaError Y0 Y1)
           (v + I * (t : ℂ))‖ ^ 2
-          ≤ C1 * (|v.im + t| + 4) ^ 20 := by simpa using hraw
+          ≤ C1 * (|v.im + t| + 3 + rho) ^ 20 := by simpa using hraw
       _ ≤ C1 * (D1 * P) ^ 20 := by
         gcongr
       _ = A1 * P ^ 20 := by
@@ -232,7 +238,7 @@ theorem exists_carlsonGaussianDerivativeMajorant_bound_on_closedBall
       _ = |v.re| + |u + e| := by rw [hqre, hqim]
       _ ≤ |v.re| + (|u| + |e|) := by gcongr; exact abs_add_le _ _
       _ ≤ 5 * P := by
-        have heSmall : |e| ≤ 1 := heAbs.trans (by norm_num)
+        have heSmall : |e| ≤ 1 := heAbs48.trans (by norm_num)
         calc
           |v.re| + (|u| + |e|) ≤ 4 + (|u| + 1) := by linarith
           _ ≤ 5 * (1 + |u|) := by linarith [abs_nonneg u]
@@ -258,7 +264,7 @@ theorem exists_carlsonGaussianDerivativeMajorant_bound_on_closedBall
       dsimp [u, e]
       ring
     rw [himShift]
-    exact shifted_gaussian_half_decay hDelta hvreAbs heAbs
+    exact shifted_gaussian_half_decay hDelta hvreAbs heAbs48
   let S0 := carlsonGaussianHilbertSection Delta w
     (carlsonGaussianLinearErrorFactor Delta w
       (poleFreeTwoScaleMollifiedZetaError Y0 Y1)) v t
@@ -304,6 +310,22 @@ theorem exists_carlsonGaussianDerivativeMajorant_bound_on_closedBall
     _ = carlsonGaussianDerivativeMajorant Delta w z.im K t := by
         dsimp [carlsonGaussianDerivativeMajorant, K, P, u]
         ring
+
+/-- The fixed-radius interface used by the initial shifted-contour
+specialization. -/
+theorem exists_carlsonGaussianDerivativeMajorant_bound_on_closedBall
+    {Delta w : ℝ} {z : ℂ} {Y0 Y1 : ℕ}
+    (hDelta : 0 < Delta) (hY0 : 1 ≤ Y0) (hY01 : Y0 < Y1)
+    (hzre : z.re ∈ Icc (29 / 48 : ℝ) (187 / 48)) :
+    ∃ K : ℝ, 0 ≤ K ∧ ∀ v ∈ Metric.closedBall z (1 / 48 : ℝ), ∀ t : ℝ,
+      ‖carlsonGaussianHilbertSectionDeriv Delta w
+          (poleFreeTwoScaleMollifiedZetaError Y0 Y1) v t‖ ^ 2 ≤
+        carlsonGaussianDerivativeMajorant Delta w z.im K t := by
+  apply
+    exists_carlsonGaussianDerivativeMajorant_bound_on_closedBall_of_radius
+      hDelta hY0 hY01 (rho := (1 / 48 : ℝ)) (by norm_num) (by norm_num)
+  · linarith [hzre.1]
+  · linarith [hzre.2]
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

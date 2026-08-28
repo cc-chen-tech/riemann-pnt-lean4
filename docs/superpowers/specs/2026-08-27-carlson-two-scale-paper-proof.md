@@ -427,82 +427,40 @@ formally in `L^2(R)` for every complex strip parameter in that strip.  It has
 also been packaged as an actual `Lp C 2 volume` element, with an a.e.-exact
 representative and an exact norm-square integral formula.  For an arbitrary
 analytic scalar factor `H`, the exact pointwise complex derivative of the
-Gaussian section in the strip parameter has now also been formalized; this
-is the pointwise input, but not yet the dominated `L^2` difference-quotient
-argument needed for `Lp C 2 volume`-valued analyticity.  Cauchy's derivative
-estimate has additionally converted the concrete degree-ten square-growth
-bound for the pole-free error on `1/2 <= Re(s) <= 4` into a degree-twenty
-square-growth bound for its derivative on the fixed inner strip
-`7/12 <= Re(s) <= 47/12` (the earlier `2/3`-left-edge statement is retained
-as a corollary); this reaches the shifted contour line
-`x_0=2/3-1/log U` once `log U >= 12` and is sufficient for the next Gaussian derivative
-membership step.  The Gaussian section formed from this concrete derivative
-has now been proved to belong to `L^2(R)` on that inner strip.  The companion
-linear-times-error summand has now also been proved to belong to `L^2(R)`,
-with its explicit degree-twelve polynomial majorant.  Their exact pointwise
-sum identity has been formalized and the full displayed derivative function
-has been proved to belong to `L^2(R)` on the inner strip.  The dominated
-difference-quotient passage in `Lp` remains; hence this still does not by
-itself prove `Lp`-valued analyticity.  A general functional-analytic bridge
-has now been formalized: convergence to zero of the integral of the squared
-pointwise slope error implies the corresponding `MemLp.toLp` family has the
-expected complex derivative.  Thus the remaining analyticity gate is no
-longer `Lp` algebra; it is precisely the dominated-convergence estimate for
-that scalar squared slope error.  The filter-form dominated-convergence
-step itself has also been formalized: eventual measurability, domination by
-an explicit integrable scalar function, and the already proved pointwise
-derivative imply the required integral limit.  Consequently the remaining
-analyticity gate is now exactly the construction of a single neighborhood-
-uniform polynomial-times-Gaussian majorant for the concrete slope errors.
-The general complex mean-value reduction for this last step is now also
-formalized: a closed-ball derivative-square bound `B(t)` implies the squared
-slope error is at most `4*B(t)`.  Thus it is enough to produce an integrable
-closed-ball-uniform majorant for the already defined concrete derivative
-section.  The intended degree-twenty polynomial times half-rate Gaussian
-majorant, with the exact vertical-center shift, has now been defined and
-proved integrable for every positive Gaussian width.  The genuinely concrete
-uniform inequality is now also formalized on every radius-`1/48` closed ball
-whose center satisfies `29/48 <= Re(z) <= 187/48`: the exact derivative
-section is bounded by one such center-shifted majorant throughout the ball.
-The ball lies in the derivative-growth strip
-`7/12 <= Re(s) <= 47/12`, and the imaginary displacement consumes only half
-of the Gaussian decay.  The exact derivative `MemLp` certificate and both of
-its component certificates have now been widened to this same strip; the
-previous `2/3`-left-edge interfaces remain as corollaries.  What remains at
-this gate is to feed this bound into
-the already formalized mean-value and dominated-convergence interfaces,
-including the concrete measurability obligations.  To match the global
-domain expected by the generic `MemLp.toLp` bridge, the controlled section
-has now also been extended by zero outside `1/2 <= Re(z) <= 4`; the totalized
-family is formally in `L²(R)` everywhere and is locally equal to the original
-section, with the original pointwise derivative, on
-`7/12 <= Re(z) <= 47/12`.  This totalization does not claim analyticity at the
-artificial strip boundary.  The uniform bound plus these pointwise facts have
-now been assembled through the complex mean-value estimate and dominated
-convergence into an actual `HasDerivAt` theorem for the totalized
-`Lp C 2 volume` map at every center with
-`29/48 <= Re(z) <= 187/48`.  This closes the local analytic neighborhood of
-the shifted `2/3` contour, but it is not yet the full analyticity hypothesis
-for Hadamard three-lines: that theorem needs every point of the open strip
-`1/2 < Re(z) < 4`, arbitrarily close to both boundary lines.  Extending the
-argument requires a point-dependent Cauchy radius controlled by the distance
-to the boundary.  The required Cauchy-growth part of this extension is now
-formalized on an arbitrary compact inner strip: for every positive radius
-`r` whose closed Cauchy disks remain in `1/2 <= Re(s) <= 4`, the derivative
-has a degree-twenty polynomial square bound with constants allowed to depend
-on `r`.  The remaining local step is to propagate that variable-radius bound
-through the neighborhood-uniform Gaussian majorant and dominated-convergence
-argument.  The endpoint mean-square estimates and finite Gaussian covering
-also remain.
+Gaussian section in the strip parameter is formalized.  Cauchy's derivative
+estimate converts the degree-ten square-growth bound for the pole-free error
+on `1/2 <= Re(s) <= 4` into a degree-twenty derivative-square bound, first on
+the fixed inner strip and then, with a point-dependent radius, on every
+compact inner strip.  The exact derivative `MemLp` certificate and both
+component certificates are retained on the fixed inner strip, with the old
+`2/3` interfaces as corollaries.
+
+The functional-analytic passage is now closed on the full open strip.  The
+controlled section is totalized by zero outside `1/2 <= Re(z) <= 4`, so it is
+an `L²(R)` value for every parameter while agreeing locally with the original
+section at every point with `1/2 < Re(z) < 4`.  At such a point the formal
+radius
+```
+min(1/48, (Re(z)-1/2)/4, (4-Re(z))/4)
+```
+is positive.  The variable-radius Cauchy estimate supplies a degree-twenty
+polynomial times half-rate Gaussian majorant uniformly on the corresponding
+closed ball.  The complex mean-value estimate bounds the squared slope error
+by four times this majorant; measurability, Gaussian integrability, dominated
+convergence, and the `MemLp.toLp` derivative bridge then give an actual
+`HasDerivAt` theorem for the totalized `Lp C 2 volume` map at every
+`1/2 < Re(z) < 4`.  The totalization makes no differentiability claim on the
+two artificial boundary lines themselves.  Thus the local analyticity
+hypothesis needed inside the Hadamard strip is no longer an open gate.  The
+endpoint norm estimates, the finite Gaussian covering, and the Conrey local
+mean-square specialization still remain.
 The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
 
 1. Conrey's Gaussian mean-square theorem in the `P(u)=u`, `Q=1`, `R=0`
    specialization, including its uniformity in the local center;
-2. for the first unconditional formal target `delta=1/20`, extend the proved
-   central `Lp C 2 volume` differentiability to the full open strip
-   `1/2 < Re(s) < 4` using point-dependent local radii, then prove the boundary
+2. for the first unconditional formal target `delta=1/20`, prove the boundary
    norm estimates and finite Gaussian covering argument; extending the same package to `R=1000` is an optional
    strengthening to `delta=5/64` rather than a gate to a power saving;
 3. the dyadic assembly of those inputs into the unconditional

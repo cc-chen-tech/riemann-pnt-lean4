@@ -37,28 +37,23 @@ theorem memLp_carlsonGaussianPoleFreeSectionTotal
         hDelta hY0 hY01 hz
   · simp
 
-/-- On the wide inner strip, totalization does not change the pointwise
-complex derivative of the Gaussian section. -/
-theorem hasDerivAt_carlsonGaussianPoleFreeSectionTotal_on_wide_inner_strip
+/-- At every point of the open controlled strip, totalization is locally
+equal to the original Gaussian section and hence has the same derivative. -/
+theorem hasDerivAt_carlsonGaussianPoleFreeSectionTotal_on_open_strip
     {Delta w : ℝ} {Y0 Y1 : ℕ}
     (hDelta : 0 < Delta) (_hY0 : 1 ≤ Y0) (_hY01 : Y0 < Y1)
-    {z : ℂ} (hzre : z.re ∈ Icc (7 / 12 : ℝ) (47 / 12)) (t : ℝ) :
+    {z : ℂ} (hzleft : 1 / 2 < z.re) (hzright : z.re < 4) (t : ℝ) :
     HasDerivAt
       (fun u : ℂ => carlsonGaussianPoleFreeSectionTotal Delta w Y0 Y1 u t)
       (carlsonGaussianHilbertSectionDeriv Delta w
         (poleFreeTwoScaleMollifiedZetaError Y0 Y1) z t) z := by
   classical
   have hnear : ∀ᶠ u in nhds z, u.re ∈ Icc (1 / 2 : ℝ) 4 := by
-    filter_upwards [Metric.ball_mem_nhds z (by norm_num : (0 : ℝ) < 1 / 24)] with u hu
-    have hdist : dist u z < (1 / 24 : ℝ) := Metric.mem_ball.mp hu
-    have hreDiff : |u.re - z.re| < (1 / 24 : ℝ) := by
-      calc
-        |u.re - z.re| = |(u - z).re| := by simp
-        _ ≤ ‖u - z‖ := Complex.abs_re_le_norm (u - z)
-        _ = dist u z := by rw [dist_eq_norm]
-        _ < 1 / 24 := hdist
-    rw [abs_lt] at hreDiff
-    constructor <;> linarith [hzre.1, hzre.2]
+    have hopen : IsOpen {u : ℂ | 1 / 2 < u.re ∧ u.re < 4} :=
+      (isOpen_lt continuous_const continuous_re).inter
+        (isOpen_lt continuous_re continuous_const)
+    filter_upwards [hopen.mem_nhds ⟨hzleft, hzright⟩] with u hu
+    exact ⟨hu.1.le, hu.2.le⟩
   have hEq :
       (fun u : ℂ => carlsonGaussianPoleFreeSectionTotal Delta w Y0 Y1 u t)
         =ᶠ[nhds z]
@@ -69,7 +64,7 @@ theorem hasDerivAt_carlsonGaussianPoleFreeSectionTotal_on_wide_inner_strip
   have hzpos : 0 < (z + I * (t : ℂ)).re := by
     simp only [add_re, mul_re, I_re, ofReal_re, I_im, ofReal_im,
       zero_mul, one_mul, sub_self, add_zero]
-    linarith [hzre.1]
+    linarith
   have hanalytic : AnalyticAt ℂ
       (poleFreeTwoScaleMollifiedZetaError Y0 Y1) (z + I * (t : ℂ)) :=
     analyticOnNhd_poleFreeTwoScaleMollifiedZetaError_re_gt
@@ -78,6 +73,20 @@ theorem hasDerivAt_carlsonGaussianPoleFreeSectionTotal_on_wide_inner_strip
     (Delta := Delta) (w := w) (H := poleFreeTwoScaleMollifiedZetaError Y0 Y1)
     (z := z) (t := t) (ne_of_gt hDelta) hanalytic
   exact hbase.congr_of_eventuallyEq hEq
+
+/-- The earlier fixed wide-strip interface, retained as a corollary. -/
+theorem hasDerivAt_carlsonGaussianPoleFreeSectionTotal_on_wide_inner_strip
+    {Delta w : ℝ} {Y0 Y1 : ℕ}
+    (hDelta : 0 < Delta) (hY0 : 1 ≤ Y0) (hY01 : Y0 < Y1)
+    {z : ℂ} (hzre : z.re ∈ Icc (7 / 12 : ℝ) (47 / 12)) (t : ℝ) :
+    HasDerivAt
+      (fun u : ℂ => carlsonGaussianPoleFreeSectionTotal Delta w Y0 Y1 u t)
+      (carlsonGaussianHilbertSectionDeriv Delta w
+        (poleFreeTwoScaleMollifiedZetaError Y0 Y1) z t) z := by
+  apply hasDerivAt_carlsonGaussianPoleFreeSectionTotal_on_open_strip
+    hDelta hY0 hY01
+  · linarith [hzre.1]
+  · linarith [hzre.2]
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
