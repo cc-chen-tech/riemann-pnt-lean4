@@ -21,10 +21,10 @@ noncomputable def carlsonGaussianLinearErrorFactor
 /-- On the fixed inner strip, the Gaussian section formed from the
 linear-times-error term belongs to `L²(ℝ)`. -/
 theorem
-    memLp_carlsonGaussian_linear_poleFreeTwoScaleMollifiedZetaError_on_inner_strip
+    memLp_carlsonGaussian_linear_poleFreeTwoScaleMollifiedZetaError_on_wide_inner_strip
     {Delta w : ℝ} {z : ℂ} {Y0 Y1 : ℕ}
     (hDelta : 0 < Delta) (hY0 : 1 ≤ Y0) (hY01 : Y0 < Y1)
-    (hzre : z.re ∈ Icc (2 / 3 : ℝ) (47 / 12)) :
+    (hzre : z.re ∈ Icc (7 / 12 : ℝ) (47 / 12)) :
     MemLp
       (carlsonGaussianHilbertSection Delta w
         (carlsonGaussianLinearErrorFactor Delta w
@@ -152,6 +152,21 @@ theorem
       hDelta 12
       (carlsonGaussianLinearErrorFactor Delta w
         (poleFreeTwoScaleMollifiedZetaError Y0 Y1)) hcont hbound
+
+/-- The original narrower interface, retained for existing callers. -/
+theorem
+    memLp_carlsonGaussian_linear_poleFreeTwoScaleMollifiedZetaError_on_inner_strip
+    {Delta w : ℝ} {z : ℂ} {Y0 Y1 : ℕ}
+    (hDelta : 0 < Delta) (hY0 : 1 ≤ Y0) (hY01 : Y0 < Y1)
+    (hzre : z.re ∈ Icc (2 / 3 : ℝ) (47 / 12)) :
+    MemLp
+      (carlsonGaussianHilbertSection Delta w
+        (carlsonGaussianLinearErrorFactor Delta w
+          (poleFreeTwoScaleMollifiedZetaError Y0 Y1)) z) 2 volume := by
+  apply
+    memLp_carlsonGaussian_linear_poleFreeTwoScaleMollifiedZetaError_on_wide_inner_strip
+      hDelta hY0 hY01
+  constructor <;> linarith [hzre.1, hzre.2]
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

@@ -16,15 +16,15 @@ namespace CarlsonZeroDensity
 /-- On the fixed inner strip, the Gaussian section formed from the derivative
 of the concrete pole-free error belongs to `L²(ℝ)`. -/
 theorem
-    memLp_carlsonGaussian_deriv_poleFreeTwoScaleMollifiedZetaError_on_inner_strip
+    memLp_carlsonGaussian_deriv_poleFreeTwoScaleMollifiedZetaError_on_wide_inner_strip
     {Delta w : ℝ} {z : ℂ} {Y0 Y1 : ℕ}
     (hDelta : 0 < Delta) (hY0 : 1 ≤ Y0) (hY01 : Y0 < Y1)
-    (hzre : z.re ∈ Icc (2 / 3 : ℝ) (47 / 12)) :
+    (hzre : z.re ∈ Icc (7 / 12 : ℝ) (47 / 12)) :
     MemLp
       (carlsonGaussianHilbertSection Delta w
         (deriv (poleFreeTwoScaleMollifiedZetaError Y0 Y1)) z) 2 volume := by
   rcases
-      exists_norm_sq_deriv_poleFreeTwoScaleMollifiedZetaError_le_polynomial_on_inner_strip
+      exists_norm_sq_deriv_poleFreeTwoScaleMollifiedZetaError_le_polynomial_on_wide_inner_strip
         hY0 hY01 with ⟨C, hC, hgrowth⟩
   have hcont : Continuous fun t : ℝ =>
       deriv (poleFreeTwoScaleMollifiedZetaError Y0 Y1)
@@ -85,6 +85,20 @@ theorem
     memLp_carlsonGaussianHilbertSection_of_complex_polynomial_sq_bound
       hDelta 20 (deriv (poleFreeTwoScaleMollifiedZetaError Y0 Y1))
       hcont hbound
+
+/-- The original narrower interface, retained for existing callers. -/
+theorem
+    memLp_carlsonGaussian_deriv_poleFreeTwoScaleMollifiedZetaError_on_inner_strip
+    {Delta w : ℝ} {z : ℂ} {Y0 Y1 : ℕ}
+    (hDelta : 0 < Delta) (hY0 : 1 ≤ Y0) (hY01 : Y0 < Y1)
+    (hzre : z.re ∈ Icc (2 / 3 : ℝ) (47 / 12)) :
+    MemLp
+      (carlsonGaussianHilbertSection Delta w
+        (deriv (poleFreeTwoScaleMollifiedZetaError Y0 Y1)) z) 2 volume := by
+  apply
+    memLp_carlsonGaussian_deriv_poleFreeTwoScaleMollifiedZetaError_on_wide_inner_strip
+      hDelta hY0 hY01
+  constructor <;> linarith [hzre.1, hzre.2]
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

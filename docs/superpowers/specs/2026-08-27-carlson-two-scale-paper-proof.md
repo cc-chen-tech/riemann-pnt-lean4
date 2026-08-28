@@ -466,7 +466,10 @@ whose center satisfies `29/48 <= Re(z) <= 187/48`: the exact derivative
 section is bounded by one such center-shifted majorant throughout the ball.
 The ball lies in the derivative-growth strip
 `7/12 <= Re(s) <= 47/12`, and the imaginary displacement consumes only half
-of the Gaussian decay.  What remains at this gate is to feed this bound into
+of the Gaussian decay.  The exact derivative `MemLp` certificate and both of
+its component certificates have now been widened to this same strip; the
+previous `2/3`-left-edge interfaces remain as corollaries.  What remains at
+this gate is to feed this bound into
 the already formalized mean-value and dominated-convergence interfaces,
 including the concrete measurability obligations.  To match the global
 domain expected by the generic `MemLp.toLp` bridge, the controlled section
