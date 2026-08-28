@@ -636,10 +636,103 @@ giving exactly
 ```
 Thus this precisely defined independent-fibre method is a no-go even for
 recovering Carlson's baseline.  This arithmetic obstruction is formalized.
-It does not rule out the broader AFE route: the next required finite lemma is
-a Gaussian maximal mean-square inequality for the nested moving partial sums
-(and its rational-ray dual), of Rademacher--Menshov type, whose logarithmic
-rather than power cost would recover the desired `O(Delta log^B U)` bound.
+
+There is, however, a direct paper-level repair which does not require a
+separate rational-ray estimate.  Fix `0<eta<1/2-b`, put
+`Delta=U^(1-eta)`, and let
+
+```
+ A(t)=sum_(m<=U^b) a_m m^(-1/2-it),   |a_m|<=1.
+```
+
+On `t asymp U`, the symmetric square-root approximate functional equation is
+
+```
+ zeta(1/2+it)=D_(K(t))(t)+chi(t) overline(D_(K(t))(t))+O(U^(-1/4)),
+ D_K(t)=sum_(n<=K)n^(-1/2-it),
+ K(t)=floor sqrt(t/(2 pi)),             |chi(t)|=1.       (8.1)
+```
+
+The key observation is pointwise, before integration:
+
+```
+ |chi(t) overline(D_(K(t))(t)) A(t)|
+   =|D_(K(t))(t) A(t)|.                                (8.2)
+```
+
+Hence the dual AFE phase does not create a second rational-frequency
+problem.  It is still essential that the phase in (8.1) be the correct
+`exp(-2 I thetaPhase t)`; equality (8.2) then uses only its unit modulus.
+Both AFE pieces are controlled by the same maximal ordinary Dirichlet
+polynomial.
+
+Here is the complete maximal estimate.  Set `N=floor(C sqrt(U))`.  For an
+interval `J` of integers in `[1,N]`, write
+
+```
+ P_J(t)=A(t) sum_(n in J)n^(-1/2-it)
+       =sum_(r<=U^b N)c_J(r)r^(-1/2-it),
+ c_J(r)=sum_(mn=r, n in J)a_m.                           (8.3)
+```
+
+For every partition of `[1,N]` into disjoint intervals `J`, divisor Cauchy
+gives, coefficient by coefficient,
+
+```
+ sum_J |c_J(r)|^2
+ <=d(r) sum_(mn=r)|a_m|^2
+ <=d(r)^2.                                               (8.4)
+```
+
+Consequently the ordinary Dirichlet-polynomial mean-value theorem, summed
+over that partition, gives on every interval `I` of length `O(Delta)`
+
+```
+ sum_J integral_I |P_J(t)|^2 dt
+ <<(Delta+U^(b+1/2)) sum_(r<=C U^(b+1/2)) d(r)^2/r
+ <<Delta (log U)^4,                                      (8.5)
+```
+
+because `b+1/2<1-eta`.  Decompose every prefix `[1,K]` into at most
+`O(log U)` binary intervals.  Cauchy over those intervals and then summing
+(8.5) over the `O(log U)` dyadic levels proves the
+Rademacher--Menshov bound
+
+```
+ integral_I max_(K<=N)|D_K(t)A(t)|^2 dt
+ <<Delta (log U)^6.                                      (8.6)
+```
+
+Partition the Gaussian into translates of length `Delta`; their bounds in
+(8.6) are summable with weights `exp(-c j^2)`.  Since the centre lies in
+`[U,2U]` and `Delta=o(U)`, the translates leaving `t asymp U` contribute
+`O(U^(-100))` by the Gaussian tail and polynomial growth.  Finally the AFE
+remainder contributes
+
+```
+ integral gaussian * |A(t)O(U^(-1/4))|^2 dt
+ <<Delta U^(b-1/2)
+ <<Delta.                                                (8.7)
+```
+
+Equations (8.1)--(8.7) therefore prove, for every fixed
+`b<1/2` (choose `eta<1/2-b`),
+
+```
+ integral_R exp(-(t-w)^2/Delta^2)
+   |zeta(1/2+it)A(t)|^2 dt
+ <<Delta (log U)^6,                                      (8.8)
+```
+
+uniformly for `U<=w<=2U`.  This applies separately to the linear mollifier
+lengths `a=2/5` and `b=9/20`; the fixed coefficients in the two-scale
+identity then preserve (8.8).  Thus the half-range critical-boundary input is
+closed at paper level by the classical symmetric AFE, the ordinary
+Dirichlet-polynomial mean-value theorem, and the finite dyadic maximal
+argument above.  No Conrey--Deshouillers--Iwaniec estimate is needed for
+this first `delta=1/400` target.  The remaining work is to formalize (8.1)
+and (8.3)--(8.6), then perform the already specified dyadic density and
+forcing assembly.
 
 All proved analytic layers have now been composed into one public bridge.
 Uniform Gaussian product bounds `C0,C1` for the two standard linear
@@ -652,30 +745,27 @@ integral_[U,V] |F_twoScale(2/3+it)|^2
 where `L` is the exact `20/21,1/21` interpolation of the proved critical and
 right endpoint expressions.  The bridge contains no additional analytic
 hypothesis and its axiom audit has only `propext`, `Classical.choice`, and
-`Quot.sound`.  Thus the sole remaining premise before the ordinary interior
-second moment is now literally the pair of Conrey product integrals.
+`Quot.sound`.  Thus the sole remaining formal premise before the ordinary
+interior second moment is the critical-boundary product bound.  At the
+`2/5,9/20` lengths it is supplied at paper level by (8.8); only lengths beyond
+`1/2` require the Conrey--Deshouillers--Iwaniec theorem.
 
 At the first formal target `R=4`, the closed-strip theorem has also been
 specialized at `x=2/3`.  The interpolation weights reduce exactly to
 `20/21` and `1/21`; the right endpoint is discharged by the proved
 inverse-cube plateau-tail estimate.  The resulting theorem has only one
-analytic hypothesis, namely the critical-boundary second-moment bound that
+analytic hypothesis, namely the critical-boundary second-moment bound.  For
+the half-range target this is (8.8); only the stronger `theta>1/2` targets
 must come from the Conrey--Deshouillers--Iwaniec input.
 The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
 
-1. For the smallest unconditional formal target `delta=1/400`, prove the
-   Gaussian mollified mean square for the two lengths `2/5` and `9/20`.
-   This is the classical `theta<1/2` subrange; a proof may use a formalized
-   square-root approximate functional equation with the exact dual phase
-   `exp(-2 I thetaPhase t)` from (5.9), and the existing finite
-   Dirichlet-polynomial mean-value machinery.  Because the square-root AFE
-   cutoff moves across a broad Gaussian, this must include the nested-cutoff
-   Gaussian maximal inequality just identified; independent cutoff-fibre
-   summation is formally ruled out.  The old
-   `exp(+I thetaPhase t)` placeholder is not an admissible premise.  For
-   `delta=1/20` or `5/64`,
+1. For the smallest unconditional formal target `delta=1/400`, formalize
+   the paper proof (8.1)--(8.8): the symmetric square-root AFE with exact
+   dual phase `exp(-2 I thetaPhase t)`, the partition energy (8.4), and the
+   nested-prefix dyadic maximal estimate (8.6).  Independent cutoff-fibre
+   summation remains forbidden.  For `delta=1/20` or `5/64`,
    formalize Conrey's full `theta<4/7` theorem and its DI spectral input.
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
@@ -687,9 +777,10 @@ a final density axiom:
    `N(2/3,T)` certificate and its connection to the forcing chain.
 
 Until all three remaining items are proved in Lean without new mathematical
-axioms, the repository-level improved density certificate remains conditional even
-though the paper proof above is unconditional modulo the cited published
-Conrey theorem.
+axioms, the repository-level improved density certificate remains conditional.
+At paper level the first `delta=1/400` target now uses only the classical
+symmetric AFE and Dirichlet-polynomial mean value through (8.1)--(8.8);
+the stronger `theta<4/7` targets still use the cited Conrey theorem.
 
 ## 9. Primary sources
 
