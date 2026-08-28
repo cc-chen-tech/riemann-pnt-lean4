@@ -5820,6 +5820,159 @@ def test_continuous_sector_support_does_not_identify_original_modulus() -> None:
     assert not identified_same_scale["coupled_kernel_gate_closed"]
 
 
+def test_original_master_product_support_closes_only_the_balanced_maximal_wedge() -> None:
+    """The original Type product is the reduced entry r, not the sector modulus."""
+
+    audit = getattr(
+        coverage_audit,
+        "original_master_type_product_support_audit",
+        None,
+    )
+    assert audit is not None, "original-master product support audit is missing"
+    rows = (
+        # (original r, Type cofactor n, prime-bearing p, b, c, residual u)
+        (13, 1, 13, 1, 1, 1),
+        (30, 6, 5, 2, 3, 1),
+        (210, 30, 7, 2, 3, 5),
+        (2310, 210, 11, 2, 3, 35),
+    )
+    balanced = audit(
+        rows=rows,
+        original_r_length_exponent=F(3),
+        original_s_modulus_exponent=F(3),
+        factor_exponents=(F(3, 4), F(3, 4), F(3, 4), F(3, 4)),
+        original_entry_type_factorization_verified=True,
+        quotient_type_factorization_verified=True,
+        residual_packet_uses_original_master_verified=True,
+    )
+    assert balanced["all_integer_product_identities_exact"]
+    assert balanced["product_total_length_exponent"] == F(3)
+    assert balanced["product_length_equals_original_r_exponent"]
+    assert balanced["balanced_maximal_original_face"]
+    assert balanced["fixed_total_modulus_long_product_threshold_met"]
+    assert balanced["balanced_maximal_short_product_wedge_removed"]
+    assert not balanced["all_core_boxes_short_product_wedge_removed"]
+    assert not balanced["packet_exhaustive_global_adapter_proved"]
+    assert not balanced[
+        "signed_varying_total_modulus_and_phase_reassembly_proved"
+    ]
+    assert not balanced["coupled_kernel_gate_closed"]
+
+    unbalanced = audit(
+        rows=rows,
+        original_r_length_exponent=F(3, 2),
+        original_s_modulus_exponent=F(3),
+        factor_exponents=(F(3, 8), F(3, 8), F(3, 8), F(3, 8)),
+        original_entry_type_factorization_verified=True,
+        quotient_type_factorization_verified=True,
+        residual_packet_uses_original_master_verified=True,
+    )
+    assert unbalanced["product_total_length_exponent"] == F(3, 2)
+    assert not unbalanced["balanced_maximal_original_face"]
+    assert not unbalanced["fixed_total_modulus_long_product_threshold_met"]
+    assert not unbalanced["balanced_maximal_short_product_wedge_removed"]
+
+    with pytest.raises(ValueError, match="n\\*p=r"):
+        audit(
+            rows=((30, 5, 5, 1, 1, 5),),
+            original_r_length_exponent=F(3),
+            original_s_modulus_exponent=F(3),
+            factor_exponents=(F(3, 4),) * 4,
+            original_entry_type_factorization_verified=True,
+            quotient_type_factorization_verified=True,
+            residual_packet_uses_original_master_verified=True,
+        )
+
+    with pytest.raises(ValueError, match="b\\*c\\*u=n"):
+        audit(
+            rows=((30, 6, 5, 2, 2, 1),),
+            original_r_length_exponent=F(3),
+            original_s_modulus_exponent=F(3),
+            factor_exponents=(F(3, 4),) * 4,
+            original_entry_type_factorization_verified=True,
+            quotient_type_factorization_verified=True,
+            residual_packet_uses_original_master_verified=True,
+        )
+
+
+def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
+    """Shen's q-average is inverse-only and far below the coupled target."""
+
+    audit = getattr(
+        coverage_audit,
+        "shen_lehmer_varying_modulus_projection_audit",
+        None,
+    )
+    assert audit is not None, "Shen varying-modulus projection audit is missing"
+
+    optimistic = audit(
+        product_length_exponent=F(3),
+        modulus_length_exponent=F(3),
+        inverse_numerator_exponent=F(5),
+        required_saving_exponent=F(2),
+        direct_phase_absent=True,
+        inverse_numerator_fixed=True,
+        product_coefficients_independent_of_modulus=True,
+        separated_coefficient_adapter_verified=True,
+    )
+    assert optimistic["bilinear_bound_exponent"] == F(47, 8)
+    assert optimistic["relative_linear_saving_exponent"] == F(1, 8)
+    assert optimistic["second_moment_energy_saving_exponent"] == F(1, 4)
+    assert not optimistic["theorem_four_strict_N_less_than_Q_verified"]
+    assert optimistic["published_bilinear_projection_hypotheses_verified"]
+    assert not optimistic["required_coupled_saving_met"]
+    assert optimistic["remaining_saving_deficit"] == F(15, 8)
+    assert not optimistic["retains_joint_h_delta_family"]
+    assert not optimistic["coupled_kernel_gate_closed"]
+
+    physical = audit(
+        product_length_exponent=F(3),
+        modulus_length_exponent=F(3),
+        inverse_numerator_exponent=F(5),
+        required_saving_exponent=F(2),
+        direct_phase_absent=False,
+        inverse_numerator_fixed=False,
+        product_coefficients_independent_of_modulus=False,
+        separated_coefficient_adapter_verified=False,
+    )
+    assert physical["relative_linear_saving_exponent"] == F(1, 8)
+    assert not physical["direct_phase_absent"]
+    assert not physical["inverse_numerator_fixed"]
+    assert not physical["product_coefficients_independent_of_modulus"]
+    assert not physical["separated_coefficient_adapter_verified"]
+    assert not physical["published_bilinear_projection_hypotheses_verified"]
+    assert not physical["current_physical_packet_covered"]
+    assert not physical["coupled_kernel_gate_closed"]
+
+
+def test_outer_modulus_row_energy_cannot_exploit_mobius_signs() -> None:
+    """Independent row phases can absorb every prescribed outer sign."""
+
+    audit = getattr(
+        coverage_audit,
+        "outer_modulus_row_energy_phase_alignment_audit",
+        None,
+    )
+    assert audit is not None, "outer row-energy no-go audit is missing"
+    result = audit(
+        outer_signs=(-1, 1, -1, 1),
+        row_amplitudes=(F(2), F(3), F(5), F(7)),
+    )
+    assert result["constructed_row_coefficients"] == (F(-2), F(3), F(-5), F(7))
+    assert result["signed_outer_sum"] == F(17)
+    assert result["triangle_bound"] == F(17)
+    assert result["triangle_bound_saturated"]
+    assert result["all_outer_signs_absorbed_by_row_phases"]
+    assert not result["cross_modulus_packet_rigidity_used"]
+    assert not result["row_energy_only_outer_power_saving_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    with pytest.raises(ValueError, match="sign"):
+        audit(outer_signs=(-1, 0, 1), row_amplitudes=(F(1),) * 3)
+    with pytest.raises(ValueError, match="nonnegative"):
+        audit(outer_signs=(-1, 1), row_amplitudes=(F(1), F(-1)))
+
+
 def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:
     audit = getattr(
         coverage_audit,

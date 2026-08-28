@@ -17072,6 +17072,243 @@ def physical_sector_product_support_bridge_audit(
     }
 
 
+def original_master_type_product_support_audit(
+    *,
+    rows: tuple[tuple[int, int, int, int, int, int], ...],
+    original_r_length_exponent: Fraction,
+    original_s_modulus_exponent: Fraction,
+    factor_exponents: tuple[Fraction, Fraction, Fraction, Fraction],
+    original_entry_type_factorization_verified: bool,
+    quotient_type_factorization_verified: bool,
+    residual_packet_uses_original_master_verified: bool,
+) -> dict[str, object]:
+    """Audit product support inside the original all-character master.
+
+    A row is ``(r, n, p, b, c, u)``.  The first Type opening is the
+    divisor identity ``n*p=r`` for the original reduced entry, and the
+    quotient Type split is ``b*c*u=n``.  Hence ``b*c*u*p=r`` exactly.
+    This is independent of the normalized sector denominator audited by
+    :func:`physical_sector_product_support_bridge_audit`.
+    """
+
+    rho = F(original_r_length_exponent)
+    sigma = F(original_s_modulus_exponent)
+    factors = tuple(F(value) for value in factor_exponents)
+    if len(factors) != 4:
+        raise ValueError("exactly four b,c,u,p factor exponents are required")
+    if min((rho, sigma, *factors)) < 0:
+        raise ValueError("all exponents must be nonnegative")
+    if rho == 0 or sigma == 0:
+        raise ValueError("both original scale exponents must be positive")
+    if not rows:
+        raise ValueError("at least one original-master Type row is required")
+
+    checked_rows: list[dict[str, object]] = []
+    for raw_row in rows:
+        if len(raw_row) != 6:
+            raise ValueError("each row must be (r,n,p,b,c,u)")
+        r, n, p, b, c, u = (int(value) for value in raw_row)
+        if min(r, n, p, b, c, u) <= 0:
+            raise ValueError("all row entries must be positive")
+        if n * p != r:
+            raise ValueError("the original Type opening must satisfy n*p=r")
+        if b * c * u != n:
+            raise ValueError("the quotient Type split must satisfy b*c*u=n")
+        checked_rows.append(
+            {
+                "original_entry": r,
+                "type_cofactor": n,
+                "prime_bearing_factor": p,
+                "quotient_factors": (b, c, u),
+                "full_factor_product": b * c * u * p,
+                "full_factor_product_equals_original_entry": (
+                    b * c * u * p == r
+                ),
+            }
+        )
+
+    exact_rows = all(
+        bool(row["full_factor_product_equals_original_entry"])
+        for row in checked_rows
+    )
+    support_hypotheses = bool(
+        original_entry_type_factorization_verified
+        and quotient_type_factorization_verified
+        and residual_packet_uses_original_master_verified
+        and exact_rows
+    )
+    x = sum(factors, start=F(0))
+    if support_hypotheses and x != rho:
+        raise ValueError(
+            "n*p=r and b*c*u=n force the full product exponent x=rho"
+        )
+
+    balanced_maximal = bool(rho == sigma == 3)
+    long_product_threshold = bool(support_hypotheses and x >= 2)
+    return {
+        "rows": tuple(checked_rows),
+        "all_integer_product_identities_exact": exact_rows,
+        "original_r_length_exponent": rho,
+        "original_s_modulus_exponent": sigma,
+        "factor_exponents": factors,
+        "product_total_length_exponent": x,
+        "original_entry_type_factorization_verified": bool(
+            original_entry_type_factorization_verified
+        ),
+        "quotient_type_factorization_verified": bool(
+            quotient_type_factorization_verified
+        ),
+        "residual_packet_uses_original_master_verified": bool(
+            residual_packet_uses_original_master_verified
+        ),
+        "original_master_product_support_verified": support_hypotheses,
+        "product_length_equals_original_r_exponent": bool(
+            support_hypotheses and x == rho
+        ),
+        "balanced_maximal_original_face": balanced_maximal,
+        "fixed_total_modulus_long_product_threshold_met": (
+            long_product_threshold
+        ),
+        "balanced_maximal_short_product_wedge_removed": bool(
+            balanced_maximal and long_product_threshold
+        ),
+        # The core polytope also contains unbalanced rows with rho < 2.
+        "all_core_boxes_short_product_wedge_removed": False,
+        "packet_exhaustive_global_adapter_proved": False,
+        "signed_varying_total_modulus_and_phase_reassembly_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def shen_lehmer_varying_modulus_projection_audit(
+    *,
+    product_length_exponent: Fraction,
+    modulus_length_exponent: Fraction,
+    inverse_numerator_exponent: Fraction,
+    required_saving_exponent: Fraction,
+    direct_phase_absent: bool,
+    inverse_numerator_fixed: bool,
+    product_coefficients_independent_of_modulus: bool,
+    separated_coefficient_adapter_verified: bool,
+) -> dict[str, object]:
+    """Compare Shen's inverse-only q-average with the coupled master.
+
+    Shen's Lemma 7 bounds
+
+    ``sum_m sum_q alpha_m beta_q e(a*inverse(m)/q)``
+
+    by the two L2 norms times
+    ``(|a|+M*Q)^(1/2) (M+Q)^(1/24) (M*Q)^(-1/24)``.
+    Theorem 4 squares this after fixing the inverse numerator.  Neither
+    statement contains the simultaneous direct phase or the moving
+    ``a=h*delta`` packet of the present master.
+    """
+
+    m = F(product_length_exponent)
+    q = F(modulus_length_exponent)
+    a = F(inverse_numerator_exponent)
+    required = F(required_saving_exponent)
+    if min(m, q, a, required) < 0 or m == 0 or q == 0:
+        raise ValueError("length exponents must be nonnegative and positive")
+
+    coefficient_norms = (m + q) / 2
+    numerator_or_volume = max(a, m + q) / 2
+    imbalance_factor = max(m, q) / 24 - (m + q) / 24
+    bilinear_bound = coefficient_norms + numerator_or_volume + imbalance_factor
+    trivial = m + q
+    saving = max(F(0), trivial - bilinear_bound)
+    energy_saving = m / 12
+    hypotheses = bool(
+        direct_phase_absent
+        and inverse_numerator_fixed
+        and product_coefficients_independent_of_modulus
+        and separated_coefficient_adapter_verified
+    )
+    return {
+        "product_length_exponent": m,
+        "modulus_length_exponent": q,
+        "inverse_numerator_exponent": a,
+        "required_saving_exponent": required,
+        "coefficient_l2_norm_exponent": coefficient_norms,
+        "numerator_or_volume_exponent": numerator_or_volume,
+        "imbalance_factor_exponent": imbalance_factor,
+        "bilinear_bound_exponent": bilinear_bound,
+        "trivial_bilinear_exponent": trivial,
+        "relative_linear_saving_exponent": saving,
+        "second_moment_energy_saving_exponent": energy_saving,
+        "theorem_four_strict_N_less_than_Q_verified": bool(m < q),
+        "direct_phase_absent": bool(direct_phase_absent),
+        "inverse_numerator_fixed": bool(inverse_numerator_fixed),
+        "product_coefficients_independent_of_modulus": bool(
+            product_coefficients_independent_of_modulus
+        ),
+        "separated_coefficient_adapter_verified": bool(
+            separated_coefficient_adapter_verified
+        ),
+        "published_bilinear_projection_hypotheses_verified": hypotheses,
+        "required_coupled_saving_met": bool(saving >= required),
+        "remaining_saving_deficit": max(F(0), required - saving),
+        "retains_outer_modulus_average": True,
+        "retains_joint_h_delta_family": False,
+        "retains_direct_and_inverse_phase_together": False,
+        "retains_double_mobius_type_structure": False,
+        "current_physical_packet_covered": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def outer_modulus_row_energy_phase_alignment_audit(
+    *,
+    outer_signs: tuple[int, ...],
+    row_amplitudes: tuple[Fraction, ...],
+) -> dict[str, object]:
+    """Give an exact saturation witness for any row-norm-only estimate.
+
+    For prescribed signs ``epsilon_i`` and nonnegative amplitudes ``a_i``,
+    take the one-dimensional row vector ``U_i=1`` and coefficient
+    ``C_i=epsilon_i*a_i``.  Then
+
+    ``sum_i epsilon_i <C_i,U_i> = sum_i a_i``.
+
+    Therefore independent fixed-row energy bounds cannot exploit the
+    outer Möbius signs without an additional cross-row constraint on the
+    common physical coefficient family.
+    """
+
+    signs = tuple(int(sign) for sign in outer_signs)
+    amplitudes = tuple(F(amplitude) for amplitude in row_amplitudes)
+    if not signs or len(signs) != len(amplitudes):
+        raise ValueError("sign and amplitude families must have equal positive length")
+    if any(sign not in {-1, 1} for sign in signs):
+        raise ValueError("every outer sign must equal -1 or 1")
+    if any(amplitude < 0 for amplitude in amplitudes):
+        raise ValueError("row amplitudes must be nonnegative")
+
+    coefficients = tuple(
+        F(sign) * amplitude for sign, amplitude in zip(signs, amplitudes)
+    )
+    signed_outer_sum = sum(
+        (F(sign) * coefficient for sign, coefficient in zip(signs, coefficients)),
+        start=F(0),
+    )
+    triangle = sum(amplitudes, start=F(0))
+    return {
+        "outer_signs": signs,
+        "row_amplitudes": amplitudes,
+        "constructed_row_coefficients": coefficients,
+        "constructed_test_vectors": tuple(F(1) for _ in signs),
+        "signed_outer_sum": signed_outer_sum,
+        "triangle_bound": triangle,
+        "triangle_bound_saturated": bool(signed_outer_sum == triangle),
+        "all_outer_signs_absorbed_by_row_phases": bool(
+            signed_outer_sum == triangle
+        ),
+        "cross_modulus_packet_rigidity_used": False,
+        "row_energy_only_outer_power_saving_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def centered_type_phase_local_spectrum_audit(*, prime: int) -> dict[str, object]:
     """Compute the exact local Gram spectrum of the centered tensor.
 
