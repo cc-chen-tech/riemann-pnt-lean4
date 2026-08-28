@@ -16242,6 +16242,10 @@ phase gives the boundary-exact double-character form
  \tag{9.747}
 \]
 
+No unit condition on \(B\) is used in (9.745)--(9.747); all gcd strata
+of the direct additive coefficient remain inside
+\(\widehat{\mathcal J}_s(\lambda)\).
+
 Thus the Type character is \((\lambda\psi)(dp)\), not \(\psi(dp)\).
 In particular, deleting \(\psi=\chi_0\) does **not** imply that the
 convolved Type character \(\lambda\psi\) is nonprincipal.  The Type split
@@ -16339,6 +16343,110 @@ Type split for \(\lambda\psi\).  The exact-rational helper
 `joint_all_character_large_sieve_deficit_audit` verifies
 (9.751)--(9.753).  Both helpers leave the signed cross-modulus estimate
 and the coupled-kernel gate explicitly false.
+
+### 9.114 The convolved-principal row is a Kloosterman slice
+
+The warning after (9.747) can be made completely explicit.  Restrict the
+double-character master to
+
+\[
+ \lambda\psi=\chi_0,
+ \tag{9.754}
+\]
+
+so that \(\lambda=\bar\psi\).  The direct transform then satisfies, for
+arbitrary integral \(B\),
+
+\[
+ \widehat{\mathcal J}_s(\bar\psi)
+ =\sum_{t\in U(s)}\psi(t)e_s(Bt)=G_\psi(B;s).
+\]
+
+Consequently the convolved-principal contribution is
+
+\[
+ \frac{\mu(s)}{\varphi(s)^2}D_s(\chi_0)P_s(\chi_0)
+ \sum_aU(a)\sum_{\psi\bmod s}G_\psi(B;s)G_\psi(-a;s).
+ \tag{9.755}
+\]
+
+Opening the two Gauss sums and applying character orthogonality imposes
+\(uv\equiv1\pmod s\).  Hence, with the classical complete Kloosterman
+sum
+
+\[
+ S(B,-a;s)=\sum_{u\in U(s)}e_s(Bu-a\bar u),
+\]
+
+one has the exact identity
+
+\[
+ \boxed{
+ \frac1{\varphi(s)}
+ \sum_{\psi\bmod s}G_\psi(B;s)G_\psi(-a;s)
+ =S(B,-a;s).}
+ \tag{9.756}
+\]
+
+Thus (9.755), including both inverse-character conductor sectors, equals
+
+\[
+ \boxed{
+ \frac{\mu(s)}{\varphi(s)}D_s(\chi_0)P_s(\chi_0)
+ \sum_aU(a)S(B,-a;s).}
+ \tag{9.757}
+\]
+
+The \(q=1\) inverse-character row inside this slice is exactly
+
+\[
+ \frac{\mu(s)}{\varphi(s)^2}D_s(\chi_0)P_s(\chi_0)
+ c_s(B)\sum_aU(a)c_s(a),
+ \tag{9.758}
+\]
+
+and the sum of the \(q>1\) rows is (9.757) minus (9.758).  Equivalently,
+their local kernel is
+
+\[
+ S(B,-a;s)-\frac{c_s(B)c_s(a)}{\varphi(s)}.
+ \tag{9.759}
+\]
+
+This is the multiplicative-character analogue of the centered
+Kloosterman kernel in (9.716).  It proves that convolved-principal Type
+rows were not lost in Section 9.113: the inverse-principal part is the
+Ramanujan row, while the inverse-nonprincipal part is its centered
+Kloosterman complement.
+
+The collapse is structural, not yet an estimate.  For squarefree \(s\),
+the classical pointwise bound
+
+\[
+ |S(B,-a;s)|\leq\tau(s)(B,a,s)^{1/2}s^{1/2}
+\]
+
+is especially clean when \((B,s)=1\), but absolute summation is still
+far outside the target.  At the balanced scales, the modulus family,
+coherent Type-product length, and product-label length have exponents
+\(3,3,5\).  The factor \(s^{1/2}/\varphi(s)\) therefore gives the
+pointwise-Weil ledger
+
+\[
+ T^3\,T^3\,T^5\,T^{-3/2}=T^{19/2+\varepsilon},
+\]
+
+which is \(T^{7/2}\) above the \(T^6\) joint target and one power worse
+than the standard global large-sieve bound (9.752).  A useful treatment
+of (9.757) must therefore average the Kloosterman slice together with the
+outer \(\mu(s)\), the Type coefficients, and the complementary
+\(\lambda\psi\ne\chi_0\) rows.  Taking this slice as a separate absolute
+gate would again strengthen the original problem without justification.
+
+The finite helper `centered_global_two_mobius_character_master_audit`
+checks (9.754)--(9.759), including nonunit \(B\), nonunit \(a\), the
+\(q=1\) Ramanujan row, and the full \(q>1\) centered complement.  It does
+not claim a spectral average or close the coupled-kernel gate.
 
 ## 10. What has and has not been proved
 
@@ -17091,6 +17199,7 @@ Proved in this note:
 | Fixed-modulus ratio-frequency/character square | exact inner-block diagonalization and Type determinant; cross-modulus two-Möbius estimate unproved | Taking the full squarefree modulus as cofactor rewrites the fixed-\(s\) unequal-label Gram as the positive ratio-frequency square (9.591).  On each smooth rank-one tensor, multiplicative Parseval gives (9.592), while the Type product transform factors as two Dirichlet polynomials, (9.593).  Opening the square and applying the remainder-free split (9.241) gives (9.595), retaining \(a=h\delta\) and the Type Möbius sign.  The fixed-modulus square necessarily removes the outer \(\mu(s)\); the required next object is its cross-modulus \((s_1,s_2)\) analogue formed before Cauchy, with both outer signs retained |
 | Global linear two-Möbius character master | exact pre-Cauchy Type I/II form; cross-modulus dispersion unproved | Applying multiplicative inversion linearly before the \(s\)-sum gives (9.596)--(9.597): \(\mu(s)\), \(\mu(d)\), the complete character family, and \(a=h\delta\) all remain in one finite sum.  The boundary-safe identity (9.598)--(9.599) splits only \(\mu(d)\), retains \(d\leq\max(U_0,V_0)\), and has no mixed rectangles or remainder.  A single subsequent global square has the signed cross-modulus kernel (9.600).  Published separate character moments do not bound the product of its trace, Type, and companion polynomials at the balanced face |
 | Joint all-character/conductor master | exact principal-centered recombination; signed cross-\(q\) estimate unproved | Separately transforming the direct and inverse phases gives the double-character master (9.747): the Type polynomial sees \(\lambda\psi\), so centering the inverse character \(\psi\) does not delete principal convolved Type rows.  The \(q=1\) row is exactly the Ramanujan principal projection (9.748); every \(q>1\) row has the primitive-conductor descent (9.749).  Adding them before absolute values recovers (9.117), hence the true residual target is the joint gate \(|\mathfrak P_{\rm top}+\mathfrak N_{\rm all}|\), not separate PECG bounds.  Standard Farey/character large sieves give \(T^{17/2+\varepsilon}\) against target \(T^{6+\varepsilon}\), an exact \(T^{5/2}\) deficit, (9.751)--(9.753) |
+| Convolved-principal Type slice | exact centered Kloosterman collapse; joint modulus average unproved | On \(\lambda\psi=\chi_0\), character orthogonality gives \(\varphi(s)^{-1}\sum_\psi G_\psi(B)G_\psi(-a)=S(B,-a;s)\), (9.754)--(9.757).  Its inverse-character \(q=1\) row is the Ramanujan product (9.758), and all \(q>1\) rows are exactly the centered Kloosterman complement (9.759), including nonunit \(B,a\).  Pointwise Weil gives exponent \(19/2\), one power worse than the global large sieve and \(7/2\) above target; the slice must therefore remain coupled to the outer Möbius, Type coefficients, and complementary convolved characters |
 | Cross-modulus zero product frequency | exact same-\((s,t)\) diagonal; signed complement unproved | The primitive frequency \(\bar t_s/s\) is a reduced fraction.  Hence equality across two blocks forces \(s_1=s_2,t_1=t_2\), and every distinct pair has Farey spacing at least \((s_1s_2)^{-1}\), (9.601)--(9.603).  The ordinary additive large sieve (9.604) and the sum of fixed-modulus Cochrane--Shi energies both have balanced exponent \(11\), so spacing alone gives no new power.  The zero projector is classified, but its AFE/Type reassembly and the signed nonzero-frequency cross-modulus estimate remain unproved |
 | Cross-modulus frequency Euler centering | exact local density and mean-zero divisor expansion; weighted lift handled next | For \(s_i=gr_i\), CRT gives the exact multiplicity (9.606) of every circular numerator \(\kappa\).  The common Möbius sign cancels as \(\mu(s_1)\mu(s_2)=\mu(r_1)\mu(r_2)\), while (9.608)--(9.610) split the multiplicity into the explicit density \(\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) and Euler blocks containing a mean-zero factor \(1_{p\mid\kappa}-1/p\).  Section 9.93 lifts this to arbitrary fixed-pair packet weights; the signed estimate for the resulting centered blocks remains unproved |
 | Weighted CRT packet centering | exact orthogonal projection; principal reassembly and centered dispersion unproved | Conditional expectations in the prime CRT coordinates give the Hoeffding decomposition (9.612)--(9.615) for an arbitrary fixed-\((s_1,s_2)\) packet.  The weighted fibre identity (9.616) separates \(\bar W\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) from two terms whose total \(\kappa\)-mass is exactly zero.  Linearity (9.618) retains \(h\delta\), both Type Möbius weights, the outer cofactor signs, and all nine ordered Type blocks at divisor cost \(T^\varepsilon\).  Zero marginals do not themselves give power cancellation; the AFE/reflection principal ledger and the global signed norm of the centered blocks remain open |

@@ -11410,8 +11410,6 @@ def centered_global_two_mobius_character_master_audit(
         factors = _finite_prime_exponents(modulus) if modulus > 1 else {}
         if modulus <= 1 or any(exponent != 1 for exponent in factors.values()):
             raise ValueError("every modulus must be squarefree and greater than one")
-        if gcd(int(direct_coefficient), modulus) != 1:
-            raise ValueError("the direct coefficient must be a unit for every modulus")
     if (
         not type_base_coefficients
         or not companion_type_coefficients
@@ -11443,6 +11441,11 @@ def centered_global_two_mobius_character_master_audit(
     joint_all_inverse_master = 0j
     principal_q1_master = 0j
     centered_q_gt_1_master = 0j
+    convolved_principal_joint_master = 0j
+    convolved_principal_q1_master = 0j
+    convolved_principal_centered_master = 0j
+    convolved_principal_kloosterman_master = 0j
+    convolved_principal_ramanujan_master = 0j
     modulus_rows: list[dict[str, object]] = []
 
     for modulus in moduli:
@@ -11585,6 +11588,11 @@ def centered_global_two_mobius_character_master_audit(
             )
             for index in indices
         }
+        principal_index = tuple(0 for _ in primes)
+        principal_type_product = (
+            complex(d_transforms[principal_index]["full"])
+            * p_transforms[principal_index]
+        )
 
         modulus_raw_direct = 0j
         modulus_literal_direct = 0j
@@ -11657,6 +11665,9 @@ def centered_global_two_mobius_character_master_audit(
         modulus_joint = 0j
         modulus_principal_q1 = 0j
         modulus_centered_q_gt_1 = 0j
+        modulus_convolved_principal = 0j
+        modulus_convolved_principal_q1 = 0j
+        modulus_convolved_principal_centered = 0j
         all_convolved_type_splits_exact = True
         for psi in indices:
             active_primes = tuple(
@@ -11714,6 +11725,27 @@ def centered_global_two_mobius_character_master_audit(
                     }
                 )
 
+            inverse_psi = tuple(
+                (-component) % (prime - 1)
+                for component, prime in zip(psi, primes)
+            )
+            convolved_principal_contribution = (
+                mu_modulus
+                / (phi_s * phi_s)
+                * direct_phase_transforms[inverse_psi]
+                * inverse_transform
+                * principal_type_product
+            )
+            modulus_convolved_principal += convolved_principal_contribution
+            if is_principal:
+                modulus_convolved_principal_q1 += (
+                    convolved_principal_contribution
+                )
+            else:
+                modulus_convolved_principal_centered += (
+                    convolved_principal_contribution
+                )
+
             psi_contribution = 0j
             for lambda_index in indices:
                 convolved = tuple(
@@ -11761,6 +11793,43 @@ def centered_global_two_mobius_character_master_audit(
         joint_all_inverse_master += modulus_joint
         principal_q1_master += modulus_principal_q1
         centered_q_gt_1_master += modulus_centered_q_gt_1
+        modulus_kloosterman_collapse = (
+            mu_modulus
+            / phi_s
+            * principal_type_product
+            * sum(
+                outer_value
+                * sum(
+                    root
+                    ** (
+                        (
+                            int(direct_coefficient) * unit
+                            - a * pow(unit, -1, modulus)
+                        )
+                        % modulus
+                    )
+                    for unit in units
+                )
+                for a, outer_value in outer.items()
+            )
+        )
+        modulus_ramanujan_q1 = (
+            mu_modulus
+            / (phi_s * phi_s)
+            * principal_type_product
+            * ramanujan(int(direct_coefficient), modulus)
+            * sum(
+                outer_value * ramanujan(a, modulus)
+                for a, outer_value in outer.items()
+            )
+        )
+        convolved_principal_joint_master += modulus_convolved_principal
+        convolved_principal_q1_master += modulus_convolved_principal_q1
+        convolved_principal_centered_master += (
+            modulus_convolved_principal_centered
+        )
+        convolved_principal_kloosterman_master += modulus_kloosterman_collapse
+        convolved_principal_ramanujan_master += modulus_ramanujan_q1
         modulus_rows.append(
             {
                 "modulus": modulus,
@@ -11772,6 +11841,21 @@ def centered_global_two_mobius_character_master_audit(
                 "joint_all_inverse_character_contribution": modulus_joint,
                 "principal_q1_contribution": modulus_principal_q1,
                 "centered_q_gt_1_contribution": modulus_centered_q_gt_1,
+                "convolved_principal_joint_contribution": (
+                    modulus_convolved_principal
+                ),
+                "convolved_principal_q1_contribution": (
+                    modulus_convolved_principal_q1
+                ),
+                "convolved_principal_centered_contribution": (
+                    modulus_convolved_principal_centered
+                ),
+                "convolved_principal_kloosterman_contribution": (
+                    modulus_kloosterman_collapse
+                ),
+                "convolved_principal_ramanujan_contribution": (
+                    modulus_ramanujan_q1
+                ),
                 "centered_inverse_character_rows": tuple(inverse_rows),
                 "all_convolved_character_type_splits_exact": (
                     all_convolved_type_splits_exact
@@ -11799,6 +11883,17 @@ def centered_global_two_mobius_character_master_audit(
         "joint_all_inverse_character_master": joint_all_inverse_master,
         "principal_q1_master": principal_q1_master,
         "centered_q_gt_1_master": centered_q_gt_1_master,
+        "convolved_principal_joint_master": convolved_principal_joint_master,
+        "convolved_principal_q1_master": convolved_principal_q1_master,
+        "convolved_principal_centered_master": (
+            convolved_principal_centered_master
+        ),
+        "convolved_principal_kloosterman_master": (
+            convolved_principal_kloosterman_master
+        ),
+        "convolved_principal_ramanujan_master": (
+            convolved_principal_ramanujan_master
+        ),
         "raw_global_character_identity_exact": abs(
             raw_direct - raw_character_master
         )
@@ -11843,10 +11938,31 @@ def centered_global_two_mobius_character_master_audit(
             bool(row["all_convolved_character_type_splits_exact"])
             for row in modulus_rows
         ),
+        "convolved_principal_rows_collapse_to_kloosterman": abs(
+            convolved_principal_joint_master
+            - convolved_principal_kloosterman_master
+        )
+        < tolerance,
+        "convolved_principal_q1_ramanujan_row_exact": abs(
+            convolved_principal_q1_master
+            - convolved_principal_ramanujan_master
+        )
+        < tolerance,
+        "convolved_principal_centered_rows_exact": abs(
+            convolved_principal_centered_master
+            - (
+                convolved_principal_kloosterman_master
+                - convolved_principal_ramanujan_master
+            )
+        )
+        < tolerance,
         "modulus_rows": tuple(modulus_rows),
         "outer_modulus_mobius_weight_retained_linearly": True,
         "inner_type_mobius_weight_retained_linearly": True,
         "physical_product_label_retained_inside_inverse_gauss_sum": True,
+        "nonunit_direct_coefficients_supported": any(
+            gcd(int(direct_coefficient), modulus) != 1 for modulus in moduli
+        ),
         "principal_and_centered_recombined_before_absolute_values": True,
         "joint_kernel_master_equivalent_to_uncentered_master": abs(
             joint_all_inverse_master - raw_direct
@@ -11903,6 +12019,50 @@ def joint_all_character_large_sieve_deficit_audit(
         "centering_reduces_farey_family_exponent": False,
         "standard_large_sieve_closes_joint_gate": deficit == 0,
         "joint_signed_cross_modulus_estimate_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def convolved_principal_kloosterman_slice_deficit_audit(
+    *,
+    modulus_exponent: Fraction,
+    coherent_type_exponent: Fraction,
+    product_label_exponent: Fraction,
+) -> dict[str, object]:
+    """Record the pointwise-Weil ledger for ``lambda*psi=1``.
+
+    Character orthogonality collapses this row to a complete Kloosterman
+    sum with normalization ``1/phi(s)``.  Across ``T^sigma`` moduli,
+    pointwise Weil therefore contributes net exponent ``sigma/2`` in
+    addition to the coherent Type and product-label lengths.
+    """
+
+    sigma = F(modulus_exponent)
+    coherent_type = F(coherent_type_exponent)
+    product_length = F(product_label_exponent)
+    if min(sigma, coherent_type, product_length) < 0:
+        raise ValueError("all exponents must be nonnegative")
+
+    pointwise_weil = coherent_type + product_length + sigma / 2
+    target = coherent_type + sigma
+    standard = joint_all_character_large_sieve_deficit_audit(
+        modulus_exponent=sigma,
+        long_mobius_exponent=coherent_type,
+        product_label_exponent=product_length,
+    )["standard_linear_bound_exponent"]
+    standard_exponent = F(standard)
+    return {
+        "modulus_exponent": sigma,
+        "coherent_type_exponent": coherent_type,
+        "product_label_exponent": product_length,
+        "pointwise_weil_bound_exponent": pointwise_weil,
+        "joint_gate_target_exponent": target,
+        "pointwise_weil_deficit": _positive_part(pointwise_weil - target),
+        "standard_global_large_sieve_exponent": standard_exponent,
+        "pointwise_weil_minus_large_sieve": pointwise_weil - standard_exponent,
+        "convolved_principal_collapse_proved": True,
+        "slice_may_be_bounded_separately_without_loss": False,
+        "spectral_modulus_average_proved": False,
         "coupled_kernel_gate_closed": False,
     }
 

@@ -3569,6 +3569,9 @@ def test_centered_global_master_recombines_q1_and_primitive_rows() -> None:
     assert result["all_centered_inverse_rows_have_nontrivial_primitive_conductor"]
     assert result["all_centered_inverse_rows_match_conductor_descent"]
     assert result["all_convolved_character_type_splits_exact"]
+    assert result["convolved_principal_rows_collapse_to_kloosterman"]
+    assert result["convolved_principal_q1_ramanujan_row_exact"]
+    assert result["convolved_principal_centered_rows_exact"]
     assert result["outer_modulus_mobius_weight_retained_linearly"]
     assert result["inner_type_mobius_weight_retained_linearly"]
     assert result["physical_product_label_retained_inside_inverse_gauss_sum"]
@@ -3594,7 +3597,7 @@ def test_centered_global_master_recombines_q1_and_primitive_rows() -> None:
 
     mixed_conductors = audit(
         squarefree_moduli=(3, 5, 6, 7, 10, 15),
-        direct_coefficient=1,
+        direct_coefficient=6,
         type_base_coefficients={1: 1, 2: -1, 3: 1j, 6: -2j, 11: 2},
         companion_type_coefficients={1: -1, 4: 2j, 7: 3},
         outer_product_coefficients={0: 1, 3: -1j, 5: 2, 15: 1 + 1j},
@@ -3610,6 +3613,12 @@ def test_centered_global_master_recombines_q1_and_primitive_rows() -> None:
         "all_centered_inverse_rows_match_conductor_descent"
     ]
     assert mixed_conductors["all_convolved_character_type_splits_exact"]
+    assert mixed_conductors[
+        "convolved_principal_rows_collapse_to_kloosterman"
+    ]
+    assert mixed_conductors["convolved_principal_q1_ramanujan_row_exact"]
+    assert mixed_conductors["convolved_principal_centered_rows_exact"]
+    assert mixed_conductors["nonunit_direct_coefficients_supported"]
     assert {
         row["primitive_conductor"]
         for modulus_row in mixed_conductors["modulus_rows"]
@@ -3623,6 +3632,9 @@ def test_centered_global_master_recombines_q1_and_primitive_rows() -> None:
     assert r"q=1" in text
     assert r"q>1" in text
     assert r"\mathfrak P_{\rm top}+\mathfrak N_{\rm all}" in text
+    assert "### 9.114 The convolved-principal row is a Kloosterman slice" in text
+    assert r"\lambda\psi=\chi_0" in text
+    assert r"S(B,-a;s)" in text
 
 
 def test_joint_all_character_standard_large_sieve_still_loses_five_halves() -> None:
@@ -3653,6 +3665,30 @@ def test_joint_all_character_standard_large_sieve_still_loses_five_halves() -> N
     assert r"T^{17/2+\varepsilon}" in text
     assert r"T^{5/2}" in text
     assert "standard large-sieve ceiling" in text
+
+
+def test_convolved_principal_pointwise_weil_is_one_power_worse() -> None:
+    audit = getattr(
+        coverage_audit,
+        "convolved_principal_kloosterman_slice_deficit_audit",
+        None,
+    )
+    assert audit is not None, "convolved-principal slice audit is missing"
+
+    result = audit(
+        modulus_exponent=F(3),
+        coherent_type_exponent=F(3),
+        product_label_exponent=F(5),
+    )
+    assert result["pointwise_weil_bound_exponent"] == F(19, 2)
+    assert result["joint_gate_target_exponent"] == F(6)
+    assert result["pointwise_weil_deficit"] == F(7, 2)
+    assert result["standard_global_large_sieve_exponent"] == F(17, 2)
+    assert result["pointwise_weil_minus_large_sieve"] == F(1)
+    assert result["convolved_principal_collapse_proved"]
+    assert not result["slice_may_be_bounded_separately_without_loss"]
+    assert not result["spectral_modulus_average_proved"]
+    assert not result["coupled_kernel_gate_closed"]
 
 
 def test_cross_modulus_zero_product_frequency_is_exactly_diagonal() -> None:
