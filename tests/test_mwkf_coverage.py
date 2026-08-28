@@ -6198,6 +6198,14 @@ def test_nonprincipal_projector_retains_cofactor_and_type_convolution() -> None:
         2: F(29),
     }
     assert result["ratio_convolution_energy"] == F(1802)
+    assert result["principal_character_mean"] == F(30)
+    assert result["centered_ratio_convolution"] == {
+        1: F(1),
+        2: F(-1),
+    }
+    assert result["principal_character_energy"] == F(1800)
+    assert result["centered_character_energy"] == F(2)
+    assert result["principal_plus_centered_energy_is_total"]
     assert result["expanded_resonant_energy"] == F(1802)
     assert result["convolution_energy_equals_expanded_resonant_energy"]
     assert result["resonant_ordered_pair_count"] == 8
@@ -6226,7 +6234,7 @@ def test_nonprincipal_projector_retains_cofactor_and_type_convolution() -> None:
 
 
 def test_generic_fourth_moment_misses_the_top_reduced_conductor() -> None:
-    """Even ideal common coefficients leave one energy power at q=T^3."""
+    """Primitive fourth moments omit an even larger principal row."""
 
     audit = getattr(
         coverage_audit,
@@ -6242,19 +6250,31 @@ def test_generic_fourth_moment_misses_the_top_reduced_conductor() -> None:
         product_label_count_exponent=F(5),
         cofactor_convolution_excess_exponent=F(0),
         type_convolution_excess_exponent=F(0),
+        principal_type_mean_exponent=F(3),
         common_coefficient_across_moduli_verified=True,
         physical_unit_mask_adapter_verified=True,
+        principal_character_mean_bound_verified=False,
     )
     assert top["inactive_cofactor_exponent"] == F(0)
     assert top["effective_left_sequence_length_exponent"] == F(5)
     assert top["left_fourth_moment_exponent"] == F(20)
     assert top["type_fourth_moment_exponent"] == F(12)
-    assert top["ideal_divisor_bounded_projector_exponent"] == F(13)
+    assert top["ideal_divisor_bounded_primitive_projector_exponent"] == F(13)
     assert top["squared_local_target_exponent"] == F(12)
-    assert top["ideal_remaining_deficit"] == F(1)
+    assert top["ideal_primitive_remaining_deficit"] == F(1)
     assert top["total_convolution_excess_budget"] == F(-2)
-    assert not top["generic_fourth_moment_can_meet_target_even_ideally"]
-    assert not top["published_fourth_moment_projection_covers_packet"]
+    assert not top[
+        "generic_primitive_fourth_moment_can_meet_target_even_ideally"
+    ]
+    assert top["principal_character_projector_bound_exponent"] == F(16)
+    assert top["required_principal_type_mean_exponent"] == F(1)
+    assert top[
+        "required_principal_type_amplitude_saving_exponent"
+    ] == F(2)
+    assert top["principal_character_remaining_deficit"] == F(4)
+    assert not top["principal_character_meets_target"]
+    assert not top["primitive_fourth_moment_projection_covers_subfamily"]
+    assert not top["full_projector_covered_by_this_route"]
 
     transition = audit(
         reduced_conductor_exponent=F(2),
@@ -6263,13 +6283,46 @@ def test_generic_fourth_moment_misses_the_top_reduced_conductor() -> None:
         product_label_count_exponent=F(5),
         cofactor_convolution_excess_exponent=F(0),
         type_convolution_excess_exponent=F(0),
+        principal_type_mean_exponent=F(3),
         common_coefficient_across_moduli_verified=True,
         physical_unit_mask_adapter_verified=True,
+        principal_character_mean_bound_verified=False,
     )
     assert transition["effective_left_sequence_length_exponent"] == F(4)
-    assert transition["weighted_projector_bound_exponent"] == F(12)
-    assert transition["generic_fourth_moment_can_meet_target_even_ideally"]
-    assert transition["published_fourth_moment_projection_covers_packet"]
+    assert transition[
+        "weighted_primitive_projector_bound_exponent"
+    ] == F(12)
+    assert transition[
+        "generic_primitive_fourth_moment_can_meet_target_even_ideally"
+    ]
+    assert transition["principal_character_projector_bound_exponent"] == F(14)
+    assert transition["required_principal_type_mean_exponent"] == F(2)
+    assert transition[
+        "required_principal_type_amplitude_saving_exponent"
+    ] == F(1)
+    assert transition["primitive_fourth_moment_projection_covers_subfamily"]
+    assert not transition["principal_character_meets_target"]
+    assert not transition["full_projector_covered_by_this_route"]
+
+    low = audit(
+        reduced_conductor_exponent=F(1),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        product_label_count_exponent=F(5),
+        cofactor_convolution_excess_exponent=F(0),
+        type_convolution_excess_exponent=F(0),
+        principal_type_mean_exponent=F(3),
+        common_coefficient_across_moduli_verified=True,
+        physical_unit_mask_adapter_verified=True,
+        principal_character_mean_bound_verified=True,
+    )
+    assert low["effective_left_sequence_length_exponent"] == F(3)
+    assert low["weighted_primitive_projector_bound_exponent"] == F(11)
+    assert low["principal_character_projector_bound_exponent"] == F(12)
+    assert low["required_principal_type_mean_exponent"] == F(3)
+    assert low["required_principal_type_amplitude_saving_exponent"] == F(0)
+    assert low["principal_character_meets_target"]
+    assert low["full_projector_covered_by_this_route"]
 
     physical = audit(
         reduced_conductor_exponent=F(2),
@@ -6278,12 +6331,20 @@ def test_generic_fourth_moment_misses_the_top_reduced_conductor() -> None:
         product_label_count_exponent=F(5),
         cofactor_convolution_excess_exponent=F(0),
         type_convolution_excess_exponent=F(0),
+        principal_type_mean_exponent=F(3),
         common_coefficient_across_moduli_verified=False,
         physical_unit_mask_adapter_verified=False,
+        principal_character_mean_bound_verified=False,
     )
-    assert physical["weighted_projector_bound_exponent"] == F(12)
-    assert not physical["published_fourth_moment_hypotheses_verified"]
-    assert not physical["published_fourth_moment_projection_covers_packet"]
+    assert physical[
+        "weighted_primitive_projector_bound_exponent"
+    ] == F(12)
+    assert not physical["primitive_fourth_moment_hypotheses_verified"]
+    assert not physical[
+        "primitive_fourth_moment_projection_covers_subfamily"
+    ]
+    assert not physical["principal_character_mean_bound_verified"]
+    assert not physical["full_projector_covered_by_this_route"]
     assert not physical["retains_cofactor_and_type_mobius_cancellation_jointly"]
     assert not physical["q_projector_bound_proved"]
     assert not physical["coupled_kernel_gate_closed"]

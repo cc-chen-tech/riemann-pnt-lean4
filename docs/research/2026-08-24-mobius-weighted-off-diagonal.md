@@ -30,7 +30,7 @@
 > | Original-master product support | Section 9.133 does not identify the two models.  It opens the coefficient already present in the original all-character master: the Möbius--log Type identity has \(r=n_0p\), the quotient Type split has \(n_0=bcu\), and therefore \(bcup=r\asymp R\) with no endpoint error.  On the original balanced maximal face this gives \(x=3\), so (9.883) supplies the full fixed-\((s,\vartheta)\) saving \(5/2\).  Section 9.136 handles every unbalanced orientation; the signed outer modulus/phase norm remains open |
 > | Reciprocity-oriented all-core support | Section 9.136 uses \(-a\bar r/s\equiv a\bar s/r-a/(rs)\) and swaps \((r,s,M,K,\delta)\) when \(S>R\).  The extra phase has exponent at most \(-1\), so it stays in the coupled seminorm class.  With \(u=\max(\rho,\sigma)\), \(v=\min(\rho,\sigma)\), the Type product has exponent \(u\), both \(h,\delta\) exponents are at most \(v\), and the squared fixed-fibre exponent is at most \(2(u+v)\).  Hence every core box reaches \(RS\,T^\varepsilon\) locally.  This does not estimate the signed varying-oriented-modulus sum or the nonzero determinant family |
 > | Global reduced-frequency projector | Section 9.137 performs the reciprocal orientation linearly for every core packet, producing one exact master with short modulus \(v\), long Type entry \(w=bcup\), both signs \(\mu(v)\mu(w)\), and \(a=h\delta\).  Writing \(d=(a,v)\), \(q=v/d\), \(A=a/d\), the inverse frequency is the reduced fraction \(-A\bar w_q/q\).  Equal frequencies have a common \(q\), satisfy \(A_1w_2\equiv A_2w_1\pmod q\), and cancel only the common \(\mu(q)^2\), leaving the cofactor and Type signs inside the exact projector \(\sum_{q,c}\|Z_{q,c}\|^2\).  The \(q=1\) principal reassembly, \(q>1\) projector bound, and reduced-determinant nonzero dispersion remain unproved |
-> | Nonprincipal cofactor--Type convolution | Section 9.138 splits \(d=d_1d_2\), \(h=d_1h_1\), \(\delta=d_2\delta_1\) uniquely and rewrites every separated fixed-\(q>1\) projector atom as the exact ratio convolution \(Z_{q,c}=\mu(q)\sum_{y\in U(q)}F_q(-cy)G_q(y)\).  Multiplicative Parseval retains \(\mu(d_1)\mu(d_2)\) in \(F_q\), \(\mu(w)\) and all small/I/II Type blocks in \(G_q\).  An optimistic varying-modulus fourth-moment envelope is \(T^{10+\gamma}\) on the balanced face \(q=T^\gamma\), against squared target \(T^{12}\): it can reach the target only for \(\gamma\leq2\), while the top conductor \(\gamma=3\) still loses one full energy power.  The physical unit-mask/common-coefficient adapter and every high-conductor projector bound remain unproved |
+> | Nonprincipal cofactor--Type convolution | Section 9.138 splits \(d=d_1d_2\), \(h=d_1h_1\), \(\delta=d_2\delta_1\) uniquely and rewrites every separated fixed-\(q>1\) projector atom as the exact ratio convolution \(Z_{q,c}=\mu(q)\sum_{y\in U(q)}F_q(-cy)G_q(y)\).  Multiplicative Parseval retains \(\mu(d_1)\mu(d_2)\) in \(F_q\), \(\mu(w)\) and all small/I/II Type blocks in \(G_q\), and exposes an additional principal multiplicative character for every \(q>1\).  The optimistic primitive-character envelope is \(T^{10+\gamma}\) against target \(T^{12}\), but the uncentered principal row has trivial exponent \(10+2\gamma\).  At \(\gamma=3\) a standalone positive-projector proof would require a \(T^2\) amplitude saving in its length-\(T^3\) Type mean, or exact pre-square AFE/reflection reassembly.  The physical adapter, principal reassembly, high-conductor centered estimate, and projector bound remain unproved |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -19699,7 +19699,8 @@ alone does not supply the missing power, but (9.914) is now the correct
 conductor-level determinant: inactive factors \(d_i\) do not inflate
 the spectral modulus.
 
-Thus the remaining global gate has three disjoint finite obligations:
+Thus one sufficient, but potentially stronger than necessary, global
+gate has three disjoint finite obligations:
 
 1. reassemble and bound the \(q=1\) projector with both AFE directions,
    the reflected cross terms, and the explicit diagonal;
@@ -19712,6 +19713,12 @@ This is strictly more structured than an arbitrary varying-row norm and
 is packet-exhaustive on the core master, but none of the three analytic
 bounds is asserted here.  In particular, positivity of (9.913) does not
 permit a triangle inequality inside \(Z_{q,c}\).
+
+Section 9.138 shows why the qualifier “sufficient” matters: every
+\(q>1\) projector has its own principal multiplicative character.  A
+weaker pre-square gate may extract those means and reassemble them with
+the first and third obligations before absolute values, instead of
+bounding the whole positive projector separately.
 
 The finite helper
 oriented_global_reduced_frequency_projector_audit checks (9.907)--(9.913)
@@ -19824,6 +19831,39 @@ finite multiplicative Fourier inversion gives
  \tag{9.921}
 \]
 
+In particular, the principal multiplicative character is an explicit
+positive summand:
+
+\[
+ \boxed{\begin{aligned}
+ \overline Z_q
+  &:=\frac1{\varphi(q)}\sum_{c\in U(q)}Z_{q,c}
+   =\frac{\mu(q)}{\varphi(q)}
+      \left(\sum_xF_q(x)\right)\left(\sum_yG_q(y)\right),\\
+ Z_{q,c}^{\circ}&:=Z_{q,c}-\overline Z_q,\\
+ \mathcal E_q^{\rm mult\text{-}pr}
+  &:=\varphi(q)|\overline Z_q|^2
+   =\frac1{\varphi(q)}
+      \left|\sum_xF_q(x)\right|^2
+      \left|\sum_yG_q(y)\right|^2,\\
+ \mathcal E_q
+  &=\mathcal E_q^{\rm mult\text{-}pr}
+    +\mathcal E_q^{\rm mult\text{-}cent},\qquad
+ \mathcal E_q^{\rm mult\text{-}cent}
+   :=\sum_c|Z_{q,c}^{\circ}|^2.
+ \end{aligned}}
+ \tag{9.921a}
+\]
+
+The centered remainder in (9.921a) is nonnegative by Parseval.  This
+principal character must not be confused with the additive reduced
+conductor \(q=1\) in Section 9.137: it is the constant multiplicative
+mode among the nonzero additive frequencies \(c/q\), for every
+\(q>1\).  Equivalently, it is the mean of \(Z_{q,c}\) over
+\(c\in U(q)\).  Extracting that mean before the global square is a
+possible weaker reassembly route, but bounding (9.913) as a standalone
+positive projector must pay (9.921a).
+
 The same formula holds for Hilbert-valued separated atoms, with their
 finite projective coefficients summed inside the norm before squaring.
 Equations (9.918)--(9.921) do not discard any of the three Möbius
@@ -19832,7 +19872,8 @@ sources: only \(|\mu(q)|^2=1\) disappears from the energy, while
 \(G_q\).
 
 There is now a sharp no-coverage calculation for a generic application
-of character fourth moments.  Write
+of character fourth moments, but it must first be stated on the correct
+character family.  Write
 
 \[
  q=T^\gamma,\qquad V=T^v,\qquad W\asymp T^u,
@@ -19850,8 +19891,8 @@ the effective length of the left sequence is
 \]
 
 Squaring each Dirichlet polynomial and applying the ordinary
-varying-modulus character large sieve gives the fourth-moment exponent
-ledger
+varying-modulus character large sieve to **primitive characters** gives
+the optimistic fourth-moment exponent ledger
 
 \[
 \begin{aligned}
@@ -19865,10 +19906,14 @@ ledger
 Here \(\xi_F,\xi_G\geq0\) record any excess in the two multiplicative
 self-convolution energies over the divisor-bounded scale.  The factor
 \(-\gamma\) is the \(1/q\) normalization in character Parseval.  This
-is deliberately an optimistic envelope: a direct theorem application
-also needs the same coefficient sequence for every modulus in the
-large-sieve family, which the physical \(q\)-dependent cofactor packet
-does not presently supply.
+is deliberately an optimistic **primitive-conductor** envelope.  A
+direct theorem application also needs the same coefficient sequence for
+every modulus in the large-sieve family.  Descending imprimitive
+nonprincipal characters has only a bare divisor cost in (9.738), but the
+physical \(q\)-dependent cofactor packet has not been shown to survive
+that descent with a common coefficient.  Most importantly, the
+principal character in (9.921a) is not part of the primitive large
+sieve at all.
 
 On the decisive balanced face
 
@@ -19884,11 +19929,11 @@ At ideal convolution energy \(\xi_F=\xi_G=0\), (9.923) becomes
  \tag{9.924}
 \]
 
-Hence the generic fourth-moment route can reach the squared local target
-only for \(\gamma\leq2\).  At the top reduced conductor \(q=T^3\) it
-gives exponent \(13\), one full energy power above the target \(12\).
-For \(0<\gamma\leq2\), even the optimistic lower-conductor row allows
-only
+Hence even the primitive-character subfamily can reach the squared
+local target only for \(\gamma\leq2\).  At the top reduced conductor
+\(q=T^3\) it gives exponent \(13\), one full energy power above the
+target \(12\).  For \(0<\gamma\leq2\), the optimistic primitive row
+allows only
 
 \[
  \boxed{\xi_F+\xi_G\leq4-2\gamma.}
@@ -19896,39 +19941,104 @@ only
 \]
 
 Thus \(\gamma=2\) has no spare convolution loss.  Moreover, (9.925) is
-not yet published coverage of the physical packet because the common
-varying-modulus coefficient and unit-mask adapter preceding (9.922) have
-not been proved.
+not yet published coverage of the physical primitive packet because the
+common varying-modulus coefficient and unit-mask adapter preceding
+(9.922) have not been proved.
+
+The omitted principal row is quantitatively larger.  On a dyadic family
+\(q\asymp T^\gamma\), suppose only for this exponent audit that
+
+\[
+ |\widehat F_q(\chi_0)|\ll T^{y+\varepsilon},\qquad
+ |\widehat G_q(\chi_0)|\ll T^{m+\varepsilon}.
+\]
+
+There are \(T^\gamma\) moduli and the factor
+\(1/\varphi(q)\) in (9.921a) has exponent \(-\gamma\), so these two
+powers cancel.  The principal projector exponent and its required Type
+mean are therefore
+
+\[
+ \boxed{
+ E_{\rm mult\text{-}pr}=2y+2m,\qquad
+ m\leq u+v-y.}
+ \tag{9.926}
+\]
+
+On the balanced face, the trivial Type mean has \(m=u=3\), and
+
+\[
+ \boxed{
+ E_{\rm mult\text{-}pr}^{\rm triv}=10+2\gamma,\qquad
+ m_{\rm req}=4-\gamma,\qquad
+ u-m_{\rm req}=\gamma-1.}
+ \tag{9.927}
+\]
+
+Thus at \(q=T^3\) this separate-factor positive-projector proof would
+require
+
+\[
+ \left|\sum_{\substack{w\asymp T^3\\(w,q)=1}}
+       \mu(w)g_q(w)\right|
+ \ll T^{1+\varepsilon},
+ \tag{9.928}
+\]
+
+or an equivalent weighted mean-square statement.  This is a
+\(T^2\) amplitude saving from a length-\(T^3\) Type sum.  The prime
+number theorem's zero-free-region saving is subpower and does not imply
+(9.928).  Formula (9.928) is a sufficient scale ledger, not a claim
+that the full AFE packet has nonzero total mass: exact reassembly across
+AFE directions, reflection, and the explicit diagonal could instead
+cancel the multiplicative principal means before the square.  That
+reassembly is precisely what must be checked before adopting the much
+stronger standalone projector gate.
 
 The exact coverage boundary is therefore:
 
 | reduced-conductor range | available input | conclusion |
 |---|---|---|
-| fixed \(q>1\), separated unit atom | multiplicative Parseval | exact convolution (9.920)--(9.921); no \(q\)-average bound |
-| \(0<\gamma\leq2\), ideal common divisor-bounded coefficients | classical fourth moment via the varying-modulus character large sieve | exponent reaches the target if (9.925) holds; physical adapter unproved |
-| \(2<\gamma\leq3\) | same optimistic fourth-moment envelope | fails by \(T^{\gamma-2}\) in energy, already before physical adapter losses |
+| fixed \(q>1\), separated unit atom | multiplicative Parseval | exact convolution and principal/centered split (9.920)--(9.921a); no \(q\)-average bound |
+| \(0<\gamma\leq1\), ideal common divisor-bounded coefficients | primitive fourth moments plus trivial principal Type mean | both exponent ledgers fit the target; every physical adapter remains unproved |
+| \(1<\gamma\leq2\) | same primitive fourth moments | primitive row fits if (9.925) holds, but the principal row needs \(T^{\gamma-1}\) amplitude saving or global mean reassembly |
+| \(2<\gamma\leq3\) | same optimistic primitive envelope | primitive row fails by \(T^{\gamma-2}\) in energy, while the principal row needs \(T^{\gamma-1}\) amplitude saving or reassembly |
 | fixed prime trace-function estimates | FKM/Korolev fixed-modulus atoms | no varying squarefree-\(q\), cofactor, and Type projector estimate |
 | separate interval fourth moments | Cochrane--Shi (9.581) | controls product-label factors at fixed modulus, not the simultaneous Type polynomial and varying-\(q\) packet |
 
 Consequently the top-conductor range cannot be closed by applying
-Cauchy--Schwarz to (9.921) and quoting two generic fourth moments.  A
-successful estimate there must use cancellation jointly between the
-cofactor pair \(\mu(d_1)\mu(d_2)\), the Type sign \(\mu(w)\), and the
-moving product label before character Hölder.  For \(q\leq T^2\), a
-separate concrete milestone is to prove the physical unit-mask/common-
-coefficient adapter and the sharp excess budget (9.925).  Neither
-milestone proves the \(q=1\) reassembly or the nonzero determinant
-dispersion in Section 9.137.
+Cauchy--Schwarz to (9.921) and quoting two generic fourth moments.  The
+strong standalone \(q>1\) projector gate already contains the
+multiplicative-principal Type mean (9.928).  The weaker and more
+plausible next gate is instead:
+
+1. extract \(\mathcal E_q^{\rm mult\text{-}pr}\) linearly before the
+   global square and reassemble its mean with the \(q=1\), AFE,
+   reflection, and explicit-diagonal ledger;
+2. apply primitive-conductor estimates only to the genuinely centered
+   \(q>1\) family, retaining the physical imprimitive lift;
+3. treat the reduced-determinant complement by one signed dispersion.
+
+If the principal means do not cancel in step 1, then the required
+replacement is the weighted two-Möbius/Type estimate measured by
+(9.926)--(9.928).  For \(q\leq T^2\), one must in addition prove the
+physical unit-mask/common-coefficient adapter and the primitive excess
+budget (9.925).  None of these milestones proves the coupled-kernel
+gate.
 
 The helper
 `oriented_nonprincipal_cofactor_type_convolution_audit` verifies
 (9.915)--(9.920) exactly for arbitrary supplied rational fixed-\(q\)
 rows, including equality with the direct resonant ordered-pair energy;
-(9.921) is the finite multiplicative Parseval identity on \(U(q)\).
+(9.921) is the finite multiplicative Parseval identity on \(U(q)\), and
+the helper records (9.921a) by subtracting its exact rational principal
+energy from the total.  In its regression sample the principal row is
+\(1800\) of total energy \(1802\), so omitting it is detected.
 The helper `optimistic_resonant_fourth_moment_envelope_audit` checks
-(9.922)--(9.925) with exact rational exponents.  Both leave the physical
-adapter, the \(q>1\) projector estimate, and the coupled-kernel gate
-false.
+(9.922)--(9.927) with exact rational exponents and distinguishes the
+primitive fourth-moment subfamily from the principal row.  Both leave
+the physical adapter, the principal mean bound/reassembly, the \(q>1\)
+projector estimate, and the coupled-kernel gate false.
 
 ## 10. What has and has not been proved
 
@@ -20901,7 +21011,7 @@ Proved in this note:
 | Original all-character product support | exact Type identity in both reciprocal orientations; outer gate unproved | In the displayed reverse-Poisson orientation the Möbius--log opening has \(r=n_0p\), and the quotient Type split has \(n_0=bcu\), so \(bcup=r\asymp R\), (9.889)--(9.892).  Section 9.136 applies the identical opening to \(s\) after the exact swap (9.900)--(9.901), proving \(x=\max(\rho,\sigma)\) and the fixed-fibre target on every core box.  The signed varying-oriented-modulus/phase norm and the coupled-kernel closure remain unproved |
 | Reciprocity-oriented all-core fixed fibres | exact local target; signed global dispersion unproved | Additive reciprocity contributes only the smooth factor \(e(-a/(rs))\), whose exponent is at most \(-1\), (9.900)--(9.902).  The transformed AFE constraints force both label exponents below \(v=\min(\rho,\sigma)\), while the Type product exponent is \(u=\max(\rho,\sigma)\), (9.903)--(9.904).  The retained product-spectrum square therefore has exponent at most \(2(u+v)\), exactly the squared local target, (9.905).  This exhausts the fixed-fibre core polytope but supplies no outer signed cancellation |
 | Global oriented reduced-frequency split | exact packet-exhaustive resonant projector; three analytic bounds unproved | The reciprocal transformation is linear at the core-master level, giving (9.906) with short modulus \(v\), long Type entry \(w=bcup\), both Möbius weights, and \(a=h\delta\).  Reduction by \(d=(a,v)\) gives the primitive frequency \(-A\bar w_q/q\), (9.908)--(9.909).  Resonance is exactly \(q_1=q_2\), \(A_1w_2\equiv A_2w_1\pmod q\), and the common conductor sign cancels while the cofactor and Type signs remain, (9.910)--(9.912).  Hence the resonant Gram is the positive but still signed-inside projector \(\sum_{q,c}\|Z_{q,c}\|^2\), (9.913), and the complement has reduced determinant \(c_1q_2-c_2q_1\ne0\), (9.914).  The \(q=1\) AFE/reflection reassembly, \(q>1\) projector estimate, and nonzero-determinant dispersion remain open |
-| Nonprincipal cofactor--Type ratio convolution | exact fixed-\(q\) factorization; optimistic fourth moments fail at high conductor | The unique split \(d=d_1d_2\), \(h=d_1h_1\), \(\delta=d_2\delta_1\) turns each separated unit atom into \(Z_{q,c}=\mu(q)\sum_yF_q(-cy)G_q(y)\), (9.915)--(9.920).  Multiplicative Parseval (9.921) retains \(\mu(d_1)\mu(d_2)\) and \(\mu(w)\) inside the two factors.  Even assuming a modulus-independent divisor-bounded physical adapter, generic varying-modulus fourth moments give balanced exponent \(10+\gamma\), (9.924), versus target \(12\).  Thus only \(q\leq T^2\) is optimistically accessible, with excess budget \(\xi_F+\xi_G\leq4-2\gamma\); \(q=T^3\) loses one energy power.  The unit-mask/common-coefficient adapter, the high-conductor mixed Möbius estimate, and the \(q>1\) projector bound remain unproved |
+| Nonprincipal cofactor--Type ratio convolution | exact fixed-\(q\) factorization and principal/centered split; neither global piece closed | The unique split \(d=d_1d_2\), \(h=d_1h_1\), \(\delta=d_2\delta_1\) turns each separated unit atom into \(Z_{q,c}=\mu(q)\sum_yF_q(-cy)G_q(y)\), (9.915)--(9.920).  Multiplicative Parseval retains \(\mu(d_1)\mu(d_2)\) and \(\mu(w)\), and (9.921a) extracts the principal multiplicative character for every \(q>1\).  The optimistic primitive-character envelope is \(10+\gamma\), hence fails above \(q=T^2\), but it is not an all-character bound.  The uncentered principal row has trivial balanced exponent \(10+2\gamma\); at \(q=T^3\), (9.926)--(9.928) require a \(T^2\) amplitude saving in the length-\(T^3\) Type mean unless exact AFE/reflection/diagonal reassembly cancels it before the square.  The physical primitive-conductor adapter, principal reassembly, centered high-conductor estimate, and \(q>1\) projector bound remain unproved |
 | August 2026 varying-modulus projection | genuine inverse-only \(q\)-average; quantitatively and structurally insufficient | Shen's Theorem 4 gives \(\sum_{q\sim Q}|\Delta|^2\ll\|\alpha\|_2^2N^{11/12}Q^{1+\varepsilon}\), (9.894).  Its underlying bilinear form is \(e(a\bar m/q)\), (9.895), and at \(M=Q=T^3,|a|\leq T^5\) saves only \(T^{1/8}\) linearly, leaving deficit \(15/8\), (9.896)--(9.897).  It fixes \(a\), omits the direct phase, and requires a modulus-independent product coefficient.  Mohammadi's (9.898) retains a direct-plus-inverse product phase but only over one fixed finite field.  Neither theorem retains the physical moving \(h\delta\) family, the two-Möbius Type packet, and the signed varying squarefree-modulus norm together |
 | Fixed-row energy phase-alignment obstruction | exact no-go for rowwise norm proofs; physical cross-row rigidity still available | For arbitrary signs \(\varepsilon_i\) and nonnegative amplitudes \(a_i\), the one-dimensional choice \(C_i=\varepsilon_i a_i,U_i=1\) saturates the triangle bound, (9.899).  Hence the outer Möbius signs can be absorbed by independent row phases, and no theorem stated only through separate fixed-\((s,\vartheta)\) energies can produce an outer power saving.  A successful estimate must retain a common cross-modulus Type/AFE constraint or the nonzero-determinant incidence before rowwise Cauchy.  This does not assert that the physical packet itself saturates the bound |
 | Balanced double-Möbius cross-conductor Gram | exact pre-Cauchy phase and zero-orbit collapse; nonzero spectral norm unproved | The residual is regrouped as \(\sum_b\mu(b)\mathcal A_b\) with \(\mu(c)\), outer conductor signs, all packet weights, and \(a=h\delta\) inside \(\mathcal A_b\), (9.832)--(9.834).  Opening the one global square gives the exact modulus \([G_1,G_2]\) and phase \(Db+E\bar b\), (9.835)--(9.837).  For squarefree unit rows, \(D=E=0\) forces \(G_1=G_2\), equality of the invariant \(B_ia_i k_i^{-2}\), and one \(c_2\)-residue for each \(c_1\), (9.838)--(9.839); hence no cross-conductor zero orbit survives.  A complete AFE/reflection norm for the invariant fibres and a signed varying-LCM estimate for every nonzero \((D,E)\) remain open |

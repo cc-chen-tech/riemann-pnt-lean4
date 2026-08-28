@@ -17739,6 +17739,23 @@ def oriented_nonprincipal_cofactor_type_convolution_audit(
         (value * value for value in convolution.values()),
         start=F(0),
     )
+    principal_character_mean = (
+        F(_finite_mobius(q))
+        * sum(left_residues.values(), start=F(0))
+        * sum(right_residues.values(), start=F(0))
+        / len(units)
+    )
+    centered_convolution = {
+        frequency: value - principal_character_mean
+        for frequency, value in convolution.items()
+    }
+    principal_character_energy = (
+        len(units) * principal_character_mean**2
+    )
+    centered_character_energy = sum(
+        (value * value for value in centered_convolution.values()),
+        start=F(0),
+    )
 
     expanded_resonant_energy = F(0)
     resonant_ordered_pairs = 0
@@ -17784,6 +17801,14 @@ def oriented_nonprincipal_cofactor_type_convolution_audit(
         "type_residue_function": right_residues,
         "signed_ratio_convolution": convolution,
         "ratio_convolution_energy": convolution_energy,
+        "principal_character_mean": principal_character_mean,
+        "centered_ratio_convolution": centered_convolution,
+        "principal_character_energy": principal_character_energy,
+        "centered_character_energy": centered_character_energy,
+        "principal_plus_centered_energy_is_total": bool(
+            principal_character_energy + centered_character_energy
+            == convolution_energy
+        ),
         "expanded_resonant_energy": expanded_resonant_energy,
         "convolution_energy_equals_expanded_resonant_energy": bool(
             convolution_energy == expanded_resonant_energy
@@ -17813,16 +17838,19 @@ def optimistic_resonant_fourth_moment_envelope_audit(
     product_label_count_exponent: Fraction,
     cofactor_convolution_excess_exponent: Fraction,
     type_convolution_excess_exponent: Fraction,
+    principal_type_mean_exponent: Fraction,
     common_coefficient_across_moduli_verified: bool,
     physical_unit_mask_adapter_verified: bool,
+    principal_character_mean_bound_verified: bool,
 ) -> dict[str, object]:
-    """Audit the classical fourth-moment envelope for the q>1 projector.
+    """Audit primitive fourth moments and the omitted principal row.
 
     The optimistic common coefficient on the product-label side has
     effective length Y=HL/(V/Q).  If its self-convolution energy has
     exponent 2*y+xi_F, and the Type self-convolution has exponent
     2*u+xi_G, two classical character fourth moments give the weighted
-    projector exponent recorded below.
+    primitive-character projector exponent recorded below.  The principal
+    character modulo every q is imprimitive and must be added separately.
     """
 
     gamma = F(reduced_conductor_exponent)
@@ -17831,7 +17859,16 @@ def optimistic_resonant_fourth_moment_envelope_audit(
     label_count = F(product_label_count_exponent)
     xi_f = F(cofactor_convolution_excess_exponent)
     xi_g = F(type_convolution_excess_exponent)
-    if min(gamma, v, u, label_count, xi_f, xi_g) < 0:
+    principal_type_mean = F(principal_type_mean_exponent)
+    if min(
+        gamma,
+        v,
+        u,
+        label_count,
+        xi_f,
+        xi_g,
+        principal_type_mean,
+    ) < 0:
         raise ValueError("all exponents must be nonnegative")
     if gamma > v:
         raise ValueError("the reduced conductor cannot exceed the total modulus")
@@ -17848,17 +17885,38 @@ def optimistic_resonant_fourth_moment_envelope_audit(
     type_fourth_moment = (
         2 * max(gamma, u) + 2 * u + xi_g
     )
-    weighted_projector_bound = (
+    weighted_primitive_projector_bound = (
         -gamma + (left_fourth_moment + type_fourth_moment) / 2
     )
     squared_local_target = 2 * (u + v)
-    ideal_bound = weighted_projector_bound - (xi_f + xi_g) / 2
-    ideal_deficit = max(F(0), ideal_bound - squared_local_target)
-    actual_deficit = max(
-        F(0),
-        weighted_projector_bound - squared_local_target,
+    ideal_primitive_bound = (
+        weighted_primitive_projector_bound - (xi_f + xi_g) / 2
     )
-    total_excess_budget = 2 * (squared_local_target - ideal_bound)
+    ideal_primitive_deficit = max(
+        F(0),
+        ideal_primitive_bound - squared_local_target,
+    )
+    actual_primitive_deficit = max(
+        F(0),
+        weighted_primitive_projector_bound - squared_local_target,
+    )
+    total_excess_budget = 2 * (
+        squared_local_target - ideal_primitive_bound
+    )
+    principal_projector_bound = (
+        2 * effective_left_length + 2 * principal_type_mean
+    )
+    required_principal_type_mean = (
+        squared_local_target - 2 * effective_left_length
+    ) / 2
+    required_principal_type_saving = max(
+        F(0),
+        u - required_principal_type_mean,
+    )
+    principal_deficit = max(
+        F(0),
+        principal_projector_bound - squared_local_target,
+    )
     hypotheses = bool(
         common_coefficient_across_moduli_verified
         and physical_unit_mask_adapter_verified
@@ -17872,16 +17930,34 @@ def optimistic_resonant_fourth_moment_envelope_audit(
         "effective_left_sequence_length_exponent": effective_left_length,
         "cofactor_convolution_excess_exponent": xi_f,
         "type_convolution_excess_exponent": xi_g,
+        "principal_type_mean_exponent": principal_type_mean,
         "left_fourth_moment_exponent": left_fourth_moment,
         "type_fourth_moment_exponent": type_fourth_moment,
-        "weighted_projector_bound_exponent": weighted_projector_bound,
-        "ideal_divisor_bounded_projector_exponent": ideal_bound,
+        "weighted_primitive_projector_bound_exponent": (
+            weighted_primitive_projector_bound
+        ),
+        "ideal_divisor_bounded_primitive_projector_exponent": (
+            ideal_primitive_bound
+        ),
         "squared_local_target_exponent": squared_local_target,
-        "ideal_remaining_deficit": ideal_deficit,
-        "actual_remaining_deficit": actual_deficit,
+        "ideal_primitive_remaining_deficit": ideal_primitive_deficit,
+        "actual_primitive_remaining_deficit": actual_primitive_deficit,
         "total_convolution_excess_budget": total_excess_budget,
-        "generic_fourth_moment_can_meet_target_even_ideally": bool(
-            ideal_bound <= squared_local_target
+        "generic_primitive_fourth_moment_can_meet_target_even_ideally": bool(
+            ideal_primitive_bound <= squared_local_target
+        ),
+        "principal_character_projector_bound_exponent": (
+            principal_projector_bound
+        ),
+        "required_principal_type_mean_exponent": (
+            required_principal_type_mean
+        ),
+        "required_principal_type_amplitude_saving_exponent": (
+            required_principal_type_saving
+        ),
+        "principal_character_remaining_deficit": principal_deficit,
+        "principal_character_meets_target": bool(
+            principal_projector_bound <= squared_local_target
         ),
         "common_coefficient_across_moduli_verified": bool(
             common_coefficient_across_moduli_verified
@@ -17889,9 +17965,19 @@ def optimistic_resonant_fourth_moment_envelope_audit(
         "physical_unit_mask_adapter_verified": bool(
             physical_unit_mask_adapter_verified
         ),
-        "published_fourth_moment_hypotheses_verified": hypotheses,
-        "published_fourth_moment_projection_covers_packet": bool(
-            hypotheses and weighted_projector_bound <= squared_local_target
+        "primitive_fourth_moment_hypotheses_verified": hypotheses,
+        "principal_character_mean_bound_verified": bool(
+            principal_character_mean_bound_verified
+        ),
+        "primitive_fourth_moment_projection_covers_subfamily": bool(
+            hypotheses
+            and weighted_primitive_projector_bound <= squared_local_target
+        ),
+        "full_projector_covered_by_this_route": bool(
+            hypotheses
+            and principal_character_mean_bound_verified
+            and weighted_primitive_projector_bound <= squared_local_target
+            and principal_projector_bound <= squared_local_target
         ),
         "retains_cofactor_and_type_mobius_cancellation_jointly": False,
         "q_projector_bound_proved": False,
