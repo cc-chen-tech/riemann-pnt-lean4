@@ -6101,6 +6101,67 @@ def test_reciprocity_orientation_removes_every_fixed_fibre_short_product_wedge()
         )
 
 
+def test_oriented_global_reduced_frequency_resonance_is_one_projector() -> None:
+    """All cross-modulus resonances group by one reduced fraction."""
+
+    audit = getattr(
+        coverage_audit,
+        "oriented_global_reduced_frequency_projector_audit",
+        None,
+    )
+    assert audit is not None, "oriented reduced-frequency audit is missing"
+    result = audit(
+        rows=(
+            # (v,w,h,delta,n,p,b,c,u,packet vector)
+            (6, 35, 2, 3, 7, 5, 7, 1, 1, (F(1), F(2))),
+            (10, 21, 2, 3, 3, 7, 3, 1, 1, (F(3), F(-1))),
+            (15, 14, 2, 3, 2, 7, 2, 1, 1, (F(2), F(4))),
+            (10, 7, 2, 3, 1, 7, 1, 1, 1, (F(-1), F(3))),
+        )
+    )
+    assert result["all_arithmetic_reductions_exact"]
+    assert result["rows"][0]["reduced_frequency"] == (1, 0)
+    assert result["rows"][1]["reduced_frequency"] == (5, 2)
+    assert result["rows"][2]["reduced_frequency"] == (5, 2)
+    assert result["rows"][3]["reduced_frequency"] == (5, 1)
+    assert result["grouped_signed_packet_vectors"] == {
+        (1, 0): (F(1), F(2)),
+        (5, 2): (F(5), F(3)),
+        (5, 1): (F(1), F(-3)),
+    }
+    assert result["principal_conductor_one_energy"] == F(5)
+    assert result["nonprincipal_resonant_energy"] == F(44)
+    assert result["reduced_frequency_projector_energy"] == F(49)
+    assert result["resonant_pair_sum"] == F(49)
+    assert result["resonant_pair_sum_equals_projector_energy"]
+    assert result["resonant_ordered_pair_count"] == 6
+    assert result["nonresonant_ordered_pair_count"] == 10
+    assert result[
+        "common_reduced_conductor_mobius_sign_cancels_in_resonant_pairs"
+    ]
+    assert result["product_label_factorization_retained"]
+    assert result["two_mobius_weights_retained_before_global_square"]
+    assert result["principal_q_one_projector_extracted"]
+    assert result["nonprincipal_resonant_projector_extracted"]
+    assert not result["principal_afe_reflection_reassembly_proved"]
+    assert not result["nonprincipal_resonant_projector_bound_proved"]
+    assert not result["nonresonant_determinant_dispersion_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    with pytest.raises(ValueError, match="coprime"):
+        audit(
+            rows=((6, 21, 2, 3, 3, 7, 3, 1, 1, (F(1),)),)
+        )
+    with pytest.raises(ValueError, match="n\\*p=w"):
+        audit(
+            rows=((10, 21, 2, 3, 1, 7, 1, 1, 1, (F(1),)),)
+        )
+    with pytest.raises(ValueError, match="nonzero"):
+        audit(
+            rows=((10, 21, 0, 3, 3, 7, 3, 1, 1, (F(1),)),)
+        )
+
+
 def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
     """Shen's q-average is inverse-only and far below the coupled target."""
 

@@ -17366,6 +17366,231 @@ def reciprocity_oriented_original_master_support_audit(
     }
 
 
+def oriented_global_reduced_frequency_projector_audit(
+    *,
+    rows: tuple[
+        tuple[
+            int,
+            int,
+            int,
+            int,
+            int,
+            int,
+            int,
+            int,
+            int,
+            tuple[Fraction, ...],
+        ],
+        ...,
+    ],
+) -> dict[str, object]:
+    """Split the oriented global square by exact reduced inverse frequency.
+
+    A row is (v,w,h,delta,n,p,b,c,u,vector), where v is the oriented
+    modulus, w=n*p=b*c*u*p is the Type entry, and gcd(v,w)=1.  For
+    a=h*delta, put d=gcd(a,v), q=v/d, and A=a/d.  The inverse phase
+    e_v(-a*inverse(w)) is the reduced frequency
+    c/q with c=-A*inverse(w) modulo q.
+
+    Grouping arbitrary rational packet vectors by (q,c) makes the
+    resonant part of the one global square an exact sum of squared norms.
+    No analytic bound is asserted.
+    """
+
+    if not rows:
+        raise ValueError("at least one oriented global row is required")
+
+    checked_rows: list[dict[str, object]] = []
+    vector_dimension: int | None = None
+    grouped_vectors: dict[tuple[int, int], list[Fraction]] = {}
+    for raw_row in rows:
+        if len(raw_row) != 10:
+            raise ValueError(
+                "each row must be (v,w,h,delta,n,p,b,c,u,vector)"
+            )
+        v, w, h, delta, n, p, b, c, u, raw_vector = raw_row
+        v = int(v)
+        w = int(w)
+        h = int(h)
+        delta = int(delta)
+        n = int(n)
+        p = int(p)
+        b = int(b)
+        c = int(c)
+        u = int(u)
+        vector = tuple(F(value) for value in raw_vector)
+        if min(v, w, n, p, b, c, u) <= 0:
+            raise ValueError("all arithmetic entries except h and delta must be positive")
+        if h == 0 or delta == 0:
+            raise ValueError("the product labels h and delta must be nonzero")
+        if gcd(v, w) != 1:
+            raise ValueError("the oriented modulus and Type entry must be coprime")
+        if _finite_mobius(v) == 0 or _finite_mobius(w) == 0:
+            raise ValueError("both oriented Möbius entries must be squarefree")
+        if n * p != w:
+            raise ValueError("the Type opening must satisfy n*p=w")
+        if b * c * u != n:
+            raise ValueError("the quotient Type split must satisfy b*c*u=n")
+        if not vector:
+            raise ValueError("every packet vector must be nonempty")
+        if vector_dimension is None:
+            vector_dimension = len(vector)
+        elif len(vector) != vector_dimension:
+            raise ValueError("all packet vectors must have the same dimension")
+
+        product_label = h * delta
+        inactive_cofactor = gcd(abs(product_label), v)
+        reduced_conductor = v // inactive_cofactor
+        reduced_label = product_label // inactive_cofactor
+        if reduced_conductor == 1:
+            reduced_numerator = 0
+        else:
+            reduced_numerator = (
+                -reduced_label * pow(w, -1, reduced_conductor)
+            ) % reduced_conductor
+        frequency = (reduced_conductor, reduced_numerator)
+        outer_sign = _finite_mobius(v)
+        type_sign = _finite_mobius(w)
+        full_sign = outer_sign * type_sign
+        divisor_h = gcd(abs(h), inactive_cofactor)
+        complementary_divisor = inactive_cofactor // divisor_h
+        unique_product_divisor_split = bool(delta % complementary_divisor == 0)
+        reduced_label_is_unit = bool(
+            gcd(abs(reduced_label), reduced_conductor) == 1
+        )
+        product_label_is_unit_at_conductor = bool(
+            gcd(abs(product_label), reduced_conductor) == 1
+        )
+        cofactor_sign_factorization = bool(
+            outer_sign
+            == _finite_mobius(reduced_conductor)
+            * _finite_mobius(inactive_cofactor)
+        )
+
+        signed_vector = tuple(F(full_sign) * value for value in vector)
+        accumulator = grouped_vectors.setdefault(
+            frequency,
+            [F(0) for _ in vector],
+        )
+        for index, value in enumerate(signed_vector):
+            accumulator[index] += value
+        checked_rows.append(
+            {
+                "oriented_modulus": v,
+                "type_entry": w,
+                "product_label": product_label,
+                "inactive_cofactor": inactive_cofactor,
+                "reduced_conductor": reduced_conductor,
+                "reduced_label": reduced_label,
+                "reduced_frequency_numerator": reduced_numerator,
+                "reduced_frequency": frequency,
+                "reduced_label_is_unit": reduced_label_is_unit,
+                "product_label_is_unit_at_reduced_conductor": (
+                    product_label_is_unit_at_conductor
+                ),
+                "outer_mobius_sign": outer_sign,
+                "type_mobius_sign": type_sign,
+                "full_two_mobius_sign": full_sign,
+                "outer_sign_factors_as_conductor_times_cofactor": (
+                    cofactor_sign_factorization
+                ),
+                "h_divisor_stratum": divisor_h,
+                "delta_complementary_divisor": complementary_divisor,
+                "unique_h_delta_divisor_split_verified": (
+                    unique_product_divisor_split
+                ),
+                "type_cofactor": n,
+                "prime_bearing_factor": p,
+                "quotient_type_factors": (b, c, u),
+                "packet_vector": vector,
+                "signed_packet_vector": signed_vector,
+            }
+        )
+
+    def dot(left: tuple[Fraction, ...], right: tuple[Fraction, ...]) -> Fraction:
+        return sum(
+            (x * y for x, y in zip(left, right)),
+            start=F(0),
+        )
+
+    resonant_pair_sum = F(0)
+    resonant_pair_count = 0
+    nonresonant_pair_count = 0
+    common_conductor_sign_cancellation = True
+    for left in checked_rows:
+        for right in checked_rows:
+            if left["reduced_frequency"] == right["reduced_frequency"]:
+                resonant_pair_count += 1
+                resonant_pair_sum += F(left["full_two_mobius_sign"]) * F(
+                    right["full_two_mobius_sign"]
+                ) * dot(
+                    tuple(left["packet_vector"]),
+                    tuple(right["packet_vector"]),
+                )
+                q = int(left["reduced_conductor"])
+                common_conductor_sign_cancellation = bool(
+                    common_conductor_sign_cancellation
+                    and int(right["reduced_conductor"]) == q
+                    and _finite_mobius(int(left["oriented_modulus"]))
+                    * _finite_mobius(int(right["oriented_modulus"]))
+                    == _finite_mobius(int(left["inactive_cofactor"]))
+                    * _finite_mobius(int(right["inactive_cofactor"]))
+                )
+            else:
+                nonresonant_pair_count += 1
+
+    grouped = {
+        frequency: tuple(vector)
+        for frequency, vector in grouped_vectors.items()
+    }
+    projector_energy = sum(
+        (dot(vector, vector) for vector in grouped.values()),
+        start=F(0),
+    )
+    principal_energy = sum(
+        (
+            dot(vector, vector)
+            for (conductor, _), vector in grouped.items()
+            if conductor == 1
+        ),
+        start=F(0),
+    )
+    nonprincipal_resonant_energy = projector_energy - principal_energy
+    all_arithmetic_reductions_exact = all(
+        bool(row["reduced_label_is_unit"])
+        and bool(row["product_label_is_unit_at_reduced_conductor"])
+        and bool(row["outer_sign_factors_as_conductor_times_cofactor"])
+        and bool(row["unique_h_delta_divisor_split_verified"])
+        for row in checked_rows
+    )
+    return {
+        "rows": tuple(checked_rows),
+        "grouped_signed_packet_vectors": grouped,
+        "resonant_pair_sum": resonant_pair_sum,
+        "reduced_frequency_projector_energy": projector_energy,
+        "resonant_pair_sum_equals_projector_energy": bool(
+            resonant_pair_sum == projector_energy
+        ),
+        "principal_conductor_one_energy": principal_energy,
+        "nonprincipal_resonant_energy": nonprincipal_resonant_energy,
+        "resonant_ordered_pair_count": resonant_pair_count,
+        "nonresonant_ordered_pair_count": nonresonant_pair_count,
+        "all_arithmetic_reductions_exact": all_arithmetic_reductions_exact,
+        "common_reduced_conductor_mobius_sign_cancels_in_resonant_pairs": (
+            common_conductor_sign_cancellation
+        ),
+        "product_label_factorization_retained": True,
+        "two_mobius_weights_retained_before_global_square": True,
+        "all_type_support_factorizations_retained": True,
+        "principal_q_one_projector_extracted": True,
+        "nonprincipal_resonant_projector_extracted": True,
+        "principal_afe_reflection_reassembly_proved": False,
+        "nonprincipal_resonant_projector_bound_proved": False,
+        "nonresonant_determinant_dispersion_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,

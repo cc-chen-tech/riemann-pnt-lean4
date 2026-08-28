@@ -29,6 +29,7 @@
 > | Continuous-sector product-support bridge | Section 9.132 combines the literal support \(dp\asymp s_{\rm sec}\) in (9.525) with \(d=bcn\), giving \(x=\sigma_{\rm sec}=1\) on that normalized sector critical face.  Sections 9.98--9.99 explicitly distinguish this \(s_{\rm sec}\asymp T\) denominator from the original total modulus \(S\asymp T^3\).  No packet-exhaustive adapter identifies them, so this bridge itself gives no original-modulus saving; Section 9.136 removes the fixed-fibre wedge instead by exact reciprocity entirely inside the original master |
 > | Original-master product support | Section 9.133 does not identify the two models.  It opens the coefficient already present in the original all-character master: the Möbius--log Type identity has \(r=n_0p\), the quotient Type split has \(n_0=bcu\), and therefore \(bcup=r\asymp R\) with no endpoint error.  On the original balanced maximal face this gives \(x=3\), so (9.883) supplies the full fixed-\((s,\vartheta)\) saving \(5/2\).  Section 9.136 handles every unbalanced orientation; the signed outer modulus/phase norm remains open |
 > | Reciprocity-oriented all-core support | Section 9.136 uses \(-a\bar r/s\equiv a\bar s/r-a/(rs)\) and swaps \((r,s,M,K,\delta)\) when \(S>R\).  The extra phase has exponent at most \(-1\), so it stays in the coupled seminorm class.  With \(u=\max(\rho,\sigma)\), \(v=\min(\rho,\sigma)\), the Type product has exponent \(u\), both \(h,\delta\) exponents are at most \(v\), and the squared fixed-fibre exponent is at most \(2(u+v)\).  Hence every core box reaches \(RS\,T^\varepsilon\) locally.  This does not estimate the signed varying-oriented-modulus sum or the nonzero determinant family |
+> | Global reduced-frequency projector | Section 9.137 performs the reciprocal orientation linearly for every core packet, producing one exact master with short modulus \(v\), long Type entry \(w=bcup\), both signs \(\mu(v)\mu(w)\), and \(a=h\delta\).  Writing \(d=(a,v)\), \(q=v/d\), \(A=a/d\), the inverse frequency is the reduced fraction \(-A\bar w_q/q\).  Equal frequencies have a common \(q\), satisfy \(A_1w_2\equiv A_2w_1\pmod q\), and cancel only the common \(\mu(q)^2\), leaving the cofactor and Type signs inside the exact projector \(\sum_{q,c}\|Z_{q,c}\|^2\).  The \(q=1\) principal reassembly, \(q>1\) projector bound, and reduced-determinant nonzero dispersion remain unproved |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -19555,6 +19556,170 @@ energy comparison (9.905).  It marks the all-core fixed-fibre wedge
 removed while leaving the signed varying-modulus norm, nonzero
 determinant dispersion, and coupled-kernel flags false.
 
+### 9.137 The global resonant set is one reduced-frequency projector
+
+The orientation in Section 9.136 can be performed linearly before any
+rowwise norm.  Absorb the common divisor \(q\) from (4.5), all dyadic and
+AFE/reflection labels, and the box normalization into a packet index
+\(\omega\).  Write \(v\) for the oriented denominator and \(w\) for the
+oriented Type entry.  On an unswapped packet put
+
+\[
+ \widetilde C_\omega(v,w,h,\delta)
+ =C_\omega(w,v,h,\delta).
+\]
+
+On a swapped packet put \(\delta'=-\delta\) and
+
+\[
+ \widetilde C_\omega(v,w,h,\delta')
+ =C_\omega(v,w,h,-\delta')
+   e\!\left(\frac{h\delta'}{vw}\right).
+\]
+
+Equation (9.900) then gives the exact global linear master
+
+\[
+ \boxed{
+ \mathscr S_{\rm core}
+ =\sum_\omega\sum_{\substack{v,w\geq1\\(v,w)=1}}
+   \mu(v)\mu(w)
+   \sum_{h\delta\ne0}
+   \widetilde C_\omega(v,w,h,\delta)
+   e_v(-h\delta\overline w_v).}
+ \tag{9.906}
+\]
+
+The dyadic scale of \(v\) is no larger than that of \(w\), but no
+discontinuous pointwise condition \(v\leq w\) is inserted.  Balanced
+packets retain either fixed orientation.  Thus (9.906) is
+packet-exhaustive for the core master and preserves both Möbius weights,
+the product \(a=h\delta\), and the coupled smooth weight.  The Type
+opening is always made on \(w\):
+
+\[
+ w=n_0p=bcup.
+ \tag{9.907}
+\]
+
+There is an exact cross-modulus classification before estimating the
+single global square.  For one row put
+
+\[
+ d=(|a|,v),\qquad q=\frac vd,\qquad A=\frac ad,
+ \qquad c\equiv-A\overline w_q\pmod q.
+ \tag{9.908}
+\]
+
+On Möbius support \(v\) is squarefree, so \((d,q)=1\).  Moreover
+\((A,q)=1\), and reduction of \(\overline w_v\) modulo \(q\) gives
+
+\[
+ \boxed{e_v(-a\overline w_v)=e_q(c).}
+ \tag{9.909}
+\]
+
+The fraction \(c/q\) is reduced, with the convention \((q,c)=(1,0)\).
+Consequently two rows have the same inverse frequency if and only if
+
+\[
+ \boxed{
+ q_1=q_2=q,\qquad
+ A_1\overline w_1\equiv A_2\overline w_2\pmod q
+ \quad\Longleftrightarrow\quad
+ A_1w_2\equiv A_2w_1\pmod q.}
+ \tag{9.910}
+\]
+
+This permits unequal original moduli \(v_i=qd_i\); equality of the total
+moduli is not required.  On every resonant pair the common conductor
+sign cancels exactly:
+
+\[
+ \boxed{
+ \mu(v_1)\mu(v_2)
+ =\mu(qd_1)\mu(qd_2)
+ =\mu(d_1)\mu(d_2).}
+ \tag{9.911}
+\]
+
+The two Type signs \(\mu(w_1),\mu(w_2)\), and after (9.907) all signed
+small/I/II blocks, remain inside the same pair.  The product-label
+structure is also explicit:
+
+\[
+ d\mid h\delta,\qquad (h\delta,q)=1,\qquad
+ d_h=(|h|,d),\qquad d/d_h\mid\delta.
+ \tag{9.912}
+\]
+
+The divisor \(d_h\) is unique, so (9.912) introduces neither a mixed
+remainder nor an arbitrary divisor choice.
+
+Let the remaining packet data take values in the finite Hilbert space
+\(\mathcal H\), and define
+
+\[
+ Z_{q,c}
+ :=\sum_{\substack{\omega,v,w,h,\delta\\
+                    v=qd,\ (|h\delta|,v)=d\\
+                    - (h\delta/d)\overline w_q\equiv c\ (q)}}
+ \mu(v)\mu(w)\,
+ \widetilde C_\omega(v,w,h,\delta).
+\]
+
+Opening the single global square and using (9.910), with no Cauchy step,
+gives the exact resonant projector
+
+\[
+ \boxed{
+ \mathfrak G_{\rm res}
+ =\sum_{q\geq1}\sum_{c\in U(q)}
+   \|Z_{q,c}\|_{\mathcal H}^{\,2}.}
+ \tag{9.913}
+\]
+
+For \(q=1\), (9.908) is precisely \(v\mid h\delta\), the principal
+divisibility family already exposed in (9.633)--(9.645).  The rows
+\(q>1\) are the genuine nonprincipal resonances.  They are not bounded
+by deleting the common \(\mu(q)\): formula (9.911) shows that the two
+cofactor signs and both Type packets remain inside \(Z_{q,c}\).
+
+Every complementary pair has two distinct reduced fractions.  Its exact
+determinant is
+
+\[
+ \boxed{\Delta_{\rm red}=c_1q_2-c_2q_1\ne0,}
+ \tag{9.914}
+\]
+
+and its spacing is at least \(1/(q_1q_2)\).  As in Section 9.91, spacing
+alone does not supply the missing power, but (9.914) is now the correct
+conductor-level determinant: inactive factors \(d_i\) do not inflate
+the spectral modulus.
+
+Thus the remaining global gate has three disjoint finite obligations:
+
+1. reassemble and bound the \(q=1\) projector with both AFE directions,
+   the reflected cross terms, and the explicit diagonal;
+2. bound the \(q>1\) square function in (9.913), retaining
+   \(\mu(d_1)\mu(d_2)\), \(h\delta\), and every Type block;
+3. estimate only \(\Delta_{\rm red}\ne0\) by one signed global
+   dispersion step.
+
+This is strictly more structured than an arbitrary varying-row norm and
+is packet-exhaustive on the core master, but none of the three analytic
+bounds is asserted here.  In particular, positivity of (9.913) does not
+permit a triangle inequality inside \(Z_{q,c}\).
+
+The finite helper
+oriented_global_reduced_frequency_projector_audit checks (9.907)--(9.913)
+for supplied squarefree rows and arbitrary rational packet vectors.  It
+verifies the unique product-divisor stratum, the common-conductor sign
+cancellation, and equality between the direct resonant pair sum and the
+projector energy.  Its principal reassembly, nonprincipal projector
+bound, determinant dispersion, and coupled-kernel flags remain false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -20525,6 +20690,7 @@ Proved in this note:
 | Continuous-sector product-support bridge | exact local \(x=\sigma_{\rm sec}=1\) identity; cross-model lift unproved | Equation (9.525) contains \(dp\asymp s_{\rm sec}\), while \(d=bcn\), so \(x=\sigma_{\rm sec}\), (9.885)--(9.887).  Its calibrated critical scale is \(s_{\rm sec}\asymp T\), hence \(x=1\), (9.888), whereas Section 9.131 uses the original total modulus \(S\asymp T^3\).  No current theorem identifies these models.  Thus this bridge cannot invoke fixed-\(S\) reassembly; the packet-exhaustive adapter, joint varying-\((S,\vartheta)\) estimate, and coupled-kernel closure remain unproved |
 | Original all-character product support | exact Type identity in both reciprocal orientations; outer gate unproved | In the displayed reverse-Poisson orientation the Möbius--log opening has \(r=n_0p\), and the quotient Type split has \(n_0=bcu\), so \(bcup=r\asymp R\), (9.889)--(9.892).  Section 9.136 applies the identical opening to \(s\) after the exact swap (9.900)--(9.901), proving \(x=\max(\rho,\sigma)\) and the fixed-fibre target on every core box.  The signed varying-oriented-modulus/phase norm and the coupled-kernel closure remain unproved |
 | Reciprocity-oriented all-core fixed fibres | exact local target; signed global dispersion unproved | Additive reciprocity contributes only the smooth factor \(e(-a/(rs))\), whose exponent is at most \(-1\), (9.900)--(9.902).  The transformed AFE constraints force both label exponents below \(v=\min(\rho,\sigma)\), while the Type product exponent is \(u=\max(\rho,\sigma)\), (9.903)--(9.904).  The retained product-spectrum square therefore has exponent at most \(2(u+v)\), exactly the squared local target, (9.905).  This exhausts the fixed-fibre core polytope but supplies no outer signed cancellation |
+| Global oriented reduced-frequency split | exact packet-exhaustive resonant projector; three analytic bounds unproved | The reciprocal transformation is linear at the core-master level, giving (9.906) with short modulus \(v\), long Type entry \(w=bcup\), both Möbius weights, and \(a=h\delta\).  Reduction by \(d=(a,v)\) gives the primitive frequency \(-A\bar w_q/q\), (9.908)--(9.909).  Resonance is exactly \(q_1=q_2\), \(A_1w_2\equiv A_2w_1\pmod q\), and the common conductor sign cancels while the cofactor and Type signs remain, (9.910)--(9.912).  Hence the resonant Gram is the positive but still signed-inside projector \(\sum_{q,c}\|Z_{q,c}\|^2\), (9.913), and the complement has reduced determinant \(c_1q_2-c_2q_1\ne0\), (9.914).  The \(q=1\) AFE/reflection reassembly, \(q>1\) projector estimate, and nonzero-determinant dispersion remain open |
 | August 2026 varying-modulus projection | genuine inverse-only \(q\)-average; quantitatively and structurally insufficient | Shen's Theorem 4 gives \(\sum_{q\sim Q}|\Delta|^2\ll\|\alpha\|_2^2N^{11/12}Q^{1+\varepsilon}\), (9.894).  Its underlying bilinear form is \(e(a\bar m/q)\), (9.895), and at \(M=Q=T^3,|a|\leq T^5\) saves only \(T^{1/8}\) linearly, leaving deficit \(15/8\), (9.896)--(9.897).  It fixes \(a\), omits the direct phase, and requires a modulus-independent product coefficient.  Mohammadi's (9.898) retains a direct-plus-inverse product phase but only over one fixed finite field.  Neither theorem retains the physical moving \(h\delta\) family, the two-Möbius Type packet, and the signed varying squarefree-modulus norm together |
 | Fixed-row energy phase-alignment obstruction | exact no-go for rowwise norm proofs; physical cross-row rigidity still available | For arbitrary signs \(\varepsilon_i\) and nonnegative amplitudes \(a_i\), the one-dimensional choice \(C_i=\varepsilon_i a_i,U_i=1\) saturates the triangle bound, (9.899).  Hence the outer Möbius signs can be absorbed by independent row phases, and no theorem stated only through separate fixed-\((s,\vartheta)\) energies can produce an outer power saving.  A successful estimate must retain a common cross-modulus Type/AFE constraint or the nonzero-determinant incidence before rowwise Cauchy.  This does not assert that the physical packet itself saturates the bound |
 | Balanced double-Möbius cross-conductor Gram | exact pre-Cauchy phase and zero-orbit collapse; nonzero spectral norm unproved | The residual is regrouped as \(\sum_b\mu(b)\mathcal A_b\) with \(\mu(c)\), outer conductor signs, all packet weights, and \(a=h\delta\) inside \(\mathcal A_b\), (9.832)--(9.834).  Opening the one global square gives the exact modulus \([G_1,G_2]\) and phase \(Db+E\bar b\), (9.835)--(9.837).  For squarefree unit rows, \(D=E=0\) forces \(G_1=G_2\), equality of the invariant \(B_ia_i k_i^{-2}\), and one \(c_2\)-residue for each \(c_1\), (9.838)--(9.839); hence no cross-conductor zero orbit survives.  A complete AFE/reflection norm for the invariant fibres and a signed varying-LCM estimate for every nonzero \((D,E)\) remain open |
