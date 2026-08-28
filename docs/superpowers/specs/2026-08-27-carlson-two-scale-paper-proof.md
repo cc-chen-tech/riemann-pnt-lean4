@@ -478,17 +478,21 @@ family is formally in `L²(R)` everywhere and is locally equal to the original
 section, with the original pointwise derivative, on
 `7/12 <= Re(z) <= 47/12`.  This totalization does not claim analyticity at the
 artificial strip boundary.  The uniform bound plus these pointwise facts have
-not yet been assembled into the final `Lp` derivative theorem.
+now been assembled through the complex mean-value estimate and dominated
+convergence into an actual `HasDerivAt` theorem for the totalized
+`Lp C 2 volume` map at every center with
+`29/48 <= Re(z) <= 187/48`.  Thus the local `Lp` analyticity gate needed by
+the shifted `2/3` contour is closed.  This does not yet supply either endpoint
+mean-square estimate or the finite Gaussian covering.
 The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
 
 1. Conrey's Gaussian mean-square theorem in the `P(u)=u`, `Q=1`, `R=0`
    specialization, including its uniformity in the local center;
-2. for the first unconditional formal target `delta=1/20`, the
-   `Lp C 2 volume`-valued analyticity on the already controlled strip
-   `1/2 <= Re(s) <= 4`, its boundary norm estimates, and the finite Gaussian
-   covering argument; extending the same package to `R=1000` is an optional
+2. for the first unconditional formal target `delta=1/20`, the boundary norm
+   estimates and finite Gaussian covering argument using the now formalized
+   local `Lp C 2 volume` analyticity; extending the same package to `R=1000` is an optional
    strengthening to `delta=5/64` rather than a gate to a power saving;
 3. the dyadic assembly of those inputs into the unconditional
    `N(2/3,T)` certificate and its connection to the forcing chain.
