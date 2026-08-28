@@ -209,11 +209,7 @@ theorem exists_boundaryRectIntegral_thirdOrderExplicitFormulaIntegrand_eq_residu
       apply heq z hzK
       intro hzPole
       apply hzBoundary
-      rw [mem_reProdIm]
-      exact ⟨⟨(hpolesInterior z hzPole).1,
-        (hpolesInterior z hzPole).2.1⟩,
-        (hpolesInterior z hzPole).2.2.1,
-        (hpolesInterior z hzPole).2.2.2⟩)
+      exact hpolesInterior z hzPole)
   exact hcongr.trans hregularized
 
 noncomputable def thirdOrderContourRemainder (x a c W : ℝ) : ℂ :=

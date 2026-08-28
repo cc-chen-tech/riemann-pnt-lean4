@@ -322,11 +322,7 @@ theorem exists_boundaryRectIntegral_thirdOrderExplicitFormulaIntegrand_eq_residu
       have hzPoles : z ∉ poles := by
         intro hzPole
         apply hzBoundary
-        rw [mem_reProdIm]
-        exact ⟨⟨(hpolesInterior z hzPole).1,
-          (hpolesInterior z hzPole).2.1⟩,
-          (hpolesInterior z hzPole).2.2.1,
-          (hpolesInterior z hzPole).2.2.2⟩
+        exact hpolesInterior z hzPole
       rw [heq z hzK hzPoles]
       dsimp [base, principal, term, quad, cube]
       ring)

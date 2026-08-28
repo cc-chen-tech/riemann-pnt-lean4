@@ -1,9 +1,17 @@
 {
-  "timestamp": "2026-08-23",
+  "timestamp": "2026-08-26",
   "status": "not-yet-complete",
   "completed_without_sorry": true,
   "remaining_prop_targets": {
     "HardyTheorem": [
+      {
+        "name": "conreyTwoFifthsSimpleZerosTarget",
+        "qualified_name": "HardyTheorem.conreyTwoFifthsSimpleZerosTarget",
+        "file": "HardyTheorem/ConreySimpleZeroCount.lean",
+        "line": 84,
+        "shape": "∃c>2/5, ∀ᶠT, c*N(T) ≤ N₀*(T)",
+        "depends_on": []
+      },
       {
         "name": "selberg_odd_zero_proportion_target",
         "qualified_name": "HardyTheorem.selberg_odd_zero_proportion_target",
@@ -113,7 +121,7 @@
         "name": "conrey_40_percent_zeros_on_critical_line_target",
         "qualified_name": "KnownResults.conrey_40_percent_zeros_on_critical_line_target",
         "file": "RiemannExplorer.lean",
-        "line": 235,
+        "line": 237,
         "shape": "∃c>0, ∃T0, ∀T≥T0, zeroCountOnCriticalLine T ≥ c*(T/(2π)*log T)",
         "depends_on": [],
         "closed_by_zeta23_bridge": true
@@ -140,10 +148,18 @@
       "body": "real_statement"
     },
     {
+      "name": "conreyExplicitAnalyticLowerBound",
+      "qualified_name": "HardyTheorem.conreyExplicitAnalyticLowerBound",
+      "file": "HardyTheorem/ConreyTwoFifthsBridge.lean",
+      "line": 24,
+      "chain": "Quantitative critical-line extensions",
+      "body": "real_statement"
+    },
+    {
       "name": "rectangleIntegral_meromorphic_eq_residue_sum",
       "qualified_name": "MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum",
       "file": "MathlibAux/RectangleResidue.lean",
-      "line": 1084,
+      "line": 1371,
       "chain": "Explicit formula",
       "body": "real_statement"
     },
@@ -168,7 +184,7 @@
       "name": "conrey_40_percent_zeros_on_critical_line_target",
       "qualified_name": "RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target",
       "file": "RiemannExplorer/Conrey40.lean",
-      "line": 70,
+      "line": 71,
       "chain": "Quantitative critical-line extensions",
       "body": "real_statement"
     }
@@ -199,6 +215,12 @@
       "qualified_name": "HardyTheorem.hardy_littlewood_positive_multiplicity_lower_bound_target",
       "file": "HardyTheorem/HardyLittlewoodLiteratureCount.lean",
       "line": 134
+    },
+    {
+      "name": "selbergS13SupportedBy",
+      "qualified_name": "HardyTheorem.selbergS13SupportedBy",
+      "file": "HardyTheorem/SelbergS13DivisorPair.lean",
+      "line": 58
     },
     {
       "name": "HasNegToPosLocalSignChangeAt",
@@ -1383,13 +1405,14 @@
     },
     {
       "name": "Quantitative critical-line extensions",
-      "target": "selberg_odd_zero_proportion_target",
-      "status": "Hardy's theorem and the Hardy-Littlewood linear lower bounds for distinct and odd-multiplicity critical-line zeros are proved; Selberg and Conrey counts remain open",
-      "next_step": "obtain the logarithmic gain needed for Selberg's T log T critical-line count, then develop Conrey-style percentage estimates"
+      "target": "conreyTwoFifthsSimpleZerosTarget",
+      "status": "Hardy's theorem and the Hardy-Littlewood lower bounds are proved; the Zeta23 bridge closes the Selberg odd-zero proportion target, while Conrey's genuine strict two-fifths simple-zero target remains open",
+      "next_step": "prove the long-mollifier mean square at length T^(4/7-epsilon) and transfer it through the argument principle to discharge conreyExplicitAnalyticLowerBound"
     }
   ],
   "chain_inventory": {
     "Quantitative critical-line extensions": [
+      "conreyTwoFifthsSimpleZerosTarget",
       "selberg_odd_zero_proportion_target",
       "integral_asymptotic_target",
       "hardy_two_signed_moments_target",
@@ -1410,10 +1433,10 @@
       "RH_ErrorBound"
     ]
   },
-  "mathematical_target_count": 14,
-  "route_interface_count": 5,
+  "mathematical_target_count": 15,
+  "route_interface_count": 6,
   "route_interface_true_body_count": 0,
-  "reusable_predicate_count": 196,
+  "reusable_predicate_count": 197,
   "unclassified_prop_def_count": 0,
-  "all_scanned_prop_defs_count": 215
+  "all_scanned_prop_defs_count": 218
 }

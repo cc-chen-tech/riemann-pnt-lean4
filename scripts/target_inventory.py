@@ -46,6 +46,7 @@ MATH_TARGETS = {
     "HardyTheorem.Details.theta_asymptotic_target": "Quantitative critical-line extensions",
     "HardyTheorem.Details.approximate_functional_equation_target": "Quantitative critical-line extensions",
     "KnownResults.conrey_40_percent_zeros_on_critical_line_target": "Quantitative critical-line extensions",
+    "HardyTheorem.conreyTwoFifthsSimpleZerosTarget": "Quantitative critical-line extensions",
 }
 
 ROUTE_INTERFACES = {
@@ -54,6 +55,7 @@ ROUTE_INTERFACES = {
     "MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum": "Explicit formula",
     "HardyTheorem.AFE.zeta_critical_afe_target": "Quantitative critical-line extensions",
     "RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target": "Quantitative critical-line extensions",
+    "HardyTheorem.conreyExplicitAnalyticLowerBound": "Quantitative critical-line extensions",
 }
 
 REUSABLE_PREDICATES = {
@@ -138,6 +140,7 @@ REUSABLE_PREDICATES = {
     "HardyTheorem.hardy_littlewood_positive_odd_lower_bound_target",
     "HardyTheorem.hardy_littlewood_positive_multiplicity_lower_bound_target",
     "HardyTheorem.selberg_zero_proportion_target",
+    "HardyTheorem.selbergS13SupportedBy",
     "HardyTheorem.HasNegToPosLocalSignChangeAt",
     "HardyTheorem.HasPosToNegLocalSignChangeAt",
     "HardyTheorem.HasLocalSignChangeAt",

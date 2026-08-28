@@ -32,9 +32,9 @@ CHAIN_SUMMARY = [
     },
     {
         "name": "Quantitative critical-line extensions",
-        "target": "selberg_odd_zero_proportion_target",
-        "status": "Hardy's theorem and the Hardy-Littlewood linear lower bounds for distinct and odd-multiplicity critical-line zeros are proved; Selberg and Conrey counts remain open",
-        "next_step": "obtain the logarithmic gain needed for Selberg's T log T critical-line count, then develop Conrey-style percentage estimates",
+        "target": "conreyTwoFifthsSimpleZerosTarget",
+        "status": "Hardy's theorem and the Hardy-Littlewood lower bounds are proved; the Zeta23 bridge closes the Selberg odd-zero proportion target, while Conrey's genuine strict two-fifths simple-zero target remains open",
+        "next_step": "prove the long-mollifier mean square at length T^(4/7-epsilon) and transfer it through the argument principle to discharge conreyExplicitAnalyticLowerBound",
     },
 ]
 

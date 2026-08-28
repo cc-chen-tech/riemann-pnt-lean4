@@ -164,7 +164,7 @@ lemma boundaryRectIntegral_congr_of_eqOn_boundary
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     {f g : ℂ → E} {x0 x1 y0 y1 : ℝ}
     (hfg : ∀ z ∈ ([[x0, x1]] ×ℂ [[y0, y1]]),
-      z ∉ (Ioo x0 x1 ×ℂ Ioo y0 y1) → f z = g z) :
+      ¬(x0 < z.re ∧ z.re < x1 ∧ y0 < z.im ∧ z.im < y1) → f z = g z) :
     boundaryRectIntegral f x0 x1 y0 y1 =
       boundaryRectIntegral g x0 x1 y0 y1 := by
   have hbottom :

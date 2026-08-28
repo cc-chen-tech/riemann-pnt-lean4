@@ -417,9 +417,7 @@ theorem exists_boundaryRectIntegral_explicitFormulaIntegrand_eq_residue_sum
       apply hboundary_eq z (by simpa [K] using hzK)
       intro hzInterior
       apply hzBoundary
-      rw [mem_reProdIm]
-      exact ⟨⟨hzInterior.1, hzInterior.2.1⟩,
-        hzInterior.2.2.1, hzInterior.2.2.2⟩
+      exact hzInterior
     _ = (2 * Real.pi * I) * ∑ p ∈ poles, residue p :=
       MathlibAux.boundaryRectIntegral_eq_finite_simple_pole_residue_sum_of_differentiableOn
         poles residue hregular'.differentiableOn hpoles

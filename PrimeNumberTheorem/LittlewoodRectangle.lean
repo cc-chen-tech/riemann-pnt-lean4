@@ -479,14 +479,7 @@ theorem boundaryRectIntegral_weighted_logDeriv_eq_zeroMultiplicitySum
     apply MathlibAux.boundaryRectIntegral_congr_of_eqOn_boundary
     intro z hz hnot
     have hzU : z ∈ U := by simpa [U] using hz
-    have hnot' :
-        ¬(x0 < z.re ∧ z.re < x1 ∧ y0 < z.im ∧ z.im < y1) := by
-      intro hinside
-      apply hnot
-      rw [mem_reProdIm]
-      exact ⟨⟨hinside.1, hinside.2.1⟩,
-        hinside.2.2.1, hinside.2.2.2⟩
-    rw [hregularEqBoundary z hzU hnot']
+    rw [hregularEqBoundary z hzU hnot]
     dsimp [raw]
     have hsumComm :
         (∑ rho ∈ poles,
