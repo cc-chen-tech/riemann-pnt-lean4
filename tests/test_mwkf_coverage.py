@@ -7916,6 +7916,38 @@ def test_principal_active_APBD_transfers_to_proved_resonant_energy() -> None:
     assert not result["coupled_kernel_gate_closed"]
 
 
+def test_fixed_order_active_characters_have_euler_sparse_multiplicity() -> None:
+    audit = getattr(
+        coverage_audit,
+        "sparse_active_character_sector_transfer_audit",
+        None,
+    )
+    assert audit is not None, "sparse active-character transfer is missing"
+    result = audit(
+        active_cofactors=(3, 5, 15),
+        character_power_exponent=2,
+        centered_imprimitive_energy_bound_proved=True,
+        pairwise_common_lift_contraction_verified=True,
+        bounded_determinant_count_is_subpolynomial=True,
+    )
+    assert result["character_multiplicity_by_cofactor"] == {
+        3: 2,
+        5: 2,
+        15: 4,
+    }
+    assert result["totient_by_cofactor"] == {3: 2, 5: 4, 15: 8}
+    assert result["finite_sparse_euler_weight"] == 2
+    assert result["multiplicity_is_bounded_by_B_to_omega"]
+    assert result["fixed_order_character_euler_sum_is_subpolynomial"]
+    assert result["principal_active_sector_bound_proved"]
+    assert result["quadratic_active_sector_bound_proved"]
+    assert result["every_fixed_order_active_sector_bound_proved"]
+    assert not result["all_active_character_sectors_proved"]
+    assert not result["high_order_active_character_sector_proved"]
+    assert not result["bounded_D_one_power_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (

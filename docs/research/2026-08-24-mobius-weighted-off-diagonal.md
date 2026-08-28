@@ -51,11 +51,12 @@
 > | Bounded-determinant Type master | Section 9.156 inserts the exact small/I/II split before restricting the one opened global square to \(0<|D|\leq D_0\).  The product-label weight is retained as \(W_\omega(a)=\sum_{h\delta=a}f_\omega(h)g_\omega(\delta)\), not replaced by arbitrary coefficients.  All nine ordered Type cross blocks reassemble the bounded-\(D\) master exactly, with the modulus and Type Möbius signs still linear before the pair sum.  The primitive bounded-\(D\) target still needs one power.  The published-coverage table has no complete row: fixed-modulus estimates lose the signed varying-level packet, while the long--long results do not supply the required power or physical adapter |
 > | Resonant two-PV compatibility boundary | Section 9.157 proves that the Section 9.144 argument cannot simply be reused on bounded nonzero \(D\).  Every physical reduced modulus is at least \(T^{5/2}\); equal reduced moduli would give \(g\geq T^{5/2}\), contradicting \(g|D|\ll T\).  Hence the cross term has distinct ambient moduli and two independent character families.  The determinant incidence does not impose \(\chi_1=\chi_2\); a shared primitive-conductor slice is not exhaustive.  Applying Cauchy separately returns the exact outer-sign saturation of Section 9.135.  Thus the two PV savings close the resonant projector only, not the one-power bounded-\(D\) gate |
 > | Common-lift two-pole sum and reconstruction boundary | Section 9.158 parameterizes every common \(g\)-lift by \(x_1r_2\equiv t\), \(x_2r_1\equiv t-D\pmod g\).  For one fixed pair of multiplicative-character atoms the retained common trace is a fixed-degree mixed character sum with additive phase \(A/t+B/(t-D)\).  Prime-modulus Weil and squarefree CRT give \(g^{1/2+\varepsilon}g_{\rm exc}^{1/2}\), where \(g_{\rm exc}\mid D\).  This is a genuine fixed-atom square-root bound, but Section 9.159 proves that arbitrary character reconstruction is the matrix of a norm-one partial shift: entrywise Weil cancellation does not yield an operator-norm saving.  Thus \(1-\gamma/2\) is only the formal fixed-atom residual; without a physical restriction on the character coefficients the global bounded-\(D\) gate still requires one full power |
-> | Active-cofactor character sectors | Section 9.160 evaluates the active residues before any large sieve.  Their exact twist is \(\chi_{1,r_1}(D)\overline{\chi_{2,r_2}(-D)}\overline{\chi_{1,r_1}(r_2)}\chi_{2,r_2}(r_1)\).  The active-principal sector is allowed whenever nonprincipality sits on the common \(g\)-part, and its twist is identically one.  On the quadratic sector, reciprocity collapses the two high-conductor cross evaluations to a sign modulo four; for bounded \(D\), only bounded-conductor factors remain.  A character-large-sieve shortcut does not cover all sectors.  Sections 9.161--9.165 subsequently close the active-principal slice by inverse-totient weighted energy transfer; the quadratic and higher active-character complements remain |
+> | Active-cofactor character sectors | Section 9.160 evaluates the active residues before any large sieve.  Their exact twist is \(\chi_{1,r_1}(D)\overline{\chi_{2,r_2}(-D)}\overline{\chi_{1,r_1}(r_2)}\chi_{2,r_2}(r_1)\).  The active-principal sector is allowed whenever nonprincipality sits on the common \(g\)-part, and its twist is identically one.  On the quadratic sector, reciprocity collapses the two high-conductor cross evaluations to a sign modulo four; for bounded \(D\), only bounded-conductor factors remain.  A character-large-sieve shortcut does not cover all sectors.  Sections 9.161--9.165 instead close the principal slice by inverse-totient energy transfer, and Section 9.166 extends that transfer to the quadratic and every fixed-order active family; only high-order non-sparse complements remain |
 > | Active-principal CRT fiber projection | Section 9.161 computes the projection, rather than estimating it.  In CRT coordinates \(U(gr)=U(g)\times U(r)\), being principal on the active \(r\)-component is exactly fiber averaging.  Its energy is \(\varphi(r)^{-1}\sum_s|\sum_u Z(s,u)|^2\leq\sum_{s,u}|Z(s,u)|^2\).  Centered packets constant on every active fiber attain equality, so the inverse-totient normalization is cancelled by the fiber multiplicity and gives no uniform \(r\)-power.  After the determinant selector the exact surviving bilinear is a common-\(g\) partial shift of the two centered fiber averages, with \(a=h\delta\), all Type packets, and \(\mu(r_1)\mu(r_2)\) still present |
 > | Principal-active outer Möbius Type split | Section 9.162 applies the exact small/I/II identity to the two surviving outer signs \(\mu(r_1)\mu(r_2)\), outside the common physical kernel.  This gives nine ordered blocks while retaining one \(a=h\delta\) convolution and allowing cross-block cancellation.  On the balanced bounded-\(D\) polytope, \(r_i=T^{3-\delta_i-\gamma}\geq T^{3/2}\); with the registered \(U=V=T^{1/2+o(1)}\), every block containing `small` is identically empty.  No audited theorem bounds any of the four remaining blocks separately.  Section 9.165 nevertheless proves their *combined* APBD estimate by retaining the reassembled outer weights and transferring the whole pair sum to one centered row energy |
 > | Physical \(H\)-packet descent on the active-principal face | Section 9.163 substitutes the actual definition \(Z_{q,c}=\sum_{-A\bar w=c}H_{q,A}(w)\) into the CRT fiber projection.  The result is exactly the same centered projective packet on modulus \(g\), built from \(\overline H_{g,r}(a,v)=\varphi(r)^{-1}\sum_{b,z\in U(r)}H_{gr,(a,b)}(v,z)\).  Centering commutes with descent.  Although the projection alone gives no \(r\)-power, it preserves the inverse-totient weight needed in Section 9.165: the weighted squared norm of the descended row is exactly the active-principal character subenergy of the packet-exhaustive Section 9.144 projector |
 > | Ratio-convolution descent and APBD closure | Sections 9.164--9.165 insert \(Z_{gr,c}=\mu(gr)\sum_yF_{gr}(-cy)G_{gr}(y)\) and obtain \(\overline H_{g,r}(a,v)=\mu(gr)F^{[r]}(a)G^{[r]}(v)/\varphi(r)\).  A cross pair therefore has weight \(\mu(r_1)\mu(r_2)/(\varphi(r_1)\varphi(r_2))\).  Every pair-dependent common-lift map is a contraction, so the complete signed pair sum is at most \((\sum_r\|P_r\|/\varphi(r))^2\), hence at most an Euler-polylog factor times \(\sum_r\|P_r\|^2/\varphi(r)\).  The latter is exactly a subenergy already bounded in Section 9.144.  Thus the combined four-block principal-active gate (APBD) is proved within target; individual I/II block bounds and all complementary active-character sectors remain open |
+> | Sparse active-character closure | Section 9.166 extends the same transfer beyond the principal character.  For \(\mathcal X_B(r)=\{\psi\bmod r:\psi^B=1\}\), squarefreeness gives \(|\mathcal X_B(r)|=\prod_{p\mid r}(B,p-1)\leq B^{\omega(r)}\).  Active Fourier inversion and Cauchy cost exactly \(\sum_r|\mathcal X_B(r)|/\varphi(r)\), an Euler-polylog factor for every fixed \(B\).  The remaining energy is again a subfamily of Section 9.144.  Hence all fixed-order active-character sectors, including the complete quadratic sector whose reciprocity phase collapses, are proved within target.  The remaining bounded-\(D\) gate is supported only on high-order, non-sparse active character families |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -22928,6 +22929,11 @@ after the reciprocal product (9.1062) has collapsed nor covers the
 active-principal sector.  Applying it to only the remaining high-order
 character rows cannot prove the full centered master.
 
+Sections 9.165--9.166 later bypass this failed large-sieve application:
+they use inverse-totient weighted contraction to close both the
+active-principal and quadratic sectors.  The present calculation remains
+the reason that quadratic reciprocity alone is not that proof.
+
 Consequently every exhaustive theorem must still bound the slice
 
 \[
@@ -23490,14 +23496,118 @@ principal-active sector proved, while keeping every individual block,
 all complementary active-character sectors, the full bounded-\(D\)
 gate, and the coupled-kernel gate false.
 
+### 9.166 Every fixed-order active-character sector is also closed
+
+The weighted contraction is not limited to the single principal active
+character.  Fix an integer \(B\geq1\), and on a squarefree active
+cofactor \(r\) put
+
+\[
+ \mathcal X_B(r):=\{\psi\bmod r:\psi^B=\psi_0\},
+ \qquad M_B(r):=|\mathcal X_B(r)|.
+ \tag{9.1097}
+\]
+
+Since the character group modulo squarefree \(r\) is the product of the
+local character groups,
+
+\[
+ \boxed{
+ M_B(r)=\prod_{p\mid r}(B,p-1)\leq B^{\omega(r)}.}
+ \tag{9.1098}
+\]
+
+Let \(Z_{g,r;B}^{\circ}(s,u)\) be the part of the centered physical
+packet whose active character belongs to \(\mathcal X_B(r)\).  Fourier
+inversion in the active coordinate gives
+
+\[
+ Z_{g,r;B}^{\circ}(s,u)
+ =\frac1{\varphi(r)}
+   \sum_{\psi\in\mathcal X_B(r)}
+   \widehat Z_{g,r}^{\circ}(s,\psi)\overline{\psi(u)}.
+ \tag{9.1099}
+\]
+
+Define the corresponding active Fourier energy
+
+\[
+ E_{g,r;B}:=\frac1{\varphi(r)}
+  \sum_{\psi\in\mathcal X_B(r)}
+  \|\widehat Z_{g,r}^{\circ}(\,cdot\,,\psi)\|_2^2.
+ \tag{9.1100}
+\]
+
+Cauchy in \(\psi\) yields, uniformly in the determinant-fixed active
+residue \(u\),
+
+\[
+ \boxed{
+ \|Z_{g,r;B}^{\circ}(\,cdot\,,u)\|_2
+ \leq\left(\frac{M_B(r)}{\varphi(r)}\right)^{1/2}
+ E_{g,r;B}^{1/2}.}
+ \tag{9.1101}
+\]
+
+Apply the pairwise common-lift contraction (9.1092), sum the two active
+cofactors, and use Cauchy once more.  The full \(B\)-torsion sector is
+bounded by
+
+\[
+ \boxed{
+ \left(\sum_r\frac{M_B(r)}{\varphi(r)}\right)
+ \left(\sum_rE_{g,r;B}\right).}
+ \tag{9.1102}
+\]
+
+For fixed \(B\), (9.1098) gives the Euler bound
+
+\[
+ \sum_{r\leq R}\frac{\mu(r)^2M_B(r)}{\varphi(r)}
+ \leq\prod_{p\leq R}
+   \left(1+\frac{(B,p-1)}{p-1}\right)
+ \ll_B(\log(2R))^B.
+ \tag{9.1103}
+\]
+
+The second factor in (9.1102) is exactly the selected active-character
+subenergy of the full centered ambient projector.  Summing the common
+characters and then descending them by primitive conductor places it
+inside (9.954), so Section 9.144 bounds it.  The bounded \(D\)-sum and
+projective packet norms again cost only \(T^\varepsilon\).
+
+Therefore every fixed \(B\)-torsion active sector is within the
+bounded-determinant target.  Taking \(B=1\) recovers Section 9.165;
+\(B=2\) proves the entire quadratic active-character sector, including
+the reciprocal-collapse rows of (9.1061)--(9.1062).  More generally,
+every individually fixed character order is covered by choosing a fixed
+multiple \(B\) of that order.
+
+This still does not sum all active characters: allowing
+\(B\) or the number of selected characters to grow polynomially with
+\(r\) destroys the Euler-polylog factor in (9.1103).  The remaining
+bounded-\(D\) master is now confined to high-order active-character
+families whose multiplicity is not \(r^{o(1)}\).  That high-order sector,
+not the principal or quadratic face, is the next analytic gate.
+
+The helper `sparse_active_character_sector_transfer_audit` computes
+(9.1098) exactly on supplied squarefree cofactors, verifies the finite
+inverse-totient weight, and records the contraction/energy prerequisites.
+It marks the principal, quadratic, and every fixed-order active sector
+proved when those inputs are present, while keeping the high-order
+sector, full bounded-\(D\), and coupled-kernel gates false.
+
 ## 10. What has and has not been proved
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
 complete active-principal character projection within the required
 envelope by transferring its inverse-totient weighted pair sum to the
-already bounded centered resonant energy.  This closes (APBD), not the
-full bounded-\(D\) gate: every sector with a nonprincipal active
-character remains in the complementary two-character master.
+already bounded centered resonant energy.  Section 9.166 extends the
+same argument to every fixed-order active-character family, including
+the entire quadratic sector.  This closes (APBD) and all sparse
+fixed-order extensions, not the full bounded-\(D\) gate: high-order
+active-character families of polynomial multiplicity remain in the
+complementary two-character master.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent

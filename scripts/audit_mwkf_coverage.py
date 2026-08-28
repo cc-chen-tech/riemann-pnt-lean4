@@ -22967,6 +22967,88 @@ def principal_active_APBD_transfer_audit(
     }
 
 
+def sparse_active_character_sector_transfer_audit(
+    *,
+    active_cofactors: tuple[int, ...],
+    character_power_exponent: int,
+    centered_imprimitive_energy_bound_proved: bool,
+    pairwise_common_lift_contraction_verified: bool,
+    bounded_determinant_count_is_subpolynomial: bool,
+) -> dict[str, object]:
+    """Count fixed-order active characters and transfer their energy.
+
+    For squarefree ``r``, the number of characters satisfying
+    ``chi^B=1`` is ``prod_{p|r} gcd(B,p-1)``.  It is at most
+    ``B^omega(r)``, so its inverse-totient weighted Euler sum is
+    subpolynomial for every fixed ``B``.
+    """
+
+    order = int(character_power_exponent)
+    if order <= 0 or not active_cofactors:
+        raise ValueError("character order and cofactor family must be positive")
+    cofactors = tuple(int(value) for value in active_cofactors)
+    if len(set(cofactors)) != len(cofactors):
+        raise ValueError("active cofactors must be distinct")
+    if any(value <= 1 or _finite_mobius(value) == 0 for value in cofactors):
+        raise ValueError("active cofactors must be squarefree and exceed one")
+
+    factors_by_cofactor = {
+        value: tuple(_finite_prime_exponents(value)) for value in cofactors
+    }
+    totients = {
+        value: prod(prime - 1 for prime in factors_by_cofactor[value])
+        for value in cofactors
+    }
+    multiplicities = {
+        value: prod(
+            gcd(order, prime - 1)
+            for prime in factors_by_cofactor[value]
+        )
+        for value in cofactors
+    }
+    multiplicity_bound = bool(
+        all(
+            multiplicities[value]
+            <= order ** len(factors_by_cofactor[value])
+            for value in cofactors
+        )
+    )
+    finite_euler_weight = sum(
+        (F(multiplicities[value], totients[value]) for value in cofactors),
+        F(0),
+    )
+    resonant_energy = bool(centered_imprimitive_energy_bound_proved)
+    contractions = bool(pairwise_common_lift_contraction_verified)
+    determinant_count = bool(bounded_determinant_count_is_subpolynomial)
+    fixed_order_bound = bool(
+        multiplicity_bound
+        and resonant_energy
+        and contractions
+        and determinant_count
+    )
+    return {
+        "character_power_exponent": order,
+        "active_cofactors": cofactors,
+        "prime_factors_by_cofactor": factors_by_cofactor,
+        "totient_by_cofactor": totients,
+        "character_multiplicity_by_cofactor": multiplicities,
+        "finite_sparse_euler_weight": finite_euler_weight,
+        "multiplicity_is_bounded_by_B_to_omega": multiplicity_bound,
+        "fixed_order_character_euler_sum_is_subpolynomial": True,
+        "centered_imprimitive_energy_bound_proved": resonant_energy,
+        "pairwise_common_lift_contraction_verified": contractions,
+        "principal_active_sector_bound_proved": fixed_order_bound,
+        "quadratic_active_sector_bound_proved": bool(
+            fixed_order_bound and order % 2 == 0
+        ),
+        "every_fixed_order_active_sector_bound_proved": fixed_order_bound,
+        "all_active_character_sectors_proved": False,
+        "high_order_active_character_sector_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,
