@@ -256,5 +256,38 @@ theorem norm_sq_carlsonGaussianPoleFreeLpValueTotal_le_of_endpoint_bounds
     _ = A ^ (1 - (x - 1 / 2) / (4 - 1 / 2)) *
         B ^ ((x - 1 / 2) / (4 - 1 / 2)) := by rfl
 
+/-- At `x=2/3` the closed-strip weights are exactly `20/21` and `1/21`.
+The right endpoint is discharged by the proved inverse-cube plateau tail, so
+the only remaining hypothesis is the critical-boundary second moment. -/
+theorem norm_sq_carlsonGaussianPoleFreeLpValueTotal_two_thirds_le_of_left_bound
+    {Delta w A : ℝ} {Y0 Y1 : ℕ}
+    (hDelta : 0 < Delta) (hY0 : 1 ≤ Y0) (hY01 : Y0 < Y1)
+    (hA : ‖carlsonGaussianPoleFreeLpValueTotal Delta w Y0 Y1
+        hDelta hY0 hY01 ((1 / 2 : ℝ) : ℂ)‖ ^ 2 ≤ A) :
+    ‖carlsonGaussianPoleFreeLpValueTotal Delta w Y0 Y1
+        hDelta hY0 hY01 ((2 / 3 : ℝ) : ℂ)‖ ^ 2 ≤
+      A ^ (20 / 21 : ℝ) *
+        (Real.exp (16 / Delta ^ 2) *
+          ((10 / 3 : ℝ) * (1 / (Y0 : ℝ) ^ 3)) ^ 2 *
+            Real.sqrt (Real.pi / (1 / Delta ^ 2))) ^ (1 / 21 : ℝ) := by
+  let B : ℝ :=
+    Real.exp (16 / Delta ^ 2) *
+      ((10 / 3 : ℝ) * (1 / (Y0 : ℝ) ^ 3)) ^ 2 *
+        Real.sqrt (Real.pi / (1 / Delta ^ 2))
+  have hB : ‖carlsonGaussianPoleFreeLpValueTotal Delta w Y0 Y1
+      hDelta hY0 hY01 (4 : ℂ)‖ ^ 2 ≤ B := by
+    rw [carlsonGaussianPoleFreeLpValueTotal_eq hDelta hY0 hY01
+      (by norm_num : (4 : ℂ).re ∈ Icc (1 / 2 : ℝ) 4)]
+    exact norm_sq_carlsonGaussianPoleFreeLpValue_four_le
+      hDelta hY0 hY01
+  have hinterp :=
+    norm_sq_carlsonGaussianPoleFreeLpValueTotal_le_of_endpoint_bounds
+      hDelta hY0 hY01
+        (by norm_num : (2 / 3 : ℝ) ∈ Icc (1 / 2 : ℝ) 4)
+      hA hB
+  dsimp [B] at hinterp ⊢
+  convert hinterp using 1
+  all_goals norm_num
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem

@@ -494,6 +494,13 @@ it gives the exact closed-strip inequality with endpoint second moments
 axioms.  This is distinct from the deep Conrey--Deshouillers--Iwaniec estimate
 itself.  The Conrey left endpoint and the finite Gaussian covering still
 remain.
+
+At the first formal target `R=4`, the closed-strip theorem has also been
+specialized at `x=2/3`.  The interpolation weights reduce exactly to
+`20/21` and `1/21`; the right endpoint is discharged by the proved
+inverse-cube plateau-tail estimate.  The resulting theorem has only one
+analytic hypothesis, namely the critical-boundary second-moment bound that
+must come from the Conrey--Deshouillers--Iwaniec input.
 The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
