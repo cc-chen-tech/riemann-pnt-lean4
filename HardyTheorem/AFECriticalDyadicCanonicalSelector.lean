@@ -11,7 +11,7 @@ estimate.  On any window where the natural cutoff is at most the ambient
 endpoint, the clamped and genuine prefixes agree exactly.
 -/
 
-open Complex MeasureTheory
+open Complex MeasureTheory Set
 
 namespace HardyTheorem
 namespace AFE
@@ -21,6 +21,25 @@ theorem measurable_criticalAfeCutoff : Measurable criticalAfeCutoff := by
   unfold criticalAfeCutoff
   exact (Real.continuous_sqrt.measurable.comp
     (measurable_id.div_const (2 * Real.pi))).nat_floor
+
+/-- A dyadic endpoint strictly above the square-root coordinate at the right
+edge of a window also lies strictly above every natural cutoff
+successor in that window. -/
+theorem criticalAfeCutoff_succ_le_pow_of_mem_Icc
+    {K : ℕ} {L U t : ℝ} (ht : t ∈ Icc L U)
+    (hU : Real.sqrt (U / (2 * Real.pi)) < (((2 ^ K : ℕ) : ℝ))) :
+    criticalAfeCutoff t + 1 ≤ 2 ^ K := by
+  have hc : 0 < 2 * Real.pi := mul_pos (by norm_num) Real.pi_pos
+  have hdiv : t / (2 * Real.pi) ≤ U / (2 * Real.pi) :=
+    (div_le_div_iff_of_pos_right hc).2 ht.2
+  have hsqrt : Real.sqrt (t / (2 * Real.pi)) ≤
+      Real.sqrt (U / (2 * Real.pi)) :=
+    Real.sqrt_le_sqrt hdiv
+  have hy : 0 ≤ Real.sqrt (t / (2 * Real.pi)) := Real.sqrt_nonneg _
+  have hfloor : Nat.floor (Real.sqrt (t / (2 * Real.pi))) < 2 ^ K :=
+    (Nat.floor_lt hy).2 (hsqrt.trans_lt hU)
+  unfold criticalAfeCutoff
+  omega
 
 /-- The canonical selector clamped to one ambient dyadic block. -/
 noncomputable def dyadicClampedCriticalPrefixMollifiedPolynomial

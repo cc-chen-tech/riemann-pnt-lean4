@@ -806,10 +806,13 @@ a final density axiom:
    exact identity between this recovered prefix and the canonical AFE main
    sum times the concrete mollifier.  The resulting global
    Gaussian theorem has no measurability premise and the same allowed axiom
-   audit.  What remains before applying it to (8.1) is the local-window
-   cutoff upper bound, the symmetric square-root AFE itself (still the
-   genuine analytic gate), and the translated-Gaussian tail assembly in
-   (8.7)--(8.8).
+   audit.  The local-window cutoff upper bound is now formal as well: from
+   `t in [L,U]` and `sqrt(U/(2*pi))<2^K`, Lean derives
+   `criticalAfeCutoff(t)+1<=2^K`, so the recovered prefix identity applies
+   pointwise throughout the window.  What remains before applying it to
+   (8.1) is the symmetric square-root AFE itself (still the genuine analytic
+   gate), the local-set-integral to global clamped-Gaussian comparison, and
+   the translated-Gaussian tail assembly in (8.7)--(8.8).
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
    specialization, and insert the resulting local norm into the now-proved
