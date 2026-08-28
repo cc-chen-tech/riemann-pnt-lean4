@@ -2749,6 +2749,8 @@ class IndependentCubicClosureVerificationAudit:
     mrstt_maximal_progression_form_verified: bool
     sliding_identity_is_exact_on_the_interior: bool
     edge_intervals_are_power_saving: bool
+    reciprocal_amplitude_normalized_chain_rule_verified: bool
+    reciprocal_amplitude_total_variation_verified: bool
     weighted_partial_summation_verified: bool
     fixed_numeric_log_witness_used: bool
     log_choice_order: tuple[str, ...]
@@ -2757,6 +2759,29 @@ class IndependentCubicClosureVerificationAudit:
     cancellation_budget: tuple[tuple[str, str], ...]
     every_cancellation_source_is_used_once: bool
     all_four_independent_gates_verified: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class ReciprocalAmplitudeSeminormTransferAudit:
+    derivative_order: int
+    fourier_decay_order: int
+    normalized_chain_rule_terms: tuple[tuple[int, int, int, int], ...]
+    required_kernel_x_derivatives: int
+    required_kernel_y_derivatives: int
+    available_kernel_x_derivatives: int
+    available_kernel_y_derivatives: int
+    normalized_curve_derivative_has_no_lambda_power: bool
+    n_inverse_square_supremum_power: Fraction
+    n_inverse_square_total_variation_power: Fraction
+    partial_summation_output_power: Fraction
+    kernel_seminorm_log_loss: Fraction
+    requested_mrstt_log_saving: Fraction
+    aggregation_log_loss: Fraction
+    target_log_saving: Fraction
+    net_log_saving: Fraction
+    kernel_derivative_supply_is_sufficient: bool
+    weighted_partial_summation_closes: bool
     source: str
 
 
@@ -18729,12 +18754,12 @@ def cubic_reciprocal_endpoint_dispersion_audit(
     ``A/(r*e*S)``.  The original outer ``A^(-1)`` cancels that ``A``;
     a dyadic ``A~A0`` sum therefore has weight ``A0/(r*e*S)``.
 
-    The logarithmic choices are nested.  If ``Cw`` is the fixed
-    physical-weight/seminorm loss and ``Cagg`` is the dyadic and
-    harmonic-q loss, the subcritical range saves
-    ``K0-Cw-Cagg``.  The critical range has ``log^(K0+Cj)`` Poisson
-    modes and saves ``M-K0-Cj-Cw-Cagg``.  Both must exceed the requested
-    final logarithmic saving; merely checking ``M-Cw`` is insufficient.
+    The logarithmic choices are quantified and nested.  After fixing a
+    final saving and a Fourier decay order, record the finite kernel
+    seminorm exponents, then choose the subcritical cutoff, the mode
+    cutoff and finally the arbitrary MRSTT saving.  The numerical input
+    parameters remain only a pressure-test example; they are not proof
+    constants.
     """
     u = F(longer_modulus_exponent)
     a = F(third_length_exponent)
@@ -18795,6 +18820,29 @@ def cubic_reciprocal_endpoint_dispersion_audit(
         theorem_window and taylor_saving > 0 and critical_net > target
     )
     physical_normalization = physical_times_dual == u
+    amplitude = reciprocal_amplitude_seminorm_transfer_audit(
+        derivative_order=1,
+        fourier_decay_order=4,
+        available_kernel_x_derivatives=1,
+        available_kernel_y_derivatives=5,
+        kernel_seminorm_log_loss=weight_loss,
+        requested_mrstt_log_saving=weight_loss,
+        aggregation_log_loss=F(0),
+        target_log_saving=F(0),
+    )
+    amplitude_uniform = all(
+        (
+            amplitude.kernel_derivative_supply_is_sufficient,
+            amplitude.normalized_curve_derivative_has_no_lambda_power,
+        )
+    )
+    partial_summation_x_inverse = all(
+        (
+            amplitude.n_inverse_square_supremum_power == F(-2),
+            amplitude.n_inverse_square_total_variation_power == F(-2),
+            amplitude.partial_summation_output_power == F(-1),
+        )
+    )
     quantified = independent_cubic_closure_verification_audit()
     local_proved = all(
         (
@@ -18805,6 +18853,8 @@ def cubic_reciprocal_endpoint_dispersion_audit(
             quantified.c_poisson_full_weight_embedding_verified,
             quantified.mrstt_maximal_progression_form_verified,
             quantified.sliding_identity_is_exact_on_the_interior,
+            amplitude_uniform,
+            partial_summation_x_inverse,
             quantified.weighted_partial_summation_verified,
             quantified.lcpe2_quantified_log_ledger_closed,
         )
@@ -18833,8 +18883,10 @@ def cubic_reciprocal_endpoint_dispersion_audit(
             "p_N(q*s_entry)",
             "dyadic(A,e,r,k,l,j,n)",
         ),
-        physical_weight_normalized_derivatives_are_polylogarithmic=True,
-        partial_summation_gives_X_inverse=True,
+        physical_weight_normalized_derivatives_are_polylogarithmic=(
+            amplitude_uniform
+        ),
+        partial_summation_gives_X_inverse=partial_summation_x_inverse,
         post_poisson_weight_before_outer_A="A/(r*e*S)",
         outer_A_inverse_cancels_poisson_A=True,
         dyadic_A_sum_weight="A0/(r*e*S)",
@@ -18859,6 +18911,114 @@ def cubic_reciprocal_endpoint_dispersion_audit(
             "weight retained; MRSTT Theorem 1.1(i), maximal form; "
             "nested logarithmic "
             "choice K0 then M"
+        ),
+    )
+
+
+def reciprocal_amplitude_seminorm_transfer_audit(
+    *,
+    derivative_order: int,
+    fourier_decay_order: int,
+    available_kernel_x_derivatives: int,
+    available_kernel_y_derivatives: int,
+    kernel_seminorm_log_loss: Fraction,
+    requested_mrstt_log_saving: Fraction,
+    aggregation_log_loss: Fraction,
+    target_log_saving: Fraction,
+) -> ReciprocalAmplitudeSeminormTransferAudit:
+    """Audit the normalized derivatives along the reciprocal curve.
+
+    Put ``x=n/X`` and ``lambda=j*A*e/S``.  Since
+    ``j*A/(r*n)=lambda/x``, differentiation along the physical curve is
+
+    ``x*d/dx = x*partial_x - xi*partial_xi``.
+
+    The two normalized partial derivatives commute.  Leibniz and the
+    binomial theorem therefore give the returned exact terms
+
+    ``(W_order, Phi_x_order, Phi_xi_order, coefficient)``.
+
+    Moreover ``(xi*d/dxi)^b PhiHat`` is the Fourier transform of
+    ``(-partial_y*y)^b Phi``.  Fourier decay of order ``J`` consequently
+    uses at most ``J+b`` y-derivatives.  For amplitude order ``m``, the
+    uniform sufficient supply is thus ``m`` x-derivatives and ``J+m``
+    y-derivatives, with no power of ``lambda`` or of the Poisson mode.
+
+    Multiplication by ``n^-2`` has supremum and total-variation scale
+    ``X^-2`` on ``n asymp X``.  A maximal partial sum of scale ``X``
+    then yields the exact partial-summation scale ``X^-1``.
+    """
+    integers = (
+        derivative_order,
+        fourier_decay_order,
+        available_kernel_x_derivatives,
+        available_kernel_y_derivatives,
+    )
+    if any(not isinstance(value, int) for value in integers):
+        raise TypeError("derivative orders must be integers")
+    if derivative_order < 0 or fourier_decay_order < 1:
+        raise ValueError("amplitude order must be nonnegative and decay positive")
+    if min(available_kernel_x_derivatives, available_kernel_y_derivatives) < 0:
+        raise ValueError("available derivative orders must be nonnegative")
+
+    kernel_loss = F(kernel_seminorm_log_loss)
+    mrstt_saving = F(requested_mrstt_log_saving)
+    aggregation_loss = F(aggregation_log_loss)
+    target = F(target_log_saving)
+    if min(kernel_loss, mrstt_saving, aggregation_loss, target) < 0:
+        raise ValueError("logarithmic ledger entries must be nonnegative")
+
+    m = derivative_order
+    j_decay = fourier_decay_order
+    terms = tuple(
+        (
+            m - phi_order,
+            phi_order - xi_order,
+            xi_order,
+            comb(m, phi_order)
+            * comb(phi_order, xi_order)
+            * (-1) ** xi_order,
+        )
+        for phi_order in range(m + 1)
+        for xi_order in range(phi_order + 1)
+    )
+    no_lambda_power = all(
+        w_order + x_order + xi_order == m
+        for w_order, x_order, xi_order, _ in terms
+    )
+    required_x = m
+    required_y = j_decay + m
+    supply = (
+        available_kernel_x_derivatives >= required_x
+        and available_kernel_y_derivatives >= required_y
+    )
+    n_weight_power = F(-2)
+    partial_summation_power = F(1) + n_weight_power
+    net_log_saving = mrstt_saving - kernel_loss - aggregation_loss
+    closes = supply and no_lambda_power and net_log_saving > target
+    return ReciprocalAmplitudeSeminormTransferAudit(
+        derivative_order=m,
+        fourier_decay_order=j_decay,
+        normalized_chain_rule_terms=terms,
+        required_kernel_x_derivatives=required_x,
+        required_kernel_y_derivatives=required_y,
+        available_kernel_x_derivatives=available_kernel_x_derivatives,
+        available_kernel_y_derivatives=available_kernel_y_derivatives,
+        normalized_curve_derivative_has_no_lambda_power=no_lambda_power,
+        n_inverse_square_supremum_power=n_weight_power,
+        n_inverse_square_total_variation_power=n_weight_power,
+        partial_summation_output_power=partial_summation_power,
+        kernel_seminorm_log_loss=kernel_loss,
+        requested_mrstt_log_saving=mrstt_saving,
+        aggregation_log_loss=aggregation_loss,
+        target_log_saving=target,
+        net_log_saving=net_log_saving,
+        kernel_derivative_supply_is_sufficient=supply,
+        weighted_partial_summation_closes=closes,
+        source=(
+            "exact normalized chain rule x*d_x-xi*d_xi; Fourier identity "
+            "(xi*d_xi)^b PhiHat=(-1)^b Fourier((partial_y*y)^b Phi); "
+            "Abel summation"
         ),
     )
 
@@ -18895,7 +19055,30 @@ def independent_cubic_closure_verification_audit(
     maximal_mrstt = True
     sliding_interior = True
     edges_power_saving = True
-    partial_summation = True
+    amplitude = reciprocal_amplitude_seminorm_transfer_audit(
+        derivative_order=1,
+        fourier_decay_order=4,
+        available_kernel_x_derivatives=1,
+        available_kernel_y_derivatives=5,
+        kernel_seminorm_log_loss=F(0),
+        requested_mrstt_log_saving=F(2),
+        aggregation_log_loss=F(0),
+        target_log_saving=F(1),
+    )
+    chain_rule = (
+        amplitude.normalized_chain_rule_terms
+        == ((1, 0, 0, 1), (0, 1, 0, 1), (0, 0, 1, -1))
+        and amplitude.normalized_curve_derivative_has_no_lambda_power
+    )
+    total_variation = all(
+        (
+            amplitude.kernel_derivative_supply_is_sufficient,
+            amplitude.n_inverse_square_supremum_power == F(-2),
+            amplitude.n_inverse_square_total_variation_power == F(-2),
+            amplitude.partial_summation_output_power == F(-1),
+        )
+    )
+    partial_summation = chain_rule and total_variation
     quantified_lcpe2 = all(
         (
             full_weight_embedding,
@@ -18932,6 +19115,8 @@ def independent_cubic_closure_verification_audit(
         mrstt_maximal_progression_form_verified=maximal_mrstt,
         sliding_identity_is_exact_on_the_interior=sliding_interior,
         edge_intervals_are_power_saving=edges_power_saving,
+        reciprocal_amplitude_normalized_chain_rule_verified=chain_rule,
+        reciprocal_amplitude_total_variation_verified=total_variation,
         weighted_partial_summation_verified=partial_summation,
         fixed_numeric_log_witness_used=False,
         log_choice_order=(
@@ -30357,6 +30542,10 @@ def main() -> None:
         f"{independent_cubic.sliding_identity_is_exact_on_the_interior} "
         "weighted_partial="
         f"{independent_cubic.weighted_partial_summation_verified} "
+        "amplitude_chain="
+        f"{independent_cubic.reciprocal_amplitude_normalized_chain_rule_verified} "
+        "amplitude_variation="
+        f"{independent_cubic.reciprocal_amplitude_total_variation_verified} "
         "lcpe2_quantified="
         f"{independent_cubic.lcpe2_quantified_log_ledger_closed} "
         "disjoint_partition="
@@ -30366,6 +30555,41 @@ def main() -> None:
         "numeric_witness_used="
         f"{independent_cubic.fixed_numeric_log_witness_used} "
         f"all_four={independent_cubic.all_four_independent_gates_verified}"
+    )
+    reciprocal_amplitude = reciprocal_amplitude_seminorm_transfer_audit(
+        derivative_order=2,
+        fourier_decay_order=5,
+        available_kernel_x_derivatives=2,
+        available_kernel_y_derivatives=7,
+        kernel_seminorm_log_loss=F(3),
+        requested_mrstt_log_saving=F(20),
+        aggregation_log_loss=F(4),
+        target_log_saving=F(10),
+    )
+    print(
+        "mwkf_reciprocal_amplitude: "
+        f"m={reciprocal_amplitude.derivative_order} "
+        f"J={reciprocal_amplitude.fourier_decay_order} "
+        "required_x="
+        f"{reciprocal_amplitude.required_kernel_x_derivatives} "
+        "required_y="
+        f"{reciprocal_amplitude.required_kernel_y_derivatives} "
+        "available_x="
+        f"{reciprocal_amplitude.available_kernel_x_derivatives} "
+        "available_y="
+        f"{reciprocal_amplitude.available_kernel_y_derivatives} "
+        "no_lambda="
+        f"{reciprocal_amplitude.normalized_curve_derivative_has_no_lambda_power} "
+        "sup_power="
+        f"{_fmt(reciprocal_amplitude.n_inverse_square_supremum_power)} "
+        "variation_power="
+        f"{_fmt(reciprocal_amplitude.n_inverse_square_total_variation_power)} "
+        "partial_power="
+        f"{_fmt(reciprocal_amplitude.partial_summation_output_power)} "
+        f"net_log={_fmt(reciprocal_amplitude.net_log_saving)} "
+        "supply="
+        f"{reciprocal_amplitude.kernel_derivative_supply_is_sufficient} "
+        f"closes={reciprocal_amplitude.weighted_partial_summation_closes}"
     )
     cubic_residual_labels = tuple(
         label

@@ -7376,6 +7376,8 @@ def test_independent_cubic_closure_uses_quantified_not_invented_log_losses(
     assert audit.mrstt_maximal_progression_form_verified
     assert audit.sliding_identity_is_exact_on_the_interior
     assert audit.edge_intervals_are_power_saving
+    assert audit.reciprocal_amplitude_normalized_chain_rule_verified
+    assert audit.reciprocal_amplitude_total_variation_verified
     assert audit.weighted_partial_summation_verified
     assert not audit.fixed_numeric_log_witness_used
     assert audit.log_choice_order == (
@@ -7395,6 +7397,70 @@ def test_independent_cubic_closure_uses_quantified_not_invented_log_losses(
     )
     assert audit.every_cancellation_source_is_used_once
     assert audit.all_four_independent_gates_verified
+
+
+def test_reciprocal_amplitude_seminorm_transfer_has_no_poisson_mode_loss(
+) -> None:
+    """A wrong chain rule or missing y derivative must reject the gate."""
+    adapter = getattr(
+        coverage_audit,
+        "reciprocal_amplitude_seminorm_transfer_audit",
+        None,
+    )
+    assert adapter is not None, "reciprocal amplitude audit is missing"
+    audit = adapter(
+        derivative_order=2,
+        fourier_decay_order=5,
+        available_kernel_x_derivatives=2,
+        available_kernel_y_derivatives=7,
+        kernel_seminorm_log_loss=F(3),
+        requested_mrstt_log_saving=F(20),
+        aggregation_log_loss=F(4),
+        target_log_saving=F(10),
+    )
+    assert audit.normalized_chain_rule_terms == (
+        (2, 0, 0, 1),
+        (1, 1, 0, 2),
+        (1, 0, 1, -2),
+        (0, 2, 0, 1),
+        (0, 1, 1, -2),
+        (0, 0, 2, 1),
+    )
+    assert audit.required_kernel_x_derivatives == 2
+    assert audit.required_kernel_y_derivatives == 7
+    assert audit.normalized_curve_derivative_has_no_lambda_power
+    assert audit.n_inverse_square_supremum_power == F(-2)
+    assert audit.n_inverse_square_total_variation_power == F(-2)
+    assert audit.partial_summation_output_power == F(-1)
+    assert audit.net_log_saving == F(13)
+    assert audit.kernel_derivative_supply_is_sufficient
+    assert audit.weighted_partial_summation_closes
+
+    missing_y_derivative = adapter(
+        derivative_order=2,
+        fourier_decay_order=5,
+        available_kernel_x_derivatives=2,
+        available_kernel_y_derivatives=6,
+        kernel_seminorm_log_loss=F(3),
+        requested_mrstt_log_saving=F(20),
+        aggregation_log_loss=F(4),
+        target_log_saving=F(10),
+    )
+    assert not missing_y_derivative.kernel_derivative_supply_is_sufficient
+    assert not missing_y_derivative.weighted_partial_summation_closes
+
+    insufficient_log_saving = adapter(
+        derivative_order=2,
+        fourier_decay_order=5,
+        available_kernel_x_derivatives=2,
+        available_kernel_y_derivatives=7,
+        kernel_seminorm_log_loss=F(3),
+        requested_mrstt_log_saving=F(16),
+        aggregation_log_loss=F(4),
+        target_log_saving=F(10),
+    )
+    assert insufficient_log_saving.net_log_saving == F(9)
+    assert not insufficient_log_saving.weighted_partial_summation_closes
 
 
 def test_cubic_reciprocal_phase_closes_lcpe2_before_product_lift(
@@ -7546,8 +7612,15 @@ def test_cubic_global_reassembly_proves_unconditional_theta_three_asymptotic(
     assert (
         "mwkf_cubic_independent_verification: c_poisson=True "
         "mrstt_maximal=True sliding=True weighted_partial=True "
+        "amplitude_chain=True amplitude_variation=True "
         "lcpe2_quantified=True disjoint_partition=True "
         "cancellation_unique=True numeric_witness_used=False all_four=True"
+    ) in output
+    assert (
+        "mwkf_reciprocal_amplitude: m=2 J=5 required_x=2 required_y=7 "
+        "available_x=2 available_y=7 no_lambda=True sup_power=-2 "
+        "variation_power=-2 partial_power=-1 net_log=13 supply=True "
+        "closes=True"
     ) in output
     assert (
         "mwkf_cubic_full_coverage: power_cells=True "

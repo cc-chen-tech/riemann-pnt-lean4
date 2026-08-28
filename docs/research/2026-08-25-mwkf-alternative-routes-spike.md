@@ -22048,10 +22048,98 @@ Thus the Jacobian is \(A/(rn)\), the phase sign is negative, and none of
 \(W(rne/S)\), \(n^{-2}\),
 \(\widehat\Phi_2(n/X,jA/(rn))\), the two mollifier tapers
 \(p_N(qr_{\rm entry})p_N(qs_{\rm entry})\), or the dyadic cutoffs in
-\(A,e,r,k,l,j,n\) is discarded.  Their normalized derivatives cost at
-most a fixed power of \(\log(3T)\).  MRSTT, the cubic Taylor estimate,
-the sliding identity, and partial summation therefore give, uniformly
-for every retained critical mode,
+\(A,e,r,k,l,j,n\) is discarded.
+
+The dependence of the transformed amplitude on \(n\) can be checked
+without charging a power of the Poisson mode.  Put
+
+\[
+ x=\frac nX,\qquad \lambda=\frac{jAe}{S}.
+\]
+
+Since \(rX=D=S/e\), one has the exact identities
+
+\[
+ W\!\left(\frac{rne}{S}\right)=W(x),\qquad
+ \frac{jA}{rn}=\frac{\lambda}{x}.
+\tag{4.845dc_14xq_35w31n29b1}
+\]
+
+For
+
+\[
+ G_\lambda(x):=W(x)\widehat\Phi_2(x,\lambda/x),
+ \qquad
+ \mathcal D:=x\partial_x-\xi\partial_\xi,
+\]
+
+the normalized chain rule is, for every fixed integer \(m\geq0\),
+
+\[
+ \boxed{
+ \begin{aligned}
+ \left(x\frac d{dx}\right)^mG_\lambda(x)
+ ={}&\sum_{a=0}^m\sum_{b=0}^a
+ \binom ma\binom ab(-1)^b
+ \left(x\partial_x\right)^{m-a}W(x)\\
+ &\quad\times
+ \left(x\partial_x\right)^{a-b}
+ \left(\xi\partial_\xi\right)^b
+ \widehat\Phi_2(x,\xi)\bigg|_{\xi=\lambda/x}.
+ \end{aligned}}
+\tag{4.845dc_14xq_35w31n29b2}
+\]
+
+There is no factor \(|\lambda|^b\) in
+(4.845dc_14xq_35w31n29b2).  This is precisely why normalized
+\(\xi\partial_\xi\), rather than unnormalized \(\partial_\xi\), must
+be retained.  On the Fourier side,
+
+\[
+ \boxed{
+ (\xi\partial_\xi)^b\widehat\Phi_2
+ =(-1)^b\widehat{(\partial_y y)^b\Phi}_2,\qquad
+ (2\pi i\xi)^J(\xi\partial_\xi)^b\widehat\Phi_2
+ =(-1)^b
+ \widehat{\partial_y^J(\partial_y y)^b\Phi}_2.}
+\tag{4.845dc_14xq_35w31n29b3}
+\]
+
+Here \((\partial_y y)f:=\partial_y(yf)\).  Consequently, amplitude
+derivatives through order \(m\) and Fourier decay through order \(J\)
+require only the already available physical-kernel derivatives
+
+\[
+ 0\leq a\leq m\quad\text{in }x,
+ \qquad
+ 0\leq b\leq J+m\quad\text{in }y.
+\tag{4.845dc_14xq_35w31n29b4}
+\]
+
+Their bound is \((\log(3T))^{C_{m,J,W}}\), uniformly in
+\(j,A,e,r\) and hence uniformly in \(\lambda\).  Finally set
+
+\[
+ b_\lambda(t):=t^{-2}G_\lambda(t/X).
+\]
+
+On the fixed support \(t\asymp X\), (4.845dc_14xq_35w31n29b2) with
+\(m=1\) gives the exact scale ledger
+
+\[
+ \boxed{
+ \|b_\lambda\|_\infty
+ +\int_{t\asymp X}|b_\lambda'(t)|\,dt
+ \ll_W X^{-2}(\log(3T))^{C_{1,J,W}}.}
+\tag{4.845dc_14xq_35w31n29b5}
+\]
+
+Thus Abel summation against a maximal Möbius partial sum of size
+\(X(\log(3T))^{-M}\) produces
+\(X^{-1}(\log(3T))^{-M+C_{1,J,W}}\), with no hidden Poisson-mode
+power.  MRSTT, the cubic Taylor estimate and the exact sliding identity
+therefore give, after increasing its arbitrary logarithmic saving,
+uniformly for every retained critical mode,
 
 \[
  \sum_n\frac{\mu(n)}{n^2}W\!\left(\frac{rne}{S}\right)
