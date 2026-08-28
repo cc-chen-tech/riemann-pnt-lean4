@@ -21117,8 +21117,9 @@ exceptional set.  Set \(Y=X^{2/3}\).  On every interval
  \tag{4.845dc_14xq_35w31j}
 \]
 
-[Matomäki--Radziwiłł--Shao--Tao--Teräväinen, Corollary 1.2(i)](https://arxiv.org/abs/2411.05770)
-applies with \(\theta=1/3\) and \(\varepsilon=1/12\), since
+[Matomäki--Radziwiłł--Shao--Tao--Teräväinen, Theorem 1.1(i)](https://arxiv.org/html/2411.05770v2#S1.Thmtheorem1.1)
+applies in its maximal form with \(\theta=1/3\) and
+\(\varepsilon=1/12\), since
 
 \[
  \frac23-\left(\frac13+\frac1{12}\right)=\frac14,
@@ -21808,8 +21809,8 @@ global proof status and \((\mathrm{LCPE}_2)\) therefore remain open.
 ### 4.109zjaced000f Cubic reciprocal windows cover the full power polytope
 
 The preceding vertex-by-vertex ledger is unnecessary once the Taylor
-degree is allowed to change.  MRSTT Corollary 1.2(i), deduced from
-Theorem 1.1, is uniform for an arbitrary family of real polynomial
+degree is allowed to change.  MRSTT Theorem 1.1(i) is uniform for an
+arbitrary family of real polynomial
 phases of any fixed degree.  Hence the quadratic phase used above may
 be replaced by a cubic polynomial without changing the interval condition
 \(X^{1/3+\varepsilon}\leq Y\leq X^{1-\varepsilon}\).
@@ -21910,14 +21911,99 @@ and exact inverse Poisson on the complete axes gives at least
 \]
 
 The two density errors continue to save \(\eta/2\) and \(3\eta/2\).
-The subcritical entry box has arbitrary logarithmic saving, and the
-critical \(c\)-Poisson mode count is polylogarithmic exactly as before.
-All constants are now fixed uniformly over the compact rational
+The remaining endpoint input is the following complete local lemma,
+with the physical weights and the order of summation fixed.  Put
+
+\[
+ S=eD,\qquad d=rn,\qquad X=\frac Dr=\frac{S}{er},
+ \qquad P=T^p.
+\tag{4.845dc_14xq_35w31n29a}
+\]
+
+Before inserting the original outer coefficient \(A^{-1}\), Poisson
+summation in the complementary divisor gives the exact finite identity
+
+\[
+ \boxed{
+ \mathcal C_{A,e,r,k,l}
+ =\frac{A}{r^2e^2}\sum_{j\in\mathbb Z}\sum_n
+ \frac{\mu(n)}{n^2}W\!\left(\frac{rne}{S}\right)
+ \widehat\Phi_2\!\left(\frac nX,\frac{jA}{rn}\right)
+ e\!\left(-\frac{jAkl}{rn}\right).}
+\tag{4.845dc_14xq_35w31n29b}
+\]
+
+Thus the phase sign is negative, and none of
+\(W(rne/S)\), \(n^{-2}\),
+\(\widehat\Phi_2(n/X,jA/(rn))\), the two mollifier tapers
+\(p_N(qr_{\rm entry})p_N(qs_{\rm entry})\), or the dyadic cutoffs in
+\(A,e,r,k,l,j,n\) is discarded.  Their normalized derivatives cost at
+most a fixed power of \(\log(3T)\).  MRSTT, the cubic Taylor estimate,
+the sliding identity, and partial summation therefore give, uniformly
+for every retained critical mode,
+
+\[
+ \sum_n\frac{\mu(n)}{n^2}W\!\left(\frac{rne}{S}\right)
+ \widehat\Phi_2\!\left(\frac nX,\frac{jA}{rn}\right)
+ e\!\left(-\frac{jAkl}{rn}\right)
+ \ll_{M,W}X^{-1}(\log(3T))^{-M}.
+\tag{4.845dc_14xq_35w31n29c}
+\]
+
+Because \(X^{-1}=er/S\), the prefactor in
+(4.845dc_14xq_35w31n29b) becomes exactly
+
+\[
+ \frac{A}{r^2e^2}X^{-1}=\frac{A}{reS}.
+\tag{4.845dc_14xq_35w31n29d}
+\]
+
+The outer \(A^{-1}\) cancels this \(A\); summing a dyadic box
+\(A\asymp A_0\) consequently leaves \(A_0/(reS)\).  Together with the
+subcritical contribution, the complete cofactor ledger is
+
+\[
+ \boxed{
+ \sum_e\left(\frac1{e^2}+\frac{A_0}{eS}\right)
+ \sum_{\substack{r\le D^{\rho_Q}\\r\;Ae\text{-smooth}}}\frac1r,}
+\tag{4.845dc_14xq_35w31n29e}
+\]
+
+which costs only logarithms.  Finally, the physical normalization is
+an identity, not an exponent inequality:
+
+\[
+ \boxed{T^{a-u}P=T^{a-u}T^{2u-a}=T^u.}
+\tag{4.845dc_14xq_35w31n29f}
+\]
+
+For a fully numerical logarithmic witness, charge
+\(C_W=20\) for all fixed physical-weight seminorms and
+\(C_{\rm agg}=7\) for the six dyadic sums and harmonic \(q\)-sum.
+Choose the subcritical cutoff \(K_0=40\), charge \(C_j=4\) for the
+critical Poisson modes, and then request the MRSTT saving \(M=80\).
+The two disjoint entry ranges retain respectively
+
+\[
+ K_0-C_W-C_{\rm agg}=13,
+ \qquad
+ M-K_0-C_j-C_W-C_{\rm agg}=9,
+\tag{4.845dc_14xq_35w31n29g}
+\]
+
+both strictly larger than the target logarithmic saving \(1\).  This
+nested choice is essential: requesting only \(M=60\) would leave the
+critical exponent \(-11\), and the executable audit rejects the box.
+All constants are therefore fixed uniformly over the compact rational
 admissibility polytope.
 
-Consequently the cubic reciprocal-phase argument covers every
+Consequently the local endpoint lemma and the cubic reciprocal-phase
+argument cover every
 power-scale face and interior cell, not merely all vertices.  The
-interface cubic_reciprocal_full_polytope_audit records
+interfaces cubic_reciprocal_endpoint_dispersion_audit and
+cubic_reciprocal_full_polytope_audit record the exact physical ledger,
+the two net logarithmic savings \(13\) and \(9\),
+endpoint_dispersion_local_lemma_proved=True,
 all_power_scale_faces_and_interiors_covered=True and
 all_dyadic_parameter_cells_enumerated=True.
 
@@ -21966,14 +22052,25 @@ and the normalization is still exact:
 Thus the logarithmic endpoint has the same power-scale target as v09.
 Every additional factor in (4.845dc_14xq_35w31n30)--(4.845dc_14xq_35w31n32)
 is a fixed power of \(\log T\).  The cubic Taylor error retains the
-fixed power margin (4.845dc_14xq_35w31n27), and MRSTT supplies
-arbitrary prescribed logarithmic saving uniformly in the cubic
-coefficients.  Requesting \((\log T)^{-40}\) and charging the complete
-QCT, dyadic, cofactor, Fourier-mode and transform-tail ledger by the
-conservative factor \((\log T)^{20}\) leaves
-\((\log T)^{-20}\).  The dyadic shell \(q\asymp T^2\) satisfies
-\(\sum q^{-1}\ll1\), so no further power or endpoint logarithm is
-required.
+fixed power margin (4.845dc_14xq_35w31n27), and the local lemma
+(4.845dc_14xq_35w31n29a)--(4.845dc_14xq_35w31n29g) applies without
+changing any physical weight.  The logarithmic choices must remain
+nested.  The fixed weight/seminorm charge is \(C_W=20\); the six dyadic
+sums and harmonic \(q\)-sum cost \(C_{\rm agg}=7\); first choose
+\(K_0=40\), then charge \(C_j=4\) for the critical \(c\)-Poisson modes,
+and finally request \(M=80\) from MRSTT.  Hence
+
+\[
+ \boxed{
+ B_{\rm sub}=40-20-7=13,
+ \qquad
+ B_{\rm crit}=80-40-4-20-7=9>1.}
+\tag{4.845dc_14xq_35w31n32a}
+\]
+
+The dyadic shell \(q\asymp T^2\) satisfies \(\sum q^{-1}\ll1\); that
+cost is already dominated by the declared aggregation allowance and
+no unrecorded endpoint logarithm remains.
 
 The ordering is important.  Apply complementary-divisor \(c\)-Poisson
 and the cubic reciprocal-phase estimate to the exact MMKLS expression
@@ -21984,10 +22081,12 @@ variance statement (4.240) may remain open without obstructing the
 original signed sum.
 
 The interface cubic_reciprocal_lcpe2_audit records
+endpoint_dispersion_local_lemma_proved=True,
 centered_product_energy_gate_bypassed_not_assumed=True,
 centered_product_energy_estimate_proved=False, and
 lcpe2_covered_unconditionally=True.  It also records the bounded
-dyadic \(q\)-sum and the full transform-tail log ledger.  This removes
+dyadic \(q\)-sum, the two explicit net savings \(13\) and \(9\), and
+the full transform-tail log ledger.  This removes
 the last logarithmic endpoint left outside the full power-polytope
 coverage.  The next step is the final upstream reassembly audit; no
 asymptotic is asserted in this subsection alone.

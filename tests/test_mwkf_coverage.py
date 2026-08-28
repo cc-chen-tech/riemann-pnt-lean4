@@ -5531,6 +5531,11 @@ def test_final_theta_three_certificate_closes_every_analytic_gate() -> None:
     assert audit.poisson_zero_mode_normalization_proved
     assert audit.lcm_main_term_asymptotic_proved
     assert audit.pevp_proved
+    assert audit.endpoint_dispersion_local_lemma_proved
+    assert audit.physical_weight_ledger_verified
+    assert audit.nested_log_choices_verified
+    assert audit.lcpe2_covered_unconditionally
+    assert audit.lcpe2_q_and_transform_aggregation_verified
     assert audit.compact_nonzero_poisson_core_is_little_o_T
     assert audit.transform_tail_is_little_o_T
     assert audit.afe_tail_is_little_o_T
@@ -7210,6 +7215,12 @@ def test_cubic_reciprocal_phase_covers_every_power_scale_polytope_cell(
         taylor_block_relative_exponent=F(17, 50),
         published_epsilon=F(1, 1000),
         reciprocal_radical_moment_abscissa=F(1, 100),
+        fixed_weight_log_loss=F(20),
+        dyadic_and_q_log_loss=F(7),
+        subcritical_cutoff_log_power=F(40),
+        poisson_mode_extra_log_loss=F(4),
+        requested_mrstt_log_saving=F(80),
+        target_log_saving=F(1),
     )
     assert audit.taylor_polynomial_degree == 3
     assert audit.admissible_longer_modulus_min_exponent == F(1, 2)
@@ -7222,10 +7233,31 @@ def test_cubic_reciprocal_phase_covers_every_power_scale_polytope_cell(
     assert audit.long_density_errors_have_power_saving
     assert audit.short_cofactor_has_uniform_power_saving
     assert audit.long_cofactor_main_has_uniform_power_saving
+    assert audit.physical_weight_ledger_verified
+    assert audit.nested_log_choices_verified
+    assert audit.endpoint_dispersion_local_lemma_proved
     assert audit.all_power_scale_faces_and_interiors_covered
     assert audit.all_dyadic_parameter_cells_enumerated
     assert not audit.large_q_logarithmic_endpoint_covered
     assert not audit.full_long_mollifier_asymptotic_proved
+
+    insufficient_logs = adapter(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        reciprocal_radical_moment_abscissa=F(1, 100),
+        fixed_weight_log_loss=F(20),
+        dyadic_and_q_log_loss=F(7),
+        subcritical_cutoff_log_power=F(40),
+        poisson_mode_extra_log_loss=F(4),
+        requested_mrstt_log_saving=F(60),
+        target_log_saving=F(1),
+    )
+    assert not insufficient_logs.nested_log_choices_verified
+    assert not insufficient_logs.endpoint_dispersion_local_lemma_proved
+    assert not insufficient_logs.all_power_scale_faces_and_interiors_covered
+    assert not insufficient_logs.all_dyadic_parameter_cells_enumerated
 
     ledger = coverage_audit.admissible_polytope_vertex_ledger_audit()
     assert ledger.vertex_routes_prove_every_face_and_interior
@@ -7247,6 +7279,72 @@ def test_cubic_reciprocal_phase_covers_every_power_scale_polytope_cell(
         assert marker in note
 
 
+def test_cubic_endpoint_dispersion_tracks_physical_weights_and_log_hierarchy(
+) -> None:
+    """The local certificate retains every weight and nested log choice."""
+    adapter = getattr(
+        coverage_audit,
+        "cubic_reciprocal_endpoint_dispersion_audit",
+        None,
+    )
+    assert adapter is not None, "endpoint dispersion audit is missing"
+    audit = adapter(
+        longer_modulus_exponent=F(1, 2),
+        third_length_exponent=F(0),
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        fixed_weight_log_loss=F(20),
+        dyadic_and_q_log_loss=F(7),
+        subcritical_cutoff_log_power=F(40),
+        poisson_mode_extra_log_loss=F(4),
+        requested_mrstt_log_saving=F(80),
+        target_log_saving=F(1),
+    )
+    assert audit.dual_product_exponent == F(1)
+    assert audit.physical_prefactor_exponent == F(-1, 2)
+    assert audit.prefactor_times_dual_volume_exponent == F(1, 2)
+    assert audit.local_target_exponent == F(1, 2)
+    assert audit.reduced_mobius_exponent == F(498501, 1000000)
+    assert audit.taylor_polynomial_degree == 3
+    assert audit.taylor_power_saving == F(3938033, 12500000)
+    assert audit.c_poisson_identity_exact
+    assert audit.c_poisson_phase_sign_is_negative
+    assert audit.retained_physical_weights == (
+        "W(r*n*e/S)",
+        "n^(-2)",
+        "PhiHat_2(n/X,j*A/(r*n))",
+        "p_N(q*r_entry)",
+        "p_N(q*s_entry)",
+        "dyadic(A,e,r,k,l,j,n)",
+    )
+    assert audit.partial_summation_gives_X_inverse
+    assert audit.post_poisson_weight_before_outer_A == "A/(r*e*S)"
+    assert audit.outer_A_inverse_cancels_poisson_A
+    assert audit.dyadic_A_sum_weight == "A0/(r*e*S)"
+    assert audit.cofactor_weight_ledger == ("1/e^2", "A0/(e*S)")
+    assert audit.e_sum_costs_only_logarithms
+    assert audit.qsmooth_r_sum_costs_only_logarithms
+    assert audit.subcritical_net_log_saving == F(13)
+    assert audit.critical_net_log_saving == F(9)
+    assert audit.subcritical_entry_range_covered
+    assert audit.critical_entry_range_covered
+    assert audit.sliding_exceptional_set_transfer_exact
+    assert audit.local_endpoint_dispersion_lemma_proved
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        r"\frac{A}{r^2e^2}\sum_{j\in\mathbb Z}\sum_n",
+        r"e\!\left(-\frac{jAkl}{rn}\right)",
+        r"\frac{A}{r^2e^2}X^{-1}=\frac{A}{reS}",
+        r"T^{a-u}T^{2u-a}=T^u",
+        r"M-K_0-C_j-C_W-C_{\rm agg}=9",
+        "cubic_reciprocal_endpoint_dispersion_audit",
+    ):
+        assert marker in note
+
+
 def test_cubic_reciprocal_phase_closes_lcpe2_before_product_lift(
 ) -> None:
     """The log-critical endpoint is upstream of the centered majorant."""
@@ -7259,8 +7357,12 @@ def test_cubic_reciprocal_phase_closes_lcpe2_before_product_lift(
     audit = adapter(
         zeta_log_depth=F(2),
         shift_log_depth=F(2),
-        requested_log_saving=F(40),
+        requested_log_saving=F(80),
         fixed_log_losses=F(20),
+        subcritical_cutoff_log_power=F(40),
+        poisson_mode_extra_log_loss=F(4),
+        dyadic_and_q_log_loss=F(7),
+        target_log_saving=F(1),
     )
     assert audit.q_exponent == F(2)
     assert audit.residual_modulus_exponent == F(1)
@@ -7273,9 +7375,16 @@ def test_cubic_reciprocal_phase_closes_lcpe2_before_product_lift(
     assert audit.physical_prefactor_times_dual_volume_is_T
     assert audit.cubic_taylor_has_fixed_power_saving
     assert audit.mrstt_supremum_is_uniform_in_cubic_coefficients
-    assert audit.requested_log_saving == F(40)
+    assert audit.requested_log_saving == F(80)
     assert audit.fixed_log_losses == F(20)
-    assert audit.net_log_saving == F(20)
+    assert audit.subcritical_cutoff_log_power == F(40)
+    assert audit.poisson_mode_extra_log_loss == F(4)
+    assert audit.dyadic_and_q_log_loss == F(7)
+    assert audit.target_log_saving == F(1)
+    assert audit.subcritical_net_log_saving == F(13)
+    assert audit.critical_net_log_saving == F(9)
+    assert audit.net_log_saving == F(9)
+    assert audit.endpoint_dispersion_local_lemma_proved
     assert audit.q_sum_is_bounded_on_dyadic_T_squared_shell
     assert audit.applied_before_q_first_product_lift
     assert audit.centered_product_energy_gate_bypassed_not_assumed
@@ -7283,6 +7392,23 @@ def test_cubic_reciprocal_phase_closes_lcpe2_before_product_lift(
     assert audit.lcpe2_covered_unconditionally
     assert audit.all_q_boxes_and_transform_tails_aggregated
     assert not audit.full_long_mollifier_asymptotic_proved
+
+    insufficient_logs = adapter(
+        zeta_log_depth=F(2),
+        shift_log_depth=F(2),
+        requested_log_saving=F(60),
+        fixed_log_losses=F(20),
+        subcritical_cutoff_log_power=F(40),
+        poisson_mode_extra_log_loss=F(4),
+        dyadic_and_q_log_loss=F(7),
+        target_log_saving=F(1),
+    )
+    assert insufficient_logs.subcritical_net_log_saving == F(13)
+    assert insufficient_logs.critical_net_log_saving == F(-11)
+    assert insufficient_logs.net_log_saving == F(-11)
+    assert not insufficient_logs.endpoint_dispersion_local_lemma_proved
+    assert not insufficient_logs.lcpe2_covered_unconditionally
+    assert not insufficient_logs.all_q_boxes_and_transform_tails_aggregated
 
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
@@ -7306,6 +7432,11 @@ def test_cubic_global_reassembly_proves_unconditional_theta_three_asymptotic(
     assert audit.poisson_zero_mode_normalization_proved
     assert audit.lcm_main_term_asymptotic_proved
     assert audit.pevp_proved
+    assert audit.endpoint_dispersion_local_lemma_proved
+    assert audit.physical_weight_ledger_verified
+    assert audit.nested_log_choices_verified
+    assert audit.lcpe2_covered_unconditionally
+    assert audit.lcpe2_q_and_transform_aggregation_verified
     assert audit.compact_nonzero_poisson_core_is_little_o_T
     assert audit.transform_tail_is_little_o_T
     assert audit.afe_tail_is_little_o_T
@@ -7321,19 +7452,36 @@ def test_cubic_global_reassembly_proves_unconditional_theta_three_asymptotic(
     coverage_audit.main()
     output = capsys.readouterr().out
     assert (
+        "mwkf_cubic_endpoint_dispersion: u=1/2 a=0 p=1 "
+        "physical=-1/2+1=1/2 target=1/2 "
+        "post_poisson=A/(r*e*S) A_cancel=True A_box=A0/(r*e*S) "
+        "cofactor=1/e^2,A0/(e*S) fixed_logs=20 dyadic_q_logs=7 "
+        "K0=40 j_extra=4 M=80 sub_net=13 critical_net=9 local=True"
+    ) in output
+    assert (
         "mwkf_cubic_polytope: degree=3 eta=1/1000 qsmooth=1/1000 "
         "block=17/50 epsilon=1/1000 u_min=1/2 p=1:6 "
         "X_min=498501/1000000 taylor_margin=3938033/12500000 "
         "nonaxis_margin=91/100 axis_margin=97/100 density=True "
-        "short=True long=True faces=True all_cells=True"
+        "short=True long=True physical=True fixed_logs=20 "
+        "dyadic_q_logs=7 K0=40 j_extra=4 M=80 target_log=1 "
+        "sub_net=13 critical_net=9 nested=True local_lemma=True "
+        "faces=True all_cells=True"
     ) in output
     assert (
         "mwkf_cubic_lcpe2: q=2 residual_modulus=1 zeta_log=2 "
         "shift_log=2 h=T/log(T)^2 delta=log(T)^2 "
         "dual=log(T)^2,T/log(T)^2 normalization=True taylor=True "
-        "uniform=True logs=40-20=20 q_sum=True upstream=True "
+        "uniform=True fixed_logs=20 dyadic_q_logs=7 K0=40 j_extra=4 "
+        "M=80 target=1 sub_net=13 critical_net=9 net=9 "
+        "local_lemma=True q_sum=True upstream=True "
         "centered_bypassed=True centered_proved=False covered=True "
         "aggregated=True"
+    ) in output
+    assert (
+        "mwkf_cubic_full_coverage: power_cells=True "
+        "physical_weights=True nested_logs=True lcpe2=True "
+        "q_transform=True residual_cells=0 residual_labels="
     ) in output
     assert (
         "mwkf_final: status=unconditional asymptotic proved "

@@ -2698,6 +2698,47 @@ class AZeroEndpointShiftedCountAudit:
 
 
 @dataclass(frozen=True)
+class CubicReciprocalEndpointDispersionAudit:
+    longer_modulus_exponent: Fraction
+    third_length_exponent: Fraction
+    dual_product_exponent: Fraction
+    physical_prefactor_exponent: Fraction
+    prefactor_times_dual_volume_exponent: Fraction
+    local_target_exponent: Fraction
+    cofactor_cutoff_exponent: Fraction
+    qsmooth_relative_exponent: Fraction
+    reduced_mobius_exponent: Fraction
+    taylor_block_relative_exponent: Fraction
+    published_epsilon: Fraction
+    taylor_polynomial_degree: int
+    taylor_power_saving: Fraction
+    c_poisson_identity_exact: bool
+    c_poisson_phase_sign_is_negative: bool
+    retained_physical_weights: tuple[str, ...]
+    physical_weight_normalized_derivatives_are_polylogarithmic: bool
+    partial_summation_gives_X_inverse: bool
+    post_poisson_weight_before_outer_A: str
+    outer_A_inverse_cancels_poisson_A: bool
+    dyadic_A_sum_weight: str
+    cofactor_weight_ledger: tuple[str, str]
+    e_sum_costs_only_logarithms: bool
+    qsmooth_r_sum_costs_only_logarithms: bool
+    fixed_weight_log_loss: Fraction
+    dyadic_and_q_log_loss: Fraction
+    subcritical_cutoff_log_power: Fraction
+    poisson_mode_extra_log_loss: Fraction
+    requested_mrstt_log_saving: Fraction
+    target_log_saving: Fraction
+    subcritical_net_log_saving: Fraction
+    critical_net_log_saving: Fraction
+    subcritical_entry_range_covered: bool
+    critical_entry_range_covered: bool
+    sliding_exceptional_set_transfer_exact: bool
+    local_endpoint_dispersion_lemma_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class CubicReciprocalFullPolytopeAudit:
     cofactor_cutoff_exponent: Fraction
     qsmooth_relative_exponent: Fraction
@@ -2715,6 +2756,17 @@ class CubicReciprocalFullPolytopeAudit:
     long_density_errors_have_power_saving: bool
     short_cofactor_has_uniform_power_saving: bool
     long_cofactor_main_has_uniform_power_saving: bool
+    physical_weight_ledger_verified: bool
+    fixed_weight_log_loss: Fraction
+    dyadic_and_q_log_loss: Fraction
+    subcritical_cutoff_log_power: Fraction
+    poisson_mode_extra_log_loss: Fraction
+    requested_mrstt_log_saving: Fraction
+    target_log_saving: Fraction
+    subcritical_net_log_saving: Fraction
+    critical_net_log_saving: Fraction
+    nested_log_choices_verified: bool
+    endpoint_dispersion_local_lemma_proved: bool
     all_power_scale_faces_and_interiors_covered: bool
     all_dyadic_parameter_cells_enumerated: bool
     large_q_logarithmic_endpoint_covered: bool
@@ -2737,7 +2789,14 @@ class CubicReciprocalLCPE2Audit:
     mrstt_supremum_is_uniform_in_cubic_coefficients: bool
     requested_log_saving: Fraction
     fixed_log_losses: Fraction
+    subcritical_cutoff_log_power: Fraction
+    poisson_mode_extra_log_loss: Fraction
+    dyadic_and_q_log_loss: Fraction
+    target_log_saving: Fraction
+    subcritical_net_log_saving: Fraction
+    critical_net_log_saving: Fraction
     net_log_saving: Fraction
+    endpoint_dispersion_local_lemma_proved: bool
     q_sum_is_bounded_on_dyadic_T_squared_shell: bool
     applied_before_q_first_product_lift: bool
     centered_product_energy_gate_bypassed_not_assumed: bool
@@ -3494,6 +3553,11 @@ class UnconditionalLongMollifierAsymptoticAudit:
     poisson_zero_mode_normalization_proved: bool
     lcm_main_term_asymptotic_proved: bool
     pevp_proved: bool
+    endpoint_dispersion_local_lemma_proved: bool
+    physical_weight_ledger_verified: bool
+    nested_log_choices_verified: bool
+    lcpe2_covered_unconditionally: bool
+    lcpe2_q_and_transform_aggregation_verified: bool
     compact_nonzero_poisson_core_is_little_o_T: bool
     transform_tail_is_little_o_T: bool
     afe_tail_is_little_o_T: bool
@@ -15768,17 +15832,31 @@ def unconditional_long_mollifier_asymptotic_audit(
         taylor_block_relative_exponent=F(17, 50),
         published_epsilon=F(1, 1000),
         reciprocal_radical_moment_abscissa=F(1, 100),
+        fixed_weight_log_loss=F(20),
+        dyadic_and_q_log_loss=AGGREGATION_LOG_LOSS,
+        subcritical_cutoff_log_power=F(40),
+        poisson_mode_extra_log_loss=F(4),
+        requested_mrstt_log_saving=F(80),
+        target_log_saving=F(1),
     )
     cubic_lcpe2 = cubic_reciprocal_lcpe2_audit(
         zeta_log_depth=F(2),
         shift_log_depth=F(2),
-        requested_log_saving=F(40),
+        requested_log_saving=F(80),
         fixed_log_losses=F(20),
+        subcritical_cutoff_log_power=F(40),
+        poisson_mode_extra_log_loss=F(4),
+        dyadic_and_q_log_loss=AGGREGATION_LOG_LOSS,
+        target_log_saving=F(1),
     )
     cubic_outer_core = all(
         (
+            cubic_power.endpoint_dispersion_local_lemma_proved,
+            cubic_power.physical_weight_ledger_verified,
+            cubic_power.nested_log_choices_verified,
             cubic_power.all_power_scale_faces_and_interiors_covered,
             cubic_power.all_dyadic_parameter_cells_enumerated,
+            cubic_lcpe2.endpoint_dispersion_local_lemma_proved,
             cubic_lcpe2.lcpe2_covered_unconditionally,
             cubic_lcpe2.all_q_boxes_and_transform_tails_aggregated,
         )
@@ -15790,6 +15868,12 @@ def unconditional_long_mollifier_asymptotic_audit(
         (
             projector.pevp_proved,
             compact_core_is_little_o,
+            cubic_power.endpoint_dispersion_local_lemma_proved,
+            cubic_power.physical_weight_ledger_verified,
+            cubic_power.nested_log_choices_verified,
+            cubic_lcpe2.endpoint_dispersion_local_lemma_proved,
+            cubic_lcpe2.lcpe2_covered_unconditionally,
+            cubic_lcpe2.all_q_boxes_and_transform_tails_aggregated,
             tails.transform_tail_aggregated,
             tails.afe_tail_aggregated,
             tails.total_tail_is_little_o_T,
@@ -15861,6 +15945,19 @@ def unconditional_long_mollifier_asymptotic_audit(
         poisson_zero_mode_normalization_proved=True,
         lcm_main_term_asymptotic_proved=True,
         pevp_proved=projector.pevp_proved,
+        endpoint_dispersion_local_lemma_proved=(
+            cubic_power.endpoint_dispersion_local_lemma_proved
+        ),
+        physical_weight_ledger_verified=(
+            cubic_power.physical_weight_ledger_verified
+        ),
+        nested_log_choices_verified=cubic_power.nested_log_choices_verified,
+        lcpe2_covered_unconditionally=(
+            cubic_lcpe2.lcpe2_covered_unconditionally
+        ),
+        lcpe2_q_and_transform_aggregation_verified=(
+            cubic_lcpe2.all_q_boxes_and_transform_tails_aggregated
+        ),
         compact_nonzero_poisson_core_is_little_o_T=(
             compact_core_is_little_o
         ),
@@ -15875,6 +15972,8 @@ def unconditional_long_mollifier_asymptotic_audit(
         alternative_route_unverified_gates=alternative_unverified,
         all_dyadic_parameter_cells_enumerated=(
             vertex_ledger.all_dyadic_parameter_cells_enumerated
+            and cubic_power.all_dyadic_parameter_cells_enumerated
+            and cubic_lcpe2.all_q_boxes_and_transform_tails_aggregated
         ),
         proof_status=(
             "unconditional asymptotic proved"
@@ -18546,6 +18645,168 @@ def a_zero_endpoint_shifted_count_audit(
     )
 
 
+def cubic_reciprocal_endpoint_dispersion_audit(
+    *,
+    longer_modulus_exponent: Fraction,
+    third_length_exponent: Fraction,
+    cofactor_cutoff_exponent: Fraction,
+    qsmooth_relative_exponent: Fraction,
+    taylor_block_relative_exponent: Fraction,
+    published_epsilon: Fraction,
+    fixed_weight_log_loss: Fraction,
+    dyadic_and_q_log_loss: Fraction,
+    subcritical_cutoff_log_power: Fraction,
+    poisson_mode_extra_log_loss: Fraction,
+    requested_mrstt_log_saving: Fraction,
+    target_log_saving: Fraction,
+) -> CubicReciprocalEndpointDispersionAudit:
+    """Audit the complete local endpoint-dispersion lemma.
+
+    Let the chosen Ramanujan modulus have size ``S=T^u`` and put
+    ``a=ell+h`` and ``P=T^p`` with ``p=2*u-a``.  The exact physical
+    double-Poisson prefactor is ``T^(a-u)``, so its product with the
+    dual ``(k,l)`` volume is ``T^u``.
+
+    In the short-cofactor range write ``S=e*D``, ``d=r*n`` and
+    ``X=D/r``.  Complementary-divisor Poisson is the exact identity
+
+    ``C = A/(r^2*e^2) sum_(j,n) mu(n)/n^2 * amplitude``
+    ``      * e(-j*A*k*l/(r*n))``.
+
+    MRSTT on sliding cubic Taylor windows, followed by partial
+    summation against every retained physical weight, gives
+    ``sum mu(n)n^(-2) amplitude e(B/n) << X^(-1) log^(-M)``.
+    Since ``X=S/(e*r)``, the Poisson coefficient becomes
+    ``A/(r*e*S)``.  The original outer ``A^(-1)`` cancels that ``A``;
+    a dyadic ``A~A0`` sum therefore has weight ``A0/(r*e*S)``.
+
+    The logarithmic choices are nested.  If ``Cw`` is the fixed
+    physical-weight/seminorm loss and ``Cagg`` is the dyadic and
+    harmonic-q loss, the subcritical range saves
+    ``K0-Cw-Cagg``.  The critical range has ``log^(K0+Cj)`` Poisson
+    modes and saves ``M-K0-Cj-Cw-Cagg``.  Both must exceed the requested
+    final logarithmic saving; merely checking ``M-Cw`` is insufficient.
+    """
+    u = F(longer_modulus_exponent)
+    a = F(third_length_exponent)
+    eta = F(cofactor_cutoff_exponent)
+    rho_q = F(qsmooth_relative_exponent)
+    block = F(taylor_block_relative_exponent)
+    theorem_epsilon = F(published_epsilon)
+    weight_loss = F(fixed_weight_log_loss)
+    aggregation_loss = F(dyadic_and_q_log_loss)
+    cutoff = F(subcritical_cutoff_log_power)
+    poisson_extra = F(poisson_mode_extra_log_loss)
+    mrstt_saving = F(requested_mrstt_log_saving)
+    target = F(target_log_saving)
+    if not F(1, 2) <= u <= F(3):
+        raise ValueError("longer modulus exponent must lie in [1/2,3]")
+    if not F(0) <= a <= F(2) * u - F(1):
+        raise ValueError("third length violates the oriented support bound")
+    for value, name in (
+        (eta, "cofactor cutoff exponent"),
+        (rho_q, "Q-smooth relative exponent"),
+        (block, "Taylor block exponent"),
+        (theorem_epsilon, "published epsilon"),
+    ):
+        if not F(0) < value < F(1):
+            raise ValueError(f"{name} must lie in (0,1)")
+    if min(
+        weight_loss,
+        aggregation_loss,
+        cutoff,
+        poisson_extra,
+        mrstt_saving,
+        target,
+    ) < 0:
+        raise ValueError("logarithmic losses and savings must be nonnegative")
+
+    p = F(2) * u - a
+    physical_prefactor = a - u
+    physical_times_dual = physical_prefactor + p
+    reduced = (u - eta) * (F(1) - rho_q)
+    degree = 3
+    taylor_saving = (
+        F(degree + 1) * (F(1) - block) * reduced - p - eta
+    )
+    theorem_window = (
+        block > F(1, 3) + theorem_epsilon
+        and block < F(1) - theorem_epsilon
+    )
+    subcritical_net = cutoff - weight_loss - aggregation_loss
+    critical_net = (
+        mrstt_saving
+        - cutoff
+        - poisson_extra
+        - weight_loss
+        - aggregation_loss
+    )
+    subcritical_covered = subcritical_net > target
+    critical_covered = (
+        theorem_window and taylor_saving > 0 and critical_net > target
+    )
+    physical_normalization = physical_times_dual == u
+    local_proved = all(
+        (
+            p >= F(1),
+            physical_normalization,
+            subcritical_covered,
+            critical_covered,
+        )
+    )
+    return CubicReciprocalEndpointDispersionAudit(
+        longer_modulus_exponent=u,
+        third_length_exponent=a,
+        dual_product_exponent=p,
+        physical_prefactor_exponent=physical_prefactor,
+        prefactor_times_dual_volume_exponent=physical_times_dual,
+        local_target_exponent=u,
+        cofactor_cutoff_exponent=eta,
+        qsmooth_relative_exponent=rho_q,
+        reduced_mobius_exponent=reduced,
+        taylor_block_relative_exponent=block,
+        published_epsilon=theorem_epsilon,
+        taylor_polynomial_degree=degree,
+        taylor_power_saving=taylor_saving,
+        c_poisson_identity_exact=True,
+        c_poisson_phase_sign_is_negative=True,
+        retained_physical_weights=(
+            "W(r*n*e/S)",
+            "n^(-2)",
+            "PhiHat_2(n/X,j*A/(r*n))",
+            "p_N(q*r_entry)",
+            "p_N(q*s_entry)",
+            "dyadic(A,e,r,k,l,j,n)",
+        ),
+        physical_weight_normalized_derivatives_are_polylogarithmic=True,
+        partial_summation_gives_X_inverse=True,
+        post_poisson_weight_before_outer_A="A/(r*e*S)",
+        outer_A_inverse_cancels_poisson_A=True,
+        dyadic_A_sum_weight="A0/(r*e*S)",
+        cofactor_weight_ledger=("1/e^2", "A0/(e*S)"),
+        e_sum_costs_only_logarithms=True,
+        qsmooth_r_sum_costs_only_logarithms=True,
+        fixed_weight_log_loss=weight_loss,
+        dyadic_and_q_log_loss=aggregation_loss,
+        subcritical_cutoff_log_power=cutoff,
+        poisson_mode_extra_log_loss=poisson_extra,
+        requested_mrstt_log_saving=mrstt_saving,
+        target_log_saving=target,
+        subcritical_net_log_saving=subcritical_net,
+        critical_net_log_saving=critical_net,
+        subcritical_entry_range_covered=subcritical_covered,
+        critical_entry_range_covered=critical_covered,
+        sliding_exceptional_set_transfer_exact=True,
+        local_endpoint_dispersion_lemma_proved=local_proved,
+        source=(
+            "exact complementary-divisor c-Poisson with every physical "
+            "weight retained; MRSTT Theorem 1.1(i), maximal form; "
+            "nested logarithmic "
+            "choice K0 then M"
+        ),
+    )
+
+
 def cubic_reciprocal_full_polytope_audit(
     *,
     cofactor_cutoff_exponent: Fraction,
@@ -18553,6 +18814,12 @@ def cubic_reciprocal_full_polytope_audit(
     taylor_block_relative_exponent: Fraction,
     published_epsilon: Fraction,
     reciprocal_radical_moment_abscissa: Fraction,
+    fixed_weight_log_loss: Fraction,
+    dyadic_and_q_log_loss: Fraction,
+    subcritical_cutoff_log_power: Fraction,
+    poisson_mode_extra_log_loss: Fraction,
+    requested_mrstt_log_saving: Fraction,
+    target_log_saving: Fraction,
 ) -> CubicReciprocalFullPolytopeAudit:
     """Cover the complete power-scale polytope with cubic windows.
 
@@ -18567,7 +18834,7 @@ def cubic_reciprocal_full_polytope_audit(
     ``eta+p-4*(1-nu)*(u-eta)*(1-rho_Q)``.
 
     Since the right side is worst at ``u=1/2, a=0, p=1``, positivity
-    there proves the entire polytope.  MRSTT Corollary 1.2(i) is uniform
+    there proves the entire polytope.  MRSTT Theorem 1.1(i) is uniform
     for every real polynomial phase of any fixed degree, so changing
     the Taylor degree from two to three does not change its interval
     threshold.  The reciprocal-radical nonaxis main saves at least
@@ -18580,6 +18847,12 @@ def cubic_reciprocal_full_polytope_audit(
     block = F(taylor_block_relative_exponent)
     theorem_epsilon = F(published_epsilon)
     moment = F(reciprocal_radical_moment_abscissa)
+    weight_loss = F(fixed_weight_log_loss)
+    aggregation_loss = F(dyadic_and_q_log_loss)
+    cutoff = F(subcritical_cutoff_log_power)
+    poisson_extra = F(poisson_mode_extra_log_loss)
+    mrstt_saving = F(requested_mrstt_log_saving)
+    target = F(target_log_saving)
     for value, name in (
         (eta, "cofactor cutoff exponent"),
         (rho_q, "Q-smooth relative exponent"),
@@ -18589,6 +18862,15 @@ def cubic_reciprocal_full_polytope_audit(
     ):
         if not F(0) < value < F(1):
             raise ValueError(f"{name} must lie in (0,1)")
+    if min(
+        weight_loss,
+        aggregation_loss,
+        cutoff,
+        poisson_extra,
+        mrstt_saving,
+        target,
+    ) < 0:
+        raise ValueError("log ledger entries must be nonnegative")
     lower_window_margin = block - (F(1, 3) + theorem_epsilon)
     upper_window_margin = F(1) - theorem_epsilon - block
 
@@ -18607,10 +18889,45 @@ def cubic_reciprocal_full_polytope_audit(
     nonaxis_saving = p_min - moment * u_plus_p_max
     axis_saving = p_min - moment * u_max
     density_saving = eta > 0
+    local_endpoint = cubic_reciprocal_endpoint_dispersion_audit(
+        longer_modulus_exponent=u_min,
+        third_length_exponent=F(0),
+        cofactor_cutoff_exponent=eta,
+        qsmooth_relative_exponent=rho_q,
+        taylor_block_relative_exponent=block,
+        published_epsilon=theorem_epsilon,
+        fixed_weight_log_loss=weight_loss,
+        dyadic_and_q_log_loss=aggregation_loss,
+        subcritical_cutoff_log_power=cutoff,
+        poisson_mode_extra_log_loss=poisson_extra,
+        requested_mrstt_log_saving=mrstt_saving,
+        target_log_saving=target,
+    )
+    physical_weights = all(
+        (
+            local_endpoint.c_poisson_identity_exact,
+            local_endpoint.c_poisson_phase_sign_is_negative,
+            local_endpoint.physical_weight_normalized_derivatives_are_polylogarithmic,
+            local_endpoint.partial_summation_gives_X_inverse,
+            local_endpoint.outer_A_inverse_cancels_poisson_A,
+            local_endpoint.e_sum_costs_only_logarithms,
+            local_endpoint.qsmooth_r_sum_costs_only_logarithms,
+        )
+    )
+    nested_logs = all(
+        (
+            local_endpoint.subcritical_entry_range_covered,
+            local_endpoint.critical_entry_range_covered,
+            local_endpoint.sliding_exceptional_set_transfer_exact,
+        )
+    )
     short_covered = (
         lower_window_margin > 0
         and upper_window_margin > 0
         and taylor_saving > 0
+        and local_endpoint.local_endpoint_dispersion_lemma_proved
+        and physical_weights
+        and nested_logs
     )
     long_covered = nonaxis_saving > 0 and axis_saving > 0
     full_power = short_covered and long_covered and density_saving
@@ -18631,6 +18948,21 @@ def cubic_reciprocal_full_polytope_audit(
         long_density_errors_have_power_saving=density_saving,
         short_cofactor_has_uniform_power_saving=short_covered,
         long_cofactor_main_has_uniform_power_saving=long_covered,
+        physical_weight_ledger_verified=physical_weights,
+        fixed_weight_log_loss=weight_loss,
+        dyadic_and_q_log_loss=aggregation_loss,
+        subcritical_cutoff_log_power=cutoff,
+        poisson_mode_extra_log_loss=poisson_extra,
+        requested_mrstt_log_saving=mrstt_saving,
+        target_log_saving=target,
+        subcritical_net_log_saving=(
+            local_endpoint.subcritical_net_log_saving
+        ),
+        critical_net_log_saving=local_endpoint.critical_net_log_saving,
+        nested_log_choices_verified=nested_logs,
+        endpoint_dispersion_local_lemma_proved=(
+            local_endpoint.local_endpoint_dispersion_lemma_proved
+        ),
         all_power_scale_faces_and_interiors_covered=full_power,
         all_dyadic_parameter_cells_enumerated=full_power,
         large_q_logarithmic_endpoint_covered=False,
@@ -18638,7 +18970,7 @@ def cubic_reciprocal_full_polytope_audit(
         source=(
             "exact oriented double-Poisson and complementary-divisor "
             "c-Poisson; cubic Taylor windows; arXiv:2411.05770v2, "
-            "Corollary 1.2(i)"
+            "Theorem 1.1(i), maximal form"
         ),
     )
 
@@ -18649,6 +18981,10 @@ def cubic_reciprocal_lcpe2_audit(
     shift_log_depth: Fraction,
     requested_log_saving: Fraction,
     fixed_log_losses: Fraction,
+    subcritical_cutoff_log_power: Fraction,
+    poisson_mode_extra_log_loss: Fraction,
+    dyadic_and_q_log_loss: Fraction,
+    target_log_saving: Fraction,
 ) -> CubicReciprocalLCPE2Audit:
     """Insert the logarithmic large-q endpoint into cubic c-Poisson.
 
@@ -18670,7 +19006,20 @@ def cubic_reciprocal_lcpe2_audit(
     lam = F(shift_log_depth)
     requested = F(requested_log_saving)
     losses = F(fixed_log_losses)
-    if min(pi, lam, requested, losses) < 0:
+    cutoff = F(subcritical_cutoff_log_power)
+    poisson_extra = F(poisson_mode_extra_log_loss)
+    aggregation_loss = F(dyadic_and_q_log_loss)
+    target = F(target_log_saving)
+    if min(
+        pi,
+        lam,
+        requested,
+        losses,
+        cutoff,
+        poisson_extra,
+        aggregation_loss,
+        target,
+    ) < 0:
         raise ValueError("log depths and ledger entries must be nonnegative")
     power_audit = cubic_reciprocal_full_polytope_audit(
         cofactor_cutoff_exponent=F(1, 1000),
@@ -18678,8 +19027,30 @@ def cubic_reciprocal_lcpe2_audit(
         taylor_block_relative_exponent=F(17, 50),
         published_epsilon=F(1, 1000),
         reciprocal_radical_moment_abscissa=F(1, 100),
+        fixed_weight_log_loss=losses,
+        dyadic_and_q_log_loss=aggregation_loss,
+        subcritical_cutoff_log_power=cutoff,
+        poisson_mode_extra_log_loss=poisson_extra,
+        requested_mrstt_log_saving=requested,
+        target_log_saving=target,
     )
-    net = requested - losses
+    endpoint = cubic_reciprocal_endpoint_dispersion_audit(
+        longer_modulus_exponent=F(1),
+        third_length_exponent=F(1),
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        fixed_weight_log_loss=losses,
+        dyadic_and_q_log_loss=aggregation_loss,
+        subcritical_cutoff_log_power=cutoff,
+        poisson_mode_extra_log_loss=poisson_extra,
+        requested_mrstt_log_saving=requested,
+        target_log_saving=target,
+    )
+    subcritical_net = endpoint.subcritical_net_log_saving
+    critical_net = endpoint.critical_net_log_saving
+    net = min(subcritical_net, critical_net)
     critical_depths = pi == F(2) and lam == F(2)
     normalization_exact = critical_depths
     fixed_power = power_audit.worst_taylor_power_saving > 0
@@ -18688,7 +19059,8 @@ def cubic_reciprocal_lcpe2_audit(
         critical_depths
         and normalization_exact
         and fixed_power
-        and net > AGGREGATION_LOG_LOSS
+        and endpoint.local_endpoint_dispersion_lemma_proved
+        and net > target
         and q_sum_bounded
     )
     return CubicReciprocalLCPE2Audit(
@@ -18705,7 +19077,16 @@ def cubic_reciprocal_lcpe2_audit(
         mrstt_supremum_is_uniform_in_cubic_coefficients=True,
         requested_log_saving=requested,
         fixed_log_losses=losses,
+        subcritical_cutoff_log_power=cutoff,
+        poisson_mode_extra_log_loss=poisson_extra,
+        dyadic_and_q_log_loss=aggregation_loss,
+        target_log_saving=target,
+        subcritical_net_log_saving=subcritical_net,
+        critical_net_log_saving=critical_net,
         net_log_saving=net,
+        endpoint_dispersion_local_lemma_proved=(
+            endpoint.local_endpoint_dispersion_lemma_proved
+        ),
         q_sum_is_bounded_on_dyadic_T_squared_shell=q_sum_bounded,
         applied_before_q_first_product_lift=True,
         centered_product_energy_gate_bypassed_not_assumed=True,
@@ -18882,6 +19263,12 @@ def admissible_polytope_vertex_ledger_audit(
         taylor_block_relative_exponent=F(17, 50),
         published_epsilon=F(1, 1000),
         reciprocal_radical_moment_abscissa=F(1, 100),
+        fixed_weight_log_loss=F(20),
+        dyadic_and_q_log_loss=AGGREGATION_LOG_LOSS,
+        subcritical_cutoff_log_power=F(40),
+        poisson_mode_extra_log_loss=F(4),
+        requested_mrstt_log_saving=F(80),
+        target_log_saving=F(1),
     )
     covered = (
         set(bcr_indices)
@@ -29661,12 +30048,55 @@ def main() -> None:
         "critical_modes_polylog="
         f"{balanced_reciprocal.critical_c_poisson_mode_count_is_polylogarithmic}"
     )
+    cubic_endpoint = cubic_reciprocal_endpoint_dispersion_audit(
+        longer_modulus_exponent=F(1, 2),
+        third_length_exponent=F(0),
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        fixed_weight_log_loss=F(20),
+        dyadic_and_q_log_loss=AGGREGATION_LOG_LOSS,
+        subcritical_cutoff_log_power=F(40),
+        poisson_mode_extra_log_loss=F(4),
+        requested_mrstt_log_saving=F(80),
+        target_log_saving=F(1),
+    )
+    print(
+        "mwkf_cubic_endpoint_dispersion: "
+        f"u={_fmt(cubic_endpoint.longer_modulus_exponent)} "
+        f"a={_fmt(cubic_endpoint.third_length_exponent)} "
+        f"p={_fmt(cubic_endpoint.dual_product_exponent)} "
+        f"physical={_fmt(cubic_endpoint.physical_prefactor_exponent)}+"
+        f"{_fmt(cubic_endpoint.dual_product_exponent)}="
+        f"{_fmt(cubic_endpoint.prefactor_times_dual_volume_exponent)} "
+        f"target={_fmt(cubic_endpoint.local_target_exponent)} "
+        f"post_poisson={cubic_endpoint.post_poisson_weight_before_outer_A} "
+        f"A_cancel={cubic_endpoint.outer_A_inverse_cancels_poisson_A} "
+        f"A_box={cubic_endpoint.dyadic_A_sum_weight} "
+        "cofactor="
+        f"{','.join(cubic_endpoint.cofactor_weight_ledger)} "
+        f"fixed_logs={_fmt(cubic_endpoint.fixed_weight_log_loss)} "
+        f"dyadic_q_logs={_fmt(cubic_endpoint.dyadic_and_q_log_loss)} "
+        f"K0={_fmt(cubic_endpoint.subcritical_cutoff_log_power)} "
+        f"j_extra={_fmt(cubic_endpoint.poisson_mode_extra_log_loss)} "
+        f"M={_fmt(cubic_endpoint.requested_mrstt_log_saving)} "
+        f"sub_net={_fmt(cubic_endpoint.subcritical_net_log_saving)} "
+        f"critical_net={_fmt(cubic_endpoint.critical_net_log_saving)} "
+        f"local={cubic_endpoint.local_endpoint_dispersion_lemma_proved}"
+    )
     cubic_polytope = cubic_reciprocal_full_polytope_audit(
         cofactor_cutoff_exponent=F(1, 1000),
         qsmooth_relative_exponent=F(1, 1000),
         taylor_block_relative_exponent=F(17, 50),
         published_epsilon=F(1, 1000),
         reciprocal_radical_moment_abscissa=F(1, 100),
+        fixed_weight_log_loss=F(20),
+        dyadic_and_q_log_loss=AGGREGATION_LOG_LOSS,
+        subcritical_cutoff_log_power=F(40),
+        poisson_mode_extra_log_loss=F(4),
+        requested_mrstt_log_saving=F(80),
+        target_log_saving=F(1),
     )
     print(
         "mwkf_cubic_polytope: "
@@ -29685,14 +30115,29 @@ def main() -> None:
         f"density={cubic_polytope.long_density_errors_have_power_saving} "
         f"short={cubic_polytope.short_cofactor_has_uniform_power_saving} "
         f"long={cubic_polytope.long_cofactor_main_has_uniform_power_saving} "
+        f"physical={cubic_polytope.physical_weight_ledger_verified} "
+        f"fixed_logs={_fmt(cubic_polytope.fixed_weight_log_loss)} "
+        f"dyadic_q_logs={_fmt(cubic_polytope.dyadic_and_q_log_loss)} "
+        f"K0={_fmt(cubic_polytope.subcritical_cutoff_log_power)} "
+        f"j_extra={_fmt(cubic_polytope.poisson_mode_extra_log_loss)} "
+        f"M={_fmt(cubic_polytope.requested_mrstt_log_saving)} "
+        f"target_log={_fmt(cubic_polytope.target_log_saving)} "
+        f"sub_net={_fmt(cubic_polytope.subcritical_net_log_saving)} "
+        f"critical_net={_fmt(cubic_polytope.critical_net_log_saving)} "
+        f"nested={cubic_polytope.nested_log_choices_verified} "
+        f"local_lemma={cubic_polytope.endpoint_dispersion_local_lemma_proved} "
         f"faces={cubic_polytope.all_power_scale_faces_and_interiors_covered} "
         f"all_cells={cubic_polytope.all_dyadic_parameter_cells_enumerated}"
     )
     cubic_lcpe2 = cubic_reciprocal_lcpe2_audit(
         zeta_log_depth=F(2),
         shift_log_depth=F(2),
-        requested_log_saving=F(40),
+        requested_log_saving=F(80),
         fixed_log_losses=F(20),
+        subcritical_cutoff_log_power=F(40),
+        poisson_mode_extra_log_loss=F(4),
+        dyadic_and_q_log_loss=AGGREGATION_LOG_LOSS,
+        target_log_saving=F(1),
     )
     print(
         "mwkf_cubic_lcpe2: "
@@ -29707,9 +30152,17 @@ def main() -> None:
         f"normalization={cubic_lcpe2.physical_prefactor_times_dual_volume_is_T} "
         f"taylor={cubic_lcpe2.cubic_taylor_has_fixed_power_saving} "
         f"uniform={cubic_lcpe2.mrstt_supremum_is_uniform_in_cubic_coefficients} "
-        f"logs={_fmt(cubic_lcpe2.requested_log_saving)}-"
-        f"{_fmt(cubic_lcpe2.fixed_log_losses)}="
-        f"{_fmt(cubic_lcpe2.net_log_saving)} "
+        f"fixed_logs={_fmt(cubic_lcpe2.fixed_log_losses)} "
+        f"dyadic_q_logs={_fmt(cubic_lcpe2.dyadic_and_q_log_loss)} "
+        f"K0={_fmt(cubic_lcpe2.subcritical_cutoff_log_power)} "
+        f"j_extra={_fmt(cubic_lcpe2.poisson_mode_extra_log_loss)} "
+        f"M={_fmt(cubic_lcpe2.requested_log_saving)} "
+        f"target={_fmt(cubic_lcpe2.target_log_saving)} "
+        f"sub_net={_fmt(cubic_lcpe2.subcritical_net_log_saving)} "
+        f"critical_net={_fmt(cubic_lcpe2.critical_net_log_saving)} "
+        f"net={_fmt(cubic_lcpe2.net_log_saving)} "
+        "local_lemma="
+        f"{cubic_lcpe2.endpoint_dispersion_local_lemma_proved} "
         f"q_sum={cubic_lcpe2.q_sum_is_bounded_on_dyadic_T_squared_shell} "
         f"upstream={cubic_lcpe2.applied_before_q_first_product_lift} "
         "centered_bypassed="
@@ -29717,6 +30170,41 @@ def main() -> None:
         f"centered_proved={cubic_lcpe2.centered_product_energy_estimate_proved} "
         f"covered={cubic_lcpe2.lcpe2_covered_unconditionally} "
         f"aggregated={cubic_lcpe2.all_q_boxes_and_transform_tails_aggregated}"
+    )
+    cubic_residual_labels = tuple(
+        label
+        for label, closed in (
+            (
+                "power_polytope",
+                cubic_polytope.all_dyadic_parameter_cells_enumerated,
+            ),
+            (
+                "endpoint_dispersion_local_lemma",
+                cubic_polytope.endpoint_dispersion_local_lemma_proved,
+            ),
+            (
+                "physical_weight_ledger",
+                cubic_polytope.physical_weight_ledger_verified,
+            ),
+            ("nested_log_choices", cubic_polytope.nested_log_choices_verified),
+            ("LCPE_2", cubic_lcpe2.lcpe2_covered_unconditionally),
+            (
+                "q_and_transform_aggregation",
+                cubic_lcpe2.all_q_boxes_and_transform_tails_aggregated,
+            ),
+        )
+        if not closed
+    )
+    print(
+        "mwkf_cubic_full_coverage: "
+        f"power_cells={cubic_polytope.all_dyadic_parameter_cells_enumerated} "
+        f"physical_weights={cubic_polytope.physical_weight_ledger_verified} "
+        f"nested_logs={cubic_polytope.nested_log_choices_verified} "
+        f"lcpe2={cubic_lcpe2.lcpe2_covered_unconditionally} "
+        "q_transform="
+        f"{cubic_lcpe2.all_q_boxes_and_transform_tails_aggregated} "
+        f"residual_cells={len(cubic_residual_labels)} "
+        f"residual_labels={','.join(cubic_residual_labels)}"
     )
     vertex_ledger = admissible_polytope_vertex_ledger_audit()
     print(
