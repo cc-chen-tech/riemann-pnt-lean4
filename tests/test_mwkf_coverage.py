@@ -8255,6 +8255,58 @@ def test_prime_conductor_zero_frequency_obstruction_is_documented() -> None:
     assert "The resulting physical gate is still unproved" in text
 
 
+def test_prime_zero_frequency_character_sum_reinverts_to_active_residues() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_zero_frequency_character_reinversion_audit",
+        None,
+    )
+    assert audit is not None, "prime zero-frequency reinversion audit is missing"
+    result = audit(
+        left_prime=7,
+        right_prime=5,
+        determinant=1,
+        deleted_character_order_bound=2,
+        left_active_profile=(
+            (1, 2),
+            (2, -1),
+            (3, 3),
+            (4, 0),
+            (5, -2),
+            (6, -2),
+        ),
+        right_active_profile=((1, 1), (2, 4), (3, -2), (4, -3)),
+    )
+    assert result["left_active_residue"] == 3
+    assert result["right_active_residue"] == 2
+    assert result["left_profile_is_centered"]
+    assert result["right_profile_is_centered"]
+    assert result["left_high_order_character_count"] == 4
+    assert result["right_high_order_character_count"] == 2
+    assert result["full_character_reinversion_exact"]
+    assert result["full_character_mutual_sum"] == 12
+    assert result["high_order_character_reinversion_exact"]
+    assert result["high_order_mutual_sum_equals_projected_cross_residue"]
+    assert result["active_residues_match_bounded_determinant_congruences"]
+    assert result["arbitrary_character_vectors_removed_from_zero_frequency_gate"]
+    assert not result["physical_cross_residue_profile_bound_proved"]
+    assert not result["NPIT_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_prime_zero_frequency_physical_reinversion_is_documented() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.171 Zero-frequency character reinversion exposes the physical "
+        "cross residues"
+    ) in text
+    assert r"D\overline q_p" in text
+    assert r"-D\overline p_q" in text
+    assert r"\mathscr S_{\rm pp,0}^{\rm phys}" in text
+    assert "no longer an arbitrary mutual-character vector" in text
+    assert "physical cross-residue profile bound remains unproved" in text
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (

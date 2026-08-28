@@ -23812,6 +23812,8 @@ def prime_conductor_zero_frequency_saturation_audit(
     def is_prime(value: int) -> bool:
         return value > 1 and _finite_prime_exponents(value) == {value: 1}
 
+    if q <= 2 or any(value <= 2 for value in primes):
+        raise ValueError("the prime-conductor obstruction uses odd primes")
     if not is_prime(q) or any(not is_prime(value) for value in primes):
         raise ValueError("all supplied conductors must be prime")
     if len(set(primes)) != len(primes):
@@ -23897,6 +23899,282 @@ def prime_conductor_zero_frequency_saturation_audit(
         "type_reassembly_supplies_power_cancellation": False,
         "physical_row_coefficients_are_forced_to_avoid_delta_packet": False,
         "near_primitive_zero_frequency_bound_proved": False,
+        "NPIT_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def prime_zero_frequency_character_reinversion_audit(
+    *,
+    left_prime: int,
+    right_prime: int,
+    determinant: int,
+    deleted_character_order_bound: int,
+    left_active_profile: tuple[tuple[int, Fraction], ...],
+    right_active_profile: tuple[tuple[int, Fraction], ...],
+) -> dict[str, object]:
+    """Reinvert the prime-prime zero-frequency character pair exactly.
+
+    With Fourier convention
+
+    ``Vhat(chi) = sum_x V(x) conjugate(chi(x))``,
+
+    the active twist from (9.1111) sends the two inverse transforms to
+    ``D*inverse(q) mod p`` and ``-D*inverse(p) mod q``.  Restricting the
+    character sums to order greater than ``B`` gives the corresponding
+    orthogonal high-order projections at those same physical residues.
+    """
+
+    p = int(left_prime)
+    q = int(right_prime)
+    D = int(determinant)
+    order_bound = int(deleted_character_order_bound)
+    if min(p, q, order_bound) <= 0 or D == 0:
+        raise ValueError("primes and order bound must be positive and D nonzero")
+    if p <= 2 or q <= 2:
+        raise ValueError("the reinversion audit uses odd prime conductors")
+    if (
+        _finite_prime_exponents(p) != {p: 1}
+        or _finite_prime_exponents(q) != {q: 1}
+        or p == q
+    ):
+        raise ValueError("two distinct prime conductors are required")
+    if gcd(D, p * q) != 1:
+        raise ValueError("the determinant must be a unit at both conductors")
+
+    def supplied_profile(
+        prime: int,
+        rows: tuple[tuple[int, Fraction], ...],
+    ) -> dict[int, Fraction]:
+        units = set(range(1, prime))
+        profile: dict[int, Fraction] = {}
+        for residue_value, coefficient_value in rows:
+            residue = int(residue_value) % prime
+            if residue not in units:
+                raise ValueError("every active profile label must be a unit")
+            if residue in profile:
+                raise ValueError("active profile residues must be unique")
+            profile[residue] = F(coefficient_value)
+        if set(profile) != units:
+            raise ValueError("each prime active profile must cover every unit")
+        return profile
+
+    left_profile = supplied_profile(p, left_active_profile)
+    right_profile = supplied_profile(q, right_active_profile)
+
+    def primitive_root(prime: int) -> int:
+        order = prime - 1
+        order_primes = tuple(_finite_prime_exponents(order))
+        return next(
+            candidate
+            for candidate in range(2, prime)
+            if all(
+                pow(candidate, order // divisor, prime) != 1
+                for divisor in order_primes
+            )
+        )
+
+    def character_table(prime: int) -> tuple[dict[int, int], complex]:
+        generator = primitive_root(prime)
+        logarithms: dict[int, int] = {}
+        value = 1
+        for exponent in range(prime - 1):
+            logarithms[value] = exponent
+            value = value * generator % prime
+        root = cmath.exp(2j * cmath.pi / (prime - 1))
+        return logarithms, root
+
+    left_logs, left_root = character_table(p)
+    right_logs, right_root = character_table(q)
+
+    def character(
+        prime: int,
+        logarithms: dict[int, int],
+        root: complex,
+        index: int,
+        value: int,
+    ) -> complex:
+        return root ** (index * logarithms[value % prime] % (prime - 1))
+
+    def character_order(prime: int, index: int) -> int:
+        return (prime - 1) // gcd(prime - 1, index)
+
+    left_indices = tuple(range(p - 1))
+    right_indices = tuple(range(q - 1))
+    left_high = tuple(
+        index
+        for index in left_indices
+        if character_order(p, index) > order_bound
+    )
+    right_high = tuple(
+        index
+        for index in right_indices
+        if character_order(q, index) > order_bound
+    )
+
+    def fourier(
+        prime: int,
+        profile: dict[int, Fraction],
+        logarithms: dict[int, int],
+        root: complex,
+        indices: tuple[int, ...],
+    ) -> dict[int, complex]:
+        return {
+            index: sum(
+                (
+                    complex(value)
+                    * character(
+                        prime,
+                        logarithms,
+                        root,
+                        index,
+                        residue,
+                    ).conjugate()
+                    for residue, value in profile.items()
+                ),
+                0j,
+            )
+            for index in indices
+        }
+
+    left_fourier = fourier(p, left_profile, left_logs, left_root, left_indices)
+    right_fourier = fourier(
+        q,
+        right_profile,
+        right_logs,
+        right_root,
+        right_indices,
+    )
+    left_residue = D * pow(q, -1, p) % p
+    right_residue = -D * pow(p, -1, q) % q
+
+    def projected_value(
+        prime: int,
+        logarithms: dict[int, int],
+        root: complex,
+        transform: dict[int, complex],
+        indices: tuple[int, ...],
+        residue: int,
+    ) -> complex:
+        return sum(
+            (
+                transform[index]
+                * character(prime, logarithms, root, index, residue)
+                for index in indices
+            ),
+            0j,
+        ) / (prime - 1)
+
+    left_full_value = projected_value(
+        p,
+        left_logs,
+        left_root,
+        left_fourier,
+        left_indices,
+        left_residue,
+    )
+    right_full_value = projected_value(
+        q,
+        right_logs,
+        right_root,
+        right_fourier,
+        right_indices,
+        right_residue,
+    )
+    left_high_value = projected_value(
+        p,
+        left_logs,
+        left_root,
+        left_fourier,
+        left_high,
+        left_residue,
+    )
+    right_high_value = projected_value(
+        q,
+        right_logs,
+        right_root,
+        right_fourier,
+        right_high,
+        right_residue,
+    )
+
+    def mutual_sum(
+        left_subset: tuple[int, ...],
+        right_subset: tuple[int, ...],
+    ) -> complex:
+        total = 0j
+        for left_index in left_subset:
+            left_twist = (
+                character(p, left_logs, left_root, left_index, D)
+                * character(p, left_logs, left_root, left_index, q).conjugate()
+            )
+            for right_index in right_subset:
+                right_twist = (
+                    character(
+                        q,
+                        right_logs,
+                        right_root,
+                        right_index,
+                        -D,
+                    ).conjugate()
+                    * character(
+                        q,
+                        right_logs,
+                        right_root,
+                        right_index,
+                        p,
+                    )
+                )
+                total += (
+                    left_fourier[left_index]
+                    * right_fourier[right_index].conjugate()
+                    * left_twist
+                    * right_twist
+                )
+        return total / ((p - 1) * (q - 1))
+
+    full_mutual = mutual_sum(left_indices, right_indices)
+    high_mutual = mutual_sum(left_high, right_high)
+    full_cross = left_full_value * right_full_value.conjugate()
+    high_cross = left_high_value * right_high_value.conjugate()
+    exact_full_cross = (
+        left_profile[left_residue] * right_profile[right_residue]
+    )
+    tolerance = 1e-8
+    return {
+        "left_prime_conductor": p,
+        "right_prime_conductor": q,
+        "bounded_determinant": D,
+        "left_active_residue": left_residue,
+        "right_active_residue": right_residue,
+        "left_active_profile": left_profile,
+        "right_active_profile": right_profile,
+        "left_profile_is_centered": sum(left_profile.values(), F(0)) == 0,
+        "right_profile_is_centered": sum(right_profile.values(), F(0)) == 0,
+        "left_high_order_character_count": len(left_high),
+        "right_high_order_character_count": len(right_high),
+        "full_character_mutual_sum": exact_full_cross,
+        "full_character_mutual_sum_numeric": full_mutual,
+        "full_cross_residue_product_numeric": full_cross,
+        "high_order_character_mutual_sum_numeric": high_mutual,
+        "high_order_projected_cross_residue_numeric": high_cross,
+        "full_character_reinversion_exact": bool(
+            abs(full_mutual - complex(exact_full_cross)) < tolerance
+            and abs(full_cross - complex(exact_full_cross)) < tolerance
+        ),
+        "high_order_character_reinversion_exact": bool(
+            abs(high_mutual - high_cross) < tolerance
+        ),
+        "high_order_mutual_sum_equals_projected_cross_residue": bool(
+            abs(high_mutual - high_cross) < tolerance
+        ),
+        "active_residues_match_bounded_determinant_congruences": bool(
+            (q * left_residue - D) % p == 0
+            and (p * right_residue + D) % q == 0
+        ),
+        "arbitrary_character_vectors_removed_from_zero_frequency_gate": True,
+        "physical_cross_residue_profile_bound_proved": False,
         "NPIT_proved": False,
         "bounded_D_one_power_gate_closed": False,
         "coupled_kernel_gate_closed": False,
