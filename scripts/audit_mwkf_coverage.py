@@ -26652,6 +26652,359 @@ def completed_ratio_double_mobius_type_master_audit(
     }
 
 
+def completed_ratio_triple_character_type_master_audit(
+    *,
+    short_prime: int,
+    determinant_shift: int,
+    first_long_prime: int,
+    second_long_prime: int,
+    first_product_labels: tuple[tuple[tuple[int, int], Fraction], ...],
+    second_product_labels: tuple[tuple[tuple[int, int], Fraction], ...],
+    first_type_rows: tuple[tuple[int, Fraction], ...],
+    second_type_rows: tuple[tuple[int, Fraction], ...],
+    short_cutoff_u: int,
+    short_cutoff_v: int,
+    mutual_short_prime_labels: tuple[int, ...],
+    mutual_long_prime: int,
+) -> dict[str, object]:
+    """Invert all three centered ratios and retain both Type splits.
+
+    Every point-minus-uniform kernel on a prime unit group is the
+    normalized sum of its nonprincipal multiplicative characters.  The
+    resulting tensor retains the mutual evaluations of the short modulus
+    in both long-character rows.  A separate finite Gram calculation
+    records that this raw evaluation matrix has full row rank; it is not
+    a rank-one common-coefficient family.
+
+    This routine proves finite identities only.  In particular, full row
+    rank rules out a direct rank-one separation of the raw phase but does
+    not bound the physical coefficient-weighted tensor.
+    """
+
+    q = int(short_prime)
+    D = int(determinant_shift)
+    p1 = int(first_long_prime)
+    p2 = int(second_long_prime)
+    base = completed_ratio_double_mobius_type_master_audit(
+        short_prime=q,
+        determinant_shift=D,
+        first_long_prime=p1,
+        second_long_prime=p2,
+        first_product_labels=first_product_labels,
+        second_product_labels=second_product_labels,
+        first_type_rows=first_type_rows,
+        second_type_rows=second_type_rows,
+        short_cutoff_u=short_cutoff_u,
+        short_cutoff_v=short_cutoff_v,
+    )
+
+    def character_table(
+        prime: int,
+    ) -> tuple[dict[int, int], complex]:
+        if prime <= 2 or _finite_prime_exponents(prime) != {prime: 1}:
+            raise ValueError("character moduli must be odd primes")
+        order = prime - 1
+        order_primes = tuple(_finite_prime_exponents(order))
+        generator = next(
+            candidate
+            for candidate in range(2, prime)
+            if all(
+                pow(candidate, order // divisor, prime) != 1
+                for divisor in order_primes
+            )
+        )
+        logarithms: dict[int, int] = {}
+        value = 1
+        for exponent in range(order):
+            logarithms[value] = exponent
+            value = value * generator % prime
+        return logarithms, cmath.exp(2j * cmath.pi / order)
+
+    q_logs, q_root = character_table(q)
+    p1_logs, p1_root = character_table(p1)
+    p2_logs, p2_root = character_table(p2)
+
+    def character(
+        prime: int,
+        logarithms: dict[int, int],
+        root: complex,
+        index: int,
+        value: int,
+    ) -> complex:
+        residue = int(value) % prime
+        if residue == 0:
+            raise ValueError("every character argument must be a unit")
+        return root ** (index * logarithms[residue] % (prime - 1))
+
+    def centered_character_kernel(
+        first_product: int,
+        first_argument: int,
+        second_product: int,
+        second_argument: int,
+    ) -> complex:
+        outer_argument = p1 * pow(p2, -1, q) % q
+        first_argument_ratio = (
+            -q
+            * first_product
+            * pow(D * first_argument, -1, p1)
+        ) % p1
+        second_argument_ratio = (
+            -q
+            * second_product
+            * pow(D * second_argument, -1, p2)
+        ) % p2
+        total = 0j
+        for outer_index in range(1, q - 1):
+            outer_value = character(
+                q,
+                q_logs,
+                q_root,
+                outer_index,
+                outer_argument,
+            )
+            for first_index in range(1, p1 - 1):
+                first_value = character(
+                    p1,
+                    p1_logs,
+                    p1_root,
+                    first_index,
+                    first_argument_ratio,
+                )
+                for second_index in range(1, p2 - 1):
+                    second_value = character(
+                        p2,
+                        p2_logs,
+                        p2_root,
+                        second_index,
+                        second_argument_ratio,
+                    )
+                    total += outer_value * first_value * second_value.conjugate()
+        return total / ((q - 1) * (p1 - 1) * (p2 - 1))
+
+    first_labels = tuple(base["first_product_labels"])
+    second_labels = tuple(base["second_product_labels"])
+    first_types = tuple(
+        (int(argument), F(weight)) for argument, weight in first_type_rows
+    )
+    second_types = tuple(
+        (int(argument), F(weight)) for argument, weight in second_type_rows
+    )
+    type_names = ("small", "I", "II")
+    character_master = 0j
+    character_blocks = [[0j for _ in type_names] for _ in type_names]
+    first_multipliers = dict(base["first_type_multipliers"])
+    second_multipliers = dict(base["second_type_multipliers"])
+    for _, _, first_product, first_label_weight in first_labels:
+        for first_argument, first_type_weight in first_types:
+            for _, _, second_product, second_label_weight in second_labels:
+                for second_argument, second_type_weight in second_types:
+                    scalar_weight = complex(
+                        first_label_weight
+                        * first_type_weight
+                        * second_label_weight
+                        * second_type_weight
+                    )
+                    kernel = centered_character_kernel(
+                        int(first_product),
+                        first_argument,
+                        int(second_product),
+                        second_argument,
+                    )
+                    character_master += (
+                        scalar_weight
+                        * _finite_mobius(first_argument)
+                        * _finite_mobius(second_argument)
+                        * kernel
+                    )
+                    for first_index, first_type in enumerate(type_names):
+                        for second_index, second_type in enumerate(type_names):
+                            character_blocks[first_index][second_index] += (
+                                scalar_weight
+                                * first_multipliers[first_argument][first_type]
+                                * second_multipliers[second_argument][second_type]
+                                * kernel
+                            )
+
+    character_block_matrix = tuple(
+        tuple(entry for entry in row) for row in character_blocks
+    )
+    direct_block_matrix = tuple(base["nine_type_block_matrix"])
+    tolerance = 1e-10
+
+    def matrices_close(
+        left: tuple[tuple[complex, ...], ...],
+        right: tuple[tuple[Fraction, ...], ...],
+    ) -> bool:
+        return all(
+            abs(left[row][column] - complex(right[row][column])) < tolerance
+            for row in range(len(left))
+            for column in range(len(left[row]))
+        )
+
+    def type_character_factorization(
+        prime: int,
+        logarithms: dict[int, int],
+        root: complex,
+        multipliers: dict[int, dict[str, int]],
+        expansions: dict[
+            int,
+            dict[str, tuple[dict[str, int], ...]],
+        ],
+    ) -> bool:
+        for argument, type_expansion in expansions.items():
+            for type_name in type_names:
+                for index in range(1, prime - 1):
+                    direct = (
+                        multipliers[argument][type_name]
+                        * character(
+                            prime,
+                            logarithms,
+                            root,
+                            index,
+                            argument,
+                        ).conjugate()
+                    )
+                    factored = sum(
+                        (
+                            row["coefficient"]
+                            * character(
+                                prime,
+                                logarithms,
+                                root,
+                                index,
+                                row["first_short_factor"],
+                            ).conjugate()
+                            * character(
+                                prime,
+                                logarithms,
+                                root,
+                                index,
+                                row["second_short_factor"],
+                            ).conjugate()
+                            * character(
+                                prime,
+                                logarithms,
+                                root,
+                                index,
+                                row["residual_factor"],
+                            ).conjugate()
+                        )
+                        for row in type_expansion[type_name]
+                    )
+                    if abs(direct - factored) >= tolerance:
+                        return False
+        return True
+
+    first_factorization = type_character_factorization(
+        p1,
+        p1_logs,
+        p1_root,
+        first_multipliers,
+        dict(base["first_type_factorization_rows"]),
+    )
+    second_factorization = type_character_factorization(
+        p2,
+        p2_logs,
+        p2_root,
+        second_multipliers,
+        dict(base["second_type_factorization_rows"]),
+    )
+
+    mutual_prime = int(mutual_long_prime)
+    mutual_logs, mutual_root = character_table(mutual_prime)
+    mutual_labels = tuple(int(label) for label in mutual_short_prime_labels)
+    if not mutual_labels:
+        raise ValueError("the mutual-evaluation family must be nonempty")
+    if len(set(label % mutual_prime for label in mutual_labels)) != len(
+        mutual_labels
+    ):
+        raise ValueError("mutual-evaluation labels must be distinct units")
+    if any(
+        label >= mutual_prime
+        or _finite_prime_exponents(label) != {label: 1}
+        for label in mutual_labels
+    ):
+        raise ValueError("mutual-evaluation labels must be smaller primes")
+    if len(mutual_labels) >= mutual_prime - 1:
+        raise ValueError("the nonprincipal Gram witness needs fewer labels than units")
+
+    enumerated_gram: list[list[complex]] = []
+    exact_gram: list[list[int]] = []
+    for left_label in mutual_labels:
+        enumerated_row: list[complex] = []
+        exact_row: list[int] = []
+        for right_label in mutual_labels:
+            enumerated_row.append(
+                sum(
+                    character(
+                        mutual_prime,
+                        mutual_logs,
+                        mutual_root,
+                        index,
+                        left_label,
+                    )
+                    * character(
+                        mutual_prime,
+                        mutual_logs,
+                        mutual_root,
+                        index,
+                        right_label,
+                    ).conjugate()
+                    for index in range(1, mutual_prime - 1)
+                )
+            )
+            exact_row.append(
+                mutual_prime - 2 if left_label == right_label else -1
+            )
+        enumerated_gram.append(enumerated_row)
+        exact_gram.append(exact_row)
+    gram_matches = all(
+        abs(enumerated_gram[row][column] - exact_gram[row][column])
+        < tolerance
+        for row in range(len(mutual_labels))
+        for column in range(len(mutual_labels))
+    )
+    row_rank = len(mutual_labels)
+
+    raw_master = F(base["raw_double_mobius_master"])
+    return {
+        "raw_centered_master": raw_master,
+        "triple_character_master": character_master,
+        "triple_character_type_block_matrix": character_block_matrix,
+        "triple_character_expansion_matches_raw_master": bool(
+            abs(character_master - complex(raw_master)) < tolerance
+        ),
+        "triple_character_type_blocks_match_direct_blocks": bool(
+            matrices_close(character_block_matrix, direct_block_matrix)
+        ),
+        "first_type_character_factorization_verified": first_factorization,
+        "second_type_character_factorization_verified": second_factorization,
+        "both_type_character_factorizations_verified": bool(
+            first_factorization and second_factorization
+        ),
+        "outer_principal_character_deleted": True,
+        "first_inner_principal_character_deleted": True,
+        "second_inner_principal_character_deleted": True,
+        "all_three_character_families_are_nonprincipal": True,
+        "mutual_evaluation_phase": (
+            "xi(p1*inverse(p2))*chi1(q)*conjugate(chi2(q))"
+        ),
+        "mutual_evaluation_phase_retained": True,
+        "mutual_evaluation_exact_gram": tuple(
+            tuple(row) for row in exact_gram
+        ),
+        "mutual_evaluation_gram_matches_character_sum": gram_matches,
+        "mutual_evaluation_row_rank": row_rank,
+        "raw_mutual_phase_is_rank_one": bool(row_rank == 1),
+        "raw_phase_has_subpolynomial_common_coefficient_adapter": False,
+        "ordinary_large_sieve_closes_physical_master": False,
+        "TCGDTM_bound_proved": False,
+        "GDTM_bound_proved": False,
+        "WRFE_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def short_prime_weighted_profile_ttstar_audit(
     *,
     short_prime: int,

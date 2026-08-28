@@ -83,6 +83,7 @@
 > | Uniform-ratio completion of all density terms | Section 9.190 rewrites each density \(1/\varphi(\ell)\) as the exact average of a full incidence over a dummy unit ratio.  The outer actual ratio is \(a^*=1\), and the inner actual ratios are \(c_{p_i}^*\equiv D\overline q\pmod {p_i}\).  Thus all eight terms of the triple-centered product become signed averages of three incidence indicators before any absolute value.  This supplies quotient coordinates to the seven density terms, but the dummy ratios change the determinant equation and do not preserve the original common \(t\).  The finite completion and principal-mode deletion are exact; the resulting generalized-determinant estimate remains unproved |
 > | Published coverage of the completed ratios | Section 9.191 inserts the literal full nonprincipal ratio spectrum into Milićević--Qin--Wu, Blomer--Pascadi, and Pascadi.  On the extreme long-prime modulus \(p=T^2\), both completed Fourier variables have length \(p\).  MQW misses its \(M^{7/5}N<p^{3/2}\) and \(MN\leq p^{5/4}\) conditions by \(T^{9/5}\) and \(T^{3/2}\), respectively.  At full residue length all three Blomer--Pascadi margins are negative, and Pascadi's averaged alternative has best margin \(-1/6\) in the modulus exponent.  The actual family additionally has three varying moduli and level-dependent Type/AFE coefficients.  Hence uniform-ratio completion creates no new published cell; it identifies the hypotheses of the new generalized-determinant theorem that would be needed |
 > | Completed double-Type generalized-determinant master | Section 9.192 combines the uniform-ratio completion with both literal Type Möbius variables.  Each physical product label remains \(a_i=h_i\delta_i\); both raw \(\mu(n_i)\) are first restored and then split by the exact small/I/II identity.  Every ordered block retains all three actual-minus-uniform ratio projectors.  Type I and II expose the short-factor coefficients \(\mu(b_i)\mu(c_i)\), while their quotient residuals have Möbius coefficient one.  On the top support `small` vanishes and all four I--I, I--II, II--I, and II--II blocks must remain signed.  The finite GDTM reassembly is exact and equivalent to the WRFE integrand; no individual block estimate or GDTM bound is proved |
+> | Triple-character form and mutual-phase rank obstruction | Section 9.193 inverts all three centered ratio kernels simultaneously.  Only nonprincipal characters occur, and each Type-I/II factor becomes two short Möbius character polynomials times one unsigned residual character polynomial.  The surviving phase contains \(\xi(p_1\overline {p_2})\chi_1(q)\overline{\chi_2(q)}\).  For any fixed long prime \(p\) and \(J<p-1\) distinct short-prime labels, the nonprincipal evaluation matrix \(M_{j,\chi}=\chi(q_j)\) has exact Gram matrix \((p-1)I_J-\mathbf1\mathbf1^\ast\), hence full row rank \(J\).  With \(J\asymp Q/\log Q\), the raw phase cannot have a subpolynomial-size exact rank-one common-coefficient decomposition.  This rules out algebraically separating the phase and then applying the ordinary large sieve; it does not rule out cancellation from the physical coefficients.  The equivalent joint tensor gate TCGDTM remains unproved |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -27096,6 +27097,168 @@ short factors and unsigned residuals, verifies all nine blocks against
 the raw and uniform-completed masters, and leaves every analytic flag
 false.
 
+### 9.193 Triple character inversion retains the mutual phase
+
+The completion in Section 9.190 can be inverted without expanding its
+eight terms separately.  For a prime \(p\) and units \(q,m,D,n\), finite
+multiplicative orthogonality gives
+
+\[
+ \boxed{
+ \Delta_p(qm+Dn)
+ =\frac1{\varphi(p)}
+  \sum_{\substack{\chi\bmod p\\\chi\ne\chi_0}}
+  \chi(-q\overline D_p)\chi(m)\overline{\chi(n)}.}
+ \tag{9.1284}
+\]
+
+Likewise,
+
+\[
+ \boxed{
+ \Delta_q(p_1-p_2)
+ =\frac1{\varphi(q)}
+  \sum_{\substack{\xi\bmod q\\\xi\ne\xi_0}}
+  \xi(p_1\overline {p_2}_q).}
+ \tag{9.1285}
+\]
+
+Thus all three principal characters have already been deleted before
+any Cauchy inequality.  On one physical/projective atom define
+
+\[
+ \begin{aligned}
+ \mathcal F_{p,i}(\chi)
+ &:=\sum_{h_i,\delta_i}
+ F_i(h_i,\delta_i)\chi(h_i\delta_i),\\
+ \mathcal G_{p,i}^{\alpha}(\chi)
+ &:=\sum_{n_i}\lambda_\alpha(n_i)
+ \widetilde g_i(n_i)\overline{\chi(n_i)}.
+ \end{aligned}
+ \tag{9.1286}
+\]
+
+Substitution of (9.1284)--(9.1285) into (9.1278) gives, coefficient by
+coefficient,
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathscr G^{\alpha,\beta}
+ =\sum_{q,p_1,p_2}\frac1{
+   \varphi(q)\varphi(p_1)\varphi(p_2)}
+ \sum_{\substack{\xi\ne\xi_0\\
+                  \chi_1\ne\chi_{1,0}\\
+                  \chi_2\ne\chi_{2,0}}}
+ &\xi(p_1\overline {p_2}_q)
+ \chi_1(-q\overline D_{p_1})
+ \overline{\chi_2(-q\overline D_{p_2})}\\
+ &\times
+ \mathcal F_{p_1,1}(\chi_1)
+ \mathcal G_{p_1,1}^{\alpha}(\chi_1)
+ \overline{
+ \mathcal F_{p_2,2}(\chi_2)
+ \mathcal G_{p_2,2}^{\beta}(\chi_2)} ,
+ \end{aligned}}
+ \tag{9.1287}
+\]
+
+with the omitted finite AFE, dyadic, \(D\), and projective weights
+unchanged.  In particular the product labels in (9.1286) remain
+literally \(h_i\delta_i\); they have not become arbitrary residue
+coefficients.
+
+The Type decomposition also factors exactly in this character basis.
+For example, including every original support mask,
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathcal G_{p,i}^{\rm I}(\chi)
+ &=-\sum_{\substack{b\leq U,\ c\leq V}}
+ \mu(b)\mu(c)\overline{\chi(bc)}
+ \sum_r\widetilde g_i(bcr)\overline{\chi(r)},\\
+ \mathcal G_{p,i}^{\rm II}(\chi)
+ &=\sum_{\substack{b>U,\ c>V}}
+ \mu(b)\mu(c)\overline{\chi(bc)}
+ \sum_r\widetilde g_i(bcr)\overline{\chi(r)}.
+ \end{aligned}}
+ \tag{9.1288}
+\]
+
+The quotient \(r\) still has coefficient one.  Equation (9.1288) is
+therefore the requested two-sided Type I/II form with all short Möbius
+factors visible.  It does not create a third Möbius sequence.
+
+The decisive obstruction to three successive ordinary large-sieve
+steps is now an exact rank statement, rather than an exponent
+heuristic.  Fix a long prime \(p\), choose distinct unit labels
+\(q_1,\ldots,q_J\pmod p\), with \(J<p-1\), and put
+
+\[
+ M_{j,\chi}:=\chi(q_j),
+ \qquad \chi\bmod p,\quad\chi\ne\chi_0.
+ \tag{9.1289}
+\]
+
+Character orthogonality gives the full-row-rank mutual-evaluation Gram matrix
+
+\[
+ \boxed{
+ MM^\ast=(p-1)I_J-\mathbf1_J\mathbf1_J^\ast.}
+ \tag{9.1290}
+\]
+
+Its eigenvalues are \(p-1\), with multiplicity \(J-1\), and
+\(p-1-J>0\), on the constant vector.  Hence
+
+\[
+ \boxed{\operatorname {rank}M=J.}
+ \tag{9.1291}
+\]
+
+On the physical wedge \(Q<p\), the short primes provide
+\(J\asymp Q/\log Q=T^{\sigma_S-o(1)}\) distinct rows.  Consequently
+the raw factor \(\chi_p(q)\) cannot be written as a
+\(T^\varepsilon\)-sized exact sum of rank-one common-coefficient atoms.
+The same obstruction occurs simultaneously in the two inner character
+families of (9.1287), together with the outer phase
+\(\xi(p_1\overline {p_2})\).
+
+This does not show that the physical tensor is large.  The vectors in
+(9.1287) are the literal \(h\delta\), Type, Möbius, and AFE transforms,
+not arbitrary vectors; their signed sum may avoid the full-rank
+saturation.  What (9.1290)--(9.1291) proves is that one cannot first
+separate the mutual phase into a subpolynomial projective family and
+then invoke the ordinary large sieve from Section 9.184.
+
+The exact character-domain version of the remaining gate is therefore
+
+\[
+ \boxed{
+ \sum_{\omega,\lambda}|\rho_\omega|
+ \sum_{\alpha,\beta}
+ \mathscr G_{\omega,\lambda}^{\alpha,\beta;\rm char}
+ \ll_{\varepsilon,W}
+ T^{-2\eta_{\rm cross}+\varepsilon}
+ \sum_{\omega,\lambda}|\rho_\omega|
+ \mathfrak E_{{\rm occ},\omega,\lambda}.}
+ \tag{TCGDTM}
+\]
+
+By (9.1284)--(9.1288), (TCGDTM) is coefficientwise equivalent to
+(GDTM), not a second saving and not a proved weaker theorem.  A valid
+analytic input must act jointly on the full
+\((q,p_1,p_2,\xi,\chi_1,\chi_2)\) tensor while the two Type
+factorizations and both \(h_i\delta_i\) convolutions remain inside.
+
+The helper `completed_ratio_triple_character_type_master_audit`
+enumerates all three nonprincipal character groups, verifies (9.1287)
+against the raw centered master and all nine Type blocks, verifies
+(9.1288) on both sides, and checks (9.1290) for arbitrary supplied
+distinct short-prime labels.  It leaves (TCGDTM), (GDTM), (WRFE), and
+the coupled-kernel gate false.
+
 ## 10. What has and has not been proved
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
@@ -27383,6 +27546,15 @@ an unsigned quotient residual.  On the top support the four I/II blocks
 must be summed with signs, as the cancellation witness (9.1283) shows.
 The resulting finite gate (GDTM) is an exact completed-ratio form of
 (WRFE), not a proved estimate.
+
+Section 9.193 gives the simultaneous nonprincipal-character inversion
+of that finite master.  Both Type decompositions factor exactly, but
+the phase
+\(\xi(p_1\overline {p_2})\chi_1(q)\overline{\chi_2(q)}\)
+survives.  Its nonprincipal evaluation matrix has the exact full-rank
+Gram law (9.1290), so an algebraic common-coefficient separation followed
+by three ordinary large-sieve applications cannot prove the target.
+The equivalent joint tensor estimate (TCGDTM) remains unproved.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent

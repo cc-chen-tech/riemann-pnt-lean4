@@ -9440,6 +9440,58 @@ def test_completed_ratio_master_retains_product_labels_and_both_type_splits() ->
     assert "all four I--I, I--II, II--I, and II--II blocks" in text
 
 
+def test_completed_double_type_master_has_exact_triple_character_form() -> None:
+    audit = getattr(
+        coverage_audit,
+        "completed_ratio_triple_character_type_master_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        determinant_shift=1,
+        first_long_prime=7,
+        second_long_prime=17,
+        first_product_labels=(((1, 3), F(1)),),
+        second_product_labels=(((2, 5), F(1)),),
+        first_type_rows=((6, F(1)),),
+        second_type_rows=((35, F(1)),),
+        short_cutoff_u=3,
+        short_cutoff_v=3,
+        mutual_short_prime_labels=(3, 5, 7, 11, 13),
+        mutual_long_prime=17,
+    )
+    assert result["raw_centered_master"] == F(75, 128)
+    assert abs(result["triple_character_master"] - 75 / 128) < 1e-10
+    assert result["triple_character_expansion_matches_raw_master"]
+    assert result["triple_character_type_blocks_match_direct_blocks"]
+    assert result["both_type_character_factorizations_verified"]
+    assert result["outer_principal_character_deleted"]
+    assert result["first_inner_principal_character_deleted"]
+    assert result["second_inner_principal_character_deleted"]
+    assert result["all_three_character_families_are_nonprincipal"]
+    assert result["mutual_evaluation_phase_retained"]
+    assert result["mutual_evaluation_exact_gram"] == (
+        (15, -1, -1, -1, -1),
+        (-1, 15, -1, -1, -1),
+        (-1, -1, 15, -1, -1),
+        (-1, -1, -1, 15, -1),
+        (-1, -1, -1, -1, 15),
+    )
+    assert result["mutual_evaluation_gram_matches_character_sum"]
+    assert result["mutual_evaluation_row_rank"] == 5
+    assert result["raw_mutual_phase_is_rank_one"] is False
+    assert result["raw_phase_has_subpolynomial_common_coefficient_adapter"] is False
+    assert result["ordinary_large_sieve_closes_physical_master"] is False
+    assert result["TCGDTM_bound_proved"] is False
+    assert result["GDTM_bound_proved"] is False
+    assert result["coupled_kernel_gate_closed"] is False
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.193 Triple character inversion retains the mutual phase" in text
+    assert r"\tag{TCGDTM}" in text
+    assert "full-row-rank mutual-evaluation Gram matrix" in text
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (
