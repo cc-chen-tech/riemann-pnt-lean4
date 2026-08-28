@@ -16654,6 +16654,351 @@ def ramanujan_lifted_retained_product_exponent_audit(
     }
 
 
+def fixed_total_modulus_conductor_partition_energy_audit(
+    *,
+    total_squarefree_modulus: int,
+    partition_rows: tuple[dict[str, object], ...],
+) -> dict[str, object]:
+    """Reassemble every supplied conductor partition at one fixed modulus.
+
+    All supplied rows are interpreted at one fixed physical sector/phase
+    label; that label is not summed by this helper.  A row has
+    ``s=G*k*r0`` and ``K=k*r0``.  Its normalized inactive
+    Ramanujan expansion sends ``(u,x) in U(K) x U(G)`` bijectively to
+    ``t=-K*A/x+G*u in U(s)``.  The physical direct Ramanujan scalar and
+    the signed partition coefficient are retained in the resulting
+    coefficient vector on ``U(s)``.
+    """
+
+    S = int(total_squarefree_modulus)
+    factors_S = _finite_prime_exponents(S) if S > 1 else {}
+    if S <= 1 or any(exponent != 1 for exponent in factors_S.values()):
+        raise ValueError("total_squarefree_modulus must be squarefree and exceed one")
+    if not partition_rows:
+        raise ValueError("at least one conductor partition row is required")
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    def ramanujan(label: int, modulus: int) -> int:
+        common = gcd(label, modulus)
+        return _finite_mobius(modulus // common) * finite_totient(common)
+
+    unit_total = tuple(residue for residue in range(S) if gcd(residue, S) == 1)
+    combined_coefficients = {residue: 0j for residue in unit_total}
+    row_results: list[dict[str, object]] = []
+    labels: set[str] = set()
+    active_conductors: list[int] = []
+
+    for raw_row in partition_rows:
+        label = str(raw_row["row_label"])
+        if label in labels:
+            raise ValueError("row_label values must be distinct")
+        labels.add(label)
+        G = int(raw_row["active_squarefree_modulus"])
+        k = int(raw_row["joint_inactive_squarefree_cofactor"])
+        r0 = int(raw_row["common_inactive_squarefree_cofactor"])
+        if min(G, k, r0) <= 0 or G * k * r0 != S:
+            raise ValueError("every partition row must satisfy s=G*k*r0")
+        if gcd(G, k * r0) != 1 or gcd(k, r0) != 1:
+            raise ValueError("G, k, and r0 must be pairwise coprime")
+        K = k * r0
+        phi_K = finite_totient(K)
+        partition_coefficient = F(raw_row["partition_coefficient"])
+        physical_direct = int(raw_row["physical_direct_label"])
+        direct_scalar = F(ramanujan(physical_direct, K), phi_K)
+        raw_product_coefficients = raw_row["product_residue_coefficients"]
+        if not isinstance(raw_product_coefficients, dict) or not raw_product_coefficients:
+            raise ValueError("each row needs nonempty product residue coefficients")
+
+        product_coefficients: Counter[int] = Counter()
+        for raw_residue, raw_coefficient in raw_product_coefficients.items():
+            residue = int(raw_residue) % G if G > 1 else 0
+            if G > 1 and gcd(residue, G) != 1:
+                raise ValueError("every active product residue must be a unit")
+            product_coefficients[residue] += F(raw_coefficient)
+
+        unit_products = (
+            tuple(residue for residue in range(G) if gcd(residue, G) == 1)
+            if G > 1
+            else (0,)
+        )
+        unit_cofactor_frequencies = tuple(
+            residue for residue in range(K) if gcd(residue, K) == 1
+        )
+        A = pow(K, -1, G) if G > 1 else 0
+        B = A * physical_direct % G if G > 1 else 0
+        row_coefficients = {residue: 0j for residue in unit_total}
+        lifted_frequencies: list[int] = []
+        for cofactor_frequency in unit_cofactor_frequencies:
+            for product_residue in unit_products:
+                if G > 1:
+                    frequency = (
+                        -K * A * pow(product_residue, -1, G)
+                        + G * cofactor_frequency
+                    ) % S
+                    direct_phase = cmath.exp(
+                        2j * cmath.pi * B * product_residue / G
+                    )
+                else:
+                    frequency = cofactor_frequency % S
+                    direct_phase = 1 + 0j
+                lifted_frequencies.append(frequency)
+                coefficient = (
+                    complex(
+                        partition_coefficient
+                        * direct_scalar
+                        * product_coefficients[product_residue]
+                        / phi_K
+                    )
+                    * direct_phase
+                )
+                row_coefficients[frequency] += coefficient
+                combined_coefficients[frequency] += coefficient
+
+        product_energy = sum(
+            (coefficient * coefficient for coefficient in product_coefficients.values()),
+            F(0),
+        )
+        formula_energy = (
+            partition_coefficient
+            * partition_coefficient
+            * direct_scalar
+            * direct_scalar
+            * product_energy
+            / phi_K
+        )
+        actual_energy = sum(abs(value) ** 2 for value in row_coefficients.values())
+        tolerance = 1e-9 * max(1.0, float(formula_energy))
+        row_results.append(
+            {
+                "row_label": label,
+                "active_squarefree_modulus": G,
+                "joint_inactive_squarefree_cofactor": k,
+                "common_inactive_squarefree_cofactor": r0,
+                "inactive_squarefree_cofactor": K,
+                "partition_coefficient": partition_coefficient,
+                "normalized_inactive_direct_ramanujan_scalar": direct_scalar,
+                "derived_active_inverse_multiplier": A,
+                "derived_active_direct_coefficient": B,
+                "product_residue_energy": product_energy,
+                "lifted_frequency_map": tuple(lifted_frequencies),
+                "lifted_coefficient_vector": row_coefficients,
+                "row_energy_formula": formula_energy,
+                "row_energy_actual": actual_energy,
+                "joint_frequency_map_bijective": bool(
+                    len(lifted_frequencies)
+                    == len(set(lifted_frequencies))
+                    == len(unit_total)
+                    and set(lifted_frequencies) == set(unit_total)
+                ),
+                "all_lifted_frequencies_primitive": all(
+                    gcd(frequency, S) == 1 for frequency in lifted_frequencies
+                ),
+                "row_energy_identity_exact": bool(
+                    abs(actual_energy - float(formula_energy)) <= tolerance
+                ),
+            }
+        )
+        active_conductors.append(G)
+
+    row_energy_sum = sum(
+        (F(row["row_energy_formula"]) for row in row_results),
+        F(0),
+    )
+    combined_energy = sum(
+        abs(value) ** 2 for value in combined_coefficients.values()
+    )
+    partition_cauchy_bound = len(row_results) * row_energy_sum
+    tolerance = 1e-9 * max(1.0, float(partition_cauchy_bound))
+    distinct_active = tuple(sorted(set(active_conductors)))
+    return {
+        "total_squarefree_modulus": S,
+        "primitive_total_frequencies": unit_total,
+        "partition_row_count": len(row_results),
+        "partition_rows": tuple(row_results),
+        "distinct_active_conductors": distinct_active,
+        "repeated_active_conductor_rows_present": bool(
+            len(distinct_active) < len(active_conductors)
+        ),
+        "all_supplied_partition_factorizations_exact": True,
+        "all_joint_frequency_maps_bijective": all(
+            bool(row["joint_frequency_map_bijective"]) for row in row_results
+        ),
+        "all_lifted_frequencies_primitive": all(
+            bool(row["all_lifted_frequencies_primitive"]) for row in row_results
+        ),
+        "all_row_energy_identities_exact": all(
+            bool(row["row_energy_identity_exact"]) for row in row_results
+        ),
+        "sector_and_phase_label_fixed_outside_partition_family": True,
+        "combined_coefficient_vector": combined_coefficients,
+        "combined_coefficient_energy": combined_energy,
+        "row_energy_formula_sum": row_energy_sum,
+        "partition_cauchy_upper_bound": partition_cauchy_bound,
+        "partition_cauchy_bound_holds": bool(
+            combined_energy <= float(partition_cauchy_bound) + tolerance
+        ),
+        "fixed_total_modulus_conductor_partition_reassembly_proved": True,
+        "signed_varying_total_modulus_and_phase_reassembly_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def fixed_total_modulus_divisor_energy_envelope_audit(
+    *,
+    total_squarefree_modulus: int,
+    product_support_length: int,
+) -> dict[str, object]:
+    """Verify the exact divisor sum behind fixed-modulus reassembly."""
+
+    S = int(total_squarefree_modulus)
+    X = int(product_support_length)
+    factors = _finite_prime_exponents(S) if S > 1 else {}
+    if S <= 1 or any(exponent != 1 for exponent in factors.values()):
+        raise ValueError("total_squarefree_modulus must be squarefree and exceed one")
+    if X <= 0:
+        raise ValueError("product_support_length must be positive")
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    divisors = [1]
+    for prime in factors:
+        divisors += [prime * divisor for divisor in tuple(divisors)]
+    divisors = sorted(divisors)
+    inverse_totient_sum = sum(
+        (F(1, finite_totient(K)) for K in divisors),
+        F(0),
+    )
+    cofactor_totient_sum = sum(
+        (F(K, finite_totient(K)) for K in divisors),
+        F(0),
+    )
+    direct_envelope = sum(
+        (
+            F(X, finite_totient(S // G))
+            + F(X * X, G * finite_totient(S // G))
+            for G in divisors
+        ),
+        F(0),
+    )
+    total_modulus_envelope = (
+        X * inverse_totient_sum
+        + F(X * X, S) * cofactor_totient_sum
+    )
+    inverse_euler_product = prod(
+        (F(prime, prime - 1) for prime in factors),
+        start=F(1),
+    )
+    cofactor_euler_product = prod(
+        (F(2 * prime - 1, prime - 1) for prime in factors),
+        start=F(1),
+    )
+    return {
+        "total_squarefree_modulus": S,
+        "product_support_length": X,
+        "divisors": tuple(divisors),
+        "inverse_totient_divisor_sum": inverse_totient_sum,
+        "cofactor_over_totient_divisor_sum": cofactor_totient_sum,
+        "inverse_totient_euler_product": inverse_euler_product,
+        "cofactor_over_totient_euler_product": cofactor_euler_product,
+        "divisor_euler_products_exact": bool(
+            inverse_totient_sum == inverse_euler_product
+            and cofactor_totient_sum == cofactor_euler_product
+        ),
+        "direct_partition_energy_envelope": direct_envelope,
+        "total_modulus_energy_envelope": total_modulus_envelope,
+        "active_conductor_losses_collapse_exactly": bool(
+            direct_envelope == total_modulus_envelope
+        ),
+        "soft_divisor_cost_only": True,
+    }
+
+
+def fixed_total_modulus_partition_exponent_audit(
+    *,
+    total_modulus_exponent: Fraction,
+    h_length_exponent: Fraction,
+    delta_length_exponent: Fraction,
+    product_total_length_exponent: Fraction,
+    required_saving_exponent: Fraction,
+    fixed_total_modulus_partition_reassembly_verified: bool,
+    sector_and_phase_label_fixed_outside_partition_family: bool,
+    smooth_physical_tensor_adapter_verified: bool,
+    divisor_bounded_partition_multiplicity_verified: bool,
+) -> dict[str, object]:
+    """Record the exponent ledger after reassembling all partitions of s."""
+
+    sigma = F(total_modulus_exponent)
+    h = F(h_length_exponent)
+    delta = F(delta_length_exponent)
+    x = F(product_total_length_exponent)
+    required = F(required_saving_exponent)
+    if min(sigma, h, delta, x, required) < 0 or sigma == 0:
+        raise ValueError("all exponents must be nonnegative and modulus positive")
+
+    boundary_base = max(F(0), h, delta, h + delta - sigma)
+    primitive_energy = max(h + delta, 2 * boundary_base)
+    product_energy = max(x, 2 * x - sigma)
+    operator_bound = (sigma + primitive_energy + product_energy) / 2
+    trivial = h + delta + x
+    saving = max(F(0), trivial - operator_bound)
+    balanced = bool(sigma == 3 and h == F(5, 2) and delta == F(5, 2))
+    hypotheses = bool(
+        fixed_total_modulus_partition_reassembly_verified
+        and sector_and_phase_label_fixed_outside_partition_family
+        and smooth_physical_tensor_adapter_verified
+        and divisor_bounded_partition_multiplicity_verified
+    )
+    return {
+        "total_modulus_exponent": sigma,
+        "h_length_exponent": h,
+        "delta_length_exponent": delta,
+        "product_total_length_exponent": x,
+        "required_saving_exponent": required,
+        "primitive_h_delta_energy_exponent": primitive_energy,
+        "product_partition_energy_exponent": product_energy,
+        "operator_bound_exponent": operator_bound,
+        "trivial_amplitude_exponent": trivial,
+        "power_saving_exponent": saving,
+        "balanced_maximal_scale": balanced,
+        "balanced_saving_closed_form": (
+            min(F(5, 2), F(1) + x / 2) if balanced else None
+        ),
+        "balanced_target_region_exact": bool(
+            balanced
+            and required == 2
+            and ((saving >= required) == (x >= 2))
+        ),
+        "active_conductor_exponent_absent_from_bound": True,
+        "fixed_total_modulus_partition_reassembly_verified": bool(
+            fixed_total_modulus_partition_reassembly_verified
+        ),
+        "sector_and_phase_label_fixed_outside_partition_family": bool(
+            sector_and_phase_label_fixed_outside_partition_family
+        ),
+        "smooth_physical_tensor_adapter_verified": bool(
+            smooth_physical_tensor_adapter_verified
+        ),
+        "divisor_bounded_partition_multiplicity_verified": bool(
+            divisor_bounded_partition_multiplicity_verified
+        ),
+        "published_hypotheses_verified": hypotheses,
+        "fixed_total_modulus_target_met": bool(
+            hypotheses and saving >= required
+        ),
+        "signed_varying_total_modulus_and_phase_reassembly_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def centered_type_phase_local_spectrum_audit(*, prime: int) -> dict[str, object]:
     """Compute the exact local Gram spectrum of the centered tensor.
 

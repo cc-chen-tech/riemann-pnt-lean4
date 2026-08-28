@@ -5562,6 +5562,189 @@ def test_ramanujan_cofactor_lifts_into_total_primitive_spectrum() -> None:
         assert marker in note
 
 
+def test_fixed_total_modulus_reassembles_supplied_conductor_partitions() -> None:
+    """A wrong CRT map, phi normalization, or partition count breaks this."""
+
+    audit = getattr(
+        coverage_audit,
+        "fixed_total_modulus_conductor_partition_energy_audit",
+        None,
+    )
+    assert audit is not None, "fixed-total-modulus partition audit is missing"
+
+    result = audit(
+        total_squarefree_modulus=6,
+        partition_rows=(
+            {
+                "row_label": "G1-Q2",
+                "active_squarefree_modulus": 1,
+                "joint_inactive_squarefree_cofactor": 2,
+                "common_inactive_squarefree_cofactor": 3,
+                "physical_direct_label": 0,
+                "partition_coefficient": F(1),
+                "product_residue_coefficients": {0: F(1)},
+            },
+            {
+                "row_label": "G1-Q3",
+                "active_squarefree_modulus": 1,
+                "joint_inactive_squarefree_cofactor": 3,
+                "common_inactive_squarefree_cofactor": 2,
+                "physical_direct_label": 0,
+                "partition_coefficient": F(-1),
+                "product_residue_coefficients": {0: F(1)},
+            },
+            {
+                "row_label": "G2-Q6",
+                "active_squarefree_modulus": 2,
+                "joint_inactive_squarefree_cofactor": 3,
+                "common_inactive_squarefree_cofactor": 1,
+                "physical_direct_label": 0,
+                "partition_coefficient": F(1),
+                "product_residue_coefficients": {1: F(1)},
+            },
+            {
+                "row_label": "G3-Q6",
+                "active_squarefree_modulus": 3,
+                "joint_inactive_squarefree_cofactor": 2,
+                "common_inactive_squarefree_cofactor": 1,
+                "physical_direct_label": 0,
+                "partition_coefficient": F(1),
+                "product_residue_coefficients": {1: F(1), 2: F(-1)},
+            },
+            {
+                "row_label": "G6-Q6",
+                "active_squarefree_modulus": 6,
+                "joint_inactive_squarefree_cofactor": 1,
+                "common_inactive_squarefree_cofactor": 1,
+                "physical_direct_label": 0,
+                "partition_coefficient": F(1),
+                "product_residue_coefficients": {1: F(2)},
+            },
+        ),
+    )
+    assert result["distinct_active_conductors"] == (1, 2, 3, 6)
+    assert result["repeated_active_conductor_rows_present"]
+    assert result["all_supplied_partition_factorizations_exact"]
+    assert result["all_joint_frequency_maps_bijective"]
+    assert result["all_lifted_frequencies_primitive"]
+    assert result["all_row_energy_identities_exact"]
+    assert result["sector_and_phase_label_fixed_outside_partition_family"]
+    assert result["row_energy_formula_sum"] == F(15, 2)
+    assert result["combined_coefficient_energy"] == pytest.approx(F(25, 2))
+    assert result["partition_cauchy_upper_bound"] == F(75, 2)
+    assert result["partition_cauchy_bound_holds"]
+    assert result["fixed_total_modulus_conductor_partition_reassembly_proved"]
+    assert not result[
+        "signed_varying_total_modulus_and_phase_reassembly_proved"
+    ]
+    assert not result["coupled_kernel_gate_closed"]
+
+    nonzero_direct = audit(
+        total_squarefree_modulus=6,
+        partition_rows=(
+            {
+                "row_label": "nonzero-direct-G1",
+                "active_squarefree_modulus": 1,
+                "joint_inactive_squarefree_cofactor": 2,
+                "common_inactive_squarefree_cofactor": 3,
+                "physical_direct_label": 1,
+                "partition_coefficient": F(1),
+                "product_residue_coefficients": {0: F(1)},
+            },
+        ),
+    )
+    nonzero_row = nonzero_direct["partition_rows"][0]
+    assert nonzero_row["normalized_inactive_direct_ramanujan_scalar"] == F(1, 2)
+    assert nonzero_row["row_energy_formula"] == F(1, 8)
+    assert nonzero_direct["combined_coefficient_energy"] == pytest.approx(F(1, 8))
+
+
+def test_fixed_total_modulus_divisor_sum_removes_active_conductor_loss() -> None:
+    """The X^2/G term must collapse to X^2/s after divisor reassembly."""
+
+    divisor_audit = getattr(
+        coverage_audit,
+        "fixed_total_modulus_divisor_energy_envelope_audit",
+        None,
+    )
+    assert divisor_audit is not None, "fixed-modulus divisor audit is missing"
+    divisor_result = divisor_audit(
+        total_squarefree_modulus=30,
+        product_support_length=12,
+    )
+    assert divisor_result["inverse_totient_divisor_sum"] == F(15, 4)
+    assert divisor_result["cofactor_over_totient_divisor_sum"] == F(135, 8)
+    assert divisor_result["direct_partition_energy_envelope"] == F(126)
+    assert divisor_result["total_modulus_energy_envelope"] == F(126)
+    assert divisor_result["active_conductor_losses_collapse_exactly"]
+    assert divisor_result["soft_divisor_cost_only"]
+
+    exponent_audit = getattr(
+        coverage_audit,
+        "fixed_total_modulus_partition_exponent_audit",
+        None,
+    )
+    assert exponent_audit is not None, "fixed-modulus exponent audit is missing"
+    common = {
+        "total_modulus_exponent": F(3),
+        "h_length_exponent": F(5, 2),
+        "delta_length_exponent": F(5, 2),
+        "required_saving_exponent": F(2),
+        "fixed_total_modulus_partition_reassembly_verified": True,
+        "sector_and_phase_label_fixed_outside_partition_family": True,
+        "smooth_physical_tensor_adapter_verified": True,
+        "divisor_bounded_partition_multiplicity_verified": True,
+    }
+    maximal = exponent_audit(
+        product_total_length_exponent=F(3),
+        **common,
+    )
+    assert maximal["product_partition_energy_exponent"] == F(3)
+    assert maximal["operator_bound_exponent"] == F(11, 2)
+    assert maximal["power_saving_exponent"] == F(5, 2)
+    assert maximal["fixed_total_modulus_target_met"]
+
+    threshold = exponent_audit(
+        product_total_length_exponent=F(2),
+        **common,
+    )
+    assert threshold["operator_bound_exponent"] == F(5)
+    assert threshold["power_saving_exponent"] == F(2)
+    assert threshold["balanced_target_region_exact"]
+    assert threshold["fixed_total_modulus_target_met"]
+
+    short_product = exponent_audit(
+        product_total_length_exponent=F(3, 2),
+        **common,
+    )
+    assert short_product["power_saving_exponent"] == F(7, 4)
+    assert short_product["balanced_target_region_exact"]
+    assert not short_product["fixed_total_modulus_target_met"]
+    assert short_product["active_conductor_exponent_absent_from_bound"]
+    assert short_product[
+        "sector_and_phase_label_fixed_outside_partition_family"
+    ]
+    assert not short_product[
+        "signed_varying_total_modulus_and_phase_reassembly_proved"
+    ]
+    assert not short_product["coupled_kernel_gate_closed"]
+
+    unfixed_phase = exponent_audit(
+        product_total_length_exponent=F(3),
+        **{
+            **common,
+            "sector_and_phase_label_fixed_outside_partition_family": False,
+        },
+    )
+    assert unfixed_phase["power_saving_exponent"] == F(5, 2)
+    assert not unfixed_phase["published_hypotheses_verified"]
+    assert not unfixed_phase["fixed_total_modulus_target_met"]
+    assert not unfixed_phase[
+        "signed_varying_total_modulus_and_phase_reassembly_proved"
+    ]
+    assert not unfixed_phase["coupled_kernel_gate_closed"]
+
+
 def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:
     audit = getattr(
         coverage_audit,
