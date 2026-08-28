@@ -820,10 +820,18 @@ a final density axiom:
    phase, this makes the complete dual-product norm-square pointwise equal to
    the main-product norm-square; its window Gaussian bound is therefore
    identical, with no new constant or logarithmic loss.  Its axiom audit is
-   again the allowed three axioms.  What remains before applying the whole
-   AFE in (8.1) is the symmetric square-root AFE itself (still the genuine
-   analytic gate), the canonical remainder contribution, and the
-   translated-Gaussian tail assembly in (8.7)--(8.8).
+   again the allowed three axioms.  The canonical remainder has now been
+   assembled too.  Conditional only on the still-explicit symmetric AFE
+   target, the complete mollified-zeta window moment is bounded by
+   `3*(2*B_dyadic + GaussianMass*K_remainder)`, where `B_dyadic` is the
+   proved `(K+1)^2` selector bound and `K_remainder` is exactly
+   `(R*L^(-1/4)*2*sqrt(X))^2`.  The proof uses continuity only for the actual
+   zeta product, while the right majorant is globally integrable.  Its axiom
+   audit is again the allowed three axioms.  Thus the symmetric square-root
+   AFE itself is now the sole analytic premise at this layer.  What remains
+   is to instantiate `K,X,Delta,L` at the half-range scales, absorb the
+   remainder into the required polylogarithmic boundary norm, and perform
+   the translated-window/two-scale assembly in (8.7)--(8.8).
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
    specialization, and insert the resulting local norm into the now-proved
