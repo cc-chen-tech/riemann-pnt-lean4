@@ -4944,6 +4944,158 @@ def test_korolev_bilinear_lemma_covers_the_fixed_prime_balanced_atom() -> None:
     assert not too_short["fixed_prime_balanced_atom_has_power_saving"]
 
 
+def test_bourgain_garaev_composite_inverse_product_polytope() -> None:
+    audit = getattr(
+        coverage_audit,
+        "bourgain_garaev_composite_inverse_product_bilinear_audit",
+        None,
+    )
+    assert audit is not None, "composite inverse-product audit is missing"
+
+    interior = audit(
+        modulus=30,
+        inverse_coefficient=7,
+        first_labels=(1, 7, 11, 13),
+        second_labels=(1, 17, 19, 23),
+        modulus_exponent=F(3),
+        first_length_exponent=F(1),
+        second_length_exponent=F(1),
+        first_moment_order=2,
+        second_moment_order=2,
+        zero_direct_phase=True,
+        one_bounded_coefficients=True,
+        separated_weight_verified=True,
+    )
+    assert interior["all_inverse_product_phase_identities_exact"]
+    assert interior["arbitrary_composite_modulus_allowed"]
+    assert interior["published_hypotheses_verified"]
+    assert interior["first_factor_exponent_contribution"] == F(-1, 2)
+    assert interior["second_factor_exponent_contribution"] == F(-1, 2)
+    assert interior["fixed_atom_saving_exponent"] == F(1, 8)
+    assert interior["fixed_composite_zero_direct_atom_covered"]
+    assert not interior["nonzero_direct_phase_covered"]
+    assert not interior["physical_packet_adapter_proved"]
+    assert not interior["global_varying_modulus_reassembly_proved"]
+    assert not interior["coupled_kernel_gate_closed"]
+
+    mixed_boundary = audit(
+        modulus=30,
+        inverse_coefficient=7,
+        first_labels=(1, 7),
+        second_labels=(11, 13),
+        modulus_exponent=F(3),
+        first_length_exponent=F(3, 2),
+        second_length_exponent=F(1),
+        first_moment_order=2,
+        second_moment_order=2,
+        zero_direct_phase=True,
+        one_bounded_coefficients=True,
+        separated_weight_verified=True,
+    )
+    assert mixed_boundary["first_factor_exponent_contribution"] == 0
+    assert mixed_boundary["second_factor_exponent_contribution"] == F(-1, 2)
+    assert mixed_boundary["fixed_atom_saving_exponent"] == F(1, 16)
+    assert mixed_boundary["fixed_composite_zero_direct_atom_covered"]
+
+    balanced = audit(
+        modulus=30,
+        inverse_coefficient=7,
+        first_labels=(1, 7),
+        second_labels=(11, 13),
+        modulus_exponent=F(3),
+        first_length_exponent=F(3, 2),
+        second_length_exponent=F(3, 2),
+        first_moment_order=2,
+        second_moment_order=2,
+        zero_direct_phase=True,
+        one_bounded_coefficients=True,
+        separated_weight_verified=True,
+    )
+    assert balanced["first_factor_exponent_contribution"] == 0
+    assert balanced["second_factor_exponent_contribution"] == 0
+    assert balanced["fixed_atom_saving_exponent"] == 0
+    assert balanced["exact_square_root_resonance"]
+    assert not balanced["fixed_composite_zero_direct_atom_covered"]
+
+    nonzero_direct = audit(
+        modulus=30,
+        inverse_coefficient=7,
+        first_labels=(1, 7),
+        second_labels=(11, 13),
+        modulus_exponent=F(3),
+        first_length_exponent=F(1),
+        second_length_exponent=F(1),
+        first_moment_order=2,
+        second_moment_order=2,
+        zero_direct_phase=False,
+        one_bounded_coefficients=True,
+        separated_weight_verified=True,
+    )
+    assert nonzero_direct["fixed_atom_saving_exponent"] == F(1, 8)
+    assert not nonzero_direct["published_hypotheses_verified"]
+    assert not nonzero_direct["fixed_composite_zero_direct_atom_covered"]
+    assert not nonzero_direct["nonzero_direct_phase_covered"]
+
+    for failed_hypothesis in (
+        {"inverse_coefficient": 5},
+        {"one_bounded_coefficients": False},
+        {"separated_weight_verified": False},
+    ):
+        rejected = audit(
+            modulus=30,
+            inverse_coefficient=failed_hypothesis.get("inverse_coefficient", 7),
+            first_labels=(1, 7),
+            second_labels=(11, 13),
+            modulus_exponent=F(3),
+            first_length_exponent=F(1),
+            second_length_exponent=F(1),
+            first_moment_order=2,
+            second_moment_order=2,
+            zero_direct_phase=True,
+            one_bounded_coefficients=failed_hypothesis.get(
+                "one_bounded_coefficients", True
+            ),
+            separated_weight_verified=failed_hypothesis.get(
+                "separated_weight_verified", True
+            ),
+        )
+        assert rejected["fixed_atom_saving_exponent"] == F(1, 8)
+        assert not rejected["published_hypotheses_verified"]
+        assert not rejected["fixed_composite_zero_direct_atom_covered"]
+
+    with pytest.raises(ValueError, match="must be units"):
+        audit(
+            modulus=30,
+            inverse_coefficient=7,
+            first_labels=(1, 6),
+            second_labels=(11, 13),
+            modulus_exponent=F(3),
+            first_length_exponent=F(1),
+            second_length_exponent=F(1),
+            first_moment_order=2,
+            second_moment_order=2,
+            zero_direct_phase=True,
+            one_bounded_coefficients=True,
+            separated_weight_verified=True,
+        )
+
+    with pytest.raises(ValueError, match="genuinely composite"):
+        audit(
+            modulus=31,
+            inverse_coefficient=7,
+            first_labels=(1, 7),
+            second_labels=(11, 13),
+            modulus_exponent=F(3),
+            first_length_exponent=F(1),
+            second_length_exponent=F(1),
+            first_moment_order=2,
+            second_moment_order=2,
+            zero_direct_phase=True,
+            one_bounded_coefficients=True,
+            separated_weight_verified=True,
+        )
+
+
 def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:
     audit = getattr(
         coverage_audit,

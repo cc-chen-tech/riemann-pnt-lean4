@@ -15635,6 +15635,132 @@ def korolev_prime_product_trace_bilinear_coverage_audit(
     }
 
 
+def bourgain_garaev_composite_inverse_product_bilinear_audit(
+    *,
+    modulus: int,
+    inverse_coefficient: int,
+    first_labels: tuple[int, ...],
+    second_labels: tuple[int, ...],
+    modulus_exponent: Fraction,
+    first_length_exponent: Fraction,
+    second_length_exponent: Fraction,
+    first_moment_order: int,
+    second_moment_order: int,
+    zero_direct_phase: bool,
+    one_bounded_coefficients: bool,
+    separated_weight_verified: bool,
+) -> dict[str, object]:
+    """Audit Bourgain--Garaev's arbitrary-modulus inverse-product bound.
+
+    Their Theorem 3 bounds the bilinear phase ``e_m(A*x^(-1)*y^(-1))``
+    for arbitrary modulus.  For moment orders ``k1,k2``, the two scale
+    factors have exponents
+    ``max((ki-1)*xi-gamma/2, gamma/2-ki*xi)`` and the product is raised
+    to ``1/(2*k1*k2)``.  This helper records the exact rational saving
+    and deliberately rejects every nonzero direct-product phase.
+    """
+
+    m = int(modulus)
+    if m <= 1:
+        raise ValueError("modulus must exceed one")
+    factors = _finite_prime_exponents(m)
+    if len(factors) == 1 and next(iter(factors.values())) == 1:
+        raise ValueError("this audit is reserved for a genuinely composite modulus")
+    if not first_labels or not second_labels:
+        raise ValueError("both bilinear label families are required")
+    if any(
+        gcd(int(label), m) != 1
+        for label in (*first_labels, *second_labels)
+    ):
+        raise ValueError("all finite inverse-product labels must be units")
+
+    gamma = F(modulus_exponent)
+    first = F(first_length_exponent)
+    second = F(second_length_exponent)
+    k1 = int(first_moment_order)
+    k2 = int(second_moment_order)
+    if gamma <= 0 or min(first, second) < 0 or max(first, second) > gamma:
+        raise ValueError("length exponents must lie between zero and the modulus exponent")
+    if min(k1, k2) <= 0:
+        raise ValueError("moment orders must be positive integers")
+
+    A = int(inverse_coefficient) % m
+    phase_rows: list[dict[str, object]] = []
+    for first_label in first_labels:
+        x = int(first_label) % m
+        x_inverse = pow(x, -1, m)
+        for second_label in second_labels:
+            y = int(second_label) % m
+            y_inverse = pow(y, -1, m)
+            product_phase = A * pow(x * y % m, -1, m) % m
+            separated_inverse_phase = A * x_inverse * y_inverse % m
+            phase_rows.append(
+                {
+                    "first_label": x,
+                    "second_label": y,
+                    "product_inverse_phase": product_phase,
+                    "separated_inverse_phase": separated_inverse_phase,
+                    "phase_identity_exact": product_phase == separated_inverse_phase,
+                }
+            )
+
+    first_contribution = max(
+        (k1 - 1) * first - gamma / 2,
+        gamma / 2 - k1 * first,
+    )
+    second_contribution = max(
+        (k2 - 1) * second - gamma / 2,
+        gamma / 2 - k2 * second,
+    )
+    relative_exponent = (first_contribution + second_contribution) / (
+        2 * k1 * k2
+    )
+    saving = max(F(0), -relative_exponent)
+    identities_exact = all(
+        bool(row["phase_identity_exact"]) for row in phase_rows
+    )
+    hypotheses = bool(
+        gcd(A, m) == 1
+        and zero_direct_phase
+        and one_bounded_coefficients
+        and separated_weight_verified
+        and identities_exact
+    )
+    return {
+        "source": (
+            "Bourgain--Garaev, Kloosterman sums in residue rings, "
+            "Theorem 3 (arXiv:1309.1124)"
+        ),
+        "modulus": m,
+        "modulus_factorization": factors,
+        "arbitrary_composite_modulus_allowed": True,
+        "inverse_coefficient": A,
+        "unit_inverse_coefficient_verified": gcd(A, m) == 1,
+        "phase_rows": tuple(phase_rows),
+        "all_inverse_product_phase_identities_exact": identities_exact,
+        "modulus_exponent": gamma,
+        "first_length_exponent": first,
+        "second_length_exponent": second,
+        "first_moment_order": k1,
+        "second_moment_order": k2,
+        "first_factor_exponent_contribution": first_contribution,
+        "second_factor_exponent_contribution": second_contribution,
+        "relative_bound_exponent": relative_exponent,
+        "fixed_atom_saving_exponent": saving,
+        "published_hypotheses_verified": hypotheses,
+        "fixed_composite_zero_direct_atom_covered": bool(
+            hypotheses and saving > 0
+        ),
+        "exact_square_root_resonance": bool(
+            first == gamma / 2 and second == gamma / 2
+        ),
+        "nonzero_direct_phase_covered": False,
+        "physical_packet_adapter_proved": False,
+        "global_varying_modulus_reassembly_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def centered_type_phase_local_spectrum_audit(*, prime: int) -> dict[str, object]:
     """Compute the exact local Gram spectrum of the centered tensor.
 

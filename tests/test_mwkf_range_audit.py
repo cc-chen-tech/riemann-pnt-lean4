@@ -158,7 +158,7 @@ def test_research_note_records_product_trace_completion_and_rank_one_boundary() 
         "rank-one Type-II pole stratification fails",
         "formal substitution, not a currently valid route",
         "proved-coverage column",
-        "composite central band remain unproved",
+        "simultaneously resonant/nonzero-direct composite Type-II rows",
         "### 9.79 Squarefree CRT transfer and its sharp cofactor cost",
         r"K_{qr}(x)=K_q^{(r)}(x)K_r^{(q)}(x)",
         r"\frac1{\varphi(r)}\sum_{\chi\bmod r}",
