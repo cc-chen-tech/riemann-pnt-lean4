@@ -257,8 +257,14 @@ the principal-part integral lemma and factor-support height selection.
   factor-disk zero ordinates, using the per-zero Poisson-kernel integral
   rather than a pointwise `J^2` bound.
 
-- [ ] **Step 1: Select against the factor-disk support**
+- [x] **Step 1: Select against the factor-disk support**
 - [ ] **Step 2: Prove the weighted principal-part integral bound**
+
+The exact one-zero Poisson-kernel identity and its weighted
+`(b-a) * pi` integral bound are proved.  Still aggregate the
+multiplicity-weighted finite divisor support into
+`pi * (A-sigma0) * m_b`.
+
 - [ ] **Step 3: Combine with the regular factor bound and coarse-scale it**
 
 ### Task 7: Whole-checkpoint verification and publication

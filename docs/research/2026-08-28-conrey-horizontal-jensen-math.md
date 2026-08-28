@@ -390,6 +390,11 @@ Borel--Caratheodory 加 Cauchy 的仓库端点随后给出，对
 \tag{HJ-principal-integral}
 \]
 
+截至 2026-08-28，单零点 Poisson 核恒等式、其未加权绝对积分 `<=pi`、
+带权积分 `<=pi*(A-sigma0)`，以及对完整因子盘零点虚部重新选择高度均已
+形式化。尚缺的是把单零点定理与 divisor 的有限支撑及重数有限和汇总成
+完整的 `HJ-principal-integral`；因此这一标签仍是待完成的组合端点。
+
 正则部分用 `HJ-regular-logderiv` 的一致界。于是两部分合并后的精确
 目标上界是
 
