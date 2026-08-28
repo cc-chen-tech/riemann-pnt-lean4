@@ -8307,6 +8307,44 @@ def test_prime_zero_frequency_physical_reinversion_is_documented() -> None:
     assert "physical cross-residue profile bound remains unproved" in text
 
 
+def test_prime_cross_residue_incidence_puts_all_repetition_on_short_side() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_cross_residue_incidence_audit",
+        None,
+    )
+    assert audit is not None, "prime cross-residue incidence audit is missing"
+    result = audit(
+        long_primes=(31, 41, 61, 71),
+        short_primes=(5, 7),
+        determinant=1,
+    )
+    assert result["all_cross_residues_satisfy_determinant_congruences"]
+    assert result["long_profile_sampling_is_injective"]
+    assert result["long_profile_sampling_maximum_occupancy"] == 1
+    assert result["short_profile_residue_occupancies"][5][4] == 4
+    assert result["short_profile_sampling_maximum_occupancy"] == 4
+    assert result["cauchy_squared_loss_is_short_occupancy"] == 4
+    assert result["all_repetition_is_on_short_profile_side"]
+    assert not result["short_profile_centering_removes_positive_occupancy"]
+    assert not result["pre_cauchy_long_prime_cancellation_proved"]
+    assert not result["NPIT_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_prime_cross_residue_occupancy_boundary_is_documented() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.172 Cross-residue incidence puts the entire occupancy loss "
+        "on the short profile"
+    ) in text
+    assert r"n_q(a)" in text
+    assert r"\max_{q,a}n_q(a)" in text
+    assert "long-profile sampling is injective" in text
+    assert "Cauchy must be delayed past the long-prime average" in text
+    assert "pre-Cauchy physical incidence bound remains unproved" in text
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (

@@ -62,6 +62,7 @@
 > | Oriented conductor-imbalance wedge | Section 9.169 translates the only remaining inequality back to the physical Type-frequency polytope.  If \(\sigma_1>\sigma_2\), then failure of Section 9.168 is exactly \(\rho_1-\rho_2>3\kappa_1+\kappa_2\).  Since \(|\rho_1-\rho_2|\leq1/2\), the missing pre-Cauchy Type saving is \(\eta=((\rho_1-\rho_2)-3\kappa_1-\kappa_2)/2\leq1/4\), and the long-conductor side has \(\kappa_1<1/6\).  Thus the former one-power bounded-\(D\) obstruction has been reduced to a sharply oriented at-most-quarter-power Type gate.  Existing fixed-prime trace estimates cover diagnostic atoms only; no published theorem supplies this saving for the full moving two-character, \(h\delta\)-weighted packet |
 > | Prime-conductor zero-frequency obstruction | Section 9.170 isolates a subface on which the proposed conductor Type mechanism has no cancellation to spend.  For every prime conductor above the two Type cutoffs, the exact split is \(\lambda_{\rm I}(p)=-1\), \(\lambda_{\rm II}(p)=0\); hence the prime--prime face lies wholly in I--I and both Möbius signs are constant.  At common frequency zero, high-order characters modulo a short prime form an exact residue-delta packet.  Pigeonholing long primes into one short residue class gives mutual-character operator norm \(\gg P/\sqrt{\log P}\), so the \(P+Q\) large-sieve cost is sharp in powers and cannot be replaced uniformly by \(\sqrt{PQ}\).  Therefore NPIT cannot follow from the Type split plus arbitrary row-energy control alone.  Its zero-frequency prime face must instead use a proved delocalization of the literal physical transforms, or be extracted and reassembled as a residual main term; neither step is yet proved |
 > | Prime zero-frequency physical reinversion | Section 9.171 removes the arbitrary-character-vector enlargement on the obstructing face.  If \(V_p^{(0)}\) is the literal common-zero-frequency active-residue profile and \(P_{>B,p}\) its high-order character projector, then the normalized double character sum is exactly \(P_{>B,p}V_p^{(0)}(D\overline q_p)\overline{P_{>B,q}V_q^{(0)}(-D\overline p_q)}\).  Thus the missing term is a finite cross-residue bilinear form in the original ratio-convolution/AFE profiles, not a generic mutual-character operator.  Row energy alone still permits point-mass saturation, so the remaining input is a physical cross-residue profile bound or a residual-main-term reassembly; neither is proved |
+> | One-sided cross-residue occupancy | Section 9.172 shows exactly where the remaining prime zero-mode loss sits.  For fixed long \(p\), the map \(q\mapsto D\overline q_p\) is injective because every short \(q<p\).  For fixed short \(q\), the values \(-D\overline p_q\) repeat with residue occupancy \(n_q(a)\).  Cauchy therefore costs precisely \((\max_{q,a}n_q(a))^{1/2}\), which has exponent \((\sigma_{\rm long}-\sigma_{\rm short})/2\) on the pigeonholed prime family and reproduces the full mutual-character imbalance.  Centering does not remove this positive sampling energy.  Any successful estimate must delay Cauchy past the long-prime average and use the physical profiles there |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -24383,6 +24384,121 @@ computes both multiplicative transforms, and verifies (9.1143)--(9.1144)
 for the full and high-order character families.  It records the exact
 cross residues while leaving every analytic-bound flag false.
 
+### 9.172 Cross-residue incidence puts the entire occupancy loss on the short profile
+
+The two cross residues in (9.1145) have asymmetric incidence.  Suppress
+the fixed packet labels and write
+
+\[
+ A_p(x):=(P_{>B,p}V_p^{(0)})(x),\qquad
+ B_q(y):=(P_{>B,q}V_q^{(0)})(y).
+ \tag{9.1146}
+\]
+
+For fixed \(p\), if \(q_1,q_2<p\) are distinct, then
+
+\[
+ D\overline {q_1}_p=D\overline {q_2}_p
+ \quad\Longrightarrow\quad q_1=q_2.
+ \tag{9.1147}
+\]
+
+Thus long-profile sampling is injective and
+
+\[
+ \boxed{
+ \sum_p\sum_q|A_p(D\overline q_p)|^2
+ \leq\sum_p\sum_{x\in U(p)}|A_p(x)|^2.}
+ \tag{9.1148}
+\]
+
+For the short profile, define the exact finite occupancy
+
+\[
+ \boxed{
+ n_q(a):=
+ \#\{p:\ -D\overline p_q=a\}
+ =\#\{p:\ p\equiv-D\overline a_q\pmod q\}.}
+ \tag{9.1149}
+\]
+
+There is no corresponding injectivity when \(p>q\).  Instead,
+
+\[
+ \boxed{
+ \begin{aligned}
+ \sum_q\sum_p|B_q(-D\overline p_q)|^2
+ &=\sum_q\sum_{a\in U(q)}n_q(a)|B_q(a)|^2\\
+ &\leq
+ \left(\max_{q,a}n_q(a)\right)
+ \sum_q\sum_{a\in U(q)}|B_q(a)|^2.
+ \end{aligned}}
+ \tag{9.1150}
+\]
+
+Consequently a Cauchy step on the pair sum in (9.1145) costs exactly
+\((\max_{q,a}n_q(a))^{1/2}\) beyond the two registered row energies.
+For the pigeonholed prime family in (9.1135),
+
+\[
+ \max_{q,a}n_q(a)
+ \gg\frac{P}{Q\log P}.
+ \tag{9.1151}
+\]
+
+If \(P=T^{\sigma_{\rm long}}\) and
+\(Q=T^{\sigma_{\rm short}}\), the logarithm is subpolynomial and the
+Cauchy loss in (9.1150) has exponent
+
+\[
+ \frac{\sigma_{\rm long}-\sigma_{\rm short}}2.
+ \tag{9.1152}
+\]
+
+This is exactly the mutual-character cost in (9.1118).  After the two
+imprimitive row margins are credited, its positive part is
+\(\eta_{\rm imb}\) in (9.1127).  Thus the character-domain deficit and
+the physical cross-residue deficit are the same occupancy, not two
+losses that can be combined or traded.
+
+Centering \(B_q\) does not remove (9.1150): the multiplier \(n_q(a)\)
+is applied to the positive energy \(|B_q(a)|^2\), and a centered profile
+may concentrate on two residues.  Similarly, taking absolute values in
+the long-prime variable before (9.1150) makes the lower bound (9.1151)
+unavoidable.  Cauchy must be delayed past the long-prime average.  A
+successful estimate must correlate
+
+\[
+ A_p(D\overline q_p)
+ \quad\hbox{with}\quad
+ B_q(-D\overline p_q)
+ \tag{9.1153}
+\]
+
+while their common \(h\delta\), ratio-convolution, and smooth packet
+structure is still present.  The required
+pre-Cauchy physical incidence bound remains unproved, as do
+\((\mathrm{NPIT})\), bounded \(D\),
+LDSKM, and the coupled-kernel gate.
+
+The closest recent trace-function result still has the wrong family
+parameter.  Fouvry--Kowalski--Michel--Sawin formulate their Type I/II
+reduction for a kernel over one fixed prime field; see
+[Section 4.1](https://arxiv.org/abs/2511.09459).  In (9.1153), the
+short prime \(q\) varies and \(B_q\) is itself a level-dependent
+physical profile, not a bounded-complexity trace function fixed before
+the \(q\)-average.  Bettin--Chandee allow arbitrary scalar coefficients
+in a trilinear Kloosterman-fraction sum
+[here](https://arxiv.org/abs/1502.00769), but not two residue-indexed
+profiles whose definitions both vary with their moduli.  Applying either
+theorem would first require a uniform separated trace-atom expansion of
+(9.1153) with subpolynomial projective norm.  No such adapter is proved.
+
+The finite helper prime_cross_residue_incidence_audit checks
+(9.1147)--(9.1150) on arbitrary supplied long and short prime families,
+records every residue occupancy, and verifies that all determinant
+congruences are exact.  It marks no analytic gate closed.
+
 ## 10. What has and has not been proved
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
@@ -24431,6 +24547,15 @@ finite cross-residue form (9.1145), with the original \(h\delta\),
 ratio-convolution, and AFE dependence retained.  Parseval alone still
 allows point-mass saturation, so an analytic cross-residue profile bound
 or residual-main-term reassembly remains necessary and unproved.
+
+Section 9.172 identifies the residual loss inside that cross-residue
+form.  Sampling the long profile by \(D\overline q_p\) is injective,
+whereas sampling the short profile by \(-D\overline p_q\) has exact
+occupancy \(n_q(a)\).  Pairwise Cauchy costs
+\((\max n_q(a))^{1/2}\), reproducing the full conductor-imbalance
+exponent.  Hence no character-transform artifact remains: the needed
+cancellation must occur in the long-prime average of the two physical
+profiles before Cauchy.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent

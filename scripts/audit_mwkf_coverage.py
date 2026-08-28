@@ -24181,6 +24181,112 @@ def prime_zero_frequency_character_reinversion_audit(
     }
 
 
+def prime_cross_residue_incidence_audit(
+    *,
+    long_primes: tuple[int, ...],
+    short_primes: tuple[int, ...],
+    determinant: int,
+) -> dict[str, object]:
+    """Locate residue repetition after the prime zero-mode reinversion.
+
+    For fixed long ``p``, distinct short conductors ``q<p`` give
+    distinct residues ``D*inverse(q) mod p``.  For fixed short ``q``,
+    the residues ``-D*inverse(p) mod q`` repeat exactly according to the
+    occupancy of the long conductors modulo ``q``.  This is the precise
+    Cauchy loss in the physical cross-residue form (9.1145).
+    """
+
+    long_values = tuple(int(value) for value in long_primes)
+    short_values = tuple(int(value) for value in short_primes)
+    D = int(determinant)
+    if not long_values or not short_values or D == 0:
+        raise ValueError("both prime families and a nonzero determinant are required")
+    if len(set(long_values)) != len(long_values) or len(set(short_values)) != len(
+        short_values
+    ):
+        raise ValueError("prime conductor labels must be distinct in each family")
+
+    def is_odd_prime(value: int) -> bool:
+        return value > 2 and _finite_prime_exponents(value) == {value: 1}
+
+    if any(not is_odd_prime(value) for value in long_values + short_values):
+        raise ValueError("all conductor labels must be odd primes")
+    if min(long_values) <= max(short_values):
+        raise ValueError("every long prime must exceed every short prime")
+    if any(gcd(D, value) != 1 for value in long_values + short_values):
+        raise ValueError("the determinant must be a unit at every conductor")
+
+    long_samples: dict[int, dict[int, int]] = {}
+    long_sampling_occupancy: dict[int, Counter[int]] = {}
+    for p in long_values:
+        samples = {
+            q: D * pow(q, -1, p) % p
+            for q in short_values
+        }
+        long_samples[p] = samples
+        long_sampling_occupancy[p] = Counter(samples.values())
+
+    short_samples: dict[int, dict[int, int]] = {}
+    short_sampling_occupancy: dict[int, Counter[int]] = {}
+    for q in short_values:
+        samples = {
+            p: -D * pow(p, -1, q) % q
+            for p in long_values
+        }
+        short_samples[q] = samples
+        short_sampling_occupancy[q] = Counter(samples.values())
+
+    long_maximum = max(
+        max(occupancy.values(), default=0)
+        for occupancy in long_sampling_occupancy.values()
+    )
+    short_maximum = max(
+        max(occupancy.values(), default=0)
+        for occupancy in short_sampling_occupancy.values()
+    )
+    congruences = bool(
+        all(
+            (q * residue - D) % p == 0
+            for p, samples in long_samples.items()
+            for q, residue in samples.items()
+        )
+        and all(
+            (p * residue + D) % q == 0
+            for q, samples in short_samples.items()
+            for p, residue in samples.items()
+        )
+    )
+    return {
+        "long_prime_conductors": long_values,
+        "short_prime_conductors": short_values,
+        "bounded_determinant": D,
+        "long_profile_cross_residues": long_samples,
+        "short_profile_cross_residues": short_samples,
+        "long_profile_residue_occupancies": {
+            p: dict(occupancy)
+            for p, occupancy in long_sampling_occupancy.items()
+        },
+        "short_profile_residue_occupancies": {
+            q: dict(occupancy)
+            for q, occupancy in short_sampling_occupancy.items()
+        },
+        "all_cross_residues_satisfy_determinant_congruences": congruences,
+        "long_profile_sampling_is_injective": long_maximum == 1,
+        "long_profile_sampling_maximum_occupancy": long_maximum,
+        "short_profile_sampling_maximum_occupancy": short_maximum,
+        "cauchy_squared_loss_is_short_occupancy": short_maximum,
+        "all_repetition_is_on_short_profile_side": bool(
+            long_maximum == 1 and short_maximum > 1
+        ),
+        "short_profile_centering_removes_positive_occupancy": False,
+        "pre_cauchy_long_prime_cancellation_proved": False,
+        "physical_cross_residue_profile_bound_proved": False,
+        "NPIT_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def prime_conductor_zero_frequency_polytope_audit(
     *,
     long_conductor_exponent: Fraction,
