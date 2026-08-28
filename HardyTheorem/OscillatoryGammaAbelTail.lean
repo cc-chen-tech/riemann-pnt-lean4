@@ -138,6 +138,45 @@ theorem norm_oscillatoryGammaNegBoundary_sub_partial_le
 
 /-- Positive damping makes the negative-phase Gamma tail absolutely
 integrable. -/
+theorem integrableOn_dampedGammaNeg_Ioi_zero
+    {z : ℂ} {r c : ℝ} (hz0 : 0 < z.re) (hr : 0 < r) :
+    IntegrableOn
+      (fun u : ℝ => (u : ℂ) ^ (z - 1) * Complex.exp (-(r * u)) *
+        Complex.exp (-I * (c * u))) (Ioi 0) := by
+  let g : ℝ → ℂ := fun u =>
+    (u : ℂ) ^ (z - 1) * Complex.exp (-(r * u)) *
+      Complex.exp (-I * (c * u))
+  let G : ℝ → ℝ := fun u => u ^ (z.re - 1) * Real.exp (-r * u)
+  have hG : IntegrableOn G (Ioi 0) := by
+    simpa [G] using
+      (integrableOn_rpow_mul_exp_neg_mul_rpow
+        (s := z.re - 1) (p := 1) (b := r) (by linarith) (by norm_num) hr)
+  have hgcont : ContinuousOn g (Ioi 0) := by
+    intro u hu
+    have hupos : 0 < u := hu
+    have hpow : ContinuousAt (fun v : ℝ => (v : ℂ) ^ (z - 1)) u :=
+      Complex.continuousAt_ofReal_cpow_const _ _ (Or.inr hupos.ne')
+    have hdamp : ContinuousAt (fun v : ℝ => Complex.exp (-(r * v))) u := by
+      fun_prop
+    have hphase : ContinuousAt (fun v : ℝ => Complex.exp (-I * (c * v))) u := by
+      fun_prop
+    exact ((hpow.mul hdamp).mul hphase).continuousWithinAt
+  apply hG.mono' (hgcont.aestronglyMeasurable measurableSet_Ioi)
+  filter_upwards [ae_restrict_mem measurableSet_Ioi] with u hu
+  have hupos : 0 < u := hu
+  dsimp only [g, G]
+  rw [norm_mul, norm_mul, Complex.norm_cpow_eq_rpow_re_of_pos hupos]
+  have hdampNorm : ‖Complex.exp (-(r * u))‖ = Real.exp (-(r * u)) := by
+    rw [Complex.norm_exp]
+    simp
+  have hphaseNorm : ‖Complex.exp (-I * (c * u))‖ = 1 := by
+    rw [Complex.norm_exp]
+    simp
+  rw [hdampNorm, hphaseNorm, mul_one]
+  simp
+
+/-- Positive damping makes the negative-phase Gamma tail absolutely
+integrable. -/
 theorem integrableOn_dampedGammaNeg_Ioi
     {z : ℂ} {r c A : ℝ} (hz0 : 0 < z.re) (hr : 0 < r) (hA : 0 < A) :
     IntegrableOn

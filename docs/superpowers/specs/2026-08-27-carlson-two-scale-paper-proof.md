@@ -1076,6 +1076,29 @@ improper limit.  Thus the final Abel assembly can compare actual whole-ray
 damped integrals with the canonical conditional boundary value without any
 unproved interchange of limits.
 
+The full Abel assembly is now formal.  Define
+
+\[
+ J_r^-(z,c)=\int_0^\infty u^{z-1}e^{-ru}e^{-icu}\,du
+\]
+
+for `r>0`, and define `J_0^-(z,c)` as the ordinary integral on `[0,1]`
+plus the canonical natural-truncation limit on `[1,infinity)`.  Then for
+`0<Re(z)<1` and `c>0`, Lean proves
+
+\[
+ \lim_{r\to0+}J_r^-(z,c)=J_0^-(z,c).                              \tag{8.17}
+\]
+
+The proof chooses one integer `N` so that both
+`2*|Im(z)|<=c*N` and `8*N^(Re(z)-1)/c<epsilon/3` hold, applies dominated
+convergence on `[0,N]`, and spends the other two thirds of the error on the
+damped and undamped tails.  Positive damping is separately proved to make
+the whole `Ioi 0` integral absolutely integrable, so (8.17) does not rely on
+the convention that a nonintegrable set integral is zero.  The remaining
+Gamma gate is the positive-real scaling of the rotated Mellin identity and
+limit uniqueness; no further tail estimate is needed.
+
 ## 9. Primary sources
 
 - J. B. Conrey, *More than two fifths of the zeros of the Riemann zeta

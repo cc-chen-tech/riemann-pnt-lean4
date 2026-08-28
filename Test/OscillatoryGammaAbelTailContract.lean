@@ -7,6 +7,8 @@ namespace HardyTheorem.OscillatoryGammaAbelTail
 #check tendsto_oscillatoryGammaNegPartial_atTop
 #check norm_oscillatoryGammaNegBoundary_sub_partial_le
 #print axioms norm_oscillatoryGammaNegBoundary_sub_partial_le
+#check integrableOn_dampedGammaNeg_Ioi_zero
+#print axioms integrableOn_dampedGammaNeg_Ioi_zero
 #check integrableOn_dampedGammaNeg_Ioi
 #check norm_integral_dampedGammaNeg_Ioi_le
 #print axioms norm_integral_dampedGammaNeg_Ioi_le
