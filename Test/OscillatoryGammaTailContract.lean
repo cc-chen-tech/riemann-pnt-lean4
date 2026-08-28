@@ -6,6 +6,8 @@ namespace HardyTheorem.OscillatoryGammaTail
 
 #check norm_intervalIntegral_cpow_mul_cexp_linear_le
 #print axioms norm_intervalIntegral_cpow_mul_cexp_linear_le
+#check exists_tendsto_oscillatoryGammaPartial_atTop
+#print axioms exists_tendsto_oscillatoryGammaPartial_atTop
 
 example {z : ℂ} {c A B : ℝ}
     (hAB : A ≤ B) (hA : 0 < A) (hz1 : z.re < 1)

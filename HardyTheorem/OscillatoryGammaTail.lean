@@ -1,6 +1,6 @@
 import HardyTheorem.OscillatoryIntegral
 
-open Real Complex Set
+open Real Complex Set MeasureTheory Filter Topology
 
 namespace HardyTheorem.OscillatoryGammaTail
 
@@ -140,5 +140,91 @@ theorem norm_intervalIntegral_cpow_mul_cexp_linear_le
     rw [show -(1 - z.re) = z.re - 1 by ring]
     field_simp [hc.ne']
     norm_num)
+
+/-- Natural truncations of the boundary Gamma integral, based at `1`.  The
+segment `(0,1]` is kept separate because its convergence uses `0 < Re z`,
+whereas the oscillatory right tail only uses `Re z < 1`. -/
+noncomputable def oscillatoryGammaPartial (z : ℂ) (c : ℝ) (N : ℕ) : ℂ :=
+  ∫ u in (1 : ℝ)..(N : ℝ),
+    (u : ℂ) ^ (z - 1) * Complex.exp (I * (c * u))
+
+private theorem intervalIntegrable_cpow_mul_cexp_linear
+    (z : ℂ) (c : ℝ) {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) :
+    IntervalIntegrable
+      (fun u : ℝ =>
+        (u : ℂ) ^ (z - 1) * Complex.exp (I * (c * u))) volume a b := by
+  apply ContinuousOn.intervalIntegrable_of_Icc hab
+  intro u hu
+  have hu0 : u ≠ 0 := ne_of_gt (ha.trans_le hu.1)
+  have hpow : ContinuousAt (fun v : ℝ => (v : ℂ) ^ (z - 1)) u :=
+    Complex.continuousAt_ofReal_cpow_const _ _ (Or.inr hu0)
+  have hexp : ContinuousAt
+      (fun v : ℝ => Complex.exp (I * (c * v))) u := by
+    fun_prop
+  exact (hpow.mul hexp).continuousWithinAt
+
+/-- The natural truncations of the boundary Gamma integral have a limit.
+This is conditional convergence: the proof is the Cauchy criterion plus the
+uniform right-tail estimate above, not absolute integrability. -/
+theorem exists_tendsto_oscillatoryGammaPartial_atTop
+    {z : ℂ} {c : ℝ} (hz1 : z.re < 1) (hc : 0 < c) :
+    ∃ L : ℂ,
+      Tendsto (oscillatoryGammaPartial z c) atTop (nhds L) := by
+  have hp : 0 < 1 - z.re := by linarith
+  have hpowReal :
+      Tendsto (fun A : ℝ => 8 * A ^ (z.re - 1) / c) atTop (nhds 0) := by
+    have hbase := tendsto_rpow_neg_atTop hp
+    have hmul :
+        Tendsto (fun A : ℝ => (8 / c) * A ^ (-(1 - z.re))) atTop
+          (nhds ((8 / c) * 0)) := tendsto_const_nhds.mul hbase
+    convert hmul using 1
+    · funext A
+      rw [show z.re - 1 = -(1 - z.re) by ring]
+      ring
+    · simp
+  have hpowNat :
+      Tendsto (fun N : ℕ => 8 * (N : ℝ) ^ (z.re - 1) / c) atTop
+        (nhds 0) :=
+    hpowReal.comp tendsto_natCast_atTop_atTop
+  have hcauchy : CauchySeq (oscillatoryGammaPartial z c) := by
+    apply Metric.cauchySeq_iff'.2
+    intro eps heps
+    have hsmall : ∀ᶠ N : ℕ in atTop,
+        8 * (N : ℝ) ^ (z.re - 1) / c < eps :=
+      (tendsto_order.1 hpowNat).2 eps heps
+    have hlarge : ∀ᶠ N : ℕ in atTop,
+        2 * |z.im| / c ≤ (N : ℝ) :=
+      tendsto_natCast_atTop_atTop.eventually_ge_atTop (2 * |z.im| / c)
+    have hgood : ∀ᶠ N : ℕ in atTop,
+        1 ≤ N ∧ 2 * |z.im| / c ≤ (N : ℝ) ∧
+          8 * (N : ℝ) ^ (z.re - 1) / c < eps := by
+      filter_upwards [eventually_ge_atTop 1, hlarge, hsmall] with N hN hNlarge hNsmall
+      exact ⟨hN, hNlarge, hNsmall⟩
+    obtain ⟨N, hN, hNlarge, hNsmall⟩ := hgood.exists
+    refine ⟨N, ?_⟩
+    intro n hn
+    have hNpos : 0 < (N : ℝ) := by
+      exact_mod_cast (Nat.zero_lt_of_lt hN)
+    have hNn : (N : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
+    have himN : 2 * |z.im| ≤ c * (N : ℝ) := by
+      rw [div_le_iff₀ hc] at hNlarge
+      nlinarith
+    have h1N : (1 : ℝ) ≤ (N : ℝ) := by exact_mod_cast hN
+    have hbase := intervalIntegrable_cpow_mul_cexp_linear z c
+      (a := 1) (b := (N : ℝ)) (by norm_num) h1N
+    have htail := intervalIntegrable_cpow_mul_cexp_linear z c
+      (a := (N : ℝ)) (b := (n : ℝ)) hNpos hNn
+    have hadd := intervalIntegral.integral_add_adjacent_intervals hbase htail
+    have hdiff :
+        oscillatoryGammaPartial z c n - oscillatoryGammaPartial z c N =
+          ∫ u in (N : ℝ)..(n : ℝ),
+            (u : ℂ) ^ (z - 1) * Complex.exp (I * (c * u)) := by
+      dsimp only [oscillatoryGammaPartial]
+      rw [← hadd]
+      ring
+    rw [dist_eq_norm, hdiff]
+    exact (norm_intervalIntegral_cpow_mul_cexp_linear_le
+      hNn hNpos hz1 hc himN).trans_lt hNsmall
+  exact cauchySeq_tendsto_of_complete hcauchy
 
 end HardyTheorem.OscillatoryGammaTail

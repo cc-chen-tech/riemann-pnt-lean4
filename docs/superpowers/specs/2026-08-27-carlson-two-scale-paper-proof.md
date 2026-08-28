@@ -1012,6 +1012,11 @@ therefore follows from the already formal first-derivative estimate and is
 uniform in `B`.  This supplies the Cauchy right tail needed when the damped
 Gamma ray is moved to angle `pi/2`; it does not by itself prove the boundary
 Gamma identity or the Poisson transformation, which remain the next gates.
+Lean now also applies (8.13) to the natural truncations
+`integral_[1,N] u^(z-1)e^(icu) du` and proves the Cauchy criterion, hence the
+existence of their limit for every `Re(z)<1` and `c>0`.  This latter theorem
+still makes no assertion about the value of the limit; identifying it with
+`exp(i*pi*z/2)c^(-z)Gamma(z)` is the remaining Abel-boundary step.
 
 ## 9. Primary sources
 
