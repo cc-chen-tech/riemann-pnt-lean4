@@ -1,0 +1,6 @@
+import MathlibAux.GaussianExponentialPolynomialMeanSquare
+
+open Complex MeasureTheory
+
+#check MathlibAux.integral_gaussian_mul_normSq_exponentialPolynomial_le
+#print axioms MathlibAux.integral_gaussian_mul_normSq_exponentialPolynomial_le

@@ -169,6 +169,8 @@ lean_lib RiemannPNT where
     `MathlibAux.ArgumentCrossing,
     `MathlibAux.HalfWeightedMultiplicity,
     `MathlibAux.FiniteSpectrumGap,
+    `MathlibAux.GaussianExponentialIntegral,
+    `MathlibAux.GaussianExponentialPolynomialMeanSquare,
     `PrimeNumberTheorem.SincSquareIntegral,
     `PrimeNumberTheorem.SincSquareFourier,
     `PrimeNumberTheorem.PositiveFourierKernel,
