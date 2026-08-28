@@ -8442,6 +8442,179 @@ def test_prime_centered_incidence_type_polytope_is_documented() -> None:
     assert "combined nine-block incidence bound remains unproved" in text
 
 
+def test_prime_incidence_scale_adapter_keeps_ambient_and_active_exponents_distinct() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_incidence_scale_adapter_audit",
+        None,
+    )
+    assert audit is not None, "prime incidence scale adapter is missing"
+    result = audit(
+        left_ambient_reduced_modulus_exponent=F(3),
+        right_ambient_reduced_modulus_exponent=F(3),
+        left_type_frequency_gcd_exponent=F(0),
+        right_type_frequency_gcd_exponent=F(1, 2),
+        common_reduced_gcd_exponent=F(1),
+        left_active_primitive_conductor_exponent=F(2),
+        right_active_primitive_conductor_exponent=F(3, 2),
+        left_active_imprimitive_cofactor_exponent=F(0),
+        right_active_imprimitive_cofactor_exponent=F(0),
+        left_oriented_modulus_exponent=F(3),
+        right_oriented_modulus_exponent=F(3),
+        product_label_exponent=F(5),
+        internal_type_length_exponent=F(3),
+        internal_type_cutoff_exponent=F(1, 2),
+    )
+    assert result["left_reduced_denominator_exponent"] == F(3)
+    assert result["right_reduced_denominator_exponent"] == F(5, 2)
+    assert result["left_active_cofactor_exponent"] == F(2)
+    assert result["right_active_cofactor_exponent"] == F(3, 2)
+    assert result["left_scale_factorization_exact"]
+    assert result["right_scale_factorization_exact"]
+    assert result["left_9_138_effective_F_length_exponent"] == F(5)
+    assert result["right_9_138_effective_F_length_exponent"] == F(5)
+    assert result["9_138_internal_G_length_exponent"] == F(3)
+    assert not result[
+        "left_ambient_modulus_equals_active_primitive_conductor"
+    ]
+    assert not result[
+        "right_ambient_modulus_equals_active_primitive_conductor"
+    ]
+    assert result["internal_small_block_empty_on_this_dyadic_face"]
+    assert result["nonempty_internal_type_blocks_on_this_face"] == (
+        ("I", "I"),
+        ("I", "II"),
+        ("II", "I"),
+        ("II", "II"),
+    )
+    assert result["conductor_imbalance_exponent"] == F(1, 4)
+    assert not result["PCDI_proved"]
+    assert not result["NPIT_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_prime_incidence_scale_adapter_rejects_a_false_scale_identification() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_incidence_scale_adapter_audit",
+        None,
+    )
+    assert audit is not None, "prime incidence scale adapter is missing"
+    with pytest.raises(ValueError, match="scale factorization"):
+        audit(
+            left_ambient_reduced_modulus_exponent=F(2),
+            right_ambient_reduced_modulus_exponent=F(3, 2),
+            left_type_frequency_gcd_exponent=F(0),
+            right_type_frequency_gcd_exponent=F(1, 2),
+            common_reduced_gcd_exponent=F(1),
+            left_active_primitive_conductor_exponent=F(2),
+            right_active_primitive_conductor_exponent=F(3, 2),
+            left_active_imprimitive_cofactor_exponent=F(0),
+            right_active_imprimitive_cofactor_exponent=F(0),
+            left_oriented_modulus_exponent=F(3),
+            right_oriented_modulus_exponent=F(3),
+            product_label_exponent=F(5),
+            internal_type_length_exponent=F(3),
+            internal_type_cutoff_exponent=F(1, 2),
+        )
+
+
+def test_prime_centered_incidence_splits_its_resonant_double_incidence_diagonal() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_centered_incidence_resonant_split_audit",
+        None,
+    )
+    assert audit is not None, "prime incidence resonant split is missing"
+    result = audit(
+        left_prime=7,
+        right_prime=5,
+        determinant=1,
+        left_F_lift=((2, 1),),
+        left_G_lift=((4, 1),),
+        right_F_lift=((3, 1), (2, 1)),
+        right_G_lift=((6, 1), (9, 1)),
+    )
+    assert result["double_incidence_row_count"] == 2
+    assert result["resonant_double_incidence_row_count"] == 1
+    assert result["nonresonant_double_incidence_row_count"] == 1
+    assert result["double_incidence_weight"] == F(2)
+    assert result["resonant_double_incidence_weight"] == F(1)
+    assert result["nonresonant_double_incidence_weight"] == F(1)
+    resonant = result["resonant_parameter_rows"][0]
+    assert resonant["left_scale"] == 2
+    assert resonant["right_scale"] == 3
+    assert resonant["core_triple"] == (1, 1, 2)
+    assert resonant["core_equation"] == (7, 7)
+    assert resonant["parameterization_reconstructs_all_six_variables"]
+    assert resonant["primitive_ray_core"] == (1, 1, 2)
+    assert resonant["left_ray_scale"] == 2
+    assert resonant["right_ray_scale"] == 3
+    nonresonant = result["nonresonant_double_incidence_rows"][0]
+    assert nonresonant["incidence_determinant"] == -2
+    assert nonresonant["first_determinant_factorization"] == (-2, -2)
+    assert nonresonant["second_determinant_factorization"] == (-10, -10)
+    assert result["incidence_plane_primitive_normal"] == (7, -5, -1)
+    assert result["incidence_plane_canonical_basis"] == ((1, 1, 2), (1, 0, 7))
+    assert nonresonant["left_lattice_coordinates"] == (2, 0)
+    assert nonresonant["right_lattice_coordinates"] == (1, 1)
+    assert nonresonant["lattice_coordinate_determinant"] == 2
+    assert nonresonant["generated_sublattice_index"] == 2
+    assert nonresonant["vector_cross_product"] == (14, -10, -2)
+    assert nonresonant["cross_product_equals_minus_t_times_normal"]
+    assert result["canonical_basis_cross_product_equals_primitive_normal"]
+    assert result["every_double_incidence_pair_has_exact_lattice_index"]
+    assert result["every_nonresonant_row_has_one_common_integer_determinant"]
+    assert result["every_resonant_row_has_unique_coprime_scale_parameterization"]
+    assert result["left_primitive_ray_profile"] == {(1, 1, 2): F(1)}
+    assert result["right_primitive_ray_profile"] == {
+        (1, 1, 2): F(1),
+        (2, 1, 9): F(1),
+    }
+    assert result["factorized_resonant_ray_inner_product"] == F(1)
+    assert result["resonant_ray_profile_factorization_exact"]
+    assert result["double_incidence_reassembles_from_resonant_and_nonresonant"]
+    assert result["resonant_density_compensated_ledger"] == F(-1, 6)
+    assert result["nonresonant_incidence_remainder"] == F(1)
+    assert result["supplied_resonant_ledger_is_nonzero"]
+    assert result["centered_product_from_four_density_terms"] == F(5, 6)
+    assert result["resonant_plus_nonresonant_reassembles_centered_product"]
+    assert result["centered_product_equals_direct_centered_incidence"]
+    assert not result["resonant_diagonal_bound_proved"]
+    assert not result["nonresonant_incidence_bound_proved"]
+    assert not result["PCDI_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    scaled = audit(
+        left_prime=7,
+        right_prime=5,
+        determinant=1,
+        left_F_lift=((4, 1),),
+        left_G_lift=((8, 1),),
+        right_F_lift=((6, 1),),
+        right_G_lift=((12, 1),),
+    )
+    scaled_resonant = scaled["resonant_parameter_rows"][0]
+    assert scaled_resonant["left_scale"] == 2
+    assert scaled_resonant["right_scale"] == 3
+    assert scaled_resonant["core_triple"] == (2, 2, 4)
+    assert scaled_resonant["primitive_ray_core"] == (1, 1, 2)
+    assert scaled_resonant["left_ray_scale"] == 4
+    assert scaled_resonant["right_ray_scale"] == 6
+    assert scaled["resonant_ray_profile_factorization_exact"]
+
+
+def test_prime_incidence_determinant_literature_coverage_is_documented() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "Published fixed-determinant coverage audit" in text
+    assert "https://arxiv.org/abs/2410.04637" in text
+    assert "https://arxiv.org/abs/2509.16890" in text
+    assert "https://arxiv.org/abs/2509.20259" in text
+    assert "https://arxiv.org/abs/2605.15434" in text
+    assert "moving four-weight tensor" in text
+    assert "validates the determinant geometry but does not prove (PCDI)" in text
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (

@@ -65,6 +65,8 @@
 > | One-sided cross-residue occupancy | Section 9.172 shows exactly where the remaining prime zero-mode loss sits.  For fixed long \(p\), the map \(q\mapsto D\overline q_p\) is injective because every short \(q<p\).  For fixed short \(q\), the values \(-D\overline p_q\) repeat with residue occupancy \(n_q(a)\).  Cauchy therefore costs precisely \((\max_{q,a}n_q(a))^{1/2}\), which has exponent \((\sigma_{\rm long}-\sigma_{\rm short})/2\) on the pigeonholed prime family and reproduces the full mutual-character imbalance.  Centering does not remove this positive sampling energy.  Any successful estimate must delay Cauchy past the long-prime average and use the physical profiles there |
 > | Prime centered divisor-incidence master | Section 9.173 expands the two physical ratio convolutions before Cauchy.  The inverse residues disappear exactly: \(Z_{p,D\overline q_p}^{\circ}\) is the \(f_p(m)g_p(n)\)-weighted discrepancy \(\mu(p)(\mathbf1_{p\mid qm+Dn}-1/\varphi(p))\), and the other profile is the analogous \(\mu(q)(\mathbf1_{q\mid pu-Dv}-1/\varphi(q))\).  The prime conductor signs are constant, but all Möbius/Type weights inside the four physical lifts remain.  The coupled congruences admit quotients \(pr=qm+Dn\), \(qs=pu-Dv\) satisfying \(q(rs-mu)=D(nu-rv)\).  This is an exact pre-Cauchy finite master; no published centered-incidence estimate for its level-dependent four lifts is known |
 > | Nine internal Type blocks on the prime incidence face | Section 9.174 inserts the exact small/I/II split into the two internal \(G\)-lifts of (9.1160), without changing either centered density subtraction or either \(F\)-lift.  The product has nine ordered signed blocks and only their sum equals the original physical incidence master.  Fixed-prime Type-I completion removes one local zero dual mode, but does not accept the other moving modulus/profile; FKM/FKMS and Bettin--Chandee likewise do not cover any complete level-dependent block.  The weakest prime-zero-mode obligation is the combined nine-block pre-Cauchy incidence bound (PCDI), not nine separate absolute estimates |
+> | Ambient-to-active scale adapter | Section 9.175 separates the three exponent conventions which cannot be identified: the Section 9.138 ambient reduced-modulus exponent \(\Gamma_i\), the common Type-frequency denominator exponent \(\gamma\), and the active primitive-conductor exponent \(\sigma_i\).  Exactly \(\Gamma_i=\delta_i+\gamma+\sigma_i+\kappa_i\).  On the extreme prime face \((\delta_L,\delta_S,\gamma,\sigma_L,\sigma_S)=(0,1/2,1,2,3/2)\), both ambient exponents remain 3, so both effective \(F\)-lifts still have length exponent 5.  The top internal \(G\)-block has exponent 3 and therefore only four I/II blocks, but neither Type-frequency descent nor the common gcd shortens the physical \(F\)-lift or supplies the missing \(1/4\) power |
+> | Resonant/nonresonant split inside prime incidence | Section 9.176 expands the two local density subtractions exactly, then splits the double-incidence term by one integer determinant \(t\).  The \(t=0\) rows factor into independent primitive ray profiles on \(px=qy+Dz\).  For \(t\ne0\), the two incidence vectors lie in the primitive plane lattice \(\Lambda_{p,q,D}\), their cross product is \(-t(p,-q,-D)\), and \(|t|\) is the exact index of the sublattice they generate.  In a canonical basis the remainder is therefore a fixed-determinant \(2\times2\) integer-matrix family.  Hence the full prime zero-mode is an explicit resonant ray-profile term, including all three density compensations, plus a literal Hecke-type \(t\ne0\) incidence remainder.  These are finite identities; neither analytic part is bounded yet |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -24756,6 +24758,481 @@ applies (9.934) pointwise to arbitrary supplied Type arguments on both
 (9.1168) with exact rational arithmetic.  It takes no blockwise absolute
 value and marks every analytic-bound flag false.
 
+### 9.175 The active-prime scales do not shorten the physical ratio convolution
+
+There is a potentially fatal notation collision between Sections 9.138,
+9.151, and 9.168.  It must be removed before attaching an exponent to
+any block of (9.1167).  For row \(i\), write the ambient reduced modulus
+*before* Type-frequency descent as
+
+\[
+ q_i=T^{\Gamma_i}.
+\]
+
+Rename the Type dual frequency \(K_i^{\rm tf}\), and put
+
+\[
+ d_i^{\rm tf}:=(K_i^{\rm tf},q_i)=T^{\delta_i},
+ \qquad
+ Q_i:=q_i/d_i^{\rm tf}.
+ \tag{9.1169}
+\]
+
+The determinant factorization and the active-character conductor
+factorization are
+
+\[
+ Q_i=gr_i,qquad
+ g=T^\gamma,qquad
+ r_i=c_i k_i^{\rm act},qquad
+ c_i=T^{\sigma_i},\quad k_i^{\rm act}=T^{\kappa_i}.
+ \tag{9.1170}
+\]
+
+Consequently the exact exponent adapter is
+
+\[
+ \boxed{
+ \Gamma_i-\delta_i
+ =\gamma+\rho_i
+ =\gamma+\sigma_i+\kappa_i,
+ \qquad
+ \Gamma_i=\delta_i+\gamma+\sigma_i+\kappa_i.}
+ \tag{9.1171}
+\]
+
+Thus the \(\gamma\) in (9.922), which was the exponent of the ambient
+reduced modulus there, is \(\Gamma_i\) in the present notation.  It is
+neither the common-gcd exponent \(\gamma\) in (9.1170) nor the active
+primitive-conductor exponent \(\sigma_i\).  In particular, substituting
+\(\sigma_i\) for the modulus exponent in (9.922) is invalid.
+
+Let the original oriented modulus have exponent \(v_i\), and retain the
+product-label and internal Type lengths
+
+\[
+ HL=T^{h+\ell},\qquad W=T^u.
+\]
+
+The inactive cofactor in Section 9.138 has exponent
+\(v_i-\Gamma_i\), before (9.1169) is performed.  Hence its two physical
+lift lengths are exactly
+
+\[
+ \boxed{
+ y_i=(h+\ell)-(v_i-\Gamma_i),
+ \qquad G\text{-length exponent}=u.}
+ \tag{9.1172}
+\]
+
+Neither \(\delta_i\), \(\gamma\), \(\sigma_i\), nor \(\kappa_i\)
+appears separately in (9.1172).  They only partition the descended
+denominator in (9.1171).  This is the precise reason that the
+Type-frequency reduction and the active-prime extraction cannot be
+booked as a second shortening of the \(F\)-lift.
+
+On the decisive maximal ambient row,
+
+\[
+ v_i=\Gamma_i=u=3,qquad h+\ell=5,
+\]
+
+so
+
+\[
+ \boxed{y_L=y_S=5,\qquad u=3.}
+ \tag{9.1173}
+\]
+
+The endpoint of Section 9.169 is realized by
+
+\[
+ \boxed{
+ (\delta_L,\delta_S,\gamma,
+   \sigma_L,\sigma_S,\kappa_L,\kappa_S)
+ =\left(0,\frac12,1,2,\frac32,0,0\right).}
+ \tag{9.1174}
+\]
+
+Indeed, (9.1171) gives \(\Gamma_L=\Gamma_S=3\), while
+
+\[
+ \eta_{\rm imb}
+ =\frac{\sigma_L-\sigma_S}{2}-\kappa_L-\kappa_S
+ =\frac14.
+ \tag{9.1175}
+\]
+
+There is one genuine support simplification.  On this top dyadic
+\(G\)-face, the Type argument satisfies \(w\asymp T^3\), whereas the
+cutoff in (9.934) is \(T^{1/2+o(1)}\).  Therefore
+\(\lambda_{\rm small}(w)=0\), and (9.1168) reduces to
+
+\[
+ \boxed{
+ \mathscr I_{\rm pp,0}
+ =\mathscr I_{\rm pp,0}^{{\rm I},{\rm I}}
+ +\mathscr I_{\rm pp,0}^{{\rm I},{\rm II}}
+ +\mathscr I_{\rm pp,0}^{{\rm II},{\rm I}}
+ +\mathscr I_{\rm pp,0}^{{\rm II},{\rm II}}.}
+ \tag{9.1176}
+\]
+
+This four-block reduction is local to the top \(W\)-dyadic face; the
+small blocks in Section 9.174 remain necessary for the full physical
+packet.  More importantly, (9.1176) supplies no saving by itself.  The
+scale ledger is:
+
+| possible input | exact scale consequence | usable new saving for (PCDI) |
+|---|---|---|
+| Type-frequency gcd \(d_i^{\rm tf}\) | shortens \(q_i\) to \(Q_i\) in (9.1169) | none: the \(F\)-length in (9.1172) is unchanged |
+| common reduced gcd \(g\) | factors \(Q_i=gr_i\) and is recombined by common-frequency Parseval | none: that Parseval was already used in \(\mathscr B_{\rm MC}\) |
+| active imprimitive cofactor \(k_i^{\rm act}\) | contributes the margins \(\kappa_i\) in (9.1127) | already booked in \(\eta_{\rm imb}\); zero at (9.1174) |
+| top internal Type support | deletes the five blocks containing `small` | exact reduction to four signed I/II blocks, but no norm improvement |
+| Section 9.144 two-PV row bound | controls each registered centered row energy | already part of \(\mathscr B_{\rm MC}\); it cannot be multiplied in again |
+
+The adapter therefore rules out one more false coverage argument: the
+fixed-prime active conductor cannot be inserted as the modulus length in
+the Section 9.138 fourth-moment ledger.  At the worst face the physical
+incidence master still couples two \(F\)-lifts of exponent five and two
+internal Type lifts of exponent three.  A proof of (PCDI) must use their
+joint centered incidence before the long-prime Cauchy step; no existing
+row-energy estimate has acquired a new power from (9.1171)--(9.1176).
+
+The exact-rational helper `prime_incidence_scale_adapter_audit` checks
+(9.1169)--(9.1175), rejects inconsistent identifications of the ambient
+and active scales, and records the dyadic four-block support in
+(9.1176).  It marks the adapter proved while leaving every internal
+block estimate, (PCDI), (NPIT), bounded \(D\), and the coupled-kernel
+gate false.
+
+### 9.176 The double-incidence term has an exact rank-one resonant diagonal
+
+The two density subtractions in (9.1160) can now be expanded without
+taking an absolute value.  Put
+
+\[
+ \mathbf1_p:=\mathbf1_{p\mid qm+Dn},\qquad
+ \mathbf1_q:=\mathbf1_{q\mid pu-Dv},
+\]
+
+and abbreviate the complete signed physical weight by
+
+\[
+ \mathcal W_{m,n,u,v}
+ :=f_p(m)g_p(n)\overline{f_q(u)g_q(v)}.
+\]
+
+For fixed \((p,q,D,\omega)\), define
+
+\[
+ \begin{aligned}
+ I_{11}&:=\sum\mathcal W\mathbf1_p\mathbf1_q,&
+ I_{10}&:=\sum\mathcal W\mathbf1_p,\\
+ I_{01}&:=\sum\mathcal W\mathbf1_q,&
+ I_{00}&:=\sum\mathcal W,
+ \end{aligned}
+ \tag{9.1177}
+\]
+
+with every internal packet label retained.  The full master sums these
+local quantities against its original \((p,q,D,\omega)\) weights.
+Since the two
+outer prime signs multiply to one, (9.1160) is exactly
+
+\[
+ \boxed{
+ \mathscr I_{\rm pp,0}
+ =I_{11}-\frac{I_{10}}{\varphi(q)}
+       -\frac{I_{01}}{\varphi(p)}
+       +\frac{I_{00}}{\varphi(p)\varphi(q)}.}
+ \tag{9.1178}
+\]
+
+There is no probabilistic replacement in (9.1178): the last three
+terms are the literal density compensations already present in
+(9.1160).
+
+On a row of \(I_{11}\), introduce the positive integer quotients
+
+\[
+ pr=qm+Dn,\qquad qs=pu-Dv.
+ \tag{9.1179}
+\]
+
+Equation (9.1162) and \((q,D)=1\) give a unique integer
+
+\[
+ \boxed{
+ t:=\frac{nu-rv}{q}=\frac{rs-mu}{D},
+ \qquad
+ nu-rv=qt,\qquad rs-mu=Dt.}
+ \tag{9.1180}
+\]
+
+Thus the nonresonant double-incidence rows are exactly \(t\ne0\).  The
+resonant rows have \(t=0\), equivalently
+
+\[
+ rs=mu,\qquad nu=rv.
+ \tag{9.1181}
+\]
+
+They admit a complete elementary classification.  Reduce the positive
+ratio \(r/u=A/B\), with \((A,B)=1\).  The first identity in (9.1181)
+forces \(m=Ay\), \(s=By\); the second forces \(n=Az\), \(v=Bz\);
+and \(r=Ax\), \(u=Bx\).  Hence
+
+\[
+ \boxed{
+ (r,m,n)=A(x,y,z),\qquad
+ (u,s,v)=B(x,y,z),\qquad(A,B)=1.}
+ \tag{9.1182}
+\]
+
+Substitution into (9.1179) leaves one common core incidence equation,
+
+\[
+ \boxed{px=qy+Dz.}
+ \tag{9.1183}
+\]
+
+Conversely, every positive solution of (9.1183), together with
+coprime positive scales \(A,B\), reconstructs a unique resonant row by
+(9.1182).  Therefore
+
+\[
+ \boxed{
+ I_{11}^{\rm res}
+ =\sum_{\substack{(A,B)=1\\px=qy+Dz}}
+ f_p(Ay)g_p(Az)
+ \overline{f_q(Bx)g_q(Bz)},}
+ \tag{9.1184}
+\]
+
+where the original finite supports and every omitted packet weight are
+understood literally.  Let \(I_{11}^{\ne0}\) be the same weighted sum
+over (9.1179)--(9.1180) with \(t\ne0\).  Then
+
+\[
+ \boxed{I_{11}=I_{11}^{\rm res}+I_{11}^{\ne0}.}
+ \tag{9.1185}
+\]
+
+One exact resonant/nonresonant ledger for the centered master is now
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathcal M_{\rm pp,0}^{\rm res}
+ &:={}
+ I_{11}^{\rm res}
+ -\frac{I_{10}}{\varphi(q)}
+ -\frac{I_{01}}{\varphi(p)}
+ +\frac{I_{00}}{\varphi(p)\varphi(q)},\\
+ \mathcal R_{\rm pp,0}^{\ne0}
+ &:={}I_{11}^{\ne0},\\
+ \mathscr I_{\rm pp,0}
+ &=\mathcal M_{\rm pp,0}^{\rm res}
+  +\mathcal R_{\rm pp,0}^{\ne0}.
+ \end{aligned}}
+ \tag{9.1186}
+\]
+
+There is a second, more useful normalization of the resonant rows.
+Divide the common triple in (9.1182) by its own gcd and absorb that gcd
+into both scales.  This gives the unique representation
+
+\[
+ \boxed{
+ (r,m,n)=A(x,y,z),\qquad
+ (u,s,v)=B(x,y,z),\qquad (x,y,z)=1,}
+ \tag{9.1187}
+\]
+
+where there is now **no** coprimality condition between \(A\) and
+\(B\).  Define the two finite ray profiles
+
+\[
+ \boxed{
+ L_p(y,z):=\sum_{A\geq1}f_p(Ay)g_p(Az),qquad
+ R_q(x,z):=\sum_{B\geq1}f_q(Bx)g_q(Bz),}
+ \tag{9.1188}
+\]
+
+with their original support masks.  Since the two scale sums are now
+independent, (9.1184) becomes the exact inner product
+
+\[
+ \boxed{
+ I_{11}^{\rm res}
+ =\sum_{\substack{x,y,z\geq1\\(x,y,z)=1\\px=qy+Dz}}
+ L_p(y,z)\overline{R_q(x,z)}.}
+ \tag{9.1189}
+\]
+
+Formula (9.1189) is the first genuine dimensional reduction of the
+prime zero-mode after physical reinversion: the two long ray scales no
+longer interact.  It is also the natural entry point for the existing
+LCM/square-energy technology, because each ray profile is itself a
+one-parameter dilation sum.  What is not yet proved is that the two ray
+energies, after the primitive plane \(px=qy+Dz\), every Type block, and
+the full \((p,q,D,\omega)\) family are restored, lie in the required
+envelope.  Applying Cauchy separately for every \((p,q)\) would again
+discard the long-prime cancellation and is not counted as progress on
+(PCDI).
+
+The resonant ledger is not forced to vanish packet by packet.  For the
+finite unit-lift fixture
+
+\[
+ p=7,\quad q=5,\quad D=1,\quad
+ (m,n)=(2,4),\quad
+ (u,v)\in\{(3,6),(2,9)\},
+\]
+
+with all displayed weights one, the first right pair is resonant and
+the second has \(t=-2\).  Exact density subtraction gives
+
+\[
+ \boxed{
+ \mathcal M_{\rm pp,0}^{\rm res}=-\frac16,qquad
+ \mathcal R_{\rm pp,0}^{\ne0}=1,qquad
+ \mathscr I_{\rm pp,0}=\frac56.}
+ \tag{9.1190}
+\]
+
+Thus a global AFE/reflection/explicit-diagonal reassembly is genuinely
+necessary if the resonant term is to cancel; local centering alone does
+not delete it.
+
+The same integer \(t\) has an exact lattice interpretation on the
+nonresonant side.  Put
+
+\[
+ X:=(r,m,n),\qquad Y:=(u,s,v),\qquad
+ N:=(p,-q,-D),
+\]
+
+and define the primitive plane lattice
+
+\[
+ \boxed{
+ \Lambda_{p,q,D}:=\{(a,b,c)\in\mathbb Z^3:
+ pa-qb-Dc=0\}.}
+ \tag{9.1191}
+\]
+
+Both equations in (9.1179) say exactly that \(X,Y\in\Lambda_{p,q,D}\).
+The normal \(N\) is primitive because \((D,pq)=1\).  Choose the unique
+\(c_0\in\{0,\ldots,p-1\}\) satisfying
+
+\[
+ q+Dc_0\equiv0\pmod p,\qquad
+ a_0:=\frac{q+Dc_0}{p}.
+\]
+
+Then
+
+\[
+ \boxed{
+ b_1:=(a_0,1,c_0),\qquad b_2:=(D,0,p),\qquad
+ b_1\times b_2=(p,-q,-D)=N.}
+ \tag{9.1192}
+\]
+
+This is a basis of \(\Lambda_{p,q,D}\), not merely a finite-index
+pair.  Indeed, for \((a,b,c)\in\Lambda_{p,q,D}\), reduction modulo
+\(p\) gives \(c-bc_0\equiv0\pmod p\), and
+
+\[
+ \boxed{
+ (a,b,c)=b\,b_1+\frac{c-bc_0}{p}\,b_2.}
+ \tag{9.1193}
+\]
+
+Directly from (9.1180), including its previously unused first minor,
+
+\[
+ \boxed{
+ X\times Y
+ =(mv-ns,\,nu-rv,\,rs-mu)
+ =(-pt,qt,Dt)=-tN.}
+ \tag{9.1194}
+\]
+
+If \(X=\alpha b_1+\beta b_2\) and
+\(Y=\gamma b_1+\delta b_2\), comparison with (9.1192) gives
+
+\[
+ \boxed{
+ \alpha\delta-\beta\gamma=-t,
+ \qquad
+ [\Lambda_{p,q,D}:\mathbb ZX+\mathbb ZY]=|t|.}
+ \tag{9.1195}
+\]
+
+The index identity is for \(t\ne0\); at \(t=0\) the two vectors span
+the rank-one resonant ray already isolated above.  Thus the
+nonresonant remainder in (9.1186) can be indexed by integer matrices
+
+\[
+ \begin{pmatrix}\alpha&\gamma\\\beta&\delta\end{pmatrix},
+ \qquad \det=-t\ne0,
+\]
+
+after pulling the four physical lift weights back through the basis
+(9.1192).  This is a genuine Hecke/Smith-normal-form geometry, rather
+than an arbitrary pair of residue profiles.  It is not yet a theorem
+application: the basis and the pulled-back support both vary with
+\((p,q,D)\), and the Type, \(h\delta\), AFE, and dyadic weights remain
+level dependent.  Freezing those data before applying a fixed-
+determinant estimate would again destroy the long-prime average needed
+by Section 9.172.
+
+**Published fixed-determinant coverage audit.**  The lattice adapter
+above is close enough to the classical determinant surface that the
+recent literature must be compared theorem by theorem, but not close
+enough for a title-level citation to close (PCDI):
+
+| published input | weight/determinant regime actually supplied | mismatch with (9.1186) |
+|---|---|---|
+| [Ganguly--Guria, Theorem 1.1](https://arxiv.org/abs/2410.04637) | the unweighted equal box, with the stated uniform range \(r=O(X^{1/3})\) | the pulled-back supports are anisotropic and vary with \((p,q,D)\), while \(t\) is summed rather than frozen |
+| [Ganguly--Guria, Theorem 1.2](https://arxiv.org/abs/2410.04637) | one arbitrary sequence attached to one matrix entry | (9.1186) carries a moving four-weight tensor, including two Möbius/Type lifts and two AFE lifts |
+| [Ganguly--Guria, Theorem 1.4 and Theorem 1.6](https://arxiv.org/abs/2410.04637) | fixed periodic weights in two entries at determinant one, or one fixed smooth product weight at fixed nonzero determinant | the periods, basis, derivative scales, determinant, and all four physical weights in (9.1186) depend on the outer level |
+| [Dhanda--Haynes--Prasala](https://arxiv.org/abs/2509.16890) | unweighted bounded-coefficient counting, uniform in the fixed determinant | its direct-counting symmetry does not retain the signed Type/AFE tensor or the pre-Cauchy prime average |
+| [Chapman--Mudgal, given determinant](https://arxiv.org/abs/2509.20259) and [quadratic determinant equation](https://arxiv.org/abs/2605.15434) | unweighted box counts, including strong ranges obtained from physical-space symmetry | the symmetry is not stable after inserting the level-dependent four physical weights |
+
+This comparison validates the determinant geometry but does not prove (PCDI).
+A usable theorem still has to be uniform in the moving basis,
+anisotropic support and nonzero \(t\), accept all four signed physical
+weights, and leave the \((p,q,D,\omega)\) summation intact until the one
+global dispersion/Cauchy step.  The closest spectral technology is
+therefore a guide for the \(TT^*\) analysis, not a black-box estimate
+which can be multiplied into the already-booked row energy.
+
+This is the promised point at which the nonoscillating part can be
+``put on the same invoice'': all local density compensations belong to
+the explicit resonant ledger, while the remaining double incidence has
+the nonzero integer determinant \(t\).  The choice in (9.1186) is
+algebraic, not an estimate.  It does not yet show that
+\(\mathcal M_{\rm pp,0}^{\rm res}\) is small, cancels another AFE or
+diagonal term, or produces a new secondary main term.  Nor does it
+bound the \(t\ne0\) family.  Those are now two separate analytic
+obligations, and both retain the internal Type and \(h\delta\) weights.
+
+The finite helper `prime_centered_incidence_resonant_split_audit`
+expands all four terms of (9.1178), enumerates the positive quotient
+rows, verifies (9.1180), constructs the unique parameters in
+(9.1182)--(9.1183), independently groups the primitive ray profiles in
+(9.1187)--(9.1189), constructs the canonical lattice basis
+(9.1191)--(9.1193), and verifies the cross-product/index identities
+(9.1194)--(9.1195) with exact integer arithmetic.  It also checks
+(9.1185)--(9.1190) with exact rational weights.  It marks the resonant
+extraction, ray factorization, and lattice adapter proved, but both analytic
+bounds, (PCDI), (NPIT), bounded \(D\), and the coupled-kernel gate
+remain false.
+
 ## 10. What has and has not been proved
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
@@ -24835,6 +25312,36 @@ or Kloosterman-fraction estimates cover only frozen fibres, not a full
 level-dependent physical block.  Consequently the combined
 nine-block bound (PCDI), and hence this prime-zero-mode part of (NPIT),
 remains unproved.
+
+Section 9.175 then fixes the exponent conventions needed to interpret
+those blocks.  The pre-descent ambient modulus, the common reduced gcd,
+and the active primitive conductor satisfy the exact scale identity
+\(\Gamma_i=\delta_i+\gamma+\sigma_i+\kappa_i\); they are not
+interchangeable.  On the extreme prime incidence face both ambient
+moduli still have exponent three, so both Section 9.138 \(F\)-lifts
+retain exponent five.  The top internal Type support does delete every
+block containing `small`, leaving four I/II blocks, but the two-PV row
+margin and common-frequency Parseval are already included in the
+baseline of (PCDI).  The scale adapter therefore closes no analytic
+part of (PCDI), whose missing exponent remains \(1/4\) at the endpoint.
+
+Section 9.176 makes the next pre-dispersion split exact.  Expanding the
+two local densities gives four finite terms.  Inside the double-
+incidence term, every row has one integer determinant
+\(t=(nu-rv)/q=(rs-mu)/D\).  The zero rows are precisely the rank-one
+family (9.1182)--(9.1184), while every other row has \(t\ne0\).  Thus
+the prime zero-mode is now an explicit resonant ledger, containing all
+three density compensations, plus a nonzero-determinant incidence
+remainder.  Normalizing the rank-one triples to gcd one further
+factorizes the resonant double incidence into two independent dilation
+profiles on the plane \(px=qy+Dz\).  A finite witness gives resonant
+ledger \(-1/6\), so local centering does not force its disappearance.
+For the complementary rows, \(X\times Y=-t(p,-q,-D)\), and \(|t|\) is
+the exact sublattice index in the primitive incidence plane.  Hence the
+remaining geometry is a level-dependent fixed-determinant integer-
+matrix family.  The decomposition, ray factorization, and lattice
+adapter are proved; the global resonant evaluation and the resulting
+Hecke-type nonzero-determinant estimate are both still open.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent

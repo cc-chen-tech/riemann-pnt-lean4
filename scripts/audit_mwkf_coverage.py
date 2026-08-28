@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import cmath
 import sys
-from collections import Counter
+from collections import Counter, defaultdict
 from dataclasses import dataclass
 from fractions import Fraction
 from itertools import product
@@ -24653,6 +24653,538 @@ def prime_centered_incidence_internal_type_split_audit(
         "both_local_density_subtractions_are_unchanged_by_type_split": True,
         "individual_internal_type_block_bounds_proved": False,
         "combined_internal_type_incidence_bound_proved": False,
+        "NPIT_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def prime_incidence_scale_adapter_audit(
+    *,
+    left_ambient_reduced_modulus_exponent: Fraction,
+    right_ambient_reduced_modulus_exponent: Fraction,
+    left_type_frequency_gcd_exponent: Fraction,
+    right_type_frequency_gcd_exponent: Fraction,
+    common_reduced_gcd_exponent: Fraction,
+    left_active_primitive_conductor_exponent: Fraction,
+    right_active_primitive_conductor_exponent: Fraction,
+    left_active_imprimitive_cofactor_exponent: Fraction,
+    right_active_imprimitive_cofactor_exponent: Fraction,
+    left_oriented_modulus_exponent: Fraction,
+    right_oriented_modulus_exponent: Fraction,
+    product_label_exponent: Fraction,
+    internal_type_length_exponent: Fraction,
+    internal_type_cutoff_exponent: Fraction,
+) -> dict[str, object]:
+    """Map the Section 9.138 and active-prime exponent conventions.
+
+    Before the Type-frequency descent, the ambient reduced modulus has
+    exponent ``gamma_amb``.  If the Type frequency has gcd exponent
+    ``delta``, the descended denominator factors as
+
+    ``gamma_amb - delta = gamma_g + sigma + kappa``,
+
+    where ``gamma_g`` is the common reduced gcd, ``sigma`` is the active
+    primitive conductor, and ``kappa`` its imprimitive cofactor.  The
+    product-label cofactor in (9.922) is instead the difference between
+    the oriented and ambient modulus exponents.
+    """
+
+    left_ambient = F(left_ambient_reduced_modulus_exponent)
+    right_ambient = F(right_ambient_reduced_modulus_exponent)
+    left_type_gcd = F(left_type_frequency_gcd_exponent)
+    right_type_gcd = F(right_type_frequency_gcd_exponent)
+    common_gcd = F(common_reduced_gcd_exponent)
+    left_sigma = F(left_active_primitive_conductor_exponent)
+    right_sigma = F(right_active_primitive_conductor_exponent)
+    left_kappa = F(left_active_imprimitive_cofactor_exponent)
+    right_kappa = F(right_active_imprimitive_cofactor_exponent)
+    left_oriented = F(left_oriented_modulus_exponent)
+    right_oriented = F(right_oriented_modulus_exponent)
+    product_length = F(product_label_exponent)
+    type_length = F(internal_type_length_exponent)
+    type_cutoff = F(internal_type_cutoff_exponent)
+    scales = (
+        left_ambient,
+        right_ambient,
+        left_type_gcd,
+        right_type_gcd,
+        common_gcd,
+        left_sigma,
+        right_sigma,
+        left_kappa,
+        right_kappa,
+        left_oriented,
+        right_oriented,
+        product_length,
+        type_length,
+        type_cutoff,
+    )
+    if min(scales) < 0:
+        raise ValueError("all scale exponents must be nonnegative")
+    if left_ambient > left_oriented or right_ambient > right_oriented:
+        raise ValueError("an ambient reduced modulus cannot exceed its oriented modulus")
+    if left_type_gcd > left_ambient or right_type_gcd > right_ambient:
+        raise ValueError("a Type-frequency gcd cannot exceed its ambient modulus")
+
+    left_active = left_sigma + left_kappa
+    right_active = right_sigma + right_kappa
+    left_reduced = left_ambient - left_type_gcd
+    right_reduced = right_ambient - right_type_gcd
+    left_expected = common_gcd + left_active
+    right_expected = common_gcd + right_active
+    if left_reduced != left_expected or right_reduced != right_expected:
+        raise ValueError(
+            "the ambient/Type-gcd/common-g/active scale factorization is inconsistent"
+        )
+
+    left_inactive_product = left_oriented - left_ambient
+    right_inactive_product = right_oriented - right_ambient
+    left_F_length = product_length - left_inactive_product
+    right_F_length = product_length - right_inactive_product
+    if min(left_F_length, right_F_length) < 0:
+        raise ValueError("the effective Section 9.138 F length cannot be negative")
+
+    small_empty = type_length > type_cutoff
+    type_names = ("I", "II") if small_empty else ("small", "I", "II")
+    type_blocks = tuple(
+        (left_type, right_type)
+        for left_type in type_names
+        for right_type in type_names
+    )
+    imbalance = _positive_part(
+        abs(left_sigma - right_sigma) / 2 - left_kappa - right_kappa
+    )
+    return {
+        "left_ambient_reduced_modulus_exponent": left_ambient,
+        "right_ambient_reduced_modulus_exponent": right_ambient,
+        "left_type_frequency_gcd_exponent": left_type_gcd,
+        "right_type_frequency_gcd_exponent": right_type_gcd,
+        "common_reduced_gcd_exponent": common_gcd,
+        "left_active_primitive_conductor_exponent": left_sigma,
+        "right_active_primitive_conductor_exponent": right_sigma,
+        "left_active_imprimitive_cofactor_exponent": left_kappa,
+        "right_active_imprimitive_cofactor_exponent": right_kappa,
+        "left_active_cofactor_exponent": left_active,
+        "right_active_cofactor_exponent": right_active,
+        "left_reduced_denominator_exponent": left_reduced,
+        "right_reduced_denominator_exponent": right_reduced,
+        "left_scale_factorization_exact": True,
+        "right_scale_factorization_exact": True,
+        "left_9_138_inactive_product_cofactor_exponent": left_inactive_product,
+        "right_9_138_inactive_product_cofactor_exponent": right_inactive_product,
+        "left_9_138_effective_F_length_exponent": left_F_length,
+        "right_9_138_effective_F_length_exponent": right_F_length,
+        "9_138_internal_G_length_exponent": type_length,
+        "left_ambient_modulus_equals_active_primitive_conductor": bool(
+            left_ambient == left_sigma
+        ),
+        "right_ambient_modulus_equals_active_primitive_conductor": bool(
+            right_ambient == right_sigma
+        ),
+        "internal_small_block_empty_on_this_dyadic_face": small_empty,
+        "nonempty_internal_type_blocks_on_this_face": type_blocks,
+        "conductor_imbalance_exponent": imbalance,
+        "ambient_to_active_scale_adapter_proved": True,
+        "internal_type_block_bound_proved": False,
+        "PCDI_proved": False,
+        "NPIT_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def prime_centered_incidence_resonant_split_audit(
+    *,
+    left_prime: int,
+    right_prime: int,
+    determinant: int,
+    left_F_lift: tuple[tuple[int, Fraction], ...],
+    left_G_lift: tuple[tuple[int, Fraction], ...],
+    right_F_lift: tuple[tuple[int, Fraction], ...],
+    right_G_lift: tuple[tuple[int, Fraction], ...],
+) -> dict[str, object]:
+    """Split the double-incidence term into rank-one and nonresonant rows.
+
+    For positive quotient rows
+
+    ``p*r=q*m+D*n`` and ``q*s=p*u-D*v``,
+
+    the two determinant equations ``r*s=m*u`` and ``n*u=r*v`` hold if
+    and only if there are unique coprime scales ``A,B`` and a positive
+    core triple ``x,y,z`` with
+
+    ``(r,m,n)=A*(x,y,z)``, ``(u,s,v)=B*(x,y,z)``, and
+    ``p*x=q*y+D*z``.
+    """
+
+    base = prime_cross_residue_centered_divisor_incidence_audit(
+        left_prime=left_prime,
+        right_prime=right_prime,
+        determinant=determinant,
+        left_F_lift=left_F_lift,
+        left_G_lift=left_G_lift,
+        right_F_lift=right_F_lift,
+        right_G_lift=right_G_lift,
+    )
+    p = int(left_prime)
+    q = int(right_prime)
+    D = int(determinant)
+    left_F = tuple((int(label), F(weight)) for label, weight in left_F_lift)
+    left_G = tuple((int(label), F(weight)) for label, weight in left_G_lift)
+    right_F = tuple((int(label), F(weight)) for label, weight in right_F_lift)
+    right_G = tuple((int(label), F(weight)) for label, weight in right_G_lift)
+
+    left_total = sum(
+        (f_weight * g_weight for _, f_weight in left_F for _, g_weight in left_G),
+        F(0),
+    )
+    right_total = sum(
+        (f_weight * g_weight for _, f_weight in right_F for _, g_weight in right_G),
+        F(0),
+    )
+    left_incidence = sum(
+        (
+            f_weight * g_weight
+            for m, f_weight in left_F
+            for n, g_weight in left_G
+            if (q * m + D * n) % p == 0
+        ),
+        F(0),
+    )
+    right_incidence = sum(
+        (
+            f_weight * g_weight
+            for u, f_weight in right_F
+            for v, g_weight in right_G
+            if (p * u - D * v) % q == 0
+        ),
+        F(0),
+    )
+
+    left_ray_profile: dict[tuple[int, int, int], Fraction] = defaultdict(F)
+    for m, f_weight in left_F:
+        for n, g_weight in left_G:
+            numerator = q * m + D * n
+            if numerator % p:
+                continue
+            r = numerator // p
+            if r <= 0:
+                raise ValueError("every physical left-incidence quotient must be positive")
+            ray_scale = gcd(gcd(r, m), n)
+            core = (r // ray_scale, m // ray_scale, n // ray_scale)
+            left_ray_profile[core] += f_weight * g_weight
+
+    right_ray_profile: dict[tuple[int, int, int], Fraction] = defaultdict(F)
+    for u, f_weight in right_F:
+        for v, g_weight in right_G:
+            numerator = p * u - D * v
+            if numerator % q:
+                continue
+            s = numerator // q
+            if s <= 0:
+                raise ValueError("every physical right-incidence quotient must be positive")
+            ray_scale = gcd(gcd(u, s), v)
+            core = (u // ray_scale, s // ray_scale, v // ray_scale)
+            right_ray_profile[core] += f_weight * g_weight
+
+    primitive_normal = (p, -q, -D)
+    canonical_c = (-q * pow(D, -1, p)) % p
+    canonical_a = (q + D * canonical_c) // p
+    canonical_basis = ((canonical_a, 1, canonical_c), (D, 0, p))
+
+    def cross_product(
+        left: tuple[int, int, int],
+        right: tuple[int, int, int],
+    ) -> tuple[int, int, int]:
+        return (
+            left[1] * right[2] - left[2] * right[1],
+            left[2] * right[0] - left[0] * right[2],
+            left[0] * right[1] - left[1] * right[0],
+        )
+
+    basis_cross = cross_product(canonical_basis[0], canonical_basis[1])
+
+    double_rows: list[dict[str, object]] = []
+    resonant_rows: list[dict[str, object]] = []
+    nonresonant_rows: list[dict[str, object]] = []
+    for m, f_weight in left_F:
+        for n, g_weight in left_G:
+            left_numerator = q * m + D * n
+            if left_numerator % p:
+                continue
+            r = left_numerator // p
+            for u, u_weight in right_F:
+                for v, v_weight in right_G:
+                    right_numerator = p * u - D * v
+                    if right_numerator % q:
+                        continue
+                    s = right_numerator // q
+                    if min(r, s) <= 0:
+                        raise ValueError(
+                            "every physical double-incidence quotient must be positive"
+                        )
+                    weight = f_weight * g_weight * u_weight * v_weight
+                    first_determinant = r * s - m * u
+                    second_determinant = n * u - r * v
+                    if second_determinant % q:
+                        raise RuntimeError(
+                            "the second incidence determinant is not divisible by q"
+                        )
+                    incidence_determinant = second_determinant // q
+                    if first_determinant != D * incidence_determinant:
+                        raise RuntimeError(
+                            "the two incidence determinants have no common quotient"
+                        )
+                    if (n - m * canonical_c) % p or (v - s * canonical_c) % p:
+                        raise RuntimeError(
+                            "one incidence vector has no integral lattice coordinates"
+                        )
+                    left_coordinates = (m, (n - m * canonical_c) // p)
+                    right_coordinates = (s, (v - s * canonical_c) // p)
+                    left_reconstructed = tuple(
+                        left_coordinates[0] * canonical_basis[0][index]
+                        + left_coordinates[1] * canonical_basis[1][index]
+                        for index in range(3)
+                    )
+                    right_reconstructed = tuple(
+                        right_coordinates[0] * canonical_basis[0][index]
+                        + right_coordinates[1] * canonical_basis[1][index]
+                        for index in range(3)
+                    )
+                    left_vector = (r, m, n)
+                    right_vector = (u, s, v)
+                    if left_reconstructed != left_vector or right_reconstructed != right_vector:
+                        raise RuntimeError(
+                            "the canonical incidence-lattice coordinates did not reconstruct"
+                        )
+                    coordinate_determinant = (
+                        left_coordinates[0] * right_coordinates[1]
+                        - left_coordinates[1] * right_coordinates[0]
+                    )
+                    vector_cross = cross_product(left_vector, right_vector)
+                    expected_cross = tuple(
+                        -incidence_determinant * component
+                        for component in primitive_normal
+                    )
+                    row: dict[str, object] = {
+                        "left_F_label": m,
+                        "left_G_label": n,
+                        "right_F_label": u,
+                        "right_G_label": v,
+                        "left_quotient": r,
+                        "right_quotient": s,
+                        "first_rank_one_determinant": first_determinant,
+                        "second_rank_one_determinant": second_determinant,
+                        "incidence_determinant": incidence_determinant,
+                        "first_determinant_factorization": (
+                            first_determinant,
+                            D * incidence_determinant,
+                        ),
+                        "second_determinant_factorization": (
+                            second_determinant,
+                            q * incidence_determinant,
+                        ),
+                        "left_lattice_coordinates": left_coordinates,
+                        "right_lattice_coordinates": right_coordinates,
+                        "lattice_coordinate_determinant": coordinate_determinant,
+                        "generated_sublattice_index": abs(coordinate_determinant),
+                        "vector_cross_product": vector_cross,
+                        "cross_product_equals_minus_t_times_normal": bool(
+                            vector_cross == expected_cross
+                            and coordinate_determinant == -incidence_determinant
+                        ),
+                        "coupled_determinant_identity": (
+                            q * first_determinant == D * second_determinant
+                        ),
+                        "weight": weight,
+                    }
+                    double_rows.append(row)
+                    if first_determinant != 0 or second_determinant != 0:
+                        nonresonant_rows.append(row)
+                        continue
+
+                    common_scale = gcd(r, u)
+                    left_scale = r // common_scale
+                    right_scale = u // common_scale
+                    if (
+                        m % left_scale
+                        or n % left_scale
+                        or s % right_scale
+                        or v % right_scale
+                    ):
+                        raise RuntimeError(
+                            "a resonant row failed its coprime-scale parameterization"
+                        )
+                    y_left = m // left_scale
+                    z_left = n // left_scale
+                    y_right = s // right_scale
+                    z_right = v // right_scale
+                    reconstructs = bool(
+                        gcd(left_scale, right_scale) == 1
+                        and y_left == y_right
+                        and z_left == z_right
+                        and (r, m, n)
+                        == (
+                            left_scale * common_scale,
+                            left_scale * y_left,
+                            left_scale * z_left,
+                        )
+                        and (u, s, v)
+                        == (
+                            right_scale * common_scale,
+                            right_scale * y_left,
+                            right_scale * z_left,
+                        )
+                    )
+                    if not reconstructs:
+                        raise RuntimeError(
+                            "a resonant row failed its unique coprime-scale reconstruction"
+                        )
+                    left_ray_scale = gcd(gcd(r, m), n)
+                    right_ray_scale = gcd(gcd(u, s), v)
+                    primitive_left = (
+                        r // left_ray_scale,
+                        m // left_ray_scale,
+                        n // left_ray_scale,
+                    )
+                    primitive_right = (
+                        u // right_ray_scale,
+                        s // right_ray_scale,
+                        v // right_ray_scale,
+                    )
+                    if primitive_left != primitive_right:
+                        raise RuntimeError(
+                            "a resonant row failed its primitive-ray factorization"
+                        )
+                    row = dict(row)
+                    row.update(
+                        {
+                            "left_scale": left_scale,
+                            "right_scale": right_scale,
+                            "core_triple": (
+                                common_scale,
+                                y_left,
+                                z_left,
+                            ),
+                            "core_equation": (
+                                p * common_scale,
+                                q * y_left + D * z_left,
+                            ),
+                            "parameterization_reconstructs_all_six_variables": (
+                                reconstructs
+                            ),
+                            "primitive_ray_core": primitive_left,
+                            "left_ray_scale": left_ray_scale,
+                            "right_ray_scale": right_ray_scale,
+                        }
+                    )
+                    resonant_rows.append(row)
+
+    double_weight = sum((F(row["weight"]) for row in double_rows), F(0))
+    resonant_weight = sum(
+        (F(row["weight"]) for row in resonant_rows),
+        F(0),
+    )
+    nonresonant_weight = sum(
+        (F(row["weight"]) for row in nonresonant_rows),
+        F(0),
+    )
+    left_only_weight = left_incidence * right_total
+    right_only_weight = left_total * right_incidence
+    total_weight = left_total * right_total
+    left_density = F(1, p - 1)
+    right_density = F(1, q - 1)
+    centered_from_terms = (
+        double_weight
+        - right_density * left_only_weight
+        - left_density * right_only_weight
+        + left_density * right_density * total_weight
+    )
+    resonant_ledger = (
+        resonant_weight
+        - right_density * left_only_weight
+        - left_density * right_only_weight
+        + left_density * right_density * total_weight
+    )
+    nonresonant_remainder = nonresonant_weight
+    factorized_resonant = sum(
+        (
+            left_weight * right_ray_profile.get(core, F(0))
+            for core, left_weight in left_ray_profile.items()
+        ),
+        F(0),
+    )
+    direct_centered = F(base["coupled_centered_incidence_product"])
+    return {
+        "left_prime_conductor": p,
+        "right_prime_conductor": q,
+        "bounded_determinant": D,
+        "incidence_plane_primitive_normal": primitive_normal,
+        "incidence_plane_canonical_basis": canonical_basis,
+        "canonical_basis_cross_product": basis_cross,
+        "canonical_basis_cross_product_equals_primitive_normal": bool(
+            basis_cross == primitive_normal
+        ),
+        "double_incidence_rows": tuple(double_rows),
+        "resonant_parameter_rows": tuple(resonant_rows),
+        "nonresonant_double_incidence_rows": tuple(nonresonant_rows),
+        "double_incidence_row_count": len(double_rows),
+        "resonant_double_incidence_row_count": len(resonant_rows),
+        "nonresonant_double_incidence_row_count": len(nonresonant_rows),
+        "double_incidence_weight": double_weight,
+        "resonant_double_incidence_weight": resonant_weight,
+        "nonresonant_double_incidence_weight": nonresonant_weight,
+        "left_incidence_times_right_total_weight": left_only_weight,
+        "left_total_times_right_incidence_weight": right_only_weight,
+        "total_four_lift_weight": total_weight,
+        "resonant_density_compensated_ledger": resonant_ledger,
+        "nonresonant_incidence_remainder": nonresonant_remainder,
+        "supplied_resonant_ledger_is_nonzero": bool(resonant_ledger != 0),
+        "left_primitive_ray_profile": dict(left_ray_profile),
+        "right_primitive_ray_profile": dict(right_ray_profile),
+        "factorized_resonant_ray_inner_product": factorized_resonant,
+        "resonant_ray_profile_factorization_exact": bool(
+            factorized_resonant == resonant_weight
+        ),
+        "centered_product_from_four_density_terms": centered_from_terms,
+        "direct_centered_incidence_product": direct_centered,
+        "every_double_incidence_row_satisfies_coupled_determinant_identity": all(
+            bool(row["coupled_determinant_identity"]) for row in double_rows
+        ),
+        "every_double_incidence_pair_has_exact_lattice_index": all(
+            bool(row["cross_product_equals_minus_t_times_normal"])
+            and int(row["generated_sublattice_index"])
+            == abs(int(row["incidence_determinant"]))
+            for row in double_rows
+        ),
+        "every_nonresonant_row_has_one_common_integer_determinant": all(
+            int(row["incidence_determinant"]) != 0
+            and tuple(row["first_determinant_factorization"])[0]
+            == tuple(row["first_determinant_factorization"])[1]
+            and tuple(row["second_determinant_factorization"])[0]
+            == tuple(row["second_determinant_factorization"])[1]
+            for row in nonresonant_rows
+        ),
+        "every_resonant_row_has_unique_coprime_scale_parameterization": all(
+            bool(row["parameterization_reconstructs_all_six_variables"])
+            and tuple(row["core_equation"])[0]
+            == tuple(row["core_equation"])[1]
+            for row in resonant_rows
+        ),
+        "double_incidence_reassembles_from_resonant_and_nonresonant": bool(
+            double_weight == resonant_weight + nonresonant_weight
+        ),
+        "resonant_plus_nonresonant_reassembles_centered_product": bool(
+            resonant_ledger + nonresonant_remainder == centered_from_terms
+        ),
+        "centered_product_equals_direct_centered_incidence": bool(
+            centered_from_terms == direct_centered
+        ),
+        "resonant_diagonal_extracted_exactly": True,
+        "resonant_diagonal_bound_proved": False,
+        "nonresonant_incidence_bound_proved": False,
+        "PCDI_proved": False,
         "NPIT_proved": False,
         "bounded_D_one_power_gate_closed": False,
         "coupled_kernel_gate_closed": False,
