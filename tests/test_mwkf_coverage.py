@@ -4096,6 +4096,286 @@ def test_conductor_and_type_mobius_signs_fuse_through_the_gcd() -> None:
         )
 
 
+def test_fixed_gcd_mobius_trace_coverage_keeps_composite_gate_open() -> None:
+    audit = getattr(
+        coverage_audit,
+        "fused_gcd_mobius_trace_coverage_audit",
+        None,
+    )
+    assert audit is not None, "fixed-gcd Mobius-trace coverage audit is missing"
+
+    full_prime = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(3),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=False,
+    )
+    assert full_prime["fkm_length_threshold"] == F(9, 4)
+    assert full_prime["fkm_limiting_power_saving"] == F(1, 8)
+    assert full_prime["published_local_fixed_power_coverage"]
+    assert not full_prime["fkm_ceiling_is_attained"]
+
+    threshold = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(9, 4),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=False,
+    )
+    assert threshold["fkm_limiting_power_saving"] == 0
+    assert not threshold["published_local_fixed_power_coverage"]
+
+    interior = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(5, 2),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=False,
+    )
+    assert interior["fkm_limiting_power_saving"] == F(1, 24)
+
+    logarithmic_only = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(2),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=False,
+    )
+    assert logarithmic_only["short_trace_logarithmic_range"]
+    assert logarithmic_only["short_trace_fixed_power_saving"] == 0
+    assert not logarithmic_only["published_local_fixed_power_coverage"]
+
+    composite = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(14, 5),
+        prime_conductor=False,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=True,
+        prime_factor_exponent=F(14, 5),
+    )
+    assert composite["formal_prime_factor_transfer_saving"] == F(1, 60)
+    assert composite["formal_prime_factor_transfer_positive"]
+    assert composite["gong_jia_inverse_phase_form_matches"]
+    assert composite["gong_jia_length_condition"]
+    assert composite["gong_jia_applicable"]
+    assert composite["gong_jia_fixed_power_saving"] == 0
+    assert not composite["prime_factor_transfer_adapter_proved"]
+    assert not composite["published_prime_factor_transfer_coverage"]
+    assert not composite["published_local_fixed_power_coverage"]
+
+    transfer_boundary = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(36, 13),
+        prime_conductor=False,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=False,
+        prime_factor_exponent=F(36, 13),
+    )
+    assert transfer_boundary["formal_prime_factor_transfer_saving"] == 0
+    assert transfer_boundary["large_prime_factor_threshold"] == F(36, 13)
+    assert transfer_boundary["global_large_sieve_deficit"] == F(5, 2)
+    assert transfer_boundary[
+        "maximal_fixed_prime_pointwise_saving"
+    ] == F(1, 8)
+    assert transfer_boundary[
+        "diagnostic_deficit_after_maximal_local_saving"
+    ] == F(19, 8)
+    assert not transfer_boundary["packet_uniform_common_cofactor_adapter_proved"]
+    assert not transfer_boundary["moving_gcd_kernel_estimate_proved"]
+    assert not transfer_boundary["coupled_kernel_gate_closed"]
+
+    short_composite = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(1),
+        prime_conductor=False,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=True,
+    )
+    assert short_composite["gong_jia_inverse_phase_form_matches"]
+    assert not short_composite["gong_jia_length_condition"]
+    assert not short_composite["gong_jia_applicable"]
+
+    exceptional_prime = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(3),
+        prime_conductor=True,
+        unit_nonexceptional_trace=False,
+        direct_phase_zero=False,
+    )
+    assert exceptional_prime["fkm_limiting_power_saving"] == F(1, 8)
+    assert not exceptional_prime["published_local_fixed_power_coverage"]
+    assert not exceptional_prime["short_trace_logarithmic_range"]
+
+    intermediate_boundary = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(27, 10),
+        prime_conductor=False,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=False,
+        prime_factor_exponent=F(14, 5),
+    )
+    assert intermediate_boundary[
+        "formal_prime_factor_transfer_saving"
+    ] == 0
+    assert intermediate_boundary[
+        "formal_intermediate_transfer_numerator"
+    ] == 0
+
+    intermediate_positive = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(11, 4),
+        prime_conductor=False,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=False,
+        prime_factor_exponent=F(14, 5),
+    )
+    assert intermediate_positive[
+        "formal_prime_factor_transfer_saving"
+    ] == F(1, 120)
+    assert intermediate_positive[
+        "formal_intermediate_transfer_numerator"
+    ] == F(1, 5)
+
+    with pytest.raises(ValueError, match="prime factor"):
+        audit(
+            conductor_exponent=F(3),
+            mobius_length_exponent=F(2),
+            prime_conductor=False,
+            unit_nonexceptional_trace=True,
+            direct_phase_zero=False,
+            prime_factor_exponent=F(4),
+        )
+
+
+def test_common_cofactor_mobius_fuses_by_a_divisor_lift() -> None:
+    audit = getattr(
+        coverage_audit,
+        "common_cofactor_mobius_divisor_lift_audit",
+        None,
+    )
+    assert audit is not None, "common-cofactor Mobius divisor lift is missing"
+
+    packet_weights = {
+        (1, 1, 1): 1,
+        (1, 6, 7): -2,
+        (7, 2, 11): 3j,
+        (7, 30, 13): 2 - 1j,
+        (11, 14, 2): -4,
+        (7, 14, 11): 101,
+        (3, 2, 7): -103,
+        (4, 5, 7): 107,
+        (7, 12, 11): -109,
+        (7, 5, 7): 113,
+    }
+    result = audit(
+        modulus=15,
+        direct_label=0,
+        inverse_label=-2,
+        packet_weights=packet_weights,
+    )
+    assert result["two_mobius_master_equals_divisor_lifted_master"]
+    assert result["every_retained_mobius_product_fuses_exactly"]
+    assert result["moving_gcd_is_preserved_by_common_cofactor_lift"]
+    assert result["every_packet_weight_is_retained_exactly"]
+    assert result["ramanujan_divisor_l1_cost_bounded_by_tau"]
+    assert result["mobius_factor_count_before_lift"] == 2
+    assert result["mobius_factor_count_after_lift"] == 1
+    assert result["lift_scope"] == "finite_joint_conductor_master"
+    assert result["common_cofactor_mobius_divisor_lift_proved"]
+    assert result["packet_uniform_common_cofactor_adapter_proved"]
+    assert not result["divisor_lifted_moving_gcd_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    principal_row = audit(
+        modulus=1,
+        direct_label=0,
+        inverse_label=-2,
+        packet_weights=packet_weights,
+    )
+    assert principal_row["two_mobius_master_equals_divisor_lifted_master"]
+    assert principal_row["both_phase_characters_principal_supported"]
+    assert all(
+        row["moving_gcd_after"] == 1
+        for row in principal_row["retained_original_rows"]
+    )
+
+    cancellation = audit(
+        modulus=7,
+        direct_label=0,
+        inverse_label=1,
+        packet_weights={
+            (1, 30, 1): -1e20,
+            (2, 1, 1): -1e20,
+            (5, 1, 1): 4,
+        },
+    )
+    assert cancellation["termwise_contributions_match_by_packet_key"]
+    assert cancellation["two_mobius_master_equals_divisor_lifted_master"]
+    assert cancellation["common_cofactor_mobius_divisor_lift_proved"]
+    assert cancellation["packet_uniform_common_cofactor_adapter_proved"]
+
+    retained = result["retained_original_rows"]
+    assert retained
+    assert all(
+        row["moving_gcd_before"] == row["moving_gcd_after"]
+        for row in retained
+    )
+    assert all(
+        row["fused_label"]
+        == row["common_cofactor"] * row["mobius_label"]
+        for row in retained
+    )
+
+    audited_cases = 0
+    for modulus in range(1, 16):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        weights = {
+            (r0, mobius_label, companion): complex(
+                r0 - mobius_label,
+                companion,
+            )
+            for r0 in range(1, 10)
+            for mobius_label in range(1, 14)
+            for companion in (1, 2, 5)
+        }
+        for direct_label in (0, 1, modulus):
+            for inverse_label in (1, -2, modulus):
+                exhaustive = audit(
+                    modulus=modulus,
+                    direct_label=direct_label,
+                    inverse_label=inverse_label,
+                    packet_weights=weights,
+                )
+                assert exhaustive[
+                    "two_mobius_master_equals_divisor_lifted_master"
+                ]
+                assert exhaustive[
+                    "moving_gcd_is_preserved_by_common_cofactor_lift"
+                ]
+                assert exhaustive[
+                    "ramanujan_divisor_l1_cost_bounded_by_tau"
+                ]
+                audited_cases += 1
+    assert audited_cases == 99
+
+    with pytest.raises(ValueError, match="positive"):
+        audit(
+            modulus=15,
+            direct_label=0,
+            inverse_label=1,
+            packet_weights={(0, 1, 1): 1},
+        )
+    with pytest.raises(ValueError, match="modulus"):
+        audit(
+            modulus=0,
+            direct_label=0,
+            inverse_label=1,
+            packet_weights={(1, 1, 1): 1},
+        )
+
+
 def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:
     audit = getattr(
         coverage_audit,

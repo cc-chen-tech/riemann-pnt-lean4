@@ -13509,6 +13509,436 @@ def conductor_type_mobius_gcd_fusion_audit(
     }
 
 
+def fused_gcd_mobius_trace_coverage_audit(
+    *,
+    conductor_exponent: Fraction,
+    mobius_length_exponent: Fraction,
+    prime_conductor: bool,
+    unit_nonexceptional_trace: bool,
+    direct_phase_zero: bool,
+    prime_factor_exponent: Fraction | None = None,
+) -> dict[str, object]:
+    """Audit published trace bounds on one fixed gcd row of (9.784).
+
+    Write the fixed Kloosterman conductor as ``g=T^gamma`` and the
+    remaining Mobius variable ``n=m/g`` as having length ``T^u``.  For
+    prime ``g`` and a unit nonexceptional trace, the smoothed
+    Fouvry--Kowalski--Michel Theorem 1.7 has limiting relative saving
+
+    ``gamma/24 - max(gamma-u, 0)/6``.
+
+    The ``1/24`` endpoint is a supremum, not an attained exponent.  The
+    optional prime-factor calculation is deliberately only a formal
+    best-case ledger: after extracting ``q=T^lambda`` from composite
+    ``g``, it charges the complementary periodic factor by the sharp
+    Fourier ``l1`` ceiling ``T^((gamma-lambda)/2)``.  No published
+    theorem accepts that completed cofactor multiplier together with
+    the Mobius weight, so this row never certifies coverage.
+    """
+
+    gamma = F(conductor_exponent)
+    u = F(mobius_length_exponent)
+    if gamma <= 0:
+        raise ValueError("conductor exponent must be positive")
+    if u < 0:
+        raise ValueError("Mobius length exponent must be nonnegative")
+
+    fkm_eta_ceiling = F(1, 24)
+    fkm_length_threshold = 3 * gamma / 4
+    fkm_interval_penalty = _positive_part(gamma - u) / 6
+    fkm_raw_limiting_saving = gamma / 24 - fkm_interval_penalty
+    fkm_limiting_power_saving = _positive_part(fkm_raw_limiting_saving)
+    fkm_hypotheses_verified = bool(
+        prime_conductor and unit_nonexceptional_trace
+    )
+    published_local_fixed_power_coverage = bool(
+        fkm_hypotheses_verified and fkm_raw_limiting_saving > 0
+    )
+
+    short_trace_length_threshold = gamma / 2
+    short_trace_logarithmic_range = bool(
+        fkm_hypotheses_verified and u > short_trace_length_threshold
+    )
+
+    lambda_exponent: Fraction | None = None
+    complementary_cofactor_exponent: Fraction | None = None
+    formal_cofactor_completion_cost: Fraction | None = None
+    formal_prime_factor_local_saving: Fraction | None = None
+    formal_prime_factor_transfer_raw_saving: Fraction | None = None
+    formal_intermediate_transfer_numerator: Fraction | None = None
+    formal_prime_factor_transfer_saving = F(0)
+    formal_prime_factor_transfer_positive = False
+    if prime_factor_exponent is not None:
+        lambda_exponent = F(prime_factor_exponent)
+        if lambda_exponent <= 0 or lambda_exponent > gamma:
+            raise ValueError(
+                "prime factor exponent must lie in (0, conductor exponent]"
+            )
+        complementary_cofactor_exponent = gamma - lambda_exponent
+        formal_cofactor_completion_cost = (
+            complementary_cofactor_exponent / 2
+        )
+        formal_prime_factor_local_saving = (
+            lambda_exponent / 24
+            - _positive_part(lambda_exponent - u) / 6
+        )
+        formal_prime_factor_transfer_raw_saving = (
+            formal_prime_factor_local_saving
+            - formal_cofactor_completion_cost
+        )
+        formal_intermediate_transfer_numerator = (
+            4 * u + 9 * lambda_exponent - 12 * gamma
+        )
+        formal_prime_factor_transfer_saving = _positive_part(
+            formal_prime_factor_transfer_raw_saving
+        )
+        formal_prime_factor_transfer_positive = bool(
+            formal_prime_factor_transfer_raw_saving > 0
+        )
+
+    theta_three_maximal_fixed_prime_saving = F(3, 24)
+    global_large_sieve_deficit = F(5, 2)
+    gong_jia_length_condition = gamma <= 2 * u
+    gong_jia_applicable = bool(
+        direct_phase_zero
+        and unit_nonexceptional_trace
+        and gong_jia_length_condition
+    )
+    return {
+        "conductor_exponent": gamma,
+        "mobius_length_exponent": u,
+        "prime_conductor": bool(prime_conductor),
+        "unit_nonexceptional_trace": bool(unit_nonexceptional_trace),
+        "direct_phase_zero": bool(direct_phase_zero),
+        "fkm_eta_ceiling": fkm_eta_ceiling,
+        "fkm_ceiling_is_attained": False,
+        "fkm_length_threshold": fkm_length_threshold,
+        "fkm_interval_over_modulus_penalty": fkm_interval_penalty,
+        "fkm_raw_limiting_saving": fkm_raw_limiting_saving,
+        "fkm_limiting_power_saving": fkm_limiting_power_saving,
+        "fkm_fixed_prime_hypotheses_verified": fkm_hypotheses_verified,
+        "published_local_fixed_power_coverage": (
+            published_local_fixed_power_coverage
+        ),
+        "short_trace_length_threshold": short_trace_length_threshold,
+        "short_trace_logarithmic_range": short_trace_logarithmic_range,
+        "short_trace_fixed_power_saving": F(0),
+        "gong_jia_inverse_phase_form_matches": bool(direct_phase_zero),
+        "gong_jia_length_condition": gong_jia_length_condition,
+        "gong_jia_applicable": gong_jia_applicable,
+        "gong_jia_fixed_power_saving": F(0),
+        "prime_factor_exponent": lambda_exponent,
+        "complementary_cofactor_exponent": (
+            complementary_cofactor_exponent
+        ),
+        "formal_cofactor_completion_cost": formal_cofactor_completion_cost,
+        "formal_prime_factor_local_saving": (
+            formal_prime_factor_local_saving
+        ),
+        "formal_prime_factor_transfer_raw_saving": (
+            formal_prime_factor_transfer_raw_saving
+        ),
+        "formal_intermediate_transfer_numerator": (
+            formal_intermediate_transfer_numerator
+        ),
+        "formal_prime_factor_transfer_saving": (
+            formal_prime_factor_transfer_saving
+        ),
+        "formal_prime_factor_transfer_positive": (
+            formal_prime_factor_transfer_positive
+        ),
+        "large_prime_factor_threshold": 12 * gamma / 13,
+        "prime_factor_transfer_adapter_proved": False,
+        "published_prime_factor_transfer_coverage": False,
+        "global_large_sieve_deficit": global_large_sieve_deficit,
+        "maximal_fixed_prime_pointwise_saving": (
+            theta_three_maximal_fixed_prime_saving
+        ),
+        "diagnostic_deficit_after_maximal_local_saving": (
+            global_large_sieve_deficit
+            - theta_three_maximal_fixed_prime_saving
+        ),
+        "local_pointwise_savings_may_be_summed_over_packets": False,
+        "packet_uniform_common_cofactor_adapter_proved": False,
+        "moving_gcd_kernel_estimate_proved": False,
+        "coupled_kernel_gate_closed": False,
+        "fkm_source": (
+            "Fouvry--Kowalski--Michel, arXiv:1211.6043v3, "
+            "Theorem 1.7"
+        ),
+        "short_trace_source": (
+            "Korolev--Shparlinski, arXiv:1804.01337v2, "
+            "Theorem 2.1"
+        ),
+        "composite_inverse_source": (
+            "Gong--Jia, arXiv:1401.4556v4"
+        ),
+    }
+
+
+def common_cofactor_mobius_divisor_lift_audit(
+    *,
+    modulus: int,
+    direct_label: int,
+    inverse_label: int,
+    packet_weights: dict[tuple[int, int, int], complex],
+) -> dict[str, object]:
+    """Fuse the external common-cofactor sign into the gcd-fused sign.
+
+    The input models an arbitrary finite coefficient
+    ``W(r0,m,p)`` after (9.784).  On its support,
+
+    ``(r0,Q)=1, (r0,m)=1, (p,Q*r0)=1``.
+
+    Setting ``M=r0*m`` gives ``mu(r0)mu(m)=mu(M)`` and preserves the
+    moving conductor because ``gcd(M,Q)=gcd(m,Q)``.  Conversely, for a
+    squarefree ``M`` every admissible ``r0|M`` recovers ``m=M/r0``.
+    The physical packet is not separated: it is retained inside the
+    divisor-lifted coefficient.  The Ramanujan weight on that divisor
+    axis has pointwise l1 cost at most ``tau(M)``.
+    """
+
+    Q = int(modulus)
+    B = int(direct_label)
+    a = int(inverse_label)
+    if Q <= 0 or _finite_mobius(Q) == 0:
+        raise ValueError("modulus must be positive and squarefree")
+    if a == 0:
+        raise ValueError("inverse phase label must be nonzero")
+    if not packet_weights:
+        raise ValueError("packet_weights must be nonempty")
+    if any(
+        int(r0) <= 0 or int(mobius_label) <= 0 or int(companion) <= 0
+        for r0, mobius_label, companion in packet_weights
+    ):
+        raise ValueError("all packet labels must be positive")
+
+    weights = {
+        (int(r0), int(mobius_label), int(companion)): complex(value)
+        for (r0, mobius_label, companion), value in packet_weights.items()
+    }
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    def ramanujan(label: int, modulus_value: int) -> int:
+        common = gcd(abs(label), modulus_value)
+        return _finite_mobius(modulus_value // common) * finite_totient(
+            common
+        )
+
+    def cofactor_weight(common_cofactor: int) -> Fraction:
+        return F(
+            ramanujan(B, common_cofactor)
+            * ramanujan(a, common_cofactor),
+            finite_totient(common_cofactor) ** 2,
+        )
+
+    retained_original_rows: list[dict[str, object]] = []
+    for (r0, mobius_label, companion), weight in sorted(weights.items()):
+        retained = bool(
+            _finite_mobius(r0) != 0
+            and _finite_mobius(mobius_label) != 0
+            and gcd(r0, Q) == 1
+            and gcd(r0, mobius_label) == 1
+            and gcd(companion, Q * r0) == 1
+        )
+        if not retained:
+            continue
+        fused_label = r0 * mobius_label
+        moving_gcd_before = gcd(mobius_label, Q)
+        moving_gcd_after = gcd(fused_label, Q)
+        original_sign = (
+            _finite_mobius(r0) * _finite_mobius(mobius_label)
+        )
+        fused_sign = _finite_mobius(fused_label)
+        ramanujan_weight = cofactor_weight(r0)
+        contribution = (
+            original_sign * complex(ramanujan_weight) * weight
+        )
+        retained_original_rows.append(
+            {
+                "common_cofactor": r0,
+                "mobius_label": mobius_label,
+                "companion_label": companion,
+                "fused_label": fused_label,
+                "moving_gcd_before": moving_gcd_before,
+                "moving_gcd_after": moving_gcd_after,
+                "mobius_product": original_sign,
+                "fused_mobius": fused_sign,
+                "mobius_product_fuses_exactly": (
+                    original_sign == fused_sign
+                ),
+                "moving_gcd_preserved": (
+                    moving_gcd_before == moving_gcd_after
+                ),
+                "ramanujan_cofactor_weight": ramanujan_weight,
+                "packet_weight": weight,
+                "contribution": contribution,
+            }
+        )
+
+    fused_candidates = {
+        (r0 * mobius_label, companion)
+        for r0, mobius_label, companion in weights
+    }
+    divisor_lifted_rows: list[dict[str, object]] = []
+    for fused_label, companion in sorted(fused_candidates):
+        if _finite_mobius(fused_label) == 0:
+            continue
+        moving_gcd = gcd(fused_label, Q)
+        for r0 in _positive_divisors(fused_label):
+            if gcd(r0, Q) != 1:
+                continue
+            mobius_label = fused_label // r0
+            weight = weights.get((r0, mobius_label, companion))
+            if weight is None or gcd(companion, Q * r0) != 1:
+                continue
+            ramanujan_weight = cofactor_weight(r0)
+            contribution = (
+                _finite_mobius(fused_label)
+                * complex(ramanujan_weight)
+                * weight
+            )
+            divisor_lifted_rows.append(
+                {
+                    "fused_label": fused_label,
+                    "common_cofactor_divisor": r0,
+                    "mobius_quotient": mobius_label,
+                    "companion_label": companion,
+                    "moving_gcd": moving_gcd,
+                    "ramanujan_cofactor_weight": ramanujan_weight,
+                    "packet_weight": weight,
+                    "contribution": contribution,
+                }
+            )
+
+    divisor_l1_rows: list[dict[str, object]] = []
+    for fused_label in sorted({row[0] * row[1] for row in weights}):
+        if _finite_mobius(fused_label) == 0:
+            continue
+        eligible_divisors = tuple(
+            divisor
+            for divisor in _positive_divisors(fused_label)
+            if gcd(divisor, Q) == 1
+        )
+        ramanujan_l1_cost = sum(
+            (abs(cofactor_weight(divisor)) for divisor in eligible_divisors),
+            F(0),
+        )
+        divisor_l1_rows.append(
+            {
+                "fused_label": fused_label,
+                "eligible_common_cofactor_divisors": eligible_divisors,
+                "ramanujan_divisor_l1_cost": ramanujan_l1_cost,
+                "tau_fused_label": len(_positive_divisors(fused_label)),
+                "cost_bounded_by_tau": (
+                    ramanujan_l1_cost
+                    <= len(_positive_divisors(fused_label))
+                ),
+            }
+        )
+
+    original_contributions = {
+        (
+            int(row["common_cofactor"]),
+            int(row["mobius_label"]),
+            int(row["companion_label"]),
+        ): complex(row["contribution"])
+        for row in retained_original_rows
+    }
+    lifted_contributions = {
+        (
+            int(row["common_cofactor_divisor"]),
+            int(row["mobius_quotient"]),
+            int(row["companion_label"]),
+        ): complex(row["contribution"])
+        for row in divisor_lifted_rows
+    }
+    original_keys = set(original_contributions)
+    lifted_keys = set(lifted_contributions)
+    termwise_contributions_match = bool(
+        original_keys == lifted_keys
+        and all(
+            original_contributions[key] == lifted_contributions[key]
+            for key in original_keys
+        )
+    )
+    original_master = sum(
+        (original_contributions[key] for key in sorted(original_keys)),
+        0j,
+    )
+    divisor_lifted_master = sum(
+        (lifted_contributions[key] for key in sorted(lifted_keys)),
+        0j,
+    )
+    mobius_products_fuse = all(
+        bool(row["mobius_product_fuses_exactly"])
+        for row in retained_original_rows
+    )
+    moving_gcd_is_preserved = all(
+        bool(row["moving_gcd_preserved"])
+        for row in retained_original_rows
+    )
+    packet_weights_are_retained = original_keys == lifted_keys
+    divisor_l1_cost_is_bounded = all(
+        bool(row["cost_bounded_by_tau"])
+        for row in divisor_l1_rows
+    )
+    finite_divisor_lift_proved = bool(
+        termwise_contributions_match
+        and mobius_products_fuse
+        and moving_gcd_is_preserved
+        and packet_weights_are_retained
+        and divisor_l1_cost_is_bounded
+    )
+    return {
+        "squarefree_modulus": Q,
+        "both_phase_characters_principal_supported": Q == 1,
+        "direct_label": B,
+        "inverse_label": a,
+        "packet_weights": weights,
+        "original_two_mobius_master": original_master,
+        "divisor_lifted_one_mobius_master": divisor_lifted_master,
+        "retained_original_rows": tuple(retained_original_rows),
+        "divisor_lifted_rows": tuple(divisor_lifted_rows),
+        "divisor_l1_rows": tuple(divisor_l1_rows),
+        "termwise_contributions_match_by_packet_key": (
+            termwise_contributions_match
+        ),
+        "two_mobius_master_equals_divisor_lifted_master": (
+            termwise_contributions_match
+        ),
+        "every_retained_mobius_product_fuses_exactly": (
+            mobius_products_fuse
+        ),
+        "moving_gcd_is_preserved_by_common_cofactor_lift": (
+            moving_gcd_is_preserved
+        ),
+        "every_packet_weight_is_retained_exactly": (
+            packet_weights_are_retained
+        ),
+        "ramanujan_divisor_l1_cost_bounded_by_tau": (
+            divisor_l1_cost_is_bounded
+        ),
+        "mobius_factor_count_before_lift": 2,
+        "mobius_factor_count_after_lift": 1,
+        "lift_scope": "finite_joint_conductor_master",
+        "common_cofactor_mobius_divisor_lift_proved": (
+            finite_divisor_lift_proved
+        ),
+        "packet_uniform_common_cofactor_adapter_proved": (
+            finite_divisor_lift_proved
+        ),
+        "absolute_values_taken_before_mobius_fusion": False,
+        "divisor_lifted_moving_gcd_estimate_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def centered_type_phase_local_spectrum_audit(*, prime: int) -> dict[str, object]:
     """Compute the exact local Gram spectrum of the centered tensor.
 

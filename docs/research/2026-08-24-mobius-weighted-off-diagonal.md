@@ -13,7 +13,9 @@
 > | Joint all-character/conductor master | exact \(q=1\) principal plus \(q>1\) centered recombination proved in Section 9.113; signed cross-\(q\) estimate unproved, with standard large-sieve deficit \(T^{5/2}\) |
 > | Joint conductor LCM reduction | common inactive cofactor isolated at divisor cost in Section 9.115; jointly primitive cross-modulus core unproved |
 > | Centered tensor conductor collapse | exact Ramanujan-cofactor/Möbius--Kloosterman decomposition proved in Section 9.116; signed conductor estimate unproved |
-> | Conductor--Type Möbius fusion | inside the fixed-\(r_0\) jointly primitive core, the conductor and Type signs fuse exactly through \(d=(m,Q)\) in Section 9.117; the common-cofactor adapter and varying-gcd kernel estimate are unproved |
+> | Conductor--Type Möbius fusion | inside the fixed-\(r_0\) jointly primitive core, the conductor and Type signs fuse exactly through \(d=(m,Q)\) in Section 9.117; Section 9.119 later absorbs the external cofactor sign, while the varying-gcd kernel estimate remains unproved |
+> | Fixed-gcd Möbius--trace coverage | Section 9.118 proves the exact FKM exponent boundary on prime-conductor rows and audits a formal large-prime-factor transfer; every composite moving-gcd row and the global packet estimate remain unproved |
+> | Common-cofactor Möbius divisor lift | Section 9.119 fuses \(\mu(r_0)\mu(m)\) into one global \(\mu(M)\) with \(M=r_0m\), preserves \((M,Q)=(m,Q)\), and retains arbitrary physical packet weights at divisor cost; the resulting one-Möbius gate \({\rm DLMG}_3\), including \(Q=1\), remains unproved |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
 > | Direct published Region A--C coverage | proved/classified in Section 8 |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
@@ -16938,13 +16940,13 @@ Consequently a theorem for one Möbius function against one fixed trace
 function cannot be inserted directly.  Moreover the common inactive
 factor
 \(\mu(r_0)c_{r_0}(B)c_{r_0}(a)/\varphi(r_0)^2\) from (9.763) lies
-outside \(\mathfrak T_{Q,r_0}\) and is not fused by (9.783).  The two
-remaining tasks are therefore a packet-uniform \(r_0\)-adapter at the
-advertised divisor cost and, after that lift, a one-Möbius
-**varying-gcd conductor estimate**, with the \(Q\), \(h\delta\),
-AFE/reflection, and companion-Type sums still inside the same
-pre-Cauchy master.  Neither target norm is proved, so (9.784) does not
-close (9.750), (9.119), or the full twisted moment.
+outside \(\mathfrak T_{Q,r_0}\) and is not fused by (9.783) at fixed
+\(r_0\).  Section 9.119 puts the \(r_0\)-sum back before Cauchy and
+fuses that sign by the divisor lift \(M=r_0m\).  The remaining task is
+then a one-Möbius **divisor-lifted varying-gcd conductor estimate**, with
+the \(Q\), \(h\delta\), AFE/reflection, and companion-Type sums still
+inside the same pre-Cauchy master.  No such bound is proved, so (9.784)
+does not close (9.750), (9.119), or the full twisted moment.
 
 The helper `conductor_type_mobius_gcd_fusion_audit` enumerates the
 two-sign side and the gcd-fused side independently for arbitrary finite
@@ -16952,8 +16954,299 @@ Type-pair weights.  It verifies (9.783)--(9.784), including the ambient
 unit mask, zero direct phase, zero Möbius coefficients, and nonunit rows.
 At fixed \(r_0\), it records the reduction from two pointwise Möbius
 factors and nine ordered Type blocks to one factor and three blocks,
-while leaving the common-cofactor adapter, varying-gcd estimate, and
-coupled-kernel gate explicitly false.
+while leaving the varying-gcd estimate and coupled-kernel gate explicitly
+false.  Its fixed-\(r_0\) scope deliberately does not perform the global
+divisor lift proved later in Section 9.119.
+
+### 9.118 Fixed-gcd Möbius--trace coverage and the composite residual
+
+Formula (9.784) has only one pointwise Möbius sign, but its trace
+function changes whenever \(g=(m,Q)\) changes.  The precise scope of the
+published one-variable trace estimates can now be audited before any
+outer absolute value is taken.  Fix one gcd row and write
+
+\[
+ g=T^\gamma,\qquad n=\frac m g\asymp T^u,
+\tag{9.785}
+\]
+
+while holding the companion label \(p\), \(Q\), \(r_0\), and the phase
+labels fixed.  On a prime-conductor row, the unit nonexceptional trace is
+of the form
+
+\[
+ K_{g,p}(n)
+ =e_g\!\left(\bar k_g
+   \{B_0np-a_0\overline{np}_g\}\right),
+ \qquad k=Q/g.
+\tag{9.786}
+\]
+
+The inverse coefficient must be nonzero modulo \(g\); nonunit rows first
+require the exact conductor descent already encoded in (9.775)--(9.779).
+For a fixed smooth cutoff, Fouvry--Kowalski--Michel Theorem 1.7 gives
+
+\[
+ \sum_n\mu(n)K_{g,p}(n)V(n/T^u)
+ \ll T^u(1+T^{\gamma-u})^{1/6}T^{-\eta\gamma},
+ \qquad \eta<\frac1{24}.
+\]
+
+Thus the **limiting, nonattained** relative power-saving exponent is
+
+\[
+ \boxed{
+ \eta_{\mu}^{\rm prime}(\gamma,u)
+ =\left[\frac\gamma{24}
+       -\frac{(\gamma-u)_+}{6}\right]_+.}
+\tag{9.787}
+\]
+
+It is positive exactly when \(u>3\gamma/4\), equals \(\gamma/24\)
+when \(u\geq\gamma\), and vanishes at the boundary.  For example,
+\(\gamma=3\) gives savings \(0,1/24,1/8\) at
+\(u=9/4,5/2,3\), respectively.  The last number is a supremum: the
+theorem permits every \(\eta<1/24\), not \(\eta=1/24\).
+
+Korolev--Shparlinski Theorem 2.1 reaches the shorter prime-modulus range
+\(u>\gamma/2\), but its saving is logarithmic and therefore contributes
+zero to a fixed-power exponent ledger.  Gong--Jia's general-composite
+estimate accepts a bounded multiplicative coefficient such as \(\mu\),
+but only for the inverse phase \(e_g(C\bar n)\) and under
+\(g\leq (T^u)^2\), equivalently \(u\geq\gamma/2\).  Its final
+\(T^u/\sqrt{\log\log T}\) term again gives no fixed power.  When the
+direct coefficient in (9.786) is nonzero, or \(u<\gamma/2\), the
+theorem does not apply.
+
+There is a tempting but currently noncomposable large-prime-factor
+calculation.  Suppose a prime \(q=T^\lambda\) divides a composite
+\(g=T^\gamma\).  If one **formally assumes** that the complementary
+periodic trace of modulus \(g/q\) may be Fourier-completed at only the
+sharp \(\ell^1\) cost \(T^{(\gamma-\lambda)/2}\), then FKM on the
+\(q\)-part would leave
+
+\[
+ \boxed{
+ \eta_{\rm formal}(\gamma,\lambda,u)
+ =\frac\lambda{24}
+  -\frac{(\lambda-u)_+}{6}
+  -\frac{\gamma-\lambda}{2}.}
+\tag{9.788}
+\]
+
+For \(u\geq\lambda\), positivity would require
+\(\lambda>12\gamma/13\).  In the intermediate range
+\(3\lambda/4<u<\lambda\), it would require
+\(4u+9\lambda>12\gamma\).  At \(\gamma=3\), the formal boundary is
+\(\lambda=36/13\), while \(\lambda=u=14/5\) gives only \(1/60\).
+
+Equation (9.788) is a diagnostic ceiling, not published coverage.  The
+complementary trace is an additional periodic multiplier of the same
+Möbius sum.  FKM Theorem 1.7 does not accept arbitrary coefficients of
+that form, and Fourier completion does not turn \(\mu(n)\) on residue
+classes into the original theorem.  Consequently no composite row is
+removed by (9.788), even when \(g\) has a prime factor exceeding the
+formal \(12/13\) threshold.
+
+The resulting exact coverage table is:
+
+| fixed-\(g\) row | strongest applicable input | fixed-power status |
+|---|---|---:|
+| prime \(g\), unit nonexceptional trace, \(u>3\gamma/4\) | FKM Theorem 1.7 | local saving (9.787), at most \(\gamma/24\) |
+| prime \(g\), \(\gamma/2<u\leq3\gamma/4\) | Korolev--Shparlinski | logarithmic only; exponent \(0\) |
+| composite \(g\), inverse-only phase, \(u\geq\gamma/2\) | Gong--Jia | logarithmic only; exponent \(0\) |
+| composite \(g\), inverse-only phase, \(u<\gamma/2\) | Gong--Jia length condition fails | no coverage |
+| composite \(g\) with a very large prime factor | formal transfer (9.788) | adapter unproved; no coverage |
+| composite central/smooth \(g\), or nonunit/exceptional phase | none of the preceding inputs | **unproved residual** |
+
+This local table is quantitatively far from the global gate.  At
+\(\theta=3\), the standard all-character large-sieve ledger has deficit
+\(T^{5/2}\), (9.753).  Even the largest fixed-prime pointwise saving
+\(T^{1/8}\) leaves the diagnostic difference
+
+\[
+ \frac52-\frac18=\frac{19}{8}.
+\tag{9.789}
+\]
+
+That subtraction is only a scale comparison: summing the companion,
+\(Q\), \(r_0\), and \(a=h\delta\) labels absolutely is precisely the
+forbidden loss.  Hence even the prime wings classified by (9.787) do
+not prove a packet contribution.  The surviving analytic target is
+still a packet-uniform lift of the external
+\(\mu(r_0)c_{r_0}(B)c_{r_0}(a)/\varphi(r_0)^2\) factor followed by one
+pre-Cauchy moving-gcd estimate for (9.784).  The composite rows and the
+balanced prime range show that no cited scalar trace theorem supplies
+that estimate.
+
+The helper `fused_gcd_mobius_trace_coverage_audit` evaluates
+(9.787)--(9.789) with exact rational arithmetic.  It distinguishes the
+attained local hypotheses from limiting exponent suprema, labels the
+large-prime calculation as formal, and keeps the moving-gcd estimate and
+coupled-kernel gate false.  Section 9.119 supplies a different exact
+adapter for the external common-cofactor sign; it does not validate the
+formal prime-factor transfer (9.788).
+
+### 9.119 The common-cofactor sign fuses by a divisor lift
+
+The external \(\mu(r_0)\) in (9.763) can also be fused before Cauchy,
+without asking a trace theorem to accept a complementary periodic
+multiplier.  Remove that sign from the Ramanujan weight and write
+
+\[
+ \omega_{B,a}(r_0)
+ :=\frac{c_{r_0}(B)c_{r_0}(a)}{\varphi(r_0)^2}.
+\tag{9.790}
+\]
+
+After inserting (9.784), let \(\Pi\) denote one supplied choice of all
+remaining outer dyadic, AFE/reflection, phase, and boundary labels.  One
+fixed-\((Q,\Pi)\) packet has the finite form
+
+\[
+\begin{aligned}
+ \mathscr S_Q[\Pi]
+ ={}&\sum_{\substack{r_0\ge1\\(r_0,Q)=1}}
+ \mu(r_0)\omega_{B,a}(r_0)
+ \sum_{\substack{m\ge1\\\mu(m)\ne0\\(m,r_0)=1}}
+ \mu(m)
+ \sum_{\substack{p\\(p,Qr_0)=1}}
+ \mathscr W_{g,Q/g,r_0}(m/g,p;B,a),\\
+ &\hspace{42mm}g=(m,Q).
+\end{aligned}
+\tag{9.791}
+\]
+
+Every dyadic cutoff, Selberg taper, AFE/reflection weight, boundary
+indicator, companion label, and the product \(a=h\delta\) is allowed to
+remain inside \(\mathscr W\), extended by zero off its actual finite
+support.  No separation in \(r_0\) is assumed.
+
+Set
+
+\[
+ M=r_0m.
+\]
+
+The support in (9.791) gives \((r_0,m)=1\), so \(M\) is squarefree and
+
+\[
+ \boxed{
+ \mu(r_0)\mu(m)=\mu(M),\qquad
+ (M,Q)=(m,Q).}
+\tag{9.792}
+\]
+
+Conversely, if \(M\) is squarefree and
+\(r_0\mid M\), \((r_0,Q)=1\), then \(m=M/r_0\) is automatically
+coprime to \(r_0\), and (9.792) recovers the original row.  Thus the
+change of variables is a bijection, including all finite boundaries,
+and (9.791) becomes
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathscr S_Q[\Pi]
+ ={}&\sum_{\substack{M\ge1\\\mu(M)\ne0}}\mu(M)
+ \sum_{\substack{r_0\mid M\\(r_0,Q)=1}}
+ \omega_{B,a}(r_0)
+ \sum_{\substack{p\\(p,Qr_0)=1}}
+ \mathscr W_{G,Q/G,r_0}
+ \!\left(\frac{M}{r_0G},p;B,a\right),\\
+ &\hspace{44mm}G=(M,Q).
+ \end{aligned}}
+\tag{9.793}
+\]
+
+In particular the moving Kloosterman conductor is unchanged by the
+lift: \(G=g\).  The outer common-cofactor sign and the already fused
+conductor--Type sign have become one global Möbius factor \(\mu(M)\).
+There is no second pointwise Möbius source in (9.793).
+
+The divisor lift has only a divisor-size projective cost.  For
+squarefree \(M\), the primewise classification in (9.764) gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ \sum_{\substack{r_0\mid M\\(r_0,Q)=1}}
+ |\omega_{B,a}(r_0)|
+ &=\prod_{\substack{p\mid M\\p\nmid Q}}
+ \left(1+\frac{|c_p(B)c_p(a)|}{(p-1)^2}\right)\\
+ &\le 2^{\omega(M)}=\tau(M)\ll_\varepsilon M^\varepsilon.
+ \end{aligned}}
+\tag{9.794}
+\]
+
+This proves the finite packet-uniform common-cofactor adapter: arbitrary
+physical dependence on \(r_0\) is retained inside the divisor sum, and
+the Ramanujan coefficient axis costs no fixed power.  It also corrects
+the boundary stated after (9.784): the external \(\mu(r_0)\) is not an
+irreducible second Möbius sign once the sum over common cofactors is put
+back before Cauchy.
+
+What remains is still analytic and substantial.  The coefficient of
+\(\mu(M)\) in (9.793) is a divisor superposition whose conductor
+\(G=(M,Q)\), cofactor \(Q/G\), Type argument \(M/(r_0G)\), unit mask,
+and physical weight all move together.  Neither FKM nor the composite
+inverse-only theorem in Section 9.118 accepts this coefficient class.
+The formula also permits \(Q=1\): then \(G=1\), and this is exactly the
+subrow in which **both** phase characters are principal.  This must not
+be confused with the whole inverse-character principal row (9.748).
+If \(\psi=\chi_0\) but \(\lambda\ne\chi_0\), then
+
+\[
+ Q=[q_\lambda,q_\psi]=q_\lambda>1.
+\]
+
+Hence \(\mathscr S_1[\Pi]\) is only the double-principal subrow, while
+\(\sum_{Q>1}\mathscr S_Q[\Pi]\) contains both the remaining
+\(\lambda\ne\chi_0\) part of \(\mathfrak P_{\rm top}\) and all of
+\(\mathfrak N_{\rm all}\).  What proves completeness is not a false
+principal/centered dichotomy, but the unique partition of every pair
+\((\lambda,\psi)\) by its joint conductor
+\(Q=[q_\lambda,q_\psi]\).
+
+Consequently the weakest post-lift target can be named as the
+**one-Möbius divisor-lifted moving-gcd gate**
+
+\[
+ \boxed{
+ {\rm DLMG}_3:\qquad
+ \left|\sum_{\Pi}^{\rm residual}\sum_{Q\ge1}
+ \mathscr S_Q[\Pi]\right|
+ \ll_{\varepsilon,W}RS T^\varepsilon,}
+\tag{9.795}
+\]
+
+where every \(\mathscr S_Q[\Pi]\) is the finite sum (9.793), and
+``residual'' means the same already-pruned outer-packet support as
+(9.750).
+The conductor reduction and the two exact Möbius fusions give
+
+\[
+ {\rm DLMG}_3\Longrightarrow (9.750)
+ \Longrightarrow\mathcal R_{T^3,T}\ll_{\varepsilon,W}T^{1+\varepsilon}.
+\]
+
+This implication is an exact reindexing, not a bound.  No estimate of
+the strength (9.795) is proved here, so the coupled-kernel gate and the
+full twisted moment remain open.
+
+The helper `common_cofactor_mobius_divisor_lift_audit` enumerates both
+sides of (9.793) independently for arbitrary finite complex packet
+weights.  It verifies the sign fusion, preservation of the moving gcd,
+exact retention of every admissible packet row, and (9.794).  Its finite
+common-cofactor adapter flag is true, including the \(Q=1\)
+double-principal row at the final divisor-lift stage.  It compares
+contributions by canonical packet key, so arbitrary complex weights do
+not introduce a summation-order tolerance.  The
+divisor-lifted moving-gcd estimate and coupled-kernel flags remain false.
+The earlier conductor-collapse and fixed-\(r_0\) fusion helpers retain
+their \(Q>1\) input convention, so the present tests do not claim an
+end-to-end finite enumeration of (9.772)--(9.784) at \(Q=1\); the
+\(Q=1\) extension used above is the explicit empty-product convention
+\(\mu(1)=\varphi(1)=c_1(\cdot)=1\).
 
 ## 10. What has and has not been proved
 
@@ -17158,9 +17451,23 @@ one step further: at fixed common cofactor \(r_0\), the ambient unit
 mask makes its conductor and Type Möbius factors coprime, so
 (9.780)--(9.784) fuse them through \(d=(m,Q)\) into one Möbius
 variable.  This reduces the nonminimal nine-block core interface to
-three blocks but leaves both the signed common-cofactor lift and a
-moving-gcd trace kernel for which no global estimate or physical packet
-adapter has been proved.**
+three blocks.  The fixed-gcd trace audit (9.785)--(9.789)
+now shows that FKM gives a local fixed-power saving only on prime
+conductors with \(u>3\gamma/4\), while shorter prime rows and the
+available composite inverse-phase estimate save only logarithms.  A
+formal large-prime-factor transfer would already require
+\(\lambda>12\gamma/13\) at full local length and, more decisively, its
+cofactor multiplier is outside the published theorem.  Finally,
+(9.790)--(9.794) restore the external \(r_0\)-sum and fuse
+\(\mu(r_0)\mu(m)\) into one \(\mu(M)\) at divisor cost, preserving the
+moving gcd exactly.  Thus the separate common-cofactor sign obstruction
+is removed.  Partitioning all phase-character pairs by their joint
+conductor \(Q\) then gives the single one-Möbius gate
+\({\rm DLMG}_3\), (9.795): \(Q=1\) is only the double-principal subrow,
+while \(Q>1\) contains both the rest of the inverse-principal row and
+the centered rows.  That divisor-lifted moving-gcd estimate, all
+composite and balanced prime rows, and the global pre-Cauchy packet
+bound remain unproved.**
 
 Proved in this note:
 
@@ -17205,9 +17512,23 @@ Proved in this note:
 * the exact fixed-\(r_0\) conductor--Type Möbius fusion
   \(m=dn\), \(d=(m,Q)\), (9.780)--(9.784), which replaces two
   pointwise Möbius factors and nine ordered Type blocks by one factor
-  and three blocks inside the jointly primitive core.  The signed
-  common-cofactor adapter and resulting varying-gcd kernel estimate
-  remain unproved;
+  and three blocks inside the jointly primitive core.  The resulting
+  varying-gcd kernel estimate remains unproved;
+* the exact fixed-gcd published-coverage ledger (9.785)--(9.789): FKM's
+  prime-conductor limiting exponent is
+  \([\gamma/24-(\gamma-u)_+/6]_+\), positive precisely for
+  \(u>3\gamma/4\); the shorter prime range and inverse-only composite
+  range have no fixed-power saving.  The large-prime-factor formula is
+  retained only as a formal ceiling because its cofactor adapter is not
+  supplied by the cited theorem;
+* the exact common-cofactor divisor lift (9.790)--(9.794), which restores
+  arbitrary \(r_0\)-dependent packet weights before Cauchy, sends
+  \(M=r_0m\), fuses \(\mu(r_0)\mu(m)=\mu(M)\), preserves
+  \((M,Q)=(m,Q)\), and costs at most \(\tau(M)\).  The resulting
+  gate \({\rm DLMG}_3\), (9.795), partitions every phase-character pair
+  by joint conductor.  Here \(Q=1\) is only the double-principal subrow;
+  the \(Q>1\) rows also retain the nontrivial-direct part of the
+  inverse-principal row.  The gate remains unproved;
 * the exact separation (5.2a) into a polylogarithmic core and a named tail,
   and the core-box normalization (5.3)--(5.15);
 * the implication
@@ -17725,9 +18046,11 @@ Proved in this note:
 | Global linear two-Möbius character master | exact pre-Cauchy Type I/II form; cross-modulus dispersion unproved | Applying multiplicative inversion linearly before the \(s\)-sum gives (9.596)--(9.597): \(\mu(s)\), \(\mu(d)\), the complete character family, and \(a=h\delta\) all remain in one finite sum.  The boundary-safe identity (9.598)--(9.599) splits only \(\mu(d)\), retains \(d\leq\max(U_0,V_0)\), and has no mixed rectangles or remainder.  A single subsequent global square has the signed cross-modulus kernel (9.600).  Published separate character moments do not bound the product of its trace, Type, and companion polynomials at the balanced face |
 | Joint all-character/conductor master | exact principal-centered recombination; signed cross-\(q\) estimate unproved | Separately transforming the direct and inverse phases gives the double-character master (9.747): the Type polynomial sees \(\lambda\psi\), so centering the inverse character \(\psi\) does not delete principal convolved Type rows.  The \(q=1\) row is exactly the Ramanujan principal projection (9.748); every \(q>1\) row has the primitive-conductor descent (9.749).  Adding them before absolute values recovers (9.117), hence the true residual target is the joint gate \(|\mathfrak P_{\rm top}+\mathfrak N_{\rm all}|\), not separate PECG bounds.  Standard Farey/character large sieves give \(T^{17/2+\varepsilon}\) against target \(T^{6+\varepsilon}\), an exact \(T^{5/2}\) deficit, (9.751)--(9.753) |
 | Convolved-principal Type slice | exact centered Kloosterman collapse; joint modulus average unproved | On \(\lambda\psi=\chi_0\), character orthogonality gives \(\varphi(s)^{-1}\sum_\psi G_\psi(B)G_\psi(-a)=S(B,-a;s)\), (9.754)--(9.757).  Its inverse-character \(q=1\) row is the Ramanujan product (9.758), and all \(q>1\) rows are exactly the centered Kloosterman complement (9.759), including nonunit \(B,a\).  Pointwise Weil gives exponent \(19/2\), one power worse than the global large sieve and \(7/2\) above target; the slice must therefore remain coupled to the outer Möbius, Type coefficients, and complementary convolved characters |
-| Joint conductor LCM/common cofactor | exact scaled lift and primewise centered Type--phase tensor; global estimate unproved | For \(Q=[q_\lambda,q_\psi]\) and \(r_0=s/Q\), every prime of \(r_0\) is inactive in both phase characters and the normalized Gauss product extracts exactly \(\mu(r_0)c_{r_0}(B)c_{r_0}(a)/\varphi(r_0)^2\), while CRT transports both residual frequencies by \(\bar r_0\), (9.760)--(9.763).  Its absolute cofactor sum has the Euler product (9.764), hence no fixed-power cost.  Reparametrizing by \(\chi=\lambda\psi\) gives (9.767); after the ambient unit mask is retained in \(C_{Q,r_0}\) and the Type polynomial is recombined before Cauchy, every prime contributes the centered tensor factor (9.771), and the outer \(\mu(Q)\) migrates to the divisor sign \(\mu(d)\) in (9.773).  The phase and coefficient still depend on \(r_0\), and neither their packet-uniform cofactor adapter nor the signed global norm of (9.772) is proved |
+| Joint conductor LCM/common cofactor | exact scaled lift and primewise centered Type--phase tensor; global estimate unproved | For \(Q=[q_\lambda,q_\psi]\) and \(r_0=s/Q\), every prime of \(r_0\) is inactive in both phase characters and the normalized Gauss product extracts exactly \(\mu(r_0)c_{r_0}(B)c_{r_0}(a)/\varphi(r_0)^2\), while CRT transports both residual frequencies by \(\bar r_0\), (9.760)--(9.763).  Its absolute cofactor sum has the Euler product (9.764), hence no fixed-power cost.  Reparametrizing by \(\chi=\lambda\psi\) gives (9.767); after the ambient unit mask is retained in \(C_{Q,r_0}\) and the Type polynomial is recombined before Cauchy, every prime contributes the centered tensor factor (9.771), and the outer \(\mu(Q)\) migrates to the divisor sign \(\mu(d)\) in (9.773).  The phase and coefficient still depend on \(r_0\); Section 9.119 retains that dependence in an exact divisor lift, while the signed global norm of the resulting kernel remains unproved |
 | Ramanujan-cofactor/Kloosterman-conductor collapse | exact zero-direct-compatible reduction; signed varying-conductor estimate unproved | Writing \(Q=dk\), CRT sums the free \(k\)-coordinates in every incidence row to \(c_k(B_0)c_k(a_0)\), (9.775), and gives the exact conductor master (9.776)--(9.778).  The outer sign is now \(\mu(d)\), the original Type sign remains inside \(C^{[k]}_{d,r_0}\), and \(a=h\delta\) is unchanged.  For \(B=0\) the cofactor weight is exactly \(c_k(a_0)/\varphi(k)\), (9.779).  Principal, intermediate, and top-conductor rows must remain recombined; applying the exact small/I/II split to both Möbius factors produces nine signed blocks whose global varying-\(d\) estimate is still unproved |
-| Conductor--Type Möbius gcd fusion | exact fixed-\(r_0\) one-sign reindexing; cofactor adapter and varying-gcd estimate unproved | Opening the Type packet before Cauchy makes the ambient unit mask force \((d,n)=1\).  The bijection \(m=dn\) then gives \(\mu(d)\mu(n)=\mu(m)\), \(d=(m,Q)\), \(k=Q/(m,Q)\), and \(n=m/(m,Q)\), (9.780)--(9.784).  Thus, inside the jointly primitive core at fixed \(r_0\), the nine separately split conductor--Type blocks may be replaced by three blocks from one pointwise split of \(\mu(m)\), with no absolute value or boundary error.  The factor \(\mu(r_0)c_{r_0}(B)c_{r_0}(a)/\varphi(r_0)^2\) remains outside, and the fused kernel's conductor, cofactor, and Type argument all move with \((m,Q)\); neither the physical \(r_0\)-adapter nor a global bound for this coefficient class is asserted |
+| Conductor--Type Möbius gcd fusion | exact fixed-\(r_0\) one-sign reindexing; varying-gcd estimate unproved | Opening the Type packet before Cauchy makes the ambient unit mask force \((d,n)=1\).  The bijection \(m=dn\) then gives \(\mu(d)\mu(n)=\mu(m)\), \(d=(m,Q)\), \(k=Q/(m,Q)\), and \(n=m/(m,Q)\), (9.780)--(9.784).  Thus, inside the jointly primitive core at fixed \(r_0\), the nine separately split conductor--Type blocks may be replaced by three blocks from one pointwise split of \(\mu(m)\), with no absolute value or boundary error.  The factor \(\mu(r_0)c_{r_0}(B)c_{r_0}(a)/\varphi(r_0)^2\) remains outside at this stage; Section 9.119 restores its sum and fuses its sign.  The kernel's conductor, cofactor, and Type argument still move with \((m,Q)\), and no global bound for this coefficient class is asserted |
+| Fixed-gcd Möbius--trace coverage | exact prime-row exponent polytope; composite and packet-level gate unproved | At fixed \(g=T^\gamma\) and Möbius quotient length \(T^u\), FKM Theorem 1.7 gives the limiting saving \([\gamma/24-(\gamma-u)_+/6]_+\), positive exactly for prime nonexceptional rows with \(u>3\gamma/4\), (9.785)--(9.787).  Korolev--Shparlinski reaches \(u>\gamma/2\) only logarithmically, while Gong--Jia is inverse-only and also leaves a logarithmic term.  A formal extraction of a prime \(T^\lambda\mid g\), charged by the complementary Fourier cost, is positive at full local length only for \(\lambda>12\gamma/13\), (9.788), but no published Möbius--trace theorem accepts that cofactor multiplier.  Hence no composite row or global packet is declared covered; even the maximal local \(1/8\) saving leaves the diagnostic \(19/8\) of the standard \(T^{5/2}\) deficit, (9.789) |
+| Common-cofactor Möbius divisor lift | exact one-sign global reindexing at divisor cost; \({\rm DLMG}_3\) unproved | Restoring the \(r_0\)-sum before Cauchy and setting \(M=r_0m\) gives \(\mu(r_0)\mu(m)=\mu(M)\) and \((M,Q)=(m,Q)\), (9.790)--(9.793).  Every physical \(r_0\)-dependent packet weight, unit mask, boundary, and \(h\delta\) label stays inside the inner \(r_0\mid M\) sum.  Its Ramanujan projective cost is at most \(\tau(M)\), (9.794), so the separate external Möbius source is removed with no fixed-power loss.  The unique joint-conductor partition of all \((\lambda,\psi)\) pairs gives the exact sufficient one-Möbius gate \({\rm DLMG}_3\), (9.795): \(Q=1\) is the double-principal subrow, while \(Q>1\) contains both the rest of the inverse-principal row and all centered rows.  Its divisor-superposition coefficient still has conductor \((M,Q)\), and the required joint pre-Cauchy estimate is not supplied by the cited scalar trace theorems |
 | Cross-modulus zero product frequency | exact same-\((s,t)\) diagonal; signed complement unproved | The primitive frequency \(\bar t_s/s\) is a reduced fraction.  Hence equality across two blocks forces \(s_1=s_2,t_1=t_2\), and every distinct pair has Farey spacing at least \((s_1s_2)^{-1}\), (9.601)--(9.603).  The ordinary additive large sieve (9.604) and the sum of fixed-modulus Cochrane--Shi energies both have balanced exponent \(11\), so spacing alone gives no new power.  The zero projector is classified, but its AFE/Type reassembly and the signed nonzero-frequency cross-modulus estimate remain unproved |
 | Cross-modulus frequency Euler centering | exact local density and mean-zero divisor expansion; weighted lift handled next | For \(s_i=gr_i\), CRT gives the exact multiplicity (9.606) of every circular numerator \(\kappa\).  The common Möbius sign cancels as \(\mu(s_1)\mu(s_2)=\mu(r_1)\mu(r_2)\), while (9.608)--(9.610) split the multiplicity into the explicit density \(\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) and Euler blocks containing a mean-zero factor \(1_{p\mid\kappa}-1/p\).  Section 9.93 lifts this to arbitrary fixed-pair packet weights; the signed estimate for the resulting centered blocks remains unproved |
 | Weighted CRT packet centering | exact orthogonal projection; principal reassembly and centered dispersion unproved | Conditional expectations in the prime CRT coordinates give the Hoeffding decomposition (9.612)--(9.615) for an arbitrary fixed-\((s_1,s_2)\) packet.  The weighted fibre identity (9.616) separates \(\bar W\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) from two terms whose total \(\kappa\)-mass is exactly zero.  Linearity (9.618) retains \(h\delta\), both Type Möbius weights, the outer cofactor signs, and all nine ordered Type blocks at divisor cost \(T^\varepsilon\).  Zero marginals do not themselves give power cancellation; the AFE/reflection principal ledger and the global signed norm of the centered blocks remain open |
@@ -17914,6 +18237,11 @@ estimate as a consequence of Bettin--Chandee or Wright would be incorrect.
   twisted by arithmetic functions*, Proc. Steklov Inst. Math. 314
   (2021), 128--144, arXiv:1804.01337, Theorem 2.1; its saving in the
   \(p^{1/2+\varepsilon}\) range is logarithmic and prime-modulus only.
+* K. Gong, C. Jia, *Kloosterman sums with multiplicative coefficients*,
+  arXiv:1401.4556v4; its general-composite bound permits bounded
+  multiplicative coefficients in an inverse-only phase, but the final
+  \(N/\sqrt{\log\log(6N)}\) term supplies no fixed-power saving.  It is
+  audited against the fused fixed-gcd row in Section 9.118.
 * arXiv:2601.00292 is **withdrawn from this project's admissible analytic
   inputs**: the author record reports a missing \(L^2\) factor (changing the
   relevant loss from \(L^5\) to \(L^7\)), so the advertised improvement is
