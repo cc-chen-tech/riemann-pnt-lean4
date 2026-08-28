@@ -4700,6 +4700,144 @@ def test_nonunit_inverse_phase_descends_to_effective_squarefree_conductor() -> N
     assert not purely_direct["published_local_effective_conductor_coverage"]
 
 
+def test_double_mobius_atom_uses_all_product_partitions_for_coverage() -> None:
+    audit = getattr(
+        coverage_audit,
+        "double_mobius_product_partition_coverage_audit",
+        None,
+    )
+    assert audit is not None, "double-Mobius partition coverage is missing"
+
+    four_factor = audit(
+        conductor_exponent=F(3),
+        b_exponent=F(3, 4),
+        c_exponent=F(3, 4),
+        n_exponent=F(3, 4),
+        p_exponent=F(3, 4),
+        squarefree_conductor=True,
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separated_four_factor_adapter_verified=True,
+    )
+    assert four_factor["best_bilinear_partition_saving_exponent"] == F(3, 8)
+    assert four_factor["bilinear_positivity_matches_closed_polytope"]
+    assert four_factor["best_partition_sides"] in (
+        (("b",), ("c", "n", "p")),
+        (("c",), ("b", "n", "p")),
+        (("n",), ("b", "c", "p")),
+        (("p",), ("b", "c", "n")),
+    )
+    assert four_factor["published_local_double_mobius_coverage"]
+
+    balanced_two_factor = audit(
+        conductor_exponent=F(3),
+        b_exponent=F(3, 2),
+        c_exponent=F(3, 2),
+        n_exponent=F(0),
+        p_exponent=F(0),
+        squarefree_conductor=True,
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separated_four_factor_adapter_verified=True,
+    )
+    assert balanced_two_factor["best_bilinear_partition_saving_exponent"] == 0
+    assert balanced_two_factor["bilinear_positivity_matches_closed_polytope"]
+    assert balanced_two_factor["best_one_mobius_saving_exponent"] == 0
+    assert balanced_two_factor["best_smooth_coordinate_saving_exponent"] == 0
+    assert not balanced_two_factor["published_local_double_mobius_coverage"]
+    assert balanced_two_factor["prime_balanced_two_factor_face_uncovered"]
+
+    long_mobius_axis = audit(
+        conductor_exponent=F(3),
+        b_exponent=F(5, 2),
+        c_exponent=F(0),
+        n_exponent=F(0),
+        p_exponent=F(0),
+        squarefree_conductor=True,
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separated_four_factor_adapter_verified=True,
+    )
+    assert long_mobius_axis["best_one_mobius_saving_exponent"] == F(1, 24)
+    assert long_mobius_axis["published_local_double_mobius_coverage"]
+
+    long_smooth_axis = audit(
+        conductor_exponent=F(3),
+        b_exponent=F(0),
+        c_exponent=F(0),
+        n_exponent=F(2),
+        p_exponent=F(0),
+        squarefree_conductor=True,
+        prime_conductor=False,
+        unit_nonexceptional_trace=True,
+        separated_four_factor_adapter_verified=True,
+    )
+    assert long_smooth_axis["best_smooth_coordinate_saving_exponent"] == F(1, 2)
+    assert long_smooth_axis["published_local_double_mobius_coverage"]
+
+    composite_central = audit(
+        conductor_exponent=F(3),
+        b_exponent=F(3, 4),
+        c_exponent=F(3, 4),
+        n_exponent=F(3, 4),
+        p_exponent=F(3, 4),
+        squarefree_conductor=True,
+        prime_conductor=False,
+        unit_nonexceptional_trace=True,
+        separated_four_factor_adapter_verified=True,
+    )
+    assert composite_central["best_bilinear_partition_saving_exponent"] == F(3, 8)
+    assert not composite_central["published_prime_bilinear_coverage"]
+    assert not composite_central["published_local_double_mobius_coverage"]
+    assert composite_central["composite_central_band_uncovered"]
+
+    missing_adapter = audit(
+        conductor_exponent=F(3),
+        b_exponent=F(3, 4),
+        c_exponent=F(3, 4),
+        n_exponent=F(3, 4),
+        p_exponent=F(3, 4),
+        squarefree_conductor=True,
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separated_four_factor_adapter_verified=False,
+    )
+    assert missing_adapter["best_local_saving_exponent"] == F(3, 8)
+    assert not missing_adapter["published_local_double_mobius_coverage"]
+    assert not missing_adapter["physical_four_factor_adapter_proved"]
+
+
+def test_double_mobius_pre_cauchy_gram_keeps_cross_conductor_phase() -> None:
+    audit = getattr(
+        coverage_audit,
+        "double_mobius_cross_conductor_ttstar_audit",
+        None,
+    )
+    assert audit is not None, "cross-conductor double-Mobius Gram is missing"
+
+    result = audit(
+        max_label=18,
+        conductors=(5, 7),
+        direct_coefficients=(1, 2),
+        inverse_labels=(2, 3),
+        conductor_cofactors=(1, 2),
+    )
+    assert result["pre_cauchy_b_and_c_mobius_weights_retained"]
+    assert result["outer_conductor_mobius_signs_retained_in_gram"]
+    assert result["inverse_labels_a_retained_in_combined_phase"]
+    assert result["all_cross_conductor_phase_identities_exact"]
+    assert result["direct_gram_equals_combined_kloosterman_gram"]
+    assert result["resonant_plus_nonresonant_gram_exact"]
+    assert result["same_conductor_unit_resonance_is_c_diagonal"]
+    assert result["zero_orbit_forces_equal_conductor"]
+    assert result["same_conductor_resonance_compatibility_exact"]
+    assert result["resonant_c2_residue_unique"]
+    assert result["cross_conductor_rows_present"]
+    assert result["nonzero_combined_phase_rows_present"]
+    assert not result["cross_conductor_kloosterman_gram_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
 def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:
     audit = getattr(
         coverage_audit,

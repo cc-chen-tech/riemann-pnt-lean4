@@ -18,6 +18,8 @@
 > | Common-cofactor Möbius divisor lift | Section 9.119 fuses \(\mu(r_0)\mu(m)\) into one global \(\mu(M)\) with \(M=r_0m\), preserves \((M,Q)=(m,Q)\), and retains arbitrary physical packet weights at divisor cost; the resulting one-Möbius gate \({\rm DLMG}_3\), including \(Q=1\), remains unproved |
 > | Gcd-first quotient Type I/II split | Section 9.120 first fixes \(G=(M,Q)\), then applies the exact two-cutoff identity only to the true Type quotient \(N=M/(r_0G)\); the conductor is frozen, \(a=h\delta\) is retained, and the long block has \(\mu(b)\mu(c)\).  FKM covers the fixed-prime separated subpolytope (9.806)--(9.807), but the physical adapter and global dispersion remain unproved |
 > | Squarefree principal-quotient trace rows | Section 9.121 expands the retained squarefree density by \(\mu^2(N)=\sum_{d^2\mid N}\mu(d)\).  Classical completion gives a fixed-row saving \(\eta_{\rm sf}(\gamma,u)=[\min\{\gamma/2,u/2-\gamma/4\}]_+\) for a squarefree unit-phase conductor and verified separated \(N\)-weight.  Section 9.122 proves the nonunit descent to \(R=G/(a_0,G)\) and replaces \(\gamma\) by the effective exponent \(\rho\).  Rows with \(u\leq\rho/2\), the physical packet adapter, the signed outer reassembly, and all of \(\mathscr B\) remain unproved |
+> | Double-Möbius product-partition coverage | Section 9.123 tests all seven unordered bipartitions of \(bcnp\), not only \(b\mid cnp\).  FKM Theorem 1.17 covers a verified separated fixed-prime atom whenever one partition has both sides nonempty and its longer side exceeds \(G^{1/2}\); FKM Theorem 1.7 covers long \(b\)- or \(c\)-axes, and elementary completion covers long smooth \(n\)- or \(p\)-axes.  The prime balanced two-factor face, composite central band, physical adapter, and signed global dispersion remain unproved |
+> | Balanced double-Möbius cross-conductor Gram | Section 9.124 regroups the residual as \(\sum_b\mu(b)\mathcal A_b\) before one Cauchy step.  The exact Gram phase is \(e_{[G_1,G_2]}(Db+E\bar b)\), retaining both \(\mu(c_i)\), outer signs, and \(a_i=h_i\delta_i\).  On unit squarefree rows the zero orbit forces \(G_1=G_2\) and one explicit \(c_2\)-residue per \(c_1\); the outer invariant-fibre norm and nonzero cross-conductor spectral estimate remain unproved |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
 > | Direct published Region A--C coverage | proved/classified in Section 8 |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
@@ -17835,6 +17837,269 @@ three exponents in (9.824), the threshold and formula (9.825), and the
 separated-weight hypotheses; all physical/global gate flags remain
 false.
 
+### 9.123 Published coverage of every double-Möbius product partition
+
+The FKM substitution in (9.805) used only the grouping
+\(b\mid(cnp)\).  On a verified separated atom of (9.809), this is not
+the only legal grouping.  Write
+
+\[
+ G=T^\gamma,\qquad
+ (b,c,n,p)=T^{(\beta,\chi,\nu,\varpi)},\qquad
+ \lambda=(\beta,\chi,\nu,\varpi).
+ \tag{9.826}
+\]
+
+For every nonempty proper subset
+\(I\subset\{b,c,n,p\}\), aggregate the integer products on the two
+sides and put
+
+\[
+ x_I=\sum_{i\in I}\lambda_i,qquad
+ y_I=\sum_{i\notin I}\lambda_i.
+ \tag{9.827}
+\]
+
+The aggregate coefficients have \(\ell^2\)-norm at most their
+one-bounded square-root scale times \(T^\varepsilon\): the number of
+factorizations of each aggregate integer is divisor-bounded.  Smooth
+four-variable separation and the coprimality divisor expansion also
+cost only \(T^\varepsilon\), provided that this adapter has actually
+been verified for the supplied physical atom.  FKM Theorem 1.17 then
+gives the limiting saving
+
+\[
+ \eta_I(\gamma;\lambda)
+ =\eta_{\rm atom}(\gamma;x_I,y_I),
+ \qquad
+ \boxed{\eta_{\rm bil}^{(4)}(\gamma;\lambda)
+ =\max_{\varnothing\ne I\ne\{b,c,n,p\}}\eta_I(\gamma;\lambda).}
+ \tag{9.828}
+\]
+
+The theorem itself assumes only dyadic support
+\([M/2,2M]\), \([N/2,2N]\) with \(M,N\ge1\); it does not impose
+\(M,N\le G\).  Thus no extra artificial face is inserted when a grouped
+product is longer than the modulus.  The prime-conductor,
+nonexceptional-trace hypotheses still remain indispensable.
+
+There is a useful closed description of the positivity region.  Let
+\(L=\beta+\chi+\nu+\varpi\), and if at least two coordinates are
+positive let \(m_+\) be the least positive coordinate.  By (9.807),
+
+\[
+ \boxed{
+ \eta_{\rm bil}^{(4)}(\gamma;\lambda)>0
+ \Longleftrightarrow
+ \#\{i:\lambda_i>0\}\ge2
+ \quad\hbox{and}\quad L-m_+>\gamma/2.}
+ \tag{9.829}
+\]
+
+Indeed the split with the least positive coordinate on one side is
+optimal for the positivity test; every other proper side has complement
+at most \(L-m_+\).  Equation (9.829) describes positivity, while the
+exact saving is still the maximum (9.828).
+
+Two one-coordinate projections add the boundary axes omitted by
+(9.829).  FKM Theorem 1.7 gives, for \(z=\beta\) or \(\chi\),
+
+\[
+ \eta_\mu^{(1)}(\gamma;z)
+ =\left[\frac\gamma{24}-\frac{(\gamma-z)_+}{6}\right]_+,
+ \tag{9.830}
+\]
+
+which is positive exactly for \(z>3\gamma/4\).  For either smooth
+unweighted coordinate \(z=\nu\) or \(\varpi\), ordinary completion of
+one unit Kloosterman trace gives
+
+\[
+ \eta_{\rm sm}^{(1)}(\gamma;z)
+ =\left[\min\left\{\frac\gamma2,z-\frac\gamma2\right\}\right]_+,
+ \tag{9.831}
+\]
+
+positive exactly for \(z>\gamma/2\).  Unlike (9.828) and (9.830), this
+last row remains valid for squarefree composite \(G\), because it uses
+only CRT--Weil completion.  A nonunit inverse coefficient must first use
+the effective conductor in Section 9.122; no automatic FKM geometric
+transfer to that descended row is asserted.
+
+The unified fixed-row coverage table is:
+
+| double-Möbius atom | input | local status |
+|---|---|---|
+| prime \(G\), unit nonexceptional trace, verified four-factor separation, some partition satisfying (9.829) | FKM Theorem 1.17 | saving (9.828) |
+| same prime row on a single \(b\)- or \(c\)-axis with exponent \(>3\gamma/4\) | FKM Theorem 1.7 | saving (9.830) |
+| squarefree \(G\), verified separated smooth \(n\)- or \(p\)-axis with exponent \(>\gamma/2\) | classical completion | saving (9.831) |
+| prime balanced two-factor row \((\beta,\chi,\nu,\varpi)=(\gamma/2,\gamma/2,0,0)\) | all three preceding projections | **no fixed power** |
+| composite central row with every smooth coordinate \(\leq\gamma/2\) | FKM prime hypothesis fails | **unproved residual** |
+| any numerically favorable row without the physical four-factor adapter | formal exponent substitution only | no coverage of \(\mathscr W\) |
+| signed \(Q,G,r_0,h,\delta,\Pi\) aggregate | no fixed-row theorem supplies the cross-row norm | unproved global dispersion |
+
+For \(\gamma=3\), four equal coordinates \(3/4\) are not a hard
+fixed-prime row: the \(3/4\mid9/4\) partition gives saving \(3/8\).
+In contrast, \((3/2,3/2,0,0)\) is exactly degenerate.  A single
+Möbius coordinate of length \(5/2\) has the smaller FKM saving
+\(1/24\), while a smooth coordinate of length \(2\) has elementary
+saving \(1/2\).  These comparisons correct the coverage polytope; they
+do not permit absolute summation over its cells.
+
+The remaining analytic target is therefore narrower but still global:
+the prime balanced two-factor face, the composite central band, every
+row lacking the physical adapter, and their signed outer recombination.
+On the first face the two genuine coefficients are precisely
+\(\mu(b)\mu(c)\), so the next valid operation is the global linear
+Type-II/character master (9.596)--(9.600), formed before Cauchy.  A
+fixed-modulus square would erase the outer conductor sign and is not a
+closure of this residual.
+
+The exact-rational helper
+`double_mobius_product_partition_coverage_audit` enumerates all seven
+unordered partitions, (9.828), together with the two FKM Möbius axes
+and two smooth axes, (9.830)--(9.831).  It distinguishes numerical
+savings from published coverage hypotheses and explicitly marks the
+prime balanced two-factor face, composite central band, physical
+adapter, outer signed average, global dispersion, and coupled-kernel
+flags.
+
+### 9.124 The balanced residual has an exact cross-conductor Gram
+
+The first unresolved prime face in Section 9.123 has
+\(b,c\asymp G^{1/2}\), with the smooth factors bounded.  It is invalid
+to square separately at fixed \(G\), because that deletes the outer
+conductor sign.  Let \(\Omega\) retain **all** outer data
+\((Q,G,r_0,h,\delta,\Pi,n,p)\), and write
+
+\[
+ K_\Omega(x)=e_{G_\Omega}\!\left(\bar k_\Omega
+   (B_\Omega x-a_\Omega\bar x)\right),
+ \qquad a_\Omega=h_\Omega\delta_\Omega.
+ \tag{9.832}
+\]
+
+Absorb the Ramanujan cofactor, taper, reflection, dyadic weight, and all
+finite boundaries into \(W_\Omega(b,c)\), but not the Möbius signs.
+The global balanced master may then be regrouped exactly as
+
+\[
+ \boxed{
+ \mathfrak B_{\rm bal}
+ =\sum_b\mu(b)\mathcal A_b,\qquad
+ \mathcal A_b
+ =\sum_\Omega\epsilon_\Omega
+   \sum_c\mu(c)W_\Omega(b,c)K_\Omega(bc).}
+ \tag{9.833}
+\]
+
+Here \(\epsilon_\Omega\) includes every outer Möbius/conductor sign.
+Thus both Type signs and \(a=h\delta\) are present before the single
+Cauchy step.  With an arbitrary positive majorant \(q_b\),
+
+\[
+ |\mathfrak B_{\rm bal}|^2
+ \leq\left(\sum_b\mu^2(b)q_b\right)
+      \left(\sum_bq_b^{-1}|\mathcal A_b|^2\right).
+ \tag{9.834}
+\]
+
+Only the already regrouped \(b\)-sign is squared away.  Expanding the
+second factor retains
+\(\epsilon_{\Omega_1}\overline{\epsilon_{\Omega_2}}) and
+\(\mu(c_1)\mu(c_2)\) across different conductors.
+
+The phase of each Gram entry is explicit.  Put
+\(G_i=G_{\Omega_i}\), \(L=[G_1,G_2]\), and abbreviate the corresponding
+labels by \(k_i,B_i,a_i\).  For \((bc_1c_2,L)=1\), define
+
+\[
+ \begin{aligned}
+ D&=\frac{L}{G_1}\bar k_1B_1c_1
+    -\frac{L}{G_2}\bar k_2B_2c_2\pmod L,\\
+ E&=-\frac{L}{G_1}\bar k_1a_1\bar c_1
+    +\frac{L}{G_2}\bar k_2a_2\bar c_2\pmod L.
+ \end{aligned}
+ \tag{9.835}
+\]
+
+CRT gives the exact identity
+
+\[
+ \boxed{
+ K_{\Omega_1}(bc_1)\overline{K_{\Omega_2}(bc_2)}
+ =e_L(D b+E\bar b).}
+ \tag{9.836}
+\]
+
+Consequently the post-Cauchy object is one signed cross-conductor
+Kloosterman Gram,
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathfrak G={}&
+ \sum_{\Omega_1,\Omega_2}
+ \epsilon_{\Omega_1}\overline{\epsilon_{\Omega_2}}
+ \sum_{c_1,c_2}\mu(c_1)\mu(c_2)\\
+ &\quad\cdot\sum_b
+ q_b^{-1}W_{\Omega_1}(b,c_1)
+ \overline{W_{\Omega_2}(b,c_2)}
+ e_{[G_1,G_2]}(D b+E\bar b).
+ \end{aligned}}
+ \tag{9.837}
+\]
+
+This formula retains the two copies of the second Möbius sign, both
+outer signs, both physical labels \(a_i=h_i\delta_i\), and all
+cross-scale packet weights.  A fixed-modulus FKM or Kuznetsov estimate
+does not by itself bound (9.837).
+
+The zero orbit of (9.837) is much smaller than an arbitrary
+cross-conductor diagonal.  Assume in this paragraph that \(G_1,G_2\)
+are squarefree and \(B_i,a_i,k_i\) are units on their conductors.  If a
+prime divides \(G_1/G_2\), reducing \(D\) modulo that prime leaves the
+nonzero first term of (9.835), a contradiction.  Symmetrically,
+
+\[
+ \boxed{D\equiv E\equiv0\pmod L\quad\Longrightarrow\quad G_1=G_2.}
+ \tag{9.838}
+\]
+
+For the common conductor \(G\), put
+\(u_i=\bar k_iB_i\), \(v_i=\bar k_i a_i\).  The two zero equations are
+equivalent to
+
+\[
+ \boxed{
+ u_1v_1\equiv u_2v_2\pmod G,qquad
+ c_2\equiv u_1\bar u_2c_1\pmod G.}
+ \tag{9.839}
+\]
+
+Thus the resonant Gram is diagonal in the conductor, supported on one
+explicit invariant
+\(B_ia_i k_i^{-2}\pmod G\), and has at most one \(c_2\)-residue for
+each \(c_1\).  On a single identical packet this is exactly
+\(c_1\equiv c_2\pmod G\).  Since the balanced \(c\)-interval is shorter
+than \(G\), the residue fibre itself is diagonal-sized.  What is not yet
+proved is a packet-exhaustive norm for the multiplicity of the outer
+invariant, nor the signed nonzero-\((D,E)\) part of (9.837).
+
+This identifies a strictly sharper next gate: evaluate the invariant
+fibres of the resonant part with the AFE/reflection principal ledger,
+then prove a joint varying-\([G_1,G_2]\) spectral estimate for the
+nonzero part of (9.837).  It is still a pre-Cauchy coupled problem, but
+it no longer contains cross-conductor zero orbits.  No such global bound
+is asserted here, so the coupled-kernel gate remains open.
+
+The finite helper `double_mobius_cross_conductor_ttstar_audit` builds
+(9.833) before Cauchy and compares the direct Gram with
+(9.835)--(9.837) as exact rational-phase group-ring counters.  It checks
+the resonant/nonresonant split, (9.838), the compatibility and unique
+residue in (9.839), retention of all Möbius and inverse-phase labels,
+and leaves the analytic Gram-bound and coupled-kernel flags false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -18074,8 +18339,16 @@ isolates an explicit Type-sign-free principal quotient from the genuine
   \(R=G/(a_0,G)=T^\rho\), with the same formula after replacing
   \(\gamma\) by \(\rho\).  The short rows \(u\leq\rho/2\), the
   \(R=1\) pure-direct refinement, physical packet adapter, signed outer
-  principal reassembly, and the entire double-Möbius dispersion are
-  still open.**
+  principal reassembly, and the global double-Möbius dispersion are
+  still open.  For the latter, the all-partition ledger
+  (9.826)--(9.831) covers every verified separated fixed-prime atom for
+  which \(L-m_+>\gamma/2\), together with long Möbius and smooth axes.
+  The prime balanced two-factor face, composite central band, missing
+  physical adapters, and signed cross-row norm remain.  On the balanced
+  two-factor face, the exact pre-Cauchy Gram (9.833)--(9.839) removes all
+  cross-conductor zero orbits and reduces the same-conductor resonance
+  to one explicit invariant fibre.  Its outer fibre norm and nonzero
+  Kloosterman Gram estimate remain unproved.**
 
 Proved in this note:
 
@@ -18176,6 +18449,22 @@ Proved in this note:
   positive precisely when \(R>1\) and \(u>\rho/2\).  This does not
   provide the physical packet adapter, outer signed reassembly, or a
   double-Möbius estimate;
+* the all-partition double-Möbius coverage ledger (9.826)--(9.831).
+  Every unordered bipartition of \(bcnp\) is tested against FKM
+  Theorem 1.17; the positivity region is exactly
+  \(L-m_+>\gamma/2\) when at least two coordinates are nonzero.
+  FKM Theorem 1.7 adds the long \(b,c\) axes and elementary completion
+  adds the long smooth \(n,p\) axes.  This is fixed-row coverage only:
+  the prime balanced two-factor face, composite central band, physical
+  four-factor adapter, and signed global dispersion remain unproved;
+* the balanced pre-Cauchy cross-conductor Gram (9.832)--(9.839).
+  Regrouping before Cauchy retains \(\mu(b)\mu(c)\), every outer sign,
+  and \(a=h\delta\).  After the single Cauchy step, the exact phase is
+  \(e_{[G_1,G_2]}(Db+E\bar b)\).  On unit squarefree rows its zero orbit
+  forces \(G_1=G_2\), equality of
+  \(B_ia_i k_i^{-2}\), and one \(c_2\)-residue per \(c_1\).  The
+  packet-exhaustive invariant-fibre norm and nonzero spectral Gram bound
+  are not proved;
 * the exact separation (5.2a) into a polylogarithmic core and a named tail,
   and the core-box normalization (5.3)--(5.15);
 * the implication
@@ -18700,6 +18989,8 @@ Proved in this note:
 | Common-cofactor Möbius divisor lift | exact one-sign global reindexing at divisor cost; \({\rm DLMG}_3\) unproved | Restoring the \(r_0\)-sum before Cauchy and setting \(M=r_0m\) gives \(\mu(r_0)\mu(m)=\mu(M)\) and \((M,Q)=(m,Q)\), (9.790)--(9.793).  Every physical \(r_0\)-dependent packet weight, unit mask, boundary, and \(h\delta\) label stays inside the inner \(r_0\mid M\) sum.  Its Ramanujan projective cost is at most \(\tau(M)\), (9.794), so the separate external Möbius source is removed with no fixed-power loss.  The unique joint-conductor partition of all \((\lambda,\psi)\) pairs gives the exact sufficient one-Möbius gate \({\rm DLMG}_3\), (9.795): \(Q=1\) is the double-principal subrow, while \(Q>1\) contains both the rest of the inverse-principal row and all centered rows.  Its divisor-superposition coefficient still has conductor \((M,Q)\), and the required joint pre-Cauchy estimate is not supplied by the cited scalar trace theorems |
 | Gcd-first quotient Type I/II split | exact frozen-conductor two-sign reduction and fixed-prime subpolytope; global dispersion unproved | Disintegrating \(M=r_0GN\) with \(G=(M,Q)\) gives pairwise coprime \(r_0,G,N\) and \((N,Q)=1\), (9.796)--(9.798).  Applying the remainder-free two-cutoff identity only to \(\mu(N)\) yields (9.799)--(9.801): every boundary is explicit, mixed rectangles cancel, the conductor \(G\) and cofactor \(Q/G\) are frozen, and \(a=h\delta\) stays inside the physical packet.  At \(U=V=1\), (9.802) separates the \(N=1\) boundary and the Type-sign-free squarefree \(N>1\) quotient mean from the genuine \(\mu(b)\mu(c)\), \(b,c>1\), divisor family.  The recombined gate \({\rm QTIID}_3(U,V)\) is exactly equivalent to \({\rm DLMG}_3\), (9.803)--(9.804).  For a verified separated prime-conductor atom, FKM Theorem 1.17 gives (9.806), positive exactly on \(\min(x,y)>0,\max(x,y)>\gamma/2\), (9.807).  Equations (9.808)--(9.810) then retain every outer label while splitting the full unit-cutoff master as \(\mathscr Z_Q+\mathscr B_Q\), with no Type Möbius sign but explicit squarefree support in \(\mathscr Z_Q\), and the two nontrivial signs \(\mu(b)\mu(c)\) in \(\mathscr B_Q\).  The physical adapter, composite rows, full principal quotient evaluation, and signed global double-Möbius estimate remain open |
 | Squarefree principal-quotient trace completion | elementary fixed-row subpolytope and nonunit descent proved; global principal master unproved | The exact projector \(\mu^2(N)=\sum_{d^2\mid N}\mu(d)\), (9.811), is split without remainder at \(d\leq D\).  For squarefree \(G\) and a unit inverse phase, CRT--Weil and smooth completion give \(XG^{-1/2}+DG^{1/2}+X/D\), (9.812)--(9.817), hence the local saving (9.819).  For a nonunit inverse coefficient, (9.820)--(9.822) expand every inactive local Fourier factor exactly and descend at divisor cost to \(R=G/(a_0,G)\); the bound becomes \(XR^{-1/2}+DR^{1/2}+X/D\), with saving (9.825), positive precisely for \(R>1,u>\rho/2\).  This is valid only after a separated physical \(N\)-weight is verified.  Short effective rows, the \(R=1\) refinement, packet-exhaustive adapter, signed \(Q,G,r_0,h,\delta,\Pi\) reassembly, and every \(\mathscr B\) row remain open |
+| Double-Möbius all-product-partition coverage | exact published fixed-row polytope; balanced/composite global residual unproved | For \((b,c,n,p)=T^{(\beta,\chi,\nu,\varpi)}\), (9.826)--(9.828) apply FKM Theorem 1.17 to all seven unordered bipartitions.  The best bilinear saving is positive exactly when at least two coordinates are positive and \(L-m_+>\gamma/2\), (9.829).  FKM Theorem 1.7 covers a single \(b\)- or \(c\)-axis beyond \(3\gamma/4\), (9.830), while elementary completion covers a smooth \(n\)- or \(p\)-axis beyond \(\gamma/2\), (9.831), including squarefree composite conductors.  A verified separated prime row with four \(3/4\)-coordinates has saving \(3/8\), but the \((3/2,3/2,0,0)\) face is degenerate.  Composite central rows, absent physical adapters, and the signed outer \(Q,G,r_0,h,\delta,\Pi\) norm remain unproved |
+| Balanced double-Möbius cross-conductor Gram | exact pre-Cauchy phase and zero-orbit collapse; nonzero spectral norm unproved | The residual is regrouped as \(\sum_b\mu(b)\mathcal A_b\) with \(\mu(c)\), outer conductor signs, all packet weights, and \(a=h\delta\) inside \(\mathcal A_b\), (9.832)--(9.834).  Opening the one global square gives the exact modulus \([G_1,G_2]\) and phase \(Db+E\bar b\), (9.835)--(9.837).  For squarefree unit rows, \(D=E=0\) forces \(G_1=G_2\), equality of the invariant \(B_ia_i k_i^{-2}\), and one \(c_2\)-residue for each \(c_1\), (9.838)--(9.839); hence no cross-conductor zero orbit survives.  A complete AFE/reflection norm for the invariant fibres and a signed varying-LCM estimate for every nonzero \((D,E)\) remain open |
 | Cross-modulus zero product frequency | exact same-\((s,t)\) diagonal; signed complement unproved | The primitive frequency \(\bar t_s/s\) is a reduced fraction.  Hence equality across two blocks forces \(s_1=s_2,t_1=t_2\), and every distinct pair has Farey spacing at least \((s_1s_2)^{-1}\), (9.601)--(9.603).  The ordinary additive large sieve (9.604) and the sum of fixed-modulus Cochrane--Shi energies both have balanced exponent \(11\), so spacing alone gives no new power.  The zero projector is classified, but its AFE/Type reassembly and the signed nonzero-frequency cross-modulus estimate remain unproved |
 | Cross-modulus frequency Euler centering | exact local density and mean-zero divisor expansion; weighted lift handled next | For \(s_i=gr_i\), CRT gives the exact multiplicity (9.606) of every circular numerator \(\kappa\).  The common Möbius sign cancels as \(\mu(s_1)\mu(s_2)=\mu(r_1)\mu(r_2)\), while (9.608)--(9.610) split the multiplicity into the explicit density \(\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) and Euler blocks containing a mean-zero factor \(1_{p\mid\kappa}-1/p\).  Section 9.93 lifts this to arbitrary fixed-pair packet weights; the signed estimate for the resulting centered blocks remains unproved |
 | Weighted CRT packet centering | exact orthogonal projection; principal reassembly and centered dispersion unproved | Conditional expectations in the prime CRT coordinates give the Hoeffding decomposition (9.612)--(9.615) for an arbitrary fixed-\((s_1,s_2)\) packet.  The weighted fibre identity (9.616) separates \(\bar W\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) from two terms whose total \(\kappa\)-mass is exactly zero.  Linearity (9.618) retains \(h\delta\), both Type Möbius weights, the outer cofactor signs, and all nine ordered Type blocks at divisor cost \(T^\varepsilon\).  Zero marginals do not themselves give power cancellation; the AFE/reflection principal ledger and the global signed norm of the centered blocks remain open |

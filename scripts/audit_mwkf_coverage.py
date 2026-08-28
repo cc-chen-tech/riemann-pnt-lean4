@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import cmath
 import sys
+from collections import Counter
 from dataclasses import dataclass
 from fractions import Fraction
 from itertools import product
@@ -14889,6 +14890,455 @@ def squarefree_density_effective_conductor_completion_audit(
         ),
         "divisor_lifted_physical_adapter_proved": False,
         "global_principal_quotient_coverage": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def double_mobius_product_partition_coverage_audit(
+    *,
+    conductor_exponent: Fraction,
+    b_exponent: Fraction,
+    c_exponent: Fraction,
+    n_exponent: Fraction,
+    p_exponent: Fraction,
+    squarefree_conductor: bool,
+    prime_conductor: bool,
+    unit_nonexceptional_trace: bool,
+    separated_four_factor_adapter_verified: bool,
+) -> dict[str, object]:
+    """Audit all published fixed-row projections of one ``B`` atom.
+
+    The unit-cutoff double-Mobius master has product argument ``b*c*n*p``
+    with Mobius signs on ``b,c``.  On a verified separated atom, FKM
+    Theorem 1.17 may group *any* nonempty proper subset of these four
+    factors against its complement.  Divisor multiplicities cost only
+    ``T^epsilon``.  The audit also records FKM Theorem 1.7 on either
+    Mobius coordinate and elementary smooth completion on ``n`` or ``p``.
+
+    All coverage flags are local.  No outer ``Q,G,r0,h*delta,Pi`` sum is
+    estimated here.
+    """
+
+    gamma = F(conductor_exponent)
+    exponents = {
+        "b": F(b_exponent),
+        "c": F(c_exponent),
+        "n": F(n_exponent),
+        "p": F(p_exponent),
+    }
+    if gamma <= 0:
+        raise ValueError("conductor exponent must be positive")
+    if any(value < 0 for value in exponents.values()):
+        raise ValueError("all product-factor exponents must be nonnegative")
+    if prime_conductor and not squarefree_conductor:
+        raise ValueError("a prime conductor must be squarefree")
+
+    names = tuple(exponents)
+    partition_rows: list[dict[str, object]] = []
+    full_mask = (1 << len(names)) - 1
+    for mask in range(1, full_mask):
+        # Keep exactly one representative of each unordered partition.
+        if not (mask & 1):
+            continue
+        left = tuple(names[index] for index in range(len(names)) if mask & (1 << index))
+        right = tuple(name for name in names if name not in left)
+        ordered_sides = tuple(sorted((left, right), key=lambda side: (len(side), side)))
+        first_side, second_side = ordered_sides
+        first = sum((exponents[name] for name in first_side), F(0))
+        second = sum((exponents[name] for name in second_side), F(0))
+        first_orientation = min(
+            gamma / 4,
+            first / 2,
+            second / 2 - gamma / 4,
+        )
+        second_orientation = min(
+            gamma / 4,
+            second / 2,
+            first / 2 - gamma / 4,
+        )
+        saving = _positive_part(max(first_orientation, second_orientation))
+        partition_rows.append(
+            {
+                "first_side": first_side,
+                "second_side": second_side,
+                "first_side_exponent": first,
+                "second_side_exponent": second,
+                "limiting_fkm_bilinear_saving_exponent": saving,
+                "published_fixed_prime_partition_coverage": bool(
+                    prime_conductor
+                    and unit_nonexceptional_trace
+                    and separated_four_factor_adapter_verified
+                    and saving > 0
+                ),
+            }
+        )
+
+    best_partition = max(
+        partition_rows,
+        key=lambda row: F(row["limiting_fkm_bilinear_saving_exponent"]),
+    )
+    best_bilinear = F(best_partition["limiting_fkm_bilinear_saving_exponent"])
+
+    one_mobius_rows: list[dict[str, object]] = []
+    for name in ("b", "c"):
+        length = exponents[name]
+        saving = _positive_part(
+            gamma / 24 - _positive_part(gamma - length) / 6
+        )
+        one_mobius_rows.append(
+            {
+                "coordinate": name,
+                "length_exponent": length,
+                "limiting_fkm_mobius_saving_exponent": saving,
+                "published_fixed_prime_mobius_coverage": bool(
+                    prime_conductor
+                    and unit_nonexceptional_trace
+                    and separated_four_factor_adapter_verified
+                    and saving > 0
+                ),
+            }
+        )
+    best_one_mobius = max(
+        F(row["limiting_fkm_mobius_saving_exponent"])
+        for row in one_mobius_rows
+    )
+
+    smooth_rows: list[dict[str, object]] = []
+    for name in ("n", "p"):
+        length = exponents[name]
+        saving = _positive_part(min(gamma / 2, length - gamma / 2))
+        smooth_rows.append(
+            {
+                "coordinate": name,
+                "length_exponent": length,
+                "smooth_completion_saving_exponent": saving,
+                "published_squarefree_smooth_coverage": bool(
+                    squarefree_conductor
+                    and unit_nonexceptional_trace
+                    and separated_four_factor_adapter_verified
+                    and saving > 0
+                ),
+            }
+        )
+    best_smooth = max(
+        F(row["smooth_completion_saving_exponent"])
+        for row in smooth_rows
+    )
+
+    published_bilinear = any(
+        bool(row["published_fixed_prime_partition_coverage"])
+        for row in partition_rows
+    )
+    published_one_mobius = any(
+        bool(row["published_fixed_prime_mobius_coverage"])
+        for row in one_mobius_rows
+    )
+    published_smooth = any(
+        bool(row["published_squarefree_smooth_coverage"])
+        for row in smooth_rows
+    )
+    best_local = max(best_bilinear, best_one_mobius, best_smooth)
+    positive_names = tuple(name for name in names if exponents[name] > 0)
+    least_positive_exponent = (
+        min(exponents[name] for name in positive_names)
+        if positive_names
+        else None
+    )
+    total_product_exponent = sum(exponents.values(), F(0))
+    closed_bilinear_positivity = bool(
+        len(positive_names) >= 2
+        and least_positive_exponent is not None
+        and total_product_exponent - least_positive_exponent > gamma / 2
+    )
+    prime_balanced_two_factor = bool(
+        prime_conductor
+        and unit_nonexceptional_trace
+        and separated_four_factor_adapter_verified
+        and positive_names == ("b", "c")
+        and exponents["b"] == exponents["c"] == gamma / 2
+        and best_local == 0
+    )
+    composite_central = bool(
+        squarefree_conductor
+        and not prime_conductor
+        and unit_nonexceptional_trace
+        and separated_four_factor_adapter_verified
+        and best_bilinear > 0
+        and not published_smooth
+    )
+
+    return {
+        "sources": (
+            "FKM arXiv:1211.6043v3 Theorem 1.17",
+            "FKM arXiv:1211.6043v3 Theorem 1.7",
+            "classical smooth Kloosterman completion",
+        ),
+        "conductor_exponent": gamma,
+        "factor_exponents": exponents,
+        "partition_rows": tuple(partition_rows),
+        "best_partition_sides": (
+            tuple(best_partition["first_side"]),
+            tuple(best_partition["second_side"]),
+        ),
+        "best_bilinear_partition_saving_exponent": best_bilinear,
+        "total_product_exponent": total_product_exponent,
+        "positive_factor_names": positive_names,
+        "least_positive_factor_exponent": least_positive_exponent,
+        "closed_bilinear_positivity_condition": closed_bilinear_positivity,
+        "bilinear_positivity_matches_closed_polytope": (
+            (best_bilinear > 0) == closed_bilinear_positivity
+        ),
+        "one_mobius_rows": tuple(one_mobius_rows),
+        "best_one_mobius_saving_exponent": best_one_mobius,
+        "smooth_coordinate_rows": tuple(smooth_rows),
+        "best_smooth_coordinate_saving_exponent": best_smooth,
+        "best_local_saving_exponent": best_local,
+        "published_prime_bilinear_coverage": published_bilinear,
+        "published_prime_one_mobius_coverage": published_one_mobius,
+        "published_squarefree_smooth_coordinate_coverage": published_smooth,
+        "published_local_double_mobius_coverage": bool(
+            published_bilinear or published_one_mobius or published_smooth
+        ),
+        "prime_balanced_two_factor_face_uncovered": prime_balanced_two_factor,
+        "composite_central_band_uncovered": composite_central,
+        "separated_four_factor_adapter_hypothesis_verified": bool(
+            separated_four_factor_adapter_verified
+        ),
+        "physical_four_factor_adapter_proved": False,
+        "outer_Q_G_r0_h_delta_Pi_average_provided": False,
+        "global_double_mobius_dispersion_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def double_mobius_cross_conductor_ttstar_audit(
+    *,
+    max_label: int,
+    conductors: tuple[int, ...],
+    direct_coefficients: tuple[int, ...],
+    inverse_labels: tuple[int, ...],
+    conductor_cofactors: tuple[int, ...],
+) -> dict[str, object]:
+    """Verify the exact cross-conductor Gram phase of the ``B`` master.
+
+    Regroup the pre-Cauchy sum as ``sum_b mu(b) A_b`` while keeping in
+    ``A_b`` the outer conductor sign, ``mu(c)``, and the inverse label
+    ``a=h*delta``.  For two rows of conductors ``G1,G2``, their phase
+    difference is, modulo ``L=lcm(G1,G2)``,
+
+    ``e_L(D*b + E*inverse(b))``
+
+    with the literal lifted direct and inverse coefficients.  This helper
+    compares the direct Gram and the combined phase as exact group-ring
+    counters, then splits ``D=E=0`` from the nonzero orbit.
+    """
+
+    X = int(max_label)
+    moduli = tuple(int(value) for value in conductors)
+    directs = tuple(int(value) for value in direct_coefficients)
+    labels = tuple(int(value) for value in inverse_labels)
+    cofactors = tuple(int(value) for value in conductor_cofactors)
+    if X < 1:
+        raise ValueError("max_label must be positive")
+    if not moduli or not (
+        len(moduli) == len(directs) == len(labels) == len(cofactors)
+    ):
+        raise ValueError("all conductor data must have one common nonzero length")
+    for G, B, a, k in zip(moduli, directs, labels, cofactors, strict=True):
+        if G <= 1:
+            raise ValueError("all conductors must exceed one")
+        if gcd(k, G) != 1:
+            raise ValueError("every conductor cofactor must be a unit")
+        if gcd(B * a, G) != 1:
+            raise ValueError(
+                "this finite audit requires unit direct and inverse labels"
+            )
+
+    ambient_lcm = 1
+    for G in moduli:
+        ambient_lcm = ambient_lcm // gcd(ambient_lcm, G) * G
+
+    b_rows: list[dict[str, object]] = []
+    direct_gram: Counter[Fraction] = Counter()
+    combined_gram: Counter[Fraction] = Counter()
+    resonant_gram: Counter[Fraction] = Counter()
+    nonresonant_gram: Counter[Fraction] = Counter()
+    phase_rows: list[dict[str, object]] = []
+    same_conductor_resonance_checks: list[bool] = []
+    same_conductor_compatibility_checks: list[bool] = []
+    cross_conductor_resonance_checks: list[bool] = []
+    cross_conductor_rows_present = False
+    nonzero_combined_phase_rows_present = False
+
+    for b in range(1, X + 1):
+        mu_b = _finite_mobius(b)
+        if mu_b == 0 or gcd(b, ambient_lcm) != 1:
+            continue
+        atoms: list[dict[str, int | Fraction]] = []
+        for G, B, a, k in zip(moduli, directs, labels, cofactors, strict=True):
+            outer_sign = _finite_mobius(G)
+            k_inverse = pow(k, -1, G)
+            for c in range(1, X + 1):
+                mu_c = _finite_mobius(c)
+                if mu_c == 0 or gcd(c, G) != 1:
+                    continue
+                packet_weight = (G + 2 * b + 3 * c) % 5 - 2
+                if packet_weight == 0:
+                    packet_weight = 1
+                inverse_bc = pow((b * c) % G, -1, G)
+                phase = F(
+                    k_inverse * (B * b * c - a * inverse_bc),
+                    G,
+                ) % 1
+                atoms.append(
+                    {
+                        "conductor": G,
+                        "direct_coefficient": B,
+                        "inverse_label": a,
+                        "cofactor": k,
+                        "c": c,
+                        "coefficient": outer_sign * mu_c * packet_weight,
+                        "phase": phase,
+                    }
+                )
+
+        for left in atoms:
+            for right in atoms:
+                G1 = int(left["conductor"])
+                G2 = int(right["conductor"])
+                L = G1 // gcd(G1, G2) * G2
+                c1 = int(left["c"])
+                c2 = int(right["c"])
+                k1_inverse = pow(int(left["cofactor"]), -1, G1)
+                k2_inverse = pow(int(right["cofactor"]), -1, G2)
+                D = (
+                    (L // G1)
+                    * k1_inverse
+                    * int(left["direct_coefficient"])
+                    * c1
+                    - (L // G2)
+                    * k2_inverse
+                    * int(right["direct_coefficient"])
+                    * c2
+                ) % L
+                E = (
+                    -(L // G1)
+                    * k1_inverse
+                    * int(left["inverse_label"])
+                    * pow(c1, -1, G1)
+                    + (L // G2)
+                    * k2_inverse
+                    * int(right["inverse_label"])
+                    * pow(c2, -1, G2)
+                ) % L
+                direct_phase = (F(left["phase"]) - F(right["phase"])) % 1
+                combined_phase = F(D * b + E * pow(b, -1, L), L) % 1
+                coefficient = int(left["coefficient"]) * int(right["coefficient"])
+                direct_gram[direct_phase] += coefficient
+                combined_gram[combined_phase] += coefficient
+                resonant = D == 0 and E == 0
+                if resonant:
+                    resonant_gram[combined_phase] += coefficient
+                else:
+                    nonresonant_gram[combined_phase] += coefficient
+                    nonzero_combined_phase_rows_present = True
+                if G1 != G2:
+                    cross_conductor_rows_present = True
+                    cross_conductor_resonance_checks.append(not resonant)
+                if G1 == G2:
+                    u1 = (
+                        k1_inverse * int(left["direct_coefficient"])
+                    ) % G1
+                    u2 = (
+                        k2_inverse * int(right["direct_coefficient"])
+                    ) % G1
+                    v1 = (
+                        k1_inverse * int(left["inverse_label"])
+                    ) % G1
+                    v2 = (
+                        k2_inverse * int(right["inverse_label"])
+                    ) % G1
+                    compatibility = (u1 * v1 - u2 * v2) % G1 == 0
+                    predicted_c2 = (u1 * c1 * pow(u2, -1, G1)) % G1
+                    same_conductor_compatibility_checks.append(
+                        resonant
+                        == (compatibility and c2 % G1 == predicted_c2)
+                    )
+                    same_conductor_resonance_checks.append(
+                        (
+                            int(left["direct_coefficient"])
+                            != int(right["direct_coefficient"])
+                            or int(left["inverse_label"])
+                            != int(right["inverse_label"])
+                            or int(left["cofactor"])
+                            != int(right["cofactor"])
+                        )
+                        or resonant == ((c1 - c2) % G1 == 0)
+                    )
+                phase_rows.append(
+                    {
+                        "b": b,
+                        "left_conductor": G1,
+                        "right_conductor": G2,
+                        "left_c": c1,
+                        "right_c": c2,
+                        "lcm_conductor": L,
+                        "combined_direct_coefficient": D,
+                        "combined_inverse_coefficient": E,
+                        "direct_phase": direct_phase,
+                        "combined_phase": combined_phase,
+                        "phase_identity_exact": direct_phase == combined_phase,
+                        "resonant": resonant,
+                        "coefficient": coefficient,
+                    }
+                )
+        b_rows.append(
+            {
+                "b": b,
+                "mobius_b": mu_b,
+                "inner_atom_count": len(atoms),
+            }
+        )
+
+    combined_split = Counter(resonant_gram)
+    combined_split.update(nonresonant_gram)
+    return {
+        "max_label": X,
+        "conductors": moduli,
+        "b_rows": tuple(b_rows),
+        "phase_rows": tuple(phase_rows),
+        "direct_gram": dict(direct_gram),
+        "combined_kloosterman_gram": dict(combined_gram),
+        "resonant_gram": dict(resonant_gram),
+        "nonresonant_gram": dict(nonresonant_gram),
+        "pre_cauchy_b_and_c_mobius_weights_retained": True,
+        "cauchy_erases_only_the_regrouped_b_mobius_sign": True,
+        "outer_conductor_mobius_signs_retained_in_gram": True,
+        "inverse_labels_a_retained_in_combined_phase": True,
+        "all_cross_conductor_phase_identities_exact": all(
+            bool(row["phase_identity_exact"]) for row in phase_rows
+        ),
+        "direct_gram_equals_combined_kloosterman_gram": (
+            direct_gram == combined_gram
+        ),
+        "resonant_plus_nonresonant_gram_exact": combined_gram == combined_split,
+        "same_conductor_unit_resonance_is_c_diagonal": all(
+            same_conductor_resonance_checks
+        ),
+        "zero_orbit_forces_equal_conductor": all(
+            cross_conductor_resonance_checks
+        ),
+        "same_conductor_resonance_compatibility_exact": all(
+            same_conductor_compatibility_checks
+        ),
+        "resonant_c2_residue_unique": all(
+            same_conductor_compatibility_checks
+        ),
+        "cross_conductor_rows_present": cross_conductor_rows_present,
+        "nonzero_combined_phase_rows_present": (
+            nonzero_combined_phase_rows_present
+        ),
+        "cross_conductor_kloosterman_gram_bound_proved": False,
         "coupled_kernel_gate_closed": False,
     }
 
