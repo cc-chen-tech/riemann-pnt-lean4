@@ -91,7 +91,7 @@ theorem conreyHorizontalJensenInnerRadius_pos (R L : ℝ) :
   nlinarith [sq_nonneg
     (conreyHorizontalRightEdge L - conreyHorizontalLeftEdge R L)]
 
-private theorem two_le_log_of_forty_thousand_le
+theorem two_le_log_of_forty_thousand_le
     {L : ℝ} (hL : 40000 ≤ L) :
     2 ≤ Real.log L := by
   have hLpos : 0 < L := by linarith

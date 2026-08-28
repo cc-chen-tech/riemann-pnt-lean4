@@ -205,14 +205,70 @@ git add HardyTheorem/ConreyHorizontalJensenCount.lean Test/ConreyHorizontalJense
 git commit -m "feat(conrey): select Jensen-controlled horizontal heights"
 ```
 
-### Task 5: Whole-checkpoint verification and publication
+### Task 5: Buffered factor disk and regular logarithmic derivative
+
+**Files:**
+- Create: `HardyTheorem/ConreyHorizontalJensenRegular.lean`
+- Create: `Test/ConreyHorizontalJensenRegularContract.lean`
+- Modify: `lakefile.lean`
+- Modify: `docs/research/2026-08-28-conrey-horizontal-jensen-math.md`
+
+**Interfaces:**
+- Consumes: Tasks 1--4, `PrimeNumberTheorem.AnalyticJensen`, and
+  `PrimeNumberTheorem.AnalyticBorel`.
+- Produces the buffered radii `b,a,q1`, the factor-disk Jensen mass `J`, a
+  zero-avoiding good circle, and the exact Borel--Caratheodory bound
+  `HJ-regular-logderiv` for an extracted nonvanishing factor.
+
+- [x] **Step 1: Prove the quantitative radius gap and buffer geometry**
+
+Prove `1/5 < outerRadius - innerRadius < 1/4`, then all strict inclusions in
+`HJ-buffer`.  Keep these facts independent of the analytic factorization.
+
+- [x] **Step 2: Write and run the failing contract**
+
+Check the public radii, factor-disk mass and exact regular log-derivative
+endpoint.  Expected: unknown declarations before implementation.
+
+- [x] **Step 3: Prove the factor-disk Jensen mass**
+
+Apply Jensen at `b`, not at `r`; preserve
+`(log M + log 6) / log (outerRadius / b)` exactly.
+
+- [ ] **Step 4: Extract the factor and select a good circle**
+
+Use the complete divisor support in `closedBall(c,b)`.  Select
+`q in Icc a q1`, prove the lower separation `delta_J`, and derive both the
+center lower bound and good-sphere upper bound for `log norm g`.
+
+- [ ] **Step 5: Apply Borel--Caratheodory and verify**
+
+Prove `HJ-regular-logderiv` throughout `closedBall(c,r)`.  Do not yet claim
+the weighted horizontal integral, which additionally needs the principal-part
+integral lemma and factor-support height selection.
+
+### Task 6: Weighted horizontal integral
+
+**Interfaces:**
+- Consumes: Task 5.
+- Produces `HJ-horizontal-explicit` on a height selected against all
+  factor-disk zero ordinates, using the per-zero Poisson-kernel integral
+  rather than a pointwise `J^2` bound.
+
+- [ ] **Step 1: Select against the factor-disk support**
+- [ ] **Step 2: Prove the weighted principal-part integral bound**
+- [ ] **Step 3: Combine with the regular factor bound and coarse-scale it**
+
+### Task 7: Whole-checkpoint verification and publication
 
 **Files:**
 - Modify: PR body only after all local verification succeeds.
 
 **Interfaces:**
-- Consumes: Tasks 1--4.
-- Produces: an honest ready-for-review stacked PR whose body lists the weighted horizontal regular-part bound as still open.
+- Consumes: the tasks actually completed above.
+- Produces: an honest ready-for-review stacked PR whose body lists every
+  remaining gate.  PR #493 may be updated incrementally, but must never imply
+  Tasks 5--6 are complete before their contracts pass.
 
 - [ ] **Step 1: Run focused verification**
 

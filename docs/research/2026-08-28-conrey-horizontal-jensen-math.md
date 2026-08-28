@@ -236,11 +236,11 @@ Jensen divisor、可容许高度以及正则部分水平积分仍未因此自动
 
 ## 5. 可容许高度和水平积分
 
-外圆 divisor 支撑有限。这里 `H` 必须取“外圆 divisor 支撑中过滤到
-内圆 `closedBall(c,r)` 的点”的虚部，而不能取整个外圆支撑：Jensen
-只控制内圆质量，外环支撑的基数没有由 `HJ-mass` 控制。由于整个目标
-矩形包含于内圆，这个过滤不会漏掉水平段上的零点。把这些虚部组成
-有限集 `H`. 在
+这里 `H` 取内圆 `closedBall(c,r)` 的 divisor 支撑的虚部；由 divisor
+locality，这等价于把外圆 divisor 支撑限制到内圆，而不能取整个外圆
+支撑：Jensen 只控制内圆质量，外环支撑的基数没有由 `HJ-mass` 控制。
+由于整个目标矩形包含于内圆，这不会漏掉水平段上的零点。把这些虚部
+组成有限集 `H`. 在
 `[U,U+1]` 中选择 `t`，使
 
 \[
@@ -256,23 +256,163 @@ Jensen divisor、可容许高度以及正则部分水平积分仍未因此自动
 
 所以主部的未加权水平 argument variation 至多 `pi*N_D(r)`。
 
-这里必须明确保留下一项未证义务：还要构造零点移除后的无零解析
-因子、选择解析对数，并用 Borel--Caratheodory 控制它的对数导数。
-`HJ-growth` 与 `HJ-mass` 本身并不自动给出这个正则部分估计。预期在
-内外圆间距约常数而圆半径约 `A` 的几何下，正则部分只有固定多对数
-损失；完成该因子分解后，目标才是
+截至 2026-08-28，内圆质量、内圆支撑的有限性以及满足 `HJ-sep` 的
+高度已经对实际乘积形式化。这保证水平段非零，但还没有控制剥零后的
+正则部分。下面先给出这一步的完整数学设计；只有这些不等式被 Lean
+逐项核验后，正则部分才能标为完成。
+
+### 5.1 为什么要再加一个因子盘
+
+不能只在半径 `r` 上剥零后立刻对所得因子使用
+Borel--Caratheodory：该定理需要在待控制闭圆盘之外还有一个严格更大的
+无零解析圆盘。令
+
+\[
+ \Delta=\mathcal R-r,\qquad
+ b=r+{3\Delta\over4},\qquad
+ a=r+{\Delta\over4},\qquad
+ q_1=r+{\Delta\over2}.
+\]
+
+利用 `A>=4`、`49/100<=sigma0<=1/2` 直接比较平方，还可得到
+
+\[
+ {1\over5}<\Delta<{1\over4}.
+\tag{HJ-gap}
+\]
+
+于是
+
+\[
+ r<a<q_1<b<\mathcal R,\qquad
+ a-r=b-q_1=q_1-a={\Delta\over4}.
+\tag{HJ-buffer}
+\]
+
+在 `closedBall(c,b)` 上剥掉实际乘积 `F` 的全部零点，写成 divisor
+`D_b` 和无零解析因子 `g`. 因为 `b>=1`，中心恒等式与
+`|F(c)|>=1/6` 给出
+
+\[
+ \log|g(c)|\ge -\log 6-\log b\,m_b,
+ \qquad m_b:=\sum_\rho D_b(\rho).
+\tag{HJ-factor-center}
+\]
+
+对半径 `b` 再用一次 Jensen，而不是错误地拿内圆质量控制更大的
+因子盘，得到
+
+\[
+ m_b\le J:={\log M+\log6\over\log(\mathcal R/b)}.
+\tag{HJ-factor-mass}
+\]
+
+由于 `mathcal R-b=Delta/4` 为常数量级、`mathcal R` 为 `A` 量级，
+这里 `J=O(LA)=O(L log L)`。
+
+### 5.2 好圆与正则因子的对数导数
+
+把 `D_b` 支撑到圆心的距离组成有限集。在 `[a,q1]` 中可选到半径
+`q`，使好圆避开全部因子盘零点，而且对圆上每个 `z` 和每个
+`rho in supp(D_b)` 都有
+
+\[
+ |z-\rho|\ge {\Delta\over16(k+1)}
+              \ge \delta_J:={\Delta\over16(J+1)},
+\tag{HJ-good-circle}
+\]
+
+其中 `k` 是不同径向距离的个数，`k<=m_b<=J`. 由 `HJ-gap`，
+`0<delta_J<1`。在好圆上利用
+`log|F|<=log M` 和剥零恒等式，得到
+
+\[
+ \log|g(z)|\le \log M-\log\delta_J\,m_b
+              \le \log M-\log\delta_J\,J.
+\tag{HJ-factor-sphere}
+\]
+
+将 `HJ-factor-center`、`HJ-factor-sphere` 和 `m_b<=J` 合并，定义
+
+\[
+ V:=\log M+\log6+(\log b-\log\delta_J)J.
+\]
+
+Borel--Caratheodory 加 Cauchy 的仓库端点随后给出，对
+`|z-c|<=r`，
+
+\[
+ \left|{g'\over g}(z)\right|
+ \le 4\max(V,1){q+r\over(q-r)^2}
+ \le 128\max(V,1){\mathcal R\over\Delta^2}.
+\tag{HJ-regular-logderiv}
+\]
+
+最后一个常数只用了 `q+r<=2*mathcal R` 和
+`q-r>=Delta/4`。这里没有把零点圆盘边界当成 Borel 圆；`q<b` 正是
+无零解析邻域的余量。
+
+### 5.3 水平主部不应粗暴平方零点质量
+
+最终高度要对因子盘 `D_b` 的全部虚部重新做有限集选择；只避开内圆
+零点不足以控制分解式中来自 `r<|rho-c|<=b` 的主部。可取
+
+\[
+ |t-\operatorname{Im}\rho|\ge {1\over4(h+1)}
+ \quad(\rho\in\operatorname{supp}D_b),
+\tag{HJ-factor-height}
+\]
+
+其中 `h<=m_b<=J`. 这保证整条水平段上的分解无奇点。若逐点用
+`1/|t-Im rho|`，会产生无谓的 `J^2`；对需要的积分应保留 Poisson
+核结构。每个零点满足
+
+\[
+ \int_{\sigma_0}^{A}
+ \left|\operatorname{Im}{d\sigma\over\sigma+it-\rho}\right|
+ \le\pi,
+\]
+
+所以带权主部至多
+
+\[
+ \pi(A-\sigma_0)m_b\le\pi(A-\sigma_0)J.
+\tag{HJ-principal-integral}
+\]
+
+正则部分用 `HJ-regular-logderiv` 的一致界。于是两部分合并后的精确
+目标上界是
+
+\[
+ \begin{aligned}
+ &\left|\int_{\sigma_0}^{A}(\sigma-\sigma_0)
+   \operatorname{Im}{F'\over F}(\sigma+it)\,d\sigma\right|\\
+ &\quad\le
+ { (A-\sigma_0)^2\over2}\,
+ 128\max(V,1){\mathcal R\over\Delta^2}
+ +\pi(A-\sigma_0)J.
+\end{aligned}
+\tag{HJ-horizontal-explicit}
+\]
+
+按 `HJ-gap`，`Delta` 有绝对正常数量级，
+`J=O(L log L)`，而 `V=O(L(log L)^2)`；因此右端可安全粗化为
+`O(L(1+log L)^5)`。精确的幂次不参与 `2/5` 优化；后续必须形式化的
+是某个固定多对数界，并证明它为 `o(e^L/L)`。
+
+因此完成该因子分解后的目标为
 
 \[
  \left|\int_{\sigma_0}^{A}(\sigma-\sigma_0)
  \operatorname{Im}{F'\over F}(\sigma+it)\,d\sigma\right|
- \ll L(1+\log L)^4.
+ \ll L(1+\log L)^5.
 \tag{HJ-horizontal-target}
 
-这是后续计划的目标而非本文已得结论。精确的幂次不参与 2/5 优化；
-需要形式化的是它为固定多对数，并证明
+这是后续计划的目标而非本文已得结论。需要形式化的是它为固定多对数，
+并证明（指数 `5` 可由更粗的固定指数替代）
 
 \[
- L(1+\log L)^4\le e^L/L
+ L(1+\log L)^5\le e^L/L
 \]
 
 对显式充分大的 `L` 成立。
