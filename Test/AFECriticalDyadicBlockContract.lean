@@ -1,0 +1,10 @@
+import HardyTheorem.AFECriticalDyadicBlock
+
+open Complex
+open scoped BigOperators
+
+#check HardyTheorem.AFE.dyadicMollifiedFactorPairs
+#check HardyTheorem.AFE.dyadicMollifiedBlockCoeff
+#check HardyTheorem.AFE.sum_normSq_dyadicMollifiedBlockCoeff_le
+
+#print axioms HardyTheorem.AFE.sum_normSq_dyadicMollifiedBlockCoeff_le
