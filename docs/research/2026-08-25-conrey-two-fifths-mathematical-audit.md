@@ -1869,6 +1869,9 @@ actual weighted logarithmic derivative by
  1{,}100{,}000{,}000{,}000\,L^7=o(e^L/L).
 \]
 
-Thus the selected-height horizontal Jensen term is closed.  The far-right
-argument variation in equation (37), equations (38)--(41), and the long
+Thus the selected-height horizontal Jensen term is closed.  The subsequent
+right-half-plane argument module also proves `Re F >= 3/10` on the whole
+moving edge and bounds the far-right argument variation by `pi`.  What
+remains at equation (37) is the formal contour assembly and the transfer from
+selected endpoints to every height.  Equations (38)--(41) and the long
 mollified second moment remain open; strict `> 2/5` is not proved.
