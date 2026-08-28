@@ -1,0 +1,6 @@
+import HardyTheorem.AFECriticalDyadicBlockIdentity
+
+#check HardyTheorem.AFE.dyadicOwnerSupport
+#check HardyTheorem.AFE.dyadicMollifiedBlockCoeff_eq_ownerPairs
+
+#print axioms HardyTheorem.AFE.dyadicMollifiedBlockCoeff_eq_ownerPairs
