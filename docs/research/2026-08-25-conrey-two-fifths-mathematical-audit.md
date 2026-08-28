@@ -1396,3 +1396,267 @@ both necessary hypotheses separate: `P(1)=1` supplies the exact constant
 term, while `|P(x)|<=1` on `[0,1]` controls the nonconstant coefficients.
 The logarithmic corollary (B-log), the `V_1` estimate, and their product
 integral have not yet been promoted to public Lean theorems.
+
+## 22. Local mathematics of the full `V_1 B` moving-right normalization
+
+The missing `V_1` estimate does not require importing a new black-box
+Stirling theorem.  It follows quantitatively from the Gauss series for the
+digamma function already proved in `PrimeNumberTheorem/DigammaBounds.lean`.
+This section records the complete constant ledger before formalization.
+
+Put
+
+\[
+ L=\log T,\qquad \sigma=2\log L,\qquad
+ s=\sigma+it,\qquad z={s\over2},
+ \qquad T\le t\le2T,
+\]
+
+and take `T` large enough that `L>=e^2`.  In particular `sigma>=4`, while
+`sigma<=T<=t`.  Let `N=ceil(|z|)`.  Then
+
+\[
+ {t\over2}\le |z|\le t,\qquad
+ |z|\le N<|z|+1,
+\]
+
+so `N>0`.  Gauss' series is
+
+\[
+ \psi(z)=-\gamma-z^{-1}
+   +\sum_{n\ge0}\left({1\over n+1}-{1\over z+n+1}\right).
+\]
+
+Split it after `N` terms.  For the finite reciprocal part, the imaginary
+coordinate alone gives
+
+\[
+ \sum_{n<N}{1\over|z+n+1|}
+ \le {N\over |\operatorname{Im}z|}
+ ={2N\over t}\le3.
+\]
+
+The already-proved quadratic majorant for the remaining Gauss terms gives
+
+\[
+ \left\|\sum_{n\ge N}
+   \left({1\over n+1}-{1\over z+n+1}\right)\right\|
+ \le |z|\sum_{m>N}{1\over m^2}
+ \le {|z|\over N}\le1.
+\]
+
+Also `|z^(-1)|<=1` and `0<gamma<1`.  Hence, with `H_N` denoting the
+`N`-th harmonic number,
+
+\[
+ \|\psi(z)-H_N\|\le6.                                      \tag{D1}
+\]
+
+The elementary harmonic bounds
+
+\[
+ \log(N+1)\le H_N\le1+\log N
+\]
+
+and
+
+\[
+ {T\over2}\le N+1,\qquad N\le3T
+\]
+
+give `|H_N-L|<=3`.  Combining this with (D1),
+
+\[
+ \boxed{\ \|\psi(s/2)-L\|\le9.\ }                         \tag{D2}
+\]
+
+The exact logarithmic derivative identity
+
+\[
+ {H'(s)\over H(s)}={1\over s}+{1\over s-1}
+   -{\log\pi\over2}+{\psi(s/2)\over2}
+\]
+
+then yields, using the imaginary coordinate to bound both rational terms,
+
+\[
+ \boxed{\ \left\|{H'(s)\over H(s)}-{L\over2}\right\|
+   \le8.\ }                                                \tag{H-right}
+\]
+
+The zeta factor needs the same sharp lower-endpoint p-series estimate as the
+mollifier, now for the infinite Dirichlet series:
+
+\[
+ \|\zeta(s)-1\|
+ \le\sum_{n\ge2}n^{-\sigma}
+ \le2^{-\sigma}\left(1+{2\over\sigma-1}\right)
+ \le {3\over L}.                                          \tag{Z-right}
+\]
+
+Since `sigma>=4`, Cauchy's estimate on the unit disk in `Re w>=3` and the
+existing `zeta(2)<=5/3` bound give
+
+\[
+ \|\zeta'(s)\|\le\zeta(2)\le{5\over3},
+ \qquad \|\zeta(s)\|\le1+{3\over L}\le4.                 \tag{Z'-right}
+\]
+
+Now define the genuine main constant
+
+\[
+ \kappa=g+{g_1\over2}+ig_0.
+\]
+
+The exact algebraic decomposition is
+
+\[
+ V_1(s)-\kappa
+ =\kappa(\zeta(s)-1)+{g_1\over L}\zeta'(s)
+   +{g_1\over L}\left({H'(s)\over H(s)}-{L\over2}\right)
+      \zeta(s).                                            \tag{V-decomp}
+\]
+
+Therefore (H-right), (Z-right), and (Z'-right) prove
+
+\[
+ \boxed{\ \|V_1(s)-\kappa\|
+   \le {3|\kappa|+34|g_1|\over L}.\ }                     \tag{V-right}
+\]
+
+If `kappa!=0`, the normalized factor satisfies
+
+\[
+ \|\kappa^{-1}V_1(s)-1\|
+ \le {C_V\over L},\qquad
+ C_V=3+34{|g_1|\over|\kappa|}.                            \tag{V-normalized}
+\]
+
+Together with (B-moving), the actual normalized product obeys
+
+\[
+ \left\|\kappa^{-1}V_1(s)B(s,P)-1\right\|
+ \le {C_F\over L},\qquad C_F=4C_V+3
+ =15+136{|g_1|\over|\kappa|}.                             \tag{VB-right}
+\]
+
+For `L>=2 C_F` this distance is at most `1/2`.  Thus the product is nonzero
+on the whole moving right edge and
+
+\[
+ \left|\log\left|\kappa^{-1}V_1(s)B(s,P)\right|\right|
+ \le {2C_F\over L}.                                       \tag{VB-log}
+\]
+
+Integrating over a vertical interval of length `U` gives `2 C_F U/L`.
+This closes the quantitative right-vertical term on a proportional block
+`T<=t<=2T`, once the displayed finite/infinite p-series and Gauss-series
+bounds have been checked in Lean.
+
+It does **not** by itself close the global right vertical in Conrey 1989,
+equation (37).  The source check matters here: equation (37) integrates over
+`1<=t<=T`, whereas Conrey 1983, Section 4 works on `T<=t<=T+U`.  On the full
+interval one cannot replace `H'/H` pointwise by `L/2` with `O(1)` error.
+The height variation has to be retained and integrated, as in the next
+section.  This corrects the stronger provisional interpretation of the
+local estimate.
+
+## 23. Global right-vertical compensation for the explicit degree-one choice
+
+For the explicit certificate
+
+\[
+ Q(y)=1-{51\over50}y,
+\]
+
+the polynomial before the change of variables in equations (25)--(27) is
+
+\[
+ Q_1(x)=Q(1/2-x)={49\over100}+{51\over50}x.
+\]
+
+Thus the repository's exact degree-one parameters are
+
+\[
+ g={49\over100},\qquad g_0=0,\qquad g_1={51\over50},
+ \qquad \kappa=g+{g_1\over2}=1.                           \tag{explicit-V1}
+\]
+
+This identity is the missing bridge between the explicit mean-square
+polynomial and `conreyDegreeOneV1`; it must be used instead of leaving
+`g,g_0,g_1` arbitrary in the final equation-(37) specialization.
+
+Keep `L=log T` and the corrected edge `sigma=2 log L`.  For the high part
+`sigma<=t<=T`, the Gauss-series argument of Section 22, now with `t` as its
+own scale, gives
+
+\[
+ \left\|{H'(\sigma+it)\over H(\sigma+it)}
+  -{1\over2}\log {t\over2\pi}\right\|\le C_H              \tag{H-height}
+\]
+
+for one absolute constant `C_H`.  Define the height-dependent real main
+term
+
+\[
+ a_L(t)={49\over100}+{51\over100L}\log {t\over2\pi}.
+\]
+
+For `2<=t<=T` and all sufficiently large `L`,
+
+\[
+ {1\over5}\le a_L(t)\le1,
+ \qquad
+ 1-a_L(t)={51\over100L}\log {2\pi T\over t}.               \tag{a-height}
+\]
+
+Consequently
+
+\[
+ |\log a_L(t)|
+ \le {3\over L}\log {2\pi T\over t},
+\]
+
+and elementary integration gives
+
+\[
+ \int_2^T |\log a_L(t)|\,dt\ll {T\over L}.                \tag{a-int}
+\]
+
+The zeta and mollifier tails are uniformly `O(1/L)`, and (H-height) shows
+that `V_1(s)=a_L(t)+O(1/L)` on the high part.  Since (a-height) keeps the
+main term uniformly away from zero, the logarithm is Lipschitz there and
+
+\[
+ \int_\sigma^T
+ \left|\log|V_1(\sigma+it)B(\sigma+it,P)|\right|dt
+ \ll {T\over L}.                                          \tag{VB-high-int}
+\]
+
+On the short low part `2<=t<=sigma`, the existing coarse bound
+`|digamma(z)|<<1+log(|z|+1)` gives
+
+\[
+ V_1(\sigma+it)=g+O\!\left({\log\sigma\over L}\right),
+\]
+
+uniformly.  Because `g=49/100`, this is bounded away from zero for large
+`L`; both its norm and reciprocal norm are bounded by absolute constants.
+Its logarithmic integral therefore has size
+
+\[
+ O(\sigma)=O(\log L)=o(T/L).                               \tag{VB-low-int}
+\]
+
+Combining (VB-high-int), (VB-low-int), and the already proved mollifier
+bound supplies the genuine global right-vertical `O(T/L)` input required
+by equation (37).  Unlike the local normalization, this argument does not
+discard the `log(t/T)` variation; its integral is exactly what recovers the
+missing factor `1/L`.
+
+The formalization should therefore proceed in two layers.  First prove the
+reusable local Gauss/zeta estimates and `V_1` decomposition.  Then specialize
+to (explicit-V1) and prove the global logarithmic integral.  Only after the
+second layer is green may the right-vertical item in Section 20 be marked
+closed.  The horizontal Jensen terms and admissible endpoint heights remain
+separate gates.
