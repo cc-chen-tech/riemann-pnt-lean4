@@ -9382,6 +9382,64 @@ def test_uniform_ratio_completion_has_no_new_published_full_residue_coverage() -
     assert "all three Blomer--Pascadi margins are negative" in text
 
 
+def test_completed_ratio_master_retains_product_labels_and_both_type_splits() -> None:
+    audit = getattr(
+        coverage_audit,
+        "completed_ratio_double_mobius_type_master_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        determinant_shift=1,
+        first_long_prime=7,
+        second_long_prime=17,
+        first_product_labels=(((1, 3), F(1)),),
+        second_product_labels=(((2, 5), F(1)),),
+        first_type_rows=((6, F(1)),),
+        second_type_rows=((35, F(1)),),
+        short_cutoff_u=3,
+        short_cutoff_v=3,
+    )
+    assert result["first_product_values"] == {3: F(1)}
+    assert result["second_product_values"] == {10: F(1)}
+    assert result["a_equals_h_times_delta_retained"]
+    assert result["first_raw_type_coefficients"] == {6: F(1)}
+    assert result["second_raw_type_coefficients"] == {35: F(1)}
+    assert result["first_type_multipliers"][6] == {
+        "small": 0,
+        "I": 1,
+        "II": 0,
+        "raw": 1,
+    }
+    assert result["second_type_multipliers"][35] == {
+        "small": 0,
+        "I": -1,
+        "II": 2,
+        "raw": 1,
+    }
+    assert result["raw_double_mobius_master"] == F(75, 128)
+    assert result["uniform_ratio_completed_master"] == F(75, 128)
+    assert result["nine_type_block_matrix"] == (
+        (F(0), F(0), F(0)),
+        (F(0), F(-75, 128), F(75, 64)),
+        (F(0), F(0), F(0)),
+    )
+    assert result["nine_type_blocks_reassemble_raw_master"]
+    assert result["uniform_ratio_completion_commutes_with_type_split"]
+    assert result["both_type_factorizations_have_mobius_short_factors"]
+    assert result["both_type_residuals_have_no_mobius_coefficient"]
+    assert result["completed_double_type_finite_master_proved"]
+    assert not result["any_individual_type_block_bound_proved"]
+    assert not result["GDTM_bound_proved"]
+    assert not result["WRFE_proved"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.192 The completed master has two exact Type decompositions" in text
+    assert r"a_i=h_i\delta_i" in text
+    assert r"\tag{GDTM}" in text
+    assert "all four I--I, I--II, II--I, and II--II blocks" in text
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (

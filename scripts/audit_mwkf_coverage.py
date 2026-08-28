@@ -26319,6 +26319,339 @@ def uniform_ratio_completion_published_coverage_audit(
     }
 
 
+def completed_ratio_double_mobius_type_master_audit(
+    *,
+    short_prime: int,
+    determinant_shift: int,
+    first_long_prime: int,
+    second_long_prime: int,
+    first_product_labels: tuple[tuple[tuple[int, int], Fraction], ...],
+    second_product_labels: tuple[tuple[tuple[int, int], Fraction], ...],
+    first_type_rows: tuple[tuple[int, Fraction], ...],
+    second_type_rows: tuple[tuple[int, Fraction], ...],
+    short_cutoff_u: int,
+    short_cutoff_v: int,
+) -> dict[str, object]:
+    """Combine uniform ratio completion with both exact Type splits.
+
+    The first lift coordinate is supplied as a literal product
+    ``a=h*delta`` rather than an arbitrary scalar label.  Each second
+    coordinate has raw coefficient ``mu(n)`` times its supplied physical
+    weight.  The remainder-free small/I/II identity is applied to both
+    raw Möbius coefficients while every actual-minus-uniform ratio kernel
+    stays inside each ordered block.
+
+    Type-I and Type-II divisor rows explicitly carry the two short-factor
+    Möbius coefficients; their quotient residual has coefficient one.
+    This is a finite reassembly theorem only and supplies no block bound.
+    """
+
+    q = int(short_prime)
+    D = int(determinant_shift)
+    p1 = int(first_long_prime)
+    p2 = int(second_long_prime)
+    cutoff_u = int(short_cutoff_u)
+    cutoff_v = int(short_cutoff_v)
+    if q < 3 or _finite_prime_exponents(q) != {q: 1}:
+        raise ValueError("the short modulus must be an odd prime")
+    if (
+        _finite_prime_exponents(p1) != {p1: 1}
+        or _finite_prime_exponents(p2) != {p2: 1}
+    ):
+        raise ValueError("both long moduli must be prime")
+    if gcd(D, q * p1 * p2) != 1 or gcd(p1 * p2, q) != 1:
+        raise ValueError("all physical modulus labels must be units")
+    if min(cutoff_u, cutoff_v) <= 0:
+        raise ValueError("both Type cutoffs must be positive")
+
+    def convert_products(
+        rows: tuple[tuple[tuple[int, int], Fraction], ...],
+    ) -> tuple[
+        tuple[tuple[int, int, int, Fraction], ...],
+        dict[int, Fraction],
+    ]:
+        if not rows:
+            raise ValueError("both product-label families must be nonempty")
+        converted: list[tuple[int, int, int, Fraction]] = []
+        aggregated: dict[int, Fraction] = defaultdict(F)
+        seen: set[tuple[int, int]] = set()
+        for raw_pair, raw_weight in rows:
+            if len(raw_pair) != 2:
+                raise ValueError("product labels must be pairs")
+            h = int(raw_pair[0])
+            delta = int(raw_pair[1])
+            if min(h, delta) <= 0 or (h, delta) in seen:
+                raise ValueError(
+                    "product labels must be distinct positive pairs"
+                )
+            seen.add((h, delta))
+            product_value = h * delta
+            weight = F(raw_weight)
+            converted.append((h, delta, product_value, weight))
+            aggregated[product_value] += weight
+        return tuple(converted), dict(sorted(aggregated.items()))
+
+    def convert_types(
+        rows: tuple[tuple[int, Fraction], ...],
+    ) -> tuple[tuple[int, Fraction], ...]:
+        if not rows:
+            raise ValueError("both Type row families must be nonempty")
+        converted: list[tuple[int, Fraction]] = []
+        seen: set[int] = set()
+        for raw_argument, raw_weight in rows:
+            argument = int(raw_argument)
+            if argument <= 0 or argument in seen:
+                raise ValueError("Type arguments must be distinct and positive")
+            seen.add(argument)
+            converted.append((argument, F(raw_weight)))
+        return tuple(converted)
+
+    first_labels, first_products = convert_products(first_product_labels)
+    second_labels, second_products = convert_products(second_product_labels)
+    first_types = convert_types(first_type_rows)
+    second_types = convert_types(second_type_rows)
+    boundary = max(cutoff_u, cutoff_v)
+
+    def type_data(argument: int) -> tuple[dict[str, int], dict[str, tuple[dict[str, int], ...]]]:
+        raw = _finite_mobius(argument)
+        expansion: dict[str, tuple[dict[str, int], ...]] = {
+            "small": (),
+            "I": (),
+            "II": (),
+        }
+        if argument <= boundary:
+            multipliers = {"small": raw, "I": 0, "II": 0, "raw": raw}
+            expansion["small"] = (
+                {
+                    "first_short_factor": 1,
+                    "second_short_factor": 1,
+                    "residual_factor": argument,
+                    "coefficient": raw,
+                    "residual_mobius_coefficient": 1,
+                },
+            )
+            return multipliers, expansion
+
+        type_i_rows: list[dict[str, int]] = []
+        type_ii_rows: list[dict[str, int]] = []
+        for first in _positive_divisors(argument):
+            for second in _positive_divisors(argument // first):
+                residual = argument // (first * second)
+                mobius_product = (
+                    _finite_mobius(first) * _finite_mobius(second)
+                )
+                if first <= cutoff_u and second <= cutoff_v:
+                    type_i_rows.append(
+                        {
+                            "first_short_factor": first,
+                            "second_short_factor": second,
+                            "residual_factor": residual,
+                            "coefficient": -mobius_product,
+                            "residual_mobius_coefficient": 1,
+                        }
+                    )
+                if first > cutoff_u and second > cutoff_v:
+                    type_ii_rows.append(
+                        {
+                            "first_short_factor": first,
+                            "second_short_factor": second,
+                            "residual_factor": residual,
+                            "coefficient": mobius_product,
+                            "residual_mobius_coefficient": 1,
+                        }
+                    )
+        type_i = sum(row["coefficient"] for row in type_i_rows)
+        type_ii = sum(row["coefficient"] for row in type_ii_rows)
+        multipliers = {
+            "small": 0,
+            "I": type_i,
+            "II": type_ii,
+            "raw": raw,
+        }
+        expansion["I"] = tuple(type_i_rows)
+        expansion["II"] = tuple(type_ii_rows)
+        if type_i + type_ii != raw:
+            raise ArithmeticError("the exact Type identity failed")
+        return multipliers, expansion
+
+    first_type_data = {argument: type_data(argument) for argument, _ in first_types}
+    second_type_data = {argument: type_data(argument) for argument, _ in second_types}
+    first_multipliers = {
+        argument: data[0] for argument, data in first_type_data.items()
+    }
+    second_multipliers = {
+        argument: data[0] for argument, data in second_type_data.items()
+    }
+    first_expansions = {
+        argument: data[1] for argument, data in first_type_data.items()
+    }
+    second_expansions = {
+        argument: data[1] for argument, data in second_type_data.items()
+    }
+
+    outer_delta = (
+        F(1 if (p1 - p2) % q == 0 else 0) - F(1, q - 1)
+    )
+    type_names = ("small", "I", "II")
+    direct_master = F(0)
+    completed_master = F(0)
+    direct_blocks = [[F(0) for _ in type_names] for _ in type_names]
+    completed_blocks = [[F(0) for _ in type_names] for _ in type_names]
+    for _, _, first_product, first_label_weight in first_labels:
+        for first_argument, first_type_weight in first_types:
+            first_delta = (
+                F(
+                    1
+                    if (q * first_product + D * first_argument) % p1 == 0
+                    else 0
+                )
+                - F(1, p1 - 1)
+            )
+            for _, _, second_product, second_label_weight in second_labels:
+                for second_argument, second_type_weight in second_types:
+                    second_delta = (
+                        F(
+                            1
+                            if (q * second_product + D * second_argument) % p2
+                            == 0
+                            else 0
+                        )
+                        - F(1, p2 - 1)
+                    )
+                    base_weight = (
+                        first_label_weight
+                        * first_type_weight
+                        * second_label_weight
+                        * second_type_weight
+                    )
+                    direct_kernel = outer_delta * first_delta * second_delta
+                    completion = triple_centered_uniform_ratio_completion_audit(
+                        short_prime=q,
+                        determinant_shift=D,
+                        first_long_prime=p1,
+                        second_long_prime=p2,
+                        first_m=first_product,
+                        first_n=first_argument,
+                        second_m=second_product,
+                        second_n=second_argument,
+                    )
+                    completed_kernel = F(
+                        completion["uniform_ratio_completed_kernel"]
+                    )
+                    direct_master += (
+                        base_weight
+                        * _finite_mobius(first_argument)
+                        * _finite_mobius(second_argument)
+                        * direct_kernel
+                    )
+                    completed_master += (
+                        base_weight
+                        * _finite_mobius(first_argument)
+                        * _finite_mobius(second_argument)
+                        * completed_kernel
+                    )
+                    for first_index, first_type in enumerate(type_names):
+                        for second_index, second_type in enumerate(type_names):
+                            multiplier = (
+                                first_multipliers[first_argument][first_type]
+                                * second_multipliers[second_argument][second_type]
+                            )
+                            direct_blocks[first_index][second_index] += (
+                                base_weight * multiplier * direct_kernel
+                            )
+                            completed_blocks[first_index][second_index] += (
+                                base_weight * multiplier * completed_kernel
+                            )
+
+    direct_block_matrix = tuple(tuple(row) for row in direct_blocks)
+    completed_block_matrix = tuple(tuple(row) for row in completed_blocks)
+    block_sum = sum(
+        (entry for row in direct_block_matrix for entry in row),
+        F(0),
+    )
+
+    def expansion_properties(
+        expansions: dict[int, dict[str, tuple[dict[str, int], ...]]],
+    ) -> tuple[bool, bool]:
+        non_small_rows = tuple(
+            row
+            for expansion in expansions.values()
+            for type_name in ("I", "II")
+            for row in expansion[type_name]
+        )
+        short_mobius_present = bool(non_small_rows) and all(
+            row["coefficient"]
+            in (
+                -_finite_mobius(row["first_short_factor"])
+                * _finite_mobius(row["second_short_factor"]),
+                _finite_mobius(row["first_short_factor"])
+                * _finite_mobius(row["second_short_factor"]),
+            )
+            for row in non_small_rows
+        )
+        residuals_unsigned = bool(non_small_rows) and all(
+            row["residual_mobius_coefficient"] == 1
+            for row in non_small_rows
+        )
+        return short_mobius_present, residuals_unsigned
+
+    first_short_mobius, first_unsigned_residual = expansion_properties(
+        first_expansions
+    )
+    second_short_mobius, second_unsigned_residual = expansion_properties(
+        second_expansions
+    )
+    finite_master_proved = bool(
+        direct_master == completed_master
+        and block_sum == direct_master
+        and direct_block_matrix == completed_block_matrix
+    )
+    return {
+        "short_prime": q,
+        "determinant_shift": D,
+        "first_long_prime": p1,
+        "second_long_prime": p2,
+        "first_product_labels": first_labels,
+        "second_product_labels": second_labels,
+        "first_product_values": first_products,
+        "second_product_values": second_products,
+        "a_equals_h_times_delta_retained": True,
+        "first_raw_type_coefficients": {
+            argument: F(_finite_mobius(argument)) * weight
+            for argument, weight in first_types
+        },
+        "second_raw_type_coefficients": {
+            argument: F(_finite_mobius(argument)) * weight
+            for argument, weight in second_types
+        },
+        "first_type_multipliers": first_multipliers,
+        "second_type_multipliers": second_multipliers,
+        "first_type_factorization_rows": first_expansions,
+        "second_type_factorization_rows": second_expansions,
+        "raw_double_mobius_master": direct_master,
+        "uniform_ratio_completed_master": completed_master,
+        "nine_type_block_matrix": direct_block_matrix,
+        "completed_nine_type_block_matrix": completed_block_matrix,
+        "nine_type_blocks_reassemble_raw_master": bool(
+            block_sum == direct_master
+        ),
+        "uniform_ratio_completion_commutes_with_type_split": bool(
+            direct_block_matrix == completed_block_matrix
+        ),
+        "both_type_factorizations_have_mobius_short_factors": bool(
+            first_short_mobius and second_short_mobius
+        ),
+        "both_type_residuals_have_no_mobius_coefficient": bool(
+            first_unsigned_residual and second_unsigned_residual
+        ),
+        "completed_double_type_finite_master_proved": finite_master_proved,
+        "any_individual_type_block_bound_proved": False,
+        "GDTM_bound_proved": False,
+        "WRFE_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def short_prime_weighted_profile_ttstar_audit(
     *,
     short_prime: int,

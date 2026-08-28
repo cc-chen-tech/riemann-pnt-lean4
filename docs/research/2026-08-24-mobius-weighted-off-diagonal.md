@@ -82,6 +82,7 @@
 > | Ray Type-reassembly boundary | Section 9.189 restores the literal meanings of the two ray factors.  The \(F\)-lift \(f_p(u\ell)\) is the \(h\delta\)/cofactor convolution, while only the \(G\)-lift carries \(\mu(uk)\).  On squarefree coprime support this becomes one dilation sign \(\mu(uk)=\mu(u)\mu(k)\), not two Selberg coefficients.  Moreover the original Type-I/II multipliers at the product \(uk\) do not separate: for \(U=V=3\), \(k=(2,5)\), \(u=(3,7)\), the Type-I matrix has determinant \(-2\), whereas the fully reassembled Möbius matrix is rank one.  Thus Type blocks must first be reassembled before a new one-sided split in \(u\).  There is no reciprocal-LCM kernel in (9.1261), so the proved LCM quadratic bound does not apply directly; the new dilation Type estimate remains open |
 > | Uniform-ratio completion of all density terms | Section 9.190 rewrites each density \(1/\varphi(\ell)\) as the exact average of a full incidence over a dummy unit ratio.  The outer actual ratio is \(a^*=1\), and the inner actual ratios are \(c_{p_i}^*\equiv D\overline q\pmod {p_i}\).  Thus all eight terms of the triple-centered product become signed averages of three incidence indicators before any absolute value.  This supplies quotient coordinates to the seven density terms, but the dummy ratios change the determinant equation and do not preserve the original common \(t\).  The finite completion and principal-mode deletion are exact; the resulting generalized-determinant estimate remains unproved |
 > | Published coverage of the completed ratios | Section 9.191 inserts the literal full nonprincipal ratio spectrum into Milićević--Qin--Wu, Blomer--Pascadi, and Pascadi.  On the extreme long-prime modulus \(p=T^2\), both completed Fourier variables have length \(p\).  MQW misses its \(M^{7/5}N<p^{3/2}\) and \(MN\leq p^{5/4}\) conditions by \(T^{9/5}\) and \(T^{3/2}\), respectively.  At full residue length all three Blomer--Pascadi margins are negative, and Pascadi's averaged alternative has best margin \(-1/6\) in the modulus exponent.  The actual family additionally has three varying moduli and level-dependent Type/AFE coefficients.  Hence uniform-ratio completion creates no new published cell; it identifies the hypotheses of the new generalized-determinant theorem that would be needed |
+> | Completed double-Type generalized-determinant master | Section 9.192 combines the uniform-ratio completion with both literal Type Möbius variables.  Each physical product label remains \(a_i=h_i\delta_i\); both raw \(\mu(n_i)\) are first restored and then split by the exact small/I/II identity.  Every ordered block retains all three actual-minus-uniform ratio projectors.  Type I and II expose the short-factor coefficients \(\mu(b_i)\mu(c_i)\), while their quotient residuals have Möbius coefficient one.  On the top support `small` vanishes and all four I--I, I--II, II--I, and II--II blocks must remain signed.  The finite GDTM reassembly is exact and equivalent to the WRFE integrand; no individual block estimate or GDTM bound is proved |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -26950,6 +26951,151 @@ The helper `uniform_ratio_completion_published_coverage_audit` records
 published-coverage, generalized-determinant, (WRFE), and coupled-kernel
 flag false.
 
+### 9.192 The completed master has two exact Type decompositions
+
+The completed ratio geometry can now be combined with the literal two
+Möbius variables without replacing the product labels by arbitrary
+coefficients.  On the two physical sides retain
+
+\[
+ \boxed{a_i=h_i\delta_i,\qquad
+ g_{p_i}(n_i)=\mu(n_i)\widetilde g_{p_i}(n_i),qquad i=1,2.}
+ \tag{9.1277}
+\]
+
+Let \(\mathcal K^{\rm comp}_{q,p_1,p_2}\) be the product of the three
+actual-minus-uniform ratio expressions in (9.1269)--(9.1270).  Thus its
+eight-term expansion consists only of the full incidence products
+(9.1271).  Suppressing the shared finite AFE/dyadic labels, define
+
+\[
+ \boxed{
+ \mathscr G
+ :=\sum_{h_1,\delta_1,n_1}
+   \sum_{h_2,\delta_2,n_2}
+ F_1(h_1,\delta_1)\widetilde g_1(n_1)
+ \overline{F_2(h_2,\delta_2)\widetilde g_2(n_2)}
+ \mu(n_1)\mu(n_2)\mathcal K^{\rm comp}.}
+ \tag{9.1278}
+\]
+
+No factor \(h_i\) or \(\delta_i\) has been summed into an arbitrary
+sequence in (9.1278).  In particular the original convolution
+\(a_i=h_i\delta_i\), its cofactor signs, and every smooth physical
+weight remain inside \(F_i\).
+
+Apply the same remainder-free two-cutoff identity as in (9.934)--
+(9.935), now independently to \(n_1,n_2\):
+
+\[
+ \mu(n_i)=\lambda_{\rm small}(n_i)
+ +\lambda_{\rm I}(n_i)+\lambda_{\rm II}(n_i).
+ \tag{9.1279}
+\]
+
+For \(\alpha,\beta\in\{\mathrm{small},\mathrm I,\mathrm{II}\}\), let
+\(\mathscr G^{\alpha,\beta}\) be (9.1278) with the two raw Möbius
+coefficients replaced by \(\lambda_\alpha(n_1)\lambda_\beta(n_2)\).
+Linearity before every absolute value gives
+
+\[
+ \boxed{
+ \mathscr G=\sum_{\alpha,\beta}
+ \mathscr G^{\alpha,\beta}.}
+ \tag{9.1280}
+\]
+
+Uniform-ratio completion commutes with this identity coefficient by
+coefficient: the ratio kernels depend on the integer arguments but not
+on how \(\mu(n_i)\) is expanded.  Hence every one of the nine ordered
+blocks retains all eight signed ratio terms.
+
+The Type factorization is also endpoint-exact.  For \(n>W_0\),
+
+\[
+ \begin{aligned}
+ \lambda_{\rm I}(n)
+ &=-\sum_{\substack{bc r=n\\b\leq U,\ c\leq V}}
+   \mu(b)\mu(c),\\
+ \lambda_{\rm II}(n)
+ &=\sum_{\substack{bc r=n\\b>U,\ c>V}}
+   \mu(b)\mu(c).
+ \end{aligned}
+ \tag{9.1281}
+\]
+
+Thus each side exposes two Möbius-weighted short factors \(b,c\), while
+the residual factor \(r=n/(bc)\) has coefficient exactly one.  Applying
+(9.1281) on both sides retains the two original Möbius sources jointly;
+it does not turn either quotient residual into a third Möbius sequence.
+
+On the top physical support, `small` vanishes as in Section 9.175, so
+all four I--I, I--II, II--I, and II--II blocks remain:
+
+\[
+ \boxed{
+ \mathscr G^{\rm top}
+ =\mathscr G^{{\rm I},{\rm I}}
+ +\mathscr G^{{\rm I},{\rm II}}
+ +\mathscr G^{{\rm II},{\rm I}}
+ +\mathscr G^{{\rm II},{\rm II}}.}
+ \tag{9.1282}
+\]
+
+These are not positive blocks.  In the finite fixture
+
+\[
+ (q,D,p_1,p_2)=(5,1,7,17),\quad
+ (h_1,\delta_1,n_1)=(1,3,6),\quad
+ (h_2,\delta_2,n_2)=(2,5,35),
+\]
+
+with \(U=V=3\), the multipliers are
+
+\[
+ (\lambda_{\rm I}(6),\lambda_{\rm II}(6))=(1,0),\qquad
+ (\lambda_{\rm I}(35),\lambda_{\rm II}(35))=(-1,2).
+\]
+
+Both the direct and completed raw masters equal \(75/128\), while the
+two nonzero ordered blocks are
+
+\[
+ \mathscr G^{{\rm I},{\rm I}}=-\frac{75}{128},\qquad
+ \mathscr G^{{\rm I},{\rm II}}=\frac{75}{64}.
+ \tag{9.1283}
+\]
+
+Their signed sum, not their absolute values, returns \(75/128\).
+
+For a residual dyadic cell, define the completed generalized-determinant
+Type gate by
+
+\[
+ \boxed{
+ \sum_{\omega,\lambda}|\rho_\omega|
+ \sum_{\alpha,\beta}
+ \mathscr G_{\omega,\lambda}^{\alpha,\beta}
+ \ll_{\varepsilon,W}
+ T^{-2\eta_{\rm cross}+\varepsilon}
+ \sum_{\omega,\lambda}|\rho_\omega|
+ \mathfrak E_{{\rm occ},\omega,\lambda}.}
+ \tag{GDTM}
+\]
+
+All physical signs remain inside each \(\mathscr G^{\alpha,\beta}\);
+the absolute values in (GDTM) apply only to the already registered
+projective coefficients.  Since Sections 9.190 and 9.192 are exact
+identities, (GDTM) is the completed-ratio form of (WRFE), with required
+energy saving \(2\eta_{\rm cross}=1/2\) at the extreme face.  It is not
+a new proved bound or a second saving to multiply by (WRFE).
+
+The helper `completed_ratio_double_mobius_type_master_audit` retains the
+two product-label pairs, expands both Type coefficients into their
+short factors and unsigned residuals, verifies all nine blocks against
+the raw and uniform-completed masters, and leaves every analytic flag
+false.
+
 ## 10. What has and has not been proved
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
@@ -27227,6 +27373,16 @@ are all negative.  Since the real family additionally has three varying
 moduli and level-dependent physical coefficients, no new published cell
 is obtained.  A genuinely new joint generalized-determinant/three-
 character estimate is still required.
+
+Section 9.192 puts the required arithmetic coefficients back into that
+new interface.  Both labels remain literal products
+\(a_i=h_i\delta_i\), both raw \(\mu(n_i)\) are reassembled before the
+exact Type split, and every ordered Type block retains all three ratio
+projectors.  Type I/II expose their two short Möbius factors and leave
+an unsigned quotient residual.  On the top support the four I/II blocks
+must be summed with signs, as the cancellation witness (9.1283) shows.
+The resulting finite gate (GDTM) is an exact completed-ratio form of
+(WRFE), not a proved estimate.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent
