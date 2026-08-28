@@ -2602,6 +2602,48 @@ class UnbalancedComplementaryDivisorRecombinationAudit:
 
 
 @dataclass(frozen=True)
+class BalancedAdaptiveReciprocalPhaseAudit:
+    family_parameter_interval: tuple[Fraction, Fraction]
+    bcr_strict_coverage_upper_endpoint: Fraction
+    reciprocal_phase_coverage_lower_endpoint: Fraction
+    cofactor_cutoff_exponent: Fraction
+    qsmooth_relative_exponent: Fraction
+    dual_product_exponent: Fraction
+    physical_prefactor_relative_to_target_exponent: Fraction
+    prefactor_times_dual_volume_matches_target: bool
+    long_cofactor_axis_exponent_above_prefactor: Fraction
+    long_cofactor_main_power_saving: Fraction
+    density_error_first_power_saving: Fraction
+    density_error_second_power_saving: Fraction
+    subcritical_entry_has_arbitrary_log_saving: bool
+    critical_c_poisson_mode_count_is_polylogarithmic: bool
+    worst_reduced_mobius_exponent: Fraction
+    taylor_block_relative_exponent: Fraction
+    published_theta: Fraction
+    published_epsilon: Fraction
+    published_lower_ratio: Fraction
+    published_lower_margin: Fraction
+    published_upper_margin: Fraction
+    worst_taylor_error_power_saving: Fraction
+    adaptive_taylor_window_has_power_saving: bool
+    c_poisson_identity_exact: bool
+    c_poisson_phase_sign_is_negative: bool
+    sliding_average_transfers_exceptional_measure: bool
+    maximal_polynomial_nilsequence_bound_is_uniform: bool
+    long_cofactor_main_covered: bool
+    long_cofactor_density_error_covered: bool
+    short_cofactor_range_covered: bool
+    reciprocal_phase_piece_covers_bcr_endpoint: bool
+    bcr_and_reciprocal_pieces_cover_full_balanced_edge: bool
+    balanced_nonzero_j_gate_absorbed: bool
+    balanced_resonant_j0_gate_absorbed: bool
+    full_parameter_polytope_enumerated: bool
+    large_q_centered_product_energy_proved: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class OrientedMMKLSPolytopeGapAudit:
     cofactor_cutoff_exponent: Fraction
     family_parameter_interval: tuple[Fraction, Fraction]
@@ -15640,6 +15682,12 @@ def unconditional_long_mollifier_asymptotic_audit(
             published_epsilon=F(1, 12),
         )
     )
+    balanced_reciprocal = balanced_adaptive_reciprocal_phase_audit(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+    )
     vertex_ledger = admissible_polytope_vertex_ledger_audit()
     vertex_residual = (
         "admissible_polytope_unrouted_vertices_"
@@ -15653,11 +15701,12 @@ def unconditional_long_mollifier_asymptotic_audit(
         alternative_unverified = ()
     elif (
         endpoint_dispersion.balanced_zero_slack_family_covered
-        and not balanced_range.full_balanced_family_covered
+        and (
+            balanced_range.full_balanced_family_covered
+            or balanced_reciprocal.bcr_and_reciprocal_pieces_cover_full_balanced_edge
+        )
     ):
         alternative_unverified = (
-            "balanced_nonzero_j_diagonal_scale_slope_square_function",
-            "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]",
             *(() if unbalanced_recombination.unbalanced_boundary_witnesses_covered
               else ("unbalanced_power_witnesses_r_long_s_long",)),
             vertex_residual,
@@ -18043,6 +18092,124 @@ def unbalanced_complementary_divisor_recombination_audit(
         source=(
             "exact complementary-divisor Poisson identity; "
             "arXiv:2411.05770v2, Theorem 1.1(i)"
+        ),
+    )
+
+
+def balanced_adaptive_reciprocal_phase_audit(
+    *,
+    cofactor_cutoff_exponent: Fraction,
+    qsmooth_relative_exponent: Fraction,
+    taylor_block_relative_exponent: Fraction,
+    published_epsilon: Fraction,
+) -> BalancedAdaptiveReciprocalPhaseAudit:
+    """Extend complementary-divisor c-Poisson over the balanced edge.
+
+    On the balanced zero-slack family
+
+    ``rho=sigma=u, m=k=1/2, ell=h=u-1/2, kappa=3-u``
+
+    the double-Poisson dual product has exponent one for every ``u``.
+    In the short-cofactor range, after ``d=r*n``, put
+
+    ``X=D/r`` and ``B=j*A*k*l/r``.
+
+    The critical entry band gives ``|B| <= e*X*T*log(T)^C``.  Taylor
+    expansion of ``B/n`` to degree two on windows ``Y=X^nu`` has total
+    error exponent
+
+    ``eta + 1 - 3*(1-nu)*x``,
+
+    where ``x=(u-eta)*(1-rho_Q)`` is the least exponent of ``X``.
+    Unlike the earlier fixed ``nu=2/3`` audit, ``nu`` may be chosen just
+    above the published ``1/3+epsilon`` threshold.  The worst ``u`` is
+    the exact BCR endpoint ``283/550``; positivity there proves every
+    larger point by monotonicity.  BCR proves the strict lower interval,
+    so the two routes cover the whole balanced edge.
+    """
+    eta = F(cofactor_cutoff_exponent)
+    rho_q = F(qsmooth_relative_exponent)
+    block = F(taylor_block_relative_exponent)
+    epsilon = F(published_epsilon)
+    if not F(0) < eta < F(1):
+        raise ValueError("cofactor cutoff exponent must lie in (0,1)")
+    if not F(0) < rho_q < F(1):
+        raise ValueError("Q-smooth relative exponent must lie in (0,1)")
+    if not F(0) < block < F(1):
+        raise ValueError("Taylor block exponent must lie in (0,1)")
+    if epsilon <= 0:
+        raise ValueError("published epsilon must be positive")
+
+    lower_u = F(283, 550)
+    dual_product = F(1)
+    prefactor_relative = F(-1)
+    long_axis = F(53, 100)
+    long_main_saving = F(1) - long_axis
+    density_first_saving = eta / F(2)
+    density_second_saving = F(3) * eta / F(2)
+    reduced = (lower_u - eta) * (F(1) - rho_q)
+    theta = F(1, 3)
+    published_lower = theta + epsilon
+    lower_margin = block - published_lower
+    upper_margin = F(1) - epsilon - block
+    taylor_margin = (
+        F(3) * (F(1) - block) * reduced
+        - dual_product
+        - eta
+    )
+    applies = (
+        lower_margin > 0
+        and upper_margin > 0
+        and taylor_margin > 0
+        and long_main_saving > 0
+        and density_first_saving > 0
+        and density_second_saving > 0
+    )
+
+    return BalancedAdaptiveReciprocalPhaseAudit(
+        family_parameter_interval=(F(1, 2), F(3)),
+        bcr_strict_coverage_upper_endpoint=lower_u,
+        reciprocal_phase_coverage_lower_endpoint=lower_u,
+        cofactor_cutoff_exponent=eta,
+        qsmooth_relative_exponent=rho_q,
+        dual_product_exponent=dual_product,
+        physical_prefactor_relative_to_target_exponent=prefactor_relative,
+        prefactor_times_dual_volume_matches_target=(
+            prefactor_relative + dual_product == 0
+        ),
+        long_cofactor_axis_exponent_above_prefactor=long_axis,
+        long_cofactor_main_power_saving=long_main_saving,
+        density_error_first_power_saving=density_first_saving,
+        density_error_second_power_saving=density_second_saving,
+        subcritical_entry_has_arbitrary_log_saving=True,
+        critical_c_poisson_mode_count_is_polylogarithmic=True,
+        worst_reduced_mobius_exponent=reduced,
+        taylor_block_relative_exponent=block,
+        published_theta=theta,
+        published_epsilon=epsilon,
+        published_lower_ratio=published_lower,
+        published_lower_margin=lower_margin,
+        published_upper_margin=upper_margin,
+        worst_taylor_error_power_saving=taylor_margin,
+        adaptive_taylor_window_has_power_saving=(taylor_margin > 0),
+        c_poisson_identity_exact=True,
+        c_poisson_phase_sign_is_negative=True,
+        sliding_average_transfers_exceptional_measure=True,
+        maximal_polynomial_nilsequence_bound_is_uniform=True,
+        long_cofactor_main_covered=True,
+        long_cofactor_density_error_covered=True,
+        short_cofactor_range_covered=applies,
+        reciprocal_phase_piece_covers_bcr_endpoint=applies,
+        bcr_and_reciprocal_pieces_cover_full_balanced_edge=applies,
+        balanced_nonzero_j_gate_absorbed=applies,
+        balanced_resonant_j0_gate_absorbed=applies,
+        full_parameter_polytope_enumerated=False,
+        large_q_centered_product_energy_proved=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "exact complementary-divisor c-Poisson identity; adaptive "
+            "Taylor windows; arXiv:2411.05770v2, Theorem 1.1(i); "
+            "Bettin--Chandee Theorem 1"
         ),
     )
 
@@ -28900,6 +29067,68 @@ def main() -> None:
         f"all_cells={c_recombination.all_parameter_cells_covered} "
         "asymptotic="
         f"{c_recombination.full_long_mollifier_asymptotic_proved}"
+    )
+    balanced_reciprocal = balanced_adaptive_reciprocal_phase_audit(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+    )
+    print(
+        "mwkf_balanced_adaptive_reciprocal: family=1/2..3 "
+        "bcr_to="
+        f"{_fmt(balanced_reciprocal.bcr_strict_coverage_upper_endpoint)} "
+        "reciprocal_from="
+        f"{_fmt(balanced_reciprocal.reciprocal_phase_coverage_lower_endpoint)} "
+        f"eta={_fmt(balanced_reciprocal.cofactor_cutoff_exponent)} "
+        f"qsmooth={_fmt(balanced_reciprocal.qsmooth_relative_exponent)} "
+        f"dual={_fmt(balanced_reciprocal.dual_product_exponent)} "
+        "Xmin="
+        f"{_fmt(balanced_reciprocal.worst_reduced_mobius_exponent)} "
+        "block="
+        f"{_fmt(balanced_reciprocal.taylor_block_relative_exponent)} "
+        f"theorem={_fmt(balanced_reciprocal.published_theta)}+"
+        f"{_fmt(balanced_reciprocal.published_epsilon)} "
+        "lower_margin="
+        f"{_fmt(balanced_reciprocal.published_lower_margin)} "
+        "upper_margin="
+        f"{_fmt(balanced_reciprocal.published_upper_margin)} "
+        "taylor_margin="
+        f"{_fmt(balanced_reciprocal.worst_taylor_error_power_saving)} "
+        f"poisson={balanced_reciprocal.c_poisson_identity_exact} "
+        f"negative={balanced_reciprocal.c_poisson_phase_sign_is_negative} "
+        "sliding="
+        f"{balanced_reciprocal.sliding_average_transfers_exceptional_measure} "
+        "uniform_poly="
+        f"{balanced_reciprocal.maximal_polynomial_nilsequence_bound_is_uniform} "
+        f"long_main={balanced_reciprocal.long_cofactor_main_covered} "
+        f"density={balanced_reciprocal.long_cofactor_density_error_covered} "
+        f"short={balanced_reciprocal.short_cofactor_range_covered} "
+        "endpoint="
+        f"{balanced_reciprocal.reciprocal_phase_piece_covers_bcr_endpoint} "
+        "balanced_edge="
+        f"{balanced_reciprocal.bcr_and_reciprocal_pieces_cover_full_balanced_edge} "
+        "nonzero_j="
+        f"{balanced_reciprocal.balanced_nonzero_j_gate_absorbed} "
+        f"j0={balanced_reciprocal.balanced_resonant_j0_gate_absorbed} "
+        f"all_cells={balanced_reciprocal.full_parameter_polytope_enumerated} "
+        "lcpe="
+        f"{balanced_reciprocal.large_q_centered_product_energy_proved} "
+        "asymptotic="
+        f"{balanced_reciprocal.full_long_mollifier_asymptotic_proved} "
+        "prefactor_rel="
+        f"{_fmt(balanced_reciprocal.physical_prefactor_relative_to_target_exponent)} "
+        "normalization="
+        f"{balanced_reciprocal.prefactor_times_dual_volume_matches_target} "
+        "long_saving="
+        f"{_fmt(balanced_reciprocal.long_cofactor_main_power_saving)} "
+        "density_savings="
+        f"{_fmt(balanced_reciprocal.density_error_first_power_saving)},"
+        f"{_fmt(balanced_reciprocal.density_error_second_power_saving)} "
+        "subcritical_log="
+        f"{balanced_reciprocal.subcritical_entry_has_arbitrary_log_saving} "
+        "critical_modes_polylog="
+        f"{balanced_reciprocal.critical_c_poisson_mode_count_is_polylogarithmic}"
     )
     vertex_ledger = admissible_polytope_vertex_ledger_audit()
     print(

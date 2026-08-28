@@ -41,6 +41,13 @@
 > loss but turns OSLSP into a Möbius-weighted-modulus Kuznetsov gate;
 > the known arbitrary-coefficient estimate is still short by
 > \(T^{1/2}\) on the hard face.
+> Section 4.109zjaced000b now applies complementary-divisor Poisson
+> before the later \(h\)-Poisson split and uses adaptive
+> \(X^{17/50}\) reciprocal-phase windows.  Exact rational margins close
+> the full balanced zero-slack edge, so the earlier nonzero-\(j\) and
+> resonant \(j=0\) transition gates are no longer retained.  The
+> unrouted slack vertices and the logarithmic endpoint
+> \((\mathrm{LCPE}_2)\) remain open.
 > Therefore the unconditional \(T^3\) asymptotic remains open.
 
 Source correction: Kiral--Young Proposition 2.6 gives
@@ -21203,10 +21210,185 @@ The executable interface
 exact Poisson sign, the minimum exponent \(207/80\), the curvature
 margin \(\frac{37}{80}\), both theorem margins \(1/4\), and the separate
 subcritical/critical entry treatments.  It closes these two boundary
-witnesses only.  The next subsection now enumerates every vertex of the
+witnesses only.  Section 4.109zjaced000a enumerates every vertex of the
 full admissibility polytope, but does not prove the intervening faces,
 the balanced transition gates, \((\mathrm{LCPE}_2)\), or the final
 asymptotic.
+
+### 4.109zjaced000b Adaptive reciprocal-phase windows close the full balanced edge
+
+The restriction to the two unbalanced witnesses in the preceding
+subsection is unnecessary.  What was special there was only the fixed
+choice of Taylor-window exponent \(2/3\).  Allowing that exponent to
+adapt closes the complete balanced zero-slack edge
+
+\[
+ (\rho,\sigma,m,k,\ell,h,\kappa)
+ =\left(u,u,\frac12,\frac12,
+ u-\frac12,u-\frac12,3-u\right),
+ \qquad \frac12\leq u\leq3.
+\tag{4.845dc_14xq_35w31m0}
+\]
+
+Indeed, on (4.845dc_14xq_35w31m0),
+
+\[
+ S=T^u,\qquad HL=T^{2u-1},\qquad
+ K=\frac SH=T^{1/2},\quad L_*=\frac SL=T^{1/2},
+ \qquad P:=KL_*=T.
+\tag{4.845dc_14xq_35w31m1}
+\]
+
+Thus the physical double-Poisson prefactor and the dual-pair volume
+always satisfy
+
+\[
+ \boxed{\frac{HL}{S}\,P=T^{u-1}T=T^u=S.}
+\tag{4.845dc_14xq_35w31m2}
+\]
+
+This is the exact local MMKLS target, independently of \(u\).
+
+The already proved long-cofactor estimates are uniform on this edge.
+For example, take the positive reciprocal-radical moment abscissa
+\(1/100\) in (4.845dc_14xq_35w10).  Since
+\(A\leq S\leq T^3\), the nonaxis and axis short-dual sums have respective
+exponents at most \(4/100\) and \(1/2+3/100=53/100\).  After the factor
+\(T^{u-1}\), both are \(O(T^{u-47/100+o(1)})\).  With a cofactor cutoff
+\(E_0=T^\eta\), the two density errors in (4.845dc_14xq_35w18), after
+the same physical factor, are
+
+\[
+ \boxed{T^{u-\eta/2+o(1)}+T^{u-3\eta/2+o(1)}.}
+\tag{4.845dc_14xq_35w31m3}
+\]
+
+It remains only to recheck the short cofactor.  Write
+
+\[
+ e\leq T^\eta,\qquad D=T^u/e,\qquad d=rn,\qquad
+ r\leq D^{\rho_Q},\qquad X=D/r.
+\tag{4.845dc_14xq_35w31m4}
+\]
+
+Use the same exact \(c\)-Poisson identity (4.845dc_14xq_35w31d).  The
+subcritical entry range \(A<D(\log T)^{-K_0}\) contributes, with the
+original \(e^{-2}\) weight,
+
+\[
+ \frac{HL}{S}P\frac{A_0}{S}
+ \sum_{\substack{e\leq T^\eta\\A_0<S e^{-1}(\log T)^{-K_0}}}
+ \frac1e(\log T)^{O_W(1)}
+ \ll S(\log T)^{-K_0+O_W(1)}.
+\tag{4.845dc_14xq_35w31m5}
+\]
+
+In the complementary range, the number of \(c\)-Poisson modes \(j\)
+is polylogarithmic and, with \(B=jAkl/r\),
+
+\[
+ |B|\ll eX P(\log T)^{O_W(1)}.
+\tag{4.845dc_14xq_35w31m6}
+\]
+
+Let \(Y=X^\nu\).  Taylor expansion of \(B/n\) to degree two on a
+window of length \(Y\) leaves the uniform error
+
+\[
+ \boxed{
+ \frac{|B|Y^3}{X^4}
+ \ll T^{\eta+1-3(1-\nu)x}(\log T)^{O_W(1)},
+ \qquad x:=(u-\eta)(1-\rho_Q).}
+\tag{4.845dc_14xq_35w31m7}
+\]
+
+Choose once and for all
+
+\[
+ \eta=\rho_Q=\varepsilon=\frac1{1000},
+ \qquad \nu=\frac{17}{50}.
+\tag{4.845dc_14xq_35w31m8}
+\]
+
+The worst point for (4.845dc_14xq_35w31m7) is the exact BCR endpoint
+\(u_0=283/550\).  There
+
+\[
+ x_0=\left(\frac{283}{550}-\frac1{1000}\right)
+       \left(1-\frac1{1000}\right)
+ =\frac{5643351}{11000000},
+\tag{4.845dc_14xq_35w31m9}
+\]
+
+and the Taylor power saving is exactly
+
+\[
+ \boxed{
+ 3\left(1-\frac{17}{50}\right)x_0
+ -1-\frac1{1000}
+ =\frac{740159}{50000000}>0.}
+\tag{4.845dc_14xq_35w31m10}
+\]
+
+The short-interval nilsequence theorem used in (4.845dc_14xq_35w31i)
+also has strict margins:
+
+\[
+ \boxed{
+ \frac{17}{50}-\left(\frac13+\frac1{1000}\right)
+ =\frac{17}{3000},\qquad
+ 1-\frac1{1000}-\frac{17}{50}=\frac{659}{1000}.}
+\tag{4.845dc_14xq_35w31m11}
+\]
+
+Apply that theorem on every sliding \(X^{17/50}\)-window to the
+quadratic Taylor polynomial.  Its supremum is uniform in the polynomial
+coefficients, so the same sliding identity (4.845dc_14xq_35w31l)
+transfers the exceptional-measure estimate.  Equations
+(4.845dc_14xq_35w31m10)--(4.845dc_14xq_35w31m11) absorb the Taylor
+error and the two edge intervals.  Consequently, for every fixed
+\(M\), uniformly at every \(u\geq u_0\),
+
+\[
+ \sum_{n\asymp X}\mu(n)a(n/X)e(B/n)
+ \ll_{M,a}X(\log T)^{-M}.
+\tag{4.845dc_14xq_35w31m12}
+\]
+
+Partial summation supplies \(X^{-1}(\log T)^{-M}\) after the
+\(n^{-2}\) weight in (4.845dc_14xq_35w31d).  Restoring the exact
+normalizations gives
+
+\[
+ \frac{HL}{S}P(\log T)^{-M+O_W(1)}
+ \sum_{e\leq T^\eta}
+ \left(\frac1{e^2}+\frac{A_0}{eS}\right)
+ \sum_{\substack{r\leq D^{\rho_Q}\\r\ Ae\text{-smooth}}}\frac1r
+ \ll S(\log T)^{-M+O_W(1)}.
+\tag{4.845dc_14xq_35w31m13}
+\]
+
+The large \(Ae\)-smooth tail retains the fixed-power estimate
+(4.845dc_14xq_35w26)--(4.845dc_14xq_35w27).  Choosing \(K_0\), then
+\(M\), after every fixed kernel, dyadic, and harmonic-\(q\) logarithm
+proves the required arbitrary logarithmic saving for the whole
+short-cofactor range.
+
+BCR has strict saving on \(1/2\leq u<283/550\); the reciprocal-phase
+argument includes \(u=283/550\) by (4.845dc_14xq_35w31m10) and is
+monotone for larger \(u\).  Hence the two arguments cover the complete
+edge (4.845dc_14xq_35w31m0).  Since this proof is applied to the exact
+double-Poisson MMKLS expression *before* the later \(h\)-Poisson split,
+it simultaneously absorbs both the nonzero-\(j\) diagonal-scale gate
+and the resonant \(j=0\) gate of Section 4.109zjaced00c.
+
+The interface `balanced_adaptive_reciprocal_phase_audit` records every
+rational margin above and sets
+`balanced_nonzero_j_gate_absorbed=True` and
+`balanced_resonant_j0_gate_absorbed=True`.  This closes one complete
+one-dimensional face, not the whole six-dimensional admissibility
+polytope.  In particular the unrouted slack vertices and
+\((\mathrm{LCPE}_2)\) remain open, so no final asymptotic is asserted.
 
 ### 4.109zjaced000a The full admissibility polytope has exactly 25 rational vertices
 
@@ -21749,8 +21931,9 @@ residual of the full admissibility polytope: cells with
 (\ell+h<\rho+\sigma-1) have not yet been enumerated.  The executable
 interface `balanced_zero_slack_full_range_audit` records both strict
 endpoints and therefore prevents the local (u=2) certificate from
-being extrapolated to the whole edge.  The alternative-route ledger is
-now
+being extrapolated to the whole edge.  At this stage of the audit,
+before the adaptive reciprocal-phase argument in Section
+4.109zjaced000b, the alternative-route ledger was
 
 ```text
 balanced_nonzero_j_diagonal_scale_slope_square_function
@@ -21759,7 +21942,8 @@ admissible_polytope_unrouted_vertices_v08_v09_v10_v11_v12_v14_v15_v16_v19_v20_v2
 large_q_centered_product_energy_lambda_2
 ```
 
-and all four entries remain unproved.
+The first two entries are superseded and closed by that later section;
+the last two remain unproved.
 
 ### 4.109zjaced00b The transition interval is one two-Möbius Farey family
 

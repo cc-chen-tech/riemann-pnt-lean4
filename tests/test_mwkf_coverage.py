@@ -2586,8 +2586,6 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
         "residual_semantics=top_level_gate_count_not_literal_cell_count "
             "top_level=OLISK_q^{L,R} "
             "alternative_unverified="
-            "balanced_nonzero_j_diagonal_scale_slope_square_function,"
-            "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2],"
             "admissible_polytope_unrouted_vertices_"
             "v08_v09_v10_v11_v12_v14_v15_v16_"
             "v19_v20_v21_v23_v24_v25,"
@@ -5548,8 +5546,6 @@ def test_final_theta_three_certificate_retains_one_analytic_residual_cell() -> N
     )
     assert audit.residual_top_level_gates == ("OLISK_q^{L,R}",)
     assert audit.alternative_route_unverified_gates == (
-        "balanced_nonzero_j_diagonal_scale_slope_square_function",
-        "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]",
         "admissible_polytope_unrouted_vertices_"
         "v08_v09_v10_v11_v12_v14_v15_v16_"
         "v19_v20_v21_v23_v24_v25",
@@ -7025,6 +7021,81 @@ def test_unbalanced_complementary_divisor_recombination_closes_two_boundary_witn
         assert marker in note
 
 
+def test_adaptive_reciprocal_phase_closes_the_full_balanced_zero_slack_edge(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Shorter Taylor windows extend c-recombination down to the BCR edge."""
+    adapter = getattr(
+        coverage_audit,
+        "balanced_adaptive_reciprocal_phase_audit",
+        None,
+    )
+    assert adapter is not None, "balanced adaptive reciprocal audit is missing"
+    audit = adapter(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+    )
+    assert audit.family_parameter_interval == (F(1, 2), F(3))
+    assert audit.bcr_strict_coverage_upper_endpoint == F(283, 550)
+    assert audit.reciprocal_phase_coverage_lower_endpoint == F(283, 550)
+    assert audit.worst_reduced_mobius_exponent == F(5643351, 11000000)
+    assert audit.dual_product_exponent == F(1)
+    assert audit.physical_prefactor_relative_to_target_exponent == F(-1)
+    assert audit.prefactor_times_dual_volume_matches_target
+    assert audit.long_cofactor_axis_exponent_above_prefactor == F(53, 100)
+    assert audit.long_cofactor_main_power_saving == F(47, 100)
+    assert audit.density_error_first_power_saving == F(1, 2000)
+    assert audit.density_error_second_power_saving == F(3, 2000)
+    assert audit.subcritical_entry_has_arbitrary_log_saving
+    assert audit.critical_c_poisson_mode_count_is_polylogarithmic
+    assert audit.taylor_block_relative_exponent == F(17, 50)
+    assert audit.published_lower_ratio == F(1003, 3000)
+    assert audit.published_lower_margin == F(17, 3000)
+    assert audit.published_upper_margin == F(659, 1000)
+    assert audit.worst_taylor_error_power_saving == F(740159, 50000000)
+    assert audit.adaptive_taylor_window_has_power_saving
+    assert audit.c_poisson_identity_exact
+    assert audit.c_poisson_phase_sign_is_negative
+    assert audit.sliding_average_transfers_exceptional_measure
+    assert audit.maximal_polynomial_nilsequence_bound_is_uniform
+    assert audit.long_cofactor_main_covered
+    assert audit.long_cofactor_density_error_covered
+    assert audit.short_cofactor_range_covered
+    assert audit.reciprocal_phase_piece_covers_bcr_endpoint
+    assert audit.bcr_and_reciprocal_pieces_cover_full_balanced_edge
+    assert audit.balanced_nonzero_j_gate_absorbed
+    assert audit.balanced_resonant_j0_gate_absorbed
+    assert not audit.full_parameter_polytope_enumerated
+    assert not audit.large_q_centered_product_energy_proved
+    assert not audit.full_long_mollifier_asymptotic_proved
+
+    coverage_audit.main()
+    output = capsys.readouterr().out
+    assert (
+        "mwkf_balanced_adaptive_reciprocal: family=1/2..3 "
+        "bcr_to=283/550 reciprocal_from=283/550 eta=1/1000 "
+        "qsmooth=1/1000 dual=1 Xmin=5643351/11000000 "
+        "block=17/50 theorem=1/3+1/1000 lower_margin=17/3000 "
+        "upper_margin=659/1000 taylor_margin=740159/50000000 "
+        "poisson=True negative=True sliding=True uniform_poly=True "
+        "long_main=True density=True short=True endpoint=True "
+        "balanced_edge=True nonzero_j=True j0=True all_cells=False "
+        "lcpe=False asymptotic=False"
+    ) in output
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaced000b Adaptive reciprocal-phase windows close the full balanced edge",
+        r"\nu=\frac{17}{50}",
+        r"\frac{740159}{50000000}",
+        "balanced_adaptive_reciprocal_phase_audit",
+        "balanced_nonzero_j_gate_absorbed=True",
+        "balanced_resonant_j0_gate_absorbed=True",
+    ):
+        assert marker in note
+
+
 def test_exact_polytope_vertex_ledger_replaces_the_unclassified_placeholder(
 ) -> None:
     audit = coverage_audit.admissible_polytope_vertex_ledger_audit()
@@ -7238,8 +7309,6 @@ def test_balanced_zero_slack_full_range_exposes_strict_transition_residual(
 
     final = coverage_audit.unconditional_long_mollifier_asymptotic_audit()
     assert final.alternative_route_unverified_gates == (
-        "balanced_nonzero_j_diagonal_scale_slope_square_function",
-        "balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]",
         "admissible_polytope_unrouted_vertices_"
         "v08_v09_v10_v11_v12_v14_v15_v16_"
         "v19_v20_v21_v23_v24_v25",
