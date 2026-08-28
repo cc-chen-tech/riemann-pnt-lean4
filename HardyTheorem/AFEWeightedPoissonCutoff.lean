@@ -115,6 +115,90 @@ theorem weightedPoissonCutoff_eq_cpow (s : ℂ) {x N u : ℝ}
   congr 1
   ring
 
+/-- Pointwise size of the smoothed Mellin summand on the positive axis. -/
+theorem norm_weightedPoissonCutoff_le_rpow (s : ℂ) (x N : ℝ) {u : ℝ}
+    (hu : 0 < u) :
+    ‖weightedPoissonCutoff s x N u‖ ≤ u ^ (-s.re) := by
+  have hb0 : 0 ≤ intervalPlateauBump x N u :=
+    (intervalPlateauBump x N).nonneg' u
+  have hb1 : intervalPlateauBump x N u ≤ 1 :=
+    (intervalPlateauBump x N).le_one
+  rw [weightedPoissonCutoff, norm_mul, norm_real, Real.norm_eq_abs,
+    abs_of_nonneg hb0, Complex.norm_exp]
+  have hexp :
+      Real.exp ((-s * (Real.log u : ℂ)).re) = u ^ (-s.re) := by
+    rw [Real.rpow_def_of_pos hu]
+    congr 1
+    simp
+    ring
+  rw [hexp]
+  exact mul_le_of_le_one_left (Real.rpow_nonneg hu.le _) hb1
+
+/-- For integral endpoints, the smooth sum is supported on the finite integer
+interval from `m-1` to `n+1`. -/
+theorem weightedPoissonCutoff_tsum_eq_sum_Icc (s : ℂ) {m n : ℕ}
+    (_hm : 2 < m) (hmn : m ≤ n) :
+    (∑' k : ℤ, weightedPoissonCutoff s m n k) =
+      ∑ k ∈ Finset.Icc ((m : ℤ) - 1) ((n : ℤ) + 1),
+        weightedPoissonCutoff s m n k := by
+  apply tsum_eq_sum
+  intro k hk
+  rw [Finset.mem_Icc] at hk
+  have hmnR : (m : ℝ) ≤ n := by exact_mod_cast hmn
+  by_cases hkl : k < (m : ℤ) - 1
+  · have hkZ : k ≤ (m : ℤ) - 2 := by omega
+    have hkR : (k : ℝ) ≤ (m : ℝ) - 2 := by exact_mod_cast hkZ
+    simp [weightedPoissonCutoff,
+      intervalPlateauBump_eq_zero_of_le hmnR hkR]
+  · have hlow : (m : ℤ) - 1 ≤ k := le_of_not_gt hkl
+    have hku : (n : ℤ) + 1 < k := by
+      apply lt_of_not_ge
+      intro hkupper
+      exact hk ⟨hlow, hkupper⟩
+    have hkZ : (n : ℤ) + 2 ≤ k := by omega
+    have hkR : (n : ℝ) + 2 ≤ (k : ℝ) := by exact_mod_cast hkZ
+    simp [weightedPoissonCutoff,
+      intervalPlateauBump_eq_zero_of_ge hmnR hkR]
+
+/-- With integral endpoints there are exactly two smoothing terms, at
+`m-1` and `n+1`; all integers from `m` through `n` retain their hard-cutoff
+Mellin values. -/
+theorem weightedPoissonCutoff_tsum_eq_boundary_add_core (s : ℂ) {m n : ℕ}
+    (hm : 2 < m) (hmn : m ≤ n) :
+    (∑' k : ℤ, weightedPoissonCutoff s m n k) =
+      weightedPoissonCutoff s m n ((m : ℤ) - 1) +
+        weightedPoissonCutoff s m n ((n : ℤ) + 1) +
+          ∑ k ∈ Finset.Icc (m : ℤ) n, (k : ℂ) ^ (-s) := by
+  rw [weightedPoissonCutoff_tsum_eq_sum_Icc s hm hmn]
+  have hinterval :
+      Finset.Icc ((m : ℤ) - 1) ((n : ℤ) + 1) =
+        insert ((m : ℤ) - 1)
+          (insert ((n : ℤ) + 1) (Finset.Icc (m : ℤ) n)) := by
+    ext k
+    simp only [Finset.mem_Icc, Finset.mem_insert]
+    omega
+  rw [hinterval]
+  have hleft : (m : ℤ) - 1 ∉ insert ((n : ℤ) + 1) (Finset.Icc (m : ℤ) n) := by
+    simp only [Finset.mem_insert, Finset.mem_Icc, not_or, not_and_or, not_le]
+    constructor
+    · omega
+    · exact Or.inl (by omega)
+  have hright : (n : ℤ) + 1 ∉ Finset.Icc (m : ℤ) n := by
+    simp
+  rw [Finset.sum_insert hleft, Finset.sum_insert hright]
+  simp only [Int.cast_sub, Int.cast_natCast, Int.cast_one, Int.cast_add]
+  rw [← add_assoc]
+  congr 1
+  apply Finset.sum_congr rfl
+  intro k hk
+  rw [Finset.mem_Icc] at hk
+  apply weightedPoissonCutoff_eq_cpow s
+  · exact_mod_cast (show 0 < m by omega)
+  · exact_mod_cast hmn
+  · constructor
+    · exact_mod_cast hk.1
+    · exact_mod_cast hk.2
+
 /-- Whole-line Poisson summation for the smoothed Mellin cutoff.  This is an
 actual theorem obtained from the Schwartz Poisson formula, not an analytic
 interface or an axiom. -/

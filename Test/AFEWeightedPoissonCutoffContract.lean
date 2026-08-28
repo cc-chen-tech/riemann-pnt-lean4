@@ -12,8 +12,12 @@ open HardyTheorem AFE
 #check weightedPoissonCutoff_hasCompactSupport
 #check weightedPoissonCutoff_contDiff
 #check weightedPoissonCutoff_eq_cpow
+#check norm_weightedPoissonCutoff_le_rpow
+#check weightedPoissonCutoff_tsum_eq_sum_Icc
+#check weightedPoissonCutoff_tsum_eq_boundary_add_core
 #check weightedPoissonCutoff_tsum_eq_fourier_tsum
 
 #print axioms intervalPlateauBump_eq_one
 #print axioms weightedPoissonCutoff_contDiff
+#print axioms weightedPoissonCutoff_tsum_eq_boundary_add_core
 #print axioms weightedPoissonCutoff_tsum_eq_fourier_tsum

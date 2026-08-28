@@ -1186,6 +1186,18 @@ sum is supported on the two transition intervals of total length four; on
 the critical line it is therefore `O((x-2)^(-1/2))`.  Thus smoothing the
 finite endpoints cannot consume a power of `T`.
 
+For integral endpoints `m<=n` the formal statement is sharper: all integer
+terms outside `[m-1,n+1]` vanish, all terms in `[m,n]` are unchanged, and
+the smoothed sum is exactly the hard sum plus the two terms at `m-1` and
+`n+1`.  Lean also proves the pointwise bound
+
+\[
+  |F_{s,m,n}(u)|\leq u^{-\Re s}\qquad(u>0),                       \tag{8.22a}
+\]
+
+so these two terms have total size at most
+`(m-1)^(-sigma)+(n+1)^(-sigma)`.
+
 With `s=sigma+it`, the phase in the `k`-th Fourier integral is
 
 \[
