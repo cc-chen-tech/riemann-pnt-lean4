@@ -7189,6 +7189,57 @@ def test_type_frequency_short_determinant_is_documented_without_claiming_bound()
     assert "remains unproved" in text
 
 
+def test_signed_short_determinant_master_retains_outer_mobius_structure() -> None:
+    audit = getattr(
+        coverage_audit,
+        "signed_short_determinant_projective_master_audit",
+        None,
+    )
+    assert audit is not None, "signed short-determinant master audit is missing"
+    result = audit(
+        rows=(
+            # (squarefree modulus q, nonzero Type frequency k, unit y)
+            (15, 5, 2),
+            (21, 3, 5),
+            (35, 10, 3),
+            (30, 6, 7),
+            (77, 9, 10),
+        ),
+        row_coefficients=(F(2), F(-3), F(5), F(7, 2), F(-4, 3)),
+        product_label_weights=(F(1), F(2), F(-1), F(3), F(1, 2)),
+        product_label_length_exponent=F(5),
+        reduced_modulus_exponents=(F(3), F(5, 2), F(2), F(3, 2), F(1)),
+    )
+    assert result["all_reduced_product_frequencies_are_primitive"]
+    assert result["direct_energy_equals_full_pair_expansion"]
+    assert result["resonant_plus_nonzero_determinant_reassembles_master"]
+    assert result["nonzero_determinant_groups_reassemble_offdiagonal"]
+    assert result["all_nonzero_determinants_have_exact_g_times_D_factorization"]
+    assert result["common_reduced_modulus_gcd_mobius_sign_cancels_exactly"]
+    assert result["inactive_type_gcd_mobius_signs_retained"]
+    assert result["two_reduced_cofactor_mobius_signs_retained"]
+    assert result["all_inverse_phases_transfer_to_short_D"]
+    assert result["maximum_combined_short_conductor_exponent"] == F(1)
+    assert result["supplied_projective_atom_master_proved"]
+    assert not result["brs_kuznetsov_accepts_arbitrary_modulus_packet"]
+    assert not result["brs_regular_spectrum_term_is_arithmetic_diagonal"]
+    assert not result["signed_short_D_family_bound_proved"]
+    assert not result["packet_exhaustive_physical_short_D_bound_proved"]
+    assert not result["level_dependent_dskm_offdiagonal_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_signed_short_determinant_master_is_documented_as_an_unproved_bound() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.152 The signed short-determinant master retains four Möbius signs" in text
+    assert r"\mu(q_1)\mu(q_2)=\mu(d_1)\mu(d_2)\mu(r_1)\mu(r_2)" in text
+    assert r"\mathscr S_{\omega}^{\ne0}" in text
+    assert r"D\ll T/g\,\mathscr L^B" in text
+    assert "BRS proof" in text
+    assert r"signed short-\(D\) bound" in text
+    assert "remains unproved" in text
+
+
 def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
     """Shen's q-average is inverse-only and far below the coupled target."""
 

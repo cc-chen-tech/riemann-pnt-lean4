@@ -20785,6 +20785,264 @@ def type_frequency_reduced_determinant_reciprocity_audit(
     }
 
 
+def signed_short_determinant_projective_master_audit(
+    *,
+    rows: tuple[tuple[int, int, int], ...],
+    row_coefficients: tuple[Fraction, ...],
+    product_label_weights: tuple[Fraction, ...],
+    product_label_length_exponent: Fraction,
+    reduced_modulus_exponents: tuple[Fraction, ...],
+) -> dict[str, object]:
+    """Open one finite projective packet before rowwise absolute values.
+
+    For a row ``i=(q_i,k_i,y_i)``, write ``d_i=(k_i,q_i)``,
+    ``Q_i=q_i/d_i``, ``K_i=k_i/d_i``, and
+    ``x_i=-K_i*y_i (mod Q_i)``.  The supplied atom is
+
+    ``sum_a W(a) |sum_i c_i*mu(q_i)/q_i
+       * e(a*x_i/Q_i + inverse(y_i)/q_i)|^2``.
+
+    Opening its single global square is exact.  Equal primitive fractions
+    form the resonant part.  Every other ordered pair has a circular
+    determinant ``Delta=g*D`` with ``g=(Q_1,Q_2)``.  Since
+    ``Q_i=g*r_i`` and all original moduli are squarefree, the common
+    factor has squared Möbius sign:
+
+    ``mu(q_1)mu(q_2)=mu(d_1)mu(d_2)mu(r_1)mu(r_2)``.
+
+    This helper checks the finite master and its sign ledger.  It does not
+    estimate the resulting signed short-``D`` family or assert that the
+    BRS Kuznetsov proof accepts a level-dependent modulus packet.
+    """
+
+    supplied_rows = tuple(
+        (int(modulus), int(frequency), int(residue))
+        for modulus, frequency, residue in rows
+    )
+    coefficients = tuple(F(value) for value in row_coefficients)
+    label_weights = tuple(F(value) for value in product_label_weights)
+    if not supplied_rows or len(supplied_rows) != len(coefficients):
+        raise ValueError("rows and row coefficients must have equal positive length")
+    if not label_weights:
+        raise ValueError("product-label weights must be nonempty")
+
+    reduction = type_frequency_reduced_determinant_reciprocity_audit(
+        rows=supplied_rows,
+        product_label_length_exponent=product_label_length_exponent,
+        reduced_modulus_exponents=reduced_modulus_exponents,
+    )
+    reduced_rows = tuple(reduction["rows"])
+    tolerance = 1e-8
+
+    def inv_mod(value: int, modulus: int) -> int:
+        return 0 if modulus == 1 else pow(value, -1, modulus)
+
+    def additive_phase(value: Fraction) -> complex:
+        return cmath.exp(2j * cmath.pi * float(value))
+
+    def row_amplitude(index: int, product_label: int) -> complex:
+        row = reduced_rows[index]
+        modulus = int(row["modulus"])
+        residue = int(row["residue_label"])
+        reduced_modulus = int(row["reduced_modulus"])
+        numerator = int(row["reduced_additive_numerator"])
+        phase_value = (
+            F(product_label * numerator, reduced_modulus)
+            + F(inv_mod(residue, modulus), modulus)
+        )
+        return (
+            complex(coefficients[index])
+            * F(_finite_mobius(modulus), modulus)
+            * additive_phase(phase_value)
+        )
+
+    direct_energy = sum(
+        (
+            complex(weight)
+            * abs(
+                sum(
+                    (
+                        row_amplitude(index, product_label)
+                        for index in range(len(reduced_rows))
+                    ),
+                    0j,
+                )
+            )
+            ** 2
+            for product_label, weight in enumerate(label_weights)
+        ),
+        0j,
+    )
+
+    def weight_fourier(frequency: Fraction) -> complex:
+        return sum(
+            (
+                complex(weight)
+                * additive_phase(F(product_label) * frequency)
+                for product_label, weight in enumerate(label_weights)
+            ),
+            0j,
+        )
+
+    full_pair_expansion = 0j
+    resonant_part = 0j
+    nonzero_determinant_part = 0j
+    grouped_nonzero: dict[tuple[int, int, int, int, int, int], complex] = {}
+    pair_rows: list[dict[str, object]] = []
+    determinant_factorization = True
+    common_g_mobius_cancellation = True
+    primitive_frequencies = bool(
+        reduction["all_reduced_additive_fractions_are_primitive"]
+    )
+    for left_index, left in enumerate(reduced_rows):
+        for right_index, right in enumerate(reduced_rows):
+            q1 = int(left["modulus"])
+            q2 = int(right["modulus"])
+            y1 = int(left["residue_label"])
+            y2 = int(right["residue_label"])
+            d1 = int(left["type_frequency_gcd"])
+            d2 = int(right["type_frequency_gcd"])
+            reduced_q1 = int(left["reduced_modulus"])
+            reduced_q2 = int(right["reduced_modulus"])
+            x1 = int(left["reduced_additive_numerator"])
+            x2 = int(right["reduced_additive_numerator"])
+            reduced_frequency_difference = (
+                F(x1, reduced_q1) - F(x2, reduced_q2)
+            )
+            inverse_phase_difference = (
+                F(inv_mod(y1, q1), q1) - F(inv_mod(y2, q2), q2)
+            )
+            pair_coefficient = (
+                complex(coefficients[left_index])
+                * complex(coefficients[right_index]).conjugate()
+                * F(_finite_mobius(q1) * _finite_mobius(q2), q1 * q2)
+            )
+            pair_term = (
+                pair_coefficient
+                * additive_phase(inverse_phase_difference)
+                * weight_fourier(reduced_frequency_difference)
+            )
+            full_pair_expansion += pair_term
+
+            raw_delta = x1 * reduced_q2 - x2 * reduced_q1
+            period = reduced_q1 * reduced_q2
+            circular_delta = min(
+                (raw_delta - period, raw_delta, raw_delta + period),
+                key=lambda value: (abs(value), value < 0),
+            )
+            if circular_delta == 0:
+                resonant_part += pair_term
+                continue
+
+            common = gcd(reduced_q1, reduced_q2)
+            r1 = reduced_q1 // common
+            r2 = reduced_q2 // common
+            divides = circular_delta % common == 0
+            determinant_factorization = bool(
+                determinant_factorization and divides
+            )
+            short_determinant = circular_delta // common
+            mobius_identity = (
+                _finite_mobius(q1) * _finite_mobius(q2)
+                == _finite_mobius(d1)
+                * _finite_mobius(d2)
+                * _finite_mobius(r1)
+                * _finite_mobius(r2)
+            )
+            common_g_mobius_cancellation = bool(
+                common_g_mobius_cancellation and mobius_identity
+            )
+            group_key = (
+                d1,
+                d2,
+                common,
+                short_determinant,
+                r1,
+                r2,
+            )
+            grouped_nonzero[group_key] = (
+                grouped_nonzero.get(group_key, 0j) + pair_term
+            )
+            nonzero_determinant_part += pair_term
+            pair_rows.append(
+                {
+                    "left_index": left_index,
+                    "right_index": right_index,
+                    "left_type_frequency_gcd": d1,
+                    "right_type_frequency_gcd": d2,
+                    "common_reduced_modulus_gcd": common,
+                    "left_reduced_cofactor": r1,
+                    "right_reduced_cofactor": r2,
+                    "circular_determinant": circular_delta,
+                    "short_determinant": short_determinant,
+                    "determinant_equals_g_times_D": divides,
+                    "common_g_mobius_sign_cancels": mobius_identity,
+                    "pair_term": pair_term,
+                }
+            )
+
+    grouped_nonzero_total = sum(grouped_nonzero.values(), 0j)
+    direct_error = abs(direct_energy - full_pair_expansion)
+    split_error = abs(
+        full_pair_expansion - resonant_part - nonzero_determinant_part
+    )
+    grouping_error = abs(nonzero_determinant_part - grouped_nonzero_total)
+    supplied_master = bool(
+        primitive_frequencies
+        and direct_error <= tolerance
+        and split_error <= tolerance
+        and grouping_error <= tolerance
+        and determinant_factorization
+        and common_g_mobius_cancellation
+        and reduction["all_active_cofactor_phases_transfer_to_short_determinant"]
+    )
+    return {
+        "rows": reduced_rows,
+        "pair_rows": tuple(pair_rows),
+        "nonzero_determinant_groups": grouped_nonzero,
+        "direct_energy": direct_energy,
+        "full_pair_expansion": full_pair_expansion,
+        "resonant_part": resonant_part,
+        "nonzero_determinant_part": nonzero_determinant_part,
+        "direct_pair_expansion_error": direct_error,
+        "resonant_nonzero_split_error": split_error,
+        "nonzero_grouping_error": grouping_error,
+        "all_reduced_product_frequencies_are_primitive": (
+            primitive_frequencies
+        ),
+        "direct_energy_equals_full_pair_expansion": (
+            direct_error <= tolerance
+        ),
+        "resonant_plus_nonzero_determinant_reassembles_master": (
+            split_error <= tolerance
+        ),
+        "nonzero_determinant_groups_reassemble_offdiagonal": (
+            grouping_error <= tolerance
+        ),
+        "all_nonzero_determinants_have_exact_g_times_D_factorization": (
+            determinant_factorization
+        ),
+        "common_reduced_modulus_gcd_mobius_sign_cancels_exactly": (
+            common_g_mobius_cancellation
+        ),
+        "inactive_type_gcd_mobius_signs_retained": True,
+        "two_reduced_cofactor_mobius_signs_retained": True,
+        "all_inverse_phases_transfer_to_short_D": bool(
+            reduction["all_active_cofactor_phases_transfer_to_short_determinant"]
+        ),
+        "maximum_combined_short_conductor_exponent": reduction[
+            "balanced_combined_short_conductor_exponent"
+        ],
+        "supplied_projective_atom_master_proved": supplied_master,
+        "brs_kuznetsov_accepts_arbitrary_modulus_packet": False,
+        "brs_regular_spectrum_term_is_arithmetic_diagonal": False,
+        "signed_short_D_family_bound_proved": False,
+        "packet_exhaustive_physical_short_D_bound_proved": False,
+        "level_dependent_dskm_offdiagonal_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,
