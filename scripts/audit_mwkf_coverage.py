@@ -25742,6 +25742,464 @@ def prime_cross_residue_fixed_packet_ttstar_audit(
     }
 
 
+def prime_cross_residue_global_packet_ttstar_audit(
+    *,
+    projective_packets: tuple[
+        tuple[
+            Fraction,
+            tuple[
+                tuple[
+                    int,
+                    int,
+                    tuple[tuple[tuple[int, int], Fraction], ...],
+                    tuple[tuple[int, Fraction], ...],
+                ],
+                ...,
+            ],
+        ],
+        ...,
+    ],
+    physical_cross_residue_formula_verified: bool,
+    packet_exhaustive_row_energy_inclusion_verified: bool,
+    projective_l1_bound_verified: bool,
+    shared_product_label_retained_verified: bool,
+    signed_type_reassembly_verified: bool,
+) -> dict[str, object]:
+    """Reassemble fixed cross-residue blocks by weighted Hilbert sum.
+
+    Each projective packet is ``(rho, blocks)``.  A block contains the
+    exact data accepted by
+    ``prime_cross_residue_fixed_packet_ttstar_audit`` and represents a
+    distinct physical Hilbert coordinate such as ``(g,D,q)``.  The
+    common product-label convolution, Type signs, and row transforms
+    are already inside the supplied block coefficients; they are not
+    split into additional positive coordinates here.
+
+    For one projective atom, the direct sum of all block inner products
+    obeys one Cauchy inequality.  Across projective atoms, absorbing the
+    sign of ``rho`` on one Hilbert factor gives
+
+    ``|sum_omega rho_omega S_omega|^2
+      <= (sum_omega |rho_omega| E_B,omega)
+         (sum_omega |rho_omega| E_H,omega)``.
+
+    Hence the projective family costs only its l1 weight, while every
+    long-prime ratio-fiber sum remains inside the second energy before
+    Cauchy.  This registers WRFE as the sole analytic leaf of this
+    adapter, but does not prove WRFE itself.
+    """
+
+    if not projective_packets:
+        raise ValueError("at least one projective packet is required")
+
+    packet_block_values: list[tuple[Fraction, ...]] = []
+    packet_values: list[Fraction] = []
+    packet_short_energies: list[Fraction] = []
+    packet_outer_energies: list[Fraction] = []
+    converted_weights: list[Fraction] = []
+    fixed_adapters: list[bool] = []
+    for raw_projective_weight, blocks in projective_packets:
+        if not blocks:
+            raise ValueError("every projective packet needs a physical block")
+        projective_weight = F(raw_projective_weight)
+        converted_weights.append(projective_weight)
+        block_values: list[Fraction] = []
+        short_energy = F(0)
+        outer_energy = F(0)
+        for short_prime, determinant_shift, short_profile, outer_rows in blocks:
+            block = prime_cross_residue_fixed_packet_ttstar_audit(
+                short_prime=short_prime,
+                determinant_shift=determinant_shift,
+                short_profile=short_profile,
+                long_outer_rows=outer_rows,
+            )
+            block_values.append(F(block["original_cross_residue_block"]))
+            short_energy += F(block["short_profile_energy"])
+            outer_energy += F(block["centered_outer_energy"])
+            fixed_adapters.append(
+                bool(block["fixed_packet_scalar_ttstar_adapter_proved"])
+            )
+        packet_block_values.append(tuple(block_values))
+        packet_values.append(sum(block_values, F(0)))
+        packet_short_energies.append(short_energy)
+        packet_outer_energies.append(outer_energy)
+
+    physical_sum = sum(
+        (
+            weight * packet_value
+            for weight, packet_value in zip(converted_weights, packet_values)
+        ),
+        F(0),
+    )
+    weighted_short_energy = sum(
+        (
+            abs(weight) * energy
+            for weight, energy in zip(
+                converted_weights, packet_short_energies
+            )
+        ),
+        F(0),
+    )
+    weighted_outer_energy = sum(
+        (
+            abs(weight) * energy
+            for weight, energy in zip(
+                converted_weights, packet_outer_energies
+            )
+        ),
+        F(0),
+    )
+    global_bound_squared = weighted_short_energy * weighted_outer_energy
+    within_bound = bool(physical_sum * physical_sum <= global_bound_squared)
+    finite_identity_proved = bool(all(fixed_adapters) and within_bound)
+    transfer_prerequisites = bool(
+        physical_cross_residue_formula_verified
+        and packet_exhaustive_row_energy_inclusion_verified
+        and projective_l1_bound_verified
+        and shared_product_label_retained_verified
+        and signed_type_reassembly_verified
+    )
+    adapter_proved = bool(finite_identity_proved and transfer_prerequisites)
+    return {
+        "projective_weights": tuple(converted_weights),
+        "projective_l1_norm": sum(
+            (abs(weight) for weight in converted_weights), F(0)
+        ),
+        "packet_block_values": tuple(packet_block_values),
+        "projective_packet_values": tuple(packet_values),
+        "physical_reassembled_sum": physical_sum,
+        "packet_short_profile_energies": tuple(packet_short_energies),
+        "packet_ratio_fiber_energies": tuple(packet_outer_energies),
+        "weighted_short_profile_energy": weighted_short_energy,
+        "weighted_ratio_fiber_energy": weighted_outer_energy,
+        "global_cauchy_upper_bound_squared": global_bound_squared,
+        "physical_sum_within_global_cauchy_bound": within_bound,
+        "all_long_prime_sums_precede_global_cauchy": bool(
+            all(fixed_adapters)
+        ),
+        "projective_weights_cost_only_their_l1_norm": True,
+        "finite_direct_sum_ttstar_identity_proved": finite_identity_proved,
+        "helper_does_not_split_shared_product_label": True,
+        "helper_does_not_split_signed_type_blocks": True,
+        "physical_cross_residue_formula_verified": bool(
+            physical_cross_residue_formula_verified
+        ),
+        "packet_exhaustive_row_energy_inclusion_verified": bool(
+            packet_exhaustive_row_energy_inclusion_verified
+        ),
+        "projective_l1_bound_verified": bool(projective_l1_bound_verified),
+        "shared_product_label_retained_verified": bool(
+            shared_product_label_retained_verified
+        ),
+        "signed_type_reassembly_verified": bool(
+            signed_type_reassembly_verified
+        ),
+        "global_packet_ttstar_adapter_proved": adapter_proved,
+        "WRFE_is_registered_sufficient_leaf": adapter_proved,
+        "weighted_ratio_fiber_energy_bound_proved": False,
+        "PCDI_SREM_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def separated_ratio_fiber_large_sieve_polytope_audit(
+    *,
+    long_prime_exponent: Fraction,
+    short_prime_exponent: Fraction,
+    required_linear_gain_exponent: Fraction,
+    level_independent_long_coefficients_verified: bool,
+    bounded_projective_q_factor_verified: bool,
+) -> dict[str, object]:
+    """Record the Bombieri--Davenport coverage of separated fibers.
+
+    For ``P=T^sigma_L``, ``Q=T^sigma_S`` and coefficients
+    ``C_q(p)=beta_q alpha_p``, character Parseval turns the centered
+    ratio-fiber energy into nonprincipal character sums in ``alpha_p``.
+    The multiplicative large sieve bounds their dyadic ``q``-average by
+
+    ``(P + Q^2) sum_p |alpha_p|^2``.
+
+    The occupancy majorant has exponent ``sigma_L + sigma_S`` in the
+    physical range ``P >= Q``.  Hence the energy saving is
+
+    ``sigma_L + sigma_S - max(sigma_L, 2 sigma_S)``.
+
+    This audit covers only a genuinely level-independent long
+    coefficient (up to a bounded-projective scalar q-factor).  It does
+    not promote the literal q-dependent physical coefficient to that
+    class.
+    """
+
+    sigma_long = F(long_prime_exponent)
+    sigma_short = F(short_prime_exponent)
+    linear_gain = F(required_linear_gain_exponent)
+    if min(sigma_long, sigma_short, linear_gain) < 0:
+        raise ValueError("all polytope exponents must be nonnegative")
+    if sigma_long < sigma_short:
+        raise ValueError("the oriented long-prime exponent must be largest")
+
+    occupancy_exponent = sigma_long + sigma_short
+    large_sieve_exponent = max(sigma_long, 2 * sigma_short)
+    energy_saving = max(F(0), occupancy_exponent - large_sieve_exponent)
+    required_energy_saving = 2 * linear_gain
+    ledger_covers = bool(energy_saving >= required_energy_saving)
+    hypotheses_verified = bool(
+        level_independent_long_coefficients_verified
+        and bounded_projective_q_factor_verified
+    )
+    separated_covered = bool(ledger_covers and hypotheses_verified)
+    return {
+        "long_prime_exponent": sigma_long,
+        "short_prime_exponent": sigma_short,
+        "occupancy_energy_exponent": occupancy_exponent,
+        "large_sieve_energy_exponent": large_sieve_exponent,
+        "large_sieve_energy_saving_exponent": energy_saving,
+        "required_linear_gain_exponent": linear_gain,
+        "required_energy_saving_exponent": required_energy_saving,
+        "level_independent_long_coefficients_verified": bool(
+            level_independent_long_coefficients_verified
+        ),
+        "bounded_projective_q_factor_verified": bool(
+            bounded_projective_q_factor_verified
+        ),
+        "power_ledger_would_cover_if_separated": ledger_covers,
+        "separated_coefficient_cell_covered": separated_covered,
+        "multiplication_by_D_is_a_residue_permutation": True,
+        "nonprincipal_characters_at_prime_q_are_primitive": True,
+        "physical_level_dependent_WRFE_proved": False,
+        "PCDI_SREM_proved": False,
+        "coupled_kernel_gate_closed": False,
+        "source": "https://kskedlaya.org/ant/chap-largesieve2.html#theorem-16-2",
+    }
+
+
+def level_dependent_ratio_fiber_saturation_audit(
+    *,
+    short_prime: int,
+    determinant_shift: int,
+    supported_long_primes: tuple[int, ...],
+    weights: tuple[Fraction, ...],
+) -> dict[str, object]:
+    """Exhibit occupancy saturation for arbitrary q-dependent rows.
+
+    All supplied long primes are required to lie in one ratio fiber
+    ``p/D mod q``.  The centered energy is evaluated by the exact scalar
+    Gram identity, while the positive occupancy majorant is
+
+    ``phi(q) * n_max * sum_p |C_q(p)|^2``.
+
+    Equal same-sign weights make their ratio bounded away from zero as
+    ``q`` grows, so no uniform power saving is possible for arbitrary
+    level-dependent coefficients.
+    """
+
+    q = int(short_prime)
+    D = int(determinant_shift)
+    if q < 3 or _finite_prime_exponents(q) != {q: 1}:
+        raise ValueError("the short modulus must be an odd prime")
+    if gcd(D, q) != 1:
+        raise ValueError("the determinant shift must be a unit modulo q")
+    if not supported_long_primes or len(supported_long_primes) != len(weights):
+        raise ValueError("the supported primes and weights must match")
+
+    converted_primes = tuple(int(p) for p in supported_long_primes)
+    converted_weights = tuple(F(weight) for weight in weights)
+    if any(weight == 0 for weight in converted_weights):
+        raise ValueError("saturation support weights must be nonzero")
+    if len(set(converted_primes)) != len(converted_primes) or any(
+        _finite_prime_exponents(p) != {p: 1} or gcd(p, q) != 1
+        for p in converted_primes
+    ):
+        raise ValueError("long labels must be distinct primes coprime to q")
+
+    inverse_D = pow(D, -1, q)
+    slopes = tuple((p * inverse_D) % q for p in converted_primes)
+    single_fiber = bool(len(set(slopes)) == 1)
+    if not single_fiber:
+        raise ValueError("all saturation rows must lie in one ratio fiber")
+
+    gram = short_prime_global_D_centered_ttstar_audit(
+        short_prime=q,
+        outer_rows=tuple(
+            (p, D, weight)
+            for p, weight in zip(converted_primes, converted_weights)
+        ),
+    )
+    fiber_energy = F(gram["ratio_fiber_energy_formula"])
+    n_max = len(converted_primes)
+    coefficient_energy = sum(
+        (weight * weight for weight in converted_weights), F(0)
+    )
+    occupancy_bound = F(q - 1) * n_max * coefficient_energy
+    ratio = fiber_energy / occupancy_bound
+    constant_saturation = bool(2 * fiber_energy >= occupancy_bound)
+    return {
+        "short_prime": q,
+        "determinant_shift": D,
+        "supported_long_primes": converted_primes,
+        "weights": converted_weights,
+        "ratio_slopes": slopes,
+        "single_ratio_fiber": single_fiber,
+        "signed_ratio_fiber_energy": fiber_energy,
+        "occupancy_cauchy_bound": occupancy_bound,
+        "energy_to_occupancy_ratio": ratio,
+        "constant_proportion_saturation": constant_saturation,
+        "uniform_power_saving_for_level_dependent_coefficients": False,
+        "physical_level_dependent_WRFE_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def ratio_fiber_short_shift_master_audit(
+    *,
+    short_prime: int,
+    determinant_shift: int,
+    long_rows: tuple[tuple[int, Fraction, Fraction, Fraction], ...],
+) -> dict[str, object]:
+    """Rewrite one ratio-fiber energy as a centered short-shift sum.
+
+    A row is ``(p, C_raw, C_I, C_II)`` and must satisfy
+    ``C_raw = C_I + C_II``.  Since ``D`` is a unit modulo the prime
+    ``q``, two ratios ``p/D`` agree exactly when
+
+    ``p_second - p_first = r q``.
+
+    The full centered energy is the ``r=0`` diagonal plus the signed
+    ``r != 0`` correlations minus the rank-one total.  Both the shift
+    histogram and the rank-one subtraction are expanded into all four
+    ordered I/II blocks before any absolute value.
+    """
+
+    q = int(short_prime)
+    D = int(determinant_shift)
+    if q < 3 or _finite_prime_exponents(q) != {q: 1}:
+        raise ValueError("the short modulus must be an odd prime")
+    if gcd(D, q) != 1:
+        raise ValueError("the determinant shift must be a unit modulo q")
+    if not long_rows:
+        raise ValueError("at least one long row is required")
+
+    converted: list[tuple[int, Fraction, Fraction, Fraction]] = []
+    seen: set[int] = set()
+    raw_reassembles = True
+    for raw_p, raw_coefficient, type_I, type_II in long_rows:
+        p = int(raw_p)
+        coefficient = F(raw_coefficient)
+        coefficient_I = F(type_I)
+        coefficient_II = F(type_II)
+        if (
+            p in seen
+            or _finite_prime_exponents(p) != {p: 1}
+            or gcd(p, q) != 1
+        ):
+            raise ValueError("long labels must be distinct primes coprime to q")
+        seen.add(p)
+        raw_reassembles = bool(
+            raw_reassembles and coefficient == coefficient_I + coefficient_II
+        )
+        converted.append((p, coefficient, coefficient_I, coefficient_II))
+    if not raw_reassembles:
+        raise ValueError("every raw coefficient must equal its I plus II parts")
+
+    shift_histogram: dict[int, Fraction] = defaultdict(F)
+    type_histograms: dict[tuple[str, str], dict[int, Fraction]] = {
+        (first, second): defaultdict(F)
+        for first in ("I", "II")
+        for second in ("I", "II")
+    }
+
+    def component(
+        row: tuple[int, Fraction, Fraction, Fraction], label: str
+    ) -> Fraction:
+        return row[2] if label == "I" else row[3]
+
+    for first_row in converted:
+        first_p, first_raw, _, _ = first_row
+        for second_row in converted:
+            second_p, second_raw, _, _ = second_row
+            difference = second_p - first_p
+            if difference % q != 0:
+                continue
+            shift = difference // q
+            shift_histogram[shift] += first_raw * second_raw
+            for first_label, second_label in type_histograms:
+                type_histograms[(first_label, second_label)][shift] += (
+                    component(first_row, first_label)
+                    * component(second_row, second_label)
+                )
+
+    ordered_histogram = dict(sorted(shift_histogram.items()))
+    diagonal_weight = shift_histogram.get(0, F(0))
+    nonzero_weight = sum(
+        (weight for shift, weight in shift_histogram.items() if shift != 0),
+        F(0),
+    )
+    total_raw = sum((row[1] for row in converted), F(0))
+    rank_one = total_raw * total_raw
+    phi_q = q - 1
+    centered_nonzero = F(phi_q) * nonzero_weight - rank_one
+    fiber_energy_from_shifts = F(phi_q) * diagonal_weight + centered_nonzero
+
+    gram = short_prime_global_D_centered_ttstar_audit(
+        short_prime=q,
+        outer_rows=tuple((p, D, raw) for p, raw, _, _ in converted),
+    )
+    fiber_energy = F(gram["ratio_fiber_energy_formula"])
+
+    type_histograms_ordered = {
+        labels: dict(sorted(histogram.items()))
+        for labels, histogram in type_histograms.items()
+    }
+    type_shift_reassembles = all(
+        shift_histogram.get(shift, F(0))
+        == sum(
+            (
+                histogram.get(shift, F(0))
+                for histogram in type_histograms.values()
+            ),
+            F(0),
+        )
+        for shift in shift_histogram
+    )
+    type_rank_one = sum(
+        (
+            sum((component(row, first) for row in converted), F(0))
+            * sum((component(row, second) for row in converted), F(0))
+            for first in ("I", "II")
+            for second in ("I", "II")
+        ),
+        F(0),
+    )
+    nonzero_shifts = [abs(shift) for shift in shift_histogram if shift != 0]
+    return {
+        "short_prime": q,
+        "determinant_shift": D,
+        "long_rows": tuple(converted),
+        "raw_coefficients_reassemble_I_II": raw_reassembles,
+        "short_shift_histogram": ordered_histogram,
+        "ordered_type_shift_histograms": type_histograms_ordered,
+        "diagonal_shift_weight": diagonal_weight,
+        "nonzero_shift_weight": nonzero_weight,
+        "rank_one_subtraction": rank_one,
+        "centered_nonzero_shift_remainder": centered_nonzero,
+        "ratio_fiber_energy": fiber_energy,
+        "diagonal_plus_centered_nonzero_equals_fiber_energy": bool(
+            fiber_energy_from_shifts == fiber_energy
+        ),
+        "all_four_ordered_type_blocks_reassemble_before_absolute_value": bool(
+            type_shift_reassembles and len(type_histograms) == 4
+        ),
+        "rank_one_subtraction_retains_type_cross_terms": bool(
+            type_rank_one == rank_one
+        ),
+        "maximum_short_shift": max(nonzero_shifts, default=0),
+        "centered_short_shift_bound_proved": False,
+        "WRFE_proved": False,
+        "PCDI_SREM_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def prime_incidence_type_I_companion_factorization_audit(
     *,
     short_cutoff_u: int,

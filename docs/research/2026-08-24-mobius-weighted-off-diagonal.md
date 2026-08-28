@@ -71,8 +71,11 @@
 > | Companion fourth-moment saturation | Section 9.178 restores that \(p\) is the prime-power-bearing \(\Lambda(p)\) coordinate; on squarefree support it is prime and \(\mu(p)=-1\), so there is no second Möbius oscillation to split.  For a prime character modulus \(q\) and companion support \(P^2<q\), character orthogonality and unique factorization give the exact fourth moment \((q-1)(2(\sum|a_p|^2)^2-\sum|a_p|^4)\).  Under the weaker \(P<q\) condition, exact second-moment orthogonality plus Cauchy gives the lower bound \((q-1)(\sum|a_p|^2)^2\).  Thus no separate positive row theorem uniform over this coefficient class can improve the companion exponent in the residual collar.  The missing saving must be obtained before Cauchy from the cross-row determinant; at the extreme face it is \(\min\{(\varpi-1/2)_+/2,1/4\}\) |
 > | Determinant-value centering correction | Section 9.179 shows that the integer \(t\) in (9.1180) is a determinant value, not a Fourier frequency.  For fixed \((p,q,D,\omega)\), if \(H(t)\) is the weighted determinant histogram, then \(\sum_tH(t)=(\sum_XA(X))(\sum_YB(Y))\) and \(\sum_{t\ne0}H(t)=\text{rank-one all-pairs mode}-H(0)\).  Hence the \(t=0\) term cancels exactly when the all-\(t\ne0\) complement is rewritten, and (9.1186) is a geometric classification rather than a canonical main/remainder split.  A fixed-determinant theorem can enter only after its actual main terms \(M_{p,q,D,\omega}(t)\) are reassembled with the density, AFE/reflection, and diagonal ledger; the signed sum of the centered errors is then the spectral object.  Neither the physical main-term adapter nor that error estimate is proved |
 > | Global-\(D\) centered Gram identity | Section 9.180 performs the short-prime \(TT^*\) algebra before taking an absolute value in the outer \((p,D)\)-family.  For the scalar centered incidence kernels \(K_{q,c}(u,v)=\mathbf1_{v\equiv cu\ (q)}-1/\varphi(q)\), their exact Gram matrix is \(\varphi(q)\mathbf1_{c=c'}-1\).  With \(c=p\overline D\), the complete energy is therefore \(\varphi(q)\sum_c|\sum_{p\overline D=c}W_q(p,D)|^2-|\sum_{p,D}W_q(p,D)|^2\), and two rows collide exactly when \(q\mid p_1D_2-p_2D_1\).  Thus the signed outer weights must be summed inside each ratio fiber before squaring.  The finite scalar identity is proved and (WRFE) is a candidate scalar route; Section 9.181 removes the scalar-adapter prerequisite at the algebraic Gram level |
-> | Adapter-free weighted-profile Gram | Section 9.181 allows each outer row \(i=(p,D,\ldots)\) to carry an arbitrary level-dependent unit-grid profile \(A_i(u,v)\).  If \(c_i=p\overline D\), \(L_{ij}(c)=\sum_uA_i(u,cu)\overline{A_j(u,cu)}\), and \(M_{ij}=\sum_{u,v}A_i(u,v)\overline{A_j(u,v)}\), then the exact Gram entry is \(\mathbf1_{c_i=c_j}L_{ij}(c_i)-(L_{ij}(c_i)+L_{ij}(c_j))/\varphi(q)+M_{ij}/\varphi(q)^2\).  Summing these entries is exactly the direct centered-profile energy, so this algebraic identity needs no scalar projective adapter.  The candidate physical leaf is the weighted line-Gram bound (WPLG), but the packet-exhaustive identification and normalization of the actual (PCDI-SREM) post-duality form with these fixed-\(q\) profiles is not yet proved; neither is (WPLG) |
-> | Fixed-packet cross-residue \(TT^*\) adapter | Section 9.182 returns to the literal cross-residue form (9.1145).  After fixing \((\omega,g,D,q)\), its short unit-grid profile is common to every long prime \(p\); all \(p\)-dependence is a scalar coefficient and the centered graph slope \(p\overline D\).  The whole long-prime sum is therefore one exact inner product with \(H_{q,D}(u,v)=\sum_pC_{q,D}(p)K_{q,p\overline D}(u,v)\), whose norm is the signed ratio-fiber energy (9.1216).  Thus the long-prime sum really does precede the fixed-packet Cauchy step, with no scalar projective adapter.  What is not proved is that Cauchy over all shared \(a=h\delta\), AFE/reflection, Type, and dyadic packet labels fits the registered baseline without spending the cancellation sought in (PCDI-SREM); the global packet adapter and (WRFE) remain open |
+> | Adapter-free weighted-profile Gram | Section 9.181 allows each outer row \(i=(p,D,\ldots)\) to carry an arbitrary level-dependent unit-grid profile \(A_i(u,v)\).  If \(c_i=p\overline D\), \(L_{ij}(c)=\sum_uA_i(u,cu)\overline{A_j(u,cu)}\), and \(M_{ij}=\sum_{u,v}A_i(u,v)\overline{A_j(u,v)}\), then the exact Gram entry is \(\mathbf1_{c_i=c_j}L_{ij}(c_i)-(L_{ij}(c_i)+L_{ij}(c_j))/\varphi(q)+M_{ij}/\varphi(q)^2\).  Summing these entries is exactly the direct centered-profile energy, so this algebraic identity needs no scalar projective adapter.  The generic weighted line-Gram bound (WPLG) remains unproved, but Section 9.183 shows that the literal physical cross-residue packet has the more specialized scalar form and therefore needs only (WRFE), not WPLG |
+> | Fixed-packet cross-residue \(TT^*\) adapter | Section 9.182 returns to the literal cross-residue form (9.1145).  After fixing \((\omega,g,D,q)\), its short unit-grid profile is common to every long prime \(p\); all \(p\)-dependence is a scalar coefficient and the centered graph slope \(p\overline D\).  The whole long-prime sum is therefore one exact inner product with \(H_{q,D}(u,v)=\sum_pC_{q,D}(p)K_{q,p\overline D}(u,v)\), whose norm is the signed ratio-fiber energy (9.1216).  Thus the long-prime sum really does precede the fixed-packet Cauchy step, with no scalar projective adapter.  This section proves the local adapter; Section 9.183 proves its global packet normalization, while the resulting (WRFE) analytic estimate remains open |
+> | Global packet-norm reassembly | Section 9.183 proves the missing direct-sum normalization.  The shared \(a=h\delta\) convolution and all signed Type blocks remain inside each physical row; only the already registered Hilbert coordinates \((g,D,q,\ldots)\) are direct-summed.  For projective weights \(\rho_\omega\), one weighted Hilbert-space Cauchy inequality gives \(|\mathscr S|^2\leq(\sum_\omega|\rho_\omega|\mathfrak E_{{\rm short},\omega})(\sum_\omega|\rho_\omega|\mathfrak E_{{\rm fib},\omega})\).  The first factor is a subenergy of the packet-exhaustive Section 9.144 row norm; the second is exactly the signed ratio-fiber energy.  Consequently (WRFE) now rigorously implies (PCDI-SREM), with no repeated Type-I or row-energy saving.  This proves the global adapter and replaces the former packet ambiguity by one analytic leaf; (WRFE) itself remains unproved |
+> | Separated ratio-fiber large-sieve coverage | Section 9.184 applies character Parseval and the Bombieri--Davenport multiplicative large sieve to the coefficient class \(C_q(p)=\beta_q\alpha_p\), and more generally to a subpolynomial-projective sum of such atoms.  The occupancy energy exponent is \(\sigma_L+\sigma_S\), whereas the large-sieve exponent is \(\max\{\sigma_L,2\sigma_S\}\).  On the physical wedge this saves exactly \(\sigma_L-\sigma_S\geq2\eta_{\rm cross}\), including equality at the extreme face; hence every genuinely level-independent long-coefficient atom satisfies (WRFE).  But the literal coefficient contains \(V_p(D\overline q_p)\) and is level-dependent.  A one-residue-class finite witness has ratio-fiber energy \((\varphi(q)-1)n^2\), a fixed proportion of the occupancy bound \(\varphi(q)n^2\), so no arbitrary level-dependent large sieve can prove (WRFE).  The remaining gate must exploit the first physical incidence and its retained Möbius/\(h\delta\) structure |
+> | Centered short-shift Type master | Section 9.185 opens the ratio-fiber equality itself.  For fixed \((\omega,\lambda,q,D)\), write \(p_2-p_1=rq\).  Then \(|r|\ll P/Q\leq T^{1/2}\) and the exact fiber energy is \(\varphi(q)\mathcal C(0)+\{\varphi(q)\sum_{r\ne0}\mathcal C(r)-|\sum_pC(p)|^2\}\).  The braces are the centered nonzero-shift remainder; the negative rank-one term cannot be discarded.  Substituting the exact residual \(C=C^{\rm I}+C^{\rm II}\) produces all four ordered Type blocks in both the shift correlations and the rank-one subtraction before any absolute value.  At the extreme face (WRFE) is exactly the assertion that this centered \(|r|\leq T^{1/2}\) two-Möbius remainder is of diagonal size.  The finite master and Type reassembly are proved; its analytic bound is not |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -25740,24 +25743,24 @@ the squared-energy estimate
  \sum_{q,\nu}\varphi(q)n_{q,\nu}^{\max}
  \sum_{p,D}|W_{q,\nu}^{\rm rem}(p,D)|^2.
  \end{aligned}}
- \tag{WRFE}
+ \tag{WRFE-local}
 \]
 
-The exponent is doubled because (WRFE) is an energy statement and
+The exponent is doubled because (WRFE-local) is an energy statement and
 \(\eta_{\rm cross}\) in (9.1208) is the required linear saving after
 Cauchy.  This formulation is strictly more structural than a stronger
 separate row moment: same-fiber signed weights are combined before any
 absolute value, and the collision determinant (9.1217) is still
-visible.  Neither the global packet norm reassembly nor (WRFE) has been
-proved, so no implication to (PCDI-SREM) is yet registered as a closed
-gate.
+visible.  At this stage the global packet norm reassembly is not yet
+inserted; Section 9.183 proves it and replaces (WRFE-local) by the
+packet-exact version (WRFE).
 
 The exact-rational helper
 `short_prime_global_D_centered_ttstar_audit` evaluates both sides of
 (9.1216) on arbitrary supplied real rational weights, verifies
-(9.1217) for every pair of rows, and records separately that the global
-packet norm reassembly, (WRFE), (PCDI-SREM), and the coupled-kernel
-gate remain open.
+(9.1217) for every pair of rows.  By this scalar helper alone the global
+packet norm reassembly, (WRFE), (PCDI-SREM), and the coupled-kernel gate
+remain open.
 
 ### 9.181 The literal physical profiles admit an adapter-free weighted Gram
 
@@ -25842,16 +25845,14 @@ in this notation.  The candidate adapter-free squared-energy leaf is
 \]
 
 The exponent \(2\eta_{\rm cross}\) is the one which would supply the
-remaining linear gain after a single square root.  However, one finite
-bookkeeping step is still missing: the complete
-\((p,q,D,\omega)\)-sum in (PCDI-SREM), with its long profile and all
-packet weights, has not yet been put through one explicit duality step
-and identified coefficient by coefficient with the left side of
-(WPLG), with the right-side row energy normalized at the already
-registered baseline.  Until that physical \(TT^*\) adapter is proved,
-(WPLG) is a candidate sufficient replacement for the scalar route
-(WRFE), not a registered implication to (PCDI-SREM).  It does avoid any
-bounded-projective-rank hypothesis at the algebraic Gram level.
+remaining linear gain after a single square root.  At this section
+boundary the complete physical \(TT^*\) normalization has not yet been
+inserted, so (WPLG) is only a candidate interface.  Section 9.183
+subsequently proves that the actual cross-residue packet already has
+the scalar fixed-packet form and registers the packet-exact (WRFE).
+Thus no WPLG estimate is required on that physical subface, although
+the weighted identity remains available for more general
+outer-dependent profiles.
 
 The exact-rational helper
 `short_prime_weighted_profile_ttstar_audit` accepts arbitrary
@@ -25914,30 +25915,458 @@ packet; no separation of \(b_\lambda(u,v)\) into scalar kernels is
 needed.  In particular, same-residue long-prime coefficients cancel
 inside (9.1225), before an absolute value.
 
-It is not yet legitimate to declare the full packet closed by summing
-(9.1225).  The labels suppressed in \(\lambda\) include the shared
-\(a=h\delta\) convolution, AFE/reflection and Type data, and dyadic
-outer scales.  Treating all \(\lambda\) as an orthogonal direct sum and
-applying Cauchy may discard precisely the cross-packet cancellation
-which (PCDI-SREM) retained.  A complete adapter must show, with exact
-normalizations, that the resulting \(\sum_\lambda\|b_\lambda\|_2^2\)
-is already part of the registered row-energy baseline and that no
-Type-I or common-frequency saving is charged twice.  That global
-packet assertion is still unproved.
-
-Thus (9.1224)--(9.1225) remove the local scalar-projective obstacle and
-identify the exact analytic object inside each packet, but (WRFE) is
-not yet a proved sufficient replacement for (PCDI-SREM) globally.  The
-next finite task is the packet-exhaustive direct-sum normalization; only
-after it is proved can the weighted ratio-fiber estimate be attacked as
-the sole analytic leaf.
+At this stage one must still justify summing (9.1225) over the complete
+packet without turning the shared \(a=h\delta\) convolution or the four
+signed Type blocks into positive coordinates.  Section 9.183 performs
+that normalization.  It shows that only the Hilbert coordinates already
+present in the packet-exhaustive row energy are direct-summed, while
+\(a=h\delta\) and the Type reassembly remain inside the physical row.
 
 The exact-rational helper
 `prime_cross_residue_fixed_packet_ttstar_audit` evaluates the original
 cross-residue block, the inner product in (9.1224), and both sides of
 (9.1225) for arbitrary supplied real rational data.  It marks the
-fixed-packet adapter proved while leaving the global packet adapter,
-(WRFE), (PCDI-SREM), and the coupled-kernel gate false.
+fixed-packet adapter proved while, by this helper alone, leaving the
+global packet adapter, (WRFE), (PCDI-SREM), and the coupled-kernel gate
+false.  Section 9.183 supplies the separate global transfer.
+
+### 9.183 The global packet norm reduces PCDI-SREM to WRFE
+
+Return to the exact residual packet after the companion subpolytope of
+Section 9.177 has been removed.  For one projective atom \(\omega\),
+let \(\lambda\) collect only the already registered Hilbert coordinates
+\((g,D,q,\text{dyadic row coordinates},\ldots)\).  The common
+\(a=h\delta\) convolution in (9.1116) is **not** made part of
+\(\lambda\); it remains summed inside the two row profiles.  Likewise,
+the four signed Type blocks in (9.1168) are first reassembled and then
+restricted by the residual cell selector in (PCDI-SREM).
+
+Equations (9.1145), (9.1159), and (9.1224) now give, coefficient by
+coefficient,
+
+\[
+ \boxed{
+ \mathscr S_{\omega}^{\rm rem}
+ =\sum_{\lambda}
+ \left\langle b_{\omega,\lambda}^{\rm rem},
+ H_{\omega,\lambda}^{\rm rem}\right\rangle,
+ \qquad
+ H_{\omega,\lambda}^{\rm rem}(u,v)
+ =\sum_p C_{\omega,\lambda}^{\rm rem}(p)
+ K_{q,p\overline D}(u,v).}
+ \tag{9.1226}
+\]
+
+Here \(C^{\rm rem}(p)\) contains the complete long-row transform,
+pair-dependent scalar weight, and the reassembled residual Type
+coefficient.  The short profile \(b^{\rm rem}(u,v)\) contains its full
+physical \(F/G\), AFE/reflection, and \(h\delta\) dependence.  Thus
+(9.1226) neither freezes nor independently estimates either Möbius row.
+
+Define the two exact energies
+
+\[
+ \begin{aligned}
+ \mathfrak E_{{\rm short},\omega}^{\rm rem}
+ &:=\sum_\lambda
+ \|b_{\omega,\lambda}^{\rm rem}\|_2^2,\\
+ \mathfrak E_{{\rm fib},\omega}^{\rm rem}
+ &:=\sum_\lambda
+ \left\{
+ \varphi(q)\sum_{c\in U(q)}
+ \left|\sum_{p\overline D=c}
+ C_{\omega,\lambda}^{\rm rem}(p)\right|^2
+ -\left|\sum_pC_{\omega,\lambda}^{\rm rem}(p)\right|^2
+ \right\}.
+ \end{aligned}
+ \tag{9.1227}
+\]
+
+By (9.1216), the second line is exactly
+\(\sum_\lambda\|H_{\omega,\lambda}^{\rm rem}\|_2^2\), not an
+upper bound.  Cauchy in the Hilbert direct sum gives
+
+\[
+ \boxed{
+ |\mathscr S_{\omega}^{\rm rem}|^2
+ \leq
+ \mathfrak E_{{\rm short},\omega}^{\rm rem}
+ \mathfrak E_{{\rm fib},\omega}^{\rm rem}.}
+ \tag{9.1228}
+\]
+
+Let \(\rho_\omega\) be the coefficients of the physical smooth
+projective decomposition.  Absorb the phase of \(\rho_\omega\) in the
+second Hilbert factor and take the weighted direct sum.  A **single**
+Cauchy inequality, rather than atomwise absolute values, gives
+
+\[
+ \boxed{
+ \left|\sum_\omega\rho_\omega
+ \mathscr S_{\omega}^{\rm rem}\right|^2
+ \leq
+ \left(\sum_\omega|\rho_\omega|
+ \mathfrak E_{{\rm short},\omega}^{\rm rem}\right)
+ \left(\sum_\omega|\rho_\omega|
+ \mathfrak E_{{\rm fib},\omega}^{\rm rem}\right).}
+ \tag{9.1229}
+\]
+
+This costs precisely the proved projective \(\ell^1\)-norm
+\(\sum_\omega|\rho_\omega|\ll T^\varepsilon\).  Orthogonal projection
+to the common zero frequency and then to the high-order primitive
+sector is a contraction; zero extension and additive/multiplicative
+Parseval show that
+
+\[
+ \sum_\omega|\rho_\omega|
+ \mathfrak E_{{\rm short},\omega}^{\rm rem}
+ \ll_{\varepsilon,W}T^\varepsilon
+ \mathfrak E_{{\rm short,row}}^{\rm rem}
+ \tag{9.1230}
+\]
+
+is a subenergy of the packet-exhaustive Section 9.144 short-row norm.
+This is the same row-energy factor already used in
+\(\mathscr B_{\rm MC}\); no new saving is credited.  The exact
+identities (9.1116) and (9.1165)--(9.1168) verify respectively that the
+\(h\delta\) convolution and signed Type reassembly occurred before
+(9.1229).
+
+For comparison with the occupancy baseline, put
+
+\[
+ \mathfrak E_{{\rm occ},\omega}^{\rm rem}
+ :=\sum_\lambda\varphi(q)n_{\omega,\lambda}^{\max}
+ \sum_p|C_{\omega,\lambda}^{\rm rem}(p)|^2.
+ \tag{9.1231}
+\]
+
+Equation (9.1218) proves
+\(\mathfrak E_{{\rm fib},\omega}^{\rm rem}
+ \leq\mathfrak E_{{\rm occ},\omega}^{\rm rem}\); taking square roots
+in (9.1229) recovers exactly the Section 9.172 occupancy loss.  Hence
+the correctly normalized analytic leaf is
+
+\[
+ \boxed{
+ \sum_\omega|\rho_\omega|
+ \mathfrak E_{{\rm fib},\omega}^{\rm rem}
+ \ll_{\varepsilon,W}T^{-2\eta_{\rm cross}+\varepsilon}
+ \sum_\omega|\rho_\omega|
+ \mathfrak E_{{\rm occ},\omega}^{\rm rem}.}
+ \tag{WRFE}
+\]
+
+The Type-I gain \(\eta_{\rm I,S}\) has already been absorbed into the
+definition of the residual coefficients, so (WRFE) asks only for
+\(2\eta_{\rm cross}\) in the squared energy.  Combining (9.1229)--
+(9.1231) with (9.1208) gives the proved logical implication
+
+\[
+ \boxed{\mathrm{(WRFE)}\quad\Longrightarrow\quad
+        \mathrm{(PCDI\!\text{-}\!SREM)}.}
+ \tag{9.1232}
+\]
+
+This closes the **global packet adapter**, not the analytic gate.
+Estimate (WRFE) remains unproved, and therefore so do (PCDI-SREM),
+(NPIT), bounded \(D\), and the coupled-kernel gate.  The gain is that
+there is no longer an ambiguity about projective separation or an
+unpriced Cauchy step: the sole remaining estimate on this prime
+zero-mode face is the signed ratio-fiber energy (WRFE), with the full
+physical coefficients displayed in (9.1226)--(9.1231).
+
+The exact-rational helper
+`prime_cross_residue_global_packet_ttstar_audit` forms arbitrary finite
+projective families of fixed-packet blocks, verifies their physical
+reassembly, (9.1228)--(9.1229), and the \(\ell^1\)-weighted two-energy
+bound.  Its logical prerequisites separately record the cross-residue
+formula, packet-exhaustive row-energy inclusion, projective \(\ell^1\)
+bound, retained \(h\delta\), and signed Type reassembly.  With those
+proved inputs it marks the global adapter and the implication (9.1232)
+proved, while leaving (WRFE) and every downstream analytic gate false.
+
+### 9.184 The ordinary large sieve closes exactly the separated coefficient class
+
+The global adapter makes it possible to state precisely what an
+ordinary modulus average can and cannot prove.  Fix \(D\), let \(q\) be
+prime, and first suppose that the long coefficient is independent of
+\(q\):
+
+\[
+ C_q(p)=\beta_q\alpha_p,
+ \qquad p\asymp P,quad q\asymp Q.
+ \tag{9.1233}
+\]
+
+Multiplication by \(\overline D\) permutes \(U(q)\).  Multiplicative
+character Parseval therefore gives the exact variance identity
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\varphi(q)\sum_{c\in U(q)}
+ \left|\sum_{p\overline D=c}\alpha_p\right|^2
+ -\left|\sum_p\alpha_p\right|^2\\
+ &\qquad=\sum_{\substack{\chi\bmod q\\\chi\ne\chi_0}}
+ \left|\sum_p\alpha_p\chi(p)\right|^2.
+ \end{aligned}}
+ \tag{9.1234}
+\]
+
+Every nonprincipal character modulo a prime is primitive.  The
+Bombieri--Davenport multiplicative large sieve consequently gives
+
+\[
+ \boxed{
+ \sum_{q\asymp Q\atop q\ {\mathrm{prime}}}
+ |\beta_q|^2\mathfrak E_{q,D}(\alpha)
+ \ll (P+Q^2)T^\varepsilon\sum_{p\asymp P}|\alpha_p|^2,}
+ \tag{9.1235}
+\]
+
+uniformly for \(|\beta_q|\leq T^\varepsilon\); see the
+[multiplicative large-sieve theorem](https://kskedlaya.org/ant/chap-largesieve2.html#theorem-16-2).
+A subpolynomial-projective sum of separated atoms has the same bound by
+Minkowski in the character \(L^2\)-space, with the square of its
+projective \(\ell^1\)-norm absorbed into \(T^\varepsilon\).
+
+Write \(P=T^{\sigma_L}\), \(Q=T^{\sigma_S}\), with
+\(\sigma_L\geq\sigma_S\).  The occupancy majorant in (9.1231), summed
+over \(q\asymp Q\), has exponent
+
+\[
+ E_{\rm occ}=\sigma_L+\sigma_S,
+ \tag{9.1236}
+\]
+
+apart from the common coefficient energy.  The right side of (9.1235)
+has exponent
+
+\[
+ E_{\rm LS}=\max\{\sigma_L,2\sigma_S\}.
+ \tag{9.1237}
+\]
+
+Thus the available energy saving is
+
+\[
+ \boxed{
+ \eta_{\rm LS}^{(2)}
+ =\sigma_L+\sigma_S-max\{\sigma_L,2\sigma_S\}.}
+ \tag{9.1238}
+\]
+
+On the physical conductor-imbalance wedge,
+\(3/2\leq\sigma_S<\sigma_L\leq2\), so \(Q^2\geq P\) and
+
+\[
+ \boxed{
+ \eta_{\rm LS}^{(2)}=\sigma_L-\sigma_S
+ \geq2\eta_{\rm imb}\geq2\eta_{\rm cross}.}
+ \tag{9.1239}
+\]
+
+At the extreme face this is \(1/2=2(1/4)\), exactly the required
+energy saving.  Consequently (9.1235) proves (WRFE) on every residual
+cell whose long coefficient has a packet-exhaustive
+subpolynomial-projective separation of the form (9.1233).  This is a
+genuine published-coverage row for the entire exponent polytope, but
+with a decisive coefficient-class hypothesis.
+
+That hypothesis is not presently verified for the physical row.  Its
+literal scalar in (9.1226) contains
+
+\[
+ (P_{>B,p}V_{\omega,g,D;p}^{(0)})(D\overline q_p),
+ \tag{9.1240}
+\]
+
+whose evaluation point moves with \(q\).  Treating (9.1240) as an
+arbitrary \(q\)-dependent coefficient cannot work.  Indeed, for each
+prime \(q\), choose \(n\) long primes in one unit residue class and
+give them equal weight.  Then all coefficients occupy one ratio fiber,
+and (9.1216) gives
+
+\[
+ \boxed{
+ \mathfrak E_{q,D}=(\varphi(q)-1)n^2,
+ \qquad
+ \mathfrak E_{q,D}^{\rm occ}=\varphi(q)n^2,
+ \qquad
+ \frac{\mathfrak E_{q,D}}
+      {\mathfrak E_{q,D}^{\rm occ}}
+ =1-\frac1{\varphi(q)}.}
+ \tag{9.1241}
+\]
+
+Thus the negative rank-one term in (9.1216) does not give a power
+saving for arbitrary level-dependent rows.  Formula (9.1241) is only a
+coefficient-class obstruction: it does not show that the literal
+physical transforms (9.1240) saturate.  It proves that the remaining
+argument must use their first centered incidence
+\(p\mid qm+Dn\), together with the retained Type/Möbius and
+\(a=h\delta\) structure.  A stronger large sieve uniform in arbitrary
+\(C_q(p)\) cannot close (WRFE).
+
+The helper `separated_ratio_fiber_large_sieve_polytope_audit` records
+(9.1236)--(9.1239), the level-independence and projective-factor
+hypotheses, and the exact required energy saving.  It marks the
+separated coefficient class covered but never promotes the literal
+level-dependent physical row.  The helper
+`level_dependent_ratio_fiber_saturation_audit` verifies (9.1241) on
+arbitrary supplied same-fiber prime supports and leaves (WRFE),
+(PCDI-SREM), and the coupled-kernel gate false.
+
+### 9.185 WRFE is a centered short-shift two-Type master
+
+The remaining level dependence can be exposed without another
+completion.  Fix one residual physical block
+\(\lambda=(\omega,g,D,q,\ldots)\), abbreviate
+\(C_\lambda^{\rm rem}(p)\) to \(C(p)\), and define the ordered short-
+shift correlation
+
+\[
+ \boxed{
+ \mathcal C_\lambda(r)
+ :=\sum_{\substack{p_1,p_2\\p_2-p_1=rq}}
+ C(p_1)\overline{C(p_2)}.}
+ \tag{9.1242}
+\]
+
+Because \(D\in U(q)\), equality of the ratios
+\(p_1\overline D=p_2\overline D\pmod q\) is exactly the condition in
+(9.1242).  Finite regrouping of (9.1227) therefore gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathfrak E_{{\rm fib},\lambda}^{\rm rem}
+ ={}&\underbrace{\varphi(q)\mathcal C_\lambda(0)}
+          _{\mathfrak D_\lambda}\;+
+ \underbrace{\left\{
+ \varphi(q)\sum_{r\ne0}\mathcal C_\lambda(r)
+ -\left|\sum_pC(p)\right|^2\right\}}
+          _{\mathfrak R_\lambda^{\rm shift}}.
+ \end{aligned}}
+ \tag{9.1243}
+\]
+
+There is no boundary error: the support condition in (9.1242) simply
+requires both primes to remain in their original dyadic interval.  If
+\(p_i\asymp P\) and \(q\asymp Q\), then
+
+\[
+ \boxed{|r|\ll P/Q=T^{\sigma_L-\sigma_S}\leq T^{1/2}.}
+ \tag{9.1244}
+\]
+
+The rank-one subtraction in (9.1243) belongs to the centered nonzero-
+shift remainder.  Moving it into a separate positive error, or simply
+deleting it, changes the problem and can lose the only cancellation
+between the progression mean and the nonzero shifts.
+
+Now retain the exact residual Type reassembly on the long row:
+
+\[
+ C(p)=C^{\rm I}(p)+C^{\rm II}(p).
+ \tag{9.1245}
+\]
+
+The superscript in (9.1245) refers to the internal \(G\)-lift Type
+argument from (9.1163)--(9.1165), not to a second split of the active
+prime conductor \(p\); its conductor Möbius sign is constant on this
+prime face, as in Section 9.170.
+
+The `small` term is absent on the top physical support, and the
+short-side companion cells already proved in Section 9.177 have been
+removed by the residual selector.  For
+\(\alpha,\beta\in\{{\rm I},{\rm II}\}\), put
+
+\[
+ \mathcal C_\lambda^{\alpha,\beta}(r)
+ :=\sum_{p_2-p_1=rq}
+ C^\alpha(p_1)\overline{C^\beta(p_2)}.
+ \tag{9.1246}
+\]
+
+Then, before any absolute value,
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathcal C_\lambda(r)
+ &=\sum_{\alpha,\beta}
+   \mathcal C_\lambda^{\alpha,\beta}(r),\\
+ \left|\sum_pC(p)\right|^2
+ &=\sum_{\alpha,\beta}
+ \left(\sum_pC^\alpha(p)\right)
+ \overline{\left(\sum_pC^\beta(p)\right)}.
+ \end{aligned}}
+ \tag{9.1247}
+\]
+
+Thus all four I--I, I--II, II--I, and II--II blocks occur in both
+parts of the centered remainder.  The original \(a=h\delta\), short-
+row Type/Möbius weight, AFE/reflection label, and all projective
+coordinates remain inside \(C^\alpha\) and the companion short-row
+energy from (9.1229).  Formula (9.1247) is not a one-Möbius or
+blockwise-positive enlargement.
+
+On a fixed dyadic residual cell put
+\(n_{\max}=T^{\sigma_L-\sigma_S+o(1)}\) and write
+\(\eta=\eta_{\rm cross}\).  Since the occupancy energy is
+\(n_{\max}\mathfrak D\), (WRFE) is equivalent, up to the registered
+\(T^\varepsilon\) packet loss, to
+
+\[
+ \boxed{
+ \sum_{\omega,\lambda}|\rho_\omega|
+ \mathfrak R_\lambda^{\rm shift}
+ \ll_{\varepsilon,W}
+ \left(T^{-2\eta+\varepsilon}n_{\max}-1\right)
+ \sum_{\omega,\lambda}|\rho_\omega|
+ \mathfrak D_\lambda.}
+ \tag{CSSM}
+\]
+
+The factor is nonnegative in powers because
+\(2\eta_{\rm cross}\leq\sigma_L-\sigma_S\).  At the extreme face,
+\(n_{\max}=T^{1/2+o(1)}\) and \(2\eta=1/2\), so (CSSM) reduces to
+
+\[
+ \boxed{
+ \sum_{\omega,\lambda}|\rho_\omega|
+ \mathfrak R_\lambda^{\rm shift}
+ \ll_{\varepsilon,W}T^\varepsilon
+ \sum_{\omega,\lambda}|\rho_\omega|
+ \mathfrak D_\lambda.}
+ \tag{9.1248}
+\]
+
+This is the diagonal-scale formulation of the missing estimate: a
+signed average of shifts \(|r|\leq T^{1/2}\), with all four Type blocks
+and the rank-one subtraction reassembled.  The separated coefficient
+class is covered by Section 9.184.  For the literal moving evaluation
+(9.1240), no published two-Möbius shifted-correlation theorem audited
+here proves (CSSM).  Harper's general-sequence BDH expansion
+([equation (2.3)](https://arxiv.org/abs/2412.19644)) is for one fixed
+coefficient sequence across the modulus average; it does not accept
+the moving family \(C_q(p)\).  The August 2026 growing-shift logarithmic
+Chowla estimate is uniform only for
+\(h\leq(\log x)^\kappa\), \(\kappa<1/700\), and is logarithmically
+weighted ([main statement](https://arxiv.org/abs/2608.23500)); here
+\(h=rq\) has a positive-power range and the required conclusion is an
+ordinary diagonal-size physical correlation.  Hence (CSSM), (WRFE),
+(PCDI-SREM), and the coupled-kernel gate remain unproved.
+
+The exact-rational helper `ratio_fiber_short_shift_master_audit`
+constructs the complete ordered \(r\)-histogram, verifies (9.1243),
+expands both the shift sum and rank-one subtraction into the four
+ordered Type blocks, and records the largest finite shift.  It marks
+the finite reassembly proved while leaving (CSSM) and every analytic
+downstream gate false.
 
 ## 10. What has and has not been proved
 
@@ -26100,20 +26529,19 @@ outer weights are summed with their signs inside determinant fibers
 \(q\mid p_1D_2-p_2D_1\) before squaring.  The old maximum-occupancy
 loss is only the Cauchy majorant (9.1218).  This is a proved finite
 algebraic improvement in the formulation of the target, not an
-analytic estimate: the global packet-norm reassembly and the weighted
-ratio-fiber energy saving (WRFE) both remain unproved.
+analytic estimate.  Section 9.183 proves the global packet-norm
+reassembly; the weighted ratio-fiber energy saving (WRFE) remains
+unproved.
 
-Section 9.181 then removes that scalar adapter as a logical prerequisite.
+Section 9.181 removes that scalar adapter as an algebraic prerequisite
+for arbitrary outer-dependent profiles.
 For arbitrary literal outer-dependent profiles, (9.1221) expresses the
 centered Gram entry as one same-slope line correlation, two density-
 correction line correlations, and one full-grid correlation.  Its sum
 is exactly the direct physical centered-profile energy (9.1222).
-Consequently the next candidate adapter-free leaf is (WPLG), which asks
-for the remaining doubled energy saving on this weighted line Gram.
-The coefficient-by-coefficient physical \(TT^*\) identification and
-baseline normalization have not yet been proved, so (WPLG) is not yet
-registered as an implication to (PCDI-SREM); its analytic estimate is
-also unproved.
+At that section boundary WPLG is only a candidate weighted line-Gram
+leaf.  Section 9.183 shows that the literal physical packet has the
+more specialized scalar form, so WPLG is not needed to register WRFE.
 
 Section 9.182 then specializes back to the actual factorization in
 (9.1145).  For fixed \((\omega,g,D,q)\) and all shared physical labels,
@@ -26121,9 +26549,41 @@ the short profile is common to the long-prime family, so the latter is
 summed inside \(H_\lambda\) before the single Cauchy step.  Its norm is
 exactly the signed scalar ratio-fiber energy (9.1225).  This proves the
 fixed-packet scalar \(TT^*\) adapter without a projective-rank
-hypothesis.  It does not yet justify orthogonalizing the shared
-\(a=h\delta\), Type, AFE/reflection, and dyadic packet labels: the
-packet-exhaustive direct-sum normalization and (WRFE) remain unproved.
+hypothesis.  By itself it does not justify the global packet norm;
+Section 9.183 proves that normalization without orthogonalizing the
+shared \(a=h\delta\) or signed Type blocks.  The analytic estimate
+(WRFE) remains unproved.
+
+Section 9.183 proves that remaining normalization.  The physical
+cross-residue sum is one weighted Hilbert direct sum (9.1226)--(9.1229):
+the shared \(h\delta\) convolution and signed residual Type blocks stay
+inside the row coefficients, while only previously registered packet
+coordinates are orthogonalized.  The short factor is a subenergy of
+the Section 9.144 row norm, and the other factor is exactly the signed
+ratio-fiber energy.  Therefore (WRFE) is now a rigorously registered
+sufficient leaf for (PCDI-SREM), with energy saving
+\(2\eta_{\rm cross}\).  The adapter is proved; (WRFE) itself remains
+unproved, so the coupled-kernel gate is still open.
+
+Section 9.184 gives the first published analytic coverage of the new
+fiber-energy leaf.  Character Parseval plus the multiplicative large
+sieve bounds every level-independent separated atom by \(P+Q^2\).
+Across the physical polytope this saves exactly
+\(\sigma_L-\sigma_S\), at least the required
+\(2\eta_{\rm cross}\), so separated atoms satisfy (WRFE).  The actual
+coefficient (9.1240) is not known to have such a separation.  Moreover,
+the same-fiber witness (9.1241) saturates the occupancy bound up to a
+constant for arbitrary level-dependent coefficients.  Therefore the
+unproved remainder is now specifically the physical moving-evaluation
+part of WRFE, not the separated large-sieve sector.
+
+Section 9.185 rewrites that moving-evaluation remainder as the exact
+centered short-shift master (9.1243).  The shifts satisfy
+\(|r|\leq T^{1/2+o(1)}\), and both their correlations and the negative
+rank-one term retain all four ordered Type blocks before absolute
+values.  At the extreme face the missing estimate is precisely the
+diagonal-size bound (9.1248).  This finite Type/shift reduction is
+proved; the analytic centered short-shift estimate (CSSM) is not.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent

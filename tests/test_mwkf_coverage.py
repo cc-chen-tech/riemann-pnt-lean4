@@ -8822,7 +8822,7 @@ def test_short_prime_global_D_ttstar_is_signed_ratio_fiber_energy() -> None:
     assert r"\varphi(q)\mathbf1_{c=c'}-1" in text
     assert r"q\mid p_1D_2-p_2D_1" in text
     assert "(WRFE)" in text
-    assert "global packet norm reassembly nor (WRFE) has been" in text
+    assert "Section 9.183 proves it and replaces (WRFE-local)" in text
 
 
 def test_short_prime_weighted_profile_ttstar_needs_no_scalar_adapter() -> None:
@@ -8920,8 +8920,190 @@ def test_prime_cross_residue_fixed_packet_has_exact_scalar_ttstar_adapter() -> N
         "scalar adapter"
     ) in text
     assert r"H_\lambda(u,v)&:=\sum_pC_\lambda(p)K_{q,c_p}(u,v)" in text
-    assert "packet-exhaustive direct-sum normalization" in text
+    assert "Section 9.183 proves its global packet normalization" in text
     assert "global packet adapter" in text
+
+
+def test_prime_cross_residue_global_packet_norm_reassembles_before_cauchy() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_cross_residue_global_packet_ttstar_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        projective_packets=(
+            (
+                F(2),
+                (
+                    (
+                        5,
+                        1,
+                        (((1, 3), F(1)),),
+                        (
+                            (7, F(1)),
+                            (17, F(-1)),
+                            (23, F(2)),
+                            (13, F(3)),
+                        ),
+                    ),
+                ),
+            ),
+            (
+                F(-1),
+                (
+                    (
+                        3,
+                        1,
+                        (((1, 1), F(1)),),
+                        ((7, F(1)), (13, F(-1)), (5, F(2))),
+                    ),
+                ),
+            ),
+        ),
+        physical_cross_residue_formula_verified=True,
+        packet_exhaustive_row_energy_inclusion_verified=True,
+        projective_l1_bound_verified=True,
+        shared_product_label_retained_verified=True,
+        signed_type_reassembly_verified=True,
+    )
+    assert result["packet_block_values"] == ((F(15, 4),), (F(-1),))
+    assert result["projective_packet_values"] == (F(15, 4), F(-1))
+    assert result["physical_reassembled_sum"] == F(17, 2)
+    assert result["weighted_short_profile_energy"] == F(3)
+    assert result["weighted_ratio_fiber_energy"] == F(154)
+    assert result["global_cauchy_upper_bound_squared"] == F(462)
+    assert result["physical_sum_within_global_cauchy_bound"]
+    assert result["all_long_prime_sums_precede_global_cauchy"]
+    assert result["projective_weights_cost_only_their_l1_norm"]
+    assert result["finite_direct_sum_ttstar_identity_proved"]
+    assert result["helper_does_not_split_shared_product_label"]
+    assert result["helper_does_not_split_signed_type_blocks"]
+    assert result["global_packet_ttstar_adapter_proved"]
+    assert result["WRFE_is_registered_sufficient_leaf"]
+    assert not result["weighted_ratio_fiber_energy_bound_proved"]
+    assert not result["PCDI_SREM_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.183 The global packet norm reduces PCDI-SREM to WRFE"
+    ) in text
+    assert r"\tag{WRFE-local}" in text
+    assert text.count(r"\tag{WRFE}") == 1
+    assert r"\mathrm{(WRFE)}\quad\Longrightarrow\quad" in text
+    assert "This closes the **global packet adapter**, not the analytic gate" in text
+
+
+def test_separated_ratio_fiber_coefficients_are_covered_by_large_sieve() -> None:
+    audit = getattr(
+        coverage_audit,
+        "separated_ratio_fiber_large_sieve_polytope_audit",
+        None,
+    )
+    assert audit is not None
+    extreme = audit(
+        long_prime_exponent=F(2),
+        short_prime_exponent=F(3, 2),
+        required_linear_gain_exponent=F(1, 4),
+        level_independent_long_coefficients_verified=True,
+        bounded_projective_q_factor_verified=True,
+    )
+    assert extreme["occupancy_energy_exponent"] == F(7, 2)
+    assert extreme["large_sieve_energy_exponent"] == F(3)
+    assert extreme["large_sieve_energy_saving_exponent"] == F(1, 2)
+    assert extreme["required_energy_saving_exponent"] == F(1, 2)
+    assert extreme["separated_coefficient_cell_covered"]
+    assert extreme["multiplication_by_D_is_a_residue_permutation"]
+    assert extreme["nonprincipal_characters_at_prime_q_are_primitive"]
+    assert not extreme["physical_level_dependent_WRFE_proved"]
+    assert not extreme["PCDI_SREM_proved"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.184 The ordinary large sieve closes exactly the separated "
+        "coefficient class"
+    ) in text
+    assert r"\eta_{\rm LS}^{(2)}=\sigma_L-\sigma_S" in text
+    assert "multiplicative large-sieve theorem" in text
+    assert r"1-\frac1{\varphi(q)}" in text
+
+    nonseparated = audit(
+        long_prime_exponent=F(2),
+        short_prime_exponent=F(3, 2),
+        required_linear_gain_exponent=F(1, 4),
+        level_independent_long_coefficients_verified=False,
+        bounded_projective_q_factor_verified=True,
+    )
+    assert not nonseparated["separated_coefficient_cell_covered"]
+    assert nonseparated["power_ledger_would_cover_if_separated"]
+
+
+def test_arbitrary_level_dependent_ratio_fibers_saturate_occupancy() -> None:
+    audit = getattr(
+        coverage_audit,
+        "level_dependent_ratio_fiber_saturation_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        determinant_shift=1,
+        supported_long_primes=(7, 17),
+        weights=(F(1), F(1)),
+    )
+    assert result["single_ratio_fiber"]
+    assert result["signed_ratio_fiber_energy"] == F(12)
+    assert result["occupancy_cauchy_bound"] == F(16)
+    assert result["energy_to_occupancy_ratio"] == F(3, 4)
+    assert result["constant_proportion_saturation"]
+    assert not result["uniform_power_saving_for_level_dependent_coefficients"]
+    assert not result["physical_level_dependent_WRFE_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_ratio_fiber_energy_is_a_centered_short_shift_master() -> None:
+    audit = getattr(
+        coverage_audit,
+        "ratio_fiber_short_shift_master_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        determinant_shift=1,
+        long_rows=(
+            (7, F(1), F(2), F(-1)),
+            (17, F(-1), F(-3), F(2)),
+            (23, F(2), F(1), F(1)),
+            (13, F(3), F(4), F(-1)),
+        ),
+    )
+    assert result["raw_coefficients_reassemble_I_II"]
+    assert result["short_shift_histogram"] == {
+        -2: F(5),
+        0: F(15),
+        2: F(5),
+    }
+    assert result["diagonal_shift_weight"] == F(15)
+    assert result["nonzero_shift_weight"] == F(10)
+    assert result["rank_one_subtraction"] == F(25)
+    assert result["centered_nonzero_shift_remainder"] == F(15)
+    assert result["ratio_fiber_energy"] == F(75)
+    assert result["diagonal_plus_centered_nonzero_equals_fiber_energy"]
+    assert result["all_four_ordered_type_blocks_reassemble_before_absolute_value"]
+    assert result["rank_one_subtraction_retains_type_cross_terms"]
+    assert result["maximum_short_shift"] == 2
+    assert not result["centered_short_shift_bound_proved"]
+    assert not result["WRFE_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.185 WRFE is a centered short-shift two-Type master"
+    ) in text
+    assert r"p_2-p_1=rq" in text
+    assert r"\tag{CSSM}" in text
+    assert "negative rank-one term" in text
+    assert "Hence (CSSM), (WRFE)," in text
+    assert "(PCDI-SREM), and the coupled-kernel gate remain unproved" in text
 
 
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
