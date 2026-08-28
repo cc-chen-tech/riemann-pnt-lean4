@@ -8615,6 +8615,121 @@ def test_prime_incidence_determinant_literature_coverage_is_documented() -> None
     assert "validates the determinant geometry but does not prove (PCDI)" in text
 
 
+def test_prime_incidence_type_I_factorization_and_short_side_pv_gain() -> None:
+    factorization = getattr(
+        coverage_audit,
+        "prime_incidence_type_I_factorization_audit",
+        None,
+    )
+    assert factorization is not None, "prime incidence Type-I factorization is missing"
+    exact = factorization(
+        short_cutoff_u=2,
+        short_cutoff_v=3,
+        weights=tuple((value, F(value + 1, value + 2)) for value in range(1, 31)),
+    )
+    assert exact["type_I_coefficients_reassemble_exactly"]
+    assert exact["quotient_residual_factor_has_no_mobius_coefficient"]
+    assert not exact["companion_factor_mobius_coefficient_removed"]
+    assert exact["mixed_endpoint_remainder_present"] is False
+
+    companion_factorization = getattr(
+        coverage_audit,
+        "prime_incidence_type_I_companion_factorization_audit",
+        None,
+    )
+    assert companion_factorization is not None
+    companion_exact = companion_factorization(
+        short_cutoff_u=2,
+        short_cutoff_v=3,
+        rows=((5, 2, F(2, 3)), (7, 6, F(3, 5)), (10, 3, F(5, 7))),
+    )
+    assert companion_exact["full_companion_factorization_reassembles_exactly"]
+    assert companion_exact["direct_coefficients"] == {
+        (5, 2): F(2, 3),
+        (7, 6): F(-3, 5),
+        (10, 3): F(-5, 7),
+    }
+    assert companion_exact["companion_mobius_signs_retained"] == (-1, 1, -1)
+    assert not companion_exact["companion_factor_mobius_coefficient_removed"]
+
+    polytope = getattr(
+        coverage_audit,
+        "prime_incidence_short_type_I_pv_polytope_audit",
+        None,
+    )
+    assert polytope is not None, "short-side Type-I PV polytope audit is missing"
+    result = polytope(
+        internal_type_length_exponent=F(3),
+        first_short_cutoff_exponent=F(1, 2),
+        second_short_cutoff_exponent=F(1, 2),
+        long_active_primitive_conductor_exponent=F(2),
+        short_active_primitive_conductor_exponent=F(3, 2),
+        long_active_imprimitive_cofactor_exponent=F(0),
+        short_active_imprimitive_cofactor_exponent=F(0),
+        short_companion_factor_exponent=F(1, 2),
+        physical_maximum_primitive_conductor_exponent=F(2),
+        packet_exhaustive_residual_bv_adapter_verified=True,
+    )
+    assert result["short_type_I_smooth_group_exponent"] == F(7, 4)
+    assert result["short_companion_fourth_moment_exponent"] == F(4)
+    assert result["generic_short_type_fourth_moment_exponent"] == F(12)
+    assert result["type_I_short_fourth_moment_exponent"] == F(11)
+    assert result["short_type_I_fourth_moment_gain_exponent"] == F(1)
+    assert result["usable_bilinear_gain_exponent"] == F(1, 4)
+    assert result["required_conductor_imbalance_gain_exponent"] == F(1, 4)
+    assert result["covered_type_I_short_companion_subpolytope"]
+    assert result["maximum_uniformly_covered_companion_exponent"] == F(1, 2)
+    assert not result["type_I_cell_retained_in_PCDI_SREM"]
+    assert result["short_side_type_II_cells_retained_in_PCDI_SREM"]
+    assert not result["entire_short_side_type_I_blocks_covered"]
+    assert not result["short_side_type_II_bound_proved"]
+    assert not result["PCDI_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_prime_incidence_short_type_I_pv_gain_covers_the_oriented_wedge() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_incidence_short_type_I_pv_polytope_audit",
+        None,
+    )
+    assert audit is not None, "short-side Type-I PV polytope audit is missing"
+    result = audit(
+        internal_type_length_exponent=F(3),
+        first_short_cutoff_exponent=F(1, 2),
+        second_short_cutoff_exponent=F(1, 2),
+        long_active_primitive_conductor_exponent=F(19, 10),
+        short_active_primitive_conductor_exponent=F(9, 5),
+        long_active_imprimitive_cofactor_exponent=F(0),
+        short_active_imprimitive_cofactor_exponent=F(0),
+        short_companion_factor_exponent=F(1, 5),
+        physical_maximum_primitive_conductor_exponent=F(2),
+        packet_exhaustive_residual_bv_adapter_verified=True,
+    )
+    assert result["usable_bilinear_gain_exponent"] == F(1, 10)
+    assert result["required_conductor_imbalance_gain_exponent"] == F(1, 20)
+    assert result["gain_margin_exponent"] == F(1, 20)
+    assert result["covered_type_I_short_companion_subpolytope"]
+    assert result["maximum_uniformly_covered_companion_exponent"] == F(3, 10)
+
+    outside = audit(
+        internal_type_length_exponent=F(3),
+        first_short_cutoff_exponent=F(1, 2),
+        second_short_cutoff_exponent=F(1, 2),
+        long_active_primitive_conductor_exponent=F(2),
+        short_active_primitive_conductor_exponent=F(3, 2),
+        long_active_imprimitive_cofactor_exponent=F(0),
+        short_active_imprimitive_cofactor_exponent=F(0),
+        short_companion_factor_exponent=F(3, 4),
+        physical_maximum_primitive_conductor_exponent=F(2),
+        packet_exhaustive_residual_bv_adapter_verified=True,
+    )
+    assert outside["usable_bilinear_gain_exponent"] == F(1, 8)
+    assert not outside["covered_type_I_short_companion_subpolytope"]
+    assert outside["type_I_cell_retained_in_PCDI_SREM"]
+    assert outside["short_side_type_II_cells_retained_in_PCDI_SREM"]
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (

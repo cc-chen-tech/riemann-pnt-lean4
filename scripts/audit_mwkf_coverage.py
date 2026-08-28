@@ -25191,6 +25191,308 @@ def prime_centered_incidence_resonant_split_audit(
     }
 
 
+def prime_incidence_type_I_factorization_audit(
+    *,
+    short_cutoff_u: int,
+    short_cutoff_v: int,
+    weights: tuple[tuple[int, Fraction], ...],
+) -> dict[str, object]:
+    """Expand the internal Type-I coefficient with no Möbius remainder.
+
+    For ``n > max(U,V)``, the exact multiplier is
+
+    ``lambda_I(n) = -sum_{bc|n, b<=U, c<=V} mu(b)mu(c)``.
+
+    Writing ``n=b*c*r`` leaves the quotient residual ``r`` with the
+    supplied physical weight but with no additional Möbius coefficient.
+    This does not delete the separate companion factor in ``w=n*p``;
+    that coefficient must remain in the later character moment.  Only
+    ``r`` is eligible for a bounded-variation character-sum estimate
+    after dyadic/Mellin separation.
+    """
+
+    cutoff_u = int(short_cutoff_u)
+    cutoff_v = int(short_cutoff_v)
+    if min(cutoff_u, cutoff_v) <= 0:
+        raise ValueError("both Type-I cutoffs must be positive")
+    if not weights:
+        raise ValueError("at least one internal Type weight is required")
+    boundary = max(cutoff_u, cutoff_v)
+    converted: list[tuple[int, Fraction]] = []
+    seen: set[int] = set()
+    for argument, weight in weights:
+        value = int(argument)
+        if value <= 0 or value in seen:
+            raise ValueError("Type arguments must be distinct positive integers")
+        seen.add(value)
+        converted.append((value, F(weight)))
+
+    direct_coefficients: dict[int, Fraction] = {}
+    factorized_coefficients: dict[int, Fraction] = defaultdict(F)
+    factorized_rows: list[dict[str, object]] = []
+    for value, weight in converted:
+        short_short = sum(
+            _finite_mobius(first) * _finite_mobius(second)
+            for first in _positive_divisors(value)
+            if first <= cutoff_u
+            for second in _positive_divisors(value // first)
+            if second <= cutoff_v
+        )
+        multiplier = -short_short if value > boundary else 0
+        direct_coefficients[value] = F(multiplier) * weight
+        if value <= boundary:
+            continue
+        for first in _positive_divisors(value):
+            if first > cutoff_u:
+                continue
+            for second in _positive_divisors(value // first):
+                if second > cutoff_v:
+                    continue
+                residual = value // (first * second)
+                coefficient = F(
+                    -_finite_mobius(first) * _finite_mobius(second)
+                ) * weight
+                factorized_coefficients[value] += coefficient
+                factorized_rows.append(
+                    {
+                        "type_argument": value,
+                        "first_short_factor": first,
+                        "second_short_factor": second,
+                        "residual_factor": residual,
+                        "coefficient": coefficient,
+                        "residual_mobius_coefficient": 1,
+                    }
+                )
+
+    for value in seen:
+        factorized_coefficients.setdefault(value, F(0))
+    return {
+        "short_cutoff_u": cutoff_u,
+        "short_cutoff_v": cutoff_v,
+        "small_boundary": boundary,
+        "direct_type_I_coefficients": direct_coefficients,
+        "factorized_type_I_coefficients": dict(factorized_coefficients),
+        "factorized_rows": tuple(factorized_rows),
+        "type_I_coefficients_reassemble_exactly": bool(
+            direct_coefficients == dict(factorized_coefficients)
+        ),
+        "quotient_residual_factor_has_no_mobius_coefficient": all(
+            int(row["residual_mobius_coefficient"]) == 1
+            for row in factorized_rows
+        ),
+        "companion_factor_mobius_coefficient_removed": False,
+        "mixed_endpoint_remainder_present": False,
+        "type_I_character_sum_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def prime_incidence_type_I_companion_factorization_audit(
+    *,
+    short_cutoff_u: int,
+    short_cutoff_v: int,
+    rows: tuple[tuple[int, int, Fraction], ...],
+) -> dict[str, object]:
+    """Verify the Type-I identity while retaining the companion sign.
+
+    A row is ``(n, p, weight)`` on the squarefree coprime support
+    ``w=n*p``.  Expanding only ``lambda_I(n)`` gives
+
+    ``-mu(p) * sum_{bc|n, b<=U, c<=V} mu(b)mu(c)``.
+
+    Thus the quotient ``n/(bc)`` has no Möbius coefficient, while the
+    independent factor ``mu(p)`` remains in every factorized row.
+    """
+
+    cutoff_u = int(short_cutoff_u)
+    cutoff_v = int(short_cutoff_v)
+    if min(cutoff_u, cutoff_v) <= 0:
+        raise ValueError("both Type-I cutoffs must be positive")
+    if not rows:
+        raise ValueError("at least one companion row is required")
+    boundary = max(cutoff_u, cutoff_v)
+    direct: dict[tuple[int, int], Fraction] = {}
+    factorized: dict[tuple[int, int], Fraction] = defaultdict(F)
+    expanded_rows: list[dict[str, object]] = []
+    companion_signs: list[int] = []
+    for type_argument, companion_factor, weight in rows:
+        n = int(type_argument)
+        p = int(companion_factor)
+        key = (n, p)
+        if min(n, p) <= 0 or key in direct:
+            raise ValueError("companion rows must have distinct positive labels")
+        if gcd(n, p) != 1 or _finite_mobius(n * p) == 0:
+            raise ValueError("each product n*p must be squarefree with (n,p)=1")
+        mu_p = _finite_mobius(p)
+        companion_signs.append(mu_p)
+        short_short = sum(
+            _finite_mobius(first) * _finite_mobius(second)
+            for first in _positive_divisors(n)
+            if first <= cutoff_u
+            for second in _positive_divisors(n // first)
+            if second <= cutoff_v
+        )
+        multiplier = -short_short if n > boundary else 0
+        direct[key] = F(mu_p * multiplier) * F(weight)
+        if n <= boundary:
+            factorized[key] = F(0)
+            continue
+        for first in _positive_divisors(n):
+            if first > cutoff_u:
+                continue
+            for second in _positive_divisors(n // first):
+                if second > cutoff_v:
+                    continue
+                residual = n // (first * second)
+                coefficient = F(
+                    -mu_p * _finite_mobius(first) * _finite_mobius(second)
+                ) * F(weight)
+                factorized[key] += coefficient
+                expanded_rows.append(
+                    {
+                        "type_argument": n,
+                        "companion_factor": p,
+                        "first_short_factor": first,
+                        "second_short_factor": second,
+                        "quotient_residual_factor": residual,
+                        "companion_mobius_coefficient": mu_p,
+                        "coefficient": coefficient,
+                    }
+                )
+    return {
+        "short_cutoff_u": cutoff_u,
+        "short_cutoff_v": cutoff_v,
+        "small_boundary": boundary,
+        "direct_coefficients": direct,
+        "factorized_coefficients": dict(factorized),
+        "factorized_rows": tuple(expanded_rows),
+        "companion_mobius_signs_retained": tuple(companion_signs),
+        "full_companion_factorization_reassembles_exactly": bool(
+            direct == dict(factorized)
+        ),
+        "quotient_residual_factor_has_no_mobius_coefficient": True,
+        "companion_factor_mobius_coefficient_removed": False,
+        "mixed_endpoint_remainder_present": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def prime_incidence_short_type_I_pv_polytope_audit(
+    *,
+    internal_type_length_exponent: Fraction,
+    first_short_cutoff_exponent: Fraction,
+    second_short_cutoff_exponent: Fraction,
+    long_active_primitive_conductor_exponent: Fraction,
+    short_active_primitive_conductor_exponent: Fraction,
+    long_active_imprimitive_cofactor_exponent: Fraction,
+    short_active_imprimitive_cofactor_exponent: Fraction,
+    short_companion_factor_exponent: Fraction,
+    physical_maximum_primitive_conductor_exponent: Fraction,
+    packet_exhaustive_residual_bv_adapter_verified: bool,
+) -> dict[str, object]:
+    """Record the short-side Type-I Pólya--Vinogradov gain.
+
+    After the exact Type-I expansion, dyadic short factors of total
+    exponent at most ``beta+chi`` are summed trivially.  The quotient
+    residual has no Möbius coefficient, so its bounded-variation
+    character sum costs at most the square root of the short prime
+    conductor.  The companion factor ``p`` in ``w=n*p`` is not deleted:
+    its divisor-bounded fourth moment is retained explicitly.  The
+    smooth-group transform exponent is
+
+    ``min(u-varpi, beta+chi+sigma_short/2)``.
+
+    A dyadic prime-conductor family and all of its primitive characters
+    have combined exponent ``2*sigma_short``.  Comparing the resulting
+    pointwise fourth moment with the ordinary Type fourth moment gives a
+    gain whose quarter is the usable gain in the final bilinear form.
+    """
+
+    type_length = F(internal_type_length_exponent)
+    cutoff_first = F(first_short_cutoff_exponent)
+    cutoff_second = F(second_short_cutoff_exponent)
+    sigma_long = F(long_active_primitive_conductor_exponent)
+    sigma_short = F(short_active_primitive_conductor_exponent)
+    kappa_long = F(long_active_imprimitive_cofactor_exponent)
+    kappa_short = F(short_active_imprimitive_cofactor_exponent)
+    companion = F(short_companion_factor_exponent)
+    sigma_max = F(physical_maximum_primitive_conductor_exponent)
+    values = (
+        type_length,
+        cutoff_first,
+        cutoff_second,
+        sigma_long,
+        sigma_short,
+        kappa_long,
+        kappa_short,
+        companion,
+        sigma_max,
+    )
+    if min(values) < 0 or type_length == 0:
+        raise ValueError("all exponents must be nonnegative and the Type length positive")
+    if sigma_long < sigma_short:
+        raise ValueError("the conductor cell must be oriented long over short")
+    if sigma_long > sigma_max:
+        raise ValueError("the long primitive conductor exceeds the physical maximum")
+    if companion > type_length:
+        raise ValueError("the companion factor cannot exceed the Type length")
+
+    cutoff_total = cutoff_first + cutoff_second
+    smooth_group = min(
+        type_length - companion,
+        cutoff_total + sigma_short / 2,
+    )
+    companion_fourth = 2 * max(sigma_short, companion) + 2 * companion
+    generic_fourth = 2 * max(sigma_short, type_length) + 2 * type_length
+    type_I_fourth_raw = 4 * smooth_group + companion_fourth
+    type_I_fourth = min(generic_fourth, type_I_fourth_raw)
+    fourth_gain = _positive_part(generic_fourth - type_I_fourth)
+    usable_bilinear_gain = fourth_gain / 4
+    required_imbalance_gain = _positive_part(
+        (sigma_long - sigma_short) / 2 - kappa_long - kappa_short
+    )
+    adapter = bool(packet_exhaustive_residual_bv_adapter_verified)
+    covered = bool(adapter and usable_bilinear_gain >= required_imbalance_gain)
+    maximum_uniform_companion = _positive_part(
+        4
+        - sigma_long
+        - sigma_short
+        + 2 * (kappa_long + kappa_short)
+    )
+    return {
+        "internal_type_length_exponent": type_length,
+        "first_short_cutoff_exponent": cutoff_first,
+        "second_short_cutoff_exponent": cutoff_second,
+        "total_short_factor_exponent": cutoff_total,
+        "long_active_primitive_conductor_exponent": sigma_long,
+        "short_active_primitive_conductor_exponent": sigma_short,
+        "long_active_imprimitive_cofactor_exponent": kappa_long,
+        "short_active_imprimitive_cofactor_exponent": kappa_short,
+        "short_companion_factor_exponent": companion,
+        "physical_maximum_primitive_conductor_exponent": sigma_max,
+        "short_type_I_smooth_group_exponent": smooth_group,
+        "short_companion_fourth_moment_exponent": companion_fourth,
+        "generic_short_type_fourth_moment_exponent": generic_fourth,
+        "raw_type_I_short_fourth_moment_exponent": type_I_fourth_raw,
+        "type_I_short_fourth_moment_exponent": type_I_fourth,
+        "short_type_I_fourth_moment_gain_exponent": fourth_gain,
+        "usable_bilinear_gain_exponent": usable_bilinear_gain,
+        "required_conductor_imbalance_gain_exponent": required_imbalance_gain,
+        "gain_margin_exponent": usable_bilinear_gain - required_imbalance_gain,
+        "maximum_uniformly_covered_companion_exponent": maximum_uniform_companion,
+        "packet_exhaustive_residual_bv_adapter_verified": adapter,
+        "covered_type_I_short_companion_subpolytope": covered,
+        "type_I_cell_retained_in_PCDI_SREM": not covered,
+        "short_side_type_II_cells_retained_in_PCDI_SREM": True,
+        "entire_short_side_type_I_blocks_covered": False,
+        "short_side_type_II_bound_proved": False,
+        "PCDI_proved": False,
+        "NPIT_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def prime_conductor_zero_frequency_polytope_audit(
     *,
     long_conductor_exponent: Fraction,

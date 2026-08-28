@@ -67,6 +67,7 @@
 > | Nine internal Type blocks on the prime incidence face | Section 9.174 inserts the exact small/I/II split into the two internal \(G\)-lifts of (9.1160), without changing either centered density subtraction or either \(F\)-lift.  The product has nine ordered signed blocks and only their sum equals the original physical incidence master.  Fixed-prime Type-I completion removes one local zero dual mode, but does not accept the other moving modulus/profile; FKM/FKMS and Bettin--Chandee likewise do not cover any complete level-dependent block.  The weakest prime-zero-mode obligation is the combined nine-block pre-Cauchy incidence bound (PCDI), not nine separate absolute estimates |
 > | Ambient-to-active scale adapter | Section 9.175 separates the three exponent conventions which cannot be identified: the Section 9.138 ambient reduced-modulus exponent \(\Gamma_i\), the common Type-frequency denominator exponent \(\gamma\), and the active primitive-conductor exponent \(\sigma_i\).  Exactly \(\Gamma_i=\delta_i+\gamma+\sigma_i+\kappa_i\).  On the extreme prime face \((\delta_L,\delta_S,\gamma,\sigma_L,\sigma_S)=(0,1/2,1,2,3/2)\), both ambient exponents remain 3, so both effective \(F\)-lifts still have length exponent 5.  The top internal \(G\)-block has exponent 3 and therefore only four I/II blocks, but neither Type-frequency descent nor the common gcd shortens the physical \(F\)-lift or supplies the missing \(1/4\) power |
 > | Resonant/nonresonant split inside prime incidence | Section 9.176 expands the two local density subtractions exactly, then splits the double-incidence term by one integer determinant \(t\).  The \(t=0\) rows factor into independent primitive ray profiles on \(px=qy+Dz\).  For \(t\ne0\), the two incidence vectors lie in the primitive plane lattice \(\Lambda_{p,q,D}\), their cross product is \(-t(p,-q,-D)\), and \(|t|\) is the exact index of the sublattice they generate.  In a canonical basis the remainder is therefore a fixed-determinant \(2\times2\) integer-matrix family.  Hence the full prime zero-mode is an explicit resonant ray-profile term, including all three density compensations, plus a literal Hecke-type \(t\ne0\) incidence remainder.  These are finite identities; neither analytic part is bounded yet |
+> | Short-side Type-I companion subpolytope | Section 9.177 opens the internal Type-I multiplier before the character estimate, but keeps the separate companion coefficient \(\mu(p)\) from (9.1038).  Only the quotient residual is a bounded-variation character sum.  If the companion length is \(T^{\varpi}\), the short-row fourth moment is bounded by \(4E_{\rm sm}+2\max(\sigma_S,\varpi)+2\varpi\), capped by the generic moment, where \(E_{\rm sm}=\min\{3-\varpi,1+\sigma_S/2\}\).  On the physical imbalance wedge this covers the short-side Type-I cells with \(\varpi\leq(4-\sigma_L-\sigma_S+2\kappa_L+2\kappa_S)_+\), hence only \(\varpi\leq1/2\) at the extreme face.  It does not close an entire I--I or II--I block.  The remaining signed gate (PCDI-SREM) retains every short-side Type-II cell and every short-side Type-I cell above that threshold |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -25233,6 +25234,192 @@ extraction, ray factorization, and lattice adapter proved, but both analytic
 bounds, (PCDI), (NPIT), bounded \(D\), and the coupled-kernel gate
 remain false.
 
+### 9.177 Type I opens one PV variable but retains the companion Möbius factor
+
+The four top-face blocks in (9.1176) do not have equal difficulty, but
+the Type-I identity must be inserted with the complete coefficient from
+(9.1038).  Orient the prime conductors so that the long conductor has
+exponent \(\sigma_L\), the short conductor has exponent \(\sigma_S\),
+and write the internal product length, the two cutoffs, and the
+companion length as
+
+\[
+ w=np=T^u,\qquad U=T^\beta,\qquad V=T^\chi,
+ \qquad p=T^\varpi.
+ \tag{9.1196}
+\]
+
+If \(n=bcr\), then
+\(\beta+\chi+\upsilon+\varpi=u\) on a dyadic atom.  On the squarefree
+coprime support of (9.1038), the pointwise identity (9.934) gives the
+complete finite formula
+
+\[
+ \boxed{
+ \sum_{n,p}\mu(p)\lambda_{\rm I}(n)B(np)\xi(np)
+ =-\sum_{\substack{b\leq U,\ c\leq V}}
+ \mu(b)\mu(c)\xi(bc)
+ \sum_{r,p}\mu(p)B(bcrp)\xi(rp),}
+ \tag{9.1197}
+\]
+
+with \(n=bcr>\max(U,V)\) and every original support mask understood.
+There is no \(\mu(r)\), and there is no mixed endpoint remainder.  But
+the independent companion factor \(\mu(p)\) remains.  This is exactly
+the factor which the earlier, stronger draft of this section omitted.
+
+Expand the unit masks by (9.957) and distribute their squarefree divisor
+atoms among \(b,c,r,p\).  On each resulting dyadic box, Mellin inversion
+in the logarithmic product coordinate separates the one-coordinate
+weight \(B_\nu(bcrp)\) from (9.956), with total projective norm
+\(T^\varepsilon\).  In each projective atom the inner double sum in
+(9.1197) is therefore a product
+\[
+ \left(\sum_r R_\nu(r)\xi(r)\right)
+ \left(\sum_p\mu(p)P_\nu(p)\xi(p)\right).
+\]
+Pólya--Vinogradov is applied only to the first factor; the signed second
+factor is kept for the subsequent character moment.  It is not
+legitimate to take the absolute value of the \(p\)-sum and then call the
+whole residual Möbius-free.
+
+For a nonprincipal primitive character \(\xi\) modulo a prime
+\(\ell=T^\sigma\), Pólya--Vinogradov and the trivial estimate give
+
+\[
+ \sum_{r\asymp R}R_\nu(r)\xi(r)
+ \ll_{\varepsilon,W}T^\varepsilon
+ \min\{R,\ell^{1/2}\}.
+ \tag{9.1198}
+\]
+
+Summing the two short factors trivially gives the smooth-group exponent
+
+\[
+ \boxed{
+ E_{\rm sm}(u,\beta,\chi,\sigma,\varpi)
+ :=\min\left\{u-\varpi,
+        \beta+\chi+\frac\sigma2\right\}.}
+ \tag{9.1199}
+\]
+
+All \(a=h\delta\), AFE/reflection, inactive-gcd, and opposite-row labels
+remain in the same projective packet.  Only \(b,c,r\) have been put into
+the pointwise PV envelope; the companion \(p\) remains in a genuine
+divisor-bounded character polynomial.
+
+On the maximal prime-incidence face,
+
+\[
+ u=3,\qquad \beta=\chi=\frac12,\qquad
+ \frac32\leq\sigma_S<\sigma_L\leq2.
+ \tag{9.1200}
+\]
+
+The ordinary fourth-moment exponent for the full length-
+\(T^u\) Type polynomial is
+
+\[
+ \boxed{
+ M_{4,{\rm gen}}=2\max\{\sigma_S,u\}+2u=12.}
+ \tag{9.1201}
+\]
+
+The retained length-\(T^\varpi\) companion polynomial has the standard
+divisor-bounded fourth-moment exponent
+\(M_4(p)=2\max\{\sigma_S,\varpi\}+2\varpi\).  Consequently (9.1198)--
+(9.1199) give the safe capped estimate
+
+\[
+ \boxed{
+ M_{4,{\rm I}}
+ \leq\min\left\{12,
+ 4E_{\rm sm}+2\max\{\sigma_S,\varpi\}+2\varpi\right\}.}
+ \tag{9.1202}
+\]
+
+On the positive-imbalance physical wedge and throughout the range which
+can give a new saving, one has \(\varpi\leq1\leq\sigma_S\) and
+\(E_{\rm sm}=1+\sigma_S/2\).  The usable linear gain, after the two
+square roots already present in the projector/bilinear ledger, is then
+
+\[
+ \boxed{
+ \eta_{\rm I,S}(\varpi)
+ =\frac{12-(4+4\sigma_S+2\varpi)}4
+ =2-\sigma_S-\frac\varpi2.}
+ \tag{9.1203}
+\]
+
+Comparing this with
+\(\eta_{\rm imb}=((\sigma_L-\sigma_S)/2-
+\kappa_L-\kappa_S)_+\) proves precisely the cellwise condition
+
+\[
+ \boxed{
+ \varpi\leq\varpi_{\max}:=
+ \left(4-\sigma_L-\sigma_S
+       +2\kappa_L+2\kappa_S\right)_+.}
+ \tag{9.1204}
+\]
+
+This proves a **companion-length subpolytope**, not a complete ordered
+block:
+
+| ordered block (long, short) | companion region | conclusion |
+|---|---|---|
+| I--I or II--I | \(\varpi_S\leq\varpi_{\max}\) | covered by (9.1197)--(9.1204) on the short row |
+| I--I or II--I | \(\varpi_S>\varpi_{\max}\) | unproved and retained in the signed remainder |
+| I--II or II--II | every companion length | unproved and retained in the signed remainder |
+
+At the extreme endpoint \((\sigma_L,\sigma_S,\kappa_L,\kappa_S)
+=(2,3/2,0,0)\), one has \(\varpi_{\max}=1/2\).  At
+\(\varpi=1/2\), (9.1199) gives \(E_{\rm sm}=7/4\), the companion
+moment is \(4\), the Type-I fourth moment is \(11\), and the usable
+gain is exactly the required \(1/4\).  Already at \(\varpi=3/4\), the
+usable gain is only \(1/8\), so the same argument does not close that
+cell.  This explicit witness rules out the earlier full-block claim.
+The opposite conductor orientation is obtained by exchanging the rows.
+
+Let the dyadic cell selector in a short-side Type-I block retain exactly
+the cells \(\varpi_S>\varpi_{\max}\).  The remaining maximal-face sum is
+
+\[
+ \mathscr I_{\rm pp,0}^{\rm rem}
+ :=\sum_{\alpha\in\{{\rm I},{\rm II}\}}
+ \left(
+  \mathscr I_{\rm pp,0}^{\alpha,{\rm II}}
+  +\mathscr I_{\rm pp,0;
+      \varpi_S>\varpi_{\max}}^{\alpha,{\rm I}}
+ \right).
+\]
+
+Thus the still-unproved, strictly weaker sufficient gate is
+
+\[
+ \boxed{
+ \left|\mathscr I_{\rm pp,0}^{\rm rem}\right|
+ \ll_{\varepsilon,W}
+ T^{-\eta_{\rm imb}+\varepsilon}\mathscr B_{\rm MC},}
+ \tag{PCDI-SREM}
+\]
+
+where the second label is the short-conductor side.  All selected cells
+are summed before taking an absolute value.  No Type-II estimate is
+asserted, and no entire I--I or II--I block is declared closed.  Hence
+(PCDI-SREM), (PCDI) on the full packet, (NPIT), bounded \(D\), and the
+coupled-kernel gate remain unproved.
+
+The finite helper `prime_incidence_type_I_factorization_audit` verifies
+the quotient identity and every endpoint.  The separate helper
+`prime_incidence_type_I_companion_factorization_audit` verifies
+(9.1197) on arbitrary finite squarefree coprime rows and records the
+literal \(\mu(p)\) sign in every factorized term.  The exact-rational
+helper `prime_incidence_short_type_I_pv_polytope_audit` checks
+(9.1199)--(9.1204), marks only the selected companion cells covered,
+and sends all other Type-I cells and every Type-II cell to
+(PCDI-SREM).  All three leave the coupled-kernel flag false.
+
 ## 10. What has and has not been proved
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
@@ -25342,6 +25529,19 @@ remaining geometry is a level-dependent fixed-determinant integer-
 matrix family.  The decomposition, ray factorization, and lattice
 adapter are proved; the global resonant evaluation and the resulting
 Hecke-type nonzero-determinant estimate are both still open.
+
+Section 9.177 supplies the first analytic coverage of a short-side
+Type-I **companion-length subpolytope** on the maximal prime face.
+Opening \(\lambda_{\rm I}(n)\) removes the Möbius coefficient only from
+the quotient residual; the separate \(\mu(p)\) from \(w=np\) remains.
+Its fourth moment contributes
+\(2\max(\sigma_S,\varpi)+2\varpi\), so the covered region is exactly
+\(\varpi\leq(4-\sigma_L-\sigma_S+2\kappa_L+2\kappa_S)_+\) on the
+physical imbalance branch, only \(\varpi\leq1/2\) at the extreme face.
+No complete I--I or II--I block is proved.  The remaining signed gate
+(PCDI-SREM) retains all short-side Type-II cells and the Type-I cells
+above the threshold.  No global resonant evaluation or moving
+weighted-determinant estimate is inferred.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent
