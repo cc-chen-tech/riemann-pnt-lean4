@@ -141,6 +141,26 @@ theorem argumentCrossingIndices_card_lower_bound {alpha beta : ℝ} :
       positivity
     linarith
 
+/-- Deleting an arbitrary finite family of bad argument levels costs at most
+its cardinality.  In particular, the endpoint-rounding loss remains the one
+global loss from `argumentCrossingIndices_card_lower_bound`; it is not paid
+again for every zero-free component. -/
+theorem argumentCrossingIndices_sdiff_card_lower_bound
+    {alpha beta : ℝ} (bad : Finset ℤ) :
+    (beta - alpha) / Real.pi - 1 - bad.card ≤
+      ((argumentCrossingIndices alpha beta) \ bad).card := by
+  have hlevels :=
+    argumentCrossingIndices_card_lower_bound (alpha := alpha) (beta := beta)
+  have hcardNat :
+      (argumentCrossingIndices alpha beta).card ≤
+        ((argumentCrossingIndices alpha beta) \ bad).card + bad.card :=
+    Finset.card_le_card_sdiff_add_card
+  have hcardReal :
+      ((argumentCrossingIndices alpha beta).card : ℝ) ≤
+        (((argumentCrossingIndices alpha beta) \ bad).card : ℝ) + bad.card := by
+    exact_mod_cast hcardNat
+  linarith
+
 theorem exists_argumentCrossing_of_level_mem_Icc
     (gamma : C(unitInterval, ℂ)) (hne : ∀ t, gamma t ≠ 0) (k : ℤ)
     (hlevel : argumentCrossingLevel k ∈

@@ -1930,3 +1930,33 @@ The remaining equation-(37) specialization must still construct the finite
 divisor and a right-shifted sequence of zero-free vertical lines for the
 actual product `V_1B` at the two selected horizontal heights.  Equations
 (38)--(41) and the long `theta<4/7` mollified mean square remain downstream.
+
+## 28. Equation-(41) global deleted-level accounting
+
+The next equation-(41) audit found that summing the zero-free crossing bound
+component by component is not sharp enough: it pays one floor/ceiling loss on
+each component and then risks charging the critical-line zeros a second time.
+The correct construction first reconciles the component argument lifts across
+an order-`m` zero by a phase bridge of length `m*pi`, then counts the global
+half-odd-integer argument levels only once.
+
+A half-open order-`m` bridge can swallow at most `m` such levels.  Hence the
+critical-line zero multiplicity removes at most `N_{0,eta}` levels, while the
+two global endpoints contribute only one further rounding loss.  The exact
+finite target is
+
+\[
+  \#\{t:\operatorname{Re}\eta(1/2+it)=0,\ \eta(1/2+it)\ne0\}
+  \ge \frac1\pi\Delta\arg\eta-N_{0,\eta}-1.
+\]
+
+The first reusable counting layer is now formalized as
+`argumentCrossingIndices_sdiff_card_lower_bound`: deleting an arbitrary bad
+level finset `B` from the global level interval costs at most `#B`, without
+introducing another componentwise rounding loss.  The independent note
+`2026-08-29-conrey-equation41-global-partition-math.md` records the full
+four-layer design.
+
+The order-`m` half-open bridge capacity, local analytic phase alignment, and
+global attribution for the actual `eta` remain open.  Thus equation (41) and
+the Conrey simple-zero proportion are not yet proved.

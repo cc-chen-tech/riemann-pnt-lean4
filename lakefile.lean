@@ -2785,6 +2785,7 @@ lean_lib RiemannPNT where
     `Test.ConreyRightArgumentContract,
     `Test.ConreyEquation35GlobalContract,
     `Test.ArgumentCrossingContract,
+    `Test.ArgumentCrossingDeletedLevelsContract,
     `Test.HalfWeightedMultiplicityContract,
     `Test.ConreyExplicitCertificateContract,
     `Test.ConreyExplicitIntegralBridgeContract,
