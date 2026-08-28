@@ -767,6 +767,12 @@ a final density axiom:
    nested-prefix dyadic maximal estimate (8.6).  Independent cutoff-fibre
    summation remains forbidden.  For `delta=1/20` or `5/64`,
    formalize Conrey's full `theta<4/7` theorem and its DI spectral input.
+
+   The finite Cauchy ingredients are now formal: every prefix is bounded by
+   the complete aligned dyadic tree, and the abstract divisor-fibre estimate
+   gives collected energy at most `D^2` from fibre cardinality and raw energy
+   at most `D`.  The remaining part of (8.4)--(8.6) is the arithmetic owner-map
+   instantiation and the levelwise Gaussian mean-square summation.
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
    specialization, and insert the resulting local norm into the now-proved

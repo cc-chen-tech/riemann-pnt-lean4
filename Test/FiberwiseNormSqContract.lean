@@ -8,6 +8,7 @@ namespace MathlibAux
 #check normSq_finset_sum_le_card_mul_sum_normSq
 #check sum_normSq_fiber_le_sum_card_mul_normSq
 #check sum_normSq_fiber_le_mul_sum_normSq
+#check sum_normSq_fiber_le_sq
 
 example {ι : Type*} [DecidableEq ι] (s : Finset ι) (f : ι → ℂ) :
     Complex.normSq (∑ x ∈ s, f x) ≤
@@ -36,5 +37,6 @@ example {ι κ : Type*} [DecidableEq ι] [DecidableEq κ]
 #print axioms normSq_finset_sum_le_card_mul_sum_normSq
 #print axioms sum_normSq_fiber_le_sum_card_mul_normSq
 #print axioms sum_normSq_fiber_le_mul_sum_normSq
+#print axioms sum_normSq_fiber_le_sq
 
 end MathlibAux
