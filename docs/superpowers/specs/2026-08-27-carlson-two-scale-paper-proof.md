@@ -828,9 +828,24 @@ a final density axiom:
    `(R*L^(-1/4)*2*sqrt(X))^2`.  The proof uses continuity only for the actual
    zeta product, while the right majorant is globally integrable.  Its axiom
    audit is again the allowed three axioms.  Thus the symmetric square-root
-   AFE itself is now the sole analytic premise at this layer.  What remains
-   is to instantiate `K,X,Delta,L` at the half-range scales, absorb the
-   remainder into the required polylogarithmic boundary norm, and perform
+   AFE itself is now the sole analytic premise at this layer.  The half-range
+   remainder and dyadic scale have now also been instantiated.  Lean proves
+   exactly
+   ```
+   X <= L^(9/20)  =>  K_remainder <= 4*R^2*L^(-1/20) <= 4*R^2.
+   ```
+   It also chooses the first dyadic power above
+   `sqrt(U/(2*pi))`, proves that it is at most twice this square-root scale,
+   and hence reduces the polynomial separation hypothesis to the single
+   condition
+   ```
+   4*sqrt(U/(2*pi))*X <= Delta.
+   ```
+   These facts are composed with the complete critical AFE window theorem,
+   and their axiom audit again contains only the allowed three axioms.  What
+   remains at this layer is to bound the selected dyadic depth and the
+   logarithm in `dyadicCriticalGaussianBound` by powers of `log U`, choose a
+   broad `Delta` uniformly for both half-range mollifier lengths, and perform
    the translated-window/two-scale assembly in (8.7)--(8.8).
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
