@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.MWKFCubicAggregation
+import PrimeNumberTheorem.MWKFCubicActualMoment
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
 open Filter Asymptotics MeasureTheory
@@ -26,6 +27,20 @@ theorem cubic_long_mollifier_asymptotic_of_exact_inputs
       (fun T : ℝ ↦ T) := by
   exact long_mollifier_reassembly I Q R (cubicMainConstant W)
     hexact hmain hrem
+
+/-- Final reassembly specialized to the literal zeta/Mobius integral with
+`N = floor(T^3)`.  Only the exact analytic decomposition, main-term limit,
+and remainder estimate remain as explicit hypotheses. -/
+theorem cubic_actual_long_mollifier_asymptotic_of_exact_inputs
+    (W : CubicTestWeight) (Q R : ℝ → ℝ)
+    (hexact : ∀ T, cubicMollifiedSecondMoment W T = T * Q T + R T)
+    (hmain : (fun T ↦ Q T - cubicMainConstant W) =o[atTop]
+      (fun _T ↦ (1 : ℝ)))
+    (hrem : R =o[atTop] (fun T : ℝ ↦ T)) :
+    (fun T ↦ cubicMollifiedSecondMoment W T -
+      cubicMainConstant W * T) =o[atTop] (fun T : ℝ ↦ T) := by
+  exact cubic_long_mollifier_asymptotic_of_exact_inputs W
+    (cubicMollifiedSecondMoment W) Q R hexact hmain hrem
 
 end MWKFCubic
 end PrimeNumberTheorem

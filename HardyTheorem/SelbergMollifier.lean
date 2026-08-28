@@ -114,9 +114,10 @@ theorem continuous_selbergMollifiedHardyZ
 
 theorem continuous_selbergMoebiusMollifiedHardyZ (X : ℕ) :
     Continuous (selbergMoebiusMollifiedHardyZ X) := by
-  simpa [selbergMoebiusMollifiedHardyZ] using
-    continuous_selbergMollifiedHardyZ X
-      (fun n => (selbergMoebiusCoeff X n : ℂ))
+  change Continuous (selbergMollifiedHardyZ X
+    (fun n => (selbergMoebiusCoeff X n : ℂ)))
+  exact continuous_selbergMollifiedHardyZ X
+    (fun n => (selbergMoebiusCoeff X n : ℂ))
 
 lemma hardyZ_neg_of_selbergMollifiedHardyZ_neg
     {X : ℕ} {coeff : ℕ → ℂ} {t : ℝ}

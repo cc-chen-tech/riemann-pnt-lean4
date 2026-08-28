@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.MWKFCubicActualMoment
+
+#print axioms PrimeNumberTheorem.MWKFCubic.CubicTestWeight.hasCompactSupport
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicMollifierLength_cast_le
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicMollifierLength_pos
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicMomentIntegrand_eq_hardy
+#print axioms PrimeNumberTheorem.MWKFCubic.continuous_cubicMomentIntegrand
+#print axioms PrimeNumberTheorem.MWKFCubic.hasCompactSupport_cubicMomentIntegrand
+#print axioms PrimeNumberTheorem.MWKFCubic.integrable_cubicMomentIntegrand

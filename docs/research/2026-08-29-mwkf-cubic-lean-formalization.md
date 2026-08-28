@@ -12,7 +12,10 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | finite signed level recombination `((mu*mu)*1)(n)=mu(n)` | `sum_moebius_convolution_divisors` |
 | reciprocal-curve operator `x d/dx = x partial_x - xi partial_xi` | `normalized_reciprocalAmplitude_derivative` |
 | finite dyadic/shell little-o aggregation | `isLittleO_finset_sum` |
+| literal `N=floor(T^3)` zeta/Mobius integrand and full-line integral | `cubicMomentIntegrand`, `cubicMollifiedSecondMoment` |
+| continuity, compact support, and integrability of the literal moment | `continuous_cubicMomentIntegrand`, `hasCompactSupport_cubicMomentIntegrand`, `integrable_cubicMomentIntegrand` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
+| final reassembly specialized to the literal integral | `cubic_actual_long_mollifier_asymptotic_of_exact_inputs` |
 
 The axiom-audit modules report only Lean/Mathlib's standard foundational
 axioms (`propext`, `Classical.choice`, and `Quot.sound`).
@@ -20,11 +23,12 @@ axioms (`propext`, `Classical.choice`, and `Quot.sound`).
 ## Remaining formalization boundary
 
 This PR does **not** yet make the analytic theorem unconditional inside Lean.
-The exact AFE/QCT decomposition, reciprocal-LCM main-term asymptotic, tail
-estimates, and especially the cubic MRSTT Mobius decorrelation theorem are not
-available as proved Lean imports.  The final facade therefore keeps
-`hexact`, `hmain`, and `hrem` as theorem hypotheses.  They are local binders,
-not global axioms.
+The left side is now the literal full-line integral, rather than an arbitrary
+function `I`.  The exact AFE/QCT decomposition, reciprocal-LCM main-term
+asymptotic, tail estimates, and especially the cubic MRSTT Mobius
+decorrelation theorem are not available as proved Lean imports.  The final
+facade therefore keeps `hexact`, `hmain`, and `hrem` as theorem hypotheses.
+They are local binders, not global axioms.
 
 Consequently the accurate status is:
 
