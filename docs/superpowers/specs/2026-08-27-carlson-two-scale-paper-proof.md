@@ -799,8 +799,12 @@ a final density axiom:
    `Quot.sound`.  The canonical floor-square-root AFE cutoff is now proved
    measurable.  Since it is unbounded on the whole real line, Lean applies
    the maximal theorem to its exact clamp
-   `min(criticalAfeCutoff(t),2^K)` and proves that this clamp recovers the
-   genuine prefix whenever `criticalAfeCutoff(t)<=2^K`.  The resulting global
+   `min(criticalAfeCutoff(t)+1,2^K)` and proves that this clamp recovers the
+   genuine prefix whenever `criticalAfeCutoff(t)+1<=2^K`.  The successor is
+   essential: the AFE sum contains `1<=n<=criticalAfeCutoff(t)`, whereas the
+   dyadic prefix is the half-open interval `[0,m)`.  Lean also proves the
+   exact identity between this recovered prefix and the canonical AFE main
+   sum times the concrete mollifier.  The resulting global
    Gaussian theorem has no measurability premise and the same allowed axiom
    audit.  What remains before applying it to (8.1) is the local-window
    cutoff upper bound, the symmetric square-root AFE itself (still the

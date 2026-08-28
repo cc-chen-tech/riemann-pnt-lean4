@@ -1,4 +1,4 @@
-import HardyTheorem.AFECriticalCanonical
+import HardyTheorem.AFECriticalPolynomialBridge
 import HardyTheorem.AFECriticalDyadicMaximalGaussian
 import Mathlib.MeasureTheory.Function.Floor
 
@@ -26,16 +26,16 @@ theorem measurable_criticalAfeCutoff : Measurable criticalAfeCutoff := by
 noncomputable def dyadicClampedCriticalPrefixMollifiedPolynomial
     (K X : ℕ) (t : ℝ) : ℂ :=
   dyadicMovingPrefixMollifiedPolynomial K
-    (min (criticalAfeCutoff t) (2 ^ K)) X t
+    (min (criticalAfeCutoff t + 1) (2 ^ K)) X t
 
 /-- A measurable finite-piecewise family of fixed dyadic prefixes. -/
 theorem measurable_dyadicClampedCriticalPrefixMollifiedPolynomial
     (K X : ℕ) :
     Measurable fun t : ℝ =>
       dyadicClampedCriticalPrefixMollifiedPolynomial K X t := by
-  let cutoff : ℝ → ℕ := fun t => min (criticalAfeCutoff t) (2 ^ K)
+  let cutoff : ℝ → ℕ := fun t => min (criticalAfeCutoff t + 1) (2 ^ K)
   have hcutoff : Measurable cutoff :=
-    measurable_criticalAfeCutoff.min measurable_const
+    (measurable_criticalAfeCutoff.add measurable_const).min measurable_const
   have hrepr : (fun t : ℝ =>
       dyadicClampedCriticalPrefixMollifiedPolynomial K X t) =
       fun t : ℝ => ∑ m ∈ Finset.range (2 ^ K + 1),
@@ -60,11 +60,24 @@ theorem measurable_dyadicClampedCriticalPrefixMollifiedPolynomial
       measurable_const
 
 /-- Clamping does not change the prefix below the ambient dyadic endpoint. -/
-theorem dyadicClampedCriticalPrefix_eq_of_cutoff_le
-    {K X : ℕ} {t : ℝ} (ht : criticalAfeCutoff t ≤ 2 ^ K) :
+theorem dyadicClampedCriticalPrefix_eq_of_cutoff_succ_le
+    {K X : ℕ} {t : ℝ} (ht : criticalAfeCutoff t + 1 ≤ 2 ^ K) :
     dyadicClampedCriticalPrefixMollifiedPolynomial K X t =
-      dyadicMovingPrefixMollifiedPolynomial K (criticalAfeCutoff t) X t := by
+      dyadicMovingPrefixMollifiedPolynomial K (criticalAfeCutoff t + 1) X t := by
   simp [dyadicClampedCriticalPrefixMollifiedPolynomial, min_eq_left ht]
+
+/-- With the necessary successor normalization, the clamped prefix is
+exactly the canonical AFE main sum times the concrete mollifier. -/
+theorem criticalAfeMainSum_mul_mollifier_eq_dyadicClampedPrefix
+    {K X : ℕ} {t : ℝ} (ht : criticalAfeCutoff t + 1 ≤ 2 ^ K) :
+    criticalAfeMainSum t *
+        selbergMoebiusMollifier X ((1 / 2 : ℂ) + I * t) =
+      dyadicClampedCriticalPrefixMollifiedPolynomial K X t := by
+  rw [dyadicClampedCriticalPrefix_eq_of_cutoff_succ_le ht,
+    dyadicMovingPrefixMollifiedPolynomial_eq_Ico K
+      (criticalAfeCutoff t + 1) X ht t,
+    criticalAfeMainSum_eq_Icc]
+  congr 2
 
 /-- The measurable clamped canonical selector satisfies the global Gaussian
 Rademacher--Menshov bound without a separate measurability premise. -/
@@ -79,7 +92,7 @@ theorem integral_gaussian_normSq_dyadicClampedCriticalPrefix_le
             MathlibAux.gaussianBucketSchurConstant) *
           (2 * (1 + Real.log (((2 ^ K * X : ℕ) : ℝ))) ^ 4)) := by
   apply integral_gaussian_normSq_dyadicMovingPrefixMollifiedPolynomial_le
-    hX hDelta w (fun t => min (criticalAfeCutoff t) (2 ^ K))
+    hX hDelta w (fun t => min (criticalAfeCutoff t + 1) (2 ^ K))
   · intro t
     exact min_le_right _ _
   · have hweight : Measurable fun t : ℝ =>

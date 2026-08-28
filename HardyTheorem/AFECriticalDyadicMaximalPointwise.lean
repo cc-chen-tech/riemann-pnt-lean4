@@ -55,6 +55,25 @@ theorem continuous_dyadicMovingPrefixMollifiedPolynomial
       continuous_selbergMollifier_criticalLine X
         (fun n => (selbergMoebiusCoeff X n : ℂ))
 
+/-- Below the ambient endpoint, the zero-extended prefix is exactly the
+positive integer interval `[1,m)`. -/
+theorem dyadicMovingPrefixMollifiedPolynomial_eq_Ico
+    (K m X : ℕ) (hm : m ≤ 2 ^ K) (t : ℝ) :
+    dyadicMovingPrefixMollifiedPolynomial K m X t =
+      (∑ n ∈ Finset.Ico 1 m,
+        1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)) *
+          selbergMoebiusMollifier X ((1 / 2 : ℂ) + I * t) := by
+  unfold dyadicMovingPrefixMollifiedPolynomial dyadicCriticalAmbientAtom
+  congr 1
+  rw [Finset.sum_ite]
+  simp only [Finset.sum_const_zero, add_zero]
+  apply Finset.sum_congr
+  · ext n
+    simp only [Finset.mem_filter, Finset.mem_Ico]
+    omega
+  · intro n hn
+    rfl
+
 private theorem mem_dyadicPrefixBlock_iff_div_eq
     {j q n : ℕ} :
     n ∈ MathlibAux.dyadicPrefixBlock j q ↔ n / 2 ^ j = q := by
