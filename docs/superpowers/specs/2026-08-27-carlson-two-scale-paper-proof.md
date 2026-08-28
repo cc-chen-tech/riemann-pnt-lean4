@@ -465,8 +465,25 @@ factor has norm at most one, and the resulting Gaussian `L²` norm at
 exp(16/Delta^2) * ((10/3) * Y0^-3)^2
   * sqrt(pi / (1/Delta^2)).
 ```
-The Conrey left endpoint, the Hadamard specialization, and the finite
-Gaussian covering still remain.
+Imaginary translation of the strip parameter has now been proved to be an
+exact translation of the height variable, so the formal `L^2` norm depends
+only on `Re(z)`.  Hence on every interior strip
+`1/2 < l < u < 4` the unbounded-strip boundedness hypothesis reduces to the
+boundedness of a continuous norm function on the compact interval `[l,u]`.
+The resulting concrete squared-norm Hadamard theorem takes endpoint
+second-moment bounds `A,B` and returns exactly
+```
+norm(Phi(x))^2 <= A^(1-(x-l)/(u-l)) * B^((x-l)/(u-l)),
+```
+with no square-root loss.  Its formal axiom audit contains only `propext`,
+`Classical.choice`, and `Quot.sound`.
+
+The remaining functional-analytic boundary step is now precise: either prove
+one-sided `L^2` continuity at `Re(z)=1/2,4` and pass the interior theorem to
+the limiting strip, or supply the Conrey and absolute-convergence endpoint
+bounds on edges displaced by `O(1/log U)`.  This is distinct from the deep
+Conrey--Deshouillers--Iwaniec estimate itself.  The Conrey left endpoint, this
+boundary-limit specialization, and the finite Gaussian covering still remain.
 The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
@@ -474,8 +491,9 @@ a final density axiom:
 1. Conrey's Gaussian mean-square theorem in the `P(u)=u`, `Q=1`, `R=0`
    specialization, including its uniformity in the local center;
 2. for the first unconditional formal target `delta=1/20`, use item 1 for
-   the left boundary norm, then prove the Hadamard specialization and finite
-   Gaussian covering argument; extending the same package to `R=1000` is an optional
+   the left boundary norm, pass the proved interior Hadamard specialization
+   to the limiting endpoint strip, and prove the finite Gaussian covering
+   argument; extending the same package to `R=1000` is an optional
    strengthening to `delta=5/64` rather than a gate to a power saving;
 3. the dyadic assembly of those inputs into the unconditional
    `N(2/3,T)` certificate and its connection to the forcing chain.
