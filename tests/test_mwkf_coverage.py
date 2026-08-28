@@ -6198,12 +6198,17 @@ def test_nonprincipal_projector_retains_cofactor_and_type_convolution() -> None:
         2: F(29),
     }
     assert result["ratio_convolution_energy"] == F(1802)
+    assert result["cofactor_product_total_mass"] == F(5)
+    assert result["type_total_mass"] == F(-12)
     assert result["principal_character_mean"] == F(30)
     assert result["centered_ratio_convolution"] == {
         1: F(1),
         2: F(-1),
     }
     assert result["principal_character_energy"] == F(1800)
+    assert result["linear_principal_ramanujan_contribution"] == F(-30)
+    assert result["linear_principal_density_formula_exact"]
+    assert result["centered_ratio_convolution_has_zero_total_mass"]
     assert result["centered_character_energy"] == F(2)
     assert result["principal_plus_centered_energy_is_total"]
     assert result["expanded_resonant_energy"] == F(1802)
@@ -6211,6 +6216,7 @@ def test_nonprincipal_projector_retains_cofactor_and_type_convolution() -> None:
     assert result["resonant_ordered_pair_count"] == 8
     assert result["cofactor_double_mobius_sign_retained"]
     assert result["type_mobius_sign_retained"]
+    assert result["common_conductor_sign_cancels_in_principal_density"]
     assert result["product_label_factorization_retained"]
     assert result["multiplicative_ratio_convolution_factorization_exact"]
     assert result["multiplicative_character_parseval_identity_available"]

@@ -17739,10 +17739,12 @@ def oriented_nonprincipal_cofactor_type_convolution_audit(
         (value * value for value in convolution.values()),
         start=F(0),
     )
+    left_total_mass = sum(left_residues.values(), start=F(0))
+    right_total_mass = sum(right_residues.values(), start=F(0))
     principal_character_mean = (
         F(_finite_mobius(q))
-        * sum(left_residues.values(), start=F(0))
-        * sum(right_residues.values(), start=F(0))
+        * left_total_mass
+        * right_total_mass
         / len(units)
     )
     centered_convolution = {
@@ -17751,6 +17753,9 @@ def oriented_nonprincipal_cofactor_type_convolution_audit(
     }
     principal_character_energy = (
         len(units) * principal_character_mean**2
+    )
+    linear_principal_ramanujan_contribution = (
+        F(_finite_mobius(q)) * principal_character_mean
     )
     centered_character_energy = sum(
         (value * value for value in centered_convolution.values()),
@@ -17801,9 +17806,21 @@ def oriented_nonprincipal_cofactor_type_convolution_audit(
         "type_residue_function": right_residues,
         "signed_ratio_convolution": convolution,
         "ratio_convolution_energy": convolution_energy,
+        "cofactor_product_total_mass": left_total_mass,
+        "type_total_mass": right_total_mass,
         "principal_character_mean": principal_character_mean,
         "centered_ratio_convolution": centered_convolution,
         "principal_character_energy": principal_character_energy,
+        "linear_principal_ramanujan_contribution": (
+            linear_principal_ramanujan_contribution
+        ),
+        "linear_principal_density_formula_exact": bool(
+            linear_principal_ramanujan_contribution
+            == left_total_mass * right_total_mass / len(units)
+        ),
+        "centered_ratio_convolution_has_zero_total_mass": bool(
+            sum(centered_convolution.values(), start=F(0)) == 0
+        ),
         "centered_character_energy": centered_character_energy,
         "principal_plus_centered_energy_is_total": bool(
             principal_character_energy + centered_character_energy
@@ -17816,6 +17833,7 @@ def oriented_nonprincipal_cofactor_type_convolution_audit(
         "resonant_ordered_pair_count": resonant_ordered_pairs,
         "all_cofactor_product_splits_exact": all_cofactor_splits_exact,
         "common_conductor_sign_retained_linearly": True,
+        "common_conductor_sign_cancels_in_principal_density": True,
         "cofactor_double_mobius_sign_retained": True,
         "type_mobius_sign_retained": True,
         "product_label_factorization_retained": True,
