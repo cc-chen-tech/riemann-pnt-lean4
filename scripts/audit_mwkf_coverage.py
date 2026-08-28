@@ -26101,6 +26101,142 @@ def ray_dilation_type_reassembly_audit(
     }
 
 
+def triple_centered_uniform_ratio_completion_audit(
+    *,
+    short_prime: int,
+    determinant_shift: int,
+    first_long_prime: int,
+    second_long_prime: int,
+    first_m: int,
+    first_n: int,
+    second_m: int,
+    second_n: int,
+) -> dict[str, object]:
+    """Complete all three density subtractions by uniform unit ratios.
+
+    For unit ``m,n`` modulo a prime ``p``, exactly one ``c`` in ``U(p)``
+    satisfies ``m+c*n=0``.  Therefore the density ``1/(p-1)`` is the
+    exact average of these incidence indicators over ``c``.  The outer
+    density has the analogous ratio completion
+    ``p_2=a*p_1 (mod q)`` over ``a`` in ``U(q)``.
+
+    Expanding the product of the three actual-minus-average expressions
+    gives eight terms, each containing three incidence indicators.  The
+    dummy ratios restore incidence coordinates but do not retain the
+    special common determinant attached to the three physical ratios.
+    """
+
+    q = int(short_prime)
+    D = int(determinant_shift)
+    p1 = int(first_long_prime)
+    p2 = int(second_long_prime)
+    m1 = int(first_m)
+    n1 = int(first_n)
+    m2 = int(second_m)
+    n2 = int(second_n)
+    if q < 3 or _finite_prime_exponents(q) != {q: 1}:
+        raise ValueError("the short modulus must be an odd prime")
+    if (
+        _finite_prime_exponents(p1) != {p1: 1}
+        or _finite_prime_exponents(p2) != {p2: 1}
+    ):
+        raise ValueError("both long moduli must be prime")
+    if gcd(D, q * p1 * p2) != 1 or gcd(p1 * p2, q) != 1:
+        raise ValueError("all physical modulus labels must be units")
+    if min(m1, n1, m2, n2) <= 0:
+        raise ValueError("all lift coordinates must be positive")
+    if gcd(m1 * n1, p1) != 1 or gcd(m2 * n2, p2) != 1:
+        raise ValueError("inner lift coordinates must be prime units")
+
+    actual_outer = 1
+    actual_first = (D * pow(q, -1, p1)) % p1
+    actual_second = (D * pow(q, -1, p2)) % p2
+
+    def outer_incidence(ratio: int) -> int:
+        return int((p2 - ratio * p1) % q == 0)
+
+    def first_incidence(ratio: int) -> int:
+        return int((m1 + ratio * n1) % p1 == 0)
+
+    def second_incidence(ratio: int) -> int:
+        return int((m2 + ratio * n2) % p2 == 0)
+
+    direct_kernel = (
+        F(outer_incidence(actual_outer)) - F(1, q - 1)
+    ) * (
+        F(first_incidence(actual_first)) - F(1, p1 - 1)
+    ) * (
+        F(second_incidence(actual_second)) - F(1, p2 - 1)
+    )
+
+    ratio_families = (
+        (actual_outer, tuple(range(1, q)), q - 1, outer_incidence),
+        (actual_first, tuple(range(1, p1)), p1 - 1, first_incidence),
+        (actual_second, tuple(range(1, p2)), p2 - 1, second_incidence),
+    )
+    completed_terms: dict[str, Fraction] = {}
+    for use_actual_outer in (True, False):
+        for use_actual_first in (True, False):
+            for use_actual_second in (True, False):
+                choices = (
+                    use_actual_outer,
+                    use_actual_first,
+                    use_actual_second,
+                )
+                term = F(1)
+                labels_by_factor: list[tuple[int, ...]] = []
+                indicators = []
+                for use_actual, (actual, units, phi, incidence) in zip(
+                    choices, ratio_families
+                ):
+                    if use_actual:
+                        labels = (actual,)
+                        scalar = F(1)
+                    else:
+                        labels = units
+                        scalar = -F(1, phi)
+                    labels_by_factor.append(labels)
+                    indicators.append(incidence)
+                    term *= scalar
+                incidence_sum = sum(
+                    (
+                        F(indicators[0](outer_ratio))
+                        * F(indicators[1](first_ratio))
+                        * F(indicators[2](second_ratio))
+                    )
+                    for outer_ratio in labels_by_factor[0]
+                    for first_ratio in labels_by_factor[1]
+                    for second_ratio in labels_by_factor[2]
+                )
+                name = "_".join(
+                    "actual" if use_actual else "average"
+                    for use_actual in choices
+                )
+                completed_terms[name] = term * incidence_sum
+
+    completed_kernel = sum(completed_terms.values(), F(0))
+    identity_proved = bool(direct_kernel == completed_kernel)
+    return {
+        "short_prime": q,
+        "determinant_shift": D,
+        "actual_outer_ratio": actual_outer,
+        "actual_first_inner_ratio": actual_first,
+        "actual_second_inner_ratio": actual_second,
+        "direct_triple_centered_kernel": direct_kernel,
+        "uniform_ratio_completed_kernel": completed_kernel,
+        "eight_full_incidence_ratio_terms": completed_terms,
+        "direct_equals_uniform_ratio_completion": identity_proved,
+        "every_completed_term_contains_three_incidence_indicators": True,
+        "all_dummy_ratio_averages_are_endpoint_exact": True,
+        "principal_ratio_modes_removed_before_absolute_value": True,
+        "dummy_ratio_completion_preserves_original_common_t": False,
+        "uniform_ratio_completion_finite_master_proved": identity_proved,
+        "completed_generalized_determinant_bound_proved": False,
+        "WRFE_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def short_prime_weighted_profile_ttstar_audit(
     *,
     short_prime: int,

@@ -9309,6 +9309,43 @@ def test_ray_dilation_mobius_separates_only_after_type_reassembly() -> None:
     assert "no reciprocal-LCM kernel" in text
 
 
+def test_all_eight_centering_terms_admit_uniform_ratio_incidence_completion() -> None:
+    audit = getattr(
+        coverage_audit,
+        "triple_centered_uniform_ratio_completion_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        determinant_shift=1,
+        first_long_prime=7,
+        second_long_prime=17,
+        first_m=1,
+        first_n=2,
+        second_m=2,
+        second_n=7,
+    )
+    assert result["actual_outer_ratio"] == 1
+    assert result["actual_first_inner_ratio"] == 3
+    assert result["actual_second_inner_ratio"] == 7
+    assert result["direct_triple_centered_kernel"] == F(75, 128)
+    assert result["uniform_ratio_completed_kernel"] == F(75, 128)
+    assert result["direct_equals_uniform_ratio_completion"]
+    assert len(result["eight_full_incidence_ratio_terms"]) == 8
+    assert result["every_completed_term_contains_three_incidence_indicators"]
+    assert result["all_dummy_ratio_averages_are_endpoint_exact"]
+    assert result["principal_ratio_modes_removed_before_absolute_value"]
+    assert not result["dummy_ratio_completion_preserves_original_common_t"]
+    assert not result["completed_generalized_determinant_bound_proved"]
+    assert not result["WRFE_proved"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.190 Uniform ratio completion gives all eight terms incidences" in text
+    assert r"c_p^*\equiv D\overline q\pmod p" in text
+    assert "dummy ratio" in text
+    assert "does not preserve the original common determinant" in text
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (

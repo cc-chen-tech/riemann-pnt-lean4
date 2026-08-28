@@ -80,6 +80,7 @@
 > | Eight-term route boundary | Section 9.187 expands the triple-centered kernel with exact signs and records a determinant histogram only for the all-incidence term.  A two-row fixture has total fiber energy \(7225/768\), while its all-incidence contribution is \(16\), split as determinant weights \(4,8,4\) at \(t=-1,0,1\); the other seven density terms sum to \(-5063/768\).  Thus the cancellation needed by WRFE already occurs inside the positive energy identity, and the isolated \(t=0\) mass is not a positive secondary term.  This separates two valid routes: prove WRFE by an internal eight-term reassembly, or return before Cauchy and prove a new direct AFE/reflection/diagonal implication.  The explicit diagonal cannot be used to prove WRFE after Cauchy.  Neither route's analytic estimate is proved |
 > | Primitive-ray factorization of the all-incidence zero determinant | Section 9.188 assumes only the literal factorization \(w_p(m,n)=f_p(m)g_p(n)\).  Every incident lift has a unique primitive core \((g,\ell,k)=(s,m,n)/(s,m,n)\) on \(pg=q\ell+Dk\).  For \(p_2=p_1+rq\), determinant zero is exactly equality of the two primitive cores after the shear \((g,\ell,k)\mapsto(g,\ell+rg,k)\).  Consequently the two dilation variables sum independently into one-dimensional ray profiles \(\mathcal L_p(g,\ell,k)\), giving the exact factorization (9.1260).  This is a candidate entry point for LCM square-energy, but no such bound is inferred: the primitive plane, prime shift, physical Type weights, and seven density terms must still be retained |
 > | Ray Type-reassembly boundary | Section 9.189 restores the literal meanings of the two ray factors.  The \(F\)-lift \(f_p(u\ell)\) is the \(h\delta\)/cofactor convolution, while only the \(G\)-lift carries \(\mu(uk)\).  On squarefree coprime support this becomes one dilation sign \(\mu(uk)=\mu(u)\mu(k)\), not two Selberg coefficients.  Moreover the original Type-I/II multipliers at the product \(uk\) do not separate: for \(U=V=3\), \(k=(2,5)\), \(u=(3,7)\), the Type-I matrix has determinant \(-2\), whereas the fully reassembled Möbius matrix is rank one.  Thus Type blocks must first be reassembled before a new one-sided split in \(u\).  There is no reciprocal-LCM kernel in (9.1261), so the proved LCM quadratic bound does not apply directly; the new dilation Type estimate remains open |
+> | Uniform-ratio completion of all density terms | Section 9.190 rewrites each density \(1/\varphi(\ell)\) as the exact average of a full incidence over a dummy unit ratio.  The outer actual ratio is \(a^*=1\), and the inner actual ratios are \(c_{p_i}^*\equiv D\overline q\pmod {p_i}\).  Thus all eight terms of the triple-centered product become signed averages of three incidence indicators before any absolute value.  This supplies quotient coordinates to the seven density terms, but the dummy ratios change the determinant equation and do not preserve the original common \(t\).  The finite completion and principal-mode deletion are exact; the resulting generalized-determinant estimate remains unproved |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -26774,6 +26775,112 @@ rank-one raw Möbius recovery.  It leaves the new one-sided dilation Type
 estimate, ray-profile energy bound, (WRFE), and the coupled-kernel gate
 false.
 
+### 9.190 Uniform ratio completion gives all eight terms incidences
+
+The absence of an original quotient on the seven density terms does not
+prevent an exact incidence completion.  For units \(m,n\pmod p\), define
+
+\[
+ B_p(c;m,n):=\mathbf1_{m+cn\equiv0\ (p)},
+ \qquad c\in U(p).
+\]
+
+Exactly one \(c\in U(p)\) makes this indicator one.  With
+
+\[
+ \boxed{c_p^*\equiv D\overline q\pmod p,}
+ \tag{9.1268}
+\]
+
+the physical incidence and its density subtraction therefore satisfy
+
+\[
+ \boxed{
+ \Delta_p(qm+Dn)
+ =B_p(c_p^*;m,n)
+ -\frac1{\varphi(p)}\sum_{c\in U(p)}B_p(c;m,n).}
+ \tag{9.1269}
+\]
+
+Likewise put
+
+\[
+ A_q(a;p_1,p_2):=\mathbf1_{p_2\equiv ap_1\ (q)}.
+\]
+
+The actual outer ratio is \(a^*=1\), and every pair of prime units has
+exactly one ratio in \(U(q)\).  Hence
+
+\[
+ \boxed{
+ \Delta_q(p_1-p_2)
+ =A_q(1;p_1,p_2)
+ -\frac1{\varphi(q)}\sum_{a\in U(q)}A_q(a;p_1,p_2).}
+ \tag{9.1270}
+\]
+
+Substitution of (9.1269)--(9.1270) into (9.1250) gives a tensor product
+of three actual-minus-uniform expressions.  Its eight signed terms all
+contain the full product
+
+\[
+ A_q(a;p_1,p_2)
+ B_{p_1}(c_1;m_1,n_1)
+ B_{p_2}(c_2;m_2,n_2),
+ \tag{9.1271}
+\]
+
+where each of \(a,c_1,c_2\) is either the physical ratio or a dummy ratio
+summed over the complete unit group with its inverse-totient weight.
+There is no endpoint or truncation error.  This is exactly multiplicative
+principal-mode deletion written in the physical ratio coordinates, and
+it occurs before any absolute value.
+
+For the fixture
+
+\[
+ (q,D,p_1,p_2,m_1,n_1,m_2,n_2)=(5,1,7,17,1,2,2,7),
+\]
+
+the actual ratios are \((a^*,c_1^*,c_2^*)=(1,3,7)\).  Direct evaluation
+of the three centered kernels and summation of all eight completed terms
+both give
+
+\[
+ \frac34\cdot\frac56\cdot\frac{15}{16}=\frac{75}{128}.
+\]
+
+This completion supplies incidence quotients to every density term, but
+it does not preserve the original common determinant.  Choosing integer
+representatives of the ratios, the completed incidences have the form
+
+\[
+ p_2=ap_1+rq,\qquad
+ p_1s_1=m_1+c_1n_1,\qquad
+ p_2s_2=m_2+c_2n_2,
+\]
+
+and elimination gives
+
+\[
+ a m_1s_2+rqs_1s_2-m_2s_1
+ =c_2n_2s_1-a c_1n_1s_2.
+ \tag{9.1272}
+\]
+
+For dummy ratios the two sides of (9.1272) have no common physical
+factors \(D,q\), so the integer \(t\) in (9.1254) is unavailable.  The
+gain is instead that all centerings now share a full-incidence geometry.
+The remaining analytic choice is whether multiplicative orthogonality
+in \((a,c_1,c_2)\), or dispersion in the generalized determinant
+(9.1272), can control the completed family while retaining the reassembled
+Type signs.  No such bound is proved here.
+
+The helper `triple_centered_uniform_ratio_completion_audit` enumerates
+the three unit groups, verifies all eight full-incidence terms against
+the direct centered product, and keeps both the generalized-determinant
+and (WRFE) flags false.
+
 ## 10. What has and has not been proved
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
@@ -26998,9 +27105,10 @@ the two inner quotients collapse to the single determinant value in
 (9.1254); the zero-value locus is exactly the coprime-ray family
 (9.1255).  This is a sharper finite reduction, but not a resonant
 evaluation: the seven density cross terms have no canonical \(t\), so
-they must be reassembled with the \(t=0\) ray, rank-one subtraction,
-AFE/reflection, and diagonal before any positivity argument.  That
-global resonant ledger and the signed \(t\ne0\) dispersion are both
+for (WRFE) they must be reassembled with the \(t=0\) ray and rank-one
+subtraction inside the same energy.  Using AFE/reflection/diagonal
+cancellation instead requires the distinct pre-Cauchy bypass of Section
+9.187.  Both resonant ledgers and the signed \(t\ne0\) dispersion are
 unproved; therefore (CSSM), (WRFE), and the coupled-kernel gate remain
 open.
 
@@ -27032,6 +27140,15 @@ the determinant-\(-2\) witness (9.1266) shows.  Their sum restores the
 rank-one raw Möbius matrix (9.1267).  Any ray attack must therefore
 reassemble first and only then perform a new one-sided split in \(u\).
 No estimate for that new split is proved.
+
+Section 9.190 supplies common incidence coordinates for the seven
+density terms by exact uniform-ratio completion.  Each centered kernel
+is its physical ratio incidence minus the unit-ratio average, so all
+eight expanded terms contain three incidence indicators and the
+principal ratio modes cancel before absolute values.  The dummy ratios
+do not preserve the special common \(t\); they lead to the generalized
+determinant equation (9.1272).  Neither its dispersion estimate nor an
+equivalent multiplicative-orthogonality bound is proved.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent
