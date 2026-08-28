@@ -29,6 +29,7 @@ lean_lib RiemannPNT where
     `HardyTheorem.ConreyExplicitRightVerticalLow,
     `HardyTheorem.ConreyHorizontalJensenGeometry,
     `HardyTheorem.ConreyHorizontalJensenCenter,
+    `HardyTheorem.ConreyHorizontalJensenGrowth,
     `HardyTheorem.ConreyEquation35Global,
     `HardyTheorem.ConreyLittlewoodMeanSquare,
     `HardyTheorem.ConreySimpleZeroCount,
