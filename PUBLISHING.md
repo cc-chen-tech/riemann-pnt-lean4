@@ -18,14 +18,14 @@ everywhere, bounds the closed terms, selects one good height for every real
 sample in a fixed logarithmic window, and makes the normalized finite-height
 approximation remainder uniformly arbitrarily small on that window and
 arbitrarily small in its local second moment.
-It does not prove the Riemann Hypothesis, independently reprove Selberg's
-`T log T` result through this repository's native mollifier/MWKF route, or
-provide numerically explicit values for the existential remainder constants.
-The Selberg target and the definitionally equivalent legacy Conrey-named alias
-are nevertheless closed inside this repository's kernel through the
-independently machine-checked Anthropic Zeta23 Theorem B; that external
-analytic input must remain explicit in every publication claim. Conrey's
-genuine strict `> 2/5` simple-zero theorem remains open.
+It does not prove the Riemann Hypothesis, the separate `N=T^3` long-mollifier
+asymptotic, or numerically explicit values for the existential remainder
+constants. The native short-mollifier Fourier--Mellin mainline proves Selberg's
+`T log T` target and, by the existing definitional transfer, its legacy
+Conrey-named alias. The independently machine-checked Anthropic Zeta23 Theorem B
+gives an additional stronger-input closure; that external analytic input must
+remain explicit whenever that route or its `7/48` constant is claimed.
+Conrey's genuine strict `> 2/5` simple-zero theorem remains open.
 
 ## Current Verified Baseline
 
@@ -35,13 +35,12 @@ genuine strict `> 2/5` simple-zero theorem remains open.
   output in the release log
 - Current code-level `sorry` count: 0
 - Tracked mathematical `def ... : Prop` targets: 15
-  (2 of these -- `selberg_odd_zero_proportion_target` and
-  `KnownResults.conrey_40_percent_zeros_on_critical_line_target` -- are
-  closed by the verified Anthropic `zeta-23-lean` Theorem B through the
-  in-repo bridge `HardyTheorem.Zeta23SelbergBridge`, which imports the
-  vendored, axiom-clean `Zeta23` library and closes both targets inside
-  this repository's kernel; see
-  [zeta23-selberg-bridge.md](docs/research/zeta23-selberg-bridge.md)); the
+  (`selberg_odd_zero_proportion_target` is proved natively by
+  `selberg_odd_zero_proportion_target_proved_mainline`; the verified Anthropic
+  `zeta-23-lean` Theorem B provides an independent closure through
+  `HardyTheorem.Zeta23SelbergBridge` and also closes the definitionally
+  Selberg legacy target `KnownResults.conrey_40_percent_zeros_on_critical_line_target`;
+  see [zeta23-selberg-bridge.md](docs/research/zeta23-selberg-bridge.md)); the
   inventory also includes the two unproved `FiniteSpectrumGap` target forms
 - Route-interface `def ... : Prop` declarations: 6
 - Reusable Prop predicates: 197
@@ -75,12 +74,12 @@ exact `psi` transfer is theorem-level.  The finite-height approximation, jump,
 and closed-term pieces now have fixed-window control, but no theorem yet
 controls the complementary zero package strongly enough for the strict
 positivity endpoint; the detector-energy gate also remains open. RH,
-Vinogradov--Korobov, a repository-native Selberg/MWKF reproof independent of
-Zeta23, and any unconditional power-saving error below exponent `2/3` remain
-outside the proved boundary. The Zeta23-based Selberg and legacy-alias closure
-is inside the kernel but must be attributed as an external machine-checked
-analytic input. Conrey's genuine strict two-fifths simple-zero target remains
-outside the proved boundary.
+Vinogradov--Korobov, the separate `N=T^3` long-mollifier/MWKF asymptotic, and
+any unconditional power-saving error below exponent `2/3` remain outside the
+proved boundary. The short-mollifier native Selberg mainline is proved. The
+Zeta23-based independent closure and legacy-alias closure are inside the kernel
+but must be attributed as an external machine-checked analytic input. Conrey's
+genuine strict two-fifths simple-zero target remains outside the proved boundary.
 
 As of the current baseline, no route interface has a body equal to `True`.
 `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum` is still an explicit
@@ -217,7 +216,7 @@ and
 | File | Remaining `sorry` count | Main target statements |
 |---|---:|---|
 | `ZeroFreeRegion.lean` | 0 | Classical `c/log |t|` region proved; Vinogradov-Korobov remains a target |
-| `HardyTheorem.lean`, `HardyTheorem/CriticalLineMultiplicity.lean`, `HardyTheorem/ConreySimpleZeroCount.lean` | 0 | Hardy and Hardy--Littlewood linear lower bounds and the independent Selberg theorem are proved; Zeta23 closes the Selberg target and legacy Conrey-named alias, while the genuine strict `> 2/5` simple-zero target and its long-mollifier analytic gate remain open |
+| `HardyTheorem.lean`, `HardyTheorem/CriticalLineMultiplicity.lean`, `HardyTheorem/ConreySimpleZeroCount.lean` | 0 | Hardy and Hardy--Littlewood linear lower bounds and the native short-mollifier Selberg theorem are proved; Zeta23 independently closes the Selberg target and legacy Conrey-named alias, while the genuine strict `> 2/5` simple-zero target and its long-mollifier analytic gate remain open |
 | `PrimeNumberTheorem.lean`, `PrimeNumberTheorem/PNTFromDynamicPerron.lean`, `PrimeNumberTheorem/ClassicalPNTError.lean`, and `PrimeNumberTheorem/ClassicalPrimeCountingError.lean` | 0 | Ordinary PNT and the de la Vallee Poussin-form `psi` and `pi-Li` remainders proved; unconditional RH-scale predicates remain open |
 
 ## Release Dependency Issue

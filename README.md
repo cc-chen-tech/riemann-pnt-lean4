@@ -12,14 +12,17 @@ PNT 误差振荡。围绕该振荡，`main` 还包含每个充分靠后的固定
 二阶矩下界、有限零点簇的碰撞安全局部 `L2` 强制性工具，以及把有限簇接入真实
 有限高度显式公式的精确 `psi` 二阶矩传递。最新合并链还证明：在任意固定长度的
 对数窗口上，可以选取一个整窗共用的良好截断高度，使归一化有限高度近似余项一致
-趋于零，并使其局部二阶矩任意小。此外，`main` 通过
-[Zeta23 桥接](HardyTheorem/Zeta23SelbergBridge.lean)在仓库内核内闭合了
-Selberg 奇重零点正比例目标：输入是 Anthropic
+趋于零，并使其局部二阶矩任意小。此外，`main` 已通过仓库原生的
+[Selberg Fourier--Mellin S1--S5 链](HardyTheorem/SelbergStrictCancellationZeroCover.lean)
+证明 Selberg 奇重零点正比例目标；该证明使用长度 `T^(1/32)` 的短平方根 zeta mollifier，
+不依赖 Zeta23。作为独立的更强输入，[Zeta23 桥接](HardyTheorem/Zeta23SelbergBridge.lean)
+也在仓库内核内闭合了同一目标：输入是 Anthropic
 [`zeta-23-lean`](https://github.com/anthropics/zeta-23-lean) 的机器检查
 Theorem B(至少 2/3 的零点简单且在临界线上,Apache 2.0)与本仓库自己的全高度
 Riemann--von Mangoldt 下界,桥接本身是定义级组装。旧名
-`conrey_40_percent_zeros_on_critical_line_target` 也由此成立，但它在定义上
-只是 Selberg 正比例目标，不是真正的简单零点 `> 2/5` 定理(来源与归属见
+`conrey_40_percent_zeros_on_critical_line_target` 已由原生 Selberg 定理作定义级传递，
+Zeta23 也独立推出它；但它只是 Selberg 正比例目标，不是真正的简单零点 `> 2/5`
+定理(来源与归属见
 [docs/research/zeta23-merge-provenance.md](docs/research/zeta23-merge-provenance.md))。
 项目没有证明 Riemann 假设或 Vinogradov--Korobov 零自由区域。
 
@@ -141,10 +144,13 @@ chain removes midpoint jumps almost everywhere, controls the closed terms,
 selects one good truncation height for all real samples in a fixed logarithmic
 window, and proves that the normalized finite-height approximation remainder
 is uniformly arbitrarily small there, hence also arbitrarily small in local
-`L2`. This does not control the complementary zero package.  Through the
-Zeta23 bridge (`HardyTheorem.Zeta23SelbergBridge`), `main` additionally
-closes the Selberg odd-multiplicity positive-proportion target inside this
-repository's kernel: the inputs are the
+`L2`. This does not control the complementary zero package. Independently, the
+native Selberg Fourier--Mellin S1--S5 chain
+(`HardyTheorem.SelbergStrictCancellationZeroCover`) proves the
+odd-multiplicity positive-proportion target with a short square-root-zeta
+mollifier of length `T^(1/32)`, without Zeta23. Through the Zeta23 bridge
+(`HardyTheorem.Zeta23SelbergBridge`), `main` also closes the same target from
+the stronger external input given by the
 independently machine-checked Theorem B of Anthropic's
 [`zeta-23-lean`](https://github.com/anthropics/zeta-23-lean) (at least 2/3
 of the zeros are simple and on the critical line; Apache 2.0) and this
@@ -156,18 +162,19 @@ The development emphasizes multiplicity-aware zero counting, explicit-formula
 contours, reusable analytic interfaces, focused theorem contracts, and axiom
 audits. The merged tree also contains substantial finite exponential-sum,
 prime-power conditioning, mixed-moment, and coupled-tail infrastructure toward
-Vinogradov--Korobov. The repository-native Selberg mollifier and MWKF route,
+Vinogradov--Korobov. The separate `N=T^3` long-mollifier/MWKF route,
 stronger local oscillation density, Ford's incomplete-moment bridge, and
 infinite-dimensional Weil-criterion routes remain research programs; their
 audits and conditional reductions are reported separately from the merged
-theorem surface. In particular, this native Selberg route is distinct from the
-Zeta23-based kernel closure above.
+theorem surface. Its open off-diagonal estimate is not a prerequisite for the
+proved short-mollifier Selberg mainline above.
 
 The project does **not** prove the Riemann Hypothesis, the
 Vinogradov--Korobov zero-free region, or numerically explicit final
-constants. Selberg's positive-proportion theorem is closed in-repo through the
-external machine-checked Zeta23 Theorem B (see above); the analytic content of
-that theorem is Anthropic's, not this repository's. A legacy target carrying
+constants. Selberg's positive-proportion theorem has an independent native
+proof in this repository; it is also closed through the externally
+machine-checked Zeta23 Theorem B (see above), whose analytic content is
+Anthropic's, not this repository's. A legacy target carrying
 Conrey's name is merely definitionally Selberg and must not be confused with
 the genuine simple-zero `> 2/5` theorem. Classical mathematical theorems are
 not presented as new results; the contribution is their machine-checked Lean
@@ -202,8 +209,8 @@ resulting reusable library.
 | 真实 `psi` 二阶矩的“有限零点簇减完整余项”下界 | `PrimeNumberTheorem.VKEdgePiOverTwo.normalizedChebyshevPsiErrorSecondMoment_ge_localSeparation_sub_remainder` | [源码](PrimeNumberTheorem/VKEdgeZeroClusterExplicitFormulaL2.lean) · [实现计划](docs/superpowers/plans/2026-07-29-vk-edge-zero-cluster-explicit-l2.md) |
 | 固定对数窗口上归一化有限高度显式公式余项一致趋于零 | `PrimeNumberTheorem.ExplicitFormulaResidues.eventually_exists_uniform_goodHeight_normalized_window_remainder_lt` | [源码](PrimeNumberTheorem/ExplicitFormulaNormalizedWindowRemainder.lean) · [说明](docs/research/explicit-formula-normalized-window-remainder.md) |
 | 固定对数窗口上归一化有限高度近似误差的局部二阶矩任意小 | `PrimeNumberTheorem.VKEdgePiOverTwo.eventually_exists_goodHeight_normalizedApproximationErrorSecondMoment_lt` | [源码](PrimeNumberTheorem/VKEdgeZeroClusterApproximationL2.lean) · [说明](docs/research/vk-edge-approximation-l2-decay.md) |
-| Selberg 奇重数临界线零点正比例(`c · T log T` 尺度) | `HardyTheorem.Zeta23SelbergBridge.selberg_odd_zero_proportion_target_of_zeta23`(显式常数 `7/48`) | [桥接源码](HardyTheorem/Zeta23SelbergBridge.lean) · [桥接蓝图](docs/research/zeta23-selberg-bridge.md) · [来源说明](docs/research/zeta23-merge-provenance.md) |
-| 旧版 Conrey 名称兼容目标（实际为 Selberg 正比例） | `HardyTheorem.Zeta23SelbergBridge.conrey_40_percent_zeros_on_critical_line_target_of_zeta23` | [桥接源码](HardyTheorem/Zeta23SelbergBridge.lean) · 不是真正的简单零点 `> 2/5` 目标 |
+| Selberg 奇重数临界线零点正比例(`c · T log T` 尺度) | `HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline` | [原生证明](HardyTheorem/SelbergStrictCancellationZeroCover.lean) · [数学审计](docs/research/2026-08-24-selberg-mainline-mathematical-audit.md) · [独立 Zeta23 桥接](HardyTheorem/Zeta23SelbergBridge.lean) |
+| 旧版 Conrey 名称兼容目标（实际为 Selberg 正比例） | `HardyTheorem.selberg_zero_proportion_target_proved_mainline` + `KnownResults.conrey_40_percent_zeros_on_critical_line_target_of_selberg` | [原生 Selberg 源码](HardyTheorem/SelbergStrictCancellationZeroCover.lean) · [独立 Zeta23 桥接](HardyTheorem/Zeta23SelbergBridge.lean) · 不是真正的简单零点 `> 2/5` 目标 |
 
 完整的声明级清单见
 [Formal Theorem Inventory](docs/formal-theorem-inventory.md)。各条证明链的数学解释和
@@ -392,15 +399,16 @@ flowchart TD
 
     F["Hardy Z function and first approximation"] --> G["Infinitely many critical-line zeros<br/>proved on main"]
     G --> H["Hardy-Littlewood linear lower bound<br/>proved on main"]
-    H --> I["Native Selberg mollifier route<br/>independent reproof open"]
-    I --> IA["LCM main term and exact off-diagonal reduction<br/>audited on main"]
+    H --> I["Native Selberg Fourier-Mellin S1-S5<br/>proved on main"]
+    I --> IZ["Selberg odd-zero proportion c T log T<br/>proved on main"]
+    H --> IA["Separate N=T^3 long-mollifier reduction<br/>audited on main"]
     IA --> IB["Coupled operator, Mobius-Farey and tail inputs<br/>open"]
 
     J["Multiplicity-aware zero count"] --> K["Riemann-von Mangoldt<br/>proved on main"]
     J --> L["Mollifier, detector, mean square"]
     L --> M["Carlson zero-density estimate<br/>proved on main"]
 
-    ZA["Zeta23 Theorem B<br/>externally machine-checked"] --> ZB["Selberg target and legacy Conrey alias<br/>closed in repository kernel"]
+    ZA["Zeta23 Theorem B<br/>externally machine-checked"] --> ZB["Independent closure of Selberg target<br/>and legacy Conrey alias"]
     K --> ZB
     K --> ZC["Genuine Conrey simple-zero target > 2/5<br/>open analytic gate"]
 
@@ -424,11 +432,11 @@ flowchart TD
 - 临界线上至少存在多少零点；
 - 全部零点和靠右零点分别有多少。
 
-仓库原生的 Selberg mollifier/MWKF 重证明、最终 VK、Pintz 最大阶、正负双向振荡以及
+独立的 `N=T^3` 长 mollifier/MWKF 渐近、最终 VK、Pintz 最大阶、正负双向振荡以及
 比固定 `epsilon` 幂窗口更精细的局部分布仍需要新的上游估计，不能由当前已证明定理
-自动推出。这里的“原生重证明仍开放”不否定 Zeta23 外部机器验证输入已经在本仓库内核
-中闭合 Selberg 目标及定义等价的旧 Conrey 命名别名；真正的 Conrey `> 2/5`
-简单零点目标仍需独立解析输入。
+自动推出。这个长 mollifier 缺口不影响已经证明的原生短 mollifier Selberg 主线；
+Zeta23 又独立闭合同一 Selberg 目标及定义等价的旧 Conrey 命名别名。真正的 Conrey
+`> 2/5` 简单零点目标仍需独立解析输入。
 
 ---
 
@@ -441,7 +449,7 @@ flowchart TD
 | 路线与入口 | 当前进展 | 尚未闭合的边界 |
 |---|---|---|
 | `main` 中的 Selberg/MWKF 审计（PR #478--#482） | [LCM 主项](docs/research/2026-08-24-selberg-mobius-lcm-main-term.md)、[精确 off-diagonal](docs/research/2026-08-24-mobius-weighted-off-diagonal.md)、[已发表覆盖表](docs/research/2026-08-24-mwkf-published-coverage.md)、[Möbius Type I/II](docs/research/2026-08-24-mwkf-mobius-type-i-ii.md)与[全局耦合审计](docs/research/2026-08-24-mwkf-global-coupled-coefficient-first.md)已经整理，并有 Python 精确有限模型测试 | 无条件 `N=T^3` 长 mollifier 渐近仍缺 global coupled operator、中心化 Möbius--Farey 三线性估计及变换尾项控制；这些文档不是 Lean theorem |
-| [`research/hardy-littlewood`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/hardy-littlewood) | 在已合并的线性下界之上继续建设仓库原生 Selberg mollifier、bad-set 和 packing 估计 | 不依赖 Zeta23 的原生 `T log T`/正比例重证明仍开放；目标本身已通过 Zeta23 桥在内核中闭合 |
+| [`research/hardy-littlewood`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/hardy-littlewood) | 历史上在已合并的线性下界之上建设 bad-set 和 packing 路线；当前短 mollifier Fourier--Mellin S1--S5 主线已经原生证明 Selberg 目标 | 旧 bad-set 路线仍缺两个定量估计，但已不再是 Selberg 定理的必经门 |
 | [`feat/explicit-formula-unified-next`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/feat/explicit-formula-unified-next) | 尝试把 Carlson 边界簇、动态高度和实际 PNT 误差传递统一起来 | 必须重新审计声明是否依赖外部输入、模型接口或未闭合余项，不能按提交标题计作 `main` 成果 |
 | [`agent/vk-ford-incomplete-bridge`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/agent/vk-ford-incomplete-bridge)（原 PR #19，已关闭） | 保留 Ford 不完整矩、double Hölder 和近整数计数实验 | 混合草案过大且与 `main` 冲突；residue-mass 审计已单独合并，其余内容需拆成新的可审查 PR |
 | [`research/vk-edge-annihilator-h-average-next`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/vk-edge-annihilator-h-average-next) | 继续研究消去器平均和零密度残差能量 | 完整显式公式余项、正检测器能量及真实零点簇选择尚未统一闭合 |
@@ -462,24 +470,20 @@ flowchart TD
 - Vinogradov--Korobov 零自由区域；
 - 无条件平方根尺度素数误差；
 - 无条件的 `Re(rho) <= 14/17` 或 `Re(rho) <= 2/3` 非平凡零点排除；
-- Selberg 的临界线零点正比例定理——**已通过外部机器检查证明在仓库内核内闭合**:
-  Anthropic `zeta-23-lean` 的 Theorem B(至少 2/3 零点简单且在临界线上)+
-  本仓库定义级桥接(`HardyTheorem.Zeta23SelbergBridge`,常数 7/48);定理的解析
-  内核属于 Anthropic,见[来源说明](docs/research/zeta23-merge-provenance.md);
 - Conrey 1989 年的简单零点 `> 2/5` 定理——尚未完成无公理解析证明；
   `HardyTheorem.conreyTwoFifthsSimpleZerosTarget` 是正确目标，显式积分与数值
   层已形式化，但均方估计、论证原理及 Deshouillers--Iwaniec 谱输入仍是开放层。
   旧的 `conrey_40_percent_zeros_on_critical_line_target_of_selberg` 只推出定义上
   等同 Selberg 的兼容别名，不能作为该定理的证明；
-- 不依赖外部 Zeta23 工件、完全由本仓库 Selberg mollifier/MWKF 分析给出的原生
-  `T log T`/正比例重证明；
+- 独立的 `N=T^3` 长 mollifier/MWKF 渐近；它仍缺耦合的双 Möbius 离对角节省，
+  但不是已经证明的短 mollifier Selberg 主线的前提；
 - Pintz 的均值阶或最大阶振荡定理；
 - 带最终数值常数的显式 Strong PNT 或零自由区域。
 
-Selberg 奇重零点正比例目标和 Conrey 百分比目标不属于上面的“未证明”列表：它们已经
-通过 Anthropic `zeta-23-lean` 的外部机器检查 Theorem B 与本仓库的定义级桥接在本仓库
-内核中闭合，显式常数为 `7/48`。但 Theorem B 的解析内容属于 Anthropic，本仓库没有把
-那份分析重新形式化为独立的原生 mollifier 证明；来源与公理边界见
+Selberg 奇重零点正比例目标已经由本仓库的短 mollifier Fourier--Mellin S1--S5 主线
+原生证明；Anthropic `zeta-23-lean` 的 Theorem B 与定义级桥接又给出显式常数 `7/48`
+的独立闭合。旧 Conrey 百分比名称只是定义等同 Selberg 的兼容目标；它不是上面仍开放的
+真正 Conrey 严格 `> 2/5` 简单零点定理。Zeta23 的来源与公理边界见
 [zeta23-merge-provenance.md](docs/research/zeta23-merge-provenance.md)。
 
 这些名称可能出现在 `def ... : Prop`、条件闭合定理或研究分支中。出现一个目标声明并不等于
@@ -539,8 +543,8 @@ Hardy--Littlewood 形式化的 prior art。
 
 ### 长期独立方向
 
-- Selberg 原生重证明：在不调用 Zeta23 Theorem B 的前提下闭合 mollifier/MWKF
-  `N_0(T) >= c T log T` 路线，会形成独立的解析形式化贡献；
+- Selberg 后续强化：已原生闭合短 mollifier 的 `N_0(T) >= c T log T` 主线；后续可
+  优化常数并比较 Zeta23 给出的独立 `7/48` 闭合；
 - 长 mollifier/MWKF：把已审计的 `N=T^3` 精确归约推进到 global coupled operator、
   中心化 Möbius--Farey 三线性估计和变换尾项的无条件闭合；
 - Vinogradov--Korobov：已合并基础设施与最终 zeta 零自由区域应分阶段成文；

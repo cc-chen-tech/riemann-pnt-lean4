@@ -3075,11 +3075,12 @@ These prove the local Hardy-Z setup, a uniform critical-line first zeta
 approximation, the two dyadic integral bounds, and the final constant-sign
 contradiction.  Consequently Hardy's theorem is proved unconditionally in the
 stronger form that critical-line zeros occur at arbitrarily large positive
-heights.  The signed-moment targets remain as an independent legacy route, and
-the Selberg and genuine Conrey target shapes remain stronger quantitative
-extensions. Zeta23 discharges the Selberg target and its definitionally equal
-legacy Conrey-named alias; the genuine strict `> 2/5` simple-zero target remains
-open, as does a repository-native Selberg mollifier reproof.
+heights. The signed-moment targets remain as an independent legacy route. The
+native short-mollifier Fourier--Mellin S1--S5 chain proves the stronger Selberg
+odd-zero positive-proportion target, and Zeta23 gives an independent closure of
+that target and its definitionally equal legacy Conrey-named alias. The genuine
+strict `> 2/5` simple-zero target and the separate `N=T^3` long-mollifier
+asymptotic remain open.
 
 ### `HardyTheorem/HardyLittlewoodTheorem.lean` and `HardyTheorem/HardyLittlewoodOddTheorem.lean`
 
@@ -3094,9 +3095,11 @@ The merged unconditional endpoints are:
 The proof chain uses fixed short windows, quantitative control of bad starting
 points, local Hardy-`Z` sign changes, and interval packing.  These
 Hardy--Littlewood modules alone do not prove Selberg's `T log T` lower bound,
-positive proportion, or RH. The repository-wide Selberg target and legacy
-Conrey-alias closure instead comes from the separately attributed Zeta23
-bridge; it does not close Conrey's genuine strict two-fifths simple-zero target.
+positive proportion, or RH. The later native short-mollifier Fourier--Mellin
+mainline proves the repository-wide Selberg target, and its distinct-zero
+endpoint transfers definitionally to the legacy Conrey alias. The separately
+attributed Zeta23 bridge gives an independent closure. Neither closes Conrey's
+genuine strict two-fifths simple-zero target.
 
 ### `PrimeNumberTheorem/PintzEnvelope.lean`
 
@@ -3420,9 +3423,14 @@ the merged PR #474 forcing interfaces.
 
 - `selberg_odd_zero_proportion_target`
 
-> **Closed in-repo (2026-08, via verified external artifact):** this target
-> is proved by `HardyTheorem.Zeta23SelbergBridge.selberg_odd_zero_proportion_target_of_zeta23`,
-> which combines the independently built and kernel-checked
+> **Proved natively in-repo (2026-08):** this target is proved by
+> `HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline` through the
+> short-mollifier Fourier--Mellin S1--S5 chain in
+> `HardyTheorem/SelbergStrictCancellationZeroCover.lean`.
+>
+> **Independent external closure:**
+> `HardyTheorem.Zeta23SelbergBridge.selberg_odd_zero_proportion_target_of_zeta23`
+> combines the independently built and kernel-checked
 > `Zeta23.thmB₀_mult_cumulative` (Anthropic `zeta-23-lean` Theorem B: at
 > least 2/3 of zeta zeros are simple and on the critical line;
 > `#print axioms` = `[propext, Classical.choice, Quot.sound]`) with this
@@ -3972,9 +3980,10 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    equivalence theorem but does not prove RH or an equivalent error predicate.
 4. **Hardy quantitative extensions.**
    Hardy's theorem and the Hardy--Littlewood linear lower bounds for distinct
-   and odd-multiplicity critical-line zeros are proved. Zeta23 closes the
-   Selberg target and definitionally equal legacy Conrey-named alias. The
-   genuine strict `> 2/5` simple-zero proposition remains open; its native
+   and odd-multiplicity critical-line zeros are proved. The native
+   short-mollifier mainline proves the Selberg target and transfers to the
+   definitionally equal legacy Conrey-named alias; Zeta23 independently closes
+   both. The genuine strict `> 2/5` simple-zero proposition remains open; its
    proof still needs the long-mollifier mean square, argument principle, and
    off-diagonal spectral input. The signed-moment and AFE targets remain
    alternative infrastructure.
