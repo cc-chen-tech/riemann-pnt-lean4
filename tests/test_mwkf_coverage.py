@@ -7602,6 +7602,144 @@ def test_active_cofactor_character_sectors_are_exactly_classified() -> None:
     assert not result["coupled_kernel_gate_closed"]
 
 
+def test_active_principal_projection_cancels_no_crt_fiber_power() -> None:
+    audit = getattr(
+        coverage_audit,
+        "active_principal_crt_fiber_projection_audit",
+        None,
+    )
+    assert audit is not None, "active-principal CRT projection audit is missing"
+    left_profile = {1: F(1), 2: F(-1), 3: F(2), 4: F(-2)}
+    right_profile = {1: F(2), 2: F(-2), 3: F(1), 4: F(-1)}
+    result = audit(
+        common_modulus=5,
+        left_active_cofactor=3,
+        right_active_cofactor=7,
+        short_determinant=1,
+        left_packet_values=tuple(
+            (common, active, left_profile[common])
+            for common in (1, 2, 3, 4)
+            for active in (1, 2)
+        ),
+        right_packet_values=tuple(
+            (common, active, right_profile[common])
+            for common in (1, 2, 3, 4)
+            for active in (1, 2, 3, 4, 5, 6)
+        ),
+    )
+    assert result["left_packet_is_globally_centered"]
+    assert result["right_packet_is_globally_centered"]
+    assert result["left_active_principal_profile"] == left_profile
+    assert result["right_active_principal_profile"] == right_profile
+    assert result["left_raw_packet_energy"] == 20
+    assert result["left_projected_packet_energy"] == 20
+    assert result["right_raw_packet_energy"] == 60
+    assert result["right_projected_packet_energy"] == 60
+    assert result["left_fiber_average_bound_is_saturated"]
+    assert result["right_fiber_average_bound_is_saturated"]
+    assert result["left_fixed_active_residue"] == 1
+    assert result["right_fixed_active_residue"] == 2
+    assert result["admissible_common_lift_parameters"] == (2, 3, 4)
+    assert result["unphased_projected_determinant_pair_sum"] == -2
+    assert result["centering_does_not_force_cofactor_power_saving"]
+    assert not result["inverse_totient_weight_gives_uniform_power_saving"]
+    assert not result["principal_active_sector_bound_proved"]
+    assert not result["bounded_D_one_power_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_principal_active_outer_mobius_type_blocks_reassemble_pre_cauchy() -> None:
+    audit = getattr(
+        coverage_audit,
+        "principal_active_outer_mobius_type_split_audit",
+        None,
+    )
+    assert audit is not None, "principal-active outer Type audit is missing"
+    result = audit(
+        left_active_cofactor=30,
+        right_active_cofactor=77,
+        short_cutoff_u=2,
+        short_cutoff_v=2,
+        h_weights=((-1, F(2)), (2, F(-1))),
+        delta_weights=((1, F(3)), (-2, F(1))),
+    )
+    assert result["product_label_weights"] == {
+        -4: F(-1),
+        -1: F(6),
+        2: F(-1),
+    }
+    assert result["direct_h_delta_linear_kernel_sum"] == -4
+    assert result["grouped_product_label_linear_kernel_sum"] == -4
+    assert result["left_outer_type_multipliers"] == {
+        "small": 0,
+        "I": 1,
+        "II": -2,
+    }
+    assert result["right_outer_type_multipliers"] == {
+        "small": 0,
+        "I": -1,
+        "II": 2,
+    }
+    assert result["raw_outer_mobius_pair_sign"] == -1
+    assert result["raw_principal_active_model_sum"] == 4
+    assert result["ordered_outer_type_block_sums"] == {
+        ("small", "small"): 0,
+        ("small", "I"): 0,
+        ("small", "II"): 0,
+        ("I", "small"): 0,
+        ("I", "I"): F(4),
+        ("I", "II"): F(-8),
+        ("II", "small"): 0,
+        ("II", "I"): F(-8),
+        ("II", "II"): F(16),
+    }
+    assert result["all_nine_ordered_outer_type_blocks_retained"]
+    assert result["outer_type_blocks_reassemble_raw_pair_before_cauchy"]
+    assert result["product_label_remains_exact_h_delta_convolution"]
+    assert result["no_blockwise_absolute_value_taken"]
+    assert not result["ordered_outer_type_block_bounds_proved"]
+    assert not result["principal_active_sector_bound_proved"]
+    assert not result["bounded_D_one_power_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_principal_active_polytope_deletes_all_outer_small_blocks() -> None:
+    audit = getattr(
+        coverage_audit,
+        "principal_active_outer_type_polytope_audit",
+        None,
+    )
+    assert audit is not None, "principal-active Type polytope audit is missing"
+    result = audit(
+        original_modulus_exponent=F(3),
+        maximum_type_frequency_gcd_exponent=F(1, 2),
+        maximum_common_gcd_exponent=F(1),
+        outer_short_cutoff_exponent=F(1, 2),
+    )
+    assert result["minimum_active_cofactor_exponent"] == F(3, 2)
+    assert result["maximum_outer_short_cutoff_exponent"] == F(1, 2)
+    assert result["every_outer_small_block_is_empty"]
+    assert result["nonempty_ordered_outer_type_blocks"] == (
+        ("I", "I"),
+        ("I", "II"),
+        ("II", "I"),
+        ("II", "II"),
+    )
+    assert result["published_coverage_by_block"] == {
+        "any-small": "vacuous-empty",
+        "I-I": "none",
+        "I-II": "none",
+        "II-I": "none",
+        "II-II": "none",
+    }
+    assert result["principal_active_raw_exponent"] == 5
+    assert result["principal_active_target_exponent"] == 4
+    assert result["principal_active_required_saving_exponent"] == 1
+    assert not result["combined_I_II_APBD_bound_proved"]
+    assert not result["bounded_D_one_power_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (

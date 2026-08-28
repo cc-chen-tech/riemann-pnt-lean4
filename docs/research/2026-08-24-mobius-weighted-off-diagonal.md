@@ -52,6 +52,8 @@
 > | Resonant two-PV compatibility boundary | Section 9.157 proves that the Section 9.144 argument cannot simply be reused on bounded nonzero \(D\).  Every physical reduced modulus is at least \(T^{5/2}\); equal reduced moduli would give \(g\geq T^{5/2}\), contradicting \(g|D|\ll T\).  Hence the cross term has distinct ambient moduli and two independent character families.  The determinant incidence does not impose \(\chi_1=\chi_2\); a shared primitive-conductor slice is not exhaustive.  Applying Cauchy separately returns the exact outer-sign saturation of Section 9.135.  Thus the two PV savings close the resonant projector only, not the one-power bounded-\(D\) gate |
 > | Common-lift two-pole sum and reconstruction boundary | Section 9.158 parameterizes every common \(g\)-lift by \(x_1r_2\equiv t\), \(x_2r_1\equiv t-D\pmod g\).  For one fixed pair of multiplicative-character atoms the retained common trace is a fixed-degree mixed character sum with additive phase \(A/t+B/(t-D)\).  Prime-modulus Weil and squarefree CRT give \(g^{1/2+\varepsilon}g_{\rm exc}^{1/2}\), where \(g_{\rm exc}\mid D\).  This is a genuine fixed-atom square-root bound, but Section 9.159 proves that arbitrary character reconstruction is the matrix of a norm-one partial shift: entrywise Weil cancellation does not yield an operator-norm saving.  Thus \(1-\gamma/2\) is only the formal fixed-atom residual; without a physical restriction on the character coefficients the global bounded-\(D\) gate still requires one full power |
 > | Active-cofactor character sectors | Section 9.160 evaluates the active residues before any large sieve.  Their exact twist is \(\chi_{1,r_1}(D)\overline{\chi_{2,r_2}(-D)}\overline{\chi_{1,r_1}(r_2)}\chi_{2,r_2}(r_1)\).  The active-principal sector is allowed whenever nonprincipality sits on the common \(g\)-part, and its twist is identically one.  On the quadratic sector, reciprocity collapses the two high-conductor cross evaluations to a sign modulo four; for bounded \(D\), only bounded-conductor factors remain.  Thus neither a general cross-character oscillation claim nor the published quadratic large sieve covers every centered physical sector; the principal-active slice still requires the coupled Möbius/Type cancellation |
+> | Active-principal CRT fiber projection | Section 9.161 computes the projection, rather than estimating it.  In CRT coordinates \(U(gr)=U(g)\times U(r)\), being principal on the active \(r\)-component is exactly fiber averaging.  Its energy is \(\varphi(r)^{-1}\sum_s|\sum_u Z(s,u)|^2\leq\sum_{s,u}|Z(s,u)|^2\).  Centered packets constant on every active fiber attain equality, so the inverse-totient normalization is cancelled by the fiber multiplicity and gives no uniform \(r\)-power.  After the determinant selector the exact surviving bilinear is a common-\(g\) partial shift of the two centered fiber averages, with \(a=h\delta\), all Type packets, and \(\mu(r_1)\mu(r_2)\) still present |
+> | Principal-active outer Möbius Type split | Section 9.162 applies the exact small/I/II identity to the two surviving outer signs \(\mu(r_1)\mu(r_2)\), outside the common physical kernel.  This gives nine ordered blocks while retaining one \(a=h\delta\) convolution and allowing cross-block cancellation.  On the balanced bounded-\(D\) polytope, \(r_i=T^{3-\delta_i-\gamma}\geq T^{3/2}\); with the registered \(U=V=T^{1/2+o(1)}\), every block containing `small` is identically empty.  The true principal-active gate therefore consists of the four ordered I/II blocks.  Existing two-PV, character-large-sieve, BRS, and Blomer--Pascadi estimates still do not cover any complete one of these physical blocks because the common kernel, the other varying level, and the \(h\delta\) packet remain coupled |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -22944,6 +22946,226 @@ arbitrary supplied odd squarefree coprime cofactors.  It records the
 allowed active-principal face and the quadratic high-conductor collapse,
 while leaving the principal-active Möbius/Type estimate, bounded-\(D\)
 gate, and complete coupled-kernel gate false.
+
+### 9.161 The active-principal projection has no inverse-totient saving
+
+The allowed principal-active face can be projected exactly.  Write CRT
+coordinates on one reduced modulus as
+
+\[
+ U(gr)=U(g)\times U(r),\qquad Z_{g,r}(s,u)=Z(c),
+ \quad c\equiv s\pmod g,\quad c\equiv u\pmod r.
+ \tag{9.1064}
+\]
+
+The orthogonal projection onto characters principal on the active
+\(r\)-component is fiber averaging:
+
+\[
+ A_{g,r}Z(s):=\frac1{\varphi(r)}
+   \sum_{u\in U(r)}Z_{g,r}(s,u),
+ \qquad
+ (P_{g,r}^{\rm AP}Z)(s,u)=A_{g,r}Z(s).
+ \tag{9.1065}
+\]
+
+To retain only total nonprincipal characters on this face, replace
+\(A_{g,r}Z\) by its mean-zero part in \(s\).  If the original packet is
+already centered on \(U(gr)\), then \(A_{g,r}Z\) is automatically
+centered on \(U(g)\).  The exact energy identity is
+
+\[
+ \boxed{
+ \|P_{g,r}^{\rm AP}Z\|_2^2
+ =\varphi(r)\sum_{s\in U(g)}|A_{g,r}Z(s)|^2
+ =\frac1{\varphi(r)}\sum_{s\in U(g)}
+   \left|\sum_{u\in U(r)}Z_{g,r}(s,u)\right|^2.}
+ \tag{9.1066}
+\]
+
+Cauchy gives \(\|P_{g,r}^{\rm AP}Z\|_2\leq\|Z\|_2\), but there is no
+power saving in \(r\).  Indeed, take
+
+\[
+ Z_{g,r}(s,u)=F(s),\qquad \sum_{s\in U(g)}F(s)=0.
+ \tag{9.1067}
+\]
+
+This packet is centered, lies entirely in the active-principal sector,
+and attains equality in (9.1066).  Thus the apparent
+\(1/\varphi(r)\) from imprimitive character inversion is cancelled by
+the square of the \(\varphi(r)\)-point fiber sum.  Neither ambient
+centering nor conductor descent supplies a hidden cofactor power.
+
+For a determinant pair \(Q_i=gr_i\), use the parameter \(t\) of
+(9.1047).  Put
+
+\[
+ s_1(t)=t\overline{r_2}_g,qquad
+ s_2(t)=(t-D)\overline{r_1}_g.
+ \tag{9.1068}
+\]
+
+After projecting both active character components to the principal
+character, their exact common-lift contribution is
+
+\[
+ \boxed{
+ \sum_{\substack{t\bmod g\\(t(t-D),g)=1}}
+ A_{g,r_1}Z_1(s_1(t))
+ \overline{A_{g,r_2}Z_2(s_2(t))}
+ e_g\!\left(\frac A t+\frac B{t-D}\right).}
+ \tag{9.1069}
+\]
+
+Formula (9.1069) is still inside the one global square.  The packet
+entries \(Z_i\) retain the product-label convolution
+\(W_\omega(a)=\sum_{h\delta=a}f_\omega(h)g_\omega(\delta)\), the nine
+Type blocks of (9.1040), the level-dependent AFE transforms, and the
+outer sign \(\mu(r_1)\mu(r_2)\).  The phase operator in (9.1069) is the
+norm-one partial shift of Section 9.159, while (9.1066) shows that its
+input projection is also norm-saturated.  Therefore separate Hilbert
+space estimates at either stage cannot provide the missing one power.
+
+The helper `active_principal_crt_fiber_projection_audit` accepts two
+arbitrary rational packets on complete CRT unit grids.  It computes the
+fiber averages, both sides of (9.1066), the fixed active residues, and
+the unphased determinant pairing in (9.1069).  Its centered
+fiber-constant fixture attains equality on both sides.  It consequently
+keeps the principal-active analytic bound, bounded-\(D\) gate, and
+complete coupled-kernel gate false.
+
+### 9.162 Split the two surviving outer Möbius weights before Cauchy
+
+The Type split in Section 9.156 acts on the Möbius factor inside each
+long Type entry.  On the principal-active face there are two further,
+and decisive, signs: \(\mu(r_1)\mu(r_2)\).  They must be decomposed
+without replacing the common-lift form (9.1069) by unrelated row
+coefficients.
+
+For fixed cutoffs \(U,V\), use the exact pointwise identity (9.1037) on
+each active cofactor:
+
+\[
+ \mu(r)=\lambda_{\rm small}(r)+\lambda_{\rm I}(r)
+        +\lambda_{\rm II}(r).
+ \tag{9.1070}
+\]
+
+Here the multipliers are exactly those of (9.934)--(9.935); there is no
+remainder and no mixed divisor rectangle.  Put all other variables into
+the *single physical kernel*
+
+\[
+ \mathscr K_\omega(g,r_1,r_2,D;h,\delta),
+ \tag{9.1071}
+\]
+
+defined to be (9.1069) with the corresponding fiber-averaged packet,
+AFE weight, inactive Type-gcd traces, and rowwise Type multiplier still
+inside.  In particular its product-label argument is literally
+\(a=h\delta\), not an arbitrary replacement sequence.  The
+principal-active bounded-determinant master is then of the finite form
+
+\[
+ \boxed{
+ \mathscr S_{\rm AP}
+ =\sum_{g,r_1,r_2,D}\mu(r_1)\mu(r_2)
+   \sum_{h\ne0}\sum_{\delta\ne0}
+   f_\omega(h)g_\omega(\delta)
+   \mathscr K_\omega(g,r_1,r_2,D;h,\delta),}
+ \tag{9.1072}
+\]
+
+where all displayed ranges are the original finite dyadic ranges and
+\(0<|D|\leq D_0\).  Substituting (9.1070) twice, before any absolute
+value, gives
+
+\[
+ \boxed{
+ \mathscr S_{\rm AP}
+ =\sum_{\alpha,\beta\in
+   \{\mathrm{small},\mathrm I,\mathrm{II}\}}
+   \mathscr S_{\rm AP}^{\alpha,\beta},}
+ \tag{9.1073}
+\]
+
+with
+
+\[
+ \mathscr S_{\rm AP}^{\alpha,\beta}
+ :=\sum_{g,r_1,r_2,D}\lambda_\alpha(r_1)\lambda_\beta(r_2)
+   \sum_{h,\delta}f_\omega(h)g_\omega(\delta)
+   \mathscr K_\omega(g,r_1,r_2,D;h,\delta).
+ \tag{9.1074}
+\]
+
+All nine blocks multiply the same kernel.  Thus (9.1073) permits
+cancellation between Type blocks and retains the two outer Möbius signs
+pointwise; it does not assert nine separate upper bounds.
+
+There is an exact simplification on the physical parameter polytope.  If
+
+\[
+ Q_i=T^{3-\delta_i},\qquad g=T^\gamma,qquad
+ 0\leq\delta_i\leq\frac12,qquad0\leq\gamma\leq1,
+\]
+
+then
+
+\[
+ \boxed{r_i=Q_i/g=T^{3-\delta_i-\gamma}\geq T^{3/2}.}
+ \tag{9.1075}
+\]
+
+Choose the short-divisor cutoffs
+\(U=V=T^{1/2+o(1)}\).  Since
+\(\lambda_{\rm small}(r)=0\) for
+\(r>\max\{U,V\}\), (9.1075) deletes every block containing `small`.
+Consequently
+
+\[
+ \boxed{
+ \mathscr S_{\rm AP}
+ =\mathscr S_{\rm AP}^{\mathrm I,\mathrm I}
+  +\mathscr S_{\rm AP}^{\mathrm I,\mathrm{II}}
+  +\mathscr S_{\rm AP}^{\mathrm{II},\mathrm I}
+  +\mathscr S_{\rm AP}^{\mathrm{II},\mathrm{II}}.}
+ \tag{9.1076}
+\]
+
+The published-coverage table for this smaller, actual interface is:
+
+| principal-active outer block | exact retained structure | published coverage on the full physical block |
+|---|---|---|
+| any block containing `small` | \(r_i\leq T^{1/2+o(1)}\) | vacuous: empty by (9.1075) |
+| I--I | two short--short divisor expansions, one common-\(g\) partial shift, both varying cofactors, and \(h\delta\) | none: two-PV requires a shared character diagonal; ordinary character large sieve discards the other varying physical coefficient |
+| I--II and II--I | one short--short and one long--long cofactor expansion inside the same determinant kernel | none: BRS/Blomer--Pascadi do not accept both level-dependent packet sequences with the outer Möbius/Type signs retained |
+| II--II | two long--long cofactor expansions and the common determinant incidence | none: this is the remaining two-Möbius dispersion face |
+
+Thus the weakest sector-specific sufficient statement is not nine
+independent estimates but the combined pre-Cauchy bound
+
+\[
+ \boxed{
+ \left|\sum_{\alpha,\beta\in\{\mathrm I,\mathrm{II}\}}
+ \mathscr S_{\rm AP}^{\alpha,\beta}\right|
+ \ll_{\varepsilon,W}T^{4+\varepsilon}.}
+ \tag{APBD}
+\]
+
+This is strictly narrower than the full bounded-\(D\) gate because it
+addresses only the active-principal character projection.  It is not
+proved here.  Its value is that it removes five empty blocks, preserves
+the exact \(a=h\delta\) and double-Möbius structure, and isolates the
+four blocks on which a new dispersion estimate must actually operate.
+
+The helper `principal_active_outer_mobius_type_split_audit` applies the
+pointwise split to two arbitrary squarefree coprime active cofactors.  It
+checks the direct and grouped \(h\delta\) sums, retains all nine ordered
+products, and verifies their signed reassembly before Cauchy.  It leaves
+all four nonempty physical block estimates, (APBD), and the complete
+coupled-kernel gate false.
 
 ## 10. What has and has not been proved
 

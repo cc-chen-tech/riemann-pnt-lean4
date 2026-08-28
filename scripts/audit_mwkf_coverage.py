@@ -22250,6 +22250,347 @@ def active_cofactor_character_sector_audit(
     }
 
 
+def active_principal_crt_fiber_projection_audit(
+    *,
+    common_modulus: int,
+    left_active_cofactor: int,
+    right_active_cofactor: int,
+    short_determinant: int,
+    left_packet_values: tuple[tuple[int, int, Fraction], ...],
+    right_packet_values: tuple[tuple[int, int, Fraction], ...],
+) -> dict[str, object]:
+    """Project two CRT packets to characters principal on active factors.
+
+    Under ``U(g*r) = U(g) x U(r)``, the active-principal projection is
+    the fiber average over ``U(r)``.  Its full packet energy is
+
+    ``phi(r) * sum_s |average_u Z(s,u)|^2``.
+
+    The inverse-totient normalization is therefore cancelled exactly by
+    fiber-constant packets.  Such packets can remain mean zero in the
+    common coordinate, so multiplicative centering does not prevent
+    saturation.  The determinant fixes one active residue on each side
+    and leaves the common lift parameter ``t``.
+    """
+
+    g = int(common_modulus)
+    r1 = int(left_active_cofactor)
+    r2 = int(right_active_cofactor)
+    determinant = int(short_determinant)
+    if min(g, r1, r2) <= 1 or determinant == 0:
+        raise ValueError("all moduli must exceed one and D be nonzero")
+    if any(_finite_mobius(value) == 0 for value in (g, r1, r2)):
+        raise ValueError("g,r1,r2 must be squarefree")
+    if gcd(g, r1 * r2) != 1 or gcd(r1, r2) != 1:
+        raise ValueError("g,r1,r2 must be pairwise coprime")
+    if gcd(abs(determinant), r1 * r2) != 1:
+        raise ValueError("D must be a unit on both active cofactors")
+
+    common_units = tuple(value for value in range(g) if gcd(value, g) == 1)
+    left_units = tuple(value for value in range(r1) if gcd(value, r1) == 1)
+    right_units = tuple(value for value in range(r2) if gcd(value, r2) == 1)
+
+    def packet_projection(
+        rows: tuple[tuple[int, int, Fraction], ...],
+        active_units: tuple[int, ...],
+    ) -> dict[str, object]:
+        supplied: dict[tuple[int, int], Fraction] = {}
+        for common, active, value in rows:
+            key = (int(common), int(active))
+            if key in supplied:
+                raise ValueError("packet CRT coordinates must be unique")
+            supplied[key] = F(value)
+        expected = {
+            (common, active)
+            for common in common_units
+            for active in active_units
+        }
+        if set(supplied) != expected:
+            raise ValueError("packet must supply the complete unit CRT grid")
+        active_count = len(active_units)
+        profile = {
+            common: sum(
+                (supplied[(common, active)] for active in active_units),
+                F(0),
+            )
+            / active_count
+            for common in common_units
+        }
+        raw_energy = sum((value * value for value in supplied.values()), F(0))
+        projected_energy = F(active_count) * sum(
+            (value * value for value in profile.values()),
+            F(0),
+        )
+        normalized_fiber_sum_energy = sum(
+            (
+                sum(
+                    (supplied[(common, active)] for active in active_units),
+                    F(0),
+                )
+                ** 2
+                for common in common_units
+            ),
+            F(0),
+        ) / active_count
+        return {
+            "profile": profile,
+            "raw_energy": raw_energy,
+            "projected_energy": projected_energy,
+            "normalized_fiber_sum_energy": normalized_fiber_sum_energy,
+            "globally_centered": sum(supplied.values(), F(0)) == 0,
+            "profile_centered": sum(profile.values(), F(0)) == 0,
+            "fiber_average_bound_saturated": raw_energy == projected_energy,
+        }
+
+    left = packet_projection(left_packet_values, left_units)
+    right = packet_projection(right_packet_values, right_units)
+    left_active = determinant * pow(r2, -1, r1) % r1
+    right_active = -determinant * pow(r1, -1, r2) % r2
+    admissible_t = tuple(
+        value
+        for value in common_units
+        if gcd(value - determinant, g) == 1
+    )
+    left_common_inverse = pow(r2, -1, g)
+    right_common_inverse = pow(r1, -1, g)
+    left_profile = dict(left["profile"])
+    right_profile = dict(right["profile"])
+    unphased_pair_sum = sum(
+        (
+            left_profile[t * left_common_inverse % g]
+            * right_profile[(t - determinant) * right_common_inverse % g]
+            for t in admissible_t
+        ),
+        F(0),
+    )
+    centered_saturation = bool(
+        left["globally_centered"]
+        and right["globally_centered"]
+        and left["profile_centered"]
+        and right["profile_centered"]
+        and left["fiber_average_bound_saturated"]
+        and right["fiber_average_bound_saturated"]
+    )
+    return {
+        "common_modulus": g,
+        "left_active_cofactor": r1,
+        "right_active_cofactor": r2,
+        "short_determinant": determinant,
+        "left_active_principal_profile": left["profile"],
+        "right_active_principal_profile": right["profile"],
+        "left_raw_packet_energy": left["raw_energy"],
+        "left_projected_packet_energy": left["projected_energy"],
+        "left_normalized_fiber_sum_energy": (
+            left["normalized_fiber_sum_energy"]
+        ),
+        "right_raw_packet_energy": right["raw_energy"],
+        "right_projected_packet_energy": right["projected_energy"],
+        "right_normalized_fiber_sum_energy": (
+            right["normalized_fiber_sum_energy"]
+        ),
+        "left_packet_is_globally_centered": left["globally_centered"],
+        "right_packet_is_globally_centered": right["globally_centered"],
+        "left_projected_common_profile_is_centered": (
+            left["profile_centered"]
+        ),
+        "right_projected_common_profile_is_centered": (
+            right["profile_centered"]
+        ),
+        "left_fiber_average_bound_is_saturated": (
+            left["fiber_average_bound_saturated"]
+        ),
+        "right_fiber_average_bound_is_saturated": (
+            right["fiber_average_bound_saturated"]
+        ),
+        "left_fixed_active_residue": left_active,
+        "right_fixed_active_residue": right_active,
+        "admissible_common_lift_parameters": admissible_t,
+        "unphased_projected_determinant_pair_sum": unphased_pair_sum,
+        "centering_does_not_force_cofactor_power_saving": (
+            centered_saturation
+        ),
+        "inverse_totient_weight_gives_uniform_power_saving": False,
+        "principal_active_sector_bound_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def principal_active_outer_mobius_type_split_audit(
+    *,
+    left_active_cofactor: int,
+    right_active_cofactor: int,
+    short_cutoff_u: int,
+    short_cutoff_v: int,
+    h_weights: tuple[tuple[int, Fraction], ...],
+    delta_weights: tuple[tuple[int, Fraction], ...],
+) -> dict[str, object]:
+    """Split both surviving outer Möbius signs before any Cauchy step.
+
+    The exact small/I/II identity used in Section 9.156 is applied to
+    ``mu(r_1)`` and ``mu(r_2)`` themselves.  Its nine ordered products
+    multiply one unchanged principal-active kernel.  A linear kernel in
+    the product label is used here only to audit that ``a=h*delta`` is
+    grouped without losing its factorization.
+    """
+
+    r1 = int(left_active_cofactor)
+    r2 = int(right_active_cofactor)
+    cutoff_u = int(short_cutoff_u)
+    cutoff_v = int(short_cutoff_v)
+    if min(r1, r2, cutoff_u, cutoff_v) <= 0:
+        raise ValueError("cofactors and Type cutoffs must be positive")
+    if _finite_mobius(r1) == 0 or _finite_mobius(r2) == 0:
+        raise ValueError("active cofactors must be squarefree")
+    if gcd(r1, r2) != 1:
+        raise ValueError("active cofactors must be coprime")
+    if any(label == 0 for label, _ in h_weights + delta_weights):
+        raise ValueError("h and delta labels must be nonzero")
+
+    boundary = max(cutoff_u, cutoff_v)
+    type_names = ("small", "I", "II")
+
+    def type_multipliers(value: int) -> dict[str, int]:
+        if value <= boundary:
+            return {
+                "small": _finite_mobius(value),
+                "I": 0,
+                "II": 0,
+            }
+        short_short = sum(
+            _finite_mobius(first) * _finite_mobius(second)
+            for first in _positive_divisors(value)
+            if first <= cutoff_u
+            for second in _positive_divisors(value // first)
+            if second <= cutoff_v
+        )
+        long_long = sum(
+            _finite_mobius(first) * _finite_mobius(second)
+            for first in _positive_divisors(value)
+            if first > cutoff_u
+            for second in _positive_divisors(value // first)
+            if second > cutoff_v
+        )
+        return {"small": 0, "I": -short_short, "II": long_long}
+
+    left_multipliers = type_multipliers(r1)
+    right_multipliers = type_multipliers(r2)
+    if sum(left_multipliers.values()) != _finite_mobius(r1):
+        raise RuntimeError("left outer Type identity did not reassemble")
+    if sum(right_multipliers.values()) != _finite_mobius(r2):
+        raise RuntimeError("right outer Type identity did not reassemble")
+
+    product_weights: dict[int, Fraction] = {}
+    direct_kernel_sum = F(0)
+    for h, h_weight in h_weights:
+        for delta, delta_weight in delta_weights:
+            product = h * delta
+            weight = F(h_weight) * F(delta_weight)
+            direct_kernel_sum += weight * product
+            product_weights[product] = product_weights.get(product, F(0)) + weight
+    grouped_kernel_sum = sum(
+        (weight * product for product, weight in product_weights.items()),
+        F(0),
+    )
+
+    raw_sign = _finite_mobius(r1) * _finite_mobius(r2)
+    raw_model_sum = F(raw_sign) * direct_kernel_sum
+    ordered_blocks = {
+        (left_name, right_name): F(
+            left_multipliers[left_name] * right_multipliers[right_name]
+        )
+        * grouped_kernel_sum
+        for left_name in type_names
+        for right_name in type_names
+    }
+    ordered_block_sum = sum(ordered_blocks.values(), F(0))
+    return {
+        "left_active_cofactor": r1,
+        "right_active_cofactor": r2,
+        "left_outer_type_multipliers": left_multipliers,
+        "right_outer_type_multipliers": right_multipliers,
+        "product_label_weights": product_weights,
+        "direct_h_delta_linear_kernel_sum": direct_kernel_sum,
+        "grouped_product_label_linear_kernel_sum": grouped_kernel_sum,
+        "raw_outer_mobius_pair_sign": raw_sign,
+        "raw_principal_active_model_sum": raw_model_sum,
+        "ordered_outer_type_block_sums": ordered_blocks,
+        "ordered_outer_type_block_sum": ordered_block_sum,
+        "all_nine_ordered_outer_type_blocks_retained": bool(
+            len(ordered_blocks) == 9
+        ),
+        "outer_type_blocks_reassemble_raw_pair_before_cauchy": bool(
+            ordered_block_sum == raw_model_sum
+        ),
+        "product_label_remains_exact_h_delta_convolution": bool(
+            direct_kernel_sum == grouped_kernel_sum
+        ),
+        "no_blockwise_absolute_value_taken": True,
+        "ordered_outer_type_block_bounds_proved": False,
+        "principal_active_sector_bound_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def principal_active_outer_type_polytope_audit(
+    *,
+    original_modulus_exponent: Fraction,
+    maximum_type_frequency_gcd_exponent: Fraction,
+    maximum_common_gcd_exponent: Fraction,
+    outer_short_cutoff_exponent: Fraction,
+) -> dict[str, object]:
+    """Locate the nonempty outer Type blocks on the balanced polytope."""
+
+    modulus = F(original_modulus_exponent)
+    type_gcd = F(maximum_type_frequency_gcd_exponent)
+    common_gcd = F(maximum_common_gcd_exponent)
+    short_cutoff = F(outer_short_cutoff_exponent)
+    if min(modulus, type_gcd, common_gcd, short_cutoff) < 0:
+        raise ValueError("all scale exponents must be nonnegative")
+    if type_gcd + common_gcd > modulus:
+        raise ValueError("gcd exponents cannot exceed the original modulus")
+
+    minimum_active_cofactor = modulus - type_gcd - common_gcd
+    small_blocks_empty = bool(short_cutoff < minimum_active_cofactor)
+    all_type_names = ("small", "I", "II")
+    if small_blocks_empty:
+        nonempty_blocks = (
+            ("I", "I"),
+            ("I", "II"),
+            ("II", "I"),
+            ("II", "II"),
+        )
+    else:
+        nonempty_blocks = tuple(
+            (left, right)
+            for left in all_type_names
+            for right in all_type_names
+        )
+    return {
+        "original_modulus_exponent": modulus,
+        "maximum_type_frequency_gcd_exponent": type_gcd,
+        "maximum_common_gcd_exponent": common_gcd,
+        "minimum_active_cofactor_exponent": minimum_active_cofactor,
+        "maximum_outer_short_cutoff_exponent": short_cutoff,
+        "every_outer_small_block_is_empty": small_blocks_empty,
+        "nonempty_ordered_outer_type_blocks": nonempty_blocks,
+        "published_coverage_by_block": {
+            "any-small": "vacuous-empty" if small_blocks_empty else "none",
+            "I-I": "none",
+            "I-II": "none",
+            "II-I": "none",
+            "II-II": "none",
+        },
+        "principal_active_raw_exponent": F(5),
+        "principal_active_target_exponent": F(4),
+        "principal_active_required_saving_exponent": F(1),
+        "combined_I_II_APBD_bound_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,
