@@ -458,7 +458,13 @@ The general complex mean-value reduction for this last step is now also
 formalized: a closed-ball derivative-square bound `B(t)` implies the squared
 slope error is at most `4*B(t)`.  Thus it is enough to produce an integrable
 closed-ball-uniform majorant for the already defined concrete derivative
-section.
+section.  The intended degree-twenty polynomial times half-rate Gaussian
+majorant, with the exact vertical-center shift, has now been defined and
+proved integrable for every positive Gaussian width.  What remains at this
+gate is the genuinely concrete uniform inequality: bound the exact section
+derivative by one such majorant throughout a sufficiently small complex
+neighborhood of the strip point.  Integrability alone is not recorded as
+`Lp` analyticity.
 The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
