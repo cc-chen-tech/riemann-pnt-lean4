@@ -7948,6 +7948,42 @@ def test_fixed_order_active_characters_have_euler_sparse_multiplicity() -> None:
     assert not result["coupled_kernel_gate_closed"]
 
 
+def test_active_conductor_entropy_is_absorbed_below_two_thirds() -> None:
+    audit = getattr(
+        coverage_audit,
+        "active_character_conductor_entropy_polytope_audit",
+        None,
+    )
+    assert audit is not None, "active conductor-entropy audit is missing"
+    boundary = audit(
+        active_cofactor_exponent=F(3, 2),
+        active_primitive_conductor_exponent=F(1),
+        centered_energy_target_exponent=F(12),
+    )
+    assert boundary["active_imprimitive_cofactor_exponent"] == F(1, 2)
+    assert boundary["character_entropy_cost_exponent"] == 1
+    assert boundary["imprimitive_energy_margin_exponent"] == 1
+    assert boundary["energy_after_character_entropy_exponent"] == 12
+    assert boundary["maximum_covered_conductor_exponent"] == 1
+    assert boundary["covered_conductor_ratio"] == F(2, 3)
+    assert boundary["active_conductor_sector_within_target"]
+
+    hard = audit(
+        active_cofactor_exponent=F(3, 2),
+        active_primitive_conductor_exponent=F(6, 5),
+        centered_energy_target_exponent=F(12),
+    )
+    assert hard["active_imprimitive_cofactor_exponent"] == F(3, 10)
+    assert hard["character_entropy_cost_exponent"] == F(6, 5)
+    assert hard["imprimitive_energy_margin_exponent"] == F(3, 5)
+    assert hard["energy_after_character_entropy_exponent"] == F(63, 5)
+    assert not hard["active_conductor_sector_within_target"]
+    assert hard["remaining_sector_is_near_primitive_above_two_thirds"]
+    assert not hard["near_primitive_high_order_sector_proved"]
+    assert not hard["bounded_D_one_power_gate_closed"]
+    assert not hard["coupled_kernel_gate_closed"]
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (

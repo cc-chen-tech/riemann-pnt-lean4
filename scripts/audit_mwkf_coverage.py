@@ -23049,6 +23049,44 @@ def sparse_active_character_sector_transfer_audit(
     }
 
 
+def active_character_conductor_entropy_polytope_audit(
+    *,
+    active_cofactor_exponent: Fraction,
+    active_primitive_conductor_exponent: Fraction,
+    centered_energy_target_exponent: Fraction,
+) -> dict[str, object]:
+    """Spend the imprimitive two-PV margin on active-character entropy."""
+
+    rho = F(active_cofactor_exponent)
+    sigma = F(active_primitive_conductor_exponent)
+    target = F(centered_energy_target_exponent)
+    if min(rho, sigma, target) < 0 or sigma > rho:
+        raise ValueError("conductor exponents must satisfy 0 <= sigma <= rho")
+    kappa = rho - sigma
+    entropy_cost = sigma
+    imprimitive_margin = 2 * kappa
+    energy_after_entropy = target - imprimitive_margin + entropy_cost
+    maximum_covered_sigma = F(2, 3) * rho
+    covered = bool(entropy_cost <= imprimitive_margin)
+    near_primitive = bool(sigma > maximum_covered_sigma)
+    return {
+        "active_cofactor_exponent": rho,
+        "active_primitive_conductor_exponent": sigma,
+        "active_imprimitive_cofactor_exponent": kappa,
+        "character_entropy_cost_exponent": entropy_cost,
+        "imprimitive_energy_margin_exponent": imprimitive_margin,
+        "centered_energy_target_exponent": target,
+        "energy_after_character_entropy_exponent": energy_after_entropy,
+        "maximum_covered_conductor_exponent": maximum_covered_sigma,
+        "covered_conductor_ratio": F(2, 3),
+        "active_conductor_sector_within_target": covered,
+        "remaining_sector_is_near_primitive_above_two_thirds": near_primitive,
+        "near_primitive_high_order_sector_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,

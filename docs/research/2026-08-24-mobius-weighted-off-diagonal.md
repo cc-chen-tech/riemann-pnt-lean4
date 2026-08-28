@@ -57,6 +57,7 @@
 > | Physical \(H\)-packet descent on the active-principal face | Section 9.163 substitutes the actual definition \(Z_{q,c}=\sum_{-A\bar w=c}H_{q,A}(w)\) into the CRT fiber projection.  The result is exactly the same centered projective packet on modulus \(g\), built from \(\overline H_{g,r}(a,v)=\varphi(r)^{-1}\sum_{b,z\in U(r)}H_{gr,(a,b)}(v,z)\).  Centering commutes with descent.  Although the projection alone gives no \(r\)-power, it preserves the inverse-totient weight needed in Section 9.165: the weighted squared norm of the descended row is exactly the active-principal character subenergy of the packet-exhaustive Section 9.144 projector |
 > | Ratio-convolution descent and APBD closure | Sections 9.164--9.165 insert \(Z_{gr,c}=\mu(gr)\sum_yF_{gr}(-cy)G_{gr}(y)\) and obtain \(\overline H_{g,r}(a,v)=\mu(gr)F^{[r]}(a)G^{[r]}(v)/\varphi(r)\).  A cross pair therefore has weight \(\mu(r_1)\mu(r_2)/(\varphi(r_1)\varphi(r_2))\).  Every pair-dependent common-lift map is a contraction, so the complete signed pair sum is at most \((\sum_r\|P_r\|/\varphi(r))^2\), hence at most an Euler-polylog factor times \(\sum_r\|P_r\|^2/\varphi(r)\).  The latter is exactly a subenergy already bounded in Section 9.144.  Thus the combined four-block principal-active gate (APBD) is proved within target; individual I/II block bounds and all complementary active-character sectors remain open |
 > | Sparse active-character closure | Section 9.166 extends the same transfer beyond the principal character.  For \(\mathcal X_B(r)=\{\psi\bmod r:\psi^B=1\}\), squarefreeness gives \(|\mathcal X_B(r)|=\prod_{p\mid r}(B,p-1)\leq B^{\omega(r)}\).  Active Fourier inversion and Cauchy cost exactly \(\sum_r|\mathcal X_B(r)|/\varphi(r)\), an Euler-polylog factor for every fixed \(B\).  The remaining energy is again a subfamily of Section 9.144.  Hence all fixed-order active-character sectors, including the complete quadratic sector whose reciprocity phase collapses, are proved within target.  The remaining bounded-\(D\) gate is supported only on high-order, non-sparse active character families |
+> | Active-conductor entropy polytope | Section 9.167 partitions the remaining active characters by primitive conductor \(c=T^\sigma\) inside \(r=T^\rho\), with imprimitive cofactor \(k=r/c=T^\kappa\).  The inverse-totient weighted number of conductor-\(c\) character rows costs only \(T^{\sigma+\varepsilon}\), because the \(\varphi(c)\) characters cancel the \(1/\varphi(c)\) normalization.  Section 9.144 has energy margin \(T^{-2\kappa}\).  Hence every sector with \(\sigma\leq2\kappa\), equivalently \(c\leq r^{2/3}\), is also within target.  The unresolved bounded-\(D\) family is now confined to near-primitive high-order active conductors \(c>r^{2/3}\) |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -23597,6 +23598,88 @@ It marks the principal, quadratic, and every fixed-order active sector
 proved when those inputs are present, while keeping the high-order
 sector, full bounded-\(D\), and coupled-kernel gates false.
 
+### 9.167 The imprimitive energy margin absorbs conductor entropy up to \(r^{2/3}\)
+
+The remaining characters need not form a fixed-order family.  Partition
+them instead by their primitive active conductor.  On one dyadic cell,
+write
+
+\[
+ r=T^\rho,qquad c=T^\sigma,qquad
+ k=r/c=T^\kappa,qquad \rho=\sigma+\kappa.
+ \tag{9.1104}
+\]
+
+For fixed squarefree \(c\), there are \(\ll\varphi(c)\) primitive
+characters.  In the active Fourier inversion, their inverse-totient
+weight is
+
+\[
+ \frac1{\varphi(r)}
+ =\frac1{\varphi(c)\varphi(k)}.
+\]
+
+Thus summing the characters at one \(c\) cancels \(1/\varphi(c)\), and
+the remaining \(k\)-sum is Euler-subpolynomial.  Summing the dyadic
+conductors \(c\asymp T^\sigma\) costs exactly
+
+\[
+ \boxed{T^{\sigma+\varepsilon}}
+ \tag{9.1105}
+\]
+
+in the weighted contraction factor.  It does not cost \(T^{2\sigma}\):
+one conductor count remains after its character multiplicity cancels the
+totient normalization.
+
+Section 9.144 already contains a compensating margin.  Equation (9.961)
+puts an ambient character with imprimitive cofactor exponent \(\kappa\)
+at energy exponent
+
+\[
+ E_{2{\rm PV}}=E_{\rm target}-2\kappa.
+ \tag{9.1106}
+\]
+
+The active cofactor \(k=r/c\) is a divisor of that ambient imprimitive
+cofactor, so (9.1106) supplies at least this \(2\kappa\) margin.  After
+paying (9.1105), the conductor cell remains within target precisely when
+
+\[
+ \boxed{
+ \sigma\leq2\kappa
+ \quad\Longleftrightarrow\quad
+ \sigma\leq\frac{2\rho}{3}
+ \quad\Longleftrightarrow\quad
+ c\leq r^{2/3}.}
+ \tag{9.1107}
+\]
+
+This is a genuine positive-power extension of Section 9.166.  It covers
+all character orders and all primitive active conductors up to the
+two-thirds boundary; no bounded-order hypothesis is used.  On the
+smallest balanced active cofactor \(r\geq T^{3/2}\), it covers active
+conductors through \(T^1\).
+
+The surviving active-character region is therefore
+
+\[
+ \boxed{c>r^{2/3},\qquad k=r/c<r^{1/3}.}
+ \tag{9.1108}
+\]
+
+These characters are simultaneously high-order/non-sparse and
+near-primitive on the active cofactor.  The inverse-totient contraction
+and the imprimitive two-PV margin no longer pay their conductor entropy.
+This near-primitive sector is the remaining bounded-\(D\) analytic gate.
+
+The exact-rational helper
+`active_character_conductor_entropy_polytope_audit` records the entropy
+cost \(\sigma\), the available margin \(2\kappa\), the adjusted energy
+exponent, and the boundary \(2\rho/3\).  It marks the covered side within
+target and keeps the near-primitive side, full bounded-\(D\), and
+coupled-kernel gates false.
+
 ## 10. What has and has not been proved
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
@@ -23605,8 +23688,10 @@ envelope by transferring its inverse-totient weighted pair sum to the
 already bounded centered resonant energy.  Section 9.166 extends the
 same argument to every fixed-order active-character family, including
 the entire quadratic sector.  This closes (APBD) and all sparse
-fixed-order extensions, not the full bounded-\(D\) gate: high-order
-active-character families of polynomial multiplicity remain in the
+fixed-order extensions.  Section 9.167 additionally spends the
+imprimitive two-PV margin to cover arbitrary active conductors
+\(c\leq r^{2/3}\).  The full bounded-\(D\) gate is still open only on
+the near-primitive high-order region \(c>r^{2/3}\), which remains in the
 complementary two-character master.
 
 **Current classification: Young closes each fixed scalar stratum and the
