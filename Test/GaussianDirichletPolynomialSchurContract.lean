@@ -1,0 +1,8 @@
+import MathlibAux.GaussianDirichletPolynomialSchur
+
+open Complex MeasureTheory
+
+#check MathlibAux.gaussian_log_frequency_kernel_le
+#check MathlibAux.integral_gaussian_mul_normSq_dirichletPolynomial_le
+#print axioms MathlibAux.gaussian_log_frequency_kernel_le
+#print axioms MathlibAux.integral_gaussian_mul_normSq_dirichletPolynomial_le

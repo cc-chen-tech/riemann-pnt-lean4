@@ -171,6 +171,7 @@ lean_lib RiemannPNT where
     `MathlibAux.FiniteSpectrumGap,
     `MathlibAux.GaussianExponentialIntegral,
     `MathlibAux.GaussianExponentialPolynomialMeanSquare,
+    `MathlibAux.GaussianDirichletPolynomialSchur,
     `PrimeNumberTheorem.SincSquareIntegral,
     `PrimeNumberTheorem.SincSquareFourier,
     `PrimeNumberTheorem.PositiveFourierKernel,
