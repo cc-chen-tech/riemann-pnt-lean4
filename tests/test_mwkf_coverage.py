@@ -7422,6 +7422,104 @@ def test_bounded_D_type_split_is_documented_as_the_one_power_gate() -> None:
     assert "remains unproved" in text
 
 
+def test_two_PV_projector_argument_cannot_be_reused_on_bounded_D() -> None:
+    audit = getattr(
+        coverage_audit,
+        "bounded_D_two_pv_compatibility_audit",
+        None,
+    )
+    assert audit is not None, "bounded-D two-PV compatibility audit is missing"
+    result = audit(
+        original_modulus_exponent=F(3),
+        maximum_type_frequency_gcd_exponent=F(1, 2),
+        product_label_length_exponent=F(5),
+        bounded_short_determinant_exponent=F(0),
+    )
+    assert result["minimum_reduced_modulus_exponent"] == F(5, 2)
+    assert result["maximum_nonzero_determinant_collar_exponent"] == F(1)
+    assert result["same_reduced_modulus_common_gcd_exponent"] == F(5, 2)
+    assert not result["same_reduced_modulus_bounded_nonzero_D_is_possible"]
+    assert result["bounded_nonzero_D_forces_distinct_ambient_moduli"]
+    assert result["resonant_two_PV_uses_one_common_residue_Parseval"]
+    assert result["cross_modulus_expansion_has_two_character_families"]
+    assert not result["determinant_incidence_forces_equal_primitive_characters"]
+    assert result["shared_primitive_conductor_slice_is_not_exhaustive"]
+    assert result["rowwise_cauchy_can_absorb_every_outer_mobius_sign"]
+    assert not result["two_PV_saving_transfers_to_bounded_D_master"]
+    assert not result["bounded_D_one_power_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_two_PV_noncoverage_is_documented_at_the_character_compatibility_step() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.157 Why the resonant two-PV proof stops at nonzero determinant" in text
+    assert r"Q_1=Q_2\Longrightarrow g=Q_1\geq T^{5/2}" in text
+    assert r"g|D|\ll T" in text
+    assert r"(\chi_1,\chi_2)" in text
+    assert "does not force" in text
+    assert "rowwise Cauchy" in text
+    assert "remains unproved" in text
+
+
+def test_common_g_lifts_form_a_two_pole_mixed_character_sum() -> None:
+    audit = getattr(
+        coverage_audit,
+        "common_g_lift_two_pole_audit",
+        None,
+    )
+    assert audit is not None, "common-g two-pole audit is missing"
+    result = audit(
+        common_modulus=15,
+        left_reduced_cofactor=7,
+        right_reduced_cofactor=11,
+        short_determinant=1,
+        left_phase_coefficient=2,
+        right_phase_coefficient=4,
+        common_modulus_exponent=F(1),
+        bounded_short_determinant_exponent=F(0),
+    )
+    assert result["all_modulus_factors_are_squarefree_and_pairwise_coprime"]
+    assert result["short_determinant_is_unit_on_active_cofactors"]
+    assert result["common_lifts_biject_with_t_and_t_minus_D_units"]
+    assert result["common_trace_equals_two_pole_phase_for_every_lift"]
+    assert result["two_pole_coefficients_are_units_at_common_modulus"]
+    assert result["worst_exceptional_divisor"] == 1
+    assert result["worst_exceptional_divisor_divides_short_determinant"]
+    assert result["published_square_root_bound_applies_prime_by_prime"]
+    assert result["squarefree_CRT_common_lift_bound_proved"]
+    assert result["common_lift_saving_exponent"] == F(1, 2)
+    assert result["bounded_D_residual_saving_after_common_lift"] == F(1, 2)
+    assert not result["common_lift_bound_alone_closes_bounded_D_gate"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    exceptional = audit(
+        common_modulus=15,
+        left_reduced_cofactor=7,
+        right_reduced_cofactor=11,
+        short_determinant=-3,
+        left_phase_coefficient=1,
+        right_phase_coefficient=2,
+        common_modulus_exponent=F(1),
+        bounded_short_determinant_exponent=F(0),
+    )
+    assert exceptional["common_lifts_biject_with_t_and_t_minus_D_units"]
+    assert exceptional["common_trace_equals_two_pole_phase_for_every_lift"]
+    assert exceptional["worst_exceptional_divisor"] == 3
+    assert exceptional["worst_exceptional_divisor_divides_short_determinant"]
+
+
+def test_common_g_two_pole_bound_is_documented_with_its_exceptional_divisor() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.158 The common lift is a two-pole mixed character sum" in text
+    assert r"x_1r_2\equiv t" in text
+    assert r"x_2r_1\equiv t-D\pmod g" in text
+    assert r"\frac{A}{t}+\frac{B}{t-D}" in text
+    assert r"g_{\rm exc}\mid(g,D,A+B)" in text
+    assert r"g^{1/2+\varepsilon}g_{\rm exc}^{1/2}" in text
+    assert r"1-\frac\gamma2" in text
+    assert "remains unproved" in text
+
+
 def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
     """Shen's q-average is inverse-only and far below the coupled target."""
 

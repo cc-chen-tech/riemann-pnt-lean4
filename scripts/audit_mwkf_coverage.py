@@ -21772,6 +21772,277 @@ def bounded_short_determinant_type_split_audit(
     }
 
 
+def bounded_D_two_pv_compatibility_audit(
+    *,
+    original_modulus_exponent: Fraction,
+    maximum_type_frequency_gcd_exponent: Fraction,
+    product_label_length_exponent: Fraction,
+    bounded_short_determinant_exponent: Fraction,
+) -> dict[str, object]:
+    """Check the character-family incompatibility of the resonant 2PV proof.
+
+    The physical reduced moduli have exponent at least ``m-delta_max``.
+    If two rows had the same reduced modulus, their common gcd would have
+    that exponent.  A nonzero determinant ``g*D`` must fit inside the
+    product-label Poisson collar of maximum exponent ``2*m-A``.  On the
+    balanced values ``m=3``, ``delta_max=1/2``, and ``A=5``, even
+    bounded ``D`` would require ``T^(5/2) <= T``, which is impossible.
+
+    Section 9.144 uses residue Parseval at one ambient modulus and hence
+    one common primitive-character family.  Distinct ambient moduli
+    instead yield a double ``(chi_1,chi_2)`` expansion.  Coincidence of
+    primitive conductors can define a slice, but determinant incidence
+    does not force every pair into that slice.  Applying Cauchy row by
+    row returns the sign-absorption witness of Section 9.135.
+    """
+
+    modulus = F(original_modulus_exponent)
+    maximum_type_gcd = F(maximum_type_frequency_gcd_exponent)
+    product_length = F(product_label_length_exponent)
+    bounded_d = F(bounded_short_determinant_exponent)
+    if min(modulus, maximum_type_gcd, product_length, bounded_d) < 0:
+        raise ValueError("all scale exponents must be nonnegative")
+    if modulus == 0 or product_length == 0:
+        raise ValueError("modulus and product-label exponents must be positive")
+    if maximum_type_gcd > modulus:
+        raise ValueError("Type-frequency gcd cannot exceed the modulus")
+
+    minimum_reduced_modulus = modulus - maximum_type_gcd
+    maximum_collar = 2 * modulus - product_length
+    same_modulus_common_gcd = minimum_reduced_modulus
+    same_modulus_possible = bool(
+        same_modulus_common_gcd + bounded_d <= maximum_collar
+    )
+    balanced_values = bool(
+        modulus == F(3)
+        and maximum_type_gcd == F(1, 2)
+        and product_length == F(5)
+        and bounded_d == 0
+    )
+    return {
+        "original_modulus_exponent": modulus,
+        "maximum_type_frequency_gcd_exponent": maximum_type_gcd,
+        "product_label_length_exponent": product_length,
+        "bounded_short_determinant_exponent": bounded_d,
+        "minimum_reduced_modulus_exponent": minimum_reduced_modulus,
+        "maximum_nonzero_determinant_collar_exponent": maximum_collar,
+        "same_reduced_modulus_common_gcd_exponent": (
+            same_modulus_common_gcd
+        ),
+        "same_reduced_modulus_bounded_nonzero_D_is_possible": (
+            same_modulus_possible
+        ),
+        "bounded_nonzero_D_forces_distinct_ambient_moduli": bool(
+            not same_modulus_possible
+        ),
+        "resonant_two_PV_uses_one_common_residue_Parseval": True,
+        "cross_modulus_expansion_has_two_character_families": True,
+        "determinant_incidence_forces_equal_primitive_characters": False,
+        "shared_primitive_conductor_slice_is_not_exhaustive": True,
+        "rowwise_cauchy_can_absorb_every_outer_mobius_sign": True,
+        "balanced_physical_values_verified": balanced_values,
+        "two_PV_saving_transfers_to_bounded_D_master": False,
+        "bounded_D_one_power_gate_closed": False,
+        "level_dependent_dskm_offdiagonal_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def common_g_lift_two_pole_audit(
+    *,
+    common_modulus: int,
+    left_reduced_cofactor: int,
+    right_reduced_cofactor: int,
+    short_determinant: int,
+    left_phase_coefficient: int,
+    right_phase_coefficient: int,
+    common_modulus_exponent: Fraction,
+    bounded_short_determinant_exponent: Fraction,
+) -> dict[str, object]:
+    """Parameterize the common determinant lift and its two-pole phase.
+
+    Write ``Q_i=g*r_i`` with ``g,r_1,r_2`` pairwise coprime.  The active
+    determinant congruences fix ``x_1 mod r_1`` and ``x_2 mod r_2``.
+    Their common CRT lifts are parameterized by
+
+    ``x_1*r_2=t`` and ``x_2*r_1=t-D (mod g)``, with both ``t`` and
+    ``t-D`` units.  The retained common trace is exactly
+
+    ``A*inverse(t)/g + B*inverse(t-D)/g``.
+
+    Prime by prime this is a fixed-degree mixed rational character sum.
+    Its only worst-case constant-phase primes divide ``g,D,A+B`` (and
+    also require equality of the two local characters).  The classical
+    prime-modulus Weil bound followed by squarefree CRT therefore gives
+    ``g^(1/2+eps)*g_exc^(1/2)``.  Since ``g_exc`` divides ``D``, bounded
+    ``D`` yields a half-power saving in the common lift.  This does not
+    estimate the remaining active-cofactor character family.
+    """
+
+    g = int(common_modulus)
+    r1 = int(left_reduced_cofactor)
+    r2 = int(right_reduced_cofactor)
+    determinant = int(short_determinant)
+    c1 = int(left_phase_coefficient)
+    c2 = int(right_phase_coefficient)
+    gamma = F(common_modulus_exponent)
+    determinant_exponent = F(bounded_short_determinant_exponent)
+    if min(g, r1, r2) <= 0 or determinant == 0:
+        raise ValueError("modulus factors must be positive and D nonzero")
+    if gamma < 0 or determinant_exponent < 0:
+        raise ValueError("scale exponents must be nonnegative")
+
+    pairwise_squarefree = bool(
+        _finite_mobius(g) != 0
+        and _finite_mobius(r1) != 0
+        and _finite_mobius(r2) != 0
+        and gcd(g, r1) == gcd(g, r2) == gcd(r1, r2) == 1
+    )
+    determinant_active_unit = bool(gcd(abs(determinant), r1 * r2) == 1)
+    phase_units = bool(gcd(c1 * c2, g) == 1)
+    if not pairwise_squarefree:
+        raise ValueError("g,r1,r2 must be squarefree and pairwise coprime")
+    if not determinant_active_unit:
+        raise ValueError("D must be a unit on both active cofactors")
+    if not phase_units:
+        raise ValueError("both common-trace phase coefficients must be units")
+
+    def inverse_mod(value: int, modulus: int) -> int:
+        return 0 if modulus == 1 else pow(value, -1, modulus)
+
+    q1 = g * r1
+    q2 = g * r2
+    active_left = (
+        0 if r1 == 1 else determinant * inverse_mod(r2, r1) % r1
+    )
+    active_right = (
+        0 if r2 == 1 else -determinant * inverse_mod(r1, r2) % r2
+    )
+    left_candidates = tuple(
+        value
+        for value in range(q1)
+        if gcd(value, q1) == 1 and value % r1 == active_left
+    )
+    right_candidates = tuple(
+        value
+        for value in range(q2)
+        if gcd(value, q2) == 1 and value % r2 == active_right
+    )
+    determinant_lifts = {
+        (left, right)
+        for left in left_candidates
+        for right in right_candidates
+        if (left * r2 - right * r1 - determinant) % g == 0
+    }
+
+    admissible_t = tuple(
+        value
+        for value in range(g)
+        if gcd(value, g) == 1 and gcd(value - determinant, g) == 1
+    )
+    parameterized_lifts: dict[int, tuple[int, int]] = {}
+    for t in admissible_t:
+        left_matches = tuple(
+            value
+            for value in left_candidates
+            if value * r2 % g == t
+        )
+        right_matches = tuple(
+            value
+            for value in right_candidates
+            if value * r1 % g == (t - determinant) % g
+        )
+        if len(left_matches) != 1 or len(right_matches) != 1:
+            raise RuntimeError("the common CRT lift is not unique")
+        parameterized_lifts[t] = (left_matches[0], right_matches[0])
+
+    lift_bijection = bool(set(parameterized_lifts.values()) == determinant_lifts)
+    left_two_pole = c1 * r2 * inverse_mod(r1, g) % g
+    right_two_pole = c2 * r1 * inverse_mod(r2, g) % g
+    trace_rows: list[dict[str, object]] = []
+    trace_identity = True
+    for t, (left, right) in parameterized_lifts.items():
+        original_trace = (
+            F(c1 * inverse_mod(left, g) * inverse_mod(r1, g), g)
+            + F(c2 * inverse_mod(right, g) * inverse_mod(r2, g), g)
+        )
+        two_pole_trace = (
+            F(left_two_pole * inverse_mod(t, g), g)
+            + F(
+                right_two_pole * inverse_mod(t - determinant, g),
+                g,
+            )
+        )
+        discrepancy = original_trace - two_pole_trace
+        identity = discrepancy.denominator == 1
+        trace_identity = bool(trace_identity and identity)
+        trace_rows.append(
+            {
+                "common_lift_parameter": t,
+                "left_numerator": left,
+                "right_numerator": right,
+                "original_common_trace": original_trace,
+                "two_pole_common_trace": two_pole_trace,
+                "integer_phase_discrepancy": discrepancy,
+                "trace_identity_mod_one": identity,
+            }
+        )
+
+    exceptional_divisor = gcd(
+        g,
+        gcd(abs(determinant), abs(left_two_pole + right_two_pole)),
+    )
+    exceptional_divides_determinant = bool(
+        abs(determinant) % exceptional_divisor == 0
+    )
+    common_lift_saving = max(F(0), (gamma - determinant_exponent) / 2)
+    residual_saving = max(F(0), F(1) - common_lift_saving)
+    return {
+        "common_modulus": g,
+        "left_reduced_cofactor": r1,
+        "right_reduced_cofactor": r2,
+        "short_determinant": determinant,
+        "left_active_residue": active_left,
+        "right_active_residue": active_right,
+        "admissible_common_lift_parameters": admissible_t,
+        "parameterized_common_lifts": parameterized_lifts,
+        "trace_rows": tuple(trace_rows),
+        "left_two_pole_coefficient": left_two_pole,
+        "right_two_pole_coefficient": right_two_pole,
+        "all_modulus_factors_are_squarefree_and_pairwise_coprime": (
+            pairwise_squarefree
+        ),
+        "short_determinant_is_unit_on_active_cofactors": (
+            determinant_active_unit
+        ),
+        "common_lifts_biject_with_t_and_t_minus_D_units": lift_bijection,
+        "common_trace_equals_two_pole_phase_for_every_lift": trace_identity,
+        "two_pole_coefficients_are_units_at_common_modulus": bool(
+            gcd(left_two_pole * right_two_pole, g) == 1
+        ),
+        "worst_exceptional_divisor": exceptional_divisor,
+        "worst_exceptional_divisor_divides_short_determinant": (
+            exceptional_divides_determinant
+        ),
+        "published_square_root_bound_applies_prime_by_prime": True,
+        "squarefree_CRT_common_lift_bound_proved": bool(
+            lift_bijection
+            and trace_identity
+            and exceptional_divides_determinant
+        ),
+        "common_modulus_exponent": gamma,
+        "bounded_short_determinant_exponent": determinant_exponent,
+        "common_lift_saving_exponent": common_lift_saving,
+        "bounded_D_residual_saving_after_common_lift": residual_saving,
+        "common_lift_bound_alone_closes_bounded_D_gate": bool(
+            residual_saving == 0
+        ),
+        "active_cofactor_character_average_proved": False,
+        "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,

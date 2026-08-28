@@ -49,6 +49,8 @@
 > | Unit short-determinant face | Section 9.154 gives an exact centered finite witness with adjacent fractions \(3/7\) and \(2/5\): both fixed-modulus packets have zero unit mean, but their \(D=1\) cross atom is nonzero.  For \(D=1\) the modular inverse term in (9.1014) is trivial, while the two rational tails reconstruct the original inverse phase modulo one.  On the primitive balanced face, restricting \(|D|\asymp1\) removes the whole \(T^{1-\gamma}\) collar and leaves raw exponent five against target four.  Thus only one power remains, but neither the actual AFE coefficient on this face nor the required bounded-\(D\) four-Möbius cancellation is proved |
 > | Symmetric AFE direction ledger | Section 9.155 returns to the exact contour identity (2.3e)--(2.4).  After the canonical \(z\mapsto-z\) and summation-name exchange, the two functional-equation directions are the same packet, so the factor 2 in (2.4) and (4.5) is reinforcement, not a sign choice.  Every downstream linear dyadic/Poisson/centering/bounded-\(|D|\) projection therefore maps the unfolded pair to twice one direction.  Any exact deletion of the unit-determinant face must come from a zero one-direction coefficient or reassembly with reflection, the principal ledger, or the explicit diagonal; that reassembly remains open |
 > | Bounded-determinant Type master | Section 9.156 inserts the exact small/I/II split before restricting the one opened global square to \(0<|D|\leq D_0\).  The product-label weight is retained as \(W_\omega(a)=\sum_{h\delta=a}f_\omega(h)g_\omega(\delta)\), not replaced by arbitrary coefficients.  All nine ordered Type cross blocks reassemble the bounded-\(D\) master exactly, with the modulus and Type Möbius signs still linear before the pair sum.  The primitive bounded-\(D\) target still needs one power.  The published-coverage table has no complete row: fixed-modulus estimates lose the signed varying-level packet, while the long--long results do not supply the required power or physical adapter |
+> | Resonant two-PV compatibility boundary | Section 9.157 proves that the Section 9.144 argument cannot simply be reused on bounded nonzero \(D\).  Every physical reduced modulus is at least \(T^{5/2}\); equal reduced moduli would give \(g\geq T^{5/2}\), contradicting \(g|D|\ll T\).  Hence the cross term has distinct ambient moduli and two independent character families.  The determinant incidence does not impose \(\chi_1=\chi_2\); a shared primitive-conductor slice is not exhaustive.  Applying Cauchy separately returns the exact outer-sign saturation of Section 9.135.  Thus the two PV savings close the resonant projector only, not the one-power bounded-\(D\) gate |
+> | Common-lift two-pole sum | Section 9.158 parameterizes every common \(g\)-lift by \(x_1r_2\equiv t\), \(x_2r_1\equiv t-D\pmod g\).  After multiplicative expansion of the two residue packets, the retained common trace is a fixed-degree mixed character sum with additive phase \(A/t+B/(t-D)\).  Prime-modulus Weil and squarefree CRT give \(g^{1/2+\varepsilon}g_{\rm exc}^{1/2}\), where every exceptional prime divides \((g,D,A+B)\) and also requires equality of the two local characters.  Hence \(g_{\rm exc}\mid D\), so bounded \(D\) gives a proved local \(g^{1/2}\) saving.  At \(g=T^\gamma\) the one-power gate is reduced only to \(T^{1-\gamma/2}\); the active cofactor/two-character average remains unproved |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -22551,6 +22553,219 @@ sums, every rowwise Type identity, the exact \(gD\) factorization, and
 reassembly of all nine ordered blocks after the bounded-\(D\) selector.
 It records the exponent ledger (9.1042), while every block-bound and
 coupled-kernel flag remains false.
+
+### 9.157 Why the resonant two-PV proof stops at nonzero determinant
+
+Section 9.144 has enough numerical saving to make it tempting to apply
+the same two Pólya--Vinogradov estimates to (9.1040).  The obstruction is
+not their numerical strength but the missing common character family.
+
+On every balanced physical row,
+
+\[
+ Q_i=q_i/(k_i,q_i)=T^{3-\delta_i},
+ \qquad0\leq\delta_i\leq\frac12,
+\]
+
+so \(Q_i\geq T^{5/2}\).  If two rows in a nonzero-determinant pair had
+the same reduced modulus, then
+
+\[
+ \boxed{Q_1=Q_2\Longrightarrow g=Q_1\geq T^{5/2}.}
+ \tag{9.1043}
+\]
+
+But product-label Poisson gives
+
+\[
+ \boxed{g|D|\ll T,\qquad D\ne0.}
+ \tag{9.1044}
+\]
+
+Equations (9.1043)--(9.1044) are incompatible for large \(T\).  Thus
+every bounded nonzero-\(D\) pair on the physical Type-frequency polytope
+has distinct ambient reduced moduli \(Q_1\ne Q_2\).
+
+This destroys the exact orthogonality used in Section 9.144.  At one
+ambient modulus, multiplicative Parseval gives
+
+\[
+ \sum_{c\in U(q)}|Z_{q,c}^{\circ}|^2
+ =\frac1{\varphi(q)}\sum_{\chi\ne\chi_0}
+   |\widehat F_q(\chi)|^2
+   |\widehat G_q(\overline\chi)|^2.
+ \tag{9.1045}
+\]
+
+Both label factors in (9.1045) see the same primitive character after
+conductor descent; this is where the two PV bounds and the ordinary Type
+fourth moment meet.
+
+For distinct ambient moduli, a bounded determinant instead contains
+
+\[
+ \sum_{\substack{c_1\in U(Q_1),\ c_2\in U(Q_2)\\
+                  c_1Q_2-c_2Q_1=gD}}
+ Z_{Q_1,c_1}^{\circ}\overline{Z_{Q_2,c_2}^{\circ}}.
+ \tag{9.1046}
+\]
+
+Multiplicative inversion expands (9.1046) over two independent indices
+\((\chi_1,\chi_2)\).  The additive determinant relation constrains
+\((c_1,c_2)\), but it does not force
+\(\chi_1=\chi_2\), equal primitive conductors, or a diagonal relation
+between their Type transforms.  Imprimitive descent can isolate a slice
+on which \(\chi_1\) and \(\chi_2\) are induced from the same primitive
+character, but no orthogonality identity places the whole of (9.1046) in
+that slice.  The complementary two-character family remains.
+
+Applying Cauchy separately in the two ambient moduli bounds (9.1046) by
+the product of the two row energies (9.1045).  Section 9.135 gives an
+exact one-dimensional saturation witness showing that such a rowwise
+Cauchy estimate can absorb every outer Möbius sign.  It therefore cannot
+provide the missing cross-level cancellation, even though each individual
+PV label sum is strong.
+
+The exact coverage boundary is consequently:
+
+| character sector | Section 9.144 input | bounded-\(D\) conclusion |
+|---|---|---|
+| one ambient modulus, one centered residue square | common residue Parseval and one primitive-character family | proved within target |
+| distinct ambient moduli, coincident primitive conductors | two-PV estimates may be applied atomwise after all unit-mask adapters | only a nonexhaustive slice |
+| distinct ambient moduli, independent primitive conductors | no character delta from determinant incidence | unproved |
+| all sectors after rowwise Cauchy | separate row energies | outer Möbius signs lost; no one-power saving |
+
+Thus the resonant two-PV theorem is not a hidden proof of the bounded-
+determinant block table in Section 9.156.  A successful extension must
+prove a genuinely *joint* two-character/determinant large sieve while
+retaining the common physical coefficient and the nine Type blocks.
+That joint estimate, the bounded-\(D\) one-power gate, and the complete
+coupled-kernel gate remain unproved.
+
+The exact-rational helper `bounded_D_two_pv_compatibility_audit` records
+the exponents \(5/2\) and \(1\) in (9.1043)--(9.1044), the forced
+distinct-modulus conclusion, and the one- versus two-character-family
+interface.  It keeps the two-PV transfer, bounded-\(D\) analytic bound,
+LDSKM, and coupled-kernel flags false.
+
+### 9.158 The common lift is a two-pole mixed character sum
+
+The two-character obstruction in (9.1046) still has one exact local
+oscillation which can be spent.  Write
+
+\[
+ Q_1=gr_1,\qquad Q_2=gr_2,
+ \qquad(g,r_1r_2)=(r_1,r_2)=1,
+\]
+
+and fix a nonzero short determinant \(D\), with
+\((D,r_1r_2)=1\).  The active residues are already fixed by (9.1011).
+The remaining common CRT lifts have the exact parameterization
+
+\[
+ \boxed{
+ x_1r_2\equiv t,\qquad
+ x_2r_1\equiv t-D\pmod g,
+ \qquad (t(t-D),g)=1.}
+ \tag{9.1047}
+\]
+
+For every admissible \(t\), CRT gives one and only one pair
+\((x_1\bmod Q_1,x_2\bmod Q_2)\) satisfying (9.1011) and (9.1047).
+Conversely every determinant lift supplies that \(t\).  Thus (9.1047)
+is a bijection, not a majorization.
+
+Fix one pair of multiplicative-character atoms after expanding the two
+centered residue packets in (9.1046).  The common-gcd trace in (9.1014)
+then becomes
+
+\[
+ \boxed{
+ \Gamma_g(t)
+ \equiv\frac{A\overline t_g+B\overline{t-D}_g}{g}
+ \pmod1,}
+ \tag{9.1048}
+\]
+
+where
+
+\[
+ A\equiv C_1r_2\overline{r_1}_g,qquad
+ B\equiv C_2r_1\overline{r_2}_g\pmod g.
+\]
+
+Both \(A\) and \(B\) are units modulo \(g\).  The complete common-lift
+factor is therefore, up to unit constants depending only on the fixed
+outer atom,
+
+\[
+ \boxed{
+ \sum_{\substack{t\bmod g\\(t(t-D),g)=1}}
+ \chi_1(t)\overline{\chi_2(t-D)}
+ e_g\!\left(\frac{A}{t}+\frac{B}{t-D}\right).}
+ \tag{9.1049}
+\]
+
+At a prime \(p\mid g\), if \(p\nmid D\), the additive rational function
+in (9.1049) has two distinct simple poles with nonzero residues.  If
+\(p\mid D\), it reduces to \((A+B)/t\).  Hence the only possible
+constant-phase local factor satisfies
+
+\[
+ p\mid D,qquad A+B\equiv0\pmod p,qquad
+ \chi_{1,p}=\chi_{2,p}.
+ \tag{9.1050}
+\]
+
+The last equality is also necessary for the multiplicative factor to be
+constant.  Define the worst exceptional divisor by allowing every local
+character equality in (9.1050):
+
+\[
+ \boxed{g_{\rm exc}\mid(g,D,A+B),qquad g_{\rm exc}\mid D.}
+ \tag{9.1051}
+\]
+
+For every other prime, the classical prime-modulus Weil estimate for a
+fixed-degree mixed rational character sum gives \(O(\sqrt p)\).  One
+convenient modern source is the prime-modulus background bound in
+[Cochrane--Granville, Section 4](https://arxiv.org/abs/2604.02614),
+which derives the nondegenerate case from Weil.  The finitely many small
+prime constants are harmless.  Multiplying the local estimates by CRT
+gives the proved fixed-atom bound
+
+\[
+ \boxed{
+ |\mathcal T_g(\chi_1,\chi_2;A,B,D)|
+ \ll_\varepsilon
+ g^{1/2+\varepsilon}g_{\rm exc}^{1/2}.}
+ \tag{9.1052}
+\]
+
+For \(|D|\ll T^{o(1)}\), (9.1051) makes the exceptional factor
+subpolynomial.  Thus at \(g=T^\gamma\), (9.1052) saves
+\(T^{\gamma/2}\) over the trivial common-lift length.  Combining this
+with (9.1042) leaves the exact residual requirement
+
+\[
+ \boxed{
+ S_{\rm residual}(\gamma)=1-\frac\gamma2,
+ \qquad0\leq\gamma\leq1.}
+ \tag{9.1053}
+\]
+
+In particular, even the largest bounded-determinant common gcd
+\(g\asymp T\) still leaves a half-power.  The local Weil saving is real
+published coverage, but it is not the full gate: after (9.1049) is
+bounded, the two active cofactor characters, the four outer Möbius signs,
+all nine Type blocks, and the level-dependent physical transforms remain.
+Their required joint saving is (9.1053), and it remains unproved.
+
+The helper `common_g_lift_two_pole_audit` exhausts the finite CRT lifts,
+verifies (9.1047)--(9.1048) modulo one, and computes the worst divisor
+in (9.1051).  Its exponent ledger records the proved common-lift saving
+and the residual (9.1053), while keeping the active-cofactor,
+bounded-\(D\), LDSKM, and coupled-kernel flags false.
 
 ## 10. What has and has not been proved
 
