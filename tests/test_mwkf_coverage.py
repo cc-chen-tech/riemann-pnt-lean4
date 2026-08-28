@@ -4462,6 +4462,169 @@ def test_zero_direct_weighted_divisor_adapter_is_anchor_plus_variation() -> None
     assert "physical mixed-difference bound remains unproved" in text
 
 
+def test_zero_direct_two_taper_coprime_euler_core_and_reflections() -> None:
+    audit = getattr(
+        coverage_audit,
+        "zero_direct_two_taper_coprime_reassembly_audit",
+        None,
+    )
+    assert audit is not None, "two-taper coprime reassembly is missing"
+
+    shared_and_exclusive = audit(
+        cutoff=5,
+        common_factor=1,
+        first_product_label=6,
+        second_product_label=10,
+        first_coprimality_label=1,
+        second_coprimality_label=1,
+    )
+    assert shared_and_exclusive["first_exclusive_primes"] == (3,)
+    assert shared_and_exclusive["second_exclusive_primes"] == (5,)
+    assert shared_and_exclusive["shared_primes"] == (2,)
+    assert shared_and_exclusive["closed_euler_core_formal_weight"] == {
+        "constant": F(0),
+        "log_monomial_coefficients": {(3, 5): F(-1)},
+    }
+    assert shared_and_exclusive["enumerated_complete_formal_weight"] == (
+        shared_and_exclusive["closed_euler_core_formal_weight"]
+    )
+    assert shared_and_exclusive[
+        "truncated_equals_core_minus_first_tail_minus_second_tail_plus_double_tail"
+    ]
+    assert shared_and_exclusive["every_first_boundary_cofactor_is_short"]
+    assert shared_and_exclusive["every_second_boundary_cofactor_is_short"]
+    assert shared_and_exclusive["two_taper_euler_core_identity_proved"]
+    assert shared_and_exclusive[
+        "complete_core_supported_on_at_most_one_exclusive_prime_per_side"
+    ]
+    assert not shared_and_exclusive["full_afe_reflection_adapter_proved"]
+    assert not shared_and_exclusive["principal_analytic_bound_proved"]
+    assert not shared_and_exclusive["coupled_kernel_gate_closed"]
+
+    shared_only = audit(
+        cutoff=20,
+        common_factor=1,
+        first_product_label=6,
+        second_product_label=6,
+        first_coprimality_label=1,
+        second_coprimality_label=1,
+    )
+    assert shared_only["first_exclusive_primes"] == ()
+    assert shared_only["second_exclusive_primes"] == ()
+    assert shared_only["shared_primes"] == (2, 3)
+    assert shared_only["closed_euler_core_formal_weight"] == {
+        "constant": F(1),
+        "log_monomial_coefficients": {
+            (2,): F(-2),
+            (2, 3): F(2),
+            (3,): F(-2),
+        },
+    }
+
+    common_factor = audit(
+        cutoff=30,
+        common_factor=5,
+        first_product_label=6,
+        second_product_label=2,
+        first_coprimality_label=1,
+        second_coprimality_label=1,
+    )
+    assert common_factor["closed_euler_core_formal_weight"] == {
+        "constant": F(0),
+        "log_monomial_coefficients": {
+            (2, 3): F(1),
+            (3,): F(-1),
+            (3, 5): F(1),
+        },
+    }
+
+    composite_common_factor = audit(
+        cutoff=100,
+        common_factor=6,
+        first_product_label=35,
+        second_product_label=35,
+        first_coprimality_label=1,
+        second_coprimality_label=1,
+    )
+    assert composite_common_factor["closed_euler_core_formal_weight"] == {
+        "constant": F(1),
+        "log_monomial_coefficients": {
+            (2,): F(-2),
+            (2, 2): F(1),
+            (2, 3): F(2),
+            (2, 5): F(2),
+            (2, 7): F(2),
+            (3,): F(-2),
+            (3, 3): F(1),
+            (3, 5): F(2),
+            (3, 7): F(2),
+            (5,): F(-2),
+            (5, 7): F(2),
+            (7,): F(-2),
+        },
+    }
+
+    killed = audit(
+        cutoff=100,
+        common_factor=1,
+        first_product_label=30,
+        second_product_label=2,
+        first_coprimality_label=1,
+        second_coprimality_label=1,
+    )
+    assert killed["first_exclusive_primes"] == (3, 5)
+    assert killed["closed_euler_core_formal_weight"] == {
+        "constant": F(0),
+        "log_monomial_coefficients": {},
+    }
+
+    squarefree_labels = (1, 2, 3, 5, 6, 7, 10, 14, 15, 21, 30, 42, 70, 105)
+    enumerated_cases = 0
+    for level in (5, 11, 30):
+        for common in (1, 2, 3, 5):
+            if common > level:
+                continue
+            for first_label in squarefree_labels:
+                for second_label in squarefree_labels:
+                    exhaustive = audit(
+                        cutoff=level,
+                        common_factor=common,
+                        first_product_label=first_label,
+                        second_product_label=second_label,
+                        first_coprimality_label=7,
+                        second_coprimality_label=11,
+                    )
+                    assert exhaustive["two_taper_euler_core_identity_proved"]
+                    assert exhaustive[
+                        "truncated_equals_core_minus_first_tail_minus_second_tail_plus_double_tail"
+                    ]
+                    assert exhaustive[
+                        "every_first_boundary_cofactor_is_short"
+                    ]
+                    assert exhaustive[
+                        "every_second_boundary_cofactor_is_short"
+                    ]
+                    enumerated_cases += 1
+    assert enumerated_cases == 2352
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.102 Both principal tapers" in text
+    assert r"\mathscr E_q(R_1,R_2)" in text
+    assert r"-\mathscr B_1-\mathscr B_2+\mathscr B_{12}" in text
+    assert "constant physical-weight, two-taper Euler algebra" in text
+    assert "principal analytic estimate" in text
+
+    with pytest.raises(ValueError, match="squarefree"):
+        audit(
+            cutoff=20,
+            common_factor=4,
+            first_product_label=6,
+            second_product_label=10,
+            first_coprimality_label=1,
+            second_coprimality_label=1,
+        )
+
+
 def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
     audit = getattr(
         coverage_audit,

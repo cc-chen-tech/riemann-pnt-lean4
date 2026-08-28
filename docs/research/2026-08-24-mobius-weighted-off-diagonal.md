@@ -14756,6 +14756,130 @@ The helper zero_direct_weighted_divisor_adapter_audit verifies (9.666)--
 recursive difference computation and records constant-weight collapse,
 while leaving every analytic-bound flag false.
 
+### 9.102 Both principal tapers have an explicit coprime Euler core
+
+The second taper can also be restored before an absolute value on the
+divisor-independent part of the product-label principal set.  Fix the
+squarefree common layer \(q\), two positive product labels \(a_1,a_2\),
+and any additional fixed coprimality labels \(n_1,n_2\).  Put
+
+\[
+ R_i=\prod_{\substack{p\mid a_i\\p\nmid qn_i}}p\quad(i=1,2),
+ \qquad
+ \mathscr E_q(R_1,R_2)
+ :=\sum_{\substack{r\mid R_1,\ s\mid R_2\\(r,s)=1}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs).
+ \tag{9.670}
+\]
+
+The coprimality in (9.670) is essential: a prime occurring in both
+radicals may be assigned to the first divisor, to the second divisor, or
+to neither, but not to both.  Decompose the prime sets as
+
+\[
+ A_1=\{p:p\mid R_1,\ p\nmid R_2\},\qquad
+ A_2=\{p:p\mid R_2,\ p\nmid R_1\},\qquad
+ C=\{p:p\mid(R_1,R_2)\}.
+\]
+
+Write
+
+\[
+ c_q=1-\frac{\log q}{\log N},\qquad
+ L_C=\sum_{p\in C}\frac{\log p}{\log N},\qquad
+ Q_C=\sum_{p\in C}\left(\frac{\log p}{\log N}\right)^2.
+\]
+
+Introducing formal variables \(z,w\), the complete local generating
+function is
+
+\[
+ \prod_{p\in A_1}(1-p^z)
+ \prod_{p\in A_2}(1-p^w)
+ \prod_{p\in C}(1-p^z-p^w).
+\]
+
+Applying
+\((c_q-\partial_z/\log N)(c_q-\partial_w/\log N)\) at
+\(z=w=0\) gives the exact four-case formula
+
+\[
+\boxed{
+ \mathscr E_q(R_1,R_2)=(-1)^{|C|}
+ \begin{cases}
+ (c_q-L_C)^2-Q_C,&|A_1|=|A_2|=0,\\
+ \dfrac{\log p_1}{\log N}(c_q-L_C),
+    &A_1=\{p_1\},\ |A_2|=0,\\
+ \dfrac{\log p_2}{\log N}(c_q-L_C),
+    &|A_1|=0,\ A_2=\{p_2\},\\
+ \dfrac{\log p_1\log p_2}{(\log N)^2},
+    &A_1=\{p_1\},\ A_2=\{p_2\},\\
+ 0,&|A_1|>1\ \text{or}\ |A_2|>1.
+ \end{cases}}
+ \tag{9.671}
+\]
+
+Thus arbitrary shared-prime support is harmless at the complete Euler
+level: it contributes only the explicit sign and the quadratic correction
+\(Q_C\).  The genuinely sparse condition is separate on the two exclusive
+prime sets.  In particular, completing the two tapers simultaneously does
+not create an uncontrolled \(2^{\omega((R_1,R_2))}\) core.
+
+The finite cutoffs have an exact two-dimensional reflection.  Let
+
+\[
+\begin{aligned}
+ \mathscr B_1&=\sum_{\substack{r\mid R_1,\ s\mid R_2,\ (r,s)=1\\qr>N}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs),\\
+ \mathscr B_2&=\sum_{\substack{r\mid R_1,\ s\mid R_2,\ (r,s)=1\\qs>N}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs),\\
+ \mathscr B_{12}&=\sum_{\substack{r\mid R_1,\ s\mid R_2,\ (r,s)=1\\qr>N,\ qs>N}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs).
+\end{aligned}
+\]
+
+Inclusion--exclusion, with no omitted endpoint, gives
+
+\[
+\boxed{
+ \sum_{\substack{r\mid R_1,\ s\mid R_2,\ (r,s)=1\\qr\leq N,\ qs\leq N}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs)
+ =\mathscr E_q(R_1,R_2)-\mathscr B_1-\mathscr B_2+\mathscr B_{12}.}
+ \tag{9.672}
+\]
+
+Reflecting \(r=R_1/k_1\) in the first boundary and
+\(s=R_2/k_2\) in the second gives, respectively,
+
+\[
+ \boxed{
+ k_1<\frac{qR_1}{N}\leq\frac{qa_1}{N},\qquad
+ k_2<\frac{qR_2}{N}\leq\frac{qa_2}{N}.}
+ \tag{9.673}
+\]
+
+Both inequalities hold simultaneously on the double boundary.  Hence the
+same \(O(T^{2+o(1)}/q)\) core-box length from (9.664a) applies separately
+to the two reflected coordinates when \(|a_i|=|h_i\delta_i|\) is in the
+polylogarithmic core.  The plus sign of \(\mathscr B_{12}\) in (9.672) is
+forced by overlap of the two inclusive tails; treating the two taper
+boundaries independently would count this corner twice.
+
+This closes the **constant physical-weight, two-taper Euler algebra**,
+including every single and double cutoff edge.  It does not close the
+principal analytic estimate.  The literal AFE packet has a joint weight
+depending on \(r,s,h_i,\delta_i\); its two-variable variation, the two AFE
+directions, the reflected cross terms, and the explicit diagonal still
+have to be reassembled before applying (9.671)--(9.673).  The centered
+nonprincipal signed dispersion is unchanged.
+
+The helper zero_direct_two_taper_coprime_reassembly_audit independently
+enumerates all coprime divisor pairs, represents the product of tapers in
+the formal degree-two basis
+\(1,\log p/\log N,\log p\log p'/(\log N)^2\), verifies (9.671), and
+checks (9.672)--(9.673) with strict endpoints.  Its full AFE/reflection
+adapter, principal analytic bound, and coupled-kernel flags remain false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -14897,7 +15021,14 @@ and save at most \(1/24\) on prime moduli or \(1/35\) uniformly on
 composite moduli.  FKM's bilinear trace theorem covers fixed
 prime-modulus off-balance slices with saving at most \(1/8\), but
 degenerates at exact balance.  The composite central Type-II band and
-the required joint \(s,\xi,h\delta\) moment remain unproved.**
+the required joint \(s,\xi,h\delta\) moment remain unproved.  Finally,
+(9.670)--(9.673) now complete both Selberg tapers simultaneously on the
+divisor-independent principal set: the coprime Euler core has an explicit
+four-case degree-two formula and the finite cutoff is exactly the two
+single reflections plus their double-reflection correction.  This removes
+the second taper as a separate algebraic omission, but the joint physical
+weight, complete AFE/reflection normalization, principal analytic bound,
+and centered signed dispersion remain unproved.**
 
 Proved in this note:
 
@@ -15433,7 +15564,8 @@ Proved in this note:
 | Separate direct-coefficient and sector-harmonic adapters | both finite costs proved separately; cross-model packet adapter unproved | Grouping each unit-mask quotient by \(v=(B,q)\) reduces an arbitrary nonzero direct phase in the original principal master to unit Farey rows, (9.647)--(9.650), at divisor cost.  Separately, symmetric truncation of the normalized-sector \(B=\xi+jQ\) expansion has tail \(O(s/J)\) and projective norm \(O(\log J)\), (9.651)--(9.653); the jump boundary was already closed in (9.514)--(9.515).  No identification between the original \(s\asymp T^3\) modulus and the normalized \(s\leq Q\asymp T\) sector denominator is asserted.  The packet-exhaustive cross-model map, complete AFE/reflection coefficient normalization, and nonprincipal double-centered dispersion remain unproved |
 | Normalized sector-harmonic Farey operator | fixed-coefficient \(Q^{-1}\)-averaged norm proved; cross-model and coefficient-energy adapters unproved | Weighted Cauchy in the physical harmonics and one dual Farey large sieve per dyadic \(j\)-block prove (9.659), recovering the full factor \(Q\) from the dominant \(S^2\) spacing term.  Residue aggregation gives (9.660).  On the actual normalized scale \(S\asymp X\asymp Q\asymp T\), diagonal-sized coefficient energy still yields \(T^{3+\varepsilon}\) against the \(T^{2+\varepsilon}\) sector target: one full power of energy remains.  This cannot be combined with the distinct \(s\asymp T^3\) principal-master ledger until the packet-exhaustive cross-model adapter is proved |
 | Zero-direct principal Selberg reassembly | exact \(q\)-aware one-prime Euler core and \(T^{2+o(1)}/q\) reflected boundary for divisor-independent coefficients; physical weighted norm and analytic bound unproved | Before sector completion the original packet has \(B=0\), outside (9.649).  At fixed common layer \(q\), summing one complete reduced Selberg--Möbius divisor lattice first gives (9.662): only \(R_q(m,n)=1\) or one prime outside \(qn\) survives.  The finite cutoff is exactly the reflected sum (9.663), with every cofactor \(k<qR_q(m,n)/N\leq qm/N\).  Combining (5.3), (5.8), and (9.664) proves the core-box length \(k\ll T^{2+o(1)}/q\) at \(N=T^3\).  There is no common \(\mu(q)\) sign by (5.2).  The remaining gate is analytic control of the weighted variation while retaining the other reduced Möbius factor, second taper, physical AFE/dyadic kernel, both AFE directions, reflection, and the explicit diagonal |
-| Weighted zero-direct divisor adapter | exact anchor/variation/boundary identity and Boolean mixed difference; physical variation bound unproved | For arbitrary divisor weight \(W(s)\), (9.666)--(9.668) split the truncated taper into \(W(1)\) times the sparse Euler core, one complete anchored variation, and the reflected boundary.  Equation (9.669) identifies the complete weighted sum with the full Boolean mixed difference over unmatched primes.  This is an algebraic adapter, not a norm estimate: on a single physical dyadic block \(W(1)\) may vanish and the variation can contain the entire block.  Full dyadic/AFE reassembly, a useful projective mixed-difference bound, the second taper, reflection, diagonal, and nonprincipal signed dispersion remain unproved |
+| Weighted zero-direct divisor adapter | exact anchor/variation/boundary identity and Boolean mixed difference; physical variation bound unproved | For arbitrary divisor weight \(W(s)\), (9.666)--(9.668) split one truncated taper into \(W(1)\) times the sparse Euler core, one complete anchored variation, and the reflected boundary.  Equation (9.669) identifies the complete weighted sum with the full Boolean mixed difference over unmatched primes.  This is an algebraic adapter, not a norm estimate: on a single physical dyadic block \(W(1)\) may vanish and the variation can contain the entire block.  Full dyadic/AFE reassembly, a useful joint two-variable variation bound, reflection, diagonal, and nonprincipal signed dispersion remain unproved |
+| Two-taper coprime principal reassembly | exact degree-two Euler core and all single/double reflections; physical weighted norm unproved | Completing both divisor lattices with \((r,s)=1\) gives (9.670)--(9.671).  Shared primes contribute an explicit sign and quadratic correction, while the core vanishes unless each side has at most one exclusive prime.  Inclusion--exclusion gives the endpoint-exact truncation \(\mathscr E_q-\mathscr B_1-\mathscr B_2+\mathscr B_{12}\), (9.672), and reflection gives \(k_i<qR_i/N\leq qa_i/N\), (9.673), hence the same \(T^{2+o(1)}/q\) coordinate lengths.  This closes the constant-weight two-taper algebra only; the joint physical AFE/reflection adapter, principal analytic estimate, and centered dispersion remain unproved |
 | Divisor-incidence scalar recombination | exact finite identity and energy; incidence large sieve unproved | \(s=gq,m=g\delta_0\) gives (9.247)--(9.249), replacing the apparent third scalar sign by \(\mu(s)\) and \(\nu_{\mathcal G,\mathcal Q}(s,m)\leq\tau(s)\).  The exact energy (9.251) is \(\ll(L/G+1)\tau(s)^2\), but the equivalent full-modulus gate (9.250) must exploit it while the conductor lifts from \(q\) to \(s\) |
 | Nonunit numerator completion | exact reduced-modulus identity; shorter-interval recombination unproved | (9.232) forces \((\ell,q)=(\delta,q)\) and replaces the nonunit multiplier by a centered point mass modulo \(q/(\delta,q)\).  The original ambient unit coordinates factor as \(c_w(k)/w\), (9.233), and gcd selection is paid by the restricted numerator count, (9.234).  Primitive nonunit strata cost no power; polynomial quotient-dual rows from shorter numerator intervals remain to be integrated with the smooth box decomposition |
 | Coupled-kernel estimate CK\(_{\rm ub}(3)\) | **unproved** | weakest sufficient upper-bound gate, stated in Section 6.3 |

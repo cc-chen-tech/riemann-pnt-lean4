@@ -13,7 +13,7 @@ import sys
 from dataclasses import dataclass
 from fractions import Fraction
 from itertools import product
-from math import gcd, isqrt, log, pi
+from math import gcd, isqrt, log, pi, prod
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parents[1]))
@@ -13564,6 +13564,277 @@ def zero_direct_weighted_divisor_adapter_audit(
         "exact_weighted_divisor_adapter_proved": True,
         "physical_variation_bound_proved": False,
         "zero_direct_principal_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def zero_direct_two_taper_coprime_reassembly_audit(
+    *,
+    cutoff: int,
+    common_factor: int,
+    first_product_label: int,
+    second_product_label: int,
+    first_coprimality_label: int,
+    second_coprimality_label: int,
+) -> dict[str, object]:
+    """Complete two coprime Selberg-taper divisor lattices exactly.
+
+    A monomial ``(p_1, ..., p_j)`` represents
+    ``prod_i log(p_i) / log(cutoff)^j``.  Only degrees at most two occur.
+    The first and second reduced divisors are completed simultaneously,
+    so a prime shared by the two radicals may be assigned to at most one
+    side.
+    """
+
+    level = int(cutoff)
+    common = int(common_factor)
+    first_product = int(first_product_label)
+    second_product = int(second_product_label)
+    first_coprimality = int(first_coprimality_label)
+    second_coprimality = int(second_coprimality_label)
+    if level <= 1:
+        raise ValueError("the Selberg cutoff must exceed one")
+    if common <= 0 or common > level:
+        raise ValueError("the common factor must lie in [1, cutoff]")
+    if _finite_mobius(common) == 0:
+        raise ValueError("the common factor must be squarefree")
+    if min(
+        first_product,
+        second_product,
+        first_coprimality,
+        second_coprimality,
+    ) <= 0:
+        raise ValueError("all product and coprimality labels must be positive")
+
+    Polynomial = dict[tuple[int, ...], Fraction]
+
+    def clean(polynomial: Polynomial) -> Polynomial:
+        return {
+            monomial: coefficient
+            for monomial, coefficient in polynomial.items()
+            if coefficient != 0
+        }
+
+    def add(left: Polynomial, right: Polynomial) -> Polynomial:
+        result = dict(left)
+        for monomial, coefficient in right.items():
+            result[monomial] = result.get(monomial, F(0)) + coefficient
+        return clean(result)
+
+    def scale(polynomial: Polynomial, scalar: Fraction) -> Polynomial:
+        return clean(
+            {
+                monomial: F(scalar) * coefficient
+                for monomial, coefficient in polynomial.items()
+            }
+        )
+
+    def subtract(left: Polynomial, right: Polynomial) -> Polynomial:
+        return add(left, scale(right, F(-1)))
+
+    def multiply(left: Polynomial, right: Polynomial) -> Polynomial:
+        result: Polynomial = {}
+        for left_monomial, left_coefficient in left.items():
+            for right_monomial, right_coefficient in right.items():
+                monomial = tuple(sorted(left_monomial + right_monomial))
+                result[monomial] = (
+                    result.get(monomial, F(0))
+                    + left_coefficient * right_coefficient
+                )
+        return clean(result)
+
+    def linear_log(integer: int) -> Polynomial:
+        return {
+            (prime,): F(exponent)
+            for prime, exponent in _finite_prime_exponents(integer).items()
+        }
+
+    def taper(divisor: int) -> Polynomial:
+        return scale(
+            subtract({(): F(1)}, linear_log(common * divisor)),
+            F(_finite_mobius(divisor)),
+        )
+
+    def public(polynomial: Polynomial) -> dict[str, object]:
+        return {
+            "constant": polynomial.get((), F(0)),
+            "log_monomial_coefficients": dict(
+                sorted(
+                    (monomial, coefficient)
+                    for monomial, coefficient in polynomial.items()
+                    if monomial
+                )
+            ),
+        }
+
+    first_primes = tuple(
+        prime
+        for prime in _finite_prime_exponents(first_product)
+        if common % prime != 0 and first_coprimality % prime != 0
+    )
+    second_primes = tuple(
+        prime
+        for prime in _finite_prime_exponents(second_product)
+        if common % prime != 0 and second_coprimality % prime != 0
+    )
+    first_prime_set = set(first_primes)
+    second_prime_set = set(second_primes)
+    shared_primes = tuple(sorted(first_prime_set & second_prime_set))
+    first_exclusive_primes = tuple(
+        sorted(first_prime_set - second_prime_set)
+    )
+    second_exclusive_primes = tuple(
+        sorted(second_prime_set - first_prime_set)
+    )
+    first_radical = prod(first_primes)
+    second_radical = prod(second_primes)
+
+    complete: Polynomial = {}
+    truncated: Polynomial = {}
+    first_tail: Polynomial = {}
+    second_tail: Polynomial = {}
+    double_tail: Polynomial = {}
+    first_boundary_cofactors: list[int] = []
+    second_boundary_cofactors: list[int] = []
+    double_boundary_cofactors: list[tuple[int, int]] = []
+    admissible_pairs: list[tuple[int, int]] = []
+
+    for first_divisor in _positive_divisors(first_radical):
+        for second_divisor in _positive_divisors(second_radical):
+            if gcd(first_divisor, second_divisor) != 1:
+                continue
+            admissible_pairs.append((first_divisor, second_divisor))
+            term = multiply(taper(first_divisor), taper(second_divisor))
+            complete = add(complete, term)
+            first_is_long = common * first_divisor > level
+            second_is_long = common * second_divisor > level
+            if not first_is_long and not second_is_long:
+                truncated = add(truncated, term)
+            if first_is_long:
+                first_tail = add(first_tail, term)
+                first_boundary_cofactors.append(first_radical // first_divisor)
+            if second_is_long:
+                second_tail = add(second_tail, term)
+                second_boundary_cofactors.append(
+                    second_radical // second_divisor
+                )
+            if first_is_long and second_is_long:
+                double_tail = add(double_tail, term)
+                double_boundary_cofactors.append(
+                    (
+                        first_radical // first_divisor,
+                        second_radical // second_divisor,
+                    )
+                )
+
+    common_taper = subtract({(): F(1)}, linear_log(common))
+    shared_log: Polynomial = {
+        (prime,): F(1) for prime in shared_primes
+    }
+    shared_square_sum: Polynomial = {
+        (prime, prime): F(1) for prime in shared_primes
+    }
+    shifted_common_taper = subtract(common_taper, shared_log)
+    first_exclusive_count = len(first_exclusive_primes)
+    second_exclusive_count = len(second_exclusive_primes)
+    shared_sign = F((-1) ** len(shared_primes))
+
+    if first_exclusive_count > 1 or second_exclusive_count > 1:
+        closed_core: Polynomial = {}
+    elif first_exclusive_count == 0 and second_exclusive_count == 0:
+        closed_core = scale(
+            subtract(
+                multiply(shifted_common_taper, shifted_common_taper),
+                shared_square_sum,
+            ),
+            shared_sign,
+        )
+    elif first_exclusive_count == 1 and second_exclusive_count == 0:
+        closed_core = scale(
+            multiply(
+                {(first_exclusive_primes[0],): F(1)},
+                shifted_common_taper,
+            ),
+            shared_sign,
+        )
+    elif first_exclusive_count == 0 and second_exclusive_count == 1:
+        closed_core = scale(
+            multiply(
+                {(second_exclusive_primes[0],): F(1)},
+                shifted_common_taper,
+            ),
+            shared_sign,
+        )
+    else:
+        closed_core = scale(
+            {
+                tuple(
+                    sorted(
+                        (
+                            first_exclusive_primes[0],
+                            second_exclusive_primes[0],
+                        )
+                    )
+                ): F(1)
+            },
+            shared_sign,
+        )
+
+    reconstructed_truncated = add(
+        subtract(subtract(closed_core, first_tail), second_tail),
+        double_tail,
+    )
+    return {
+        "cutoff": level,
+        "common_factor": common,
+        "first_product_label": first_product,
+        "second_product_label": second_product,
+        "first_coprimality_label": first_coprimality,
+        "second_coprimality_label": second_coprimality,
+        "first_primes": first_primes,
+        "second_primes": second_primes,
+        "first_exclusive_primes": first_exclusive_primes,
+        "second_exclusive_primes": second_exclusive_primes,
+        "shared_primes": shared_primes,
+        "first_radical": first_radical,
+        "second_radical": second_radical,
+        "admissible_coprime_divisor_pairs": tuple(admissible_pairs),
+        "direct_truncated_formal_weight": public(truncated),
+        "enumerated_complete_formal_weight": public(complete),
+        "closed_euler_core_formal_weight": public(closed_core),
+        "first_reflected_tail_formal_weight": public(first_tail),
+        "second_reflected_tail_formal_weight": public(second_tail),
+        "double_reflected_tail_formal_weight": public(double_tail),
+        "first_boundary_cofactors": tuple(first_boundary_cofactors),
+        "second_boundary_cofactors": tuple(second_boundary_cofactors),
+        "double_boundary_cofactors": tuple(double_boundary_cofactors),
+        "two_taper_euler_core_identity_proved": complete == closed_core,
+        "complete_core_supported_on_at_most_one_exclusive_prime_per_side": (
+            complete == closed_core
+            and (
+                bool(closed_core)
+                == (
+                    first_exclusive_count <= 1
+                    and second_exclusive_count <= 1
+                )
+            )
+        ),
+        "truncated_equals_core_minus_first_tail_minus_second_tail_plus_double_tail": (
+            truncated == reconstructed_truncated
+        ),
+        "every_first_boundary_cofactor_is_short": all(
+            F(cofactor) < F(common * first_radical, level)
+            and F(cofactor) <= F(common * first_product, level)
+            for cofactor in first_boundary_cofactors
+        ),
+        "every_second_boundary_cofactor_is_short": all(
+            F(cofactor) < F(common * second_radical, level)
+            and F(cofactor) <= F(common * second_product, level)
+            for cofactor in second_boundary_cofactors
+        ),
+        "both_outer_mobius_sums_performed_before_absolute_values": True,
+        "full_afe_reflection_adapter_proved": False,
+        "principal_analytic_bound_proved": False,
         "coupled_kernel_gate_closed": False,
     }
 
