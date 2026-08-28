@@ -176,6 +176,20 @@ Hardy/argument-variation 主项仍为 `T log T`；下端的所有多对数误差
 及导数增长；最后才装配实际 `V1*B`。其中任何一项缺失时，Task 3
 都只能标为未完成。
 
+截至 2026-08-28，本节的实际乘积增长链已经逐项形式化：外圆几何给出
+`norm s <= 2H`；一次 digamma 递推给出
+`norm (H'/H)(s) <= 10 * (1 + log (H+2))`；随后由已证的 zeta/导数
+四次增长和有限 mollifier 界装配出
+
+\[
+ |V_1(s)|\le C_1H^5,\qquad
+ |V_1(s)B(s)|\le C\,Y\,H^6(L+2)^2.
+\]
+
+对应 contract 已核验所有公共端点只依赖标准公理
+`propext`、`Classical.choice`、`Quot.sound`。这只完成 `HJ-growth`；下节的
+Jensen divisor、可容许高度以及正则部分水平积分仍未因此自动完成。
+
 ## 4. 中心下界和 Jensen 质量
 
 圆心在移动右边上。已有高段与低段估计可统一加强为
