@@ -1899,3 +1899,34 @@ actual product remain the next contour-core tasks.
 After that, the transfer from selected endpoints to every height,
 equations (38)--(41), and the long mollified second moment remain open;
 strict `> 2/5` is not proved.
+
+## 27. Exact left-boundary tail limit
+
+The ordinary convergence checkpoint is now combined with the reverse-Fatou
+left-boundary inequality by applying the latter to every tail of the chosen
+zero-free-line sequence.  If
+
+\[
+ A_n=2\pi(c-x_n)M_{\ge c},\qquad
+ R_n=R_{\mathrm{nonleft}}(x_n),
+\]
+
+then `A_n -> A_0` and `R_n -> R_0`.  Applying reverse Fatou to the tail
+`x_{N+k}` with error `epsilon/3` forces its selected index beyond the common
+convergence threshold and yields
+
+\[
+ A_0\le I(x_0)+R_0+\epsilon.
+\]
+
+Letting `epsilon` tend to zero proves the exact limiting inequality with both
+the coefficient and the non-left remainder evaluated at `x_0`.  This is
+formalized in `PrimeNumberTheorem/LittlewoodTailLimit.lean`; it uses no
+zero-free hypothesis on the limiting left side and no false two-sided `L^1`
+convergence statement.
+
+For Conrey, `x_0=1/2-R/L` and `c=1/2`, so the coefficient is exactly `R/L`.
+The remaining equation-(37) specialization must still construct the finite
+divisor and a right-shifted sequence of zero-free vertical lines for the
+actual product `V_1B` at the two selected horizontal heights.  Equations
+(38)--(41) and the long `theta<4/7` mollified mean square remain downstream.
