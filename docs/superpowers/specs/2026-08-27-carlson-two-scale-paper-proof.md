@@ -486,8 +486,14 @@ the shifted `2/3` contour, but it is not yet the full analyticity hypothesis
 for Hadamard three-lines: that theorem needs every point of the open strip
 `1/2 < Re(z) < 4`, arbitrarily close to both boundary lines.  Extending the
 argument requires a point-dependent Cauchy radius controlled by the distance
-to the boundary.  The endpoint mean-square estimates and finite Gaussian
-covering also remain.
+to the boundary.  The required Cauchy-growth part of this extension is now
+formalized on an arbitrary compact inner strip: for every positive radius
+`r` whose closed Cauchy disks remain in `1/2 <= Re(s) <= 4`, the derivative
+has a degree-twenty polynomial square bound with constants allowed to depend
+on `r`.  The remaining local step is to propagate that variable-radius bound
+through the neighborhood-uniform Gaussian majorant and dominated-convergence
+argument.  The endpoint mean-square estimates and finite Gaussian covering
+also remain.
 The paper proof
 leaves the following concrete Lean lemmas, none of which may be replaced by
 a final density axiom:
