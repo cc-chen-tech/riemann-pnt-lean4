@@ -11,6 +11,7 @@
 > | Principal-extracted Ramanujan/Type gate | exact proper-divisor mean and centered Type I/II split proved in Section 9.107; separate analytic bounds are sufficient but stronger than the joint residual gate |
 > | Centered Type-I completion | zero dual mode removed and rank-one Ramanujan correction closed in Sections 9.108--9.109; global nonzero spectrum unproved |
 > | Joint all-character/conductor master | exact \(q=1\) principal plus \(q>1\) centered recombination proved in Section 9.113; signed cross-\(q\) estimate unproved, with standard large-sieve deficit \(T^{5/2}\) |
+> | Joint conductor LCM reduction | common inactive cofactor isolated at divisor cost in Section 9.115; jointly primitive cross-modulus core unproved |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
 > | Direct published Region A--C coverage | proved/classified in Section 8 |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
@@ -16448,6 +16449,296 @@ checks (9.754)--(9.759), including nonunit \(B\), nonunit \(a\), the
 \(q=1\) Ramanujan row, and the full \(q>1\) centered complement.  It does
 not claim a spectral average or close the coupled-kernel gate.
 
+### 9.115 Joint conductor LCM and the common inactive cofactor
+
+The two character variables in (9.747) permit one more exact conductor
+reduction, but only if their conductors are treated jointly.  Write
+
+\[
+ q_\lambda=\operatorname{cond}(\lambda),\qquad
+ q_\psi=\operatorname{cond}(\psi),\qquad
+ Q=[q_\lambda,q_\psi],\qquad
+ r_0=\frac{s}{Q}.
+ \tag{9.760}
+\]
+
+Because \(s\) is squarefree, every prime of \(Q\) is active in at least
+one of \(\lambda,\psi\), whereas every prime of \(r_0\) is inactive in
+both.  The direct transform is
+
+\[
+ \widehat{\mathcal J}_s(\lambda)=G_{\bar\lambda}(B;s),
+ \tag{9.761}
+\]
+
+and the inverse transform is \(G_\psi(-a;s)\).  Applying (9.736) to both
+factors, including the principal-conductor convention
+\(G_{\chi_0}(n;s)=c_s(n)\), requires the CRT frequency transport
+
+\[
+ \bar r_0r_0\equiv1\pmod Q,
+ \qquad B_0\equiv B\bar r_0\pmod Q,
+ \qquad a_0\equiv a\bar r_0\pmod Q.
+\]
+
+If \(\lambda_Q,\psi_Q\) denote the restrictions to the active modulus
+\(Q\), the exact factorizations are
+
+\[
+ G_{\bar\lambda}(B;s)=c_{r_0}(B)G_{\bar\lambda_Q}(B_0;Q),
+ \qquad
+ G_\psi(-a;s)=c_{r_0}(a)G_{\psi_Q}(-a_0;Q).
+ \tag{9.762}
+\]
+
+Equivalently, refusing to scale the labels would insert the
+character-dependent twist
+\(\bar\lambda_Q(r_0)\psi_Q(r_0)\).  This twist must not be dropped.
+Formula (9.762) retains it through \(B_0,a_0\), including the primitive
+Gauss factors, unit indicators, and the remaining Ramanujan factors on
+\(Q/q_\lambda\) or \(Q/q_\psi\).  No unit condition on \(B\) or \(a\)
+has been imposed.  Since \((Q,r_0)=1\), the normalized product
+consequently splits as
+
+\[
+ \boxed{
+ \frac{\mu(s)}{\varphi(s)^2}
+ G_{\bar\lambda}(B;s)G_\psi(-a;s)
+ =
+ \frac{\mu(r_0)c_{r_0}(B)c_{r_0}(a)}{\varphi(r_0)^2}
+ \frac{\mu(Q)}{\varphi(Q)^2}
+ G_{\bar\lambda_Q}(B_0;Q)G_{\psi_Q}(-a_0;Q).}
+ \tag{9.763}
+\]
+
+Thus the common principal lift really is arithmetically cheap.  For
+nonzero \(B,a\), multiplicativity and the squarefree formula for
+Ramanujan sums give the finite majorant
+
+\[
+ \begin{aligned}
+ \sum_{\substack{r\le R\\r\ {\rm squarefree}}}
+ \frac{|c_r(B)c_r(a)|}{\varphi(r)^2}
+ &\le
+ \prod_{p\le R}
+ \left(1+\frac{|c_p(B)c_p(a)|}{(p-1)^2}\right),\\
+ \frac{|c_p(B)c_p(a)|}{(p-1)^2}
+ &=
+ \begin{cases}
+ 1,&p\mid(B,a),\\
+ (p-1)^{-1},&p\mid Ba,\ p\nmid(B,a),\\
+ (p-1)^{-2},&p\nmid Ba.
+ \end{cases}
+ \end{aligned}
+ \tag{9.764}
+\]
+
+The last Euler product is \(\ll_\varepsilon(2|Ba|)^\varepsilon\): the
+first two cases involve only divisors of \(Ba\), and the third Euler
+product converges.  Hence the bare common-cofactor sum has no fixed-power
+loss when the phase labels have polynomial size.
+
+This reduction does **not** make the remaining family sparse.  At an odd
+prime \(p\), there are \((p-1)^2\) local pairs of characters, exactly one
+pair is inactive in both coordinates, and
+
+\[
+ (p-1)^2-1=p(p-2)
+ \tag{9.765}
+\]
+
+pairs are jointly active.  At \(p=2\) the local character group is
+trivial, so \(2\) always lies in \(r_0\).  Therefore after summing the
+common inactive cofactor one is left with a generic **jointly primitive
+core**, meaning only that every prime is active in at least one phase
+character.  It neither forces \(\lambda\psi\ne\chi_0\) nor removes the
+convolved-principal Kloosterman slice of Section 9.114.
+
+The jointly primitive core nevertheless has an exact centered-incidence
+form.  Reparametrize its pairs by
+
+\[
+ \chi=\lambda\psi,
+ \qquad
+ \Psi_Q(\chi)=
+ \{\psi\bmod Q:\ \psi_p\ne\chi_{0,p}
+       \text{ whenever }\chi_p=\chi_{0,p}\}.
+ \tag{9.766}
+\]
+
+Indeed \(\lambda=\chi\bar\psi\), and
+\([\operatorname{cond}(\lambda),\operatorname{cond}(\psi)]=Q\) holds
+exactly for \(\psi\in\Psi_Q(\chi)\).  Opening both Gauss sums and applying
+local character orthogonality gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\sum_{\psi\in\Psi_Q(\chi)}
+ G_{\bar\chi\psi}(B_0;Q)G_\psi(-a_0;Q)\\
+ &\quad=
+ \sum_{u,v\in U(Q)}\bar\chi(u)e_Q(B_0u-a_0v)
+ \prod_{\substack{p\mid Q\\\chi_p\ne\chi_{0,p}}}
+ (p-1)\mathbf1_{uv\equiv1\ (p)}
+ \prod_{\substack{p\mid Q\\\chi_p=\chi_{0,p}}}
+ \left((p-1)\mathbf1_{uv\equiv1\ (p)}-1\right).
+ \end{aligned}}
+ \tag{9.767}
+\]
+
+Every factor in the second product has zero \(v\)-marginal for fixed
+\(u\).  Thus a convolved character that is principal at at least one
+prime produces a **locally centered incidence kernel**.  If \(\chi\) is
+nonprincipal at every prime, the second product is empty, \(uv\equiv1\)
+is imposed modulo all of \(Q\), and (9.767) becomes the twisted
+ Kloosterman row
+
+\[
+ \varphi(Q)\sum_{u\in U(Q)}
+ \bar\chi(u)e_Q(B_0u-a_0\bar u).
+ \tag{9.768}
+\]
+
+The exact count is
+
+\[
+ |\Psi_Q(\chi)|
+ =\prod_{\substack{p\mid Q\\\chi_p=\chi_{0,p}}}(p-2)
+  \prod_{\substack{p\mid Q\\\chi_p\ne\chi_{0,p}}}(p-1).
+ \tag{9.769}
+\]
+
+There are \(\prod_{p\mid Q}(p-2)\) fully primitive convolved characters.
+Their proportion among all \(\varphi(Q)\) Type characters is not
+power-small, so the uncentered twisted-Kloosterman rows in (9.768) cannot
+be discarded as an exceptional set.  Equations (9.767)--(9.769) replace
+the opaque primitive character-pair sum by two explicit subclasses, but
+the required signed varying-\(Q\) moment is still not supplied by an
+orthogonality identity.
+
+Crucially, the fully primitive rows should not be estimated separately.
+Put the convolved Type polynomial back into the character sum.  Its
+ambient unit mask is still modulo \(s=Qr_0\), so after collecting labels
+by their residue modulo \(Q\) write
+
+\[
+ D_{Qr_0}(\chi)P_{Qr_0}(\chi)
+ =\sum_{x\in U(Q)}C_{Q,r_0}(x)\chi(x).
+ \tag{9.770}
+\]
+
+The coefficients \(C_{Q,r_0}(x)\) retain both Type Möbius sources, the
+condition that the original Type labels are units modulo \(Qr_0\), and
+all small-boundary terms.  Thus their \(r_0\)-dependence has not been
+separated.  Formula (9.770) is only their finite multiplicative
+convolution.  Open (9.770) and both scaled Gauss sums before applying any
+absolute value.  At each \(p\mid Q\), summing all local pairs
+\((\lambda_p,\psi_p)\) except the pair principal in both coordinates
+gives
+
+\[
+ \sum_{(\lambda_p,\psi_p)\ne(\chi_{0,p},\chi_{0,p})}
+ \lambda_p(x)\overline{\lambda_p(u)}\psi_p(vx)
+ =
+ (p-1)^2\mathbf1_{x\equiv u\ (p)}
+ \mathbf1_{vx\equiv1\ (p)}-1.
+ \tag{9.771}
+\]
+
+Consequently the whole normalized jointly primitive block is exactly
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathfrak T_{Q,r_0}(B,a;C)
+ :={}&\frac{\mu(Q)}{\varphi(Q)^2}
+ \sum_{\substack{\lambda,\psi\bmod Q\\
+ [\operatorname{cond}(\lambda),\operatorname{cond}(\psi)]=Q}}
+ G_{\bar\lambda}(B_0;Q)G_\psi(-a_0;Q)
+ D_{Qr_0}(\lambda\psi)P_{Qr_0}(\lambda\psi)\\
+ ={}&\frac{\mu(Q)}{\varphi(Q)^2}
+ \sum_{x,u,v\in U(Q)}C_{Q,r_0}(x)e_Q(B_0u-a_0v)
+ \prod_{p\mid Q}
+ \left((p-1)^2\mathbf1_{x\equiv u\ (p)}
+ \mathbf1_{vx\equiv1\ (p)}-1\right).
+ \end{aligned}}
+ \tag{9.772}
+\]
+
+For every fixed unit \(x\) and every \(p\mid Q\), the local factor in
+(9.772) has zero total mass on the entire \((u,v)\)-plane.  Thus the
+jointly primitive family, including the apparently uncentered rows
+(9.768), becomes a **primewise centered Type--phase tensor** once all
+convolved Type characters are recombined pre-Cauchy.
+
+There is an equivalent divisor form.  Expanding the product in (9.772)
+and using squarefreeness,
+\(\mu(Q)\mu(Q/d)=\mu(d)\), gives
+
+ \[
+ \boxed{
+ \mathfrak T_{Q,r_0}(B,a;C)
+ =\frac1{\varphi(Q)^2}
+ \sum_{d\mid Q}\mu(d)\varphi(d)^2
+ \sum_{\substack{x,u,v\in U(Q)\\
+ x\equiv u\ (d)\\vx\equiv1\ (d)}}
+ C_{Q,r_0}(x)e_Q(B_0u-a_0v).}
+ \tag{9.773}
+\]
+
+Equation (9.773) is the promised migration of the outer modulus sign
+into a Möbius-weighted incidence divisor.  It is a better finite gate
+than a product of separate character norms: it preserves both phase
+variables, the Type label, and exact cancellation across \(d\).  But its
+individual divisor terms are not centered and may be much larger than
+their sum.  Taking a triangle inequality in (9.773) would undo (9.771),
+so no analytic saving is claimed here.
+
+Nor does local centering alone improve the arbitrary-coefficient
+operator norm.  Normalize the \(p\)-local row for \(x\in U(p)\) by
+
+\[
+ K_x(u,v)=\mathbf1_{u=x}\mathbf1_{vx=1}-\frac1{(p-1)^2}.
+\]
+
+Its Gram matrix on the \((p-1)\) Type labels is exactly
+
+\[
+ \boxed{K K^\ast=I-\frac1{(p-1)^2}J.}
+ \tag{9.774}
+\]
+
+The constant Type vector has eigenvalue \((p-2)/(p-1)\), but every
+orthogonal Type direction has eigenvalue \(1\).  Thus the transverse
+eigenvalue is exactly \(1\): (9.771) deletes the principal phase-plane
+mode but supplies no fixed-modulus \(L^2\) power saving for arbitrary
+coefficients.  Any gain must still use the actual Möbius Type
+coefficients, smooth outer packets, or signed cross-\(Q\) interaction.
+
+Finally, (9.763) is a factorization of the bare Gauss lift, not a
+separation of the full physical packet.  The Type and AFE coefficient in
+(9.747) still depends on \(s=Qr_0\), through \(C_{Q,r_0}\), its unit
+masks, dyadic support, smooth weights, and reflected boundaries; the
+phase also depends on \(r_0\) through \(B_0,a_0\).  A packet-uniform
+Abel or divisor adapter for that dependence, followed by a signed
+cross-\(Q\) estimate for the jointly primitive core, remains unproved.
+Thus (9.764) cannot be counted as a power saving and does not close
+(9.750) or (9.119).
+
+The helpers `joint_phase_character_conductor_lcm_audit`,
+`jointly_primitive_phase_convolution_audit`, and
+`jointly_primitive_type_phase_tensor_audit` enumerate every character
+pair for a finite squarefree modulus.  They verify (9.760)--(9.773) with
+arbitrary nonunit phase and Type labels, record the exact local counts
+(9.765), and compare the truncated cofactor sum with the Euler product
+(9.764).  The first helper also verifies the scaled CRT bridge (9.762)
+character by character and, when Type coefficients are supplied,
+compares each ambient \(s=Qr_0\) conductor block directly with the
+scaled tensor (9.772), including the ambient unit mask.  The exact-rational helper
+`centered_type_phase_local_spectrum_audit` verifies (9.774).  All helpers
+leave the physical-packet adapter, centered-tensor global estimate, and
+coupled-kernel gate explicitly false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -17200,6 +17491,7 @@ Proved in this note:
 | Global linear two-Möbius character master | exact pre-Cauchy Type I/II form; cross-modulus dispersion unproved | Applying multiplicative inversion linearly before the \(s\)-sum gives (9.596)--(9.597): \(\mu(s)\), \(\mu(d)\), the complete character family, and \(a=h\delta\) all remain in one finite sum.  The boundary-safe identity (9.598)--(9.599) splits only \(\mu(d)\), retains \(d\leq\max(U_0,V_0)\), and has no mixed rectangles or remainder.  A single subsequent global square has the signed cross-modulus kernel (9.600).  Published separate character moments do not bound the product of its trace, Type, and companion polynomials at the balanced face |
 | Joint all-character/conductor master | exact principal-centered recombination; signed cross-\(q\) estimate unproved | Separately transforming the direct and inverse phases gives the double-character master (9.747): the Type polynomial sees \(\lambda\psi\), so centering the inverse character \(\psi\) does not delete principal convolved Type rows.  The \(q=1\) row is exactly the Ramanujan principal projection (9.748); every \(q>1\) row has the primitive-conductor descent (9.749).  Adding them before absolute values recovers (9.117), hence the true residual target is the joint gate \(|\mathfrak P_{\rm top}+\mathfrak N_{\rm all}|\), not separate PECG bounds.  Standard Farey/character large sieves give \(T^{17/2+\varepsilon}\) against target \(T^{6+\varepsilon}\), an exact \(T^{5/2}\) deficit, (9.751)--(9.753) |
 | Convolved-principal Type slice | exact centered Kloosterman collapse; joint modulus average unproved | On \(\lambda\psi=\chi_0\), character orthogonality gives \(\varphi(s)^{-1}\sum_\psi G_\psi(B)G_\psi(-a)=S(B,-a;s)\), (9.754)--(9.757).  Its inverse-character \(q=1\) row is the Ramanujan product (9.758), and all \(q>1\) rows are exactly the centered Kloosterman complement (9.759), including nonunit \(B,a\).  Pointwise Weil gives exponent \(19/2\), one power worse than the global large sieve and \(7/2\) above target; the slice must therefore remain coupled to the outer Möbius, Type coefficients, and complementary convolved characters |
+| Joint conductor LCM/common cofactor | exact scaled lift and primewise centered Type--phase tensor; global estimate unproved | For \(Q=[q_\lambda,q_\psi]\) and \(r_0=s/Q\), every prime of \(r_0\) is inactive in both phase characters and the normalized Gauss product extracts exactly \(\mu(r_0)c_{r_0}(B)c_{r_0}(a)/\varphi(r_0)^2\), while CRT transports both residual frequencies by \(\bar r_0\), (9.760)--(9.763).  Its absolute cofactor sum has the Euler product (9.764), hence no fixed-power cost.  Reparametrizing by \(\chi=\lambda\psi\) gives (9.767); after the ambient unit mask is retained in \(C_{Q,r_0}\) and the Type polynomial is recombined before Cauchy, every prime contributes the centered tensor factor (9.771), and the outer \(\mu(Q)\) migrates to the divisor sign \(\mu(d)\) in (9.773).  The phase and coefficient still depend on \(r_0\), and neither their packet-uniform cofactor adapter nor the signed global norm of (9.772) is proved |
 | Cross-modulus zero product frequency | exact same-\((s,t)\) diagonal; signed complement unproved | The primitive frequency \(\bar t_s/s\) is a reduced fraction.  Hence equality across two blocks forces \(s_1=s_2,t_1=t_2\), and every distinct pair has Farey spacing at least \((s_1s_2)^{-1}\), (9.601)--(9.603).  The ordinary additive large sieve (9.604) and the sum of fixed-modulus Cochrane--Shi energies both have balanced exponent \(11\), so spacing alone gives no new power.  The zero projector is classified, but its AFE/Type reassembly and the signed nonzero-frequency cross-modulus estimate remain unproved |
 | Cross-modulus frequency Euler centering | exact local density and mean-zero divisor expansion; weighted lift handled next | For \(s_i=gr_i\), CRT gives the exact multiplicity (9.606) of every circular numerator \(\kappa\).  The common Möbius sign cancels as \(\mu(s_1)\mu(s_2)=\mu(r_1)\mu(r_2)\), while (9.608)--(9.610) split the multiplicity into the explicit density \(\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) and Euler blocks containing a mean-zero factor \(1_{p\mid\kappa}-1/p\).  Section 9.93 lifts this to arbitrary fixed-pair packet weights; the signed estimate for the resulting centered blocks remains unproved |
 | Weighted CRT packet centering | exact orthogonal projection; principal reassembly and centered dispersion unproved | Conditional expectations in the prime CRT coordinates give the Hoeffding decomposition (9.612)--(9.615) for an arbitrary fixed-\((s_1,s_2)\) packet.  The weighted fibre identity (9.616) separates \(\bar W\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) from two terms whose total \(\kappa\)-mass is exactly zero.  Linearity (9.618) retains \(h\delta\), both Type Möbius weights, the outer cofactor signs, and all nine ordered Type blocks at divisor cost \(T^\varepsilon\).  Zero marginals do not themselves give power cancellation; the AFE/reflection principal ledger and the global signed norm of the centered blocks remain open |

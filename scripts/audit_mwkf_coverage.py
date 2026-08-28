@@ -12067,6 +12067,1050 @@ def convolved_principal_kloosterman_slice_deficit_audit(
     }
 
 
+def joint_phase_character_conductor_lcm_audit(
+    *,
+    modulus: int,
+    direct_label: int,
+    inverse_label: int,
+    cofactor_bound: int,
+    type_coefficients: dict[int, complex] | None = None,
+) -> dict[str, object]:
+    """Isolate the common inactive cofactor of two phase characters.
+
+    If ``lambda`` and ``psi`` have primitive conductors ``q_lambda`` and
+    ``q_psi`` modulo a squarefree ``s``, put
+
+    ``Q = lcm(q_lambda, q_psi)`` and ``r0 = s/Q``.
+
+    The primes of ``r0`` are precisely those on which both characters are
+    principal.  After the ``mu(s)/phi(s)^2`` normalization, the two Gauss
+    factors therefore contain the exact common factor
+
+    ``mu(r0)c_r0(B)c_r0(a)/phi(r0)^2``.
+
+    The finite Euler audit records that summing this common factor has only
+    divisor-type cost.  It deliberately does not remove the dependence of
+    the physical packet on ``r0`` and gives no estimate for the remaining
+    jointly primitive core.
+    """
+
+    s = int(modulus)
+    B = int(direct_label)
+    a = int(inverse_label)
+    bound = int(cofactor_bound)
+    if s <= 1 or _finite_mobius(s) == 0:
+        raise ValueError("modulus must be squarefree and greater than one")
+    if B == 0 or a == 0:
+        raise ValueError("both phase labels must be nonzero")
+    if bound <= 0:
+        raise ValueError("cofactor_bound must be positive")
+
+    primes = tuple(sorted(_finite_prime_exponents(s)))
+    units = tuple(value for value in range(1, s) if gcd(value, s) == 1)
+    additive_root = cmath.exp(2j * cmath.pi / s)
+    discrete_logs: dict[int, dict[int, int]] = {}
+    character_roots: dict[int, complex] = {}
+    for prime in primes:
+        order = prime - 1
+        if prime == 2:
+            generator = 1
+        else:
+            order_prime_factors = tuple(_finite_prime_exponents(order))
+            generator = next(
+                candidate
+                for candidate in range(2, prime)
+                if all(
+                    pow(candidate, order // divisor, prime) != 1
+                    for divisor in order_prime_factors
+                )
+            )
+        logs: dict[int, int] = {}
+        current = 1
+        for exponent in range(order):
+            logs[current] = exponent
+            current = current * generator % prime
+        discrete_logs[prime] = logs
+        character_roots[prime] = cmath.exp(2j * cmath.pi / order)
+
+    indices = tuple(product(*(range(prime - 1) for prime in primes)))
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    def ramanujan(label: int, modulus_value: int) -> int:
+        common = gcd(abs(label), modulus_value)
+        return _finite_mobius(modulus_value // common) * finite_totient(common)
+
+    def character(index: tuple[int, ...], value: int) -> complex:
+        if gcd(value, s) != 1:
+            return 0j
+        result = 1 + 0j
+        for component, prime in zip(index, primes):
+            exponent = discrete_logs[prime][value % prime]
+            result *= character_roots[prime] ** (
+                component * exponent % (prime - 1)
+            )
+        return result
+
+    def active_primes(index: tuple[int, ...]) -> tuple[int, ...]:
+        return tuple(
+            prime
+            for component, prime in zip(index, primes)
+            if component != 0
+        )
+
+    def primitive_character(
+        index: tuple[int, ...],
+        active: tuple[int, ...],
+        value: int,
+    ) -> complex:
+        if any(value % prime == 0 for prime in active):
+            return 0j
+        result = 1 + 0j
+        for component, prime in zip(index, primes):
+            if prime not in active:
+                continue
+            exponent = discrete_logs[prime][value % prime]
+            result *= character_roots[prime] ** (
+                component * exponent % (prime - 1)
+            )
+        return result
+
+    def gauss(index: tuple[int, ...], frequency: int) -> complex:
+        return sum(
+            character(index, unit)
+            * additive_root ** ((frequency * unit) % s)
+            for unit in units
+        )
+
+    def joint_modulus_gauss(
+        index: tuple[int, ...],
+        frequency: int,
+        joint_modulus: int,
+    ) -> complex:
+        if joint_modulus == 1:
+            return 1 + 0j
+        joint_primes = tuple(_finite_prime_exponents(joint_modulus))
+        joint_root = cmath.exp(2j * cmath.pi / joint_modulus)
+
+        def joint_character(value: int) -> complex:
+            if gcd(value, joint_modulus) != 1:
+                return 0j
+            result = 1 + 0j
+            for component, prime in zip(index, primes):
+                if prime not in joint_primes:
+                    continue
+                exponent = discrete_logs[prime][value % prime]
+                result *= character_roots[prime] ** (
+                    component * exponent % (prime - 1)
+                )
+            return result
+
+        return sum(
+            joint_character(unit)
+            * joint_root ** ((frequency * unit) % joint_modulus)
+            for unit in range(1, joint_modulus)
+            if gcd(unit, joint_modulus) == 1
+        )
+
+    def conductor_gauss(index: tuple[int, ...], frequency: int) -> complex:
+        active = active_primes(index)
+        conductor = prod(active)
+        cofactor = s // conductor
+        if conductor == 1:
+            return complex(ramanujan(frequency, s))
+        if gcd(frequency, conductor) != 1:
+            return 0j
+        primitive_root = cmath.exp(2j * cmath.pi / conductor)
+        primitive_gauss = sum(
+            primitive_character(index, active, unit) * primitive_root**unit
+            for unit in range(1, conductor)
+            if gcd(unit, conductor) == 1
+        )
+        return (
+            primitive_character(index, active, cofactor)
+            * primitive_character(index, active, frequency).conjugate()
+            * primitive_gauss
+            * ramanujan(frequency, cofactor)
+        )
+
+    phi_s = finite_totient(s)
+    pair_rows: list[dict[str, object]] = []
+    joint_conductor_count: dict[int, int] = {}
+    maximum_direct_error = 0.0
+    maximum_inverse_error = 0.0
+    maximum_conductor_error = 0.0
+    maximum_common_split_error = 0.0
+    maximum_scaled_joint_gauss_error = 0.0
+    for lambda_index in indices:
+        conjugate_lambda = tuple(
+            (-component) % (prime - 1)
+            for component, prime in zip(lambda_index, primes)
+        )
+        q_lambda = prod(active_primes(lambda_index))
+        direct_transform = sum(
+            character(lambda_index, unit).conjugate()
+            * additive_root ** ((B * unit) % s)
+            for unit in units
+        )
+        direct_gauss = gauss(conjugate_lambda, B)
+        direct_conductor = conductor_gauss(conjugate_lambda, B)
+        for psi_index in indices:
+            q_psi = prod(active_primes(psi_index))
+            inverse_transform = sum(
+                character(psi_index, unit)
+                * additive_root ** ((-a * unit) % s)
+                for unit in units
+            )
+            inverse_gauss = gauss(psi_index, -a)
+            inverse_conductor = conductor_gauss(psi_index, -a)
+            joint_conductor = q_lambda * q_psi // gcd(q_lambda, q_psi)
+            common_cofactor = s // joint_conductor
+            joint_conductor_count[joint_conductor] = (
+                joint_conductor_count.get(joint_conductor, 0) + 1
+            )
+
+            normalized_product = (
+                _finite_mobius(s)
+                * direct_transform
+                * inverse_transform
+                / (phi_s * phi_s)
+            )
+            common_weight = F(
+                _finite_mobius(common_cofactor)
+                * ramanujan(B, common_cofactor)
+                * ramanujan(-a, common_cofactor),
+                finite_totient(common_cofactor) ** 2,
+            )
+            stripped_direct = direct_conductor / ramanujan(
+                B, common_cofactor
+            )
+            stripped_inverse = inverse_conductor / ramanujan(
+                -a, common_cofactor
+            )
+            if joint_conductor == 1:
+                scaled_direct_label = 0
+                scaled_inverse_label = 0
+            else:
+                inverse_common_cofactor = pow(
+                    common_cofactor,
+                    -1,
+                    joint_conductor,
+                )
+                scaled_direct_label = (
+                    B * inverse_common_cofactor % joint_conductor
+                )
+                scaled_inverse_label = (
+                    a * inverse_common_cofactor % joint_conductor
+                )
+            scaled_direct_gauss = joint_modulus_gauss(
+                conjugate_lambda,
+                scaled_direct_label,
+                joint_conductor,
+            )
+            scaled_inverse_gauss = joint_modulus_gauss(
+                psi_index,
+                -scaled_inverse_label,
+                joint_conductor,
+            )
+            scaled_joint_gauss_error = max(
+                abs(stripped_direct - scaled_direct_gauss),
+                abs(stripped_inverse - scaled_inverse_gauss),
+            )
+            jointly_primitive_core = (
+                _finite_mobius(joint_conductor)
+                * stripped_direct
+                * stripped_inverse
+                / (finite_totient(joint_conductor) ** 2)
+            )
+            common_split = complex(common_weight) * jointly_primitive_core
+
+            direct_error = abs(direct_transform - direct_gauss)
+            inverse_error = abs(inverse_transform - inverse_gauss)
+            conductor_error = max(
+                abs(direct_gauss - direct_conductor),
+                abs(inverse_gauss - inverse_conductor),
+            )
+            common_split_error = abs(normalized_product - common_split)
+            maximum_direct_error = max(maximum_direct_error, direct_error)
+            maximum_inverse_error = max(maximum_inverse_error, inverse_error)
+            maximum_conductor_error = max(
+                maximum_conductor_error, conductor_error
+            )
+            maximum_common_split_error = max(
+                maximum_common_split_error, common_split_error
+            )
+            maximum_scaled_joint_gauss_error = max(
+                maximum_scaled_joint_gauss_error,
+                scaled_joint_gauss_error,
+            )
+            common_primes = tuple(_finite_prime_exponents(common_cofactor))
+            convolved_character = tuple(
+                (left + right) % (prime - 1)
+                for left, right, prime in zip(
+                    lambda_index,
+                    psi_index,
+                    primes,
+                )
+            )
+            pair_rows.append(
+                {
+                    "direct_character_index": lambda_index,
+                    "inverse_character_index": psi_index,
+                    "convolved_character_index": convolved_character,
+                    "direct_primitive_conductor": q_lambda,
+                    "inverse_primitive_conductor": q_psi,
+                    "joint_conductor": joint_conductor,
+                    "common_inactive_cofactor": common_cofactor,
+                    "common_cofactor_primes": common_primes,
+                    "common_primes_inactive_in_both": all(
+                        lambda_index[primes.index(prime)] == 0
+                        and psi_index[primes.index(prime)] == 0
+                        for prime in common_primes
+                    ),
+                    "joint_conductor_is_lcm": (
+                        joint_conductor
+                        == q_lambda * q_psi // gcd(q_lambda, q_psi)
+                    ),
+                    "direct_transform": direct_transform,
+                    "conjugate_character_gauss_sum": direct_gauss,
+                    "inverse_transform": inverse_transform,
+                    "inverse_character_gauss_sum": inverse_gauss,
+                    "common_cofactor_weight": common_weight,
+                    "scaled_direct_label": scaled_direct_label,
+                    "scaled_inverse_label": scaled_inverse_label,
+                    "stripped_direct_gauss_sum": stripped_direct,
+                    "stripped_inverse_gauss_sum": stripped_inverse,
+                    "scaled_joint_direct_gauss_sum": scaled_direct_gauss,
+                    "scaled_joint_inverse_gauss_sum": scaled_inverse_gauss,
+                    "scaled_joint_gauss_factorization_exact": (
+                        scaled_joint_gauss_error < 1e-8
+                    ),
+                    "jointly_primitive_core": jointly_primitive_core,
+                    "normalized_gauss_product": normalized_product,
+                    "common_cofactor_split": common_split,
+                    "conductor_descent_exact": conductor_error < 1e-8,
+                    "common_cofactor_split_exact": common_split_error < 1e-8,
+                }
+            )
+
+    local_character_pair_counts = {
+        prime: {
+            "all_pairs": (prime - 1) ** 2,
+            "common_inactive_pairs": 1,
+            "jointly_active_pairs": (prime - 1) ** 2 - 1,
+        }
+        for prime in primes
+    }
+
+    euler_primes = tuple(
+        candidate
+        for candidate in range(2, bound + 1)
+        if _finite_prime_exponents(candidate) == {candidate: 1}
+    )
+    euler_rows: list[dict[str, object]] = []
+    euler_product = F(1)
+    for prime in euler_primes:
+        divides_direct = B % prime == 0
+        divides_inverse = a % prime == 0
+        if divides_direct and divides_inverse:
+            divisibility_class = "divides_both"
+            local_term = F(1)
+        elif divides_direct or divides_inverse:
+            divisibility_class = "divides_exactly_one"
+            local_term = F(1, prime - 1)
+        else:
+            divisibility_class = "divides_neither"
+            local_term = F(1, (prime - 1) ** 2)
+        formula_term = F(
+            abs(ramanujan(B, prime) * ramanujan(a, prime)),
+            (prime - 1) ** 2,
+        )
+        euler_product *= 1 + local_term
+        euler_rows.append(
+            {
+                "prime": prime,
+                "divisibility_class": divisibility_class,
+                "local_term": local_term,
+                "ramanujan_formula_term": formula_term,
+                "local_classification_exact": local_term == formula_term,
+            }
+        )
+
+    finite_cofactor_sum = sum(
+        (
+            F(
+                abs(ramanujan(B, cofactor) * ramanujan(a, cofactor)),
+                finite_totient(cofactor) ** 2,
+            )
+            for cofactor in range(1, bound + 1)
+            if _finite_mobius(cofactor) != 0
+        ),
+        F(0),
+    )
+    tensor_bridge_rows: list[dict[str, object]] = []
+    if type_coefficients is not None:
+        supplied_coefficients = {
+            int(label): complex(value)
+            for label, value in type_coefficients.items()
+        }
+        ambient_unit_coefficients = {
+            label: coefficient
+            for label, coefficient in supplied_coefficients.items()
+            if gcd(label, s) == 1
+        }
+        removed_labels = tuple(
+            sorted(
+                label
+                for label in supplied_coefficients
+                if gcd(label, s) != 1
+            )
+        )
+        for joint_conductor in sorted(joint_conductor_count):
+            if joint_conductor == 1:
+                continue
+            conductor_rows = tuple(
+                row
+                for row in pair_rows
+                if int(row["joint_conductor"]) == joint_conductor
+            )
+            common_cofactor = s // joint_conductor
+            inverse_common_cofactor = pow(
+                common_cofactor,
+                -1,
+                joint_conductor,
+            )
+            scaled_direct_integer = B * inverse_common_cofactor
+            scaled_inverse_integer = a * inverse_common_cofactor
+            ambient_contribution = 0j
+            for row in conductor_rows:
+                convolved = tuple(row["convolved_character_index"])
+                type_transform = sum(
+                    coefficient * character(convolved, label)
+                    for label, coefficient in supplied_coefficients.items()
+                )
+                ambient_contribution += (
+                    complex(row["normalized_gauss_product"])
+                    * type_transform
+                )
+            tensor = jointly_primitive_type_phase_tensor_audit(
+                modulus=joint_conductor,
+                direct_label=scaled_direct_integer,
+                inverse_label=scaled_inverse_integer,
+                type_coefficients=ambient_unit_coefficients,
+            )
+            common_weight = complex(
+                conductor_rows[0]["common_cofactor_weight"]
+            )
+            tensor_contribution = common_weight * complex(
+                tensor["normalized_character_master"]
+            )
+            bridge_error = abs(ambient_contribution - tensor_contribution)
+            tensor_bridge_rows.append(
+                {
+                    "joint_conductor": joint_conductor,
+                    "common_inactive_cofactor": common_cofactor,
+                    "scaled_direct_label": (
+                        scaled_direct_integer % joint_conductor
+                    ),
+                    "scaled_inverse_label": (
+                        scaled_inverse_integer % joint_conductor
+                    ),
+                    "ambient_unit_mask_removed_labels": removed_labels,
+                    "ambient_conductor_block": ambient_contribution,
+                    "scaled_joint_tensor_block": tensor_contribution,
+                    "bridge_error": bridge_error,
+                    "bridge_identity_exact": bridge_error < 1e-7,
+                }
+            )
+    tolerance = 1e-8
+    return {
+        "squarefree_modulus": s,
+        "direct_label": B,
+        "inverse_label": a,
+        "character_pair_rows": tuple(pair_rows),
+        "joint_conductor_count": joint_conductor_count,
+        "maximum_direct_gauss_error": maximum_direct_error,
+        "maximum_inverse_gauss_error": maximum_inverse_error,
+        "maximum_conductor_descent_error": maximum_conductor_error,
+        "maximum_common_cofactor_split_error": maximum_common_split_error,
+        "maximum_scaled_joint_gauss_error": maximum_scaled_joint_gauss_error,
+        "all_direct_transforms_are_conjugate_gauss_sums": (
+            maximum_direct_error < tolerance
+        ),
+        "all_inverse_transforms_are_gauss_sums": (
+            maximum_inverse_error < tolerance
+        ),
+        "all_character_pairs_match_conductor_descent": (
+            maximum_conductor_error < tolerance
+        ),
+        "all_joint_conductors_are_lcms": all(
+            bool(row["joint_conductor_is_lcm"]) for row in pair_rows
+        ),
+        "all_common_cofactor_primes_are_inactive_in_both": all(
+            bool(row["common_primes_inactive_in_both"]) for row in pair_rows
+        ),
+        "all_normalized_products_split_common_cofactor_exactly": all(
+            bool(row["common_cofactor_split_exact"]) for row in pair_rows
+        ),
+        "all_stripped_gauss_factors_match_scaled_joint_modulus": all(
+            bool(row["scaled_joint_gauss_factorization_exact"])
+            for row in pair_rows
+        ),
+        "local_character_pair_counts": local_character_pair_counts,
+        "prime_two_always_lies_in_common_inactive_cofactor": (
+            2 not in primes
+            or all(
+                int(row["common_inactive_cofactor"]) % 2 == 0
+                for row in pair_rows
+            )
+        ),
+        "common_cofactor_bound": bound,
+        "finite_common_cofactor_absolute_sum": finite_cofactor_sum,
+        "common_cofactor_euler_product": euler_product,
+        "common_cofactor_euler_rows": tuple(euler_rows),
+        "finite_common_cofactor_sum_below_euler_product": (
+            finite_cofactor_sum <= euler_product
+        ),
+        "common_cofactor_euler_local_classification_exact": all(
+            bool(row["local_classification_exact"]) for row in euler_rows
+        ),
+        "common_cofactor_cost_has_no_fixed_power": True,
+        "joint_conductor_tensor_bridge_rows": tuple(tensor_bridge_rows),
+        "all_joint_conductor_tensor_bridges_exact": (
+            type_coefficients is not None
+            and bool(tensor_bridge_rows)
+            and all(
+                bool(row["bridge_identity_exact"])
+                for row in tensor_bridge_rows
+            )
+        ),
+        "physical_packet_cofactor_dependence_removed": False,
+        "jointly_primitive_core_sparse": False,
+        "jointly_primitive_cross_modulus_estimate_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def jointly_primitive_phase_convolution_audit(
+    *,
+    modulus: int,
+    direct_label: int,
+    inverse_label: int,
+) -> dict[str, object]:
+    """Reparametrize jointly primitive phase pairs by ``chi=lambda*psi``.
+
+    At a prime where ``chi`` is principal, joint primitivity forces the
+    local component of ``psi`` to be nonprincipal.  Its character sum is
+
+    ``(p-1) 1_(uv=1 mod p) - 1``.
+
+    At a prime where ``chi`` is nonprincipal, every local ``psi`` is
+    allowed and the character sum is ``(p-1) 1_(uv=1 mod p)``.  Opening
+    the two Gauss sums therefore gives an exact locally centered incidence
+    kernel, while keeping the Type coefficient indexed by ``chi``.
+    """
+
+    Q = int(modulus)
+    B = int(direct_label)
+    a = int(inverse_label)
+    if Q <= 1 or _finite_mobius(Q) == 0:
+        raise ValueError("modulus must be squarefree and greater than one")
+    if B == 0 or a == 0:
+        raise ValueError("both phase labels must be nonzero")
+
+    primes = tuple(sorted(_finite_prime_exponents(Q)))
+    units = tuple(value for value in range(1, Q) if gcd(value, Q) == 1)
+    additive_root = cmath.exp(2j * cmath.pi / Q)
+    discrete_logs: dict[int, dict[int, int]] = {}
+    character_roots: dict[int, complex] = {}
+    for prime in primes:
+        order = prime - 1
+        if prime == 2:
+            generator = 1
+        else:
+            order_prime_factors = tuple(_finite_prime_exponents(order))
+            generator = next(
+                candidate
+                for candidate in range(2, prime)
+                if all(
+                    pow(candidate, order // divisor, prime) != 1
+                    for divisor in order_prime_factors
+                )
+            )
+        logs: dict[int, int] = {}
+        current = 1
+        for exponent in range(order):
+            logs[current] = exponent
+            current = current * generator % prime
+        discrete_logs[prime] = logs
+        character_roots[prime] = cmath.exp(2j * cmath.pi / order)
+
+    indices = tuple(product(*(range(prime - 1) for prime in primes)))
+
+    def character(index: tuple[int, ...], value: int) -> complex:
+        if gcd(value, Q) != 1:
+            return 0j
+        result = 1 + 0j
+        for component, prime in zip(index, primes):
+            exponent = discrete_logs[prime][value % prime]
+            result *= character_roots[prime] ** (
+                component * exponent % (prime - 1)
+            )
+        return result
+
+    def gauss(index: tuple[int, ...], frequency: int) -> complex:
+        return sum(
+            character(index, unit)
+            * additive_root ** ((frequency * unit) % Q)
+            for unit in units
+        )
+
+    rows: list[dict[str, object]] = []
+    maximum_incidence_error = 0.0
+    total_admissible_pairs = 0
+    for chi_index in indices:
+        centered_primes = tuple(
+            prime
+            for component, prime in zip(chi_index, primes)
+            if component == 0
+        )
+        admissible_psi = tuple(
+            psi_index
+            for psi_index in indices
+            if all(
+                not (
+                    chi_component == 0
+                    and psi_component == 0
+                )
+                for chi_component, psi_component in zip(
+                    chi_index,
+                    psi_index,
+                )
+            )
+        )
+        gauss_convolution = 0j
+        for psi_index in admissible_psi:
+            lambda_index = tuple(
+                (chi_component - psi_component) % (prime - 1)
+                for chi_component, psi_component, prime in zip(
+                    chi_index,
+                    psi_index,
+                    primes,
+                )
+            )
+            conjugate_lambda = tuple(
+                (-component) % (prime - 1)
+                for component, prime in zip(lambda_index, primes)
+            )
+            gauss_convolution += gauss(conjugate_lambda, B) * gauss(
+                psi_index,
+                -a,
+            )
+
+        incidence_kernel = 0j
+        for u in units:
+            chi_twist = character(chi_index, u).conjugate()
+            for v in units:
+                local_incidence = 1
+                for component, prime in zip(chi_index, primes):
+                    inverse_incidence = int((u * v - 1) % prime == 0)
+                    if component == 0:
+                        local_incidence *= (
+                            (prime - 1) * inverse_incidence - 1
+                        )
+                    else:
+                        local_incidence *= (prime - 1) * inverse_incidence
+                incidence_kernel += (
+                    chi_twist
+                    * additive_root ** ((B * u - a * v) % Q)
+                    * local_incidence
+                )
+
+        error = abs(gauss_convolution - incidence_kernel)
+        maximum_incidence_error = max(maximum_incidence_error, error)
+        admissible_count = len(admissible_psi)
+        expected_admissible_count = prod(
+            (prime - 2 if component == 0 else prime - 1)
+            for component, prime in zip(chi_index, primes)
+        )
+        total_admissible_pairs += admissible_count
+        rows.append(
+            {
+                "convolved_character_index": chi_index,
+                "is_principal_convolved_character": all(
+                    component == 0 for component in chi_index
+                ),
+                "is_fully_primitive_convolved_character": all(
+                    component != 0 for component in chi_index
+                ),
+                "locally_centered_primes": centered_primes,
+                "admissible_inverse_character_count": admissible_count,
+                "expected_admissible_inverse_character_count": (
+                    expected_admissible_count
+                ),
+                "admissible_count_exact": (
+                    admissible_count == expected_admissible_count
+                ),
+                "gauss_pair_convolution": gauss_convolution,
+                "incidence_kernel": incidence_kernel,
+                "incidence_identity_exact": error < 1e-8,
+                "each_centered_local_factor_has_zero_v_marginal": all(
+                    sum(
+                        (prime - 1) * int((u * v - 1) % prime == 0) - 1
+                        for v in range(1, prime)
+                    )
+                    == 0
+                    for prime in centered_primes
+                    for u in range(1, prime)
+                ),
+            }
+        )
+
+    fully_primitive_rows = tuple(
+        row
+        for row in rows
+        if bool(row["is_fully_primitive_convolved_character"])
+    )
+    partially_principal_rows = tuple(
+        row
+        for row in rows
+        if not bool(row["is_fully_primitive_convolved_character"])
+    )
+    principal_rows = tuple(
+        row for row in rows if bool(row["is_principal_convolved_character"])
+    )
+    expected_pair_count = prod(prime * (prime - 2) for prime in primes)
+    return {
+        "squarefree_modulus": Q,
+        "direct_label": B,
+        "inverse_label": a,
+        "convolved_character_rows": tuple(rows),
+        "maximum_incidence_kernel_error": maximum_incidence_error,
+        "all_convolved_character_rows_match_incidence_kernel": all(
+            bool(row["incidence_identity_exact"]) for row in rows
+        ),
+        "all_phase_pairs_reparametrize_by_convolved_character": (
+            total_admissible_pairs == expected_pair_count
+            and all(bool(row["admissible_count_exact"]) for row in rows)
+        ),
+        "jointly_primitive_phase_pair_count": total_admissible_pairs,
+        "fully_primitive_convolved_character_count": len(
+            fully_primitive_rows
+        ),
+        "partially_principal_convolved_character_count": len(
+            partially_principal_rows
+        ),
+        "principal_convolved_row_centered_at_every_prime": (
+            len(principal_rows) == 1
+            and tuple(principal_rows[0]["locally_centered_primes"]) == primes
+        ),
+        "every_partially_principal_row_has_local_zero_marginal": all(
+            bool(row["locally_centered_primes"])
+            and bool(row["each_centered_local_factor_has_zero_v_marginal"])
+            for row in partially_principal_rows
+        ),
+        "fully_primitive_rows_have_no_local_centering": all(
+            not bool(row["locally_centered_primes"])
+            for row in fully_primitive_rows
+        ),
+        "nonunit_phase_labels_supported": gcd(B * a, Q) != 1,
+        "physical_type_coefficients_retained_by_convolved_character": True,
+        "jointly_primitive_twisted_kloosterman_moment_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def jointly_primitive_type_phase_tensor_audit(
+    *,
+    modulus: int,
+    direct_label: int,
+    inverse_label: int,
+    type_coefficients: dict[int, complex],
+) -> dict[str, object]:
+    """Verify the primewise centered jointly primitive Type-phase tensor.
+
+    Opening both Gauss sums and the convolved Type polynomial before any
+    Cauchy step turns the local sum over phase-character pairs, excluding
+    only the pair principal in both coordinates, into
+
+    ``(p-1)^2 1_(x=u mod p) 1_(v*x=1 mod p) - 1``.
+
+    Multiplication by the original ``mu(Q)/phi(Q)^2`` changes the divisor
+    expansion coefficient from ``mu(Q/d)`` to ``mu(d)``.  The identity is
+    finite and exactly centered, but no norm estimate is asserted.
+    """
+
+    Q = int(modulus)
+    B = int(direct_label)
+    a = int(inverse_label)
+    if Q <= 1 or _finite_mobius(Q) == 0:
+        raise ValueError("modulus must be squarefree and greater than one")
+    if B == 0 or a == 0:
+        raise ValueError("both phase labels must be nonzero")
+    if not type_coefficients:
+        raise ValueError("type_coefficients must be nonempty")
+
+    coefficients = {
+        int(label): complex(value) for label, value in type_coefficients.items()
+    }
+    primes = tuple(sorted(_finite_prime_exponents(Q)))
+    units = tuple(value for value in range(1, Q) if gcd(value, Q) == 1)
+    additive_root = cmath.exp(2j * cmath.pi / Q)
+    discrete_logs: dict[int, dict[int, int]] = {}
+    character_roots: dict[int, complex] = {}
+    for prime in primes:
+        order = prime - 1
+        if prime == 2:
+            generator = 1
+        else:
+            order_prime_factors = tuple(_finite_prime_exponents(order))
+            generator = next(
+                candidate
+                for candidate in range(2, prime)
+                if all(
+                    pow(candidate, order // divisor, prime) != 1
+                    for divisor in order_prime_factors
+                )
+            )
+        logs: dict[int, int] = {}
+        current = 1
+        for exponent in range(order):
+            logs[current] = exponent
+            current = current * generator % prime
+        discrete_logs[prime] = logs
+        character_roots[prime] = cmath.exp(2j * cmath.pi / order)
+
+    indices = tuple(product(*(range(prime - 1) for prime in primes)))
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    def character(index: tuple[int, ...], value: int) -> complex:
+        if gcd(value, Q) != 1:
+            return 0j
+        result = 1 + 0j
+        for component, prime in zip(index, primes):
+            exponent = discrete_logs[prime][value % prime]
+            result *= character_roots[prime] ** (
+                component * exponent % (prime - 1)
+            )
+        return result
+
+    def gauss(index: tuple[int, ...], frequency: int) -> complex:
+        return sum(
+            character(index, unit)
+            * additive_root ** ((frequency * unit) % Q)
+            for unit in units
+        )
+
+    jointly_primitive_pairs = tuple(
+        (lambda_index, psi_index)
+        for lambda_index in indices
+        for psi_index in indices
+        if all(
+            not (lambda_component == 0 and psi_component == 0)
+            for lambda_component, psi_component in zip(
+                lambda_index,
+                psi_index,
+            )
+        )
+    )
+    character_master = 0j
+    unit_supported_character_master = 0j
+    for lambda_index, psi_index in jointly_primitive_pairs:
+        convolved = tuple(
+            (lambda_component + psi_component) % (prime - 1)
+            for lambda_component, psi_component, prime in zip(
+                lambda_index,
+                psi_index,
+                primes,
+            )
+        )
+        conjugate_lambda = tuple(
+            (-component) % (prime - 1)
+            for component, prime in zip(lambda_index, primes)
+        )
+        type_transform = sum(
+            coefficient * character(convolved, label)
+            for label, coefficient in coefficients.items()
+        )
+        unit_type_transform = sum(
+            coefficient * character(convolved, label)
+            for label, coefficient in coefficients.items()
+            if gcd(label, Q) == 1
+        )
+        phase_product = gauss(conjugate_lambda, B) * gauss(psi_index, -a)
+        character_master += phase_product * type_transform
+        unit_supported_character_master += phase_product * unit_type_transform
+
+    centered_incidence_tensor = 0j
+    for x, coefficient in coefficients.items():
+        if gcd(x, Q) != 1:
+            continue
+        for u in units:
+            for v in units:
+                local_tensor = prod(
+                    (prime - 1) ** 2
+                    * int((x - u) % prime == 0)
+                    * int((v * x - 1) % prime == 0)
+                    - 1
+                    for prime in primes
+                )
+                centered_incidence_tensor += (
+                    coefficient
+                    * additive_root ** ((B * u - a * v) % Q)
+                    * local_tensor
+                )
+
+    phi_Q = finite_totient(Q)
+    normalized_character_master = (
+        _finite_mobius(Q) * character_master / (phi_Q * phi_Q)
+    )
+    divisor_rows: list[dict[str, object]] = []
+    normalized_divisor_expansion = 0j
+    for divisor in sorted(_positive_divisors(Q)):
+        divisor_contribution = 0j
+        for x, coefficient in coefficients.items():
+            if gcd(x, Q) != 1:
+                continue
+            for u in units:
+                if (x - u) % divisor != 0:
+                    continue
+                for v in units:
+                    if (v * x - 1) % divisor != 0:
+                        continue
+                    divisor_contribution += coefficient * additive_root ** (
+                        (B * u - a * v) % Q
+                    )
+        normalized_contribution = (
+            _finite_mobius(divisor)
+            * finite_totient(divisor) ** 2
+            * divisor_contribution
+            / (phi_Q * phi_Q)
+        )
+        normalized_divisor_expansion += normalized_contribution
+        divisor_rows.append(
+            {
+                "divisor": divisor,
+                "mobius_coefficient": _finite_mobius(divisor),
+                "totient_square": finite_totient(divisor) ** 2,
+                "incidence_contribution": divisor_contribution,
+                "normalized_contribution": normalized_contribution,
+                "outer_mobius_sign_identity": (
+                    _finite_mobius(Q) * _finite_mobius(Q // divisor)
+                    == _finite_mobius(divisor)
+                ),
+            }
+        )
+
+    prime_marginal_rows = tuple(
+        {
+            "prime": prime,
+            "all_fixed_x_phase_plane_marginals_zero": all(
+                sum(
+                    (
+                        (prime - 1) ** 2
+                        * int((x - u) % prime == 0)
+                        * int((v * x - 1) % prime == 0)
+                        - 1
+                    )
+                    for u in range(1, prime)
+                    for v in range(1, prime)
+                )
+                == 0
+                for x in range(1, prime)
+            ),
+        }
+        for prime in primes
+    )
+    tolerance = 1e-7
+    return {
+        "squarefree_modulus": Q,
+        "direct_label": B,
+        "inverse_label": a,
+        "type_coefficients": coefficients,
+        "jointly_primitive_phase_pair_count": len(jointly_primitive_pairs),
+        "character_master": character_master,
+        "centered_incidence_tensor": centered_incidence_tensor,
+        "normalized_character_master": normalized_character_master,
+        "normalized_mobius_divisor_expansion": normalized_divisor_expansion,
+        "divisor_expansion_rows": tuple(divisor_rows),
+        "prime_marginal_rows": prime_marginal_rows,
+        "character_master_equals_centered_incidence_tensor": abs(
+            character_master - centered_incidence_tensor
+        )
+        < tolerance,
+        "normalized_tensor_equals_mobius_divisor_expansion": abs(
+            normalized_character_master - normalized_divisor_expansion
+        )
+        < tolerance,
+        "every_prime_phase_plane_marginal_is_zero": all(
+            bool(row["all_fixed_x_phase_plane_marginals_zero"])
+            for row in prime_marginal_rows
+        ),
+        "outer_modulus_mobius_migrates_to_divisor_mobius": all(
+            bool(row["outer_mobius_sign_identity"]) for row in divisor_rows
+        ),
+        "type_coefficients_retained_linearly": True,
+        "nonunit_type_labels_vanish_only_by_character_support": abs(
+            character_master - unit_supported_character_master
+        )
+        < tolerance,
+        "divisor_terms_may_be_bounded_separately": False,
+        "centered_tensor_global_estimate_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def centered_type_phase_local_spectrum_audit(*, prime: int) -> dict[str, object]:
+    """Compute the exact local Gram spectrum of the centered tensor.
+
+    Normalize the local row indexed by ``x in U(p)`` as
+
+    ``K_x(u,v) = 1_(u=x, v*x=1) - 1/(p-1)^2``.
+
+    The Gram matrix is ``I-J/(p-1)^2``.  Centering removes the constant
+    phase-plane mode but leaves transverse Type eigenvalue one, so an
+    arbitrary-coefficient fixed-modulus L2 argument gives no power gain.
+    """
+
+    p = int(prime)
+    if p <= 2 or _finite_prime_exponents(p) != {p: 1}:
+        raise ValueError("prime must be an odd prime")
+
+    phase_plane_cardinality = (p - 1) ** 2
+    type_label_cardinality = p - 1
+    gram_diagonal = F(phase_plane_cardinality - 1, phase_plane_cardinality)
+    gram_off_diagonal = F(-1, phase_plane_cardinality)
+    principal_eigenvalue = (
+        gram_diagonal
+        + (type_label_cardinality - 1) * gram_off_diagonal
+    )
+    transverse_eigenvalue = gram_diagonal - gram_off_diagonal
+    operator_norm_squared = max(principal_eigenvalue, transverse_eigenvalue)
+    return {
+        "prime": p,
+        "phase_plane_cardinality": phase_plane_cardinality,
+        "type_label_cardinality": type_label_cardinality,
+        "gram_diagonal": gram_diagonal,
+        "gram_off_diagonal": gram_off_diagonal,
+        "principal_type_eigenvalue": principal_eigenvalue,
+        "transverse_type_eigenvalue": transverse_eigenvalue,
+        "operator_norm_squared": operator_norm_squared,
+        "principal_phase_mode_deleted": True,
+        "fixed_modulus_l2_power_saving": operator_norm_squared < 1,
+        "centered_tensor_global_estimate_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def primitive_product_farey_collision_audit(
     *,
     moduli: tuple[int, ...],

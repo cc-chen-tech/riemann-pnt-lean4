@@ -3691,6 +3691,255 @@ def test_convolved_principal_pointwise_weil_is_one_power_worse() -> None:
     assert not result["coupled_kernel_gate_closed"]
 
 
+def test_joint_character_conductors_isolate_only_common_principal_cofactor() -> None:
+    audit = getattr(
+        coverage_audit,
+        "joint_phase_character_conductor_lcm_audit",
+        None,
+    )
+    assert audit is not None, "joint phase-character conductor audit is missing"
+
+    result = audit(
+        modulus=30,
+        direct_label=6,
+        inverse_label=10,
+        cofactor_bound=30,
+    )
+    assert result["all_direct_transforms_are_conjugate_gauss_sums"]
+    assert result["all_inverse_transforms_are_gauss_sums"]
+    assert result["all_character_pairs_match_conductor_descent"]
+    assert result["all_joint_conductors_are_lcms"]
+    assert result["all_common_cofactor_primes_are_inactive_in_both"]
+    assert result["all_normalized_products_split_common_cofactor_exactly"]
+    assert result["joint_conductor_count"] == {1: 1, 3: 3, 5: 15, 15: 45}
+    assert result["local_character_pair_counts"][2] == {
+        "all_pairs": 1,
+        "common_inactive_pairs": 1,
+        "jointly_active_pairs": 0,
+    }
+    assert result["local_character_pair_counts"][3]["jointly_active_pairs"] == 3
+    assert result["local_character_pair_counts"][5]["jointly_active_pairs"] == 15
+    assert result["prime_two_always_lies_in_common_inactive_cofactor"]
+    assert result["finite_common_cofactor_sum_below_euler_product"]
+    assert result["common_cofactor_euler_local_classification_exact"]
+    assert result["common_cofactor_cost_has_no_fixed_power"]
+    assert result["all_stripped_gauss_factors_match_scaled_joint_modulus"]
+    assert result["physical_packet_cofactor_dependence_removed"] is False
+    assert result["jointly_primitive_core_sparse"] is False
+    assert result["jointly_primitive_cross_modulus_estimate_proved"] is False
+    assert result["coupled_kernel_gate_closed"] is False
+
+    classes = {
+        row["prime"]: row["divisibility_class"]
+        for row in result["common_cofactor_euler_rows"]
+    }
+    assert classes[2] == "divides_both"
+    assert classes[3] == "divides_exactly_one"
+    assert classes[5] == "divides_exactly_one"
+    assert classes[7] == "divides_neither"
+
+    bridge = audit(
+        modulus=15,
+        direct_label=1,
+        inverse_label=1,
+        cofactor_bound=15,
+        type_coefficients={1: 1, 2: -1, 3: 99, 4: 2j, 7: 3},
+    )
+    assert bridge["all_joint_conductor_tensor_bridges_exact"]
+    q_five = next(
+        row for row in bridge["joint_conductor_tensor_bridge_rows"]
+        if row["joint_conductor"] == 5
+    )
+    assert q_five["common_inactive_cofactor"] == 3
+    assert q_five["scaled_direct_label"] == 2
+    assert q_five["scaled_inverse_label"] == 2
+    assert q_five["ambient_unit_mask_removed_labels"] == (3,)
+    assert q_five["bridge_identity_exact"]
+
+    audited_cases = 0
+    for modulus in range(2, 24):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        labels = tuple(dict.fromkeys((1, 2, modulus, 2 * modulus - 1)))
+        for direct_label in labels:
+            for inverse_label in labels:
+                exhaustive = audit(
+                    modulus=modulus,
+                    direct_label=direct_label,
+                    inverse_label=inverse_label,
+                    cofactor_bound=24,
+                )
+                assert exhaustive[
+                    "all_character_pairs_match_conductor_descent"
+                ]
+                assert exhaustive[
+                    "all_normalized_products_split_common_cofactor_exactly"
+                ]
+                assert exhaustive[
+                    "finite_common_cofactor_sum_below_euler_product"
+                ]
+                audited_cases += 1
+    assert audited_cases == 233
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.115 Joint conductor LCM and the common inactive cofactor" in text
+    assert r"Q=[q_\lambda,q_\psi]" in text
+    assert r"r_0=\frac{s}{Q}" in text
+    assert r"\frac{\mu(r_0)c_{r_0}(B)c_{r_0}(a)}{\varphi(r_0)^2}" in text
+    assert r"p(p-2)" in text
+    assert "jointly primitive core" in text
+
+    with pytest.raises(ValueError, match="squarefree"):
+        audit(modulus=12, direct_label=1, inverse_label=1, cofactor_bound=10)
+    with pytest.raises(ValueError, match="nonzero"):
+        audit(modulus=6, direct_label=0, inverse_label=1, cofactor_bound=10)
+    with pytest.raises(ValueError, match="positive"):
+        audit(modulus=6, direct_label=1, inverse_label=1, cofactor_bound=0)
+
+
+def test_jointly_primitive_phase_pairs_become_centered_incidence_kernel() -> None:
+    audit = getattr(
+        coverage_audit,
+        "jointly_primitive_phase_convolution_audit",
+        None,
+    )
+    assert audit is not None, "jointly primitive phase convolution audit is missing"
+
+    result = audit(modulus=15, direct_label=6, inverse_label=10)
+    assert result["all_convolved_character_rows_match_incidence_kernel"]
+    assert result["all_phase_pairs_reparametrize_by_convolved_character"]
+    assert result["jointly_primitive_phase_pair_count"] == 45
+    assert result["fully_primitive_convolved_character_count"] == 3
+    assert result["partially_principal_convolved_character_count"] == 5
+    assert result["principal_convolved_row_centered_at_every_prime"]
+    assert result["every_partially_principal_row_has_local_zero_marginal"]
+    assert result["fully_primitive_rows_have_no_local_centering"]
+    assert result["nonunit_phase_labels_supported"]
+    assert result["physical_type_coefficients_retained_by_convolved_character"]
+    assert not result["jointly_primitive_twisted_kloosterman_moment_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    principal = next(
+        row
+        for row in result["convolved_character_rows"]
+        if row["is_principal_convolved_character"]
+    )
+    assert principal["locally_centered_primes"] == (3, 5)
+    assert principal["admissible_inverse_character_count"] == 3
+
+    fully_primitive = tuple(
+        row
+        for row in result["convolved_character_rows"]
+        if row["is_fully_primitive_convolved_character"]
+    )
+    assert len(fully_primitive) == 3
+    assert all(row["locally_centered_primes"] == () for row in fully_primitive)
+
+    audited_cases = 0
+    for modulus in range(2, 24):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        for direct_label, inverse_label in (
+            (1, 1),
+            (2, 3),
+            (modulus, 2 * modulus - 1),
+        ):
+            exhaustive = audit(
+                modulus=modulus,
+                direct_label=direct_label,
+                inverse_label=inverse_label,
+            )
+            assert exhaustive[
+                "all_convolved_character_rows_match_incidence_kernel"
+            ]
+            assert exhaustive[
+                "all_phase_pairs_reparametrize_by_convolved_character"
+            ]
+            audited_cases += 1
+    assert audited_cases == 45
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert r"\chi=\lambda\psi" in text
+    assert r"(p-1)\mathbf1_{uv\equiv1\ (p)}-1" in text
+    assert "locally centered incidence kernel" in text
+    assert "fully primitive convolved characters" in text
+
+    with pytest.raises(ValueError, match="squarefree"):
+        audit(modulus=9, direct_label=1, inverse_label=1)
+    with pytest.raises(ValueError, match="nonzero"):
+        audit(modulus=5, direct_label=1, inverse_label=0)
+
+
+def test_jointly_primitive_type_phase_tensor_is_primewise_centered() -> None:
+    audit = getattr(
+        coverage_audit,
+        "jointly_primitive_type_phase_tensor_audit",
+        None,
+    )
+    assert audit is not None, "jointly primitive Type-phase tensor audit is missing"
+
+    result = audit(
+        modulus=15,
+        direct_label=6,
+        inverse_label=10,
+        type_coefficients={1: 1, 2: -1, 3: 7, 4: 2j, 15: -3},
+    )
+    assert result["character_master_equals_centered_incidence_tensor"]
+    assert result["normalized_tensor_equals_mobius_divisor_expansion"]
+    assert result["every_prime_phase_plane_marginal_is_zero"]
+    assert result["outer_modulus_mobius_migrates_to_divisor_mobius"]
+    assert result["type_coefficients_retained_linearly"]
+    assert result["nonunit_type_labels_vanish_only_by_character_support"]
+    assert result["jointly_primitive_phase_pair_count"] == 45
+    assert result["divisor_expansion_rows"][0]["divisor"] == 1
+    assert result["divisor_expansion_rows"][-1]["divisor"] == 15
+    assert not result["divisor_terms_may_be_bounded_separately"]
+    assert not result["centered_tensor_global_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert r"(p-1)^2\mathbf1_{x\equiv u\ (p)}" in text
+    assert r"\sum_{d\mid Q}\mu(d)\varphi(d)^2" in text
+    assert "primewise centered Type--phase tensor" in text
+
+    with pytest.raises(ValueError, match="nonempty"):
+        audit(
+            modulus=5,
+            direct_label=1,
+            inverse_label=1,
+            type_coefficients={},
+        )
+
+
+def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:
+    audit = getattr(
+        coverage_audit,
+        "centered_type_phase_local_spectrum_audit",
+        None,
+    )
+    assert audit is not None, "local centered Type-phase spectrum audit is missing"
+
+    result = audit(prime=5)
+    assert result["phase_plane_cardinality"] == 16
+    assert result["type_label_cardinality"] == 4
+    assert result["gram_diagonal"] == F(15, 16)
+    assert result["gram_off_diagonal"] == F(-1, 16)
+    assert result["principal_type_eigenvalue"] == F(3, 4)
+    assert result["transverse_type_eigenvalue"] == F(1)
+    assert result["operator_norm_squared"] == F(1)
+    assert result["principal_phase_mode_deleted"]
+    assert not result["fixed_modulus_l2_power_saving"]
+    assert not result["centered_tensor_global_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert r"I-\frac1{(p-1)^2}J" in text
+    assert "transverse\neigenvalue is exactly \\(1\\)" in text
+
+    with pytest.raises(ValueError, match="prime"):
+        audit(prime=9)
+
+
 def test_cross_modulus_zero_product_frequency_is_exactly_diagonal() -> None:
     audit = getattr(
         coverage_audit,
