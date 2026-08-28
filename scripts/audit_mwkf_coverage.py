@@ -17591,6 +17591,314 @@ def oriented_global_reduced_frequency_projector_audit(
     }
 
 
+def oriented_nonprincipal_cofactor_type_convolution_audit(
+    *,
+    reduced_conductor: int,
+    cofactor_product_rows: tuple[
+        tuple[int, int, int, int, Fraction],
+        ...,
+    ],
+    type_rows: tuple[
+        tuple[int, int, int, int, int, int, Fraction],
+        ...,
+    ],
+) -> dict[str, object]:
+    """Verify one separated q>1 cofactor/Type multiplicative convolution.
+
+    A cofactor row is (d1,d2,h1,delta1,weight) and reconstructs
+
+    d=d1*d2, h=d1*h1, delta=d2*delta1, A=h1*delta1.
+
+    A Type row is (w,n,p,b,c,u,weight), with w=n*p=b*c*u*p.
+    The helper works on the separated unit subpacket in which every Type
+    entry is coprime to every reconstructed total modulus q*d.  General
+    unit masks require the exact divisor expansion recorded in the note.
+    """
+
+    q = int(reduced_conductor)
+    if q <= 1 or _finite_mobius(q) == 0:
+        raise ValueError(
+            "the reduced conductor must be squarefree and greater than one"
+        )
+    if not cofactor_product_rows or not type_rows:
+        raise ValueError("both cofactor/product and Type rows are required")
+    units = tuple(value for value in range(1, q) if gcd(value, q) == 1)
+
+    left_rows: list[dict[str, object]] = []
+    left_residues = {value: F(0) for value in units}
+    reconstructed_cofactors: list[int] = []
+    for raw_row in cofactor_product_rows:
+        if len(raw_row) != 5:
+            raise ValueError(
+                "each cofactor row must be (d1,d2,h1,delta1,weight)"
+            )
+        d1, d2, h1, delta1, raw_weight = raw_row
+        d1 = int(d1)
+        d2 = int(d2)
+        h1 = int(h1)
+        delta1 = int(delta1)
+        weight = F(raw_weight)
+        if min(d1, d2) <= 0 or h1 == 0 or delta1 == 0:
+            raise ValueError(
+                "cofactors must be positive and reduced labels nonzero"
+            )
+        if _finite_mobius(d1) == 0 or _finite_mobius(d2) == 0:
+            raise ValueError("both cofactor pieces must be squarefree")
+        if gcd(q, d1 * d2) != 1 or gcd(d1, d2) != 1:
+            raise ValueError("q, d1, and d2 must be pairwise coprime")
+        if gcd(abs(h1), d2) != 1:
+            raise ValueError(
+                "the unique h-divisor stratum requires gcd(h1,d2)=1"
+            )
+        reduced_label = h1 * delta1
+        if gcd(abs(reduced_label), q) != 1:
+            raise ValueError("the reduced product label must be a unit modulo q")
+
+        d = d1 * d2
+        v = q * d
+        h = d1 * h1
+        delta = d2 * delta1
+        exact_gcd = gcd(abs(h * delta), v) == d
+        residue = reduced_label % q
+        signed_weight = F(_finite_mobius(d1) * _finite_mobius(d2)) * weight
+        left_residues[residue] += signed_weight
+        reconstructed_cofactors.append(d)
+        left_rows.append(
+            {
+                "d1": d1,
+                "d2": d2,
+                "inactive_cofactor": d,
+                "total_oriented_modulus": v,
+                "h": h,
+                "delta": delta,
+                "reduced_label": reduced_label,
+                "reduced_label_residue": residue,
+                "cofactor_mobius_sign": (
+                    _finite_mobius(d1) * _finite_mobius(d2)
+                ),
+                "gcd_product_label_and_modulus_is_cofactor": exact_gcd,
+                "weight": weight,
+                "signed_weight": signed_weight,
+            }
+        )
+
+    right_rows: list[dict[str, object]] = []
+    right_residues = {value: F(0) for value in units}
+    for raw_row in type_rows:
+        if len(raw_row) != 7:
+            raise ValueError(
+                "each Type row must be (w,n,p,b,c,u,weight)"
+            )
+        w, n, p, b, c, u, raw_weight = raw_row
+        w = int(w)
+        n = int(n)
+        p = int(p)
+        b = int(b)
+        c = int(c)
+        u = int(u)
+        weight = F(raw_weight)
+        if min(w, n, p, b, c, u) <= 0:
+            raise ValueError("all Type entries must be positive")
+        if _finite_mobius(w) == 0:
+            raise ValueError("the Type entry must be squarefree")
+        if gcd(w, q) != 1 or any(
+            gcd(w, d) != 1 for d in reconstructed_cofactors
+        ):
+            raise ValueError("the separated Type row must be a unit at every q*d")
+        if n * p != w:
+            raise ValueError("the Type opening must satisfy n*p=w")
+        if b * c * u != n:
+            raise ValueError("the quotient Type split must satisfy b*c*u=n")
+        residue = w % q
+        signed_weight = F(_finite_mobius(w)) * weight
+        right_residues[residue] += signed_weight
+        right_rows.append(
+            {
+                "type_entry": w,
+                "type_cofactor": n,
+                "prime_bearing_factor": p,
+                "quotient_type_factors": (b, c, u),
+                "type_residue": residue,
+                "type_mobius_sign": _finite_mobius(w),
+                "weight": weight,
+                "signed_weight": signed_weight,
+            }
+        )
+
+    convolution = {}
+    for frequency in units:
+        convolution[frequency] = F(_finite_mobius(q)) * sum(
+            (
+                left_residues[(-frequency * type_residue) % q]
+                * right_residues[type_residue]
+                for type_residue in units
+            ),
+            start=F(0),
+        )
+    convolution_energy = sum(
+        (value * value for value in convolution.values()),
+        start=F(0),
+    )
+
+    expanded_resonant_energy = F(0)
+    resonant_ordered_pairs = 0
+    for left_one in left_rows:
+        for right_one in right_rows:
+            frequency_one = (
+                -int(left_one["reduced_label"])
+                * pow(int(right_one["type_entry"]), -1, q)
+            ) % q
+            coefficient_one = (
+                F(_finite_mobius(q))
+                * F(left_one["signed_weight"])
+                * F(right_one["signed_weight"])
+            )
+            for left_two in left_rows:
+                for right_two in right_rows:
+                    frequency_two = (
+                        -int(left_two["reduced_label"])
+                        * pow(int(right_two["type_entry"]), -1, q)
+                    ) % q
+                    if frequency_one != frequency_two:
+                        continue
+                    resonant_ordered_pairs += 1
+                    coefficient_two = (
+                        F(_finite_mobius(q))
+                        * F(left_two["signed_weight"])
+                        * F(right_two["signed_weight"])
+                    )
+                    expanded_resonant_energy += (
+                        coefficient_one * coefficient_two
+                    )
+
+    all_cofactor_splits_exact = all(
+        bool(row["gcd_product_label_and_modulus_is_cofactor"])
+        for row in left_rows
+    )
+    return {
+        "reduced_conductor": q,
+        "unit_residues": units,
+        "cofactor_product_rows": tuple(left_rows),
+        "type_rows": tuple(right_rows),
+        "cofactor_product_residue_function": left_residues,
+        "type_residue_function": right_residues,
+        "signed_ratio_convolution": convolution,
+        "ratio_convolution_energy": convolution_energy,
+        "expanded_resonant_energy": expanded_resonant_energy,
+        "convolution_energy_equals_expanded_resonant_energy": bool(
+            convolution_energy == expanded_resonant_energy
+        ),
+        "resonant_ordered_pair_count": resonant_ordered_pairs,
+        "all_cofactor_product_splits_exact": all_cofactor_splits_exact,
+        "common_conductor_sign_retained_linearly": True,
+        "cofactor_double_mobius_sign_retained": True,
+        "type_mobius_sign_retained": True,
+        "product_label_factorization_retained": True,
+        "multiplicative_ratio_convolution_factorization_exact": bool(
+            convolution_energy == expanded_resonant_energy
+        ),
+        "multiplicative_character_parseval_identity_available": True,
+        "general_physical_unit_mask_divisor_adapter_proved": False,
+        "varying_q_common_coefficient_adapter_proved": False,
+        "q_projector_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def optimistic_resonant_fourth_moment_envelope_audit(
+    *,
+    reduced_conductor_exponent: Fraction,
+    oriented_modulus_exponent: Fraction,
+    type_entry_exponent: Fraction,
+    product_label_count_exponent: Fraction,
+    cofactor_convolution_excess_exponent: Fraction,
+    type_convolution_excess_exponent: Fraction,
+    common_coefficient_across_moduli_verified: bool,
+    physical_unit_mask_adapter_verified: bool,
+) -> dict[str, object]:
+    """Audit the classical fourth-moment envelope for the q>1 projector.
+
+    The optimistic common coefficient on the product-label side has
+    effective length Y=HL/(V/Q).  If its self-convolution energy has
+    exponent 2*y+xi_F, and the Type self-convolution has exponent
+    2*u+xi_G, two classical character fourth moments give the weighted
+    projector exponent recorded below.
+    """
+
+    gamma = F(reduced_conductor_exponent)
+    v = F(oriented_modulus_exponent)
+    u = F(type_entry_exponent)
+    label_count = F(product_label_count_exponent)
+    xi_f = F(cofactor_convolution_excess_exponent)
+    xi_g = F(type_convolution_excess_exponent)
+    if min(gamma, v, u, label_count, xi_f, xi_g) < 0:
+        raise ValueError("all exponents must be nonnegative")
+    if gamma > v:
+        raise ValueError("the reduced conductor cannot exceed the total modulus")
+    cofactor_exponent = v - gamma
+    effective_left_length = label_count - cofactor_exponent
+    if effective_left_length < 0:
+        raise ValueError("a nonempty cofactor stratum requires HL at least V/Q")
+
+    left_fourth_moment = (
+        2 * max(gamma, effective_left_length)
+        + 2 * effective_left_length
+        + xi_f
+    )
+    type_fourth_moment = (
+        2 * max(gamma, u) + 2 * u + xi_g
+    )
+    weighted_projector_bound = (
+        -gamma + (left_fourth_moment + type_fourth_moment) / 2
+    )
+    squared_local_target = 2 * (u + v)
+    ideal_bound = weighted_projector_bound - (xi_f + xi_g) / 2
+    ideal_deficit = max(F(0), ideal_bound - squared_local_target)
+    actual_deficit = max(
+        F(0),
+        weighted_projector_bound - squared_local_target,
+    )
+    total_excess_budget = 2 * (squared_local_target - ideal_bound)
+    hypotheses = bool(
+        common_coefficient_across_moduli_verified
+        and physical_unit_mask_adapter_verified
+    )
+    return {
+        "reduced_conductor_exponent": gamma,
+        "oriented_modulus_exponent": v,
+        "type_entry_exponent": u,
+        "product_label_count_exponent": label_count,
+        "inactive_cofactor_exponent": cofactor_exponent,
+        "effective_left_sequence_length_exponent": effective_left_length,
+        "cofactor_convolution_excess_exponent": xi_f,
+        "type_convolution_excess_exponent": xi_g,
+        "left_fourth_moment_exponent": left_fourth_moment,
+        "type_fourth_moment_exponent": type_fourth_moment,
+        "weighted_projector_bound_exponent": weighted_projector_bound,
+        "ideal_divisor_bounded_projector_exponent": ideal_bound,
+        "squared_local_target_exponent": squared_local_target,
+        "ideal_remaining_deficit": ideal_deficit,
+        "actual_remaining_deficit": actual_deficit,
+        "total_convolution_excess_budget": total_excess_budget,
+        "generic_fourth_moment_can_meet_target_even_ideally": bool(
+            ideal_bound <= squared_local_target
+        ),
+        "common_coefficient_across_moduli_verified": bool(
+            common_coefficient_across_moduli_verified
+        ),
+        "physical_unit_mask_adapter_verified": bool(
+            physical_unit_mask_adapter_verified
+        ),
+        "published_fourth_moment_hypotheses_verified": hypotheses,
+        "published_fourth_moment_projection_covers_packet": bool(
+            hypotheses and weighted_projector_bound <= squared_local_target
+        ),
+        "retains_cofactor_and_type_mobius_cancellation_jointly": False,
+        "q_projector_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,

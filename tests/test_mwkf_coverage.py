@@ -6162,6 +6162,133 @@ def test_oriented_global_reduced_frequency_resonance_is_one_projector() -> None:
         )
 
 
+def test_nonprincipal_projector_retains_cofactor_and_type_convolution() -> None:
+    """One separated q-row is an exact signed multiplicative convolution."""
+
+    audit = getattr(
+        coverage_audit,
+        "oriented_nonprincipal_cofactor_type_convolution_audit",
+        None,
+    )
+    assert audit is not None, "nonprincipal convolution audit is missing"
+    result = audit(
+        reduced_conductor=3,
+        cofactor_product_rows=(
+            # (d1,d2,h1,delta1,weight)
+            (2, 5, 1, 1, F(2)),
+            (2, 7, 1, 2, F(3)),
+        ),
+        type_rows=(
+            # (w,n,p,b,c,u,weight)
+            (11, 1, 11, 1, 1, 1, F(5)),
+            (13, 1, 13, 1, 1, 1, F(7)),
+        ),
+    )
+    assert result["all_cofactor_product_splits_exact"]
+    assert result["cofactor_product_residue_function"] == {
+        1: F(2),
+        2: F(3),
+    }
+    assert result["type_residue_function"] == {
+        1: F(-7),
+        2: F(-5),
+    }
+    assert result["signed_ratio_convolution"] == {
+        1: F(31),
+        2: F(29),
+    }
+    assert result["ratio_convolution_energy"] == F(1802)
+    assert result["expanded_resonant_energy"] == F(1802)
+    assert result["convolution_energy_equals_expanded_resonant_energy"]
+    assert result["resonant_ordered_pair_count"] == 8
+    assert result["cofactor_double_mobius_sign_retained"]
+    assert result["type_mobius_sign_retained"]
+    assert result["product_label_factorization_retained"]
+    assert result["multiplicative_ratio_convolution_factorization_exact"]
+    assert result["multiplicative_character_parseval_identity_available"]
+    assert not result["general_physical_unit_mask_divisor_adapter_proved"]
+    assert not result["varying_q_common_coefficient_adapter_proved"]
+    assert not result["q_projector_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    with pytest.raises(ValueError, match="pairwise coprime"):
+        audit(
+            reduced_conductor=3,
+            cofactor_product_rows=((3, 5, 1, 1, F(1)),),
+            type_rows=((11, 1, 11, 1, 1, 1, F(1)),),
+        )
+    with pytest.raises(ValueError, match="unit at every"):
+        audit(
+            reduced_conductor=3,
+            cofactor_product_rows=((2, 5, 1, 1, F(1)),),
+            type_rows=((5, 1, 5, 1, 1, 1, F(1)),),
+        )
+
+
+def test_generic_fourth_moment_misses_the_top_reduced_conductor() -> None:
+    """Even ideal common coefficients leave one energy power at q=T^3."""
+
+    audit = getattr(
+        coverage_audit,
+        "optimistic_resonant_fourth_moment_envelope_audit",
+        None,
+    )
+    assert audit is not None, "resonant fourth-moment envelope is missing"
+
+    top = audit(
+        reduced_conductor_exponent=F(3),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        product_label_count_exponent=F(5),
+        cofactor_convolution_excess_exponent=F(0),
+        type_convolution_excess_exponent=F(0),
+        common_coefficient_across_moduli_verified=True,
+        physical_unit_mask_adapter_verified=True,
+    )
+    assert top["inactive_cofactor_exponent"] == F(0)
+    assert top["effective_left_sequence_length_exponent"] == F(5)
+    assert top["left_fourth_moment_exponent"] == F(20)
+    assert top["type_fourth_moment_exponent"] == F(12)
+    assert top["ideal_divisor_bounded_projector_exponent"] == F(13)
+    assert top["squared_local_target_exponent"] == F(12)
+    assert top["ideal_remaining_deficit"] == F(1)
+    assert top["total_convolution_excess_budget"] == F(-2)
+    assert not top["generic_fourth_moment_can_meet_target_even_ideally"]
+    assert not top["published_fourth_moment_projection_covers_packet"]
+
+    transition = audit(
+        reduced_conductor_exponent=F(2),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        product_label_count_exponent=F(5),
+        cofactor_convolution_excess_exponent=F(0),
+        type_convolution_excess_exponent=F(0),
+        common_coefficient_across_moduli_verified=True,
+        physical_unit_mask_adapter_verified=True,
+    )
+    assert transition["effective_left_sequence_length_exponent"] == F(4)
+    assert transition["weighted_projector_bound_exponent"] == F(12)
+    assert transition["generic_fourth_moment_can_meet_target_even_ideally"]
+    assert transition["published_fourth_moment_projection_covers_packet"]
+
+    physical = audit(
+        reduced_conductor_exponent=F(2),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        product_label_count_exponent=F(5),
+        cofactor_convolution_excess_exponent=F(0),
+        type_convolution_excess_exponent=F(0),
+        common_coefficient_across_moduli_verified=False,
+        physical_unit_mask_adapter_verified=False,
+    )
+    assert physical["weighted_projector_bound_exponent"] == F(12)
+    assert not physical["published_fourth_moment_hypotheses_verified"]
+    assert not physical["published_fourth_moment_projection_covers_packet"]
+    assert not physical["retains_cofactor_and_type_mobius_cancellation_jointly"]
+    assert not physical["q_projector_bound_proved"]
+    assert not physical["coupled_kernel_gate_closed"]
+
+
 def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
     """Shen's q-average is inverse-only and far below the coupled target."""
 
