@@ -1,0 +1,10 @@
+import HardyTheorem.AFECriticalDyadicCanonicalSelector
+
+#check HardyTheorem.AFE.measurable_criticalAfeCutoff
+#check HardyTheorem.AFE.continuous_dyadicMovingPrefixMollifiedPolynomial
+#check HardyTheorem.AFE.dyadicClampedCriticalPrefixMollifiedPolynomial
+#check HardyTheorem.AFE.measurable_dyadicClampedCriticalPrefixMollifiedPolynomial
+#check HardyTheorem.AFE.dyadicClampedCriticalPrefix_eq_of_cutoff_le
+#check HardyTheorem.AFE.integral_gaussian_normSq_dyadicClampedCriticalPrefix_le
+
+#print axioms HardyTheorem.AFE.integral_gaussian_normSq_dyadicClampedCriticalPrefix_le

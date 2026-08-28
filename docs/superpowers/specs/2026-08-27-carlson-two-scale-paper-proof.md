@@ -796,11 +796,16 @@ a final density axiom:
    `2(1+log(2^K X))^4`.  Thus the full Rademacher--Menshov selector estimate
    has only the intended logarithmic-square maximal loss and no hidden power
    of `U`.  Its axiom audit contains only `propext`, `Classical.choice`, and
-   `Quot.sound`.  What remains before applying it to (8.1) is to prove
-   measurability for the canonical floor-square-root AFE cutoff and to prove
-   the symmetric square-root AFE itself; the latter is still the genuine
-   analytic gate.  The translated-Gaussian tail assembly in (8.7)--(8.8)
-   also remains to be composed formally.
+   `Quot.sound`.  The canonical floor-square-root AFE cutoff is now proved
+   measurable.  Since it is unbounded on the whole real line, Lean applies
+   the maximal theorem to its exact clamp
+   `min(criticalAfeCutoff(t),2^K)` and proves that this clamp recovers the
+   genuine prefix whenever `criticalAfeCutoff(t)<=2^K`.  The resulting global
+   Gaussian theorem has no measurability premise and the same allowed axiom
+   audit.  What remains before applying it to (8.1) is the local-window
+   cutoff upper bound, the symmetric square-root AFE itself (still the
+   genuine analytic gate), and the translated-Gaussian tail assembly in
+   (8.7)--(8.8).
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
    specialization, and insert the resulting local norm into the now-proved

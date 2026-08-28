@@ -28,6 +28,33 @@ noncomputable def dyadicMovingPrefixMollifiedPolynomial
   (∑ n ∈ Finset.Ico 0 m, dyadicCriticalAmbientAtom K t n) *
     selbergMoebiusMollifier X ((1 / 2 : ℂ) + I * t)
 
+/-- A fixed dyadic prefix times the concrete mollifier varies continuously
+with the height. -/
+theorem continuous_dyadicMovingPrefixMollifiedPolynomial
+    (K m X : ℕ) :
+    Continuous fun t : ℝ =>
+      dyadicMovingPrefixMollifiedPolynomial K m X t := by
+  unfold dyadicMovingPrefixMollifiedPolynomial
+  apply Continuous.mul
+  · apply continuous_finset_sum
+    intro n hn
+    unfold dyadicCriticalAmbientAtom
+    split_ifs with hambient
+    · have hn0 : n ≠ 0 := by
+        exact Nat.ne_of_gt (Finset.mem_Ico.mp hambient).1
+      rw [show (fun t : ℝ =>
+          1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)) =
+          fun t : ℝ =>
+            (((n : ℂ) ^ (1 / 2 : ℂ))⁻¹ *
+              Complex.exp ((-I * (Real.log n : ℂ)) * t)) by
+        funext t
+        rw [inv_nat_cpow_criticalLine_eq_exp hn0 t]]
+      fun_prop
+    · exact continuous_const
+  · simpa only [selbergMoebiusMollifier] using
+      continuous_selbergMollifier_criticalLine X
+        (fun n => (selbergMoebiusCoeff X n : ℂ))
+
 private theorem mem_dyadicPrefixBlock_iff_div_eq
     {j q n : ℕ} :
     n ∈ MathlibAux.dyadicPrefixBlock j q ↔ n / 2 ^ j = q := by
