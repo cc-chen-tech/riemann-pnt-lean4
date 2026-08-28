@@ -1861,8 +1861,14 @@ The finite height set is computed from the divisor on the inner disk (which,
 by divisor locality, is the outer divisor restricted to that disk).  It does
 not include uncontrolled zeros in the outer annulus.
 
-This closes Jensen divisor mass and admissible endpoint selection only.  The
-zero-removed analytic factor and Borel--Caratheodory estimate needed for the
-weighted horizontal logarithmic derivative are still open.  The far-right
+The follow-up buffered-factor, Borel--Caratheodory, and horizontal-integral
+modules now go further: at one factor-support-selected height they bound the
+actual weighted logarithmic derivative by
+
+\[
+ 1{,}100{,}000{,}000{,}000\,L^7=o(e^L/L).
+\]
+
+Thus the selected-height horizontal Jensen term is closed.  The far-right
 argument variation in equation (37), equations (38)--(41), and the long
-mollified second moment are also still open; strict `> 2/5` is not proved.
+mollified second moment remain open; strict `> 2/5` is not proved.

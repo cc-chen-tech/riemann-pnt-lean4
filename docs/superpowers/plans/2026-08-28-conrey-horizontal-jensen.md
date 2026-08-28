@@ -4,7 +4,7 @@
 
 **Goal:** Prove the actual-product Jensen divisor-mass and admissible-horizontal-height checkpoint needed for Conrey's equation (37).
 
-**Architecture:** A geometry module fixes the moving disk without crossing `Re s=0` or `s=1`. A growth module proves concrete bounds for the explicit mollifier and degree-one `V1`; a Jensen module combines those bounds with the existing analytic Jensen library and selects a zero-free horizontal height. The weighted horizontal integral remains a later plan.
+**Architecture:** A geometry module fixes the moving disk without crossing `Re s=0` or `s=1`. A growth module proves concrete bounds for the explicit mollifier and degree-one `V1`; Jensen and Borel modules select a zero-free horizontal height, remove every buffered-disk zero, and bound the actual weighted logarithmic derivative. A final asymptotic module collapses the exact bound to a fixed polynomial negligible on the `exp L / L` scale.
 
 **Tech Stack:** Lean 4, Mathlib complex analysis, existing `AnalyticJensen`, `HorizontalArgument`, Conrey right-edge modules, Lake contract tests.
 
@@ -16,7 +16,7 @@
 - Prove actual-product growth; no conditional growth interface may be advertised as closure.
 - Write each contract before production code and record the expected missing declaration.
 - Run `#print axioms` for every public endpoint; allow only `propext`, `Classical.choice`, and `Quot.sound`.
-- Do not claim the weighted horizontal term, equations (38)--(41), the long mollified mean square, or strict `> 2/5`.
+- Do not claim equation (37), equations (38)--(41), the long mollified mean square, or strict `> 2/5` merely from this horizontal checkpoint.
 
 ---
 
@@ -270,10 +270,11 @@ divisor endpoint `pi * (A-sigma0) * m_b` are proved.
 The actual weighted `F'/F` integral is now split and bounded at the same
 factor-support-selected height, with all integrability hypotheses proved.
 
-- [ ] **Step 4: Coarse-scale the explicit bound**
+- [x] **Step 4: Coarse-scale the explicit bound**
 
 Instantiate a Jensen mass majorant, control `J` and `V(J,delta_J)` by a fixed
-polylogarithm in `L`, and prove that bound is `o(exp L / L)`.
+polynomial in `L`, and prove that bound is `o(exp L / L)`.  The proved endpoint
+is `1.1e12 * L^7`; its ratio to `exp L / L` tends to zero.
 
 ### Task 7: Whole-checkpoint verification and publication
 
@@ -286,10 +287,10 @@ polylogarithm in `L`, and prove that bound is `o(exp L / L)`.
   remaining gate.  PR #493 may be updated incrementally, but must never imply
   Tasks 5--6 are complete before their contracts pass.
 
-- [ ] **Step 1: Run focused verification**
+- [x] **Step 1: Run focused verification**
 
 ```bash
-lake build HardyTheorem.ConreyHorizontalJensenGeometry HardyTheorem.ConreyHorizontalJensenCenter HardyTheorem.ConreyHorizontalJensenGrowth HardyTheorem.ConreyHorizontalJensenCount Test.ConreyHorizontalJensenGeometryContract Test.ConreyHorizontalJensenCenterContract Test.ConreyHorizontalJensenGrowthContract Test.ConreyHorizontalJensenCountContract
+lake build HardyTheorem.ConreyHorizontalJensenGeometry HardyTheorem.ConreyHorizontalJensenCenter HardyTheorem.ConreyHorizontalJensenGrowth HardyTheorem.ConreyHorizontalJensenCount HardyTheorem.ConreyHorizontalJensenRegular HardyTheorem.ConreyHorizontalJensenIntegral HardyTheorem.ConreyHorizontalJensenAsymptotic Test.ConreyHorizontalJensenGeometryContract Test.ConreyHorizontalJensenCenterContract Test.ConreyHorizontalJensenGrowthContract Test.ConreyHorizontalJensenCountContract Test.ConreyHorizontalJensenRegularContract Test.ConreyHorizontalJensenIntegralContract Test.ConreyHorizontalJensenAsymptoticContract
 git diff --check
 ```
 
@@ -299,7 +300,7 @@ git diff --check
 lake build
 ```
 
-- [ ] **Step 3: Review proof status**
+- [x] **Step 3: Review proof status**
 
 Confirm that no theorem name or documentation claims equation (37), the
 weighted horizontal terms, the far-right argument variation, the long mean
