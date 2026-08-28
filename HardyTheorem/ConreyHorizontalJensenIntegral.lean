@@ -123,6 +123,80 @@ theorem abs_integral_weighted_im_inv_horizontal_sub_le
       simpa only [← hp] using
         integral_abs_im_inv_horizontal_sub_le_pi (a := a) (b := b) ht
 
+/-- Multiplicity-weighted finite principal parts cost only the total
+multiplicity times the one-zero Poisson bound. -/
+theorem abs_integral_weighted_finset_principalParts_le
+    (P : Finset ℂ) (m : ℂ → ℝ) {a b t : ℝ} (hab : a ≤ b)
+    (hm : ∀ rho ∈ P, 0 ≤ m rho) (ht : ∀ rho ∈ P, t ≠ rho.im) :
+    |∫ x in a..b, (x - a) *
+        (∑ rho ∈ P, m rho *
+          ((((x : ℂ) + I * (t : ℂ) - rho)⁻¹).im))| ≤
+      (b - a) * Real.pi * ∑ rho ∈ P, m rho := by
+  have hne : ∀ rho ∈ P, ∀ x : ℝ,
+      (x : ℂ) + I * (t : ℂ) - rho ≠ 0 := by
+    intro rho hrho x hzero
+    have him := congrArg Complex.im hzero
+    simp only [Complex.sub_im, Complex.add_im, Complex.mul_im,
+      Complex.ofReal_im, Complex.I_re, Complex.I_im, Complex.ofReal_re,
+      zero_add, zero_mul, one_mul, sub_eq_zero, Complex.zero_im] at him
+    exact ht rho hrho him
+  have hinterm : ∀ rho ∈ P, IntervalIntegrable
+      (fun x : ℝ => (x - a) * m rho *
+        ((((x : ℂ) + I * (t : ℂ) - rho)⁻¹).im))
+      MeasureTheory.volume a b := by
+    intro rho hrho
+    have hinv : Continuous fun x : ℝ =>
+        (((x : ℂ) + I * (t : ℂ) - rho)⁻¹) := by
+      exact (by fun_prop : Continuous fun x : ℝ =>
+        (x : ℂ) + I * (t : ℂ) - rho).inv₀ (hne rho hrho)
+    have himCont : Continuous fun x : ℝ =>
+        ((((x : ℂ) + I * (t : ℂ) - rho)⁻¹).im) := by
+      change Continuous (Complex.im ∘ fun x : ℝ =>
+        ((x : ℂ) + I * (t : ℂ) - rho)⁻¹)
+      exact Complex.continuous_im.comp hinv
+    exact (((continuous_id.sub continuous_const).mul continuous_const).mul
+      himCont).intervalIntegrable _ _
+  have hsplit :
+      (∫ x in a..b, (x - a) *
+        (∑ rho ∈ P, m rho *
+          ((((x : ℂ) + I * (t : ℂ) - rho)⁻¹).im))) =
+      ∑ rho ∈ P, ∫ x in a..b, (x - a) * m rho *
+        ((((x : ℂ) + I * (t : ℂ) - rho)⁻¹).im) := by
+    rw [show (fun x : ℝ => (x - a) *
+        (∑ rho ∈ P, m rho *
+          ((((x : ℂ) + I * (t : ℂ) - rho)⁻¹).im))) =
+        (fun x : ℝ => ∑ rho ∈ P, (x - a) * m rho *
+          ((((x : ℂ) + I * (t : ℂ) - rho)⁻¹).im)) by
+      funext x
+      rw [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro rho hrho
+      ring]
+    exact intervalIntegral.integral_finsetSum hinterm
+  rw [hsplit]
+  calc
+    |∑ rho ∈ P, ∫ x in a..b, (x - a) * m rho *
+        ((((x : ℂ) + I * (t : ℂ) - rho)⁻¹).im)| ≤
+        ∑ rho ∈ P, |∫ x in a..b, (x - a) * m rho *
+          ((((x : ℂ) + I * (t : ℂ) - rho)⁻¹).im)| := by
+      exact Finset.abs_sum_le_sum_abs _ _
+    _ ≤ ∑ rho ∈ P, m rho * ((b - a) * Real.pi) := by
+      apply Finset.sum_le_sum
+      intro rho hrho
+      rw [show (fun x : ℝ => (x - a) * m rho *
+          ((((x : ℂ) + I * (t : ℂ) - rho)⁻¹).im)) =
+          (fun x : ℝ => m rho * ((x - a) *
+            ((((x : ℂ) + I * (t : ℂ) - rho)⁻¹).im))) by
+        funext x; ring,
+        intervalIntegral.integral_const_mul, abs_mul,
+        abs_of_nonneg (hm rho hrho)]
+      exact mul_le_mul_of_nonneg_left
+        (abs_integral_weighted_im_inv_horizontal_sub_le hab (ht rho hrho))
+        (hm rho hrho)
+    _ = (b - a) * Real.pi * ∑ rho ∈ P, m rho := by
+      rw [← Finset.sum_mul]
+      ring
+
 /-- Imaginary parts of all distinct zeros in the factorization disk. -/
 noncomputable def conreyHorizontalJensenFactorZeroHeights
     (Y : ℕ) (R L U : ℝ) : Finset ℝ :=
@@ -246,5 +320,149 @@ theorem exists_conreyHorizontalJensenFactorAdmissibleHeight
         1 / ((4 : ℝ) * ((H.card : ℝ) + 1)) ≤ 0 := by
       simpa [z] using hsep z.im hzim
     exact (not_lt_of_ge hzeroDistance) hdelta
+
+/-- The complete multiplicity-weighted factor-disk principal part satisfies
+the sharp linear-in-mass weighted horizontal integral bound. -/
+theorem abs_integral_conreyHorizontalJensenFactorPrincipalPart_le
+    {Y : ℕ} {R L U t : ℝ} (hR0 : 0 ≤ R) (hRmax : R ≤ 6 / 5)
+    (hL : 40000 ≤ L) (hU : conreyHorizontalRightEdge L + 1 ≤ U)
+    (ht : ∀ rho ∈ conreyHorizontalJensenFactorZeroSupport Y R L U,
+      t ≠ rho.im) :
+    |∫ x in conreyHorizontalLeftEdge R L..conreyHorizontalRightEdge L,
+        (x - conreyHorizontalLeftEdge R L) *
+          ((∑ᶠ rho,
+            (MeromorphicOn.divisor (conreyHorizontalJensenProduct Y R L)
+              (Metric.closedBall (conreyHorizontalJensenCenter L U)
+                (conreyHorizontalJensenFactorRadius R L)) rho : ℂ) *
+              (((x : ℂ) + I * (t : ℂ) - rho)⁻¹)).im)| ≤
+      (conreyHorizontalRightEdge L - conreyHorizontalLeftEdge R L) *
+        Real.pi * conreyHorizontalJensenFactorZeroMass Y R L U := by
+  classical
+  let a : ℝ := conreyHorizontalLeftEdge R L
+  let bRight : ℝ := conreyHorizontalRightEdge L
+  let c : ℂ := conreyHorizontalJensenCenter L U
+  let b : ℝ := conreyHorizontalJensenFactorRadius R L
+  let f : ℂ → ℂ := conreyHorizontalJensenProduct Y R L
+  let D := MeromorphicOn.divisor f (Metric.closedBall c b)
+  let P := conreyHorizontalJensenFactorZeroSupport Y R L U
+  have hLpos : 0 < L := by linarith
+  have hlogL := two_le_log_of_forty_thousand_le hL
+  have haUpper : a ≤ 1 / 2 := by
+    dsimp [a, conreyHorizontalLeftEdge]
+    exact sub_le_self _ (div_nonneg hR0 hLpos.le)
+  have hab : a ≤ bRight := by
+    dsimp [bRight, conreyHorizontalRightEdge]
+    linarith
+  have hbuffer := conreyHorizontalJensenBufferGeometry hR0 hRmax hL
+  have hanalyticOuter :=
+    analyticOnNhd_conreyExplicitMollifiedV1_horizontalJensenOuterClosedBall
+      Y (conreyHorizontalLeftEdge R L) L U hL hU
+  have hanalyticFactor : AnalyticOnNhd ℂ f (Metric.closedBall c b) := by
+    simpa [f, c, b, conreyHorizontalJensenProduct] using
+      hanalyticOuter.mono
+        (Metric.closedBall_subset_closedBall hbuffer.2.2.2.le)
+  have hDfinite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c b)
+  have hDnonneg : 0 ≤ D := hanalyticFactor.divisor_nonneg
+  have hPdef : P = hDfinite.toFinset := by
+    simp [P, D, f, c, b, conreyHorizontalJensenFactorZeroSupport]
+  have hprincipal : ∀ x : ℝ,
+      (∑ᶠ rho, (D rho : ℂ) *
+          (((x : ℂ) + I * (t : ℂ) - rho)⁻¹)) =
+        ∑ rho ∈ P, (D rho : ℂ) *
+          (((x : ℂ) + I * (t : ℂ) - rho)⁻¹) := by
+    intro x
+    apply finsum_eq_sum_of_support_subset
+    intro rho hrho
+    change rho ∈ P
+    rw [hPdef, hDfinite.mem_toFinset]
+    by_contra hrhoD
+    have hDrho : D rho = 0 := by
+      simpa [Function.mem_support] using hrhoD
+    simp [hDrho] at hrho
+  have himag : ∀ x : ℝ,
+      ((∑ᶠ rho, (D rho : ℂ) *
+          (((x : ℂ) + I * (t : ℂ) - rho)⁻¹))).im =
+        ∑ rho ∈ P, (D rho : ℝ) *
+          ((((x : ℂ) + I * (t : ℂ) - rho)⁻¹).im) := by
+    intro x
+    rw [hprincipal x]
+    simp
+  have hmassSupport : (fun rho : ℂ => (D rho : ℝ)).support ⊆ P := by
+    intro rho hrho
+    change rho ∈ P
+    rw [hPdef, hDfinite.mem_toFinset]
+    by_contra hrhoD
+    have hDrho : D rho = 0 := by
+      simpa [Function.mem_support] using hrhoD
+    simp [hDrho] at hrho
+  have hmassEq : (∑ rho ∈ P, (D rho : ℝ)) =
+      conreyHorizontalJensenFactorZeroMass Y R L U := by
+    have hsum := finsum_eq_sum_of_support_subset
+      (fun rho : ℂ => (D rho : ℝ)) hmassSupport
+    simpa [D, f, c, b, P, conreyHorizontalJensenFactorZeroMass] using hsum.symm
+  rw [show (fun x : ℝ =>
+      (x - conreyHorizontalLeftEdge R L) *
+        ((∑ᶠ rho,
+          (MeromorphicOn.divisor (conreyHorizontalJensenProduct Y R L)
+            (Metric.closedBall (conreyHorizontalJensenCenter L U)
+              (conreyHorizontalJensenFactorRadius R L)) rho : ℂ) *
+            (((x : ℂ) + I * (t : ℂ) - rho)⁻¹)).im)) =
+      (fun x : ℝ => (x - a) *
+        (∑ rho ∈ P, (D rho : ℝ) *
+          ((((x : ℂ) + I * (t : ℂ) - rho)⁻¹).im))) by
+    funext x
+    simpa [a, D, f, c, b] using congrArg (fun y : ℝ => (x - a) * y) (himag x)]
+  have hbound := abs_integral_weighted_finset_principalParts_le
+    P (fun rho => (D rho : ℝ)) hab
+    (fun rho hrho => by exact_mod_cast hDnonneg rho)
+    (fun rho hrho => ht rho (by simpa [P] using hrho))
+  calc
+    |∫ x in a..bRight, (x - a) *
+        (∑ rho ∈ P, (D rho : ℝ) *
+          ((((x : ℂ) + I * (t : ℂ) - rho)⁻¹).im))| ≤
+        (bRight - a) * Real.pi * ∑ rho ∈ P, (D rho : ℝ) := hbound
+    _ = (conreyHorizontalRightEdge L - conreyHorizontalLeftEdge R L) *
+        Real.pi * conreyHorizontalJensenFactorZeroMass Y R L U := by
+      rw [hmassEq]
+
+/-- A factor-support admissible height simultaneously keeps the actual
+product nonzero and gives the complete linear-in-mass principal-part bound. -/
+theorem exists_conreyHorizontalJensenFactorHeight_principalPart_le
+    {Y : ℕ} {R L U : ℝ} (hY : 2 ≤ Y) (hR0 : 0 ≤ R)
+    (hRmax : R ≤ 6 / 5) (hL : 40000 ≤ L)
+    (hU : conreyHorizontalRightEdge L + 1 ≤ U) :
+    ∃ t ∈ Set.Icc U (U + 1),
+      (∀ rho ∈ conreyHorizontalJensenFactorZeroSupport Y R L U,
+        conreyHorizontalJensenFactorHorizontalSeparation Y R L U ≤
+          |t - rho.im|) ∧
+      (∀ x ∈ Set.Icc (conreyHorizontalLeftEdge R L)
+          (conreyHorizontalRightEdge L),
+        conreyHorizontalJensenProduct Y R L
+          ((x : ℂ) + I * (t : ℂ)) ≠ 0) ∧
+      |∫ x in conreyHorizontalLeftEdge R L..conreyHorizontalRightEdge L,
+          (x - conreyHorizontalLeftEdge R L) *
+            ((∑ᶠ rho,
+              (MeromorphicOn.divisor (conreyHorizontalJensenProduct Y R L)
+                (Metric.closedBall (conreyHorizontalJensenCenter L U)
+                  (conreyHorizontalJensenFactorRadius R L)) rho : ℂ) *
+                (((x : ℂ) + I * (t : ℂ) - rho)⁻¹)).im)| ≤
+        (conreyHorizontalRightEdge L - conreyHorizontalLeftEdge R L) *
+          Real.pi * conreyHorizontalJensenFactorZeroMass Y R L U := by
+  rcases exists_conreyHorizontalJensenFactorAdmissibleHeight
+      hY hR0 hRmax hL hU with ⟨t, htWindow, hsep, hnonzero⟩
+  have hsepPos : 0 < conreyHorizontalJensenFactorHorizontalSeparation
+      Y R L U := by
+    dsimp [conreyHorizontalJensenFactorHorizontalSeparation]
+    positivity
+  have htZero : ∀ rho ∈ conreyHorizontalJensenFactorZeroSupport Y R L U,
+      t ≠ rho.im := by
+    intro rho hrho hteq
+    have h := hsep rho hrho
+    rw [hteq, sub_self, abs_zero] at h
+    exact (not_lt_of_ge h) hsepPos
+  refine ⟨t, htWindow, hsep, hnonzero, ?_⟩
+  exact abs_integral_conreyHorizontalJensenFactorPrincipalPart_le
+    hR0 hRmax hL hU htZero
 
 end HardyTheorem

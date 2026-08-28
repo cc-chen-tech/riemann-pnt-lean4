@@ -9,6 +9,9 @@ open HardyTheorem
 #check conreyHorizontalJensenFactorHorizontalSeparation
 #check conreyHorizontalJensenFactorHorizontalSeparation_lower_of_mass_le
 #check exists_conreyHorizontalJensenFactorAdmissibleHeight
+#check abs_integral_weighted_finset_principalParts_le
+#check abs_integral_conreyHorizontalJensenFactorPrincipalPart_le
+#check exists_conreyHorizontalJensenFactorHeight_principalPart_le
 
 example {a b t : ℝ} {rho : ℂ} (hab : a ≤ b) (ht : t ≠ rho.im) :
     |∫ x in a..b, (x - a) *
@@ -39,7 +42,26 @@ example {Y : ℕ} {R L U : ℝ} (hY : 2 ≤ Y) (hR0 : 0 ≤ R)
   exists_conreyHorizontalJensenFactorAdmissibleHeight
     hY hR0 hRmax hL hU
 
+example {Y : ℕ} {R L U t : ℝ} (hR0 : 0 ≤ R) (hRmax : R ≤ 6 / 5)
+    (hL : 40000 ≤ L) (hU : conreyHorizontalRightEdge L + 1 ≤ U)
+    (ht : ∀ rho ∈ conreyHorizontalJensenFactorZeroSupport Y R L U,
+      t ≠ rho.im) :
+    |∫ x in conreyHorizontalLeftEdge R L..conreyHorizontalRightEdge L,
+        (x - conreyHorizontalLeftEdge R L) *
+          ((∑ᶠ rho,
+            (MeromorphicOn.divisor (conreyHorizontalJensenProduct Y R L)
+              (Metric.closedBall (conreyHorizontalJensenCenter L U)
+                (conreyHorizontalJensenFactorRadius R L)) rho : ℂ) *
+              (((x : ℂ) + Complex.I * (t : ℂ) - rho)⁻¹)).im)| ≤
+      (conreyHorizontalRightEdge L - conreyHorizontalLeftEdge R L) *
+        Real.pi * conreyHorizontalJensenFactorZeroMass Y R L U :=
+  abs_integral_conreyHorizontalJensenFactorPrincipalPart_le
+    hR0 hRmax hL hU ht
+
 #print axioms integral_abs_im_inv_horizontal_sub_le_pi
 #print axioms abs_integral_weighted_im_inv_horizontal_sub_le
 #print axioms conreyHorizontalJensenFactorHorizontalSeparation_lower_of_mass_le
 #print axioms exists_conreyHorizontalJensenFactorAdmissibleHeight
+#print axioms abs_integral_weighted_finset_principalParts_le
+#print axioms abs_integral_conreyHorizontalJensenFactorPrincipalPart_le
+#print axioms exists_conreyHorizontalJensenFactorHeight_principalPart_le

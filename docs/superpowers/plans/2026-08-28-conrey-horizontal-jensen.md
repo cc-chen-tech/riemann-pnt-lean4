@@ -258,12 +258,11 @@ the principal-part integral lemma and factor-support height selection.
   rather than a pointwise `J^2` bound.
 
 - [x] **Step 1: Select against the factor-disk support**
-- [ ] **Step 2: Prove the weighted principal-part integral bound**
+- [x] **Step 2: Prove the weighted principal-part integral bound**
 
-The exact one-zero Poisson-kernel identity and its weighted
-`(b-a) * pi` integral bound are proved.  Still aggregate the
-multiplicity-weighted finite divisor support into
-`pi * (A-sigma0) * m_b`.
+The exact one-zero Poisson-kernel identity, its weighted `(b-a) * pi` bound,
+the multiplicity-weighted finite-support aggregation, and the actual factor
+divisor endpoint `pi * (A-sigma0) * m_b` are proved.
 
 - [ ] **Step 3: Combine with the regular factor bound and coarse-scale it**
 
