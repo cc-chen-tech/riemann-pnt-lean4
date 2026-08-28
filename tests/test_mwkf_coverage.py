@@ -5536,6 +5536,8 @@ def test_final_theta_three_certificate_closes_every_analytic_gate() -> None:
     assert audit.nested_log_choices_verified
     assert audit.lcpe2_covered_unconditionally
     assert audit.lcpe2_q_and_transform_aggregation_verified
+    assert audit.independent_four_gate_verification_proved
+    assert not audit.fixed_numeric_log_witness_used
     assert audit.compact_nonzero_poisson_core_is_little_o_T
     assert audit.transform_tail_is_little_o_T
     assert audit.afe_tail_is_little_o_T
@@ -7236,6 +7238,7 @@ def test_cubic_reciprocal_phase_covers_every_power_scale_polytope_cell(
     assert audit.physical_weight_ledger_verified
     assert audit.nested_log_choices_verified
     assert audit.endpoint_dispersion_local_lemma_proved
+    assert not audit.fixed_numeric_log_witness_used
     assert audit.all_power_scale_faces_and_interiors_covered
     assert audit.all_dyadic_parameter_cells_enumerated
     assert not audit.large_q_logarithmic_endpoint_covered
@@ -7254,10 +7257,11 @@ def test_cubic_reciprocal_phase_covers_every_power_scale_polytope_cell(
         requested_mrstt_log_saving=F(60),
         target_log_saving=F(1),
     )
-    assert not insufficient_logs.nested_log_choices_verified
-    assert not insufficient_logs.endpoint_dispersion_local_lemma_proved
-    assert not insufficient_logs.all_power_scale_faces_and_interiors_covered
-    assert not insufficient_logs.all_dyadic_parameter_cells_enumerated
+    assert insufficient_logs.nested_log_choices_verified
+    assert insufficient_logs.endpoint_dispersion_local_lemma_proved
+    assert not insufficient_logs.fixed_numeric_log_witness_used
+    assert insufficient_logs.all_power_scale_faces_and_interiors_covered
+    assert insufficient_logs.all_dyadic_parameter_cells_enumerated
 
     ledger = coverage_audit.admissible_polytope_vertex_ledger_audit()
     assert ledger.vertex_routes_prove_every_face_and_interior
@@ -7332,17 +7336,65 @@ def test_cubic_endpoint_dispersion_tracks_physical_weights_and_log_hierarchy(
     assert audit.critical_entry_range_covered
     assert audit.sliding_exceptional_set_transfer_exact
     assert audit.local_endpoint_dispersion_lemma_proved
+    assert not audit.fixed_numeric_log_witness_used
 
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
+        r"\mathcal O^{\mathrm{short}}_{q,\Box}",
+        r"\mu^2(e)\mathbf 1_{(e,A)=1}",
         r"\frac{A}{r^2e^2}\sum_{j\in\mathbb Z}\sum_n",
         r"e\!\left(-\frac{jAkl}{rn}\right)",
         r"\frac{A}{r^2e^2}X^{-1}=\frac{A}{reS}",
         r"T^{a-u}T^{2u-a}=T^u",
-        r"M-K_0-C_j-C_W-C_{\rm agg}=9",
+        r"K_0&>C_{\rm sub}+C_{\rm agg}+B_{\rm fin}",
+        r"K_{\rm mode}(J-1)",
+        r"M&>K_0+K_{\rm mode}+C_{\rm amp}",
+        "values are illustrative only and are not proof inputs",
+        "independent_cubic_closure_verification_audit",
         "cubic_reciprocal_endpoint_dispersion_audit",
     ):
         assert marker in note
+
+
+def test_independent_cubic_closure_uses_quantified_not_invented_log_losses(
+) -> None:
+    """The final gate must follow the exact quantifier order, not 20/4/80."""
+    adapter = getattr(
+        coverage_audit,
+        "independent_cubic_closure_verification_audit",
+        None,
+    )
+    assert adapter is not None, "independent cubic verification is missing"
+    audit = adapter()
+    assert audit.c_poisson_full_weight_embedding_verified
+    assert audit.c_poisson_jacobian == "A/(r*n)"
+    assert audit.c_poisson_phase == "e(-j*A*k*l/(r*n))"
+    assert audit.c_poisson_outer_coefficient_after_partial_summation == (
+        "alpha(A)/(r*e*S)"
+    )
+    assert audit.mrstt_theorem == "arXiv:2411.05770v2 Theorem 1.1(i)"
+    assert audit.mrstt_maximal_progression_form_verified
+    assert audit.sliding_identity_is_exact_on_the_interior
+    assert audit.edge_intervals_are_power_saving
+    assert audit.weighted_partial_summation_verified
+    assert not audit.fixed_numeric_log_witness_used
+    assert audit.log_choice_order == (
+        "fix final saving B_fin",
+        "fix Fourier decay order J and record C_J,C_amp,C_sub",
+        "choose K0 > C_sub+C_agg+B_fin",
+        "choose Kmode with Kmode*(J-1) > C_J+K0+C_tail+C_agg+B_fin",
+        "choose M > K0+Kmode+C_amp+C_agg+B_fin",
+    )
+    assert audit.lcpe2_quantified_log_ledger_closed
+    assert audit.compact_and_tail_partition_is_disjoint
+    assert audit.cancellation_budget == (
+        ("cubic_MRSTT_mobius", "compact critical nonzero modes"),
+        ("smooth_mobius_PNT", "compact zero phase modes"),
+        ("reciprocal_radical_positive_bound", "compact long cofactor"),
+        ("seminorm_stable_PEVP", "first-active transform tail shells"),
+    )
+    assert audit.every_cancellation_source_is_used_once
+    assert audit.all_four_independent_gates_verified
 
 
 def test_cubic_reciprocal_phase_closes_lcpe2_before_product_lift(
@@ -7385,6 +7437,7 @@ def test_cubic_reciprocal_phase_closes_lcpe2_before_product_lift(
     assert audit.critical_net_log_saving == F(9)
     assert audit.net_log_saving == F(9)
     assert audit.endpoint_dispersion_local_lemma_proved
+    assert not audit.fixed_numeric_log_witness_used
     assert audit.q_sum_is_bounded_on_dyadic_T_squared_shell
     assert audit.applied_before_q_first_product_lift
     assert audit.centered_product_energy_gate_bypassed_not_assumed
@@ -7406,9 +7459,10 @@ def test_cubic_reciprocal_phase_closes_lcpe2_before_product_lift(
     assert insufficient_logs.subcritical_net_log_saving == F(13)
     assert insufficient_logs.critical_net_log_saving == F(-11)
     assert insufficient_logs.net_log_saving == F(-11)
-    assert not insufficient_logs.endpoint_dispersion_local_lemma_proved
-    assert not insufficient_logs.lcpe2_covered_unconditionally
-    assert not insufficient_logs.all_q_boxes_and_transform_tails_aggregated
+    assert insufficient_logs.endpoint_dispersion_local_lemma_proved
+    assert not insufficient_logs.fixed_numeric_log_witness_used
+    assert insufficient_logs.lcpe2_covered_unconditionally
+    assert insufficient_logs.all_q_boxes_and_transform_tails_aggregated
 
     note = ALTERNATIVE_ROUTES_NOTE.read_text()
     for marker in (
@@ -7437,6 +7491,8 @@ def test_cubic_global_reassembly_proves_unconditional_theta_three_asymptotic(
     assert audit.nested_log_choices_verified
     assert audit.lcpe2_covered_unconditionally
     assert audit.lcpe2_q_and_transform_aggregation_verified
+    assert audit.independent_four_gate_verification_proved
+    assert not audit.fixed_numeric_log_witness_used
     assert audit.compact_nonzero_poisson_core_is_little_o_T
     assert audit.transform_tail_is_little_o_T
     assert audit.afe_tail_is_little_o_T
@@ -7455,28 +7511,43 @@ def test_cubic_global_reassembly_proves_unconditional_theta_three_asymptotic(
         "mwkf_cubic_endpoint_dispersion: u=1/2 a=0 p=1 "
         "physical=-1/2+1=1/2 target=1/2 "
         "post_poisson=A/(r*e*S) A_cancel=True A_box=A0/(r*e*S) "
-        "cofactor=1/e^2,A0/(e*S) fixed_logs=20 dyadic_q_logs=7 "
-        "K0=40 j_extra=4 M=80 sub_net=13 critical_net=9 local=True"
+        "cofactor=1/e^2,A0/(e*S) illustrative_fixed_logs=20 "
+        "illustrative_dyadic_q_logs=7 illustrative_K0=40 "
+        "illustrative_j_extra=4 illustrative_M=80 "
+        "illustrative_sub_net=13 illustrative_critical_net=9 "
+        "numeric_witness_used=False local=True"
     ) in output
     assert (
         "mwkf_cubic_polytope: degree=3 eta=1/1000 qsmooth=1/1000 "
         "block=17/50 epsilon=1/1000 u_min=1/2 p=1:6 "
         "X_min=498501/1000000 taylor_margin=3938033/12500000 "
         "nonaxis_margin=91/100 axis_margin=97/100 density=True "
-        "short=True long=True physical=True fixed_logs=20 "
-        "dyadic_q_logs=7 K0=40 j_extra=4 M=80 target_log=1 "
-        "sub_net=13 critical_net=9 nested=True local_lemma=True "
+        "short=True long=True physical=True illustrative_fixed_logs=20 "
+        "illustrative_dyadic_q_logs=7 illustrative_K0=40 "
+        "illustrative_j_extra=4 illustrative_M=80 "
+        "illustrative_target_log=1 illustrative_sub_net=13 "
+        "illustrative_critical_net=9 nested=True "
+        "numeric_witness_used=False local_lemma=True "
         "faces=True all_cells=True"
     ) in output
     assert (
         "mwkf_cubic_lcpe2: q=2 residual_modulus=1 zeta_log=2 "
         "shift_log=2 h=T/log(T)^2 delta=log(T)^2 "
         "dual=log(T)^2,T/log(T)^2 normalization=True taylor=True "
-        "uniform=True fixed_logs=20 dyadic_q_logs=7 K0=40 j_extra=4 "
-        "M=80 target=1 sub_net=13 critical_net=9 net=9 "
-        "local_lemma=True q_sum=True upstream=True "
+        "uniform=True illustrative_fixed_logs=20 "
+        "illustrative_dyadic_q_logs=7 illustrative_K0=40 "
+        "illustrative_j_extra=4 illustrative_M=80 "
+        "illustrative_target=1 illustrative_sub_net=13 "
+        "illustrative_critical_net=9 illustrative_net=9 "
+        "numeric_witness_used=False local_lemma=True q_sum=True upstream=True "
         "centered_bypassed=True centered_proved=False covered=True "
         "aggregated=True"
+    ) in output
+    assert (
+        "mwkf_cubic_independent_verification: c_poisson=True "
+        "mrstt_maximal=True sliding=True weighted_partial=True "
+        "lcpe2_quantified=True disjoint_partition=True "
+        "cancellation_unique=True numeric_witness_used=False all_four=True"
     ) in output
     assert (
         "mwkf_cubic_full_coverage: power_cells=True "

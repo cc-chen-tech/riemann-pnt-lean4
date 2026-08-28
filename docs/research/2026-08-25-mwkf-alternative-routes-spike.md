@@ -21048,19 +21048,31 @@ coordinates.
    \tag{4.845dc_14xq_35w31e}
   \]
 
-* If \(A\geq D L_T^{-K_0}\), use (4.845dc_14xq_35w31d).  Fourier
-  decay restricts
+* If \(A\geq D L_T^{-K_0}\), use (4.845dc_14xq_35w31d).  Fix a
+  Fourier integration order \(J>2\), let \(C_J\) be the corresponding
+  physical-kernel seminorm exponent, and then choose a mode-cutoff
+  exponent \(K_{\rm mode}\).  Fourier decay restricts the retained
+  modes to
 
   \[
-   |j|\ll\left(1+\frac DA\right)L_T^{C_W}
-   \ll L_T^{K_0+C_W};
+   |j|\leq\left(1+\frac DA\right)L_T^{K_{\rm mode}}
+   \ll L_T^{K_0+K_{\rm mode}};
    \tag{4.845dc_14xq_35w31f}
   \]
 
-  its complement is \(O(T^{-100})\) after choosing a fixed number of
-  integrations by parts.  Thus taking absolute values over \(j\) now
-  costs only a polylogarithm.  This is why (4.845dc_14xq_35w31d) must
-  not be used in the first range.
+  and the discarded modes contribute, before the remaining declared
+  logarithmic losses,
+
+  \[
+   \ll L_T^{C_J+K_0-K_{\rm mode}(J-1)}.
+  \]
+
+  Thus a fixed number of integrations by parts gives an arbitrarily
+  prescribed *logarithmic* tail after \(K_{\rm mode}\) is chosen; it
+  does not by itself give \(O(T^{-100})\) at a polylogarithmic cutoff.
+  Taking absolute values over the retained \(j\)'s costs only the
+  displayed polylogarithm.  This is why (4.845dc_14xq_35w31d) must not
+  be used in the first range.
 
 The required estimate for a retained nonzero \(jkl\) is a reciprocal
 phase Möbius sum.  Put
@@ -21072,8 +21084,8 @@ phase Möbius sum.  Put
 Since \(A\leq S=eD\), (4.845dc_14xq_35w31f) gives
 
 \[
- |B|\ll \frac{eDP}{r}L_T^{K_0+C_W}
-       =eXP L_T^{K_0+C_W}.
+ |B|\ll \frac{eDP}{r}L_T^{K_0+K_{\rm mode}}
+       =eXP L_T^{K_0+K_{\rm mode}}.
  \tag{4.845dc_14xq_35w31g}
 \]
 
@@ -21088,8 +21100,8 @@ Consequently
 \[
  \boxed{
  \frac{|B|}{X^2}
- \ll T^{1/8+2-207/80}L_T^{K_0+C_W}
- =T^{-37/80}L_T^{K_0+C_W}.}
+ \ll T^{1/8+2-207/80}L_T^{K_0+K_{\rm mode}}
+ =T^{-37/80}L_T^{K_0+K_{\rm mode}}.}
  \tag{4.845dc_14xq_35w31h}
 \]
 
@@ -21113,7 +21125,7 @@ exceptional set.  Set \(Y=X^{2/3}\).  On every interval
 \[
  \sup_{x<n\leq x+Y}|B/n-P_x(n)|
  \ll \frac{|B|Y^3}{X^4}=\frac{|B|}{X^2}
- \ll T^{-37/80}L_T^{K_0+C_W}.
+ \ll T^{-37/80}L_T^{K_0+K_{\rm mode}}.
  \tag{4.845dc_14xq_35w31j}
 \]
 
@@ -21152,7 +21164,7 @@ The good \(x\)'s contribute \(O(XL_T^{-M})\).  On \(\mathcal E\),
 the trivial bound \(Y\), divided by the outer \(Y\), contributes
 \(O(XL_T^{-M})\).  The edges contribute
 \(O(X^{2/3})\), and the Taylor error in (4.845dc_14xq_35w31j)
-contributes \(O(XT^{-37/80}L_T^{K_0+C_W})\).  Both are smaller than
+contributes \(O(XT^{-37/80}L_T^{K_0+K_{\rm mode}})\).  Both are smaller than
 \(XL_T^{-M}\) for every fixed \(M\).  This proves
 (4.845dc_14xq_35w31i).  Notice that the sliding identity is essential:
 the exceptional-measure estimate alone gives no information about one
@@ -21889,9 +21901,44 @@ the reduced Möbius exponent and the exact Taylor margin are
 \]
 
 The MRSTT lower and upper margins remain \(17/3000\) and \(659/1000\).
-Its supremum is uniform in all coefficients of the cubic Taylor
-polynomial, so the sliding identity and exceptional-measure transfer
-used in (4.845dc_14xq_35w31l) apply verbatim.
+More precisely, Theorem 1.1(i) of MRSTT says that for every fixed
+\(B>0\), outside a measurable set
+
+\[
+ |\mathcal E_B|\ll_{B,d,\varepsilon}X(\log X)^{-B},
+\]
+
+one has, simultaneously for every real polynomial \(Q_x\) of fixed
+degree at most three and every arithmetic progression
+\(\mathcal P\subset(x,x+Y]\cap\mathbb Z\),
+
+\[
+ \left|\sum_{n\in\mathcal P}\mu(n)e(Q_x(n))\right|
+ \ll_B Y(\log X)^{-B},
+ \qquad X^{1/3+\varepsilon}\leq Y\leq X^{1-\varepsilon}.
+\tag{4.845dc_14xq_35w31n27a}
+\]
+
+The fixed torus, its complexity and the Lipschitz norm of \(e(z)\)
+are independent of the polynomial coefficients.  On the interior
+\(I^\circ=I\cap[X+Y,2X-Y]\), the continuous sliding formula is exact:
+
+\[
+ \boxed{
+ \sum_{n\in I^\circ}u_n
+ =\frac1Y\int_X^{2X-Y}
+   \sum_{x<n\leq x+Y}u_n\mathbf1_{I^\circ}(n)\,dx.}
+\tag{4.845dc_14xq_35w31n27b}
+\]
+
+Good starts in (4.845dc_14xq_35w31n27b) contribute
+\(O_B(X(\log X)^{-B})\); bad starts contribute the same after the
+trivial \(O(Y)\) bound and division by \(Y\).  The two removed edge
+intervals cost \(O(Y)\), which is power-smaller than \(X\).  The
+maximal-progression norm in (4.845dc_14xq_35w31n27a) then permits
+partial summation against every retained smooth physical amplitude.
+This verifies the sliding and weighted-transfer quantifiers rather
+than merely invoking an exceptional-set statement on a fixed grid.
 
 The long-cofactor bounds are also uniform.  With reciprocal-radical
 moment abscissa \(\varepsilon_0=1/100\), the nonaxis saving is at least
@@ -21920,8 +21967,72 @@ with the physical weights and the order of summation fixed.  Put
 \tag{4.845dc_14xq_35w31n29a}
 \]
 
-Before inserting the original outer coefficient \(A^{-1}\), Poisson
-summation in the complementary divisor gives the exact finite identity
+For one fixed dyadic and separated QCT tensor, the short-cofactor
+piece is embedded in the full outer sum as
+
+\[
+ \boxed{
+ \mathcal O^{\mathrm{short}}_{q,\Box}
+ =\frac{HL}{S}
+ \sum_{A\asymp A_0}\frac{\alpha_q(A)}A
+ \sum_{k,l}\sum_{e\leq T^\eta}
+ \mu^2(e)\mathbf 1_{(e,A)=1}
+ \sum_{\substack{r\leq D^{\rho_Q}\\
+                  r\;Ae\text{-smooth}}}
+ \Omega_{q,\Box}(A,e,r,k,l)\,
+ \mathcal C_{A,e,r,k,l}.}
+\tag{4.845dc_14xq_35w31n29a1}
+\]
+
+Here \(\alpha_q(A)\) is the signed divisor-allocation coefficient from
+the exact MMKLS regrouping; it is not replaced by its absolute value.
+The factor \(\Omega_{q,\Box}\) is exactly the product of the dyadic
+cutoffs in \(A,e,r,k,l\), the two mollifier tapers
+\(p_N(qr_{\rm entry})p_N(qs_{\rm entry})\), the retained gcd and
+coprimality indicators other than the two displayed in
+(4.845dc_14xq_35w31n29a1), and the fixed Fourier--Mellin allocation
+weight.  The remaining two physical coordinates form \(\Phi\), and
+
+\[
+ \mathcal C_{A,e,r,k,l}
+ :=\frac1{e^2}\sum_n\frac{\mu(n)}{rn}
+ W\!\left(\frac{rne}{S}\right)
+ \sum_{c\in\mathbb Z}
+ \Phi\!\left(\frac nX,\frac{rnc-Akl}{A}\right).
+\tag{4.845dc_14xq_35w31n29a2}
+\]
+
+Thus every outer coefficient, coprimality condition, taper, dyadic
+cutoff and physical kernel is present before the transformation.
+All sums are finite after the already proved Fourier truncation.
+
+With
+
+\[
+ \widehat\Phi_2(x,\xi)
+ =\int_{\mathbb R}\Phi(x,y)e(-y\xi)\,dy,
+\]
+
+the change of variables
+
+\[
+ y=\frac{rnc-Akl}{A},\qquad
+ dc=\frac{A}{rn}\,dy
+\]
+
+gives, for each fixed \(n\),
+
+\[
+ \int_{\mathbb R}
+ \Phi\!\left(\frac nX,\frac{rnc-Akl}{A}\right)e(-jc)\,dc
+ =\frac{A}{rn}
+ \widehat\Phi_2\!\left(\frac nX,\frac{jA}{rn}\right)
+ e\!\left(-\frac{jAkl}{rn}\right).
+\tag{4.845dc_14xq_35w31n29a3}
+\]
+
+Poisson summation in \(c\), before inserting the outer coefficient
+\(A^{-1}\), therefore gives the exact finite identity
 
 \[
  \boxed{
@@ -21933,7 +22044,7 @@ summation in the complementary divisor gives the exact finite identity
 \tag{4.845dc_14xq_35w31n29b}
 \]
 
-Thus the phase sign is negative, and none of
+Thus the Jacobian is \(A/(rn)\), the phase sign is negative, and none of
 \(W(rne/S)\), \(n^{-2}\),
 \(\widehat\Phi_2(n/X,jA/(rn))\), the two mollifier tapers
 \(p_N(qr_{\rm entry})p_N(qs_{\rm entry})\), or the dyadic cutoffs in
@@ -21977,32 +22088,57 @@ an identity, not an exponent inequality:
 \tag{4.845dc_14xq_35w31n29f}
 \]
 
-For a fully numerical logarithmic witness, charge
-\(C_W=20\) for all fixed physical-weight seminorms and
-\(C_{\rm agg}=7\) for the six dyadic sums and harmonic \(q\)-sum.
-Choose the subcritical cutoff \(K_0=40\), charge \(C_j=4\) for the
-critical Poisson modes, and then request the MRSTT saving \(M=80\).
-The two disjoint entry ranges retain respectively
+The logarithmic ledger is quantified; it does not depend on invented
+universal numerical seminorm exponents.  Fix the desired final saving
+\(B_{\rm fin}>0\).  For one Fourier decay order \(J>2\), let
+\(C_J,C_{\rm amp},C_{\rm sub},C_{\rm tail}\) be the finite exponents
+supplied by the already proved physical-kernel seminorm bounds, and
+let \(C_{\rm agg}\) be the fixed dyadic and harmonic-
+\(q\) aggregation loss.  Make the choices in the following order:
 
 \[
- K_0-C_W-C_{\rm agg}=13,
- \qquad
- M-K_0-C_j-C_W-C_{\rm agg}=9,
+ \boxed{
+ \begin{aligned}
+ K_0&>C_{\rm sub}+C_{\rm agg}+B_{\rm fin},\\
+ K_{\rm mode}(J-1)
+   &>C_J+K_0+C_{\rm tail}+C_{\rm agg}+B_{\rm fin},\\
+ M&>K_0+K_{\rm mode}+C_{\rm amp}
+        +C_{\rm agg}+B_{\rm fin}.
+ \end{aligned}}
 \tag{4.845dc_14xq_35w31n29g}
 \]
 
-both strictly larger than the target logarithmic saving \(1\).  This
-nested choice is essential: requesting only \(M=60\) would leave the
-critical exponent \(-11\), and the executable audit rejects the box.
-All constants are therefore fixed uniformly over the compact rational
-admissibility polytope.
+The subcritical range is then
+\(O(T^uL_T^{-B_{\rm fin}})\).  In the critical range retain
+
+\[
+ |j|\leq(1+D/A)L_T^{K_{\rm mode}}
+       \ll L_T^{K_0+K_{\rm mode}}.
+\]
+
+After \(J\) integrations by parts, the omitted-mode contribution is
+
+\[
+ \ll L_T^{C_J+K_0-K_{\rm mode}(J-1)};
+\tag{4.845dc_14xq_35w31n29g1}
+\]
+
+including \(C_{\rm tail}+C_{\rm agg}\) leaves the requested saving.
+The retained modes cost
+\(K_0+K_{\rm mode}+C_{\rm amp}+C_{\rm agg}\), which the last line of
+(4.845dc_14xq_35w31n29g) absorbs using the arbitrary MRSTT logarithmic
+saving.  The formerly displayed values \(20,4,40,80\) are retained in
+the executable report only as a regression example: fixed numerical
+values are illustrative only and are not proof inputs.
 
 Consequently the local endpoint lemma and the cubic reciprocal-phase
 argument cover every
 power-scale face and interior cell, not merely all vertices.  The
-interfaces cubic_reciprocal_endpoint_dispersion_audit and
-cubic_reciprocal_full_polytope_audit record the exact physical ledger,
-the two net logarithmic savings \(13\) and \(9\),
+interfaces cubic_reciprocal_endpoint_dispersion_audit,
+cubic_reciprocal_full_polytope_audit and
+independent_cubic_closure_verification_audit record the exact physical
+ledger and the quantified choice order in
+(4.845dc_14xq_35w31n29g),
 endpoint_dispersion_local_lemma_proved=True,
 all_power_scale_faces_and_interiors_covered=True and
 all_dyadic_parameter_cells_enumerated=True.
@@ -22055,16 +22191,18 @@ is a fixed power of \(\log T\).  The cubic Taylor error retains the
 fixed power margin (4.845dc_14xq_35w31n27), and the local lemma
 (4.845dc_14xq_35w31n29a)--(4.845dc_14xq_35w31n29g) applies without
 changing any physical weight.  The logarithmic choices must remain
-nested.  The fixed weight/seminorm charge is \(C_W=20\); the six dyadic
-sums and harmonic \(q\)-sum cost \(C_{\rm agg}=7\); first choose
-\(K_0=40\), then charge \(C_j=4\) for the critical \(c\)-Poisson modes,
-and finally request \(M=80\) from MRSTT.  Hence
+nested.  For every prescribed \(B_{\rm fin}>0\), first record the
+finite LCPE2 physical seminorm exponents
+\(C_J,C_{\rm amp},C_{\rm sub},C_{\rm tail},C_{\rm agg}\), and then
+choose \(K_0,K_{\rm mode},M\) in exactly the order and with exactly the
+three strict inequalities in (4.845dc_14xq_35w31n29g).  Consequently
 
 \[
  \boxed{
- B_{\rm sub}=40-20-7=13,
+ B_{\rm sub}=K_0-C_{\rm sub}-C_{\rm agg}>B_{\rm fin},
  \qquad
- B_{\rm crit}=80-40-4-20-7=9>1.}
+ B_{\rm crit}=M-K_0-K_{\rm mode}-C_{\rm amp}-C_{\rm agg}
+ >B_{\rm fin}.}
 \tag{4.845dc_14xq_35w31n32a}
 \]
 
@@ -22085,8 +22223,8 @@ endpoint_dispersion_local_lemma_proved=True,
 centered_product_energy_gate_bypassed_not_assumed=True,
 centered_product_energy_estimate_proved=False, and
 lcpe2_covered_unconditionally=True.  It also records the bounded
-dyadic \(q\)-sum, the two explicit net savings \(13\) and \(9\), and
-the full transform-tail log ledger.  This removes
+dyadic \(q\)-sum, the quantified retained-mode and discarded-mode
+ledgers, and `fixed_numeric_log_witness_used=False`.  This removes
 the last logarithmic endpoint left outside the full power-polytope
 coverage.  The next step is the final upstream reassembly audit; no
 asymptotic is asserted in this subsection alone.
@@ -22128,8 +22266,21 @@ six dyadic sums and harmonic \(q\)-sum give
 The existing shell audit separately gives \(o_W(T)\) for the AFE
 product tail, time-nonstationary tail, Poisson-frequency tail and QCT
 Fourier--Mellin tail.  The archimedean correction is
-\(O_{A,W}(T^{-A})\) for every fixed \(A\).  These pieces are disjoint
-from the compact core, so no cancellation is spent twice.  Hence
+\(O_{A,W}(T^{-A})\) for every fixed \(A\).  To make disjointness
+literal, order the transform parameters once and assign every
+noncompact tuple to the shell of its first active tail parameter.
+The complement is the compact near shell.  The cancellation budget is
+
+| disjoint summand | cancellation input used there |
+|---|---|
+| compact critical, nonzero \(c\)-Poisson modes | cubic MRSTT Möbius discorrelation |
+| compact zero-phase modes \(jkl=0\) | smooth Möbius PNT |
+| compact long-cofactor main | positive reciprocal-radical bound |
+| first-active transform-tail shells | seminorm-stable PEVP |
+
+No row overlaps another and every named input occurs in one row only;
+in particular no saving used in the compact cubic estimate is spent
+again on a transform tail.  Hence
 
 \[
  \boxed{\mathcal R_{T^3,T}=o_W(T).}
@@ -22152,7 +22303,13 @@ gates, all dyadic cells enumerated, and the single proof status
 unconditional asymptotic proved.  The centered product-energy
 inequality (4.239) remains unproved because it is a stronger positive
 majorant which the signed cubic route bypasses; it is no longer an
-input to (4.845dc_14xq_35w31n37).
+input to (4.845dc_14xq_35w31n37).  The adapter
+independent_cubic_closure_verification_audit separately records the
+exact \(c\)-Poisson Jacobian and phase, the MRSTT maximal and sliding
+quantifiers, the quantified LCPE2 ledger, and the one-use cancellation
+budget.  This is a complete internal proof candidate; external expert
+validation is still pending and is not replaced by the executable
+audit.
 
 ### 4.109zjaced0 Four witnesses do not cover the parameter polytope
 

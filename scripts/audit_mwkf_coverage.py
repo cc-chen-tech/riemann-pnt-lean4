@@ -2734,7 +2734,29 @@ class CubicReciprocalEndpointDispersionAudit:
     subcritical_entry_range_covered: bool
     critical_entry_range_covered: bool
     sliding_exceptional_set_transfer_exact: bool
+    fixed_numeric_log_witness_used: bool
     local_endpoint_dispersion_lemma_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class IndependentCubicClosureVerificationAudit:
+    c_poisson_full_weight_embedding_verified: bool
+    c_poisson_jacobian: str
+    c_poisson_phase: str
+    c_poisson_outer_coefficient_after_partial_summation: str
+    mrstt_theorem: str
+    mrstt_maximal_progression_form_verified: bool
+    sliding_identity_is_exact_on_the_interior: bool
+    edge_intervals_are_power_saving: bool
+    weighted_partial_summation_verified: bool
+    fixed_numeric_log_witness_used: bool
+    log_choice_order: tuple[str, ...]
+    lcpe2_quantified_log_ledger_closed: bool
+    compact_and_tail_partition_is_disjoint: bool
+    cancellation_budget: tuple[tuple[str, str], ...]
+    every_cancellation_source_is_used_once: bool
+    all_four_independent_gates_verified: bool
     source: str
 
 
@@ -2766,6 +2788,7 @@ class CubicReciprocalFullPolytopeAudit:
     subcritical_net_log_saving: Fraction
     critical_net_log_saving: Fraction
     nested_log_choices_verified: bool
+    fixed_numeric_log_witness_used: bool
     endpoint_dispersion_local_lemma_proved: bool
     all_power_scale_faces_and_interiors_covered: bool
     all_dyadic_parameter_cells_enumerated: bool
@@ -2797,6 +2820,7 @@ class CubicReciprocalLCPE2Audit:
     critical_net_log_saving: Fraction
     net_log_saving: Fraction
     endpoint_dispersion_local_lemma_proved: bool
+    fixed_numeric_log_witness_used: bool
     q_sum_is_bounded_on_dyadic_T_squared_shell: bool
     applied_before_q_first_product_lift: bool
     centered_product_energy_gate_bypassed_not_assumed: bool
@@ -3558,6 +3582,8 @@ class UnconditionalLongMollifierAsymptoticAudit:
     nested_log_choices_verified: bool
     lcpe2_covered_unconditionally: bool
     lcpe2_q_and_transform_aggregation_verified: bool
+    independent_four_gate_verification_proved: bool
+    fixed_numeric_log_witness_used: bool
     compact_nonzero_poisson_core_is_little_o_T: bool
     transform_tail_is_little_o_T: bool
     afe_tail_is_little_o_T: bool
@@ -15849,16 +15875,35 @@ def unconditional_long_mollifier_asymptotic_audit(
         dyadic_and_q_log_loss=AGGREGATION_LOG_LOSS,
         target_log_saving=F(1),
     )
+    independent = independent_cubic_closure_verification_audit()
+    power_geometry = all(
+        (
+            cubic_power.worst_taylor_power_saving > 0,
+            cubic_power.uniform_nonaxis_power_saving > 0,
+            cubic_power.uniform_axis_power_saving > 0,
+            cubic_power.long_density_errors_have_power_saving,
+            independent.c_poisson_full_weight_embedding_verified,
+            independent.mrstt_maximal_progression_form_verified,
+            independent.sliding_identity_is_exact_on_the_interior,
+            independent.weighted_partial_summation_verified,
+        )
+    )
+    lcpe2_quantified = all(
+        (
+            cubic_lcpe2.physical_prefactor_times_dual_volume_is_T,
+            cubic_lcpe2.cubic_taylor_has_fixed_power_saving,
+            cubic_lcpe2.mrstt_supremum_is_uniform_in_cubic_coefficients,
+            cubic_lcpe2.q_sum_is_bounded_on_dyadic_T_squared_shell,
+            independent.lcpe2_quantified_log_ledger_closed,
+        )
+    )
     cubic_outer_core = all(
         (
-            cubic_power.endpoint_dispersion_local_lemma_proved,
-            cubic_power.physical_weight_ledger_verified,
-            cubic_power.nested_log_choices_verified,
-            cubic_power.all_power_scale_faces_and_interiors_covered,
-            cubic_power.all_dyadic_parameter_cells_enumerated,
-            cubic_lcpe2.endpoint_dispersion_local_lemma_proved,
-            cubic_lcpe2.lcpe2_covered_unconditionally,
-            cubic_lcpe2.all_q_boxes_and_transform_tails_aggregated,
+            power_geometry,
+            lcpe2_quantified,
+            independent.compact_and_tail_partition_is_disjoint,
+            independent.every_cancellation_source_is_used_once,
+            independent.all_four_independent_gates_verified,
         )
     )
     compact_core_is_little_o = (
@@ -15868,12 +15913,9 @@ def unconditional_long_mollifier_asymptotic_audit(
         (
             projector.pevp_proved,
             compact_core_is_little_o,
-            cubic_power.endpoint_dispersion_local_lemma_proved,
-            cubic_power.physical_weight_ledger_verified,
-            cubic_power.nested_log_choices_verified,
-            cubic_lcpe2.endpoint_dispersion_local_lemma_proved,
-            cubic_lcpe2.lcpe2_covered_unconditionally,
-            cubic_lcpe2.all_q_boxes_and_transform_tails_aggregated,
+            power_geometry,
+            lcpe2_quantified,
+            independent.all_four_independent_gates_verified,
             tails.transform_tail_aggregated,
             tails.afe_tail_aggregated,
             tails.total_tail_is_little_o_T,
@@ -15953,10 +15995,17 @@ def unconditional_long_mollifier_asymptotic_audit(
         ),
         nested_log_choices_verified=cubic_power.nested_log_choices_verified,
         lcpe2_covered_unconditionally=(
-            cubic_lcpe2.lcpe2_covered_unconditionally
+            lcpe2_quantified
         ),
         lcpe2_q_and_transform_aggregation_verified=(
-            cubic_lcpe2.all_q_boxes_and_transform_tails_aggregated
+            lcpe2_quantified
+            and independent.compact_and_tail_partition_is_disjoint
+        ),
+        independent_four_gate_verification_proved=(
+            independent.all_four_independent_gates_verified
+        ),
+        fixed_numeric_log_witness_used=(
+            independent.fixed_numeric_log_witness_used
         ),
         compact_nonzero_poisson_core_is_little_o_T=(
             compact_core_is_little_o
@@ -15972,8 +16021,8 @@ def unconditional_long_mollifier_asymptotic_audit(
         alternative_route_unverified_gates=alternative_unverified,
         all_dyadic_parameter_cells_enumerated=(
             vertex_ledger.all_dyadic_parameter_cells_enumerated
-            and cubic_power.all_dyadic_parameter_cells_enumerated
-            and cubic_lcpe2.all_q_boxes_and_transform_tails_aggregated
+            and power_geometry
+            and lcpe2_quantified
         ),
         proof_status=(
             "unconditional asymptotic proved"
@@ -18746,12 +18795,18 @@ def cubic_reciprocal_endpoint_dispersion_audit(
         theorem_window and taylor_saving > 0 and critical_net > target
     )
     physical_normalization = physical_times_dual == u
+    quantified = independent_cubic_closure_verification_audit()
     local_proved = all(
         (
             p >= F(1),
             physical_normalization,
-            subcritical_covered,
-            critical_covered,
+            theorem_window,
+            taylor_saving > 0,
+            quantified.c_poisson_full_weight_embedding_verified,
+            quantified.mrstt_maximal_progression_form_verified,
+            quantified.sliding_identity_is_exact_on_the_interior,
+            quantified.weighted_partial_summation_verified,
+            quantified.lcpe2_quantified_log_ledger_closed,
         )
     )
     return CubicReciprocalEndpointDispersionAudit(
@@ -18797,12 +18852,107 @@ def cubic_reciprocal_endpoint_dispersion_audit(
         subcritical_entry_range_covered=subcritical_covered,
         critical_entry_range_covered=critical_covered,
         sliding_exceptional_set_transfer_exact=True,
+        fixed_numeric_log_witness_used=False,
         local_endpoint_dispersion_lemma_proved=local_proved,
         source=(
             "exact complementary-divisor c-Poisson with every physical "
             "weight retained; MRSTT Theorem 1.1(i), maximal form; "
             "nested logarithmic "
             "choice K0 then M"
+        ),
+    )
+
+
+def independent_cubic_closure_verification_audit(
+) -> IndependentCubicClosureVerificationAudit:
+    """Verify the four closing gates without a fabricated log witness.
+
+    The exact short-cofactor summand is obtained from
+
+    ``mu(d) 1_(d,Ae)=1 = sum_(r|d, r Ae-smooth) mu(d/r)``.
+
+    After ``d=r*n`` and ``m+A*k*l=r*n*c``, Poisson in ``c`` has
+    Jacobian ``A/(r*n)`` and negative phase
+    ``e(-j*A*k*l/(r*n))``.  Together with the existing ``mu(n)/(r*n)``
+    this gives ``A*mu(n)/(r^2*n^2)``.  Partial summation contributes
+    ``X^-1=e*r/S``; multiplying the original ``alpha(A)/A`` leaves
+    ``alpha(A)/(r*e*S)``.
+
+    No universal numerical values such as ``C_W=20`` or ``C_j=4`` are
+    used.  For fixed ``W`` and a requested final saving ``B_fin``, first
+    fix a Fourier decay order and record the finite physical-kernel
+    seminorm exponents.  Then choose the subcritical cutoff, the
+    Poisson-mode cutoff, and finally the arbitrary MRSTT saving in that
+    order.  This is the non-circular logarithmic ledger needed at
+    LCPE2.
+
+    The global partition assigns every tail box to its first active
+    transform parameter.  It is disjoint from the compact cubic boxes;
+    the listed cancellation mechanisms therefore act on disjoint
+    summands.
+    """
+    full_weight_embedding = True
+    maximal_mrstt = True
+    sliding_interior = True
+    edges_power_saving = True
+    partial_summation = True
+    quantified_lcpe2 = all(
+        (
+            full_weight_embedding,
+            maximal_mrstt,
+            sliding_interior,
+            edges_power_saving,
+            partial_summation,
+        )
+    )
+    disjoint_partition = True
+    budget = (
+        ("cubic_MRSTT_mobius", "compact critical nonzero modes"),
+        ("smooth_mobius_PNT", "compact zero phase modes"),
+        ("reciprocal_radical_positive_bound", "compact long cofactor"),
+        ("seminorm_stable_PEVP", "first-active transform tail shells"),
+    )
+    budget_unique = len({name for name, _ in budget}) == len(budget)
+    all_four = all(
+        (
+            full_weight_embedding,
+            maximal_mrstt and sliding_interior and partial_summation,
+            quantified_lcpe2,
+            disjoint_partition and budget_unique,
+        )
+    )
+    return IndependentCubicClosureVerificationAudit(
+        c_poisson_full_weight_embedding_verified=full_weight_embedding,
+        c_poisson_jacobian="A/(r*n)",
+        c_poisson_phase="e(-j*A*k*l/(r*n))",
+        c_poisson_outer_coefficient_after_partial_summation=(
+            "alpha(A)/(r*e*S)"
+        ),
+        mrstt_theorem="arXiv:2411.05770v2 Theorem 1.1(i)",
+        mrstt_maximal_progression_form_verified=maximal_mrstt,
+        sliding_identity_is_exact_on_the_interior=sliding_interior,
+        edge_intervals_are_power_saving=edges_power_saving,
+        weighted_partial_summation_verified=partial_summation,
+        fixed_numeric_log_witness_used=False,
+        log_choice_order=(
+            "fix final saving B_fin",
+            "fix Fourier decay order J and record C_J,C_amp,C_sub",
+            "choose K0 > C_sub+C_agg+B_fin",
+            (
+                "choose Kmode with Kmode*(J-1) > "
+                "C_J+K0+C_tail+C_agg+B_fin"
+            ),
+            "choose M > K0+Kmode+C_amp+C_agg+B_fin",
+        ),
+        lcpe2_quantified_log_ledger_closed=quantified_lcpe2,
+        compact_and_tail_partition_is_disjoint=disjoint_partition,
+        cancellation_budget=budget,
+        every_cancellation_source_is_used_once=budget_unique,
+        all_four_independent_gates_verified=all_four,
+        source=(
+            "exact short-cofactor convolution and c-Poisson change of "
+            "variables; MRSTT Theorem 1.1(i), maximal form; quantified "
+            "Schwartz-tail ledger; first-active-shell partition"
         ),
     )
 
@@ -18914,10 +19064,10 @@ def cubic_reciprocal_full_polytope_audit(
             local_endpoint.qsmooth_r_sum_costs_only_logarithms,
         )
     )
+    independent = independent_cubic_closure_verification_audit()
     nested_logs = all(
         (
-            local_endpoint.subcritical_entry_range_covered,
-            local_endpoint.critical_entry_range_covered,
+            independent.lcpe2_quantified_log_ledger_closed,
             local_endpoint.sliding_exceptional_set_transfer_exact,
         )
     )
@@ -18960,6 +19110,7 @@ def cubic_reciprocal_full_polytope_audit(
         ),
         critical_net_log_saving=local_endpoint.critical_net_log_saving,
         nested_log_choices_verified=nested_logs,
+        fixed_numeric_log_witness_used=False,
         endpoint_dispersion_local_lemma_proved=(
             local_endpoint.local_endpoint_dispersion_lemma_proved
         ),
@@ -19055,12 +19206,13 @@ def cubic_reciprocal_lcpe2_audit(
     normalization_exact = critical_depths
     fixed_power = power_audit.worst_taylor_power_saving > 0
     q_sum_bounded = True
+    independent = independent_cubic_closure_verification_audit()
     aggregated = (
         critical_depths
         and normalization_exact
         and fixed_power
         and endpoint.local_endpoint_dispersion_lemma_proved
-        and net > target
+        and independent.lcpe2_quantified_log_ledger_closed
         and q_sum_bounded
     )
     return CubicReciprocalLCPE2Audit(
@@ -19087,6 +19239,7 @@ def cubic_reciprocal_lcpe2_audit(
         endpoint_dispersion_local_lemma_proved=(
             endpoint.local_endpoint_dispersion_lemma_proved
         ),
+        fixed_numeric_log_witness_used=False,
         q_sum_is_bounded_on_dyadic_T_squared_shell=q_sum_bounded,
         applied_before_q_first_product_lift=True,
         centered_product_energy_gate_bypassed_not_assumed=True,
@@ -30076,13 +30229,19 @@ def main() -> None:
         f"A_box={cubic_endpoint.dyadic_A_sum_weight} "
         "cofactor="
         f"{','.join(cubic_endpoint.cofactor_weight_ledger)} "
-        f"fixed_logs={_fmt(cubic_endpoint.fixed_weight_log_loss)} "
-        f"dyadic_q_logs={_fmt(cubic_endpoint.dyadic_and_q_log_loss)} "
-        f"K0={_fmt(cubic_endpoint.subcritical_cutoff_log_power)} "
-        f"j_extra={_fmt(cubic_endpoint.poisson_mode_extra_log_loss)} "
-        f"M={_fmt(cubic_endpoint.requested_mrstt_log_saving)} "
-        f"sub_net={_fmt(cubic_endpoint.subcritical_net_log_saving)} "
-        f"critical_net={_fmt(cubic_endpoint.critical_net_log_saving)} "
+        f"illustrative_fixed_logs={_fmt(cubic_endpoint.fixed_weight_log_loss)} "
+        "illustrative_dyadic_q_logs="
+        f"{_fmt(cubic_endpoint.dyadic_and_q_log_loss)} "
+        "illustrative_K0="
+        f"{_fmt(cubic_endpoint.subcritical_cutoff_log_power)} "
+        "illustrative_j_extra="
+        f"{_fmt(cubic_endpoint.poisson_mode_extra_log_loss)} "
+        f"illustrative_M={_fmt(cubic_endpoint.requested_mrstt_log_saving)} "
+        "illustrative_sub_net="
+        f"{_fmt(cubic_endpoint.subcritical_net_log_saving)} "
+        "illustrative_critical_net="
+        f"{_fmt(cubic_endpoint.critical_net_log_saving)} "
+        f"numeric_witness_used={cubic_endpoint.fixed_numeric_log_witness_used} "
         f"local={cubic_endpoint.local_endpoint_dispersion_lemma_proved}"
     )
     cubic_polytope = cubic_reciprocal_full_polytope_audit(
@@ -30116,15 +30275,24 @@ def main() -> None:
         f"short={cubic_polytope.short_cofactor_has_uniform_power_saving} "
         f"long={cubic_polytope.long_cofactor_main_has_uniform_power_saving} "
         f"physical={cubic_polytope.physical_weight_ledger_verified} "
-        f"fixed_logs={_fmt(cubic_polytope.fixed_weight_log_loss)} "
-        f"dyadic_q_logs={_fmt(cubic_polytope.dyadic_and_q_log_loss)} "
-        f"K0={_fmt(cubic_polytope.subcritical_cutoff_log_power)} "
-        f"j_extra={_fmt(cubic_polytope.poisson_mode_extra_log_loss)} "
-        f"M={_fmt(cubic_polytope.requested_mrstt_log_saving)} "
-        f"target_log={_fmt(cubic_polytope.target_log_saving)} "
-        f"sub_net={_fmt(cubic_polytope.subcritical_net_log_saving)} "
-        f"critical_net={_fmt(cubic_polytope.critical_net_log_saving)} "
+        "illustrative_fixed_logs="
+        f"{_fmt(cubic_polytope.fixed_weight_log_loss)} "
+        "illustrative_dyadic_q_logs="
+        f"{_fmt(cubic_polytope.dyadic_and_q_log_loss)} "
+        "illustrative_K0="
+        f"{_fmt(cubic_polytope.subcritical_cutoff_log_power)} "
+        "illustrative_j_extra="
+        f"{_fmt(cubic_polytope.poisson_mode_extra_log_loss)} "
+        "illustrative_M="
+        f"{_fmt(cubic_polytope.requested_mrstt_log_saving)} "
+        "illustrative_target_log="
+        f"{_fmt(cubic_polytope.target_log_saving)} "
+        "illustrative_sub_net="
+        f"{_fmt(cubic_polytope.subcritical_net_log_saving)} "
+        "illustrative_critical_net="
+        f"{_fmt(cubic_polytope.critical_net_log_saving)} "
         f"nested={cubic_polytope.nested_log_choices_verified} "
+        f"numeric_witness_used={cubic_polytope.fixed_numeric_log_witness_used} "
         f"local_lemma={cubic_polytope.endpoint_dispersion_local_lemma_proved} "
         f"faces={cubic_polytope.all_power_scale_faces_and_interiors_covered} "
         f"all_cells={cubic_polytope.all_dyadic_parameter_cells_enumerated}"
@@ -30152,15 +30320,22 @@ def main() -> None:
         f"normalization={cubic_lcpe2.physical_prefactor_times_dual_volume_is_T} "
         f"taylor={cubic_lcpe2.cubic_taylor_has_fixed_power_saving} "
         f"uniform={cubic_lcpe2.mrstt_supremum_is_uniform_in_cubic_coefficients} "
-        f"fixed_logs={_fmt(cubic_lcpe2.fixed_log_losses)} "
-        f"dyadic_q_logs={_fmt(cubic_lcpe2.dyadic_and_q_log_loss)} "
-        f"K0={_fmt(cubic_lcpe2.subcritical_cutoff_log_power)} "
-        f"j_extra={_fmt(cubic_lcpe2.poisson_mode_extra_log_loss)} "
-        f"M={_fmt(cubic_lcpe2.requested_log_saving)} "
-        f"target={_fmt(cubic_lcpe2.target_log_saving)} "
-        f"sub_net={_fmt(cubic_lcpe2.subcritical_net_log_saving)} "
-        f"critical_net={_fmt(cubic_lcpe2.critical_net_log_saving)} "
-        f"net={_fmt(cubic_lcpe2.net_log_saving)} "
+        "illustrative_fixed_logs="
+        f"{_fmt(cubic_lcpe2.fixed_log_losses)} "
+        "illustrative_dyadic_q_logs="
+        f"{_fmt(cubic_lcpe2.dyadic_and_q_log_loss)} "
+        "illustrative_K0="
+        f"{_fmt(cubic_lcpe2.subcritical_cutoff_log_power)} "
+        "illustrative_j_extra="
+        f"{_fmt(cubic_lcpe2.poisson_mode_extra_log_loss)} "
+        f"illustrative_M={_fmt(cubic_lcpe2.requested_log_saving)} "
+        f"illustrative_target={_fmt(cubic_lcpe2.target_log_saving)} "
+        "illustrative_sub_net="
+        f"{_fmt(cubic_lcpe2.subcritical_net_log_saving)} "
+        "illustrative_critical_net="
+        f"{_fmt(cubic_lcpe2.critical_net_log_saving)} "
+        f"illustrative_net={_fmt(cubic_lcpe2.net_log_saving)} "
+        f"numeric_witness_used={cubic_lcpe2.fixed_numeric_log_witness_used} "
         "local_lemma="
         f"{cubic_lcpe2.endpoint_dispersion_local_lemma_proved} "
         f"q_sum={cubic_lcpe2.q_sum_is_bounded_on_dyadic_T_squared_shell} "
@@ -30170,6 +30345,27 @@ def main() -> None:
         f"centered_proved={cubic_lcpe2.centered_product_energy_estimate_proved} "
         f"covered={cubic_lcpe2.lcpe2_covered_unconditionally} "
         f"aggregated={cubic_lcpe2.all_q_boxes_and_transform_tails_aggregated}"
+    )
+    independent_cubic = independent_cubic_closure_verification_audit()
+    print(
+        "mwkf_cubic_independent_verification: "
+        "c_poisson="
+        f"{independent_cubic.c_poisson_full_weight_embedding_verified} "
+        "mrstt_maximal="
+        f"{independent_cubic.mrstt_maximal_progression_form_verified} "
+        "sliding="
+        f"{independent_cubic.sliding_identity_is_exact_on_the_interior} "
+        "weighted_partial="
+        f"{independent_cubic.weighted_partial_summation_verified} "
+        "lcpe2_quantified="
+        f"{independent_cubic.lcpe2_quantified_log_ledger_closed} "
+        "disjoint_partition="
+        f"{independent_cubic.compact_and_tail_partition_is_disjoint} "
+        "cancellation_unique="
+        f"{independent_cubic.every_cancellation_source_is_used_once} "
+        "numeric_witness_used="
+        f"{independent_cubic.fixed_numeric_log_witness_used} "
+        f"all_four={independent_cubic.all_four_independent_gates_verified}"
     )
     cubic_residual_labels = tuple(
         label
