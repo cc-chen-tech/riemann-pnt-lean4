@@ -64,6 +64,56 @@ theorem dyadicPrefixIds_subset_tree (K m q : ℕ) :
           exact Or.inr (Or.inr (Or.inr
             (ih (m - 2 ^ K) (2 * q + 1) hp)))
 
+private theorem dyadicPrefixTree_level_le
+    {K q : ℕ} {p : ℕ × ℕ} (hp : p ∈ dyadicPrefixTree K q) :
+    p.1 ≤ K := by
+  induction K generalizing q with
+  | zero =>
+      have hp' : p = (0, q) := by simpa [dyadicPrefixTree] using hp
+      subst p
+      simp
+  | succ K ih =>
+      simp only [dyadicPrefixTree, Finset.mem_insert, Finset.mem_union] at hp
+      rcases hp with rfl | rfl | hp | hp
+      · simp
+      · simp
+      · exact (ih hp).trans (Nat.le_succ K)
+      · exact (ih hp).trans (Nat.le_succ K)
+
+private theorem dyadicPrefixTree_index_lt
+    {K q : ℕ} {p : ℕ × ℕ} (hp : p ∈ dyadicPrefixTree K q) :
+    p.2 < (q + 1) * 2 ^ K := by
+  induction K generalizing q with
+  | zero =>
+      have hp' : p = (0, q) := by simpa [dyadicPrefixTree] using hp
+      subst p
+      simp
+  | succ K ih =>
+      simp only [dyadicPrefixTree, Finset.mem_insert, Finset.mem_union] at hp
+      have hpow : 0 < 2 ^ K := pow_pos (by omega) K
+      rcases hp with rfl | rfl | hp | hp
+      · rw [pow_succ]
+        nlinarith
+      · rw [pow_succ]
+        nlinarith
+      · have h := ih hp
+        rw [pow_succ]
+        nlinarith
+      · have h := ih hp
+        rw [pow_succ]
+        nlinarith
+
+/-- The complete tree in the initial ambient block is contained in the
+rectangular family of levels `0,...,K` and owner indices below `2^K`. -/
+theorem dyadicPrefixTree_subset_product_range (K : ℕ) :
+    dyadicPrefixTree K 0 ⊆
+      (Finset.range (K + 1)).product (Finset.range (2 ^ K)) := by
+  intro p hp
+  exact Finset.mem_product.mpr ⟨
+    Finset.mem_range.mpr (Nat.lt_succ_of_le (dyadicPrefixTree_level_le hp)),
+    Finset.mem_range.mpr (by
+      simpa using (dyadicPrefixTree_index_lt hp))⟩
+
 /-- The binary prefix decomposition uses at most `K+1` blocks. -/
 theorem card_dyadicPrefixIds_le (K m q : ℕ) :
     (dyadicPrefixIds K m q).card ≤ K + 1 := by

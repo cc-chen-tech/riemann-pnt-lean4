@@ -11,8 +11,10 @@ open scoped BigOperators
 #check MathlibAux.dyadicPrefixTree
 #check MathlibAux.dyadicPrefixIds_subset_tree
 #check MathlibAux.normSq_sum_Ico_le_dyadicPrefixTree
+#check MathlibAux.dyadicPrefixTree_subset_product_range
 
 #print axioms MathlibAux.sum_dyadicPrefixBlocks
 #print axioms MathlibAux.normSq_sum_Ico_le_dyadicPrefixBlocks
 #print axioms MathlibAux.dyadicPrefixIds_subset_tree
 #print axioms MathlibAux.normSq_sum_Ico_le_dyadicPrefixTree
+#print axioms MathlibAux.dyadicPrefixTree_subset_product_range
