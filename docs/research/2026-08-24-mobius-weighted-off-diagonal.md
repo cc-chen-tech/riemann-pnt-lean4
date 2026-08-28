@@ -35,7 +35,8 @@
 > | Centering-compatible pre-Cauchy Type split | Section 9.140 applies the boundary-safe two-cutoff identity only to \(\mu(n)\) in the oriented Type entry \(w=np\).  Since the Ramanujan density is independent of \(w\), the small/I/II split commutes exactly with the packet-exhaustive centering (9.932), retaining \(\mu(v)\mu(p)\), \(a=h\delta\), and all packet labels.  One global square contains all nine ordered cross-Type blocks, whose signed sum is exactly the original reduced-frequency projector.  A finite witness has diagonal-block energy \(55\), cross-block contribution \(-30\), and total \(25\), so separate post-square absolute values erase real algebraic cancellation.  The joint nine-block analytic estimate remains unproved |
 > | Oriented principal Möbius fusion | Section 9.141 observes that the canonical principal row has fewer independent signs than the centered row.  With \(d=(|h\delta|,v)\) and \(m=dw\), the unit support gives \((m,v)=d\), so \((d,w)\leftrightarrow m\) is bijective and \(\mu(d)\mu(w)/\varphi(v/d)=\mu(m)/\varphi(v/(m,v))\).  Thus the full principal contribution is one moving-gcd Möbius sum and its exact Type decomposition has three blocks, while only the centered contribution retains the genuine two-Möbius nine-block dispersion.  On the top conductor \(d=1\), however, \(m=w\), so the length-\(T^3\) Type mean remains unproved |
 > | High-conductor centered saving ledger | Section 9.142 recalibrates the remaining primitive-character slice after principal fusion.  On the balanced face its ideal fourth-moment energy is \(T^{10+\gamma}\) against target \(T^{12}\).  Thus \(\gamma\leq2\) is already inside the ideal envelope, while \(2<\gamma\leq3\) needs only the pre-square signed-conductor gain \(T^{-(\gamma-2)/2}=q^{-(\gamma-2)/(2\gamma)}\).  At \(q=T^3\) the missing gain is \(T^{-1/2}=q^{-1/6}\), much weaker than square-root cancellation in the modulus.  No published Gauss-sum/character large sieve located here retains the moving physical coefficient, \(h\delta\), and outer Möbius sign needed to prove this gain |
-> | Primitive centered PV hybrid | Section 9.143 improves that fallback ledger before seeking any signed-conductor theorem.  After fixing the inactive cofactor, apply Pólya--Vinogradov to the longer of the two separated product-label factors and the ordinary varying-character fourth moment to the shorter factor and to the Type polynomial.  The balanced primitive-centered exponent is \(E_{\rm PV}(\gamma)\leq13-\gamma/2\) for \(2\leq\gamma\leq3\); hence the top face is \(T^{23/2+\varepsilon}\), a half-power inside the squared target \(T^{12}\).  Together with the generic envelope for \(\gamma\leq2\), this closes the entire **numerical** primitive-centered polytope.  The physical conclusion is still conditional on a packet-exhaustive Fourier/divisor adapter producing a common Type coefficient across the varying primitive conductors; (9.871) proves only the fixed-row version.  The imprimitive descent, fused principal master, complementary determinant, and full coupled-kernel gate remain unproved |
+> | Primitive centered one-PV hybrid | Section 9.143 is an intermediate exponent improvement: Pólya--Vinogradov on the longer product-label factor and ordinary fourth moments on the shorter factor and Type polynomial give \(E_{\rm PV}(\gamma)\leq13-\gamma/2\) for \(2\leq\gamma\leq3\), hence \(23/2\) at the top.  Section 9.144 supersedes its conditional adapter ledger by applying Pólya--Vinogradov to both centered label factors |
+> | Packet-exhaustive two-PV centered projector | Section 9.144 first partitions every nonprincipal ambient character by primitive conductor \(q_\psi\), retaining the inverse-totient Euler weight of the imprimitive cofactor.  Four-variable Fourier expansion and exact divisor expansion of the three inactive unit masks leave a common Type sequence across \(q_\psi\).  Pólya--Vinogradov on both label factors gives \(M_4(F)\leq T^{6\gamma+4r+\varepsilon}\), while the ordinary Type fourth moment gives exponent \(12\).  If \(v=\gamma+\kappa+r=3\), the centered resonant projector exponent is \(12-2\kappa\leq12\).  Thus all primitive and imprimitive centered resonant character rows are within target for the registered physical core.  The fused principal master and nonzero reduced-determinant dispersion remain unproved, so the coupled-kernel gate and full twisted moment are still open |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -20690,6 +20691,235 @@ separates numerical polytope closure from physical coverage and keeps
 the packet-exhaustive adapter, imprimitive descent, fused principal
 master, full projector, and coupled-kernel flags false.
 
+### 9.144 Two Pólya--Vinogradov bounds close the physical centered projector
+
+The one-PV argument in Section 9.143 still spends a fourth moment on one
+product-label factor.  Exact centering makes that unnecessary.  The
+principal multiplicative character has already been extracted in
+(9.932), so every character remaining in the centered resonant projector
+has nontrivial primitive conductor.  Pólya--Vinogradov may therefore be
+applied to **both** separated label factors.
+
+We first make the primitive-conductor and common-coefficient adapters
+explicit.  Let \(\mathfrak q\) be the ambient reduced modulus in
+(9.918)--(9.921), let \(\chi\pmod {\mathfrak q}\) be nonprincipal, and
+write
+
+\[
+ \operatorname {cond}(\chi)=q_\psi>1,\qquad
+ \mathfrak q=q_\psi k,\qquad(q_\psi,k)=1.
+ \tag{9.953}
+\]
+
+Squarefreeness gives a unique primitive character \(\chi^\ast\pmod
+{q_\psi}\) inducing \(\chi\).  Partitioning the centered Parseval sum
+by this conductor, and using
+\(\varphi(q_\psi k)=\varphi(q_\psi)\varphi(k)\), gives the exact finite
+identity
+
+\[
+ \boxed{
+ \sum_{\mathfrak q}\mathcal E_{\mathfrak q}^{\rm mult\text{-}cent}
+ =\sum_{q_\psi>1}\frac1{\varphi(q_\psi)}
+   \sum_{\chi^\ast\bmod q_\psi}^{\rm primitive}
+   \sum_{\substack{k\ {\rm squarefree}\\(k,q_\psi)=1}}
+   \frac{|\widehat F_{q_\psi k}(\chi^\ast)|^2
+         |\widehat G_{q_\psi k}(\overline{\chi^\ast})|^2}
+        {\varphi(k)}.}
+ \tag{9.954}
+\]
+
+The ranges and all dyadic packet labels in (9.954) are finite and remain
+inside the two transforms.  In particular, (9.954) does not replace an
+imprimitive character by an unrestricted primitive one: the unit masks
+at \(k\) are still present, with the inverse-totient weight shown.  More
+explicitly, every transform on the right is the zero-extended transform
+\[
+ \widehat F_{q_\psi k}(\chi^\ast)
+ =\sum_n F_{q_\psi k}(n)\chi^\ast(n)
+       {\bf1}_{(n,k)=1},
+\]
+and similarly for \(G\).  Thus both the transforms and the identity
+\(1/\varphi(q_\psi k)
+=1/(\varphi(q_\psi)\varphi(k))\) hold row by row; no conductor
+majorization is used.
+
+Now write the oriented modulus as
+
+\[
+ v=q_\psi k d,\qquad d=(|h\delta|,v),\qquad
+ d=d_1d_2,\quad h=d_1h_1,\quad\delta=d_2\delta_1.
+ \tag{9.955}
+\]
+
+The exact conditions are those in (9.916).  For a fixed dyadic physical
+packet, the four-variable Fourier expansion (9.587)--(9.588), including
+the swapped reciprocity factor controlled in (9.902), gives
+
+\[
+ \boxed{
+ \widetilde C_\omega(q_\psi kd,w,d_1h_1,d_2\delta_1)
+ =\sum_\nu c_\nu
+   A_\nu(q_\psi kd)B_\nu(w)
+   f_\nu(d_1h_1)g_\nu(d_2\delta_1),}
+ \tag{9.956}
+\]
+
+with the variation-weighted projective norm \(T^\varepsilon\).  The
+Selberg tapers and smooth dyadic cutoffs are functions of one displayed
+coordinate and remain in the corresponding factor.  There is no
+endpoint remainder.
+
+The remaining inactive unit masks factor exactly as
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\mathbf1_{(h_1,kd_2)=1}
+  \mathbf1_{(\delta_1,k)=1}
+  \mathbf1_{(w,kd_1d_2)=1}\\
+ &\quad=
+ \left(\sum_{\ell_h\mid(h_1,kd_2)}\mu(\ell_h)\right)
+ \left(\sum_{\ell_\delta\mid(\delta_1,k)}\mu(\ell_\delta)\right)
+ \left(\sum_{\ell_w\mid(w,kd_1d_2)}\mu(\ell_w)\right).
+ \end{aligned}}
+ \tag{9.957}
+\]
+
+The \(q_\psi\)-unit condition is supplied by the zero extension of
+\(\chi^\ast\).  Notice that \(\delta_1\) need not be coprime to \(d\),
+and \(h_1\) need only be coprime to \(d_2\).  These are precisely the
+conditions in (9.916); imposing \((h_1\delta_1w,kd)=1\) would incorrectly
+delete valid rows.  Once \(d,d_1,d_2,k\) and the three divisors in
+(9.957) are fixed, the two label sums are bounded-variation progression
+sums, while the Type coefficient is
+
+\[
+ \mu(w)B_\nu(w)\mathbf1_{\ell_w\mid w},
+\]
+
+which is independent of the varying \(q_\psi\).  The modulus factor
+\(A_\nu(q_\psi kd)\) is a bounded scalar and is harmless in the positive
+character moment.  The finitely many signs of \(h\) and \(\delta\) are
+separate progression sectors; replacing a positive label by its negative
+only contributes \(\chi^\ast(-1)\), so the same PV bound applies.  The
+divisor atoms over \(k\) cost only
+
+\[
+ \sum_{k\leq K}\frac{C^{\omega(k)}}{\varphi(k)}
+ \leq\prod_{p\leq K}\left(1+\frac C{p-1}\right)
+ \ll_C(\log(2K))^C.
+ \tag{9.958}
+\]
+
+Thus (9.956)--(9.958) prove the packet-exhaustive common-
+\(q_\psi\) coefficient adapter which was left open after (9.952).
+The genuine gcd cofactor \(d\), unlike \(k\), has no inverse-totient
+weight.  It must not be folded into one fictitious common Type
+polynomial.  Instead fix
+\[
+ (d,d_1,d_2,\ell_h,\ell_\delta,\ell_w)
+\]
+first, apply the character estimate to that atom, and only then use
+Minkowski on the resulting \(L^2\) energy norms.  There are
+\(T^{r+\varepsilon}\) such gcd rows, so this costs \(T^{2r+\varepsilon}\)
+in energy, equivalently \(T^{4r+\varepsilon}\) when recorded inside one
+of the two fourth-moment factors.  This distinction prevents both the
+false common-\(G\) shortcut and the false subtraction of the imprimitive
+cofactor length from \(h\delta\).
+
+Put
+
+\[
+ q_\psi=T^\gamma,\qquad k=T^\kappa,\qquad d=T^r,\qquad
+ V=T^v,\qquad v=\gamma+\kappa+r,\qquad W=T^u.
+\]
+
+On each fixed gcd/divisor atom and for each primitive \(\chi^\ast\),
+(9.947) on both label factors costs \(T^\gamma\) in their product
+amplitude.  Its fourth power costs \(T^{4\gamma}\).  The family of
+primitive characters and conductors has exponent \(2\gamma\).  After
+the atomwise estimate, the preceding \(L^2\)-Minkowski step is recorded
+as the safe bookkeeping cost \(T^{4r}\) in the left fourth-moment
+factor.  Hence
+
+\[
+ \boxed{M_4^{2{\rm PV}}(F)\leq6\gamma+4r.}
+ \tag{9.959}
+\]
+
+This \(M_4(F)\) notation is only an exponent ledger for the atomwise
+Minkowski bound; it does not assert that different \(d\)-rows share one
+Type sequence.  For each fixed atom the Type coefficient in (9.957) is
+divisor bounded and is common across the varying \(q_\psi\), so the
+ordinary character fourth moment gives
+
+\[
+ M_4(G)=2\max\{\gamma,u\}+2u.
+\]
+
+Combining these bounds by Cauchy in the complete
+\((q_\psi,\chi^\ast,k)\)-family and retaining the
+\(1/\varphi(q_\psi)\) normalization in (9.954) yields
+
+\[
+ \boxed{
+ E_{2{\rm PV}}
+ =-\gamma+\frac{6\gamma+4r
+          +2\max\{\gamma,u\}+2u}{2}.}
+ \tag{9.960}
+\]
+
+On every reciprocity-oriented core packet, Section 9.136 gives
+\(\gamma\leq v\leq u\), while (9.955) gives
+\(\gamma+\kappa+r=v\).  Therefore
+
+\[
+ \boxed{
+ E_{2{\rm PV}}
+ =2u+2\gamma+2r
+ =2(u+v)-2\kappa
+ \leq2(u+v).}
+ \tag{9.961}
+\]
+
+In particular, the balanced maximal face \(u=v=3\) has exponent
+\(12-2\kappa\leq12\).  The top primitive row
+\(\kappa=r=0,\gamma=3\) meets the target exactly.
+The boundary \(\gamma=0\) here denotes fixed or subpower
+**nonprincipal** primitive conductors \(q_\psi>1\), not the deleted
+principal conductor \(q_\psi=1\); (9.961) covers it as well.
+Every imprimitive cofactor supplies the positive margin \(2\kappa\),
+while a small primitive conductor with \(\kappa=0\) is paid for by the
+corresponding label-dividing cofactor \(r=3-\gamma\).  Thus every
+primitive and imprimitive nonprincipal character row in the registered
+physical centered resonant projector is within the squared local target
+\(T^{12+\varepsilon}\).
+
+This closes one of the three obligations after (9.914): the physical
+**centered resonant projector**.  It does not estimate the canonical
+principal master (9.940), because Pólya--Vinogradov is unavailable for
+its principal character.  It also does not estimate any pair with
+\(\Delta_{\rm red}\ne0\).  Consequently (9.933), the coupled-kernel
+gate, and the full \(\theta=3\) twisted moment remain unproved.
+
+The finite helper
+`centered_imprimitive_character_energy_descent_audit` directly checks
+(9.954) on arbitrary finite coefficient vectors: it deletes the ambient
+principal character, compares each induced transform with its primitive
+zero extension, and verifies the inverse-totient factorization and total
+centered energy.  The helper
+`packet_exhaustive_common_q_unit_mask_adapter_audit` checks (9.957) on
+arbitrary supplied packet rows, including primitive-character zero
+extension, identical Type atoms across several conductors, and bounded
+modulus scalars.  The exact-rational helper
+`centered_two_pv_conductor_envelope_audit` records (9.959)--(9.961),
+distinguishes \(k\) from \(d\), requires the atomwise \(L^2\)-Minkowski
+adapter explicitly, and marks only the centered resonant projector bound
+proved when every registered physical adapter is verified.  All three
+keep the principal, nonzero-determinant, full-projector, and
+coupled-kernel flags false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -21665,8 +21895,8 @@ Proved in this note:
 | Oriented projector to Ramanujan-principal bridge | exact packet-exhaustive linear adapter; joint analytic gate unproved | The common gcd layer \(q_{\rm gcd}\), ambient reduced modulus \(q_{\rm red}\), and inverse-character primitive conductor \(q_\psi\) are distinct.  The principal character modulo \(q_{\rm red}>1\) has \(q_\psi=1\), and for unit \(A\), \(\mu(q_{\rm red})\rho_{q_{\rm red}}(A)=1/\varphi(q_{\rm red})\), (9.929).  Equations (9.930)--(9.931) identify the density in (9.921b) with the zero-direct unit-label specialization of the Ramanujan row (9.748); it is not an independent secondary main term and is distinct from the phase-one set \(q_{\rm red}=1\) in (9.693)--(9.697).  Equation (9.932) applies the canonical centering directly to every packet of (9.906), proving the full oriented principal/centered adapter without rank-one separation and retaining both Möbius signs and \(h\delta\).  The positive projector is thereby replaced by the weaker joint gate (9.933), equivalent to (9.750); its analytic bound, the optional larger double-character map, and centered determinant dispersion remain unproved |
 | Oriented canonical centering with Type I/II | exact three-block linear split and nine-block Gram reassembly; analytic bound unproved | The signed multipliers (9.934) satisfy the endpoint-exact identity (9.935).  Because \(q,A,\rho_q(A)\) are unchanged by this scalar decomposition, (9.936) proves that packet-exhaustive centering commutes with small/I/II before any Cauchy step, preserving \(\mu(v)\mu(p)\), the I/II signs \(\mu(b)\mu(c)\), \(h\delta\), and all physical labels.  The one permissible global square is the nine ordered-block identity (9.937).  A finite witness has self-energy \(55\), cross energy \(-30\), and total \(25\), so separate post-square absolute values are strictly stronger even algebraically.  No joint nine-block estimate or centered determinant dispersion is proved |
 | Oriented principal cofactor--Type fusion | exact reduction from two Möbius signs to one moving-gcd sign; top analytic mean unproved | With \(d=(|h\delta|,v)\) and \(m=dw\), the unit support gives the bijection (9.938) and the coefficient identity (9.939).  Hence (9.940) rewrites the entire canonical principal contribution as one Möbius sum with the exact incidence \((m,v)=(|h\delta|,v)\), without separating the packet weight.  Its remainder-free decomposition has only the three blocks (9.941); the centered family alone retains the genuine two-Möbius nine-block dispersion.  At top reduced conductor \(d=1\), however, \(m=w\), so the length-\(T^3\) one-Möbius Type mean and the joint principal--centered bound remain unproved |
-| Centered primitive-conductor residual polytope | exact deficit calibration; signed \(q^{-1/6}\) top gain unproved | After removing the fused principal row, the ideal primitive-character energy is \(10+\gamma\) against target \(12\), (9.942)--(9.943).  Hence only \(2<\gamma\leq3\) remains, and a pre-square signed conductor gain \(T^{-(\gamma-2)/2}=q^{-(\gamma-2)/(2\gamma)}\) suffices, (9.944)--(9.945).  At \(\gamma=3\) this is \(T^{-1/2}=q^{-1/6}\), strictly below square-root conductor cancellation.  The gate must retain \(\mu(q)\), all nine Type blocks, \(h\delta\), and the physical moving coefficient; standard character/Gauss large sieves do not provide that signed gain, and the imprimitive physical descent and fused principal estimate remain open |
-| Primitive-centered PV/fourth-moment hybrid | adapted exponent polytope closed; packet-exhaustive common-coefficient adapter unproved | After fixing the inactive cofactor, Pólya--Vinogradov on the longer residual product-label factor and the ordinary varying-character fourth moment on the shorter factor give (9.949).  On the balanced face, \(E_{\rm PV}(\gamma)\leq13-\gamma/2\) for \(2\leq\gamma\leq3\), (9.952), so the top exponent is \(23/2\), a half-power below the target \(12\).  The generic envelope closes \(\gamma\leq2\), hence no signed \(q^{-1/6}\) input is needed for a fully adapted primitive-centered atom.  However (9.871) is only fixed-row: the complete Fourier/divisor expansion has not yet been proved to give one common Type coefficient across varying primitive conductors while retaining every AFE, orientation, gcd, and boundary label.  The physical primitive projector, imprimitive descent, principal master, determinant complement, and coupled-kernel gate remain open |
+| Centered primitive-conductor residual polytope | exact fallback calibration, superseded on centered rows | The generic fourth-moment deficit and its sufficient signed \(q^{-1/6}\) top gain are (9.942)--(9.945).  The one-PV hybrid (9.946)--(9.952) then closes the adapted primitive exponent polytope.  Section 9.144 proves a stronger two-PV estimate on the packet-exhaustive physical centered projector, so no signed conductor input is now needed for this resonant component |
+| Packet-exhaustive centered two-PV projector | primitive and imprimitive resonant rows proved within target | Equations (9.953)--(9.958) partition all nonprincipal ambient characters by primitive conductor, retain the imprimitive \(1/\varphi(k)\) Euler weight, and prove the common-\(q_\psi\) Type coefficient adapter using four-variable Fourier separation and exact unit-mask divisor expansion.  Pólya--Vinogradov on both label factors gives \(M_4(F)\leq6\gamma+4r\), (9.959).  With the ordinary Type fourth moment, the physical centered resonant projector exponent is \(12-2\kappa\leq12\), (9.960)--(9.961).  This bounds the recombined Möbius Type polynomial before any separate nine-block absolute values.  The canonical principal master and nonzero reduced-determinant dispersion remain unproved, so neither the full projector nor the coupled-kernel gate is closed |
 | August 2026 varying-modulus projection | genuine inverse-only \(q\)-average; quantitatively and structurally insufficient | Shen's Theorem 4 gives \(\sum_{q\sim Q}|\Delta|^2\ll\|\alpha\|_2^2N^{11/12}Q^{1+\varepsilon}\), (9.894).  Its underlying bilinear form is \(e(a\bar m/q)\), (9.895), and at \(M=Q=T^3,|a|\leq T^5\) saves only \(T^{1/8}\) linearly, leaving deficit \(15/8\), (9.896)--(9.897).  It fixes \(a\), omits the direct phase, and requires a modulus-independent product coefficient.  Mohammadi's (9.898) retains a direct-plus-inverse product phase but only over one fixed finite field.  Neither theorem retains the physical moving \(h\delta\) family, the two-Möbius Type packet, and the signed varying squarefree-modulus norm together |
 | Fixed-row energy phase-alignment obstruction | exact no-go for rowwise norm proofs; physical cross-row rigidity still available | For arbitrary signs \(\varepsilon_i\) and nonnegative amplitudes \(a_i\), the one-dimensional choice \(C_i=\varepsilon_i a_i,U_i=1\) saturates the triangle bound, (9.899).  Hence the outer Möbius signs can be absorbed by independent row phases, and no theorem stated only through separate fixed-\((s,\vartheta)\) energies can produce an outer power saving.  A successful estimate must retain a common cross-modulus Type/AFE constraint or the nonzero-determinant incidence before rowwise Cauchy.  This does not assert that the physical packet itself saturates the bound |
 | Balanced double-Möbius cross-conductor Gram | exact pre-Cauchy phase and zero-orbit collapse; nonzero spectral norm unproved | The residual is regrouped as \(\sum_b\mu(b)\mathcal A_b\) with \(\mu(c)\), outer conductor signs, all packet weights, and \(a=h\delta\) inside \(\mathcal A_b\), (9.832)--(9.834).  Opening the one global square gives the exact modulus \([G_1,G_2]\) and phase \(Db+E\bar b\), (9.835)--(9.837).  For squarefree unit rows, \(D=E=0\) forces \(G_1=G_2\), equality of the invariant \(B_ia_i k_i^{-2}\), and one \(c_2\)-residue for each \(c_1\), (9.838)--(9.839); hence no cross-conductor zero orbit survives.  A complete AFE/reflection norm for the invariant fibres and a signed varying-LCM estimate for every nonzero \((D,E)\) remain open |

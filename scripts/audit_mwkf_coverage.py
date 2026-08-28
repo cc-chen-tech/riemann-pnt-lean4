@@ -18692,6 +18692,538 @@ def primitive_centered_pv_hybrid_envelope_audit(
     }
 
 
+def centered_imprimitive_character_energy_descent_audit(
+    *,
+    squarefree_ambient_moduli: tuple[int, ...],
+    left_coefficients: dict[int, complex],
+    type_coefficients: dict[int, complex],
+) -> dict[str, object]:
+    """Partition finite centered Parseval energy by primitive conductor.
+
+    For squarefree ambient ``q=q_psi*k``, every nonprincipal character
+    has a unique nontrivial primitive conductor ``q_psi``.  Its ambient
+    transform is the primitive transform zero-extended at ``k``, while
+    ``1/phi(q)=1/(phi(q_psi)phi(k))``.  This is the finite identity used
+    before the two-PV conductor estimate; the principal row is omitted.
+    """
+
+    moduli = tuple(int(value) for value in squarefree_ambient_moduli)
+    if not moduli:
+        raise ValueError("at least one ambient modulus is required")
+    if not left_coefficients or not type_coefficients:
+        raise ValueError("both coefficient families must be nonempty")
+    if any(
+        modulus <= 1
+        or _finite_mobius(modulus) == 0
+        for modulus in moduli
+    ):
+        raise ValueError("every ambient modulus must be squarefree and nontrivial")
+
+    left = {
+        int(label): complex(value)
+        for label, value in left_coefficients.items()
+    }
+    type_values = {
+        int(label): complex(value) for label, value in type_coefficients.items()
+    }
+    if any(label == 0 for label in (*left, *type_values)):
+        raise ValueError("character-transform labels must be nonzero")
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    ambient_energy = 0.0
+    descended_energy = 0.0
+    rows: list[dict[str, object]] = []
+    for modulus in moduli:
+        primes = tuple(sorted(_finite_prime_exponents(modulus)))
+        phi_modulus = finite_totient(modulus)
+        discrete_logs: dict[int, dict[int, int]] = {}
+        character_roots: dict[int, complex] = {}
+        for prime in primes:
+            order = prime - 1
+            if prime == 2:
+                generator = 1
+            else:
+                order_prime_factors = tuple(_finite_prime_exponents(order))
+                generator = next(
+                    candidate
+                    for candidate in range(2, prime)
+                    if all(
+                        pow(candidate, order // divisor, prime) != 1
+                        for divisor in order_prime_factors
+                    )
+                )
+            logs: dict[int, int] = {}
+            current = 1
+            for exponent in range(order):
+                logs[current] = exponent
+                current = current * generator % prime
+            discrete_logs[prime] = logs
+            character_roots[prime] = cmath.exp(2j * cmath.pi / order)
+
+        indices = tuple(product(*(range(prime - 1) for prime in primes)))
+
+        def local_character(
+            index: tuple[int, ...],
+            value: int,
+            *,
+            active_only: bool,
+            primes_value: tuple[int, ...] = primes,
+            logs_value: dict[int, dict[int, int]] = discrete_logs,
+            roots_value: dict[int, complex] = character_roots,
+        ) -> complex:
+            active_primes = tuple(
+                prime
+                for component, prime in zip(index, primes_value)
+                if component != 0
+            )
+            tested_primes = active_primes if active_only else primes_value
+            if any(value % prime == 0 for prime in tested_primes):
+                return 0j
+            result = 1 + 0j
+            for component, prime in zip(index, primes_value):
+                if component == 0:
+                    continue
+                exponent = logs_value[prime][value % prime]
+                result *= roots_value[prime] ** (
+                    component * exponent % (prime - 1)
+                )
+            return result
+
+        for index in indices:
+            active_primes = tuple(
+                prime
+                for component, prime in zip(index, primes)
+                if component != 0
+            )
+            primitive_conductor = prod(active_primes)
+            if primitive_conductor == 1:
+                continue
+            cofactor = modulus // primitive_conductor
+            phi_primitive = finite_totient(primitive_conductor)
+            phi_cofactor = finite_totient(cofactor)
+
+            ambient_left = sum(
+                coefficient * local_character(index, label, active_only=False)
+                for label, coefficient in left.items()
+            )
+            ambient_type = sum(
+                coefficient
+                * local_character(index, label, active_only=False).conjugate()
+                for label, coefficient in type_values.items()
+            )
+            primitive_left = sum(
+                coefficient
+                * local_character(index, label, active_only=True)
+                * int(gcd(label, cofactor) == 1)
+                for label, coefficient in left.items()
+            )
+            primitive_type = sum(
+                coefficient
+                * local_character(index, label, active_only=True).conjugate()
+                * int(gcd(label, cofactor) == 1)
+                for label, coefficient in type_values.items()
+            )
+            ambient_weight = 1 / phi_modulus
+            descended_weight = 1 / (phi_primitive * phi_cofactor)
+            ambient_contribution = (
+                ambient_weight * abs(ambient_left) ** 2 * abs(ambient_type) ** 2
+            )
+            descended_contribution = (
+                descended_weight
+                * abs(primitive_left) ** 2
+                * abs(primitive_type) ** 2
+            )
+            ambient_energy += ambient_contribution
+            descended_energy += descended_contribution
+            rows.append(
+                {
+                    "ambient_modulus": modulus,
+                    "primitive_conductor": primitive_conductor,
+                    "imprimitive_cofactor": cofactor,
+                    "ambient_left_transform": ambient_left,
+                    "primitive_zero_extended_left_transform": primitive_left,
+                    "ambient_type_transform": ambient_type,
+                    "primitive_zero_extended_type_transform": primitive_type,
+                    "ambient_parseval_weight": ambient_weight,
+                    "factored_inverse_totient_weight": descended_weight,
+                    "induced_transforms_equal_primitive_zero_extensions": (
+                        abs(ambient_left - primitive_left) < 1e-9
+                        and abs(ambient_type - primitive_type) < 1e-9
+                    ),
+                    "parseval_weight_factors_as_inverse_totients": (
+                        phi_modulus == phi_primitive * phi_cofactor
+                    ),
+                    "ambient_energy_contribution": ambient_contribution,
+                    "descended_energy_contribution": descended_contribution,
+                }
+            )
+
+    tolerance = 1e-8 * max(1.0, ambient_energy, descended_energy)
+    return {
+        "squarefree_ambient_moduli": moduli,
+        "all_ambient_moduli_squarefree": True,
+        "rows": tuple(rows),
+        "primitive_conductors": tuple(
+            sorted({int(row["primitive_conductor"]) for row in rows})
+        ),
+        "imprimitive_cofactors": tuple(
+            sorted({int(row["imprimitive_cofactor"]) for row in rows})
+        ),
+        "ambient_centered_parseval_energy": ambient_energy,
+        "primitive_conductor_grouped_energy": descended_energy,
+        "ambient_principal_characters_deleted": True,
+        "all_remaining_rows_have_nontrivial_primitive_conductor": all(
+            int(row["primitive_conductor"]) > 1 for row in rows
+        ),
+        "all_induced_transforms_equal_primitive_zero_extensions": all(
+            bool(row["induced_transforms_equal_primitive_zero_extensions"])
+            for row in rows
+        ),
+        "all_parseval_weights_factor_as_inverse_totients": all(
+            bool(row["parseval_weight_factors_as_inverse_totients"])
+            for row in rows
+        ),
+        "centered_energy_primitive_conductor_partition_exact": (
+            abs(ambient_energy - descended_energy) <= tolerance
+        ),
+        "principal_character_energy_included": False,
+        "fused_principal_master_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def packet_exhaustive_common_q_unit_mask_adapter_audit(
+    *,
+    primitive_conductors: tuple[int, ...],
+    imprimitive_cofactor: int,
+    gcd_h_cofactor: int,
+    gcd_delta_cofactor: int,
+    label_rows: tuple[tuple[int, int, int, Fraction], ...],
+    type_base_coefficients: dict[int, Fraction],
+    modulus_scalar_weights: dict[int, Fraction],
+    four_variable_sobolev_wiener_bound_verified: bool,
+    all_physical_weights_in_registered_core_class: bool,
+) -> dict[str, object]:
+    """Audit the exact common-q divisor adapter on finite packet rows.
+
+    The primitive conductor is left to the zero extension of its
+    character.  Every unit mask from the imprimitive and product-gcd
+    cofactor is expanded on all three variables.  For the product-gcd
+    split ``d=d1*d2``, however, the exact extra masks are only
+    ``gcd(h1,d2)=1`` and ``gcd(w,d)=1``; ``delta1`` need not be a unit at
+    ``d``.  Once those divisors are fixed, the Type atom is independent
+    of the varying primitive conductor; all q-dependence is the supplied
+    bounded scalar Fourier mode.
+    """
+
+    conductors = tuple(int(value) for value in primitive_conductors)
+    k = int(imprimitive_cofactor)
+    d1 = int(gcd_h_cofactor)
+    d2 = int(gcd_delta_cofactor)
+    if not conductors or not label_rows:
+        raise ValueError("primitive conductors and label rows must be nonempty")
+    if min(k, d1, d2) < 1:
+        raise ValueError("all inactive cofactors must be positive")
+    if (
+        _finite_mobius(k) == 0
+        or _finite_mobius(d1) == 0
+        or _finite_mobius(d2) == 0
+        or gcd(k, d1 * d2) != 1
+        or gcd(d1, d2) != 1
+    ):
+        raise ValueError("the inactive cofactors must be pairwise coprime and squarefree")
+    d = d1 * d2
+    if any(
+        q <= 1
+        or _finite_mobius(q) == 0
+        or gcd(q, k * d) != 1
+        for q in conductors
+    ):
+        raise ValueError(
+            "every primitive conductor must be squarefree, nontrivial, "
+            "and coprime to the inactive cofactors"
+        )
+    if set(modulus_scalar_weights) != set(conductors):
+        raise ValueError("modulus scalar weights must match the conductor family")
+
+    rows = tuple(
+        (int(h_one), int(delta_one), int(w), F(weight))
+        for h_one, delta_one, w, weight in label_rows
+    )
+    if any(min(h_one, delta_one, w) < 1 for h_one, delta_one, w, _ in rows):
+        raise ValueError("all physical labels must be positive")
+    if any(w not in type_base_coefficients for _, _, w, _ in rows):
+        raise ValueError("every Type entry needs a base coefficient")
+
+    h_inactive = k * d2
+    delta_inactive = k
+    type_inactive = k * d
+    h_divisors = _positive_divisors(h_inactive)
+    delta_divisors = _positive_divisors(delta_inactive)
+    type_divisors = _positive_divisors(type_inactive)
+    type_atoms = {
+        divisor: {
+            w: F(_finite_mobius(divisor)) * F(type_base_coefficients[w])
+            if w % divisor == 0
+            else F(0)
+            for w in sorted(type_base_coefficients)
+        }
+        for divisor in type_divisors
+    }
+    type_atoms_by_conductor = {
+        q: type_atoms for q in conductors
+    }
+
+    checked_rows: list[dict[str, object]] = []
+    all_masks_exact = True
+    primitive_nonunit_rows_vanish = True
+    for q in conductors:
+        scalar = F(modulus_scalar_weights[q])
+        for h_one, delta_one, w, left_weight in rows:
+            primitive_unit = gcd(h_one * delta_one * w, q) == 1
+            inactive_unit = bool(
+                gcd(h_one, h_inactive) == 1
+                and gcd(delta_one, delta_inactive) == 1
+                and gcd(w, type_inactive) == 1
+            )
+            original_mask = int(primitive_unit and inactive_unit)
+            h_expansion = sum(
+                _finite_mobius(divisor)
+                for divisor in h_divisors
+                if h_one % divisor == 0
+            )
+            delta_expansion = sum(
+                _finite_mobius(divisor)
+                for divisor in delta_divisors
+                if delta_one % divisor == 0
+            )
+            type_expansion = sum(
+                _finite_mobius(divisor)
+                for divisor in type_divisors
+                if w % divisor == 0
+            )
+            expanded_mask = int(primitive_unit) * (
+                h_expansion * delta_expansion * type_expansion
+            )
+            base_coefficient = (
+                scalar * left_weight * F(type_base_coefficients[w])
+            )
+            original_coefficient = F(original_mask) * base_coefficient
+            expanded_coefficient = F(expanded_mask) * base_coefficient
+            row_exact = original_coefficient == expanded_coefficient
+            all_masks_exact = bool(all_masks_exact and row_exact)
+            primitive_nonunit_rows_vanish = bool(
+                primitive_nonunit_rows_vanish
+                and (primitive_unit or expanded_coefficient == 0)
+            )
+            checked_rows.append(
+                {
+                    "primitive_conductor": q,
+                    "h1": h_one,
+                    "delta1": delta_one,
+                    "type_entry": w,
+                    "primitive_unit_mask": primitive_unit,
+                    "inactive_unit_mask": inactive_unit,
+                    "original_full_unit_mask": original_mask,
+                    "h_divisor_expansion": h_expansion,
+                    "delta_divisor_expansion": delta_expansion,
+                    "type_divisor_expansion": type_expansion,
+                    "expanded_full_unit_mask": expanded_mask,
+                    "original_physical_coefficient": original_coefficient,
+                    "expanded_physical_coefficient": expanded_coefficient,
+                    "unit_mask_expansion_exact": row_exact,
+                }
+            )
+
+    bounded_scalars = all(
+        abs(F(value)) <= 1 for value in modulus_scalar_weights.values()
+    )
+    type_common = all(
+        atoms == type_atoms
+        for atoms in type_atoms_by_conductor.values()
+    )
+    structural_hypotheses = bool(
+        all_masks_exact
+        and primitive_nonunit_rows_vanish
+        and bounded_scalars
+        and type_common
+    )
+    physical_adapter = bool(
+        structural_hypotheses
+        and four_variable_sobolev_wiener_bound_verified
+        and all_physical_weights_in_registered_core_class
+    )
+    return {
+        "primitive_conductors": conductors,
+        "imprimitive_cofactor": k,
+        "gcd_h_cofactor": d1,
+        "gcd_delta_cofactor": d2,
+        "gcd_product_cofactor": d,
+        "imprimitive_unit_modulus": k,
+        "h_inactive_unit_modulus": h_inactive,
+        "delta_inactive_unit_modulus": delta_inactive,
+        "type_inactive_unit_modulus": type_inactive,
+        "primitive_conductors_are_pairwise_admissible": True,
+        "rows": tuple(checked_rows),
+        "h_inactive_divisors": h_divisors,
+        "delta_inactive_divisors": delta_divisors,
+        "type_inactive_divisors": type_divisors,
+        "inactive_divisor_atom_count": (
+            len(h_divisors) * len(delta_divisors) * len(type_divisors)
+        ),
+        "type_atom_coefficients": type_atoms,
+        "type_atom_coefficients_by_primitive_conductor": (
+            type_atoms_by_conductor
+        ),
+        "all_original_unit_masks_equal_divisor_expansions": all_masks_exact,
+        "primitive_nonunit_rows_vanish_by_character_extension": (
+            primitive_nonunit_rows_vanish
+        ),
+        "type_atom_coefficients_identical_across_primitive_conductors": (
+            type_common
+        ),
+        "modulus_dependence_is_bounded_scalar_only": bounded_scalars,
+        "inactive_divisor_cost_is_euler_product_only": True,
+        "four_variable_sobolev_wiener_bound_verified": bool(
+            four_variable_sobolev_wiener_bound_verified
+        ),
+        "all_physical_weights_in_registered_core_class": bool(
+            all_physical_weights_in_registered_core_class
+        ),
+        "packet_exhaustive_common_q_type_coefficient_adapter_proved": (
+            physical_adapter
+        ),
+        "centered_resonant_projector_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def centered_two_pv_conductor_envelope_audit(
+    *,
+    primitive_conductor_exponent: Fraction,
+    imprimitive_cofactor_exponent: Fraction,
+    gcd_product_cofactor_exponent: Fraction,
+    oriented_modulus_exponent: Fraction,
+    type_entry_exponent: Fraction,
+    principal_character_removed_exactly: bool,
+    both_label_bv_separation_verified: bool,
+    common_type_coefficient_adapter_verified: bool,
+    imprimitive_euler_weight_adapter_verified: bool,
+    gcd_atomwise_minkowski_verified: bool,
+    packet_exhaustive_outer_label_adapter_verified: bool,
+) -> dict[str, object]:
+    """Audit two Pólya--Vinogradov bounds after exact centering.
+
+    Across primitive conductors ``q=T^gamma`` there are ``T^(2*gamma)``
+    primitive character rows.  Pólya--Vinogradov on each of the two
+    product-label factors makes their product cost ``T^gamma`` in
+    amplitude, hence ``T^(4*gamma)`` in the fourth power.  Summing the
+    The genuine product-gcd cofactor is first fixed together with all divisor
+    masks, and Minkowski is applied to the resulting energy norms.  This
+    costs ``D^2`` in energy, recorded equivalently as ``D^4`` in the
+    left fourth-moment ledger; no common Type sequence across different
+    gcd rows is assumed.  The imprimitive cofactor instead keeps its
+    inverse-totient Euler weight and has no fixed-power cost.
+    """
+
+    gamma = F(primitive_conductor_exponent)
+    kappa = F(imprimitive_cofactor_exponent)
+    r = F(gcd_product_cofactor_exponent)
+    v = F(oriented_modulus_exponent)
+    u = F(type_entry_exponent)
+    if min(gamma, kappa, r, v, u) < 0:
+        raise ValueError("all exponents must be nonnegative")
+    if gamma + kappa + r != v:
+        raise ValueError(
+            "primitive, imprimitive, and product-gcd cofactors must partition "
+            "the oriented modulus exponent"
+        )
+
+    primitive_family = 2 * gamma
+    two_pv_fourth_power = 4 * gamma
+    gcd_fourth_cost = 4 * r
+    left_fourth_moment = (
+        primitive_family + two_pv_fourth_power + gcd_fourth_cost
+    )
+    type_fourth_moment = 2 * max(gamma, u) + 2 * u
+    projector_energy = (
+        -gamma + (left_fourth_moment + type_fourth_moment) / 2
+    )
+    target = 2 * (u + v)
+    margin = max(F(0), target - projector_energy)
+    deficit = max(F(0), projector_energy - target)
+    oriented_support = bool(u >= v)
+    hypotheses = bool(
+        oriented_support
+        and principal_character_removed_exactly
+        and both_label_bv_separation_verified
+        and common_type_coefficient_adapter_verified
+        and imprimitive_euler_weight_adapter_verified
+        and gcd_atomwise_minkowski_verified
+        and packet_exhaustive_outer_label_adapter_verified
+    )
+    numerical_coverage = bool(projector_energy <= target)
+    physical_coverage = bool(hypotheses and numerical_coverage)
+
+    return {
+        "primitive_conductor_exponent": gamma,
+        "imprimitive_cofactor_exponent": kappa,
+        "gcd_product_cofactor_exponent": r,
+        "oriented_modulus_exponent": v,
+        "type_entry_exponent": u,
+        "primitive_character_family_count_exponent": primitive_family,
+        "two_pv_label_product_fourth_power_exponent": two_pv_fourth_power,
+        "gcd_cofactor_fourth_power_cost_exponent": gcd_fourth_cost,
+        "gcd_atomwise_minkowski_energy_cost_exponent": 2 * r,
+        "gcd_rows_are_not_assumed_to_share_one_type_sequence": True,
+        "imprimitive_cofactor_fixed_power_cost_exponent": F(0),
+        "left_two_pv_fourth_moment_exponent": left_fourth_moment,
+        "type_fourth_moment_exponent": type_fourth_moment,
+        "character_parseval_normalization_exponent": -gamma,
+        "centered_projector_energy_exponent": projector_energy,
+        "squared_local_target_exponent": target,
+        "centered_projector_numerical_margin_exponent": margin,
+        "centered_projector_numerical_deficit_exponent": deficit,
+        "oriented_type_dominates_modulus": oriented_support,
+        "imprimitive_margin_equals_twice_cofactor_exponent": bool(
+            oriented_support and gamma <= u and margin == 2 * kappa
+        ),
+        "all_centered_character_conductors_numerically_covered": (
+            numerical_coverage
+        ),
+        "principal_character_removed_exactly": bool(
+            principal_character_removed_exactly
+        ),
+        "both_label_bv_separation_verified": bool(
+            both_label_bv_separation_verified
+        ),
+        "common_type_coefficient_adapter_verified": bool(
+            common_type_coefficient_adapter_verified
+        ),
+        "imprimitive_euler_weight_adapter_verified": bool(
+            imprimitive_euler_weight_adapter_verified
+        ),
+        "gcd_atomwise_minkowski_verified": bool(
+            gcd_atomwise_minkowski_verified
+        ),
+        "packet_exhaustive_outer_label_adapter_verified": bool(
+            packet_exhaustive_outer_label_adapter_verified
+        ),
+        "centered_analytic_hypotheses_verified": hypotheses,
+        "physical_centered_resonant_projector_covered": physical_coverage,
+        "centered_resonant_projector_bound_proved": physical_coverage,
+        "fused_principal_master_bound_proved": False,
+        "nonzero_determinant_dispersion_proved": False,
+        "q_projector_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,

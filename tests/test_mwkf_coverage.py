@@ -6594,6 +6594,249 @@ def test_pv_hybrid_closes_only_the_adapted_primitive_centered_polytope() -> None
     assert not physical["coupled_kernel_gate_closed"]
 
 
+def test_common_q_unit_masks_expand_into_conductor_independent_type_atoms() -> None:
+    """Inactive unit masks leave one common Type sequence for every q."""
+
+    audit = getattr(
+        coverage_audit,
+        "packet_exhaustive_common_q_unit_mask_adapter_audit",
+        None,
+    )
+    assert audit is not None, "common-q unit-mask adapter audit is missing"
+    result = audit(
+        primitive_conductors=(5, 7),
+        imprimitive_cofactor=3,
+        gcd_h_cofactor=1,
+        gcd_delta_cofactor=2,
+        label_rows=(
+            # (h1,delta1,w,left weight)
+            (1, 1, 11, F(2)),
+            (5, 1, 13, F(-1)),
+            (1, 7, 17, F(3)),
+            (2, 1, 19, F(4)),
+            (3, 1, 33, F(5)),
+            (1, 2, 29, F(6)),
+        ),
+        type_base_coefficients={
+            11: F(1),
+            13: F(-2),
+            17: F(3),
+            19: F(4),
+            33: F(-1),
+            29: F(2),
+        },
+        modulus_scalar_weights={5: F(1, 2), 7: F(-1, 3)},
+        four_variable_sobolev_wiener_bound_verified=True,
+        all_physical_weights_in_registered_core_class=True,
+    )
+    assert result["imprimitive_unit_modulus"] == 3
+    assert result["h_inactive_unit_modulus"] == 6
+    assert result["delta_inactive_unit_modulus"] == 3
+    assert result["type_inactive_unit_modulus"] == 6
+    assert result["primitive_conductors_are_pairwise_admissible"]
+    assert result["all_original_unit_masks_equal_divisor_expansions"]
+    assert result["primitive_nonunit_rows_vanish_by_character_extension"]
+    assert result["type_atom_coefficients_identical_across_primitive_conductors"]
+    assert result["modulus_dependence_is_bounded_scalar_only"]
+    assert result["inactive_divisor_atom_count"] == 32
+    assert result["inactive_divisor_cost_is_euler_product_only"]
+    assert result["four_variable_sobolev_wiener_bound_verified"]
+    assert result["all_physical_weights_in_registered_core_class"]
+    assert result["packet_exhaustive_common_q_type_coefficient_adapter_proved"]
+    delta_two = next(
+        row
+        for row in result["rows"]
+        if row["primitive_conductor"] == 5 and row["delta1"] == 2
+    )
+    assert delta_two["original_full_unit_mask"] == 1
+    h_two = next(
+        row
+        for row in result["rows"]
+        if row["primitive_conductor"] == 5 and row["h1"] == 2
+    )
+    assert h_two["original_full_unit_mask"] == 0
+    assert not result["centered_resonant_projector_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_centered_energy_descends_exactly_to_primitive_conductors() -> None:
+    """Ambient nonprincipal energy keeps the exact inverse-totient lift."""
+
+    audit = getattr(
+        coverage_audit,
+        "centered_imprimitive_character_energy_descent_audit",
+        None,
+    )
+    assert audit is not None, "centered imprimitive energy descent is missing"
+    result = audit(
+        squarefree_ambient_moduli=(15, 30),
+        left_coefficients={1: 2, 2: -1, 3: 4, 5: -2, -7: 3},
+        type_coefficients={1: -1, 2: 3, 5: 2, -11: -4, 17: 1},
+    )
+    assert result["all_ambient_moduli_squarefree"]
+    assert result["ambient_principal_characters_deleted"]
+    assert result["all_remaining_rows_have_nontrivial_primitive_conductor"]
+    assert result["all_induced_transforms_equal_primitive_zero_extensions"]
+    assert result["all_parseval_weights_factor_as_inverse_totients"]
+    assert result["centered_energy_primitive_conductor_partition_exact"]
+    assert result["primitive_conductors"] == (3, 5, 15)
+    assert result["imprimitive_cofactors"] == (1, 2, 3, 5, 6, 10)
+    assert not result["principal_character_energy_included"]
+    assert not result["fused_principal_master_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_two_pv_closes_all_adapted_centered_character_conductors() -> None:
+    """Two PV bounds pay the full primitive family including imprimitive lifts."""
+
+    audit = getattr(
+        coverage_audit,
+        "centered_two_pv_conductor_envelope_audit",
+        None,
+    )
+    assert audit is not None, "centered two-PV conductor audit is missing"
+
+    top = audit(
+        primitive_conductor_exponent=F(3),
+        imprimitive_cofactor_exponent=F(0),
+        gcd_product_cofactor_exponent=F(0),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        principal_character_removed_exactly=True,
+        both_label_bv_separation_verified=True,
+        common_type_coefficient_adapter_verified=True,
+        imprimitive_euler_weight_adapter_verified=True,
+        gcd_atomwise_minkowski_verified=True,
+        packet_exhaustive_outer_label_adapter_verified=True,
+    )
+    assert top["primitive_character_family_count_exponent"] == F(6)
+    assert top["two_pv_label_product_fourth_power_exponent"] == F(12)
+    assert top["gcd_cofactor_fourth_power_cost_exponent"] == F(0)
+    assert top["gcd_atomwise_minkowski_energy_cost_exponent"] == F(0)
+    assert top["gcd_rows_are_not_assumed_to_share_one_type_sequence"]
+    assert top["left_two_pv_fourth_moment_exponent"] == F(18)
+    assert top["type_fourth_moment_exponent"] == F(12)
+    assert top["centered_projector_energy_exponent"] == F(12)
+    assert top["squared_local_target_exponent"] == F(12)
+    assert top["centered_projector_numerical_margin_exponent"] == F(0)
+    assert top["all_centered_character_conductors_numerically_covered"]
+    assert top["physical_centered_resonant_projector_covered"]
+    assert top["centered_resonant_projector_bound_proved"]
+    assert not top["fused_principal_master_bound_proved"]
+    assert not top["nonzero_determinant_dispersion_proved"]
+    assert not top["coupled_kernel_gate_closed"]
+
+    imprimitive = audit(
+        primitive_conductor_exponent=F(2),
+        imprimitive_cofactor_exponent=F(1),
+        gcd_product_cofactor_exponent=F(0),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        principal_character_removed_exactly=True,
+        both_label_bv_separation_verified=True,
+        common_type_coefficient_adapter_verified=True,
+        imprimitive_euler_weight_adapter_verified=True,
+        gcd_atomwise_minkowski_verified=True,
+        packet_exhaustive_outer_label_adapter_verified=True,
+    )
+    assert imprimitive["left_two_pv_fourth_moment_exponent"] == F(12)
+    assert imprimitive["centered_projector_energy_exponent"] == F(10)
+    assert imprimitive["centered_projector_numerical_margin_exponent"] == F(2)
+    assert imprimitive["imprimitive_margin_equals_twice_cofactor_exponent"]
+    assert imprimitive["physical_centered_resonant_projector_covered"]
+
+    low_primitive = audit(
+        primitive_conductor_exponent=F(1),
+        imprimitive_cofactor_exponent=F(0),
+        gcd_product_cofactor_exponent=F(2),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        principal_character_removed_exactly=True,
+        both_label_bv_separation_verified=True,
+        common_type_coefficient_adapter_verified=True,
+        imprimitive_euler_weight_adapter_verified=True,
+        gcd_atomwise_minkowski_verified=True,
+        packet_exhaustive_outer_label_adapter_verified=True,
+    )
+    assert low_primitive["left_two_pv_fourth_moment_exponent"] == F(14)
+    assert low_primitive["centered_projector_energy_exponent"] == F(12)
+    assert low_primitive["centered_projector_numerical_margin_exponent"] == F(0)
+    assert low_primitive["physical_centered_resonant_projector_covered"]
+
+    fixed_nonprincipal = audit(
+        primitive_conductor_exponent=F(0),
+        imprimitive_cofactor_exponent=F(0),
+        gcd_product_cofactor_exponent=F(3),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        principal_character_removed_exactly=True,
+        both_label_bv_separation_verified=True,
+        common_type_coefficient_adapter_verified=True,
+        imprimitive_euler_weight_adapter_verified=True,
+        gcd_atomwise_minkowski_verified=True,
+        packet_exhaustive_outer_label_adapter_verified=True,
+    )
+    assert fixed_nonprincipal["primitive_conductor_exponent"] == F(0)
+    assert fixed_nonprincipal["primitive_character_family_count_exponent"] == F(0)
+    assert fixed_nonprincipal["centered_projector_energy_exponent"] == F(12)
+    assert fixed_nonprincipal["physical_centered_resonant_projector_covered"]
+
+    unbalanced = audit(
+        primitive_conductor_exponent=F(1),
+        imprimitive_cofactor_exponent=F(1),
+        gcd_product_cofactor_exponent=F(0),
+        oriented_modulus_exponent=F(2),
+        type_entry_exponent=F(3),
+        principal_character_removed_exactly=True,
+        both_label_bv_separation_verified=True,
+        common_type_coefficient_adapter_verified=True,
+        imprimitive_euler_weight_adapter_verified=True,
+        gcd_atomwise_minkowski_verified=True,
+        packet_exhaustive_outer_label_adapter_verified=True,
+    )
+    assert unbalanced["oriented_type_dominates_modulus"]
+    assert unbalanced["centered_projector_energy_exponent"] == F(8)
+    assert unbalanced["squared_local_target_exponent"] == F(10)
+    assert unbalanced["centered_projector_numerical_margin_exponent"] == F(2)
+    assert unbalanced["imprimitive_margin_equals_twice_cofactor_exponent"]
+    assert unbalanced["physical_centered_resonant_projector_covered"]
+
+    missing_adapter = audit(
+        primitive_conductor_exponent=F(2),
+        imprimitive_cofactor_exponent=F(1),
+        gcd_product_cofactor_exponent=F(0),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        principal_character_removed_exactly=True,
+        both_label_bv_separation_verified=True,
+        common_type_coefficient_adapter_verified=False,
+        imprimitive_euler_weight_adapter_verified=False,
+        gcd_atomwise_minkowski_verified=False,
+        packet_exhaustive_outer_label_adapter_verified=False,
+    )
+    assert missing_adapter["all_centered_character_conductors_numerically_covered"]
+    assert not missing_adapter["centered_analytic_hypotheses_verified"]
+    assert not missing_adapter["physical_centered_resonant_projector_covered"]
+    assert not missing_adapter["centered_resonant_projector_bound_proved"]
+
+    missing_minkowski = audit(
+        primitive_conductor_exponent=F(1),
+        imprimitive_cofactor_exponent=F(0),
+        gcd_product_cofactor_exponent=F(2),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        principal_character_removed_exactly=True,
+        both_label_bv_separation_verified=True,
+        common_type_coefficient_adapter_verified=True,
+        imprimitive_euler_weight_adapter_verified=True,
+        gcd_atomwise_minkowski_verified=False,
+        packet_exhaustive_outer_label_adapter_verified=True,
+    )
+    assert missing_minkowski["all_centered_character_conductors_numerically_covered"]
+    assert not missing_minkowski["centered_analytic_hypotheses_verified"]
+    assert not missing_minkowski["physical_centered_resonant_projector_covered"]
+
+
 def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
     """Shen's q-average is inverse-only and far below the coupled target."""
 
