@@ -15500,6 +15500,141 @@ def resonant_invariant_product_energy_exponent_audit(
     }
 
 
+def korolev_prime_product_trace_bilinear_coverage_audit(
+    *,
+    prime: int,
+    inverse_coefficient: int,
+    direct_coefficient: int,
+    first_labels: tuple[int, ...],
+    second_labels: tuple[int, ...],
+    modulus_exponent: Fraction,
+    first_length_exponent: Fraction,
+    second_length_exponent: Fraction,
+    epsilon_parameter: Fraction,
+    prime_modulus: bool,
+    unit_inverse_phase: bool,
+    divisor_bounded_coefficients: bool,
+    separated_weight_verified: bool,
+) -> dict[str, object]:
+    """Audit Korolev's prime balanced product-trace bilinear lemma.
+
+    Lemma 6 of Korolev, *On Kloosterman sums with multiplicative
+    coefficients*, bounds divisor-bounded bilinear coefficients against
+    ``e_q(A*m^(-1)*n^(-1) + B*m*n)`` by
+    ``M*N*q^(-c*epsilon^4)`` when ``q`` is prime,
+    ``q^epsilon < M,N <= q^(1/2)``, and ``A`` is a unit.  The absolute
+    constant ``c`` is not made explicit, so only positivity, not a
+    numerical saving exponent, is certified here.
+    """
+
+    q = int(prime)
+    if q <= 2 or _finite_prime_exponents(q) != {q: 1}:
+        raise ValueError("prime must be an odd prime")
+    if not first_labels or not second_labels:
+        raise ValueError("both bilinear label families are required")
+    if any(
+        gcd(int(label), q) != 1
+        for label in (*first_labels, *second_labels)
+    ):
+        raise ValueError("all finite product-trace labels must be units")
+
+    gamma = F(modulus_exponent)
+    first = F(first_length_exponent)
+    second = F(second_length_exponent)
+    epsilon0 = F(epsilon_parameter)
+    if gamma <= 0 or min(first, second) < 0:
+        raise ValueError("modulus exponent must be positive and lengths nonnegative")
+    if not (0 < epsilon0 < F(1, 10)):
+        raise ValueError(
+            "Korolev's epsilon parameter must lie strictly between 0 and 1/10"
+        )
+
+    A = int(inverse_coefficient) % q
+    B = int(direct_coefficient) % q
+    phase_rows: list[dict[str, object]] = []
+    for first_label in first_labels:
+        m = int(first_label) % q
+        m_inverse = pow(m, -1, q)
+        for second_label in second_labels:
+            n = int(second_label) % q
+            n_inverse = pow(n, -1, q)
+            product_inverse_phase = (
+                A * pow(m * n % q, -1, q) + B * m * n
+            ) % q
+            korolev_phase = (
+                A * m_inverse * n_inverse + B * m * n
+            ) % q
+            phase_rows.append(
+                {
+                    "first_label": m,
+                    "second_label": n,
+                    "product_trace_phase": product_inverse_phase,
+                    "korolev_bilinear_phase": korolev_phase,
+                    "phase_identity_exact": (
+                        product_inverse_phase == korolev_phase
+                    ),
+                }
+            )
+
+    lower_window = min(first, second) > epsilon0 * gamma
+    upper_window = max(first, second) <= gamma / 2
+    length_window = lower_window and upper_window
+    finite_prime_verified = bool(prime_modulus)
+    finite_unit_inverse_verified = bool(unit_inverse_phase and gcd(A, q) == 1)
+    hypotheses = bool(
+        finite_prime_verified
+        and finite_unit_inverse_verified
+        and divisor_bounded_coefficients
+        and separated_weight_verified
+        and length_window
+        and all(bool(row["phase_identity_exact"]) for row in phase_rows)
+    )
+    balanced = first == gamma / 2 and second == gamma / 2
+    saving_without_c = gamma * epsilon0**4
+    return {
+        "source": (
+            "Korolev, On Kloosterman sums with multiplicative coefficients, "
+            "Lemma 6 (Izv. Math. 82:4 (2018), arXiv:1610.09171)"
+        ),
+        "prime": q,
+        "inverse_coefficient": A,
+        "direct_coefficient": B,
+        "phase_rows": tuple(phase_rows),
+        "all_product_inverse_phase_identities_exact": all(
+            bool(row["phase_identity_exact"]) for row in phase_rows
+        ),
+        "direct_coefficient_may_vanish": True,
+        "modulus_exponent": gamma,
+        "first_length_exponent": first,
+        "second_length_exponent": second,
+        "epsilon_parameter": epsilon0,
+        "strict_lower_length_window_verified": lower_window,
+        "square_root_upper_length_window_verified": upper_window,
+        "published_length_window_verified": length_window,
+        "prime_modulus_hypothesis_verified": finite_prime_verified,
+        "unit_inverse_phase_hypothesis_verified": finite_unit_inverse_verified,
+        "divisor_bounded_coefficient_hypothesis_verified": bool(
+            divisor_bounded_coefficients
+        ),
+        "separated_weight_hypothesis_verified": bool(
+            separated_weight_verified
+        ),
+        "published_lemma_hypotheses_verified": hypotheses,
+        "balanced_square_root_atom": balanced,
+        "saving_shape": "G^(-c*epsilon_parameter^4)",
+        "saving_exponent_without_unknown_constant": saving_without_c,
+        "published_absolute_constant_is_unspecified": True,
+        "fixed_prime_balanced_atom_has_power_saving": bool(
+            hypotheses and balanced
+        ),
+        "composite_conductor_covered": False,
+        "physical_packet_adapter_proved": False,
+        "global_outer_signed_reassembly_proved": False,
+        "required_half_power_global_saving_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def centered_type_phase_local_spectrum_audit(*, prime: int) -> dict[str, object]:
     """Compute the exact local Gram spectrum of the centered tensor.
 

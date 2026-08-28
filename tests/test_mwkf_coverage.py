@@ -4891,6 +4891,59 @@ def test_resonant_invariant_fibres_have_full_product_energy_bound() -> None:
     assert not power_cost["multiplier_family_within_diagonal_target"]
 
 
+def test_korolev_bilinear_lemma_covers_the_fixed_prime_balanced_atom() -> None:
+    audit = getattr(
+        coverage_audit,
+        "korolev_prime_product_trace_bilinear_coverage_audit",
+        None,
+    )
+    assert audit is not None, "Korolev balanced product-trace audit is missing"
+
+    balanced = audit(
+        prime=101,
+        inverse_coefficient=7,
+        direct_coefficient=0,
+        first_labels=(2, 3, 5, 7),
+        second_labels=(11, 13, 17, 19),
+        modulus_exponent=F(3),
+        first_length_exponent=F(3, 2),
+        second_length_exponent=F(3, 2),
+        epsilon_parameter=F(1, 20),
+        prime_modulus=True,
+        unit_inverse_phase=True,
+        divisor_bounded_coefficients=True,
+        separated_weight_verified=True,
+    )
+    assert balanced["all_product_inverse_phase_identities_exact"]
+    assert balanced["direct_coefficient_may_vanish"]
+    assert balanced["published_lemma_hypotheses_verified"]
+    assert balanced["fixed_prime_balanced_atom_has_power_saving"]
+    assert balanced["saving_exponent_without_unknown_constant"] == F(3, 160000)
+    assert balanced["published_absolute_constant_is_unspecified"]
+    assert not balanced["composite_conductor_covered"]
+    assert not balanced["physical_packet_adapter_proved"]
+    assert not balanced["global_outer_signed_reassembly_proved"]
+    assert not balanced["coupled_kernel_gate_closed"]
+
+    too_short = audit(
+        prime=101,
+        inverse_coefficient=7,
+        direct_coefficient=9,
+        first_labels=(2, 3),
+        second_labels=(5, 11),
+        modulus_exponent=F(3),
+        first_length_exponent=F(1, 10),
+        second_length_exponent=F(3, 2),
+        epsilon_parameter=F(1, 20),
+        prime_modulus=True,
+        unit_inverse_phase=True,
+        divisor_bounded_coefficients=True,
+        separated_weight_verified=True,
+    )
+    assert not too_short["published_length_window_verified"]
+    assert not too_short["fixed_prime_balanced_atom_has_power_saving"]
+
+
 def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:
     audit = getattr(
         coverage_audit,
