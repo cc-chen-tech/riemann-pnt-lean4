@@ -67,7 +67,7 @@ private theorem conreyMollifierLogRatio_mem_Icc
   · exact div_nonneg hlogNonneg hlogY.le
   · exact (div_le_one hlogY).2 hlogLe
 
-private theorem norm_conreyMollifierCoefficient_le_one
+theorem norm_conreyMollifierCoefficient_le_one
     {Y n : ℕ} {sigma0 : ℝ} {P : ℝ → ℝ}
     (hY : 2 ≤ Y) (hn : n ∈ Finset.Icc 1 Y)
     (hsigma0 : sigma0 ≤ 1 / 2)
@@ -97,6 +97,40 @@ private theorem norm_conreyMollifierCoefficient_le_one
   calc
     _ ≤ 1 * 1 := mul_le_mul hfirst hpow (norm_nonneg _) (by norm_num)
     _ = 1 := by norm_num
+
+/-- On the closed right half-plane, the actual explicit Conrey mollifier is
+bounded by the length of its finite support. -/
+theorem norm_conreyExplicitMollifier_le_natCast_of_re_nonneg
+    {Y : ℕ} {sigma0 : ℝ} {s : ℂ}
+    (hY : 2 ≤ Y) (hsigma0 : sigma0 ≤ 1 / 2) (hsre : 0 ≤ s.re) :
+    ‖conreyMollifier Y sigma0 conreyExplicitP s‖ ≤ Y := by
+  unfold conreyMollifier selbergMollifier
+  calc
+    ‖∑ n ∈ Finset.Icc 1 Y,
+        conreyMollifierCoefficient Y sigma0 conreyExplicitP n *
+          (1 / (n : ℂ) ^ s)‖ ≤
+        ∑ n ∈ Finset.Icc 1 Y,
+          ‖conreyMollifierCoefficient Y sigma0 conreyExplicitP n *
+            (1 / (n : ℂ) ^ s)‖ := norm_sum_le _ _
+    _ ≤ ∑ _n ∈ Finset.Icc 1 Y, (1 : ℝ) := by
+      apply Finset.sum_le_sum
+      intro n hn
+      have hnpos : 0 < n := (Finset.mem_Icc.mp hn).1
+      have hnRone : (1 : ℝ) ≤ n := by exact_mod_cast hnpos
+      have hcoeff := norm_conreyMollifierCoefficient_le_one
+        hY hn hsigma0 (fun _x hx => abs_conreyExplicitP_le_one hx)
+      have hdenPos : 0 < (n : ℝ) ^ s.re :=
+        Real.rpow_pos_of_pos (by exact_mod_cast hnpos) _
+      have hden : (1 : ℝ) ≤ (n : ℝ) ^ s.re :=
+        Real.one_le_rpow hnRone hsre
+      have hterm : ‖1 / (n : ℂ) ^ s‖ ≤ 1 := by
+        rw [norm_div, norm_one,
+          Complex.norm_natCast_cpow_of_pos hnpos]
+        exact (div_le_one hdenPos).2 hden
+      rw [norm_mul]
+      exact (mul_le_mul hcoeff hterm (norm_nonneg _) (by norm_num)).trans_eq
+        (by norm_num)
+    _ = Y := by simp
 
 /-- For any normalized polynomial profile bounded by one on `[0,1]`, the
 actual equation-(33) mollifier has the standard p-series right-tail bound.
