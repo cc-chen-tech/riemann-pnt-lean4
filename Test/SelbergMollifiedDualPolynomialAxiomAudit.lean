@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergMollifiedDualPolynomial
+
+open HardyTheorem
+
+#print axioms norm_selbergMollifiedDualCoeff_le_mass
+#print axioms dualCriticalLineDirichletPolynomial_mul_selbergMoebiusMollifier_eq_exponentialPolynomial
