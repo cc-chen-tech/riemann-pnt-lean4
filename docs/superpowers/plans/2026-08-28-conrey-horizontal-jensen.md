@@ -241,11 +241,13 @@ Use the complete divisor support in `closedBall(c,b)`.  Select
 `q in Icc a q1`, prove the lower separation `delta_J`, and derive both the
 center lower bound and good-sphere upper bound for `log norm g`.
 
-- [x] **Step 5: Apply Borel--Caratheodory and verify**
+- [ ] **Step 5: Apply Borel--Caratheodory and verify**
 
-Prove `HJ-regular-logderiv` throughout `closedBall(c,r)`.  Do not yet claim
-the weighted horizontal integral, which additionally needs the principal-part
-integral lemma and factor-support height selection.
+The actual-mass/actual-separation Borel endpoint is proved.  Still compose it
+with `m_b <= J` and `delta_J <= delta` for the documented `V(J,delta_J)`
+majorant, then prove the `128 * outerRadius / gap^2` geometry simplification.
+Do not yet claim the weighted horizontal integral, which additionally needs
+the principal-part integral lemma and factor-support height selection.
 
 ### Task 6: Weighted horizontal integral
 
