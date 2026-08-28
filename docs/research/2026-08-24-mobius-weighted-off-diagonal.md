@@ -16,6 +16,7 @@
 > | Conductor--Type Möbius fusion | inside the fixed-\(r_0\) jointly primitive core, the conductor and Type signs fuse exactly through \(d=(m,Q)\) in Section 9.117; Section 9.119 later absorbs the external cofactor sign, while the varying-gcd kernel estimate remains unproved |
 > | Fixed-gcd Möbius--trace coverage | Section 9.118 proves the exact FKM exponent boundary on prime-conductor rows and audits a formal large-prime-factor transfer; every composite moving-gcd row and the global packet estimate remain unproved |
 > | Common-cofactor Möbius divisor lift | Section 9.119 fuses \(\mu(r_0)\mu(m)\) into one global \(\mu(M)\) with \(M=r_0m\), preserves \((M,Q)=(m,Q)\), and retains arbitrary physical packet weights at divisor cost; the resulting one-Möbius gate \({\rm DLMG}_3\), including \(Q=1\), remains unproved |
+> | Gcd-first quotient Type I/II split | Section 9.120 first fixes \(G=(M,Q)\), then applies the exact two-cutoff identity only to the true Type quotient \(N=M/(r_0G)\); the conductor is frozen, \(a=h\delta\) is retained, and the long block has \(\mu(b)\mu(c)\).  FKM covers the fixed-prime separated subpolytope (9.806)--(9.807), but the physical adapter and global dispersion remain unproved |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
 > | Direct published Region A--C coverage | proved/classified in Section 8 |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
@@ -17248,6 +17249,305 @@ end-to-end finite enumeration of (9.772)--(9.784) at \(Q=1\); the
 \(Q=1\) extension used above is the explicit empty-product convention
 \(\mu(1)=\varphi(1)=c_1(\cdot)=1\).
 
+### 9.120 Gcd-first disintegration and the true quotient Type split
+
+Applying a Type identity directly to the lifted variable \(M\) in
+(9.793) would mix primes belonging to the common cofactor, the active
+Kloosterman conductor, and the original Type variable.  There is an
+exact ordering which avoids that loss.  First disintegrate by
+
+\[
+ G=(M,Q),\qquad r_0\mid M,\quad (r_0,Q)=1,
+ \qquad N=\frac{M}{r_0G}.
+\]
+
+The squarefree support in (9.793) gives
+
+\[
+ \boxed{
+ M=r_0GN,\qquad (r_0,G)=(r_0,N)=(G,N)=1,
+ \qquad (N,Q)=1.}
+ \tag{9.796}
+\]
+
+Conversely, \(G\mid Q\), squarefree \(r_0,N\),
+\((r_0,Q)=1\), and \((N,Qr_0)=1\) recover exactly one admissible
+lifted row.  In particular,
+
+\[
+ \mu(M)=\mu(r_0)\mu(G)\mu(N).
+\]
+
+For compactness, retain the whole physical packet in
+
+\[
+ \mathcal L_{Q,G,r_0,\Pi}(N;B,a)
+ :=\sum_{(p,Qr_0)=1}
+ \mathscr W_{G,Q/G,r_0}(N,p;B,a).
+ \tag{9.797}
+\]
+
+This is only notation: no separation in \(r_0,G,N,p\), in the dyadic
+or AFE labels \(\Pi\), or in the physical product \(a=h\delta\) is
+being assumed.  Substituting (9.796) into either side of (9.793) gives
+the gcd-first form
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathscr S_Q[\Pi]
+ =\sum_{G\mid Q}\mu(G)
+  \sum_{\substack{r_0\ge1\\(r_0,Q)=1}}
+   \mu(r_0)\omega_{B,a}(r_0)
+  \sum_{\substack{N\ge1\\\mu(N)\ne0\\(N,Qr_0)=1}}
+   \mu(N)\mathcal L_{Q,G,r_0,\Pi}(N;B,a).
+ \end{aligned}}
+ \tag{9.798}
+\]
+
+All sums are still finite through the support of \(\mathscr W\).  The
+squarefree condition on \(N\) is part of the lifted support and must be
+retained when the small/I/II pieces are later considered separately.
+Formula (9.798) makes the former moving gcd an outer divisor
+label \(G\mid Q\); it has not been estimated or summed absolutely.
+
+Now choose arbitrary integers \(U,V\ge1\), and put
+\(W_0=\max(U,V)\).  Define, with the common outer factors in (9.798)
+understood,
+
+\[
+ \begin{aligned}
+ \mathscr S_Q^{\rm small}[\Pi]
+ &: \quad N\le W_0,\quad\hbox{coefficient }\mu(N),\\
+ \mathscr S_{Q;U,V}^{\rm I}[\Pi]
+ &: \quad N>W_0,\quad
+   \sum_{\substack{bc\mid N\\b\le U,\ c\le V}}
+        \mu(b)\mu(c),\\
+ \mathscr S_{Q;U,V}^{\rm II}[\Pi]
+ &: \quad N>W_0,\quad
+   \sum_{\substack{bc\mid N\\b>U,\ c>V}}
+        \mu(b)\mu(c).
+ \end{aligned}
+ \tag{9.799}
+\]
+
+The divisor orthogonality argument (9.240)--(9.241), applied to this
+\(N\) and not to \(M\), gives the boundary-exact identity
+
+\[
+ \boxed{
+ \mathscr S_Q[\Pi]
+ =\mathscr S_Q^{\rm small}[\Pi]
+  -\mathscr S_{Q;U,V}^{\rm I}[\Pi]
+  +\mathscr S_{Q;U,V}^{\rm II}[\Pi].}
+ \tag{9.800}
+\]
+
+There are no mixed rectangles and no truncation remainder.  The range
+\(N\le W_0\) is an explicit finite boundary, not an error term.  If
+\(N=bcn\) in either long block, squarefreeness makes the surviving
+conditions exactly
+
+\[
+ \boxed{
+ (b,c)=(b,n)=(c,n)=1,qquad
+ (bcn,Qr_0)=1,qquad G=(r_0Gbcn,Q).}
+ \tag{9.801}
+\]
+
+Thus the Kloosterman conductor \(G\), Ramanujan cofactor \(Q/G\),
+common cofactor \(r_0\), and the full \(h\delta\) packet are frozen in
+every \((b,c,n)\)-atom.  The Type-II block has the two genuine signs
+\(\mu(b)\mu(c)\), while the remaining factor \(n\) is unweighted.
+This is the precise pre-Cauchy coefficient class to which a bilinear or
+dispersion theorem would have to apply.
+
+The unit-cutoff specialization is particularly transparent.  Taking
+\(U=V=1\) yields, for every squarefree \(N\),
+
+\[
+ \boxed{
+ \mu(N)=\mathbf1_{N=1}-\mathbf1_{N>1}
+ +\sum_{\substack{bc\mid N\\b>1,\ c>1}}\mu(b)\mu(c).}
+ \tag{9.802}
+\]
+
+Hence the quotient axis splits exactly into the \(N=1\) boundary, a
+Type-sign-free principal quotient sum over squarefree \(N>1\), and a two-Möbius
+divisor family.  The first two pieces must be recombined with the
+already extracted zero/principal rows before any triangle inequality;
+they may cancel, remain within target, or produce a secondary term.
+Formula (9.802) does not decide which alternative occurs.  Its value is
+that no parity-bearing contribution is hidden in a vaguely named
+moving-gcd coefficient: after the explicit principal quotient is
+settled, the signed residual is a concrete \((b,c)\) dispersion problem.
+
+Equivalently, let \({\rm QTIID}_3(U,V)\) denote
+
+\[
+ \boxed{
+ \left|\sum_{\Pi}^{\rm residual}\sum_{Q\ge1}
+ \left(\mathscr S_Q^{\rm small}[\Pi]
+ -\mathscr S_{Q;U,V}^{\rm I}[\Pi]
+ +\mathscr S_{Q;U,V}^{\rm II}[\Pi]\right)\right|
+ \ll_{\varepsilon,W}RS T^\varepsilon.}
+ \tag{9.803}
+\]
+
+For every fixed positive \(U,V\), (9.800) proves the exact equivalence
+
+\[
+ \boxed{{\rm QTIID}_3(U,V)\Longleftrightarrow {\rm DLMG}_3.}
+ \tag{9.804}
+\]
+
+This is a more theorem-compatible formulation, not an analytic proof or
+a smaller numerical target.  It also permits an exact extension of the
+published fixed-prime coverage table beyond the special case in which
+the two factor lengths add to the conductor exponent.  On one dyadic
+Type atom, group the product trace as
+
+\[
+ G=T^\gamma,\qquad b=T^x,\qquad \ell=cnp=T^y,
+ \qquad K_G(b\ell).
+\]
+
+Assume for this paragraph that \(G\) is prime, the inverse coefficient
+is a unit and the trace is nonexceptional, and the supplied physical
+weight has already been written as a sum of separated
+\(\alpha_b\beta_\ell\) atoms at subpolynomial projective cost.  FKM
+[Theorem 1.17](https://arxiv.org/html/1211.6043v3)
+then gives, in the orientation displayed,
+
+\[
+ \sum_{b,\ell}\alpha_b\beta_\ell K_G(b\ell)
+ \ll \|\alpha\|_2\|\beta\|_2T^{(x+y)/2}
+ \left(T^{-\gamma/4}+T^{-x/2}
+       +T^{\gamma/4-y/2+\varepsilon}\right).
+ \tag{9.805}
+\]
+
+Since the product kernel permits interchanging the two factors, the
+limiting fixed-atom saving is
+
+\[
+ \boxed{
+ \eta_{\rm atom}(\gamma;x,y)=
+ \left[\max\left\{
+ \min\left(\frac\gamma4,\frac x2,
+                 \frac y2-\frac\gamma4\right),
+ \min\left(\frac\gamma4,\frac y2,
+                 \frac x2-\frac\gamma4\right)
+ \right\}\right]_+.}
+ \tag{9.806}
+\]
+
+It is positive exactly when
+
+\[
+ \boxed{\min(x,y)>0,\qquad \max(x,y)>\gamma/2.}
+ \tag{9.807}
+\]
+
+For example, at \(\gamma=3\), the atoms
+\((x,y)=(3/4,9/4)\) and \((1/2,2)\) have limiting savings
+\(3/8\) and \(1/4\), while \((3/2,3/2)\) is exactly degenerate.
+The logarithm in Theorem 1.17 means these are limiting exponents; an
+arbitrarily small loss is required at the boundary.
+
+The resulting post-split coverage table is therefore:
+
+| quotient Type atom | published input | status |
+|---|---|---|
+| prime \(G\), unit nonexceptional trace, verified separated atom, \(\min(x,y)>0\), \(\max(x,y)>\gamma/2\) | FKM Theorem 1.17 | local saving (9.806) |
+| same exponents but no projective adapter for the physical \(\mathscr W\) | formal substitution only | no coverage of the supplied packet |
+| prime \(G\), \(x=y=\gamma/2\), or more generally \(\max(x,y)\le\gamma/2\) | FKM Theorem 1.17 | no fixed power from this bound |
+| composite \(G\), or nonunit/exceptional trace | no matching bilinear theorem in the cited table | unproved residual |
+| signed sum over \(Q,G,r_0,h,\delta\) | no cited fixed-atom theorem supplies it | unproved global residual |
+
+For the arbitrary finite \(\mathscr W\) allowed in (9.791)--(9.803),
+the separated-atom hypothesis in the first row is not automatic.  The
+archimedean adapter (9.587)--(9.590) separates the smooth normalized
+weight, but not the same \(G\)-phase, divisor lift, reflection, and
+joint-conductor arithmetic simultaneously.  Thus (9.806) is genuine
+published coverage only for a fixed verified atom; it cannot be summed
+over the outer packets or subtracted from the global deficit.
+
+Returning to the unit-cutoff identity (9.802), its suggested two-stage
+ordering can be written without suppressing any outer sum.  Define the
+**principal quotient master**
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathscr Z_Q[\Pi]
+ :=\sum_{G\mid Q}\mu(G)
+  \sum_{\substack{r_0\ge1\\(r_0,Q)=1}}
+  \mu(r_0)\omega_{B,a}(r_0)
+  \left\{\mathcal L_{Q,G,r_0,\Pi}(1;B,a)
+  -\sum_{\substack{N>1\\\mu(N)\ne0\\(N,Qr_0)=1}}
+   \mathcal L_{Q,G,r_0,\Pi}(N;B,a)\right\}.
+ \end{aligned}}
+ \tag{9.808}
+\]
+
+There is no Type Möbius sign in (9.808); its squarefree support is still
+retained explicitly.  The complementary
+**double-Möbius quotient master** is
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathscr B_Q[\Pi]
+ :=\sum_{G\mid Q}\mu(G)
+  \sum_{\substack{r_0\ge1\\(r_0,Q)=1}}
+  \mu(r_0)\omega_{B,a}(r_0)
+  \sum_{\substack{b,c>1\\\mu(b)\mu(c)\ne0\\(b,c)=1\\(bc,Qr_0)=1}}
+  \mu(b)\mu(c)
+  \sum_{\substack{n\ge1\\\mu(n)\ne0\\(n,bcQr_0)=1}}
+  \mathcal L_{Q,G,r_0,\Pi}(bcn;B,a).
+ \end{aligned}}
+ \tag{9.809}
+\]
+
+Every sum is finite by the original support.  Reindexing
+\(N=bcn\) in the last term of (9.802) gives the exact identity
+
+\[
+ \boxed{\mathscr S_Q[\Pi]=\mathscr Z_Q[\Pi]+\mathscr B_Q[\Pi].}
+ \tag{9.810}
+\]
+
+This is the promised ``principal first, centered dispersion second''
+interface.  One must insert (9.808) back into the full two-AFE,
+reflection, explicit-diagonal, and dyadic master and determine whether
+it is within target, cancels, or contributes a secondary term.  Only
+after that accounting may (9.809) be treated as the residual two-Möbius
+dispersion problem.  Bounding \(\mathscr Z\) and \(\mathscr B\)
+separately by triangle inequality would be a stronger sufficient route,
+not an equivalence automatically granted by DLMG\(_3\).
+
+The fixed-prime rows classified in Section 9.118 and (9.806) still do
+not control the signed \(Q,G,r_0,h,\delta\) aggregate.  The composite
+central rows, the principal quotient reassembly, the physical atom
+adapter, and the global Type-II dispersion in (9.803) remain unproved.
+Consequently neither \({\rm QTIID}_3\), \({\rm DLMG}_3\), nor the
+coupled-kernel gate is closed here.
+
+The helper `divisor_lifted_quotient_type_split_audit` independently
+enumerates the original \((r_0,m,p)\) master, the gcd-first
+\((r_0,G,N,p)\) master, and the small/I/II reconstruction.  It checks
+the two divisor-orthogonality identities, every finite boundary, the
+pairwise coprimalities in (9.801), preservation of \(G\), retention of
+the supplied \(a=h\delta\) label by canonical packet key, and the
+unit-cutoff principal/double split (9.808)--(9.810).  Only the finite
+reduction flags are true; the principal quotient evaluation, global
+Type-I/II estimate, and coupled-kernel flags remain false.  The exact-rational helper
+`fkm_general_bilinear_type_atom_coverage_audit` verifies
+(9.805)--(9.807) in both orientations and distinguishes a proved fixed
+atom from the still-missing divisor-lifted physical adapter and global
+outer average.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -17467,7 +17767,21 @@ conductor \(Q\) then gives the single one-Möbius gate
 while \(Q>1\) contains both the rest of the inverse-principal row and
 the centered rows.  That divisor-lifted moving-gcd estimate, all
 composite and balanced prime rows, and the global pre-Cauchy packet
-bound remain unproved.**
+bound remain unproved.  The gcd-first disintegration (9.796)--(9.801)
+then fixes \(G=(M,Q)\) before splitting the true Type quotient
+\(N=M/(r_0G)\).  It preserves \(a=h\delta\), every endpoint, and the
+two long-block signs \(\mu(b)\mu(c)\).  At unit cutoffs, (9.802)
+isolates an explicit Type-sign-free principal quotient from the genuine
+  two-Möbius divisor family.  The equivalent gate \({\rm QTIID}_3\),
+  (9.803)--(9.804), is still unproved.  FKM Theorem 1.17 supplies the
+  local saving (9.806) only for verified separated prime-conductor
+  atoms with \(\min(x,y)>0\) and \(\max(x,y)>\gamma/2\); it supplies
+  neither the physical divisor-lifted adapter nor the global outer
+  average.  Finally, (9.808)--(9.810) split the unit-cutoff master
+  exactly into a Type-sign-free squarefree principal quotient and a genuine
+  \(\mu(b)\mu(c)\) double-Möbius master.  Evaluating the former across
+  the complete AFE/reflection master and dispersing the latter are both
+  still open.**
 
 Proved in this note:
 
@@ -17529,6 +17843,28 @@ Proved in this note:
   by joint conductor.  Here \(Q=1\) is only the double-principal subrow;
   the \(Q>1\) rows also retain the nontrivial-direct part of the
   inverse-principal row.  The gate remains unproved;
+* the exact gcd-first quotient Type split (9.796)--(9.804): after fixing
+  \(G=(M,Q)\), the actual Type variable \(N=M/(r_0G)\) has an explicit
+  small boundary and remainder-free short--short/long--long
+  decomposition.  Every long atom keeps \((bcn,Qr_0)=1\), the frozen
+  conductor \(G\), the physical product \(a=h\delta\), and the two
+  Möbius factors \(\mu(b)\mu(c)\).  The unit-cutoff identity separates
+  the principal quotient exactly, but its global reassembly and the
+  resulting Type-II dispersion remain unproved;
+* the general fixed-prime Type-atom substitution in FKM Theorem 1.17,
+  (9.805)--(9.807).  For factor exponents \(x,y\) and conductor
+  exponent \(\gamma\), optimizing both orientations gives the exact
+  limiting saving (9.806), positive precisely when
+  \(\min(x,y)>0\) and \(\max(x,y)>\gamma/2\).  This is published local
+  coverage only after a separated physical-atom adapter is verified;
+  no such adapter or global \(Q,G,r_0,h,\delta\) moment is asserted;
+* the unit-cutoff principal/double decomposition (9.808)--(9.810).
+  The coefficient \(\mathbf1_{N=1}-\mathbf1_{N>1}\) defines an
+  explicit Type-sign-free squarefree principal quotient master, while the
+  complementary rows reindex as \(N=bcn\) with \(b,c>1\),
+  \(\mu(b)\mu(c)\), and all coprimalities and physical weights intact.
+  The identity is proved; neither the full principal reassembly nor the
+  global double-Möbius dispersion is proved;
 * the exact separation (5.2a) into a polylogarithmic core and a named tail,
   and the core-box normalization (5.3)--(5.15);
 * the implication
@@ -18051,6 +18387,7 @@ Proved in this note:
 | Conductor--Type Möbius gcd fusion | exact fixed-\(r_0\) one-sign reindexing; varying-gcd estimate unproved | Opening the Type packet before Cauchy makes the ambient unit mask force \((d,n)=1\).  The bijection \(m=dn\) then gives \(\mu(d)\mu(n)=\mu(m)\), \(d=(m,Q)\), \(k=Q/(m,Q)\), and \(n=m/(m,Q)\), (9.780)--(9.784).  Thus, inside the jointly primitive core at fixed \(r_0\), the nine separately split conductor--Type blocks may be replaced by three blocks from one pointwise split of \(\mu(m)\), with no absolute value or boundary error.  The factor \(\mu(r_0)c_{r_0}(B)c_{r_0}(a)/\varphi(r_0)^2\) remains outside at this stage; Section 9.119 restores its sum and fuses its sign.  The kernel's conductor, cofactor, and Type argument still move with \((m,Q)\), and no global bound for this coefficient class is asserted |
 | Fixed-gcd Möbius--trace coverage | exact prime-row exponent polytope; composite and packet-level gate unproved | At fixed \(g=T^\gamma\) and Möbius quotient length \(T^u\), FKM Theorem 1.7 gives the limiting saving \([\gamma/24-(\gamma-u)_+/6]_+\), positive exactly for prime nonexceptional rows with \(u>3\gamma/4\), (9.785)--(9.787).  Korolev--Shparlinski reaches \(u>\gamma/2\) only logarithmically, while Gong--Jia is inverse-only and also leaves a logarithmic term.  A formal extraction of a prime \(T^\lambda\mid g\), charged by the complementary Fourier cost, is positive at full local length only for \(\lambda>12\gamma/13\), (9.788), but no published Möbius--trace theorem accepts that cofactor multiplier.  Hence no composite row or global packet is declared covered; even the maximal local \(1/8\) saving leaves the diagnostic \(19/8\) of the standard \(T^{5/2}\) deficit, (9.789) |
 | Common-cofactor Möbius divisor lift | exact one-sign global reindexing at divisor cost; \({\rm DLMG}_3\) unproved | Restoring the \(r_0\)-sum before Cauchy and setting \(M=r_0m\) gives \(\mu(r_0)\mu(m)=\mu(M)\) and \((M,Q)=(m,Q)\), (9.790)--(9.793).  Every physical \(r_0\)-dependent packet weight, unit mask, boundary, and \(h\delta\) label stays inside the inner \(r_0\mid M\) sum.  Its Ramanujan projective cost is at most \(\tau(M)\), (9.794), so the separate external Möbius source is removed with no fixed-power loss.  The unique joint-conductor partition of all \((\lambda,\psi)\) pairs gives the exact sufficient one-Möbius gate \({\rm DLMG}_3\), (9.795): \(Q=1\) is the double-principal subrow, while \(Q>1\) contains both the rest of the inverse-principal row and all centered rows.  Its divisor-superposition coefficient still has conductor \((M,Q)\), and the required joint pre-Cauchy estimate is not supplied by the cited scalar trace theorems |
+| Gcd-first quotient Type I/II split | exact frozen-conductor two-sign reduction and fixed-prime subpolytope; global dispersion unproved | Disintegrating \(M=r_0GN\) with \(G=(M,Q)\) gives pairwise coprime \(r_0,G,N\) and \((N,Q)=1\), (9.796)--(9.798).  Applying the remainder-free two-cutoff identity only to \(\mu(N)\) yields (9.799)--(9.801): every boundary is explicit, mixed rectangles cancel, the conductor \(G\) and cofactor \(Q/G\) are frozen, and \(a=h\delta\) stays inside the physical packet.  At \(U=V=1\), (9.802) separates the \(N=1\) boundary and the Type-sign-free squarefree \(N>1\) quotient mean from the genuine \(\mu(b)\mu(c)\), \(b,c>1\), divisor family.  The recombined gate \({\rm QTIID}_3(U,V)\) is exactly equivalent to \({\rm DLMG}_3\), (9.803)--(9.804).  For a verified separated prime-conductor atom, FKM Theorem 1.17 gives (9.806), positive exactly on \(\min(x,y)>0,\max(x,y)>\gamma/2\), (9.807).  Equations (9.808)--(9.810) then retain every outer label while splitting the full unit-cutoff master as \(\mathscr Z_Q+\mathscr B_Q\), with no Type Möbius sign but explicit squarefree support in \(\mathscr Z_Q\), and the two nontrivial signs \(\mu(b)\mu(c)\) in \(\mathscr B_Q\).  The physical adapter, composite rows, full principal quotient evaluation, and signed global double-Möbius estimate remain open |
 | Cross-modulus zero product frequency | exact same-\((s,t)\) diagonal; signed complement unproved | The primitive frequency \(\bar t_s/s\) is a reduced fraction.  Hence equality across two blocks forces \(s_1=s_2,t_1=t_2\), and every distinct pair has Farey spacing at least \((s_1s_2)^{-1}\), (9.601)--(9.603).  The ordinary additive large sieve (9.604) and the sum of fixed-modulus Cochrane--Shi energies both have balanced exponent \(11\), so spacing alone gives no new power.  The zero projector is classified, but its AFE/Type reassembly and the signed nonzero-frequency cross-modulus estimate remain unproved |
 | Cross-modulus frequency Euler centering | exact local density and mean-zero divisor expansion; weighted lift handled next | For \(s_i=gr_i\), CRT gives the exact multiplicity (9.606) of every circular numerator \(\kappa\).  The common Möbius sign cancels as \(\mu(s_1)\mu(s_2)=\mu(r_1)\mu(r_2)\), while (9.608)--(9.610) split the multiplicity into the explicit density \(\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) and Euler blocks containing a mean-zero factor \(1_{p\mid\kappa}-1/p\).  Section 9.93 lifts this to arbitrary fixed-pair packet weights; the signed estimate for the resulting centered blocks remains unproved |
 | Weighted CRT packet centering | exact orthogonal projection; principal reassembly and centered dispersion unproved | Conditional expectations in the prime CRT coordinates give the Hoeffding decomposition (9.612)--(9.615) for an arbitrary fixed-\((s_1,s_2)\) packet.  The weighted fibre identity (9.616) separates \(\bar W\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) from two terms whose total \(\kappa\)-mass is exactly zero.  Linearity (9.618) retains \(h\delta\), both Type Möbius weights, the outer cofactor signs, and all nine ordered Type blocks at divisor cost \(T^\varepsilon\).  Zero marginals do not themselves give power cancellation; the AFE/reflection principal ledger and the global signed norm of the centered blocks remain open |

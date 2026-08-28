@@ -2699,6 +2699,75 @@ def test_fkm_bilinear_trace_covers_prime_slice_but_degenerates_at_balance() -> N
     assert not balanced["bilinear_bound_is_power_saving"]
 
 
+def test_fkm_general_type_atom_polytope_uses_both_orientations() -> None:
+    audit = getattr(
+        coverage_audit,
+        "fkm_general_bilinear_type_atom_coverage_audit",
+        None,
+    )
+    assert audit is not None, "general FKM Type-atom coverage audit is missing"
+
+    covered = audit(
+        conductor_exponent=F(3),
+        first_factor_exponent=F(3, 4),
+        second_factor_exponent=F(9, 4),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separable_type_atom_adapter_verified=True,
+    )
+    assert covered["best_orientation"] == "first_as_M"
+    assert covered["limiting_fixed_atom_saving"] == F(3, 8)
+    assert covered["published_fixed_atom_coverage"]
+    assert covered["separable_type_atom_adapter_hypothesis_verified"]
+    assert not covered["divisor_lifted_physical_adapter_proved"]
+    assert not covered["global_divisor_lifted_packet_coverage"]
+
+    reversed_atom = audit(
+        conductor_exponent=F(3),
+        first_factor_exponent=F(9, 4),
+        second_factor_exponent=F(3, 4),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separable_type_atom_adapter_verified=True,
+    )
+    assert reversed_atom["best_orientation"] == "second_as_M"
+    assert reversed_atom["limiting_fixed_atom_saving"] == F(3, 8)
+
+    shorter_product = audit(
+        conductor_exponent=F(3),
+        first_factor_exponent=F(1, 2),
+        second_factor_exponent=F(2),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separable_type_atom_adapter_verified=True,
+    )
+    assert shorter_product["limiting_fixed_atom_saving"] == F(1, 4)
+
+    balanced = audit(
+        conductor_exponent=F(3),
+        first_factor_exponent=F(3, 2),
+        second_factor_exponent=F(3, 2),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separable_type_atom_adapter_verified=True,
+    )
+    assert balanced["limiting_fixed_atom_saving"] == 0
+    assert balanced["exact_balance_degenerates"]
+    assert not balanced["published_fixed_atom_coverage"]
+
+    missing_adapter = audit(
+        conductor_exponent=F(3),
+        first_factor_exponent=F(3, 4),
+        second_factor_exponent=F(9, 4),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separable_type_atom_adapter_verified=False,
+    )
+    assert missing_adapter["limiting_fixed_atom_saving"] == F(3, 8)
+    assert not missing_adapter["published_fixed_atom_coverage"]
+    assert not missing_adapter["divisor_lifted_physical_adapter_proved"]
+
+
 def test_product_trace_additive_completion_is_exact_and_parseval_is_trivial() -> None:
     audit = getattr(
         coverage_audit,
@@ -4374,6 +4443,104 @@ def test_common_cofactor_mobius_fuses_by_a_divisor_lift() -> None:
             inverse_label=1,
             packet_weights={(1, 1, 1): 1},
         )
+
+
+def test_divisor_lifted_master_splits_the_true_type_quotient() -> None:
+    audit = getattr(
+        coverage_audit,
+        "divisor_lifted_quotient_type_split_audit",
+        None,
+    )
+    assert audit is not None, "divisor-lifted quotient Type split is missing"
+
+    result = audit(
+        modulus=6,
+        direct_label=0,
+        inverse_label=-5,
+        short_cutoff_u=2,
+        short_cutoff_v=3,
+        packet_weights={
+            (1, 1, 1): 1,
+            (1, 2, 5): -2,
+            (1, 3, 5): 3j,
+            (1, 5, 5): 4 - 1j,
+            (1, 70, 5): -7,
+            (11, 105, 5): 2 + 4j,
+            (11, 210, 5): -9,
+            (5, 70, 5): 101,
+            (11, 12, 5): -103,
+            (11, 70, 22): 107,
+        },
+    )
+
+    assert result["original_master_equals_gcd_first_master"]
+    assert result["gcd_first_master_equals_quotient_type_split_master"]
+    assert result["every_gcd_first_mobius_factorization_is_exact"]
+    assert result["every_true_type_quotient_split_is_exact"]
+    assert result["small_quotient_boundary_retained_exactly"]
+    assert result["mixed_type_rectangles_cancel_exactly"]
+    assert result["moving_conductor_frozen_inside_every_type_atom"]
+    assert result["all_type_atoms_retain_h_delta_product"]
+    assert result["all_type_factors_are_coprime_to_joint_modulus_and_cofactor"]
+    assert result["all_long_type_factors_are_pairwise_coprime"]
+    assert result["quotient_type_i_ii_finite_reduction_proved"]
+    assert not result["quotient_type_i_ii_global_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    retained = result["retained_packet_rows"]
+    assert retained
+    assert {row["moving_conductor"] for row in retained} >= {1, 2, 3, 6}
+    assert any(row["true_type_quotient"] == 35 for row in retained)
+    assert any(
+        atom["type_block"] == "II"
+        and atom["first_type_divisor"] > 2
+        and atom["second_type_divisor"] > 3
+        for atom in result["type_atoms"]
+    )
+    assert all(
+        atom["true_type_quotient"]
+        == atom["first_type_divisor"]
+        * atom["second_type_divisor"]
+        * atom["remaining_type_factor"]
+        for atom in result["type_atoms"]
+        if atom["type_block"] != "small"
+    )
+
+    unit_cutoff = audit(
+        modulus=1,
+        direct_label=0,
+        inverse_label=1,
+        short_cutoff_u=1,
+        short_cutoff_v=1,
+        packet_weights={
+            (1, 1, 1): 1,
+            (1, 5, 1): 2,
+            (11, 35, 1): -3,
+        },
+    )
+    assert unit_cutoff["quotient_type_i_ii_finite_reduction_proved"]
+    assert unit_cutoff["unit_cutoff_principal_plus_double_master_exact"]
+    assert unit_cutoff["principal_quotient_has_no_type_mobius_sign"]
+    assert unit_cutoff["principal_quotient_squarefree_support_retained"]
+    assert unit_cutoff["unit_cutoff_double_mobius_atom_count"] > 0
+    assert unit_cutoff[
+        "all_unit_cutoff_double_atoms_have_two_nontrivial_divisors"
+    ]
+    assert not unit_cutoff["principal_quotient_global_evaluation_proved"]
+    assert not unit_cutoff["double_mobius_global_dispersion_proved"]
+    assert all(
+        row["moving_conductor"] == 1
+        for row in unit_cutoff["retained_packet_rows"]
+    )
+    unit_rows = {
+        row["true_type_quotient"]: row
+        for row in unit_cutoff["retained_packet_rows"]
+    }
+    assert unit_rows[1]["small_coefficient"] == 1
+    assert unit_rows[5]["type_i_coefficient"] == 1
+    assert unit_rows[5]["type_ii_coefficient"] == 0
+    assert unit_rows[35]["type_i_coefficient"] == 1
+    assert unit_rows[35]["type_ii_coefficient"] == 2
 
 
 def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:

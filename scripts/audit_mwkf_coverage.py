@@ -8473,6 +8473,102 @@ def fkm_prime_modulus_bilinear_type_ii_audit(
     }
 
 
+def fkm_general_bilinear_type_atom_coverage_audit(
+    *,
+    conductor_exponent: Fraction,
+    first_factor_exponent: Fraction,
+    second_factor_exponent: Fraction,
+    prime_conductor: bool,
+    unit_nonexceptional_trace: bool,
+    separable_type_atom_adapter_verified: bool,
+) -> dict[str, object]:
+    """Audit FKM Theorem 1.17 on a general fixed Type atom.
+
+    For a prime conductor ``p=T^gamma`` and dyadic factors of lengths
+    ``M=T^x`` and ``N=T^y``, Theorem 1.17 gives, relative to the
+    one-bounded trivial scale, the three limiting savings
+
+    ``gamma/4, x/2, y/2-gamma/4``.
+
+    The product kernel permits interchanging the two factors, so this
+    audit takes the better orientation.  Positive numerical saving is
+    published coverage only when the prime, trace, and separable packet
+    hypotheses have all been verified.  Even then it is one fixed atom;
+    it supplies no signed ``Q,G,r0,h*delta`` aggregate.
+    """
+
+    gamma = F(conductor_exponent)
+    first = F(first_factor_exponent)
+    second = F(second_factor_exponent)
+    if gamma <= 0:
+        raise ValueError("conductor exponent must be positive")
+    if first < 0 or second < 0:
+        raise ValueError("both factor exponents must be nonnegative")
+
+    first_as_m_terms = (
+        gamma / 4,
+        first / 2,
+        second / 2 - gamma / 4,
+    )
+    second_as_m_terms = (
+        gamma / 4,
+        second / 2,
+        first / 2 - gamma / 4,
+    )
+    first_as_m_raw = min(first_as_m_terms)
+    second_as_m_raw = min(second_as_m_terms)
+    if first_as_m_raw > second_as_m_raw:
+        best_orientation = "first_as_M"
+        best_raw = first_as_m_raw
+    elif second_as_m_raw > first_as_m_raw:
+        best_orientation = "second_as_M"
+        best_raw = second_as_m_raw
+    else:
+        best_orientation = "either"
+        best_raw = first_as_m_raw
+    saving = _positive_part(best_raw)
+    local_hypotheses_verified = bool(
+        prime_conductor
+        and unit_nonexceptional_trace
+        and separable_type_atom_adapter_verified
+    )
+    published_coverage = bool(local_hypotheses_verified and saving > 0)
+
+    return {
+        "source": (
+            "Fouvry--Kowalski--Michel, arXiv:1211.6043v3, "
+            "Theorem 1.17"
+        ),
+        "conductor_exponent": gamma,
+        "first_factor_exponent": first,
+        "second_factor_exponent": second,
+        "first_as_M_saving_terms": first_as_m_terms,
+        "second_as_M_saving_terms": second_as_m_terms,
+        "first_as_M_raw_saving": first_as_m_raw,
+        "second_as_M_raw_saving": second_as_m_raw,
+        "best_orientation": best_orientation,
+        "limiting_fixed_atom_saving": saving,
+        "fixed_atom_power_saving_available": saving > 0,
+        "exact_balance_degenerates": (
+            first == second == gamma / 2
+        ),
+        "prime_conductor_hypothesis_verified": bool(prime_conductor),
+        "unit_nonexceptional_trace_hypothesis_verified": bool(
+            unit_nonexceptional_trace
+        ),
+        "separable_type_atom_adapter_hypothesis_verified": bool(
+            separable_type_atom_adapter_verified
+        ),
+        "divisor_lifted_physical_adapter_proved": False,
+        "published_fixed_atom_coverage": published_coverage,
+        "outer_Q_G_r0_average_provided": False,
+        "joint_h_delta_moment_provided": False,
+        "global_divisor_lifted_packet_coverage": False,
+        "quotient_type_i_ii_global_estimate_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def product_trace_additive_completion_audit(
     *,
     modulus: int,
@@ -13935,6 +14031,487 @@ def common_cofactor_mobius_divisor_lift_audit(
         ),
         "absolute_values_taken_before_mobius_fusion": False,
         "divisor_lifted_moving_gcd_estimate_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def divisor_lifted_quotient_type_split_audit(
+    *,
+    modulus: int,
+    direct_label: int,
+    inverse_label: int,
+    short_cutoff_u: int,
+    short_cutoff_v: int,
+    packet_weights: dict[tuple[int, int, int], complex],
+) -> dict[str, object]:
+    """Split the true Type quotient after the common-cofactor lift.
+
+    On a retained row of (9.791), put ``G=gcd(m,Q)`` and ``N=m/G``.
+    Squarefree support gives the pairwise factorization
+
+    ``m=G*N, gcd(N,Q*r0)=1, mu(m)=mu(G)*mu(N)``.
+
+    The remainder-free two-cutoff identity is applied to ``mu(N)``, not
+    to the lifted label ``M=r0*m``.  Hence the Kloosterman conductor
+    ``G`` and Ramanujan cofactor ``Q/G`` are frozen inside every Type
+    atom, while the physical packet weight and the label ``a=h*delta``
+    remain unchanged.  This is a finite disintegration only; it supplies
+    no estimate for the resulting global Type-I/II master.
+    """
+
+    Q = int(modulus)
+    B = int(direct_label)
+    a = int(inverse_label)
+    cutoff_u = int(short_cutoff_u)
+    cutoff_v = int(short_cutoff_v)
+    if Q <= 0 or _finite_mobius(Q) == 0:
+        raise ValueError("modulus must be positive and squarefree")
+    if a == 0:
+        raise ValueError("inverse phase label must be nonzero")
+    if cutoff_u < 1 or cutoff_v < 1:
+        raise ValueError("both Type cutoffs must be positive")
+    if not packet_weights:
+        raise ValueError("packet_weights must be nonempty")
+    if any(
+        int(r0) <= 0 or int(mobius_label) <= 0 or int(companion) <= 0
+        for r0, mobius_label, companion in packet_weights
+    ):
+        raise ValueError("all packet labels must be positive")
+
+    boundary = max(cutoff_u, cutoff_v)
+    weights = {
+        (int(r0), int(mobius_label), int(companion)): complex(value)
+        for (r0, mobius_label, companion), value in packet_weights.items()
+    }
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    def ramanujan(label: int, modulus_value: int) -> int:
+        common = gcd(abs(label), modulus_value)
+        return _finite_mobius(modulus_value // common) * finite_totient(
+            common
+        )
+
+    def cofactor_weight(common_cofactor: int) -> Fraction:
+        return F(
+            ramanujan(B, common_cofactor)
+            * ramanujan(a, common_cofactor),
+            finite_totient(common_cofactor) ** 2,
+        )
+
+    retained_packet_rows: list[dict[str, object]] = []
+    type_atoms: list[dict[str, object]] = []
+    original_contributions: dict[tuple[int, int, int], complex] = {}
+    gcd_first_contributions: dict[tuple[int, int, int], complex] = {}
+    split_contributions: dict[tuple[int, int, int], complex] = {}
+
+    for (r0, mobius_label, companion), weight in sorted(weights.items()):
+        retained = bool(
+            _finite_mobius(r0) != 0
+            and _finite_mobius(mobius_label) != 0
+            and gcd(r0, Q) == 1
+            and gcd(r0, mobius_label) == 1
+            and gcd(companion, Q * r0) == 1
+        )
+        if not retained:
+            continue
+
+        moving_conductor = gcd(mobius_label, Q)
+        ramanujan_cofactor = Q // moving_conductor
+        true_type_quotient = mobius_label // moving_conductor
+        lifted_label = r0 * mobius_label
+        ramanujan_weight = cofactor_weight(r0)
+        original_sign = _finite_mobius(r0) * _finite_mobius(mobius_label)
+        gcd_first_sign = (
+            _finite_mobius(r0)
+            * _finite_mobius(moving_conductor)
+            * _finite_mobius(true_type_quotient)
+        )
+
+        small_coefficient = (
+            _finite_mobius(true_type_quotient)
+            if true_type_quotient <= boundary
+            else 0
+        )
+        type_i_pairs: list[tuple[int, int]] = []
+        type_ii_pairs: list[tuple[int, int]] = []
+        first_orthogonality = 0
+        second_orthogonality = 0
+        if true_type_quotient > boundary:
+            for first in _positive_divisors(true_type_quotient):
+                quotient_after_first = true_type_quotient // first
+                for second in _positive_divisors(quotient_after_first):
+                    if first <= cutoff_u and second <= cutoff_v:
+                        type_i_pairs.append((first, second))
+                    if first > cutoff_u and second > cutoff_v:
+                        type_ii_pairs.append((first, second))
+            first_orthogonality = sum(
+                _finite_mobius(first)
+                * sum(
+                    _finite_mobius(second)
+                    for second in _positive_divisors(
+                        true_type_quotient // first
+                    )
+                )
+                for first in _positive_divisors(true_type_quotient)
+                if first <= cutoff_u
+            )
+            second_orthogonality = sum(
+                _finite_mobius(second)
+                * sum(
+                    _finite_mobius(first)
+                    for first in _positive_divisors(
+                        true_type_quotient // second
+                    )
+                )
+                for second in _positive_divisors(true_type_quotient)
+                if second <= cutoff_v
+            )
+
+        type_i_coefficient = sum(
+            (_finite_mobius(first) * _finite_mobius(second)
+             for first, second in type_i_pairs),
+            0,
+        )
+        type_ii_coefficient = sum(
+            (_finite_mobius(first) * _finite_mobius(second)
+             for first, second in type_ii_pairs),
+            0,
+        )
+        reconstructed_coefficient = (
+            small_coefficient - type_i_coefficient + type_ii_coefficient
+        )
+        outer_gcd_first_sign = (
+            _finite_mobius(r0) * _finite_mobius(moving_conductor)
+        )
+        packet_key = (r0, mobius_label, companion)
+        original_contribution = (
+            original_sign * complex(ramanujan_weight) * weight
+        )
+        gcd_first_contribution = (
+            gcd_first_sign * complex(ramanujan_weight) * weight
+        )
+        split_contribution = (
+            outer_gcd_first_sign
+            * reconstructed_coefficient
+            * complex(ramanujan_weight)
+            * weight
+        )
+        original_contributions[packet_key] = original_contribution
+        gcd_first_contributions[packet_key] = gcd_first_contribution
+        split_contributions[packet_key] = split_contribution
+
+        retained_packet_rows.append(
+            {
+                "common_cofactor": r0,
+                "mobius_label": mobius_label,
+                "companion_label": companion,
+                "lifted_label": lifted_label,
+                "moving_conductor": moving_conductor,
+                "ramanujan_cofactor": ramanujan_cofactor,
+                "true_type_quotient": true_type_quotient,
+                "inverse_phase_product": a,
+                "ramanujan_weight": ramanujan_weight,
+                "packet_weight": weight,
+                "original_mobius_sign": original_sign,
+                "gcd_first_mobius_sign": gcd_first_sign,
+                "gcd_first_mobius_factorization_exact": (
+                    original_sign == gcd_first_sign
+                ),
+                "small_coefficient": small_coefficient,
+                "type_i_coefficient": type_i_coefficient,
+                "type_ii_coefficient": type_ii_coefficient,
+                "reconstructed_type_coefficient": reconstructed_coefficient,
+                "true_type_quotient_split_exact": (
+                    reconstructed_coefficient
+                    == _finite_mobius(true_type_quotient)
+                ),
+                "first_divisor_orthogonality_exact": (
+                    true_type_quotient <= boundary
+                    or first_orthogonality == 0
+                ),
+                "second_divisor_orthogonality_exact": (
+                    true_type_quotient <= boundary
+                    or second_orthogonality == 0
+                ),
+                "original_contribution": original_contribution,
+                "gcd_first_contribution": gcd_first_contribution,
+                "type_split_contribution": split_contribution,
+            }
+        )
+
+        if true_type_quotient <= boundary:
+            type_atoms.append(
+                {
+                    "packet_key": packet_key,
+                    "type_block": "small",
+                    "common_cofactor": r0,
+                    "moving_conductor": moving_conductor,
+                    "ramanujan_cofactor": ramanujan_cofactor,
+                    "true_type_quotient": true_type_quotient,
+                    "first_type_divisor": 1,
+                    "second_type_divisor": 1,
+                    "remaining_type_factor": true_type_quotient,
+                    "inverse_phase_product": a,
+                    "signed_type_coefficient": small_coefficient,
+                    "conductor_frozen": (
+                        gcd(lifted_label, Q) == moving_conductor
+                    ),
+                    "type_factors_coprime_to_Qr0": (
+                        gcd(true_type_quotient, Q * r0) == 1
+                    ),
+                }
+            )
+        for block, pairs, block_sign in (
+            ("I", type_i_pairs, -1),
+            ("II", type_ii_pairs, 1),
+        ):
+            for first, second in pairs:
+                remaining = true_type_quotient // (first * second)
+                type_atoms.append(
+                    {
+                        "packet_key": packet_key,
+                        "type_block": block,
+                        "common_cofactor": r0,
+                        "moving_conductor": moving_conductor,
+                        "ramanujan_cofactor": ramanujan_cofactor,
+                        "true_type_quotient": true_type_quotient,
+                        "first_type_divisor": first,
+                        "second_type_divisor": second,
+                        "remaining_type_factor": remaining,
+                        "inverse_phase_product": a,
+                        "signed_type_coefficient": (
+                            block_sign
+                            * _finite_mobius(first)
+                            * _finite_mobius(second)
+                        ),
+                        "conductor_frozen": (
+                            gcd(r0 * moving_conductor * first * second * remaining, Q)
+                            == moving_conductor
+                        ),
+                        "type_factors_coprime_to_Qr0": (
+                            gcd(first * second * remaining, Q * r0) == 1
+                        ),
+                        "type_factors_pairwise_coprime": (
+                            gcd(first, second) == 1
+                            and gcd(first, remaining) == 1
+                            and gcd(second, remaining) == 1
+                        ),
+                    }
+                )
+
+    packet_keys = set(original_contributions)
+    original_matches_gcd_first = bool(
+        packet_keys == set(gcd_first_contributions)
+        and all(
+            original_contributions[key] == gcd_first_contributions[key]
+            for key in packet_keys
+        )
+    )
+    gcd_first_matches_split = bool(
+        packet_keys == set(split_contributions)
+        and all(
+            gcd_first_contributions[key] == split_contributions[key]
+            for key in packet_keys
+        )
+    )
+    every_quotient_split_is_exact = all(
+        bool(row["true_type_quotient_split_exact"])
+        for row in retained_packet_rows
+    )
+    every_gcd_first_factorization_is_exact = all(
+        bool(row["gcd_first_mobius_factorization_exact"])
+        for row in retained_packet_rows
+    )
+    small_boundary_exact = all(
+        (
+            int(row["small_coefficient"])
+            == _finite_mobius(int(row["true_type_quotient"]))
+            and int(row["type_i_coefficient"]) == 0
+            and int(row["type_ii_coefficient"]) == 0
+        )
+        if int(row["true_type_quotient"]) <= boundary
+        else int(row["small_coefficient"]) == 0
+        for row in retained_packet_rows
+    )
+    mixed_rectangles_cancel = all(
+        bool(row["first_divisor_orthogonality_exact"])
+        and bool(row["second_divisor_orthogonality_exact"])
+        for row in retained_packet_rows
+    )
+    conductor_frozen = all(
+        bool(atom["conductor_frozen"]) for atom in type_atoms
+    )
+    h_delta_retained = all(
+        int(atom["inverse_phase_product"]) == a for atom in type_atoms
+    )
+    type_factors_coprime = all(
+        bool(atom["type_factors_coprime_to_Qr0"]) for atom in type_atoms
+    )
+    long_type_factors_pairwise_coprime = all(
+        bool(atom["type_factors_pairwise_coprime"])
+        for atom in type_atoms
+        if str(atom["type_block"]) != "small"
+    )
+    unit_cutoff_specialization = cutoff_u == 1 and cutoff_v == 1
+    unit_principal_contributions: dict[tuple[int, int, int], complex] = {}
+    unit_double_contributions: dict[tuple[int, int, int], complex] = {}
+    if unit_cutoff_specialization:
+        for row in retained_packet_rows:
+            r0 = int(row["common_cofactor"])
+            mobius_label = int(row["mobius_label"])
+            companion = int(row["companion_label"])
+            moving_conductor = int(row["moving_conductor"])
+            true_type_quotient = int(row["true_type_quotient"])
+            outer_sign = (
+                _finite_mobius(r0) * _finite_mobius(moving_conductor)
+            )
+            common_weight = (
+                complex(row["ramanujan_weight"])
+                * complex(row["packet_weight"])
+            )
+            principal_coefficient = (
+                1 if true_type_quotient == 1 else -1
+            )
+            double_coefficient = int(row["type_ii_coefficient"])
+            packet_key = (r0, mobius_label, companion)
+            unit_principal_contributions[packet_key] = (
+                outer_sign * principal_coefficient * common_weight
+            )
+            unit_double_contributions[packet_key] = (
+                outer_sign * double_coefficient * common_weight
+            )
+    unit_principal_plus_double_exact = bool(
+        unit_cutoff_specialization
+        and packet_keys == set(unit_principal_contributions)
+        and packet_keys == set(unit_double_contributions)
+        and all(
+            _finite_mobius(int(row["true_type_quotient"]))
+            == (1 if int(row["true_type_quotient"]) == 1 else -1)
+            + int(row["type_ii_coefficient"])
+            for row in retained_packet_rows
+        )
+    )
+    unit_double_atoms = tuple(
+        atom
+        for atom in type_atoms
+        if unit_cutoff_specialization and str(atom["type_block"]) == "II"
+    )
+    unit_double_atoms_have_two_nontrivial_divisors = bool(
+        unit_cutoff_specialization
+        and all(
+            int(atom["first_type_divisor"]) > 1
+            and int(atom["second_type_divisor"]) > 1
+            for atom in unit_double_atoms
+        )
+    )
+    finite_reduction_proved = bool(
+        original_matches_gcd_first
+        and gcd_first_matches_split
+        and every_gcd_first_factorization_is_exact
+        and every_quotient_split_is_exact
+        and small_boundary_exact
+        and mixed_rectangles_cancel
+        and conductor_frozen
+        and h_delta_retained
+        and type_factors_coprime
+        and long_type_factors_pairwise_coprime
+    )
+
+    return {
+        "squarefree_joint_modulus": Q,
+        "direct_label": B,
+        "inverse_phase_product": a,
+        "short_cutoff_u": cutoff_u,
+        "short_cutoff_v": cutoff_v,
+        "small_quotient_boundary": boundary,
+        "retained_packet_rows": tuple(retained_packet_rows),
+        "type_atoms": tuple(type_atoms),
+        "original_two_mobius_master": sum(
+            (original_contributions[key] for key in sorted(packet_keys)),
+            0j,
+        ),
+        "gcd_first_quotient_master": sum(
+            (gcd_first_contributions[key] for key in sorted(packet_keys)),
+            0j,
+        ),
+        "quotient_type_split_master": sum(
+            (split_contributions[key] for key in sorted(packet_keys)),
+            0j,
+        ),
+        "unit_cutoff_principal_quotient_master": (
+            sum(
+                (
+                    unit_principal_contributions[key]
+                    for key in sorted(packet_keys)
+                ),
+                0j,
+            )
+            if unit_cutoff_specialization
+            else None
+        ),
+        "unit_cutoff_double_mobius_master": (
+            sum(
+                (
+                    unit_double_contributions[key]
+                    for key in sorted(packet_keys)
+                ),
+                0j,
+            )
+            if unit_cutoff_specialization
+            else None
+        ),
+        "original_master_equals_gcd_first_master": (
+            original_matches_gcd_first
+        ),
+        "gcd_first_master_equals_quotient_type_split_master": (
+            gcd_first_matches_split
+        ),
+        "every_gcd_first_mobius_factorization_is_exact": (
+            every_gcd_first_factorization_is_exact
+        ),
+        "every_true_type_quotient_split_is_exact": (
+            every_quotient_split_is_exact
+        ),
+        "small_quotient_boundary_retained_exactly": small_boundary_exact,
+        "mixed_type_rectangles_cancel_exactly": mixed_rectangles_cancel,
+        "moving_conductor_frozen_inside_every_type_atom": conductor_frozen,
+        "all_type_atoms_retain_h_delta_product": h_delta_retained,
+        "all_type_factors_are_coprime_to_joint_modulus_and_cofactor": (
+            type_factors_coprime
+        ),
+        "all_long_type_factors_are_pairwise_coprime": (
+            long_type_factors_pairwise_coprime
+        ),
+        "unit_cutoff_specialization_available": unit_cutoff_specialization,
+        "unit_cutoff_principal_plus_double_master_exact": (
+            unit_principal_plus_double_exact
+        ),
+        "principal_quotient_has_no_type_mobius_sign": (
+            unit_cutoff_specialization
+        ),
+        "principal_quotient_squarefree_support_retained": (
+            unit_cutoff_specialization
+            and all(
+                _finite_mobius(int(row["true_type_quotient"])) != 0
+                for row in retained_packet_rows
+            )
+        ),
+        "unit_cutoff_double_mobius_atom_count": len(unit_double_atoms),
+        "all_unit_cutoff_double_atoms_have_two_nontrivial_divisors": (
+            unit_double_atoms_have_two_nontrivial_divisors
+        ),
+        "absolute_values_taken_before_type_split": False,
+        "quotient_type_i_ii_finite_reduction_proved": (
+            finite_reduction_proved
+        ),
+        "principal_quotient_global_evaluation_proved": False,
+        "double_mobius_global_dispersion_proved": False,
+        "quotient_type_i_ii_global_estimate_proved": False,
         "coupled_kernel_gate_closed": False,
     }
 
