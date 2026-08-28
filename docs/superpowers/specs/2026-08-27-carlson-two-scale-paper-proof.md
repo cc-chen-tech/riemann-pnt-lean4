@@ -870,15 +870,29 @@ a final density axiom:
      = integral_[L,U] gaussian*|zeta*M_X|^2 + Tail(Delta,w,X,L,U)
    ```
    and combines this equality with the local AFE bound above.  The axiom
-   audit is again the allowed three axioms.  This is not yet a quantitative
-   tail estimate: the present compact-range constant `C_X` depends on `X`.
-   The next formal gate is therefore to replace it by a bound uniform in the
-   Carlson scale (with the explicit elementary factor `X`), and then prove
-   that for centers separated from the complement by a fixed multiple of
-   `U`, `Delta=4*U^(19/20)` makes the tail exponentially small in `U^(1/10)`.
-   Only after that estimate may the standard linear mollifier be identified
-   and the full-line bound fed into the two-scale interface.  This tail
-   transfer must not be omitted or treated as a harmless equality.
+   audit is again the allowed three axioms.  The quantitative tail majorant
+   is now formal as well.  Lean first replaces the fixed-length compact
+   constant by one absolute constant and proves, uniformly for every `X>=2`,
+   ```
+   |zeta(1/2+it) M_X(1/2+it)|^2 <= C*X*(|t|+3)^8.
+   ```
+   Translation and dilation reduce the residual eighth polynomial Gaussian
+   moment to one fixed nonnegative constant `K_8`, at cost `Delta^9`.  Hence,
+   whenever the complement of `[L,U]` is at distance at least `D` from `w`,
+   Lean proves exactly
+   ```
+   Tail <= C*X*(|w|+3)^8*Delta^9*K_8
+             * exp(-D^2/(2*Delta^2)).
+   ```
+   It also proves that `w in [2V,3V]` is at distance at least `V` from the
+   complement of `[V,4V]`, and instantiates this bound at
+   `Delta=4*(4V)^(19/20)`.  All new theorems again have only the allowed three
+   axioms.  The remaining real-variable normalization is now only to bound
+   the displayed prefactor polynomially and use
+   `exp(-c*V^(1/10))` to absorb it.  After that, the standard linear mollifier
+   can be identified and the full-line bound fed into the two-scale
+   interface.  This tail transfer must not be omitted or treated as a
+   harmless equality.
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
    specialization, and insert the resulting local norm into the now-proved

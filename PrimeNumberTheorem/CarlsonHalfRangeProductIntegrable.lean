@@ -14,6 +14,88 @@ open Complex MeasureTheory Set
 namespace PrimeNumberTheorem
 namespace CarlsonZeroDensity
 
+/-- A fixed absolute eighth polynomial moment of the half-strength Gaussian. -/
+noncomputable def gaussianPolynomialMomentEight : ℝ :=
+  ∫ y : ℝ, (1 + |y|) ^ 8 * Real.exp (-(1 / 2 : ℝ) * y ^ 2)
+
+theorem integrable_gaussianPolynomialMomentEight :
+    Integrable fun y : ℝ =>
+      (1 + |y|) ^ 8 * Real.exp (-(1 / 2 : ℝ) * y ^ 2) := by
+  exact integrable_one_add_abs_pow_mul_exp_neg_mul_sq (by norm_num) 8
+
+theorem gaussianPolynomialMomentEight_nonneg :
+    0 ≤ gaussianPolynomialMomentEight := by
+  unfold gaussianPolynomialMomentEight
+  exact integral_nonneg fun y =>
+    mul_nonneg (pow_nonneg (by positivity) 8) (Real.exp_nonneg _)
+
+/-- After translation and dilation, the eighth polynomial Gaussian moment
+costs at most `Delta^9` times one fixed absolute constant. -/
+theorem integral_centeredPolynomialEight_mul_halfGaussian_le
+    {Delta w : ℝ} (hDelta : 1 ≤ Delta) :
+    (∫ t : ℝ, (1 + |t - w|) ^ 8 *
+      Real.exp (-(1 / (2 * Delta ^ 2)) * (t - w) ^ 2)) ≤
+        Delta ^ 9 * gaussianPolynomialMomentEight := by
+  let g : ℝ → ℝ := fun y =>
+    (1 + |y|) ^ 8 * Real.exp (-(1 / 2 : ℝ) * y ^ 2)
+  have hDeltaPos : 0 < Delta := zero_lt_one.trans_le hDelta
+  have hleft : Integrable fun t : ℝ =>
+      (1 + |t - w|) ^ 8 *
+        Real.exp (-(1 / (2 * Delta ^ 2)) * (t - w) ^ 2) := by
+    have hb : 0 < 1 / (2 * Delta ^ 2) := by positivity
+    exact Integrable.comp_sub_right
+      (integrable_one_add_abs_pow_mul_exp_neg_mul_sq hb 8) w
+  have hg : Integrable g := by
+    simpa only [g] using integrable_gaussianPolynomialMomentEight
+  have hscaled : Integrable fun t : ℝ => g ((t - w) / Delta) := by
+    have hdiv : Integrable fun u : ℝ => g (u / Delta) :=
+      hg.comp_div hDeltaPos.ne'
+    simpa only [sub_eq_add_neg] using hdiv.comp_add_right (-w)
+  have hright : Integrable fun t : ℝ => Delta ^ 8 * g ((t - w) / Delta) :=
+    hscaled.const_mul (Delta ^ 8)
+  have hpoint : ∀ t : ℝ,
+      (1 + |t - w|) ^ 8 *
+          Real.exp (-(1 / (2 * Delta ^ 2)) * (t - w) ^ 2) ≤
+        Delta ^ 8 * g ((t - w) / Delta) := by
+    intro t
+    have hlinear : 1 + |t - w| ≤ Delta * (1 + |(t - w) / Delta|) := by
+      rw [abs_div, abs_of_pos hDeltaPos]
+      field_simp [hDeltaPos.ne']
+      nlinarith
+    have hpow := pow_le_pow_left₀ (by positivity : 0 ≤ 1 + |t - w|) hlinear 8
+    have hexp :
+        Real.exp (-(1 / (2 * Delta ^ 2)) * (t - w) ^ 2) =
+          Real.exp (-(1 / 2 : ℝ) * ((t - w) / Delta) ^ 2) := by
+      congr 1
+      field_simp [hDeltaPos.ne']
+    rw [hexp]
+    dsimp only [g]
+    calc
+      _ ≤ (Delta * (1 + |(t - w) / Delta|)) ^ 8 *
+          Real.exp (-(1 / 2 : ℝ) * ((t - w) / Delta) ^ 2) := by
+        gcongr
+      _ = Delta ^ 8 * ((1 + |(t - w) / Delta|) ^ 8 *
+          Real.exp (-(1 / 2 : ℝ) * ((t - w) / Delta) ^ 2)) := by ring
+  calc
+    _ ≤ ∫ t : ℝ, Delta ^ 8 * g ((t - w) / Delta) :=
+      integral_mono hleft hright hpoint
+    _ = Delta ^ 8 * (Delta * gaussianPolynomialMomentEight) := by
+      rw [integral_const_mul]
+      congr 1
+      calc
+        (∫ t : ℝ, g ((t - w) / Delta)) =
+            ∫ t : ℝ, (fun u : ℝ => g (u / Delta)) (t + (-w)) := by
+              simp only [sub_eq_add_neg]
+        _ = ∫ u : ℝ, g (u / Delta) :=
+          integral_add_right_eq_self (μ := volume)
+            (fun u : ℝ => g (u / Delta)) (-w)
+        _ = |Delta| * ∫ y : ℝ, g y := by
+          simpa only [smul_eq_mul] using Measure.integral_comp_div g Delta
+        _ = Delta * gaussianPolynomialMomentEight := by
+          rw [abs_of_pos hDeltaPos]
+          rfl
+    _ = Delta ^ 9 * gaussianPolynomialMomentEight := by ring
+
 private theorem continuous_linearLogSelbergMollifiedZetaProduct_critical
     (X : ℕ) :
     Continuous fun t : ℝ =>
@@ -35,6 +117,100 @@ private theorem continuous_linearLogSelbergMollifiedZetaProduct_critical
       HardyTheorem.continuous_selbergMollifier_criticalLine X
         (fun n => (HardyTheorem.selbergMoebiusCoeff X n : ℂ))
   exact hzeta.mul hmoll
+
+private theorem continuous_riemannZeta_critical :
+    Continuous fun t : ℝ => riemannZeta ((1 / 2 : ℂ) + I * t) := by
+  let line : ℝ → ℂ := fun t => (1 / 2 : ℂ) + I * t
+  have hline : Continuous line := by dsimp only [line]; fun_prop
+  rw [continuous_iff_continuousAt]
+  intro t
+  have hne : line t ≠ 1 := by
+    intro h
+    have hre := congrArg Complex.re h
+    norm_num [line] at hre
+  exact (differentiableAt_riemannZeta hne).continuousAt.comp hline.continuousAt
+
+private theorem exists_norm_riemannZeta_critical_le_compact :
+    ∃ M : ℝ, 0 ≤ M ∧ ∀ t ∈ Icc (-1 : ℝ) 1,
+      ‖riemannZeta ((1 / 2 : ℂ) + I * t)‖ ≤ M := by
+  rcases isCompact_Icc.exists_bound_of_continuousOn
+      continuous_riemannZeta_critical.continuousOn with ⟨M, hM⟩
+  refine ⟨max 0 M, le_max_left 0 M, ?_⟩
+  intro t ht
+  exact (hM t ht).trans (le_max_right 0 M)
+
+/-- A product-growth estimate uniform in the mollifier length.  All length
+dependence is the explicit elementary factor `X`. -/
+theorem exists_uniform_norm_sq_linearLogSelbergMollifiedZetaProduct_le_polynomial :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (X : ℕ), 2 ≤ X → ∀ t : ℝ,
+      ‖linearLogSelbergMollifiedZetaProduct X ((1 / 2 : ℂ) + I * t)‖ ^ 2 ≤
+        C * X * (|t| + 3) ^ 8 := by
+  obtain ⟨M, hM, hcompact⟩ := exists_norm_riemannZeta_critical_le_compact
+  obtain ⟨Czeta, hCzeta, hzeta⟩ :=
+    ZeroFreeRegion.exists_norm_riemannZeta_le_polynomial_on_zero_four
+  let B : ℝ := 2 * Czeta
+  let C : ℝ := 4 * M ^ 2 + B ^ 2
+  have hB : 0 ≤ B := by dsimp only [B]; positivity
+  have hC : 0 ≤ C := by dsimp only [C]; positivity
+  refine ⟨C, hC, ?_⟩
+  intro X hX t
+  let A : ℝ := |t| + 3
+  have hA : 1 ≤ A := by dsimp only [A]; linarith [abs_nonneg t]
+  have hA0 : 0 ≤ A := zero_le_one.trans hA
+  have hX0 : 0 ≤ (X : ℝ) := Nat.cast_nonneg X
+  have hsqrt : (Real.sqrt X) ^ 2 = (X : ℝ) := Real.sq_sqrt hX0
+  have hm := HardyTheorem.norm_selbergMoebiusMollifier_criticalLine_le_two_sqrt hX t
+  by_cases ht : |t| ≤ 1
+  · have hz := hcompact t (abs_le.mp ht)
+    have hprod :
+        ‖linearLogSelbergMollifiedZetaProduct X ((1 / 2 : ℂ) + I * t)‖ ≤
+          M * (2 * Real.sqrt X) := by
+      rw [linearLogSelbergMollifiedZetaProduct,
+        HardyTheorem.linearLogSelbergMollifier_eq_selbergMoebiusMollifier,
+        norm_mul]
+      exact mul_le_mul hz hm (norm_nonneg _) hM
+    have hsq := pow_le_pow_left₀ (norm_nonneg _) hprod 2
+    have hA8 : 1 ≤ A ^ 8 := one_le_pow₀ hA
+    calc
+      _ ≤ (M * (2 * Real.sqrt X)) ^ 2 := hsq
+      _ = 4 * M ^ 2 * X := by
+        rw [mul_pow, mul_pow, hsqrt]
+        ring
+      _ ≤ C * X := by
+        apply mul_le_mul_of_nonneg_right
+        · dsimp only [C]
+          nlinarith [sq_nonneg B]
+        · exact hX0
+      _ ≤ C * X * A ^ 8 := le_mul_of_one_le_right (mul_nonneg hC hX0) hA8
+  · have htHigh : 1 ≤ |t| := le_of_not_ge ht
+    have hz := hzeta ((1 / 2 : ℂ) + I * t)
+      (by norm_num : (((1 / 2 : ℂ) + I * t).re) ∈ Icc (0 : ℝ) 4)
+      (by simpa using htHigh)
+    have hz' : ‖riemannZeta ((1 / 2 : ℂ) + I * t)‖ ≤
+        Czeta * A ^ 4 := by simpa [A] using hz
+    have hprod :
+        ‖linearLogSelbergMollifiedZetaProduct X ((1 / 2 : ℂ) + I * t)‖ ≤
+          B * Real.sqrt X * A ^ 4 := by
+      rw [linearLogSelbergMollifiedZetaProduct,
+        HardyTheorem.linearLogSelbergMollifier_eq_selbergMoebiusMollifier,
+        norm_mul]
+      dsimp only [B]
+      calc
+        _ ≤ (Czeta * A ^ 4) * (2 * Real.sqrt X) :=
+          mul_le_mul hz' hm (norm_nonneg _) (by positivity)
+        _ = 2 * Czeta * Real.sqrt X * A ^ 4 := by ring
+    have hsq := pow_le_pow_left₀ (norm_nonneg _) hprod 2
+    calc
+      _ ≤ (B * Real.sqrt X * A ^ 4) ^ 2 := hsq
+      _ = B ^ 2 * X * A ^ 8 := by
+        calc
+          (B * Real.sqrt X * A ^ 4) ^ 2 =
+              B ^ 2 * (Real.sqrt X) ^ 2 * A ^ 8 := by ring
+          _ = B ^ 2 * X * A ^ 8 := by rw [hsqrt]
+      _ ≤ C * X * A ^ 8 := by
+        gcongr
+        dsimp only [C]
+        nlinarith [sq_nonneg M]
 
 private theorem exists_norm_linearLogSelbergMollifiedZetaProduct_le_compact
     (X : ℕ) :
@@ -177,6 +353,162 @@ noncomputable def carlsonHalfRangeProductTail
   ∫ t : ℝ in (Icc L U)ᶜ, carlsonGaussianWeight Delta w t *
     ‖linearLogSelbergMollifiedZetaProduct X
       ((1 / 2 : ℂ) + I * (t : ℂ))‖ ^ 2
+
+/-- Uniform quantitative tail bound before choosing the Carlson scales.  A
+distance `D` from the center extracts half of the Gaussian; the remaining
+half absorbs the degree-eight polynomial growth. -/
+theorem exists_carlsonHalfRangeProductTail_le :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ {Delta w D L U : ℝ} {X : ℕ},
+      1 ≤ Delta → 0 ≤ D → 2 ≤ X →
+      (∀ t ∈ (Icc L U)ᶜ, D ≤ |t - w|) →
+      carlsonHalfRangeProductTail Delta w X L U ≤
+        C * X * (|w| + 3) ^ 8 *
+          Real.exp (-(D ^ 2) / (2 * Delta ^ 2)) *
+            Delta ^ 9 * gaussianPolynomialMomentEight := by
+  obtain ⟨C, hC, hglobal⟩ :=
+    exists_uniform_norm_sq_linearLogSelbergMollifiedZetaProduct_le_polynomial
+  refine ⟨C, hC, ?_⟩
+  intro Delta w D L U X hDelta hD hX hsep
+  have hDeltaPos : 0 < Delta := zero_lt_one.trans_le hDelta
+  let A : ℝ := C * X * (|w| + 3) ^ 8 *
+    Real.exp (-(D ^ 2) / (2 * Delta ^ 2))
+  let residual : ℝ → ℝ := fun t =>
+    (1 + |t - w|) ^ 8 *
+      Real.exp (-(1 / (2 * Delta ^ 2)) * (t - w) ^ 2)
+  have hA : 0 ≤ A := by dsimp only [A]; positivity
+  have hresidual : Integrable residual := by
+    have hb : 0 < 1 / (2 * Delta ^ 2) := by positivity
+    simpa only [residual] using Integrable.comp_sub_right
+      (integrable_one_add_abs_pow_mul_exp_neg_mul_sq hb 8) w
+  have hmajor : Integrable fun t : ℝ => A * residual t :=
+    hresidual.const_mul A
+  have hactual : IntegrableOn (fun t : ℝ => carlsonGaussianWeight Delta w t *
+      ‖linearLogSelbergMollifiedZetaProduct X
+        ((1 / 2 : ℂ) + I * (t : ℂ))‖ ^ 2) ((Icc L U)ᶜ) :=
+    (integrable_gaussian_norm_sq_linearLogSelbergMollifiedZetaProduct
+      hDeltaPos hX).integrableOn
+  have hpoint : ∀ t ∈ (Icc L U)ᶜ,
+      carlsonGaussianWeight Delta w t *
+          ‖linearLogSelbergMollifiedZetaProduct X
+            ((1 / 2 : ℂ) + I * (t : ℂ))‖ ^ 2 ≤
+        A * residual t := by
+    intro t ht
+    have hshift : |t| + 3 ≤ (|w| + 3) * (1 + |t - w|) := by
+      have htri : |t| ≤ |t - w| + |w| := by
+        calc
+          |t| = |(t - w) + w| := by ring_nf
+          _ ≤ |t - w| + |w| := abs_add_le _ _
+      nlinarith [abs_nonneg w, abs_nonneg (t - w),
+        mul_nonneg (abs_nonneg w) (abs_nonneg (t - w))]
+    have hpow := pow_le_pow_left₀ (by positivity : 0 ≤ |t| + 3) hshift 8
+    have hprod :
+        ‖linearLogSelbergMollifiedZetaProduct X
+            ((1 / 2 : ℂ) + I * (t : ℂ))‖ ^ 2 ≤
+          C * X * (|w| + 3) ^ 8 * (1 + |t - w|) ^ 8 := by
+      calc
+        _ ≤ C * X * (|t| + 3) ^ 8 := hglobal X hX t
+        _ ≤ C * X * ((|w| + 3) * (1 + |t - w|)) ^ 8 := by
+          gcongr
+        _ = C * X * (|w| + 3) ^ 8 * (1 + |t - w|) ^ 8 := by ring
+    have hdistSq : D ^ 2 ≤ (t - w) ^ 2 := by
+      have habs := hsep t ht
+      nlinarith [sq_abs (t - w)]
+    have hhalfExp :
+        Real.exp (-(1 / (2 * Delta ^ 2)) * (t - w) ^ 2) ≤
+          Real.exp (-(D ^ 2) / (2 * Delta ^ 2)) := by
+      apply Real.exp_le_exp.mpr
+      have hden : 0 < 2 * Delta ^ 2 := by positivity
+      have hquot : D ^ 2 / (2 * Delta ^ 2) ≤
+          (t - w) ^ 2 / (2 * Delta ^ 2) :=
+        div_le_div_of_nonneg_right hdistSq hden.le
+      calc
+        -(1 / (2 * Delta ^ 2)) * (t - w) ^ 2 =
+            -((t - w) ^ 2 / (2 * Delta ^ 2)) := by ring
+        _ ≤ -(D ^ 2 / (2 * Delta ^ 2)) := neg_le_neg hquot
+        _ = -(D ^ 2) / (2 * Delta ^ 2) := by ring
+    have hweight : carlsonGaussianWeight Delta w t =
+        Real.exp (-(1 / (2 * Delta ^ 2)) * (t - w) ^ 2) *
+          Real.exp (-(1 / (2 * Delta ^ 2)) * (t - w) ^ 2) := by
+      unfold carlsonGaussianWeight
+      rw [← Real.exp_add]
+      congr 1
+      field_simp [hDeltaPos.ne']
+      ring
+    rw [hweight]
+    dsimp only [A, residual]
+    calc
+      _ ≤ (Real.exp (-(1 / (2 * Delta ^ 2)) * (t - w) ^ 2) *
+            Real.exp (-(1 / (2 * Delta ^ 2)) * (t - w) ^ 2)) *
+          (C * X * (|w| + 3) ^ 8 * (1 + |t - w|) ^ 8) := by
+        gcongr
+      _ ≤ (Real.exp (-(D ^ 2) / (2 * Delta ^ 2)) *
+            Real.exp (-(1 / (2 * Delta ^ 2)) * (t - w) ^ 2)) *
+          (C * X * (|w| + 3) ^ 8 * (1 + |t - w|) ^ 8) := by
+        gcongr
+      _ = C * X * (|w| + 3) ^ 8 *
+          Real.exp (-(D ^ 2) / (2 * Delta ^ 2)) *
+            ((1 + |t - w|) ^ 8 *
+              Real.exp (-(1 / (2 * Delta ^ 2)) * (t - w) ^ 2)) := by ring
+  have hset :
+      carlsonHalfRangeProductTail Delta w X L U ≤
+        ∫ t : ℝ in (Icc L U)ᶜ, A * residual t := by
+    unfold carlsonHalfRangeProductTail
+    exact setIntegral_mono_on hactual hmajor.integrableOn
+      measurableSet_Icc.compl hpoint
+  calc
+    carlsonHalfRangeProductTail Delta w X L U
+        ≤ ∫ t : ℝ in (Icc L U)ᶜ, A * residual t := hset
+    _ ≤ ∫ t : ℝ, A * residual t :=
+      setIntegral_le_integral hmajor
+        (Filter.Eventually.of_forall fun t =>
+          mul_nonneg hA (mul_nonneg (pow_nonneg (by positivity) 8)
+            (Real.exp_nonneg _)))
+    _ = A * ∫ t : ℝ, residual t := by rw [integral_const_mul]
+    _ ≤ A * (Delta ^ 9 * gaussianPolynomialMomentEight) := by
+      exact mul_le_mul_of_nonneg_left
+        (integral_centeredPolynomialEight_mul_halfGaussian_le hDelta) hA
+    _ = C * X * (|w| + 3) ^ 8 *
+          Real.exp (-(D ^ 2) / (2 * Delta ^ 2)) *
+            Delta ^ 9 * gaussianPolynomialMomentEight := by
+      dsimp only [A]
+      ring
+
+/-- If the center lies in the middle half of `[V,4V]`, its distance from the
+complement is at least `V`. -/
+theorem halfRange_center_separation
+    {V w : ℝ} (hV : 0 ≤ V) (hwLower : 2 * V ≤ w) (hwUpper : w ≤ 3 * V) :
+    ∀ t ∈ (Icc V (4 * V))ᶜ, V ≤ |t - w| := by
+  intro t ht
+  rw [mem_compl_iff, mem_Icc] at ht
+  by_cases htLower : t < V
+  · rw [abs_of_nonpos (by linarith)]
+    linarith
+  · have htV : V ≤ t := le_of_not_gt htLower
+    have htUpper : 4 * V < t := lt_of_not_ge fun ht4 => ht ⟨htV, ht4⟩
+    rw [abs_of_nonneg (by linarith)]
+    linarith
+
+/-- The uniform tail estimate at the broad half-range scale used by the
+critical AFE. -/
+theorem exists_carlsonHalfRangeProductTail_le_broadScale :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ {V w : ℝ} {X : ℕ},
+      1 ≤ V → 2 * V ≤ w → w ≤ 3 * V → 2 ≤ X →
+      carlsonHalfRangeProductTail
+          (4 * (4 * V) ^ (19 / 20 : ℝ)) w X V (4 * V) ≤
+        C * X * (|w| + 3) ^ 8 *
+          Real.exp (-(V ^ 2) /
+            (2 * (4 * (4 * V) ^ (19 / 20 : ℝ)) ^ 2)) *
+          (4 * (4 * V) ^ (19 / 20 : ℝ)) ^ 9 *
+            gaussianPolynomialMomentEight := by
+  obtain ⟨C, hC, htail⟩ := exists_carlsonHalfRangeProductTail_le
+  refine ⟨C, hC, ?_⟩
+  intro V w X hV hwLower hwUpper hX
+  have hFourV : 1 ≤ 4 * V := by nlinarith
+  have hpow : 1 ≤ (4 * V) ^ (19 / 20 : ℝ) := by
+    exact Real.one_le_rpow hFourV (by norm_num)
+  have hDelta : 1 ≤ 4 * (4 * V) ^ (19 / 20 : ℝ) := by nlinarith
+  exact htail hDelta (zero_le_one.trans hV) hX
+    (halfRange_center_separation (zero_le_one.trans hV) hwLower hwUpper)
 
 /-- Exact central-window plus tail decomposition. -/
 theorem integral_gaussian_product_eq_setIntegral_add_tail
