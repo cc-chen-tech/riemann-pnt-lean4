@@ -990,6 +990,29 @@ followed by independent mean value, or independent summation over moving
 cutoff fibres, does not prove (8.9) and incurs the power losses already
 recorded above.
 
+One boundary-integral sublemma in this route is now unconditional in Lean.
+For `0<Re(z)<1`, `c>0`, `A<=B`, and
+
+\[
+  2|\Im z|\le cA,
+\]
+
+the principal-power normalization is kept exactly and the repository proves
+
+\[
+ \left|\int_A^B u^{z-1}e^{icu}\,du\right|
+ \le \frac{8}{c}A^{\Re z-1}.                                      \tag{8.13}
+\]
+
+Indeed
+`u^(z-1)e^(icu)=u^(-(1-Re(z))) exp(i(cu+Im(z)log u))`; the phase derivative
+is `c+Im(z)/u`, so the displayed hypothesis leaves it at distance at least
+`c/2` from zero, while the radial weight is positive decreasing.  The bound
+therefore follows from the already formal first-derivative estimate and is
+uniform in `B`.  This supplies the Cauchy right tail needed when the damped
+Gamma ray is moved to angle `pi/2`; it does not by itself prove the boundary
+Gamma identity or the Poisson transformation, which remain the next gates.
+
 ## 9. Primary sources
 
 - J. B. Conrey, *More than two fifths of the zeros of the Riemann zeta
