@@ -576,6 +576,20 @@ The rational ledger for the smaller half-length target is formalized too:
 margin `3/6800`.  These are arithmetic certificates only; they do not assert
 the missing half-length Gaussian mean square.
 
+All proved analytic layers have now been composed into one public bridge.
+Uniform Gaussian product bounds `C0,C1` for the two standard linear
+mollifiers imply directly
+```
+integral_[U,V] |F_twoScale(2/3+it)|^2
+  <= exp(1/4) * (floor ((V-U)/Delta) + 1)
+       * 25 * L(Delta,Y0,Y1,C0,C1),
+```
+where `L` is the exact `20/21,1/21` interpolation of the proved critical and
+right endpoint expressions.  The bridge contains no additional analytic
+hypothesis and its axiom audit has only `propext`, `Classical.choice`, and
+`Quot.sound`.  Thus the sole remaining premise before the ordinary interior
+second moment is now literally the pair of Conrey product integrals.
+
 At the first formal target `R=4`, the closed-strip theorem has also been
 specialized at `x=2/3`.  The interpolation weights reduce exactly to
 `20/21` and `1/21`; the right endpoint is discharged by the proved

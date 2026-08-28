@@ -1,0 +1,16 @@
+import PrimeNumberTheorem.CarlsonConreyCriticalToInterior
+
+open Complex Set MeasureTheory
+
+namespace PrimeNumberTheorem.CarlsonZeroDensity
+
+#check carlsonConreyCriticalEndpointBound
+#check carlsonConreyRightEndpointBound
+#check carlsonConreyTwoThirdsLocalBound
+#check carlsonConreyTwoThirdsLocalBound_nonneg
+#check integral_indicator_Icc_norm_sq_twoScaleMollifiedZetaError_two_thirds_le_of_conrey_products
+
+#print axioms carlsonConreyTwoThirdsLocalBound_nonneg
+#print axioms integral_indicator_Icc_norm_sq_twoScaleMollifiedZetaError_two_thirds_le_of_conrey_products
+
+end PrimeNumberTheorem.CarlsonZeroDensity
