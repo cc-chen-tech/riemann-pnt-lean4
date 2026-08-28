@@ -25979,6 +25979,128 @@ def short_shift_t0_ray_factorization_audit(
     }
 
 
+def ray_dilation_type_reassembly_audit(
+    *,
+    short_cutoff_u: int,
+    short_cutoff_v: int,
+    core_factors: tuple[int, int],
+    dilation_factors: tuple[int, int],
+) -> dict[str, object]:
+    """Audit Type separation on the product ``core * dilation``.
+
+    The raw squarefree coefficient separates as
+    ``mu(k*u)=mu(k)mu(u)`` when ``(k,u)=1``.  The exact small/I/II
+    multipliers are functions of the full product, however, and their
+    individual two-by-two matrices need not have rank one.  The supplied
+    two-by-two witness records this loss and its exact recovery only
+    after all Type blocks are reassembled.
+
+    This arithmetic audit also records that one raw Möbius factor along
+    the dilation is not a reciprocal-LCM quadratic kernel.
+    """
+
+    cutoff_u = int(short_cutoff_u)
+    cutoff_v = int(short_cutoff_v)
+    if min(cutoff_u, cutoff_v) <= 0:
+        raise ValueError("both Type cutoffs must be positive")
+    cores = tuple(int(value) for value in core_factors)
+    dilations = tuple(int(value) for value in dilation_factors)
+    if len(cores) != 2 or len(dilations) != 2:
+        raise ValueError("the separation witness must be two by two")
+    if len(set(cores)) != 2 or len(set(dilations)) != 2:
+        raise ValueError("core and dilation factors must be distinct")
+    if min(*cores, *dilations) <= 0:
+        raise ValueError("all core and dilation factors must be positive")
+    if any(gcd(core, dilation) != 1 for core in cores for dilation in dilations):
+        raise ValueError("every core/dilation pair must be coprime")
+    if any(
+        _finite_mobius(core * dilation) == 0
+        for core in cores
+        for dilation in dilations
+    ):
+        raise ValueError("every core/dilation product must be squarefree")
+
+    boundary = max(cutoff_u, cutoff_v)
+
+    def multipliers(value: int) -> tuple[int, int, int, int]:
+        raw = _finite_mobius(value)
+        if value <= boundary:
+            return raw, 0, 0, raw
+        short_short = sum(
+            _finite_mobius(first) * _finite_mobius(second)
+            for first in _positive_divisors(value)
+            if first <= cutoff_u
+            for second in _positive_divisors(value // first)
+            if second <= cutoff_v
+        )
+        long_long = sum(
+            _finite_mobius(first) * _finite_mobius(second)
+            for first in _positive_divisors(value)
+            if first > cutoff_u
+            for second in _positive_divisors(value // first)
+            if second > cutoff_v
+        )
+        return 0, -short_short, long_long, raw
+
+    matrices: list[tuple[tuple[int, int], tuple[int, int]]] = []
+    for component in range(4):
+        matrices.append(
+            tuple(
+                tuple(multipliers(core * dilation)[component] for dilation in dilations)
+                for core in cores
+            )
+        )
+    small_matrix, type_i_matrix, type_ii_matrix, raw_matrix = matrices
+
+    def determinant(matrix: tuple[tuple[int, int], tuple[int, int]]) -> int:
+        return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+
+    reassembled_matrix = tuple(
+        tuple(
+            small_matrix[row][column]
+            + type_i_matrix[row][column]
+            + type_ii_matrix[row][column]
+            for column in range(2)
+        )
+        for row in range(2)
+    )
+    separated_raw_matrix = tuple(
+        tuple(
+            _finite_mobius(core) * _finite_mobius(dilation)
+            for dilation in dilations
+        )
+        for core in cores
+    )
+    return {
+        "short_cutoff_u": cutoff_u,
+        "short_cutoff_v": cutoff_v,
+        "core_factors": cores,
+        "dilation_factors": dilations,
+        "small_type_matrix": small_matrix,
+        "type_I_matrix": type_i_matrix,
+        "type_II_matrix": type_ii_matrix,
+        "raw_mobius_matrix": raw_matrix,
+        "reassembled_type_matrix": reassembled_matrix,
+        "separated_raw_mobius_matrix": separated_raw_matrix,
+        "type_I_two_by_two_determinant": determinant(type_i_matrix),
+        "type_I_separates_core_and_dilation": determinant(type_i_matrix) == 0,
+        "raw_mobius_two_by_two_determinant": determinant(raw_matrix),
+        "raw_mobius_separates_as_mu_core_times_mu_dilation": bool(
+            raw_matrix == separated_raw_matrix
+        ),
+        "all_type_blocks_reassemble_raw_mobius": bool(
+            reassembled_matrix == raw_matrix
+        ),
+        "one_dilation_mobius_factor_only": True,
+        "reciprocal_LCM_kernel_present": False,
+        "existing_LCM_quadratic_bound_applies_directly": False,
+        "one_sided_dilation_type_decomposition_proved": False,
+        "ray_profile_energy_bound_proved": False,
+        "WRFE_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def short_prime_weighted_profile_ttstar_audit(
     *,
     short_prime: int,

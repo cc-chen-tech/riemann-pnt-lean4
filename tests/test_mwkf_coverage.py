@@ -9276,6 +9276,39 @@ def test_t0_full_incidence_factors_through_primitive_ray_profiles() -> None:
     assert "candidate entry point for LCM square-energy" in text
 
 
+def test_ray_dilation_mobius_separates_only_after_type_reassembly() -> None:
+    audit = getattr(
+        coverage_audit,
+        "ray_dilation_type_reassembly_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_cutoff_u=3,
+        short_cutoff_v=3,
+        core_factors=(2, 5),
+        dilation_factors=(3, 7),
+    )
+    assert result["small_type_matrix"] == ((0, 0), (0, 0))
+    assert result["type_I_matrix"] == ((1, 1), (1, -1))
+    assert result["type_II_matrix"] == ((0, 0), (0, 2))
+    assert result["raw_mobius_matrix"] == ((1, 1), (1, 1))
+    assert result["type_I_two_by_two_determinant"] == -2
+    assert not result["type_I_separates_core_and_dilation"]
+    assert result["raw_mobius_two_by_two_determinant"] == 0
+    assert result["raw_mobius_separates_as_mu_core_times_mu_dilation"]
+    assert result["all_type_blocks_reassemble_raw_mobius"]
+    assert result["one_dilation_mobius_factor_only"]
+    assert not result["reciprocal_LCM_kernel_present"]
+    assert not result["existing_LCM_quadratic_bound_applies_directly"]
+    assert not result["ray_profile_energy_bound_proved"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.189 The ray dilation is one-Möbius only after Type reassembly" in text
+    assert r"\mu(uk)=\mu(u)\mu(k)" in text
+    assert r"determinant \(-2\)" in text
+    assert "no reciprocal-LCM kernel" in text
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (

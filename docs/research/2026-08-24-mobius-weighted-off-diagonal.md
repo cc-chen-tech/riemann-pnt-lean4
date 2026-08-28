@@ -79,6 +79,7 @@
 > | Triple-centered short-shift determinant | Section 9.186 substitutes the literal first physical incidence into the ratio-fiber energy before expanding any density term.  The exact result is a product of three centered kernels, \(\Delta_q(p_1-p_2)\Delta_{p_1}(qm_1+Dn_1)\Delta_{p_2}(qm_2+Dn_2)\), so all eight incidence/density terms remain in one finite master.  On the fully incident outer shift \(p_2=p_1+rq\), quotient elimination produces one common determinant \(t\): \(n_2s_1-n_1s_2=qt\) and \(m_1s_2+rs_1s_2-m_2s_1=Dt\).  Its \(t=0\) rows have the exact coprime-ray parameterization \(s_1=gu,s_2=gv,n_1=uk,n_2=vk,m_1=u\ell,m_2=v(\ell+rg)\).  This parameterizes only the fully incident summand: the other seven density terms have no canonical \(t\), so a separate positive \(t=0\) extraction would again be invalid.  The finite identity and ray parameterization are proved; the globally reassembled resonant ledger and the \(t\ne0\) analytic bound remain unproved |
 > | Eight-term route boundary | Section 9.187 expands the triple-centered kernel with exact signs and records a determinant histogram only for the all-incidence term.  A two-row fixture has total fiber energy \(7225/768\), while its all-incidence contribution is \(16\), split as determinant weights \(4,8,4\) at \(t=-1,0,1\); the other seven density terms sum to \(-5063/768\).  Thus the cancellation needed by WRFE already occurs inside the positive energy identity, and the isolated \(t=0\) mass is not a positive secondary term.  This separates two valid routes: prove WRFE by an internal eight-term reassembly, or return before Cauchy and prove a new direct AFE/reflection/diagonal implication.  The explicit diagonal cannot be used to prove WRFE after Cauchy.  Neither route's analytic estimate is proved |
 > | Primitive-ray factorization of the all-incidence zero determinant | Section 9.188 assumes only the literal factorization \(w_p(m,n)=f_p(m)g_p(n)\).  Every incident lift has a unique primitive core \((g,\ell,k)=(s,m,n)/(s,m,n)\) on \(pg=q\ell+Dk\).  For \(p_2=p_1+rq\), determinant zero is exactly equality of the two primitive cores after the shear \((g,\ell,k)\mapsto(g,\ell+rg,k)\).  Consequently the two dilation variables sum independently into one-dimensional ray profiles \(\mathcal L_p(g,\ell,k)\), giving the exact factorization (9.1260).  This is a candidate entry point for LCM square-energy, but no such bound is inferred: the primitive plane, prime shift, physical Type weights, and seven density terms must still be retained |
+> | Ray Type-reassembly boundary | Section 9.189 restores the literal meanings of the two ray factors.  The \(F\)-lift \(f_p(u\ell)\) is the \(h\delta\)/cofactor convolution, while only the \(G\)-lift carries \(\mu(uk)\).  On squarefree coprime support this becomes one dilation sign \(\mu(uk)=\mu(u)\mu(k)\), not two Selberg coefficients.  Moreover the original Type-I/II multipliers at the product \(uk\) do not separate: for \(U=V=3\), \(k=(2,5)\), \(u=(3,7)\), the Type-I matrix has determinant \(-2\), whereas the fully reassembled Möbius matrix is rank one.  Thus Type blocks must first be reassembled before a new one-sided split in \(u\).  There is no reciprocal-LCM kernel in (9.1261), so the proved LCM quadratic bound does not apply directly; the new dilation Type estimate remains open |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -26615,7 +26616,7 @@ masks, by
  \boxed{
  \mathcal L_{p}(g,\ell,k)
  :=\sum_{u\geq1}f_p(u\ell)g_p(uk),
- \qquad (g,\ell,k)=1,quad pg=q\ell+Dk.}
+ \qquad (g,\ell,k)=1,\quad pg=q\ell+Dk.}
  \tag{9.1260}
 \]
 
@@ -26683,6 +26684,95 @@ The helper `short_shift_t0_ray_factorization_audit` constructs the
 primitive profiles from arbitrary finite rational factors, checks every
 plane equation, and verifies (9.1261) against the direct \(t=0\)
 determinant histogram.  Its analytic flags remain false.
+
+### 9.189 The ray dilation is one-Möbius only after Type reassembly
+
+The notation in (9.1258) must not obscure the arithmetic content of its
+two factors.  From (9.918) and (9.1154), the \(F\)-lift
+\(f_p(m)\) is the physical \(h\delta\)/inactive-cofactor convolution.
+It carries the fixed cofactor signs \(\mu(d_1)\mu(d_2)\), but it is not
+the Selberg coefficient \(a_m\).  The \(G\)-lift has the raw Type form
+
+\[
+ g_p(n)=\mu(n)\widetilde g_p(n),
+ \qquad n=w.
+ \tag{9.1263}
+\]
+
+Consequently, on the squarefree support of \(n=uk\),
+
+\[
+ \boxed{
+ \mu(uk)=\mu(u)\mu(k)\qquad((u,k)=1),}
+ \tag{9.1264}
+\]
+
+and the raw ray profile is
+
+\[
+ \boxed{
+ \mathcal L_p(g,\ell,k)
+ =\mu(k)\sum_{\substack{u\geq1\\(u,k)=1}}
+ \mu(u)f_p(u\ell)\widetilde g_p(uk),}
+ \tag{9.1265}
+\]
+
+with zero extension imposing every original support and squarefree
+condition.  There is exactly one Möbius factor in the dilation variable
+\(u\).  In particular, (9.1265) is not a product
+\(a_{u\ell}a_{uk}\) of two Selberg coefficients.
+
+The Type components already present in the residual selector cannot be
+separated in \((u,k)\) before this raw reassembly.  For an exact finite
+witness take the two-cutoff identity (9.934)--(9.935) with \(U=V=3\),
+use row factors \(k=2,5\), and column factors \(u=3,7\).  All four
+products are squarefree and larger than the cutoffs.  Direct divisor
+enumeration gives
+
+\[
+ \boxed{
+ \bigl(\lambda_{\rm I}(ku)\bigr)_{k,u}
+ =\begin{pmatrix}1&1\\1&-1\end{pmatrix},
+ \qquad
+ \bigl(\lambda_{\rm II}(ku)\bigr)_{k,u}
+ =\begin{pmatrix}0&0\\0&2\end{pmatrix}.}
+ \tag{9.1266}
+\]
+
+The Type-I matrix has determinant \(-2\), so it is not a product of a
+core function and a dilation function.  But after the small, I, and II
+blocks are reassembled,
+
+\[
+ \boxed{
+ \bigl(\mu(ku)\bigr)_{k,u}
+ =\begin{pmatrix}1&1\\1&1\end{pmatrix}
+ =\bigl(\mu(k)\bigr)_k\bigl(\mu(u)\bigr)_u^{\mathsf T}.}
+ \tag{9.1267}
+\]
+
+Thus the apparent nonseparation is created by looking at one old Type
+block in isolation.  The correct ray order is:
+
+1. reassemble all surviving old Type blocks to the raw \(\mu(uk)\);
+2. use (9.1264) to factor the fixed core sign \(\mu(k)\);
+3. only then, if needed, apply a new exact Type I/II or Ramaré split to
+   the single dilation sign \(\mu(u)\), while retaining the prime shear,
+   the primitive plane, and all eight centered terms.
+
+This also decides the immediate LCM question.  Formula (9.1261) contains
+no reciprocal-LCM kernel \(1/[u,v]\), and its two ray factors contain
+only one Möbius coefficient apiece, not a common Selberg quadratic form.
+Therefore the finite totient-square diagonalization of the LCM main term
+does not apply directly to the ray correlation.  Producing an LCM kernel
+would require a new summation or duality identity, which has not been
+derived; inserting one by majorization would change the problem.
+
+The helper `ray_dilation_type_reassembly_audit` verifies (9.1266)--
+(9.1267) and records both the rank-two Type-I obstruction and the
+rank-one raw Möbius recovery.  It leaves the new one-sided dilation Type
+estimate, ray-profile energy bound, (WRFE), and the coupled-kernel gate
+false.
 
 ## 10. What has and has not been proved
 
@@ -26932,6 +27022,16 @@ correlation (9.1261).  This is an exact candidate interface for the
 existing LCM square-energy machinery, but not yet a bound: it must be
 proved jointly with the short-prime/long-prime shift and the seven
 density terms, without spending the same cancellation twice.
+
+Section 9.189 checks the literal ray weights and rules out a direct LCM
+invocation.  Only the \(G\)-lift contains the Type sign, so after full
+old-Type reassembly the dilation has one Möbius factor \(\mu(u)\), not
+two Selberg coefficients; (9.1261) also has no \(1/[u,v]\) kernel.
+Individual old Type blocks are genuinely nonseparable in \((u,k)\), as
+the determinant-\(-2\) witness (9.1266) shows.  Their sum restores the
+rank-one raw Möbius matrix (9.1267).  Any ray attack must therefore
+reassemble first and only then perform a new one-sided split in \(u\).
+No estimate for that new split is proved.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent
