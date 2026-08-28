@@ -786,9 +786,12 @@ a final density axiom:
    by product.  The finite double-sum/product identity and the existing exact
    critical-line `cpow`-to-exponential conversion are now formal too, so every
    raw block times the concrete Selberg mollifier is exactly the polynomial
-   used in the Gaussian tree estimate.  What remains in (8.6) is integrating
-   the pointwise prefix inequality; this supplies the second factor `K+1`
-   and hence the intended logarithmic-square maximal loss.
+   used in the Gaussian tree estimate.  The actual moving prefix times the
+   concrete mollifier is now pointwise bounded by `(K+1)` times the complete
+   tree energy, with the ambient support handled by exact zero extension.
+   What remains in (8.6) is the standard Gaussian integrability and monotone
+   integral composition; together with the tree moment this gives the second
+   factor `K+1` and hence the intended logarithmic-square maximal loss.
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
    specialization, and insert the resulting local norm into the now-proved
