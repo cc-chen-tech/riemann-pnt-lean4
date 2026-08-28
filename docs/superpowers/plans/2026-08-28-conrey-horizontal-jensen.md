@@ -265,7 +265,15 @@ The exact one-zero Poisson-kernel identity, its weighted `(b-a) * pi` bound,
 the multiplicity-weighted finite-support aggregation, and the actual factor
 divisor endpoint `pi * (A-sigma0) * m_b` are proved.
 
-- [ ] **Step 3: Combine with the regular factor bound and coarse-scale it**
+- [x] **Step 3: Combine with the regular factor bound at one height**
+
+The actual weighted `F'/F` integral is now split and bounded at the same
+factor-support-selected height, with all integrability hypotheses proved.
+
+- [ ] **Step 4: Coarse-scale the explicit bound**
+
+Instantiate a Jensen mass majorant, control `J` and `V(J,delta_J)` by a fixed
+polylogarithm in `L`, and prove that bound is `o(exp L / L)`.
 
 ### Task 7: Whole-checkpoint verification and publication
 

@@ -262,8 +262,9 @@ locality，这等价于把外圆 divisor 支撑限制到内圆，而不能取整
 Borel--Caratheodory 界也已由 Lean 逐项核验。进一步把这些端点与
 `m_b<=J`、`delta_J<=delta` 合成为下面显示的 `V(J,delta_J)`，并把
 几何因子粗化到常数 `128`，也已经形式化。5.3 的因子盘支撑选高和
-带权主部积分的实际质量版本已经完成；尚缺把同一高度上的正则项和
-主部积分装配起来。因此完整水平积分仍不能标为完成。
+带权主部积分的实际质量版本已经完成；同一高度上的正则项和主部积分
+也已经装配为实际 `F'/F` 的精确显式界。尚缺的是把该显式界粗化为固定
+多对数并证明其为 `o(exp L/L)`。
 
 ### 5.1 为什么要再加一个因子盘
 
@@ -397,7 +398,7 @@ Borel--Caratheodory 加 Cauchy 的仓库端点随后给出，对
 带权积分 `<=pi*(A-sigma0)`、带非负重数的有限支撑汇总、实际 factor
 divisor 的 `finsum` 到 Finset 转换，以及对完整因子盘零点虚部重新选择
 高度均已形式化。因此 `HJ-principal-integral` 的实际质量版本现已闭合；
-尚未完成的是与正则因子项合并并统一替换为显式质量 majorant `J`。
+此前尚缺的是与正则因子项合并并统一替换为显式质量 majorant `J`。
 
 正则部分用 `HJ-regular-logderiv` 的一致界。于是两部分合并后的精确
 目标上界是
@@ -413,6 +414,13 @@ divisor 的 `finsum` 到 Finset 转换，以及对完整因子盘零点虚部重
 \end{aligned}
 \tag{HJ-horizontal-explicit}
 \]
+
+截至 2026-08-29，这个同高度的精确端点已经形式化：所选 `t` 同时使
+实际乘积在整条水平段上非零；剥零恒等式两侧的水平函数均由解析性和
+无零性证明可积；主部与同一个 `g` 的正则项随后在积分层合并。完整类型
+contract 直接锁定实际 `F'/F` 的上述结论，公理审计仍只有 `propext`、
+`Classical.choice`、`Quot.sound`。这完成 `HJ-horizontal-explicit`，但尚未
+完成下一段的多对数粗化。
 
 按 `HJ-gap`，`Delta` 有绝对正常数量级，
 `J=O(L log L)`，而 `V=O(L(log L)^2)`；因此右端可安全粗化为

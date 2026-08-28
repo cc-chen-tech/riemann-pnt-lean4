@@ -1,5 +1,6 @@
 import HardyTheorem.ConreyHorizontalJensenRegular
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+import PrimeNumberTheorem.LittlewoodRectangle
 
 /-!
 # Principal-part integrals on Conrey's selected horizontal edges
@@ -122,6 +123,89 @@ theorem abs_integral_weighted_im_inv_horizontal_sub_le
       apply mul_le_mul_of_nonneg_left _ (sub_nonneg.mpr hab)
       simpa only [← hp] using
         integral_abs_im_inv_horizontal_sub_le_pi (a := a) (b := b) ht
+
+/-- Integrating a uniform complex norm bound against the Littlewood weight
+costs exactly the first moment `(b-a)^2/2` of that weight. -/
+theorem abs_integral_weighted_im_le_of_norm_le
+    (h : ℝ → ℂ) {a b K : ℝ} (hab : a ≤ b)
+    (hbound : ∀ x ∈ Set.Icc a b, ‖h x‖ ≤ K) :
+    |∫ x in a..b, (x - a) * (h x).im| ≤
+      ((b - a) ^ 2 / 2) * K := by
+  have hmajorInt : IntervalIntegrable (fun x : ℝ => (x - a) * K)
+      MeasureTheory.volume a b :=
+    ((continuous_id.sub continuous_const).mul continuous_const)
+      |>.intervalIntegrable _ _
+  have hpoint : ∀ᵐ x ∂MeasureTheory.volume,
+      x ∈ Set.Ioc a b →
+        ‖(x - a) * (h x).im‖ ≤ (x - a) * K := by
+    filter_upwards [] with x hx
+    have hxIcc : x ∈ Set.Icc a b := ⟨hx.1.le, hx.2⟩
+    rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (sub_nonneg.mpr hxIcc.1)]
+    exact mul_le_mul_of_nonneg_left
+      ((Complex.abs_im_le_norm (h x)).trans (hbound x hxIcc))
+      (sub_nonneg.mpr hxIcc.1)
+  have hraw := intervalIntegral.norm_integral_le_of_norm_le
+    (f := fun x : ℝ => (x - a) * (h x).im)
+    hab hpoint hmajorInt
+  have hmajorEval :
+      (∫ x in a..b, (x - a) * K) = ((b - a) ^ 2 / 2) * K := by
+    rw [intervalIntegral.integral_mul_const]
+    let F : ℝ → ℝ := fun y =>
+      (((fun u : ℝ => u ^ 2) ∘ fun u : ℝ => _root_.id u - a) y) / 2
+    have hderiv : ∀ x : ℝ,
+        HasDerivAt F ((2 : ℝ) * (x - a) ^ (2 - 1) * 1 / 2) x := by
+      intro x
+      exact (hasDerivAt_pow 2 (x - a)).comp x
+        ((hasDerivAt_id x).sub_const a) |>.div_const (2 : ℝ)
+    have hweightInt : IntervalIntegrable
+        (fun x : ℝ => (2 : ℝ) * (x - a) ^ (2 - 1) * 1 / 2)
+        MeasureTheory.volume a b :=
+      (by fun_prop : Continuous
+        (fun x : ℝ => (2 : ℝ) * (x - a) ^ (2 - 1) * 1 / 2))
+        |>.intervalIntegrable _ _
+    have hweightEval := intervalIntegral.integral_eq_sub_of_hasDerivAt
+      (fun x _hx => hderiv x) hweightInt
+    have hweightEq : (∫ x in a..b, x - a) = (b - a) ^ 2 / 2 := by
+      simpa [F] using hweightEval
+    rw [hweightEq]
+  rw [Real.norm_eq_abs, hmajorEval] at hraw
+  exact hraw
+
+/-- The explicit regular-factor norm bound integrates over every selected
+horizontal segment with the exact first moment of the Littlewood weight. -/
+theorem abs_integral_conreyHorizontalJensenRegularFactor_le
+    (g : ℂ → ℂ) {R L U t K : ℝ} (hR0 : 0 ≤ R)
+    (hL : 40000 ≤ L) (ht : t ∈ Set.Icc U (U + 1))
+    (hregular : ∀ z ∈ Metric.closedBall
+      (conreyHorizontalJensenCenter L U)
+      (conreyHorizontalJensenInnerRadius R L), ‖logDeriv g z‖ ≤ K) :
+    |∫ x in conreyHorizontalLeftEdge R L..conreyHorizontalRightEdge L,
+        (x - conreyHorizontalLeftEdge R L) *
+          (logDeriv g ((x : ℂ) + I * (t : ℂ))).im| ≤
+      ((conreyHorizontalRightEdge L -
+          conreyHorizontalLeftEdge R L) ^ 2 / 2) * K := by
+  let a := conreyHorizontalLeftEdge R L
+  let b := conreyHorizontalRightEdge L
+  have hLpos : 0 < L := by linarith
+  have hlogL := two_le_log_of_forty_thousand_le hL
+  have haUpper : a ≤ 1 / 2 := by
+    dsimp [a, conreyHorizontalLeftEdge]
+    exact sub_le_self _ (div_nonneg hR0 hLpos.le)
+  have hab : a ≤ b := by
+    dsimp [b, conreyHorizontalRightEdge]
+    linarith
+  apply abs_integral_weighted_im_le_of_norm_le
+    (h := fun x : ℝ => logDeriv g ((x : ℂ) + I * (t : ℂ))) hab
+  intro x hx
+  apply hregular
+  apply conreyHorizontalJensenRectangle_subset_innerClosedBall R L U
+  change ((x : ℂ) + I * (t : ℂ)).re ∈
+      Set.Icc (conreyHorizontalLeftEdge R L)
+        (conreyHorizontalRightEdge L) ∧
+    ((x : ℂ) + I * (t : ℂ)).im ∈ Set.Icc U (U + 1)
+  constructor
+  · simpa [a, b] using hx
+  · simpa using ht
 
 /-- Multiplicity-weighted finite principal parts cost only the total
 multiplicity times the one-zero Poisson bound. -/
@@ -464,5 +548,214 @@ theorem exists_conreyHorizontalJensenFactorHeight_principalPart_le
   refine ⟨t, htWindow, hsep, hnonzero, ?_⟩
   exact abs_integral_conreyHorizontalJensenFactorPrincipalPart_le
     hR0 hRmax hL hU htZero
+
+/-- At one and the same selected height, the actual logarithmic derivative
+splits into the complete factor-disk principal part and the extracted regular
+factor.  Their weighted integrals satisfy the explicit linear-in-mass bound. -/
+theorem exists_conreyHorizontalJensenHeight_weightedLogDeriv_le :
+    ∃ C : ℝ, 1 ≤ C ∧ ∀ {Y : ℕ} {R L U J : ℝ}, 2 ≤ Y →
+      (Y : ℝ) ≤ Real.exp L → 0 ≤ R → R ≤ 6 / 5 → 40000 ≤ L →
+      conreyHorizontalRightEdge L + 1 ≤ U → U + 1 ≤ Real.exp L →
+      conreyHorizontalJensenFactorZeroMass Y R L U ≤ J →
+      ∃ t ∈ Set.Icc U (U + 1),
+        (∀ x ∈ Set.Icc (conreyHorizontalLeftEdge R L)
+            (conreyHorizontalRightEdge L),
+          conreyHorizontalJensenProduct Y R L
+            ((x : ℂ) + I * (t : ℂ)) ≠ 0) ∧
+        |∫ x in conreyHorizontalLeftEdge R L..conreyHorizontalRightEdge L,
+            (x - conreyHorizontalLeftEdge R L) *
+              (logDeriv (conreyHorizontalJensenProduct Y R L)
+                ((x : ℂ) + I * (t : ℂ))).im| ≤
+          ((conreyHorizontalRightEdge L -
+              conreyHorizontalLeftEdge R L) ^ 2 / 2) *
+              (128 * max
+                (conreyHorizontalJensenFactorLogVariationMajorant
+                  C Y R L U J) 1 *
+                conreyHorizontalJensenOuterRadius L /
+                conreyHorizontalJensenRadiusGap R L ^ 2) +
+            (conreyHorizontalRightEdge L -
+                conreyHorizontalLeftEdge R L) * Real.pi * J := by
+  rcases exists_conreyHorizontalJensenGoodFactor_logDeriv_le_explicit with
+    ⟨C, hC, hfactor⟩
+  refine ⟨C, hC, ?_⟩
+  intro Y R L U J hY hYtop hR0 hRmax hL hU hUtop hmass
+  rcases hfactor hY hYtop hR0 hRmax hL hU hUtop hmass with
+    ⟨q, g, hq, hg, hgne, hdecomp, hregular⟩
+  rcases exists_conreyHorizontalJensenFactorHeight_principalPart_le
+      hY hR0 hRmax hL hU with
+    ⟨t, htWindow, hsep, hproductNe, hprincipalBound⟩
+  refine ⟨t, htWindow, hproductNe, ?_⟩
+  let a : ℝ := conreyHorizontalLeftEdge R L
+  let bRight : ℝ := conreyHorizontalRightEdge L
+  let c : ℂ := conreyHorizontalJensenCenter L U
+  let bFactor : ℝ := conreyHorizontalJensenFactorRadius R L
+  let f : ℂ → ℂ := conreyHorizontalJensenProduct Y R L
+  let D := MeromorphicOn.divisor f (Metric.closedBall c bFactor)
+  let z : ℝ → ℂ := fun x => (x : ℂ) + I * (t : ℂ)
+  let principal : ℝ → ℂ := fun x =>
+    ∑ᶠ rho, (D rho : ℂ) * (z x - rho)⁻¹
+  let regular : ℝ → ℂ := fun x => logDeriv g (z x)
+  let total : ℝ → ℂ := fun x => logDeriv f (z x)
+  let K : ℝ :=
+    128 * max
+        (conreyHorizontalJensenFactorLogVariationMajorant C Y R L U J) 1 *
+      conreyHorizontalJensenOuterRadius L /
+      conreyHorizontalJensenRadiusGap R L ^ 2
+  have hLpos : 0 < L := by linarith
+  have hlogL := two_le_log_of_forty_thousand_le hL
+  have haUpper : a ≤ 1 / 2 := by
+    dsimp [a, conreyHorizontalLeftEdge]
+    exact sub_le_self _ (div_nonneg hR0 hLpos.le)
+  have hab : a ≤ bRight := by
+    dsimp [bRight, conreyHorizontalRightEdge]
+    linarith
+  have hbuffer := conreyHorizontalJensenBufferGeometry hR0 hRmax hL
+  have hzInner : ∀ x ∈ Set.Icc a bRight,
+      z x ∈ Metric.closedBall c
+        (conreyHorizontalJensenInnerRadius R L) := by
+    intro x hx
+    apply conreyHorizontalJensenRectangle_subset_innerClosedBall R L U
+    change (z x).re ∈ Set.Icc (conreyHorizontalLeftEdge R L)
+        (conreyHorizontalRightEdge L) ∧
+      (z x).im ∈ Set.Icc U (U + 1)
+    constructor
+    · simpa [z, a, bRight] using hx
+    · simpa [z] using htWindow
+  have hzFactorClosed : ∀ x ∈ Set.Icc a bRight,
+      z x ∈ Metric.closedBall c bFactor := by
+    intro x hx
+    exact Metric.closedBall_subset_closedBall
+      (hbuffer.1.trans (hbuffer.2.1.trans hbuffer.2.2.1)).le
+      (hzInner x hx)
+  have hzFactorBall : ∀ x ∈ Set.Icc a bRight,
+      z x ∈ Metric.ball c bFactor := by
+    intro x hx
+    exact Metric.closedBall_subset_ball
+      (hbuffer.1.trans (hbuffer.2.1.trans hbuffer.2.2.1))
+      (hzInner x hx)
+  have hsplitPoint : ∀ x ∈ Set.Icc a bRight,
+      total x = principal x + regular x := by
+    intro x hx
+    have hne : f (z x) ≠ 0 := by
+      have hxSegment : x ∈ Set.Icc
+          (conreyHorizontalLeftEdge R L)
+          (conreyHorizontalRightEdge L) := by
+        simpa [a, bRight] using hx
+      simpa [f, z] using (hproductNe x hxSegment)
+    have h := hdecomp (z x)
+      (by simpa [c, bFactor] using hzFactorBall x hx)
+      (by simpa [f] using hne)
+    simpa [total, principal, regular, D, f, c, bFactor, z] using h
+  have hanalyticOuter :=
+    analyticOnNhd_conreyExplicitMollifiedV1_horizontalJensenOuterClosedBall
+      Y (conreyHorizontalLeftEdge R L) L U hL hU
+  have hFanalytic : ∀ x ∈ Set.uIcc a bRight,
+      AnalyticAt ℂ f ((x : ℂ) + (t : ℂ) * I) := by
+    intro x hx
+    rw [Set.uIcc_of_le hab] at hx
+    have hzOut : z x ∈ Metric.closedBall c
+        (conreyHorizontalJensenOuterRadius L) :=
+      Metric.closedBall_subset_closedBall
+        (conreyHorizontalJensenInnerRadius_lt_outerRadius hR0 hRmax hL).le
+        (hzInner x hx)
+    simpa [f, z, c, mul_comm, conreyHorizontalJensenProduct] using
+      hanalyticOuter (z x) hzOut
+  have hFne : ∀ x ∈ Set.uIcc a bRight,
+      f ((x : ℂ) + (t : ℂ) * I) ≠ 0 := by
+    intro x hx
+    rw [Set.uIcc_of_le hab] at hx
+    simpa [f, z, mul_comm] using hproductNe x
+      (by simpa [a, bRight] using hx)
+  have hganalytic : ∀ x ∈ Set.uIcc a bRight,
+      AnalyticAt ℂ g ((x : ℂ) + (t : ℂ) * I) := by
+    intro x hx
+    rw [Set.uIcc_of_le hab] at hx
+    simpa [z, c, bFactor, mul_comm] using
+      hg (z x) (by simpa [c, bFactor] using hzFactorClosed x hx)
+  have hgneLine : ∀ x ∈ Set.uIcc a bRight,
+      g ((x : ℂ) + (t : ℂ) * I) ≠ 0 := by
+    intro x hx
+    rw [Set.uIcc_of_le hab] at hx
+    simpa [z, c, bFactor, mul_comm] using
+      hgne ⟨z x, by simpa [c, bFactor] using hzFactorClosed x hx⟩
+  have htotalCont : ContinuousOn total (Set.uIcc a bRight) := by
+    simpa [total, f, z, mul_comm] using
+      PrimeNumberTheorem.CarlsonZeroDensity.continuousOn_logDeriv_horizontal
+        hFanalytic hFne
+  have hregularCont : ContinuousOn regular (Set.uIcc a bRight) := by
+    simpa [regular, z, mul_comm] using
+      PrimeNumberTheorem.CarlsonZeroDensity.continuousOn_logDeriv_horizontal
+        hganalytic hgneLine
+  have htotalWeightedInt : IntervalIntegrable
+      (fun x : ℝ => (x - a) * (total x).im)
+      MeasureTheory.volume a bRight :=
+    ((continuousOn_id.sub continuousOn_const).mul
+      (Complex.continuous_im.comp_continuousOn htotalCont)).intervalIntegrable
+  have hregularWeightedInt : IntervalIntegrable
+      (fun x : ℝ => (x - a) * (regular x).im)
+      MeasureTheory.volume a bRight :=
+    ((continuousOn_id.sub continuousOn_const).mul
+      (Complex.continuous_im.comp_continuousOn hregularCont)).intervalIntegrable
+  have hprincipalWeightedInt : IntervalIntegrable
+      (fun x : ℝ => (x - a) * (principal x).im)
+      MeasureTheory.volume a bRight := by
+    apply IntervalIntegrable.congr
+      (f := fun x : ℝ =>
+        (x - a) * (total x).im - (x - a) * (regular x).im)
+    · intro x hx
+      have hxIcc : x ∈ Set.Icc a bRight := by
+        rw [Set.uIoc_of_le hab] at hx
+        exact ⟨hx.1.le, hx.2⟩
+      have hs := congrArg Complex.im (hsplitPoint x hxIcc)
+      dsimp only
+      simp only [Complex.add_im] at hs
+      rw [hs]
+      ring
+    · exact htotalWeightedInt.sub hregularWeightedInt
+  have hsplitIntegral :
+      (∫ x in a..bRight, (x - a) * (total x).im) =
+        (∫ x in a..bRight, (x - a) * (principal x).im) +
+          ∫ x in a..bRight, (x - a) * (regular x).im := by
+    calc
+      (∫ x in a..bRight, (x - a) * (total x).im) =
+          ∫ x in a..bRight,
+            (x - a) * (principal x).im +
+              (x - a) * (regular x).im := by
+        apply intervalIntegral.integral_congr
+        intro x hx
+        have hxIcc : x ∈ Set.Icc a bRight := by
+          simpa [Set.uIcc_of_le hab] using hx
+        have hs := congrArg Complex.im (hsplitPoint x hxIcc)
+        simp only [Complex.add_im] at hs
+        dsimp only
+        rw [hs]
+        ring
+      _ = (∫ x in a..bRight, (x - a) * (principal x).im) +
+          ∫ x in a..bRight, (x - a) * (regular x).im :=
+        intervalIntegral.integral_add
+          hprincipalWeightedInt hregularWeightedInt
+  have hregularIntegral :
+      |∫ x in a..bRight, (x - a) * (regular x).im| ≤
+        ((bRight - a) ^ 2 / 2) * K := by
+    have h := abs_integral_conreyHorizontalJensenRegularFactor_le
+      g hR0 hL htWindow hregular
+    simpa [a, bRight, regular, z, K] using h
+  have hwidthNonneg : 0 ≤ bRight - a := sub_nonneg.mpr hab
+  have hprincipalIntegral :
+      |∫ x in a..bRight, (x - a) * (principal x).im| ≤
+        (bRight - a) * Real.pi * J := by
+    have hactual :
+        |∫ x in a..bRight, (x - a) * (principal x).im| ≤
+          (bRight - a) * Real.pi *
+            conreyHorizontalJensenFactorZeroMass Y R L U := by
+      simpa [a, bRight, principal, z, D, f, c, bFactor] using
+        hprincipalBound
+    exact hactual.trans (mul_le_mul_of_nonneg_left hmass
+      (mul_nonneg hwidthNonneg Real.pi_pos.le))
+  change |∫ x in a..bRight, (x - a) * (total x).im| ≤
+    ((bRight - a) ^ 2 / 2) * K + (bRight - a) * Real.pi * J
+  rw [hsplitIntegral]
+  exact (abs_add_le _ _).trans
+    ((add_le_add hprincipalIntegral hregularIntegral).trans_eq (by ring))
 
 end HardyTheorem
