@@ -166,14 +166,12 @@ theorem quarter_le_re_of_mem_conreyHorizontalJensenOuterClosedBall
   dsimp [conreyHorizontalJensenOuterRadius] at hreAbs
   linarith
 
-/-- Starting the unit window above the moving edge keeps the disk away from
-the pole `s=1`. -/
-theorem ne_one_of_mem_conreyHorizontalJensenOuterClosedBall
-    {L U : ℝ} (hL : 40000 ≤ L)
-    (hU : conreyHorizontalRightEdge L + 1 ≤ U) {z : ℂ}
+/-- Every point of an admissible outer Jensen disk lies above height `7/4`. -/
+theorem seven_fourths_le_im_of_mem_conreyHorizontalJensenOuterClosedBall
+    {L U : ℝ} (hU : conreyHorizontalRightEdge L + 1 ≤ U) {z : ℂ}
     (hz : z ∈ Metric.closedBall (conreyHorizontalJensenCenter L U)
       (conreyHorizontalJensenOuterRadius L)) :
-    z ≠ 1 := by
+    (7 / 4 : ℝ) ≤ z.im := by
   have hdist :
       ‖z - conreyHorizontalJensenCenter L U‖ ≤
         conreyHorizontalJensenOuterRadius L := by
@@ -183,16 +181,23 @@ theorem ne_one_of_mem_conreyHorizontalJensenOuterClosedBall
   have himAbs :
       |z.im - (U + 1 / 2)| ≤ conreyHorizontalJensenOuterRadius L := by
     simpa [conreyHorizontalJensenCenter] using him.trans hdist
-  intro hzOne
-  subst z
-  simp only [one_im, zero_sub, abs_neg] at himAbs
-  have hUpos : 0 ≤ U + 1 / 2 := by
-    have hlogL := two_le_log_of_forty_thousand_le hL
-    dsimp [conreyHorizontalRightEdge] at hU
-    linarith
-  rw [abs_of_nonneg hUpos] at himAbs
+  rw [abs_le] at himAbs
   dsimp [conreyHorizontalJensenOuterRadius] at himAbs
   linarith
+
+/-- Starting the unit window above the moving edge keeps the disk away from
+the pole `s=1`. -/
+theorem ne_one_of_mem_conreyHorizontalJensenOuterClosedBall
+    {L U : ℝ} (_hL : 40000 ≤ L)
+    (hU : conreyHorizontalRightEdge L + 1 ≤ U) {z : ℂ}
+    (hz : z ∈ Metric.closedBall (conreyHorizontalJensenCenter L U)
+      (conreyHorizontalJensenOuterRadius L)) :
+    z ≠ 1 := by
+  have himLower :=
+    seven_fourths_le_im_of_mem_conreyHorizontalJensenOuterClosedBall hU hz
+  intro hzOne
+  subst z
+  norm_num at himLower
 
 /-- The actual explicit product `V₁ B` is analytic on the moving outer disk. -/
 theorem analyticOnNhd_conreyExplicitMollifiedV1_horizontalJensenOuterClosedBall

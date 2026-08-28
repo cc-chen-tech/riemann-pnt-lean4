@@ -1,11 +1,19 @@
+import HardyTheorem.ConreyHorizontalJensenGeometry
+import HardyTheorem.ConreyMollifierRightEdge
 import HardyTheorem.ConreyFarRight
 
 namespace HardyTheorem
 
 #check logDeriv_conreyH_eq_of_re_pos_of_ne_one
 #check logDeriv_conreyH_eq
+#check seven_fourths_le_im_of_mem_conreyHorizontalJensenOuterClosedBall
+#check norm_conreyMollifierCoefficient_le_one
+#check norm_conreyExplicitMollifier_le_natCast_of_re_nonneg
 
 #print axioms logDeriv_conreyH_eq_of_re_pos_of_ne_one
 #print axioms logDeriv_conreyH_eq
+#print axioms seven_fourths_le_im_of_mem_conreyHorizontalJensenOuterClosedBall
+#print axioms norm_conreyMollifierCoefficient_le_one
+#print axioms norm_conreyExplicitMollifier_le_natCast_of_re_nonneg
 
 end HardyTheorem
