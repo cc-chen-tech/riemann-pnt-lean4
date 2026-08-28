@@ -2644,6 +2644,37 @@ class BalancedAdaptiveReciprocalPhaseAudit:
 
 
 @dataclass(frozen=True)
+class AdaptiveReciprocalSlackVertexRow:
+    vertex_index: int
+    longer_modulus_exponent: Fraction
+    third_length_exponent: Fraction
+    dual_product_exponent: Fraction
+    minimum_dual_axis_exponent: Fraction
+    reduced_mobius_exponent: Fraction
+    taylor_power_saving: Fraction
+    nonaxis_power_saving: Fraction
+    axis_power_saving: Fraction
+    covered: bool
+
+
+@dataclass(frozen=True)
+class AdaptiveReciprocalSlackVertexAudit:
+    cofactor_cutoff_exponent: Fraction
+    qsmooth_relative_exponent: Fraction
+    taylor_block_relative_exponent: Fraction
+    published_epsilon: Fraction
+    reciprocal_radical_moment_abscissa: Fraction
+    vertex_rows: tuple[AdaptiveReciprocalSlackVertexRow, ...]
+    covered_vertex_indices: tuple[int, ...]
+    remaining_vertex_indices: tuple[int, ...]
+    short_cofactor_normalization_is_exact: bool
+    long_density_errors_have_power_saving: bool
+    vertex_routes_cover_every_face_and_interior: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class OrientedMMKLSPolytopeGapAudit:
     cofactor_cutoff_exponent: Fraction
     family_parameter_interval: tuple[Fraction, Fraction]
@@ -3417,6 +3448,7 @@ class AdmissiblePolytopeVertexLedgerAudit:
     bcr_covered_vertex_indices: tuple[int, ...]
     unbalanced_recombination_covered_vertex_indices: tuple[int, ...]
     polylog_short_entry_covered_vertex_indices: tuple[int, ...]
+    adaptive_reciprocal_covered_vertex_indices: tuple[int, ...]
     remaining_unrouted_vertex_indices: tuple[int, ...]
     remaining_unrouted_vertex_count: int
     vertex_routes_prove_every_face_and_interior: bool
@@ -18214,6 +18246,129 @@ def balanced_adaptive_reciprocal_phase_audit(
     )
 
 
+def adaptive_reciprocal_slack_vertex_audit(
+    *,
+    cofactor_cutoff_exponent: Fraction,
+    qsmooth_relative_exponent: Fraction,
+    taylor_block_relative_exponent: Fraction,
+    published_epsilon: Fraction,
+    reciprocal_radical_moment_abscissa: Fraction,
+) -> AdaptiveReciprocalSlackVertexAudit:
+    """Route the nondegenerate residual vertices by adaptive c-Poisson.
+
+    Choose the longer mollifier variable as modulus and put
+
+    ``u=max(rho,sigma)``, ``a=ell+h`` and ``p=2*u-a``.
+
+    The physical factor has exponent ``a-u`` and the double-Poisson
+    dual product has exponent ``p``, so their product is exactly the
+    local target ``u``.  In the short-cofactor range the reciprocal
+    Taylor error has saving
+
+    ``3*(1-nu)*(u-eta)*(1-rho_Q) - p - eta``.
+
+    For the long-cofactor density main, nonaxis fibres save
+
+    ``p-epsilon_0*(u+p)``,
+
+    while the two axes save
+
+    ``min(u-h,u-ell)-epsilon_0*u``.
+
+    Positivity of all three rational margins proves the designated
+    vertex.  This is only a vertex certificate: it does not assert that
+    the analytic regions cover every intervening face or interior cell.
+    """
+    eta = F(cofactor_cutoff_exponent)
+    rho_q = F(qsmooth_relative_exponent)
+    block = F(taylor_block_relative_exponent)
+    theorem_epsilon = F(published_epsilon)
+    moment = F(reciprocal_radical_moment_abscissa)
+    for value, name in (
+        (eta, "cofactor cutoff exponent"),
+        (rho_q, "Q-smooth relative exponent"),
+        (block, "Taylor block exponent"),
+        (theorem_epsilon, "published epsilon"),
+        (moment, "reciprocal-radical moment abscissa"),
+    ):
+        if not F(0) < value < F(1):
+            raise ValueError(f"{name} must lie in (0,1)")
+    if not (
+        block > F(1, 3) + theorem_epsilon
+        and block < F(1) - theorem_epsilon
+    ):
+        raise ValueError("Taylor block misses the published MRSTT window")
+
+    candidate_indices = (
+        8, 9, 10, 11, 12, 14, 15, 16, 19, 20, 21, 23, 24, 25
+    )
+    vertices = admissible_polytope_vertices()
+    rows = []
+    normalization_exact = True
+    for index in candidate_indices:
+        box = vertices[index - 1]
+        u = max(box.rho, box.sigma)
+        third_length = box.ell + box.h
+        dual_product = F(2) * u - third_length
+        minimum_axis = min(u - box.h, u - box.ell)
+        reduced = (u - eta) * (F(1) - rho_q)
+        taylor_saving = (
+            F(3) * (F(1) - block) * reduced
+            - dual_product
+            - eta
+        )
+        nonaxis_saving = dual_product - moment * (u + dual_product)
+        axis_saving = minimum_axis - moment * u
+        exact_here = third_length - u + dual_product == u
+        normalization_exact = normalization_exact and exact_here
+        covered = (
+            third_length > 0
+            and exact_here
+            and taylor_saving > 0
+            and nonaxis_saving > 0
+            and axis_saving > 0
+        )
+        rows.append(
+            AdaptiveReciprocalSlackVertexRow(
+                vertex_index=index,
+                longer_modulus_exponent=u,
+                third_length_exponent=third_length,
+                dual_product_exponent=dual_product,
+                minimum_dual_axis_exponent=minimum_axis,
+                reduced_mobius_exponent=reduced,
+                taylor_power_saving=taylor_saving,
+                nonaxis_power_saving=nonaxis_saving,
+                axis_power_saving=axis_saving,
+                covered=covered,
+            )
+        )
+
+    covered_indices = tuple(row.vertex_index for row in rows if row.covered)
+    remaining_indices = tuple(
+        row.vertex_index for row in rows if not row.covered
+    )
+    density_covered = eta / F(2) > 0 and F(3) * eta / F(2) > 0
+    return AdaptiveReciprocalSlackVertexAudit(
+        cofactor_cutoff_exponent=eta,
+        qsmooth_relative_exponent=rho_q,
+        taylor_block_relative_exponent=block,
+        published_epsilon=theorem_epsilon,
+        reciprocal_radical_moment_abscissa=moment,
+        vertex_rows=tuple(rows),
+        covered_vertex_indices=covered_indices,
+        remaining_vertex_indices=remaining_indices,
+        short_cofactor_normalization_is_exact=normalization_exact,
+        long_density_errors_have_power_saving=density_covered,
+        vertex_routes_cover_every_face_and_interior=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "exact oriented double-Poisson normalization; reciprocal-"
+            "radical fibres; adaptive c-Poisson; arXiv:2411.05770v2, "
+            "Theorem 1.1(i)"
+        ),
+    )
+
+
 def polylog_short_entry_reciprocity_audit(
     *,
     short_entry_log_depth: Fraction,
@@ -18360,10 +18515,19 @@ def admissible_polytope_vertex_ledger_audit(
         aggregation_log_loss=AGGREGATION_LOG_LOSS,
     )
     short_entry_indices = short_entry.covered_vertex_indices
+    adaptive_reciprocal = adaptive_reciprocal_slack_vertex_audit(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        reciprocal_radical_moment_abscissa=F(1, 100),
+    )
+    adaptive_indices = adaptive_reciprocal.covered_vertex_indices
     covered = (
         set(bcr_indices)
         | set(unbalanced_indices)
         | set(short_entry_indices)
+        | set(adaptive_indices)
     )
     remaining = tuple(
         index for index in range(1, len(vertices) + 1)
@@ -18391,6 +18555,7 @@ def admissible_polytope_vertex_ledger_audit(
             unbalanced_indices
         ),
         polylog_short_entry_covered_vertex_indices=short_entry_indices,
+        adaptive_reciprocal_covered_vertex_indices=adaptive_indices,
         remaining_unrouted_vertex_indices=remaining,
         remaining_unrouted_vertex_count=len(remaining),
         vertex_routes_prove_every_face_and_interior=False,
@@ -29158,6 +29323,13 @@ def main() -> None:
             f"v{index:02d}"
             for index in (
                 vertex_ledger.polylog_short_entry_covered_vertex_indices
+            )
+        )
+        + " adaptive_reciprocal="
+        + ",".join(
+            f"v{index:02d}"
+            for index in (
+                vertex_ledger.adaptive_reciprocal_covered_vertex_indices
             )
         )
         + " remaining="

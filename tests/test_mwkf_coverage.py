@@ -2587,8 +2587,7 @@ def test_exchange_symmetry_audit_is_documented_and_reported(
             "top_level=OLISK_q^{L,R} "
             "alternative_unverified="
             "admissible_polytope_unrouted_vertices_"
-            "v08_v09_v10_v11_v12_v14_v15_v16_"
-            "v19_v20_v21_v23_v24_v25,"
+            "v08_v09_v10_v14_v19_v21,"
             "large_q_centered_product_energy_lambda_2 "
         "all_dyadic_cells=False remainder_o_T=False"
     ) in report
@@ -5547,8 +5546,7 @@ def test_final_theta_three_certificate_retains_one_analytic_residual_cell() -> N
     assert audit.residual_top_level_gates == ("OLISK_q^{L,R}",)
     assert audit.alternative_route_unverified_gates == (
         "admissible_polytope_unrouted_vertices_"
-        "v08_v09_v10_v11_v12_v14_v15_v16_"
-        "v19_v20_v21_v23_v24_v25",
+        "v08_v09_v10_v14_v19_v21",
         "large_q_centered_product_energy_lambda_2",
     )
     assert not audit.all_dyadic_parameter_cells_enumerated
@@ -7096,6 +7094,59 @@ def test_adaptive_reciprocal_phase_closes_the_full_balanced_zero_slack_edge(
         assert marker in note
 
 
+def test_adaptive_reciprocal_phase_routes_eight_positive_slack_vertices(
+) -> None:
+    """The same c-Poisson argument covers every nondegenerate vertex."""
+    adapter = getattr(
+        coverage_audit,
+        "adaptive_reciprocal_slack_vertex_audit",
+        None,
+    )
+    assert adapter is not None, "adaptive slack-vertex audit is missing"
+    audit = adapter(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        reciprocal_radical_moment_abscissa=F(1, 100),
+    )
+    assert audit.covered_vertex_indices == (11, 12, 15, 16, 20, 23, 24, 25)
+    assert audit.remaining_vertex_indices == (8, 9, 10, 14, 19, 21)
+    rows = {row.vertex_index: row for row in audit.vertex_rows}
+    assert rows[11].dual_product_exponent == F(4)
+    assert rows[11].minimum_dual_axis_exponent == F(1)
+    assert rows[11].taylor_power_saving == F(96554099, 50000000)
+    assert rows[11].axis_power_saving == F(97, 100)
+    assert rows[23].dual_product_exponent == F(7, 2)
+    assert rows[23].minimum_dual_axis_exponent == F(1, 2)
+    assert rows[23].axis_power_saving == F(47, 100)
+    assert rows[10].third_length_exponent == 0
+    assert rows[10].taylor_power_saving == F(-3445901, 50000000)
+    assert rows[8].axis_power_saving == F(-1, 100)
+    assert rows[19].axis_power_saving == F(-3, 100)
+    assert rows[21].axis_power_saving == F(-3, 100)
+    assert audit.short_cofactor_normalization_is_exact
+    assert audit.long_density_errors_have_power_saving
+    assert not audit.vertex_routes_cover_every_face_and_interior
+    assert not audit.full_long_mollifier_asymptotic_proved
+
+    ledger = coverage_audit.admissible_polytope_vertex_ledger_audit()
+    assert ledger.adaptive_reciprocal_covered_vertex_indices == (
+        11, 12, 15, 16, 20, 23, 24, 25
+    )
+    assert ledger.remaining_unrouted_vertex_indices == (8, 9, 10, 14, 19, 21)
+
+    note = ALTERNATIVE_ROUTES_NOTE.read_text()
+    for marker in (
+        "### 4.109zjaced000c Adaptive c-Poisson routes eight slack vertices",
+        r"3(1-\nu)(u-\eta)(1-\rho_Q)>2u-a+\eta",
+        r"\{\mathrm{v08},\mathrm{v09},\mathrm{v10},\mathrm{v14},",
+        r"\mathrm{v19},\mathrm{v21}\}",
+        "adaptive_reciprocal_slack_vertex_audit",
+    ):
+        assert marker in note
+
+
 def test_exact_polytope_vertex_ledger_replaces_the_unclassified_placeholder(
 ) -> None:
     audit = coverage_audit.admissible_polytope_vertex_ledger_audit()
@@ -7113,10 +7164,11 @@ def test_exact_polytope_vertex_ledger_replaces_the_unclassified_placeholder(
     assert audit.bcr_covered_vertex_indices == (3, 6, 7, 18, 22)
     assert audit.unbalanced_recombination_covered_vertex_indices == (13, 17)
     assert audit.polylog_short_entry_covered_vertex_indices == (1, 2, 4, 5)
-    assert audit.remaining_unrouted_vertex_indices == (
-        8, 9, 10, 11, 12, 14, 15, 16, 19, 20, 21, 23, 24, 25,
+    assert audit.adaptive_reciprocal_covered_vertex_indices == (
+        11, 12, 15, 16, 20, 23, 24, 25,
     )
-    assert audit.remaining_unrouted_vertex_count == 14
+    assert audit.remaining_unrouted_vertex_indices == (8, 9, 10, 14, 19, 21)
+    assert audit.remaining_unrouted_vertex_count == 6
     assert not audit.vertex_routes_prove_every_face_and_interior
     assert not audit.all_dyadic_parameter_cells_enumerated
 
@@ -7310,8 +7362,7 @@ def test_balanced_zero_slack_full_range_exposes_strict_transition_residual(
     final = coverage_audit.unconditional_long_mollifier_asymptotic_audit()
     assert final.alternative_route_unverified_gates == (
         "admissible_polytope_unrouted_vertices_"
-        "v08_v09_v10_v11_v12_v14_v15_v16_"
-        "v19_v20_v21_v23_v24_v25",
+        "v08_v09_v10_v14_v19_v21",
         "large_q_centered_product_energy_lambda_2",
     )
 

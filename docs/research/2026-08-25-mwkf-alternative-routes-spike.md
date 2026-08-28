@@ -46,7 +46,10 @@
 > \(X^{17/50}\) reciprocal-phase windows.  Exact rational margins close
 > the full balanced zero-slack edge, so the earlier nonzero-\(j\) and
 > resonant \(j=0\) transition gates are no longer retained.  The
-> unrouted slack vertices and the logarithmic endpoint
+> A boxwise extension routes eight further slack vertices by exact
+> positive Taylor and long-cofactor margins.  The six vertices v08,
+> v09, v10, v14, v19 and v21, the intervening-face problem, and the
+> logarithmic endpoint
 > \((\mathrm{LCPE}_2)\) remain open.
 > Therefore the unconditional \(T^3\) asymptotic remains open.
 
@@ -21563,6 +21566,116 @@ interior point.  The executable interfaces
 `admissible_polytope_vertex_ledger_audit` therefore keep
 `vertex_routes_prove_every_face_and_interior=False` and
 `all_dyadic_parameter_cells_enumerated=False`.
+
+### 4.109zjaced000c Adaptive c-Poisson routes eight slack vertices
+
+The normalization used in Section 4.109zjaced000b is not special to a
+balanced box.  Orient the exact double-Poisson expression by the longer
+mollifier variable and put
+
+\[
+ u:=\max(\rho,\sigma),\qquad a:=\ell+h,
+ \qquad p:=2u-a.
+\tag{4.845dc_14xq_35w31n1}
+\]
+
+The physical factor has exponent \(a-u\), while the two dual lengths
+have product \(T^p\).  Hence, on every oriented box,
+
+\[
+ \boxed{T^{a-u}T^p=T^u,}
+\tag{4.845dc_14xq_35w31n2}
+\]
+
+which is exactly the local MMKLS target.  In particular no balanced
+identity was used in restoring the normalization.
+
+Take
+
+\[
+ \eta=\rho_Q=\varepsilon=\frac1{1000},\qquad
+ \nu=\frac{17}{50},\qquad \varepsilon_0=\frac1{100},
+\tag{4.845dc_14xq_35w31n3}
+\]
+
+where \(\varepsilon_0\) is the abscissa in the reciprocal-radical
+moment bound, not the MRSTT interval slack.  In the short-cofactor
+range the proof of (4.845dc_14xq_35w31m7) now gives the exact criterion
+
+\[
+ \boxed{
+ 3(1-\nu)(u-\eta)(1-\rho_Q)>2u-a+\eta.}
+\tag{4.845dc_14xq_35w31n4}
+\]
+
+The subcritical entry range, the polylogarithmic \(c\)-Poisson mode
+count, the sliding-window transfer, and the two density errors are
+unchanged.  The latter retain savings \(\eta/2\) and \(3\eta/2\)
+against the target in (4.845dc_14xq_35w31n2).
+
+The long-cofactor main also has a boxwise exact test.  Away from the
+axes, \(|m+Akl|\ll T^{u+p+o(1)}\), so (4.845dc_14xq_35w10) with
+abscissa \(\varepsilon_0\) leaves the saving
+
+\[
+ \boxed{p-\varepsilon_0(u+p).}
+\tag{4.845dc_14xq_35w31n5}
+\]
+
+On \(kl=0\), the number of dual pairs has exponent
+\(\max(u-h,u-\ell)\); the corresponding saving is
+
+\[
+ \boxed{
+ \min(u-h,u-\ell)-\varepsilon_0u.}
+\tag{4.845dc_14xq_35w31n6}
+\]
+
+Thus a residual vertex is proved whenever (4.845dc_14xq_35w31n4)--
+(4.845dc_14xq_35w31n6) are all strictly positive.  Exact substitution
+in the fourteen-vertex ledger gives
+
+\[
+ \boxed{
+ \{\mathrm{v11},\mathrm{v12},\mathrm{v15},\mathrm{v16},
+   \mathrm{v20},\mathrm{v23},\mathrm{v24},\mathrm{v25}\}}
+\tag{4.845dc_14xq_35w31n7}
+\]
+
+as newly covered.  For v11, v12, v15 and v16 the three margins are
+
+\[
+ \frac{96554099}{50000000},\qquad
+ \frac{393}{100},\qquad \frac{97}{100}.
+\tag{4.845dc_14xq_35w31n8}
+\]
+
+For v23 and v24 the dual product is \(7/2\), the minimum dual-axis
+exponent is \(1/2\), and the axis margin is \(47/100\).  Vertex v25 is
+also contained in the full balanced-edge theorem of the preceding
+section, giving an independent consistency check.
+
+The six vertices not certified by this criterion are exactly
+
+\[
+ \boxed{
+ \{\mathrm{v08},\mathrm{v09},\mathrm{v10},\mathrm{v14},
+   \mathrm{v19},\mathrm{v21}\}.}
+\tag{4.845dc_14xq_35w31n9}
+\]
+
+At v10 and v14 one has \(a=0\), and the Taylor margin is the negative
+rational number \(-3445901/50000000\).  At v08 and v09 one dual axis
+has zero length exponent and (4.845dc_14xq_35w31n6) equals \(-1/100\).
+The same zero-axis obstruction gives \(-3/100\) at v19 and v21.
+These failures are retained rather than hidden by a supremum.
+
+The interface `adaptive_reciprocal_slack_vertex_audit` records every
+row and the exact rejection margin.  Covering these eight vertices is
+not a convex-cover theorem for every intervening face or interior
+cell.  The six displayed witnesses, the face-enumeration problem and
+\((\mathrm{LCPE}_2)\) therefore remain open; the unconditional
+long-mollifier asymptotic is not asserted.
 
 ### 4.109zjaced0 Four witnesses do not cover the parameter polytope
 
