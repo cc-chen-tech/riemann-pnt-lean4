@@ -15,9 +15,16 @@ open HardyTheorem AFE
 #check norm_weightedPoissonCutoff_le_rpow
 #check weightedPoissonCutoff_tsum_eq_sum_Icc
 #check weightedPoissonCutoff_tsum_eq_boundary_add_core
+#check weightedPoissonPhase
+#check weightedPoissonCutoff_fourierIntegrand_eq
+#check fourier_weightedPoissonCutoff_eq_intervalIntegral
+#check fourier_weightedPoissonCutoff_eq_phaseIntegral
 #check weightedPoissonCutoff_tsum_eq_fourier_tsum
 
 #print axioms intervalPlateauBump_eq_one
 #print axioms weightedPoissonCutoff_contDiff
 #print axioms weightedPoissonCutoff_tsum_eq_boundary_add_core
+#print axioms weightedPoissonCutoff_fourierIntegrand_eq
+#print axioms fourier_weightedPoissonCutoff_eq_intervalIntegral
+#print axioms fourier_weightedPoissonCutoff_eq_phaseIntegral
 #print axioms weightedPoissonCutoff_tsum_eq_fourier_tsum

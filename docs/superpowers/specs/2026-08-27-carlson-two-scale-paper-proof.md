@@ -1204,6 +1204,11 @@ With `s=sigma+it`, the phase in the `k`-th Fourier integral is
   -t\log u-2\pi ku.
 \]
 
+This normalization is now an exact Lean identity, including the Fourier
+sign, the factor `2*pi`, the positive amplitude
+`w_{x,N}(u)u^(-sigma)`, and restriction of every Fourier integral to
+`[x-2,N+2]`.
+
 Only negative modes `k=-m<0` can be stationary, at
 `u=t/(2*pi*m)`.  Consequently the stationary range is exactly
 

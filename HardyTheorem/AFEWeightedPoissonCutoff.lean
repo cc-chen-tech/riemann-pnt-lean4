@@ -199,6 +199,85 @@ theorem weightedPoissonCutoff_tsum_eq_boundary_add_core (s : ℂ) {m n : ℕ}
     · exact_mod_cast hk.1
     · exact_mod_cast hk.2
 
+/-- Real phase of the `k`-th Fourier transform of the Mellin weight at
+`s = sigma + I*t`, with mathlib's `exp (-2*pi*I*k*u)` convention. -/
+noncomputable def weightedPoissonPhase (t : ℝ) (k : ℤ) (u : ℝ) : ℝ :=
+  -t * Real.log u - 2 * Real.pi * (k : ℝ) * u
+
+/-- Exact amplitude--phase normalization of a Fourier summand on the
+positive axis. -/
+theorem weightedPoissonCutoff_fourierIntegrand_eq
+    (sigma t x N u : ℝ) (k : ℤ) (hu : 0 < u) :
+    Complex.exp ((-2 * Real.pi * u * (k : ℝ) : ℝ) * I) •
+        weightedPoissonCutoff ((sigma : ℂ) + I * t) x N u =
+      (intervalPlateauBump x N u * u ^ (-sigma)) •
+        Complex.exp (I * weightedPoissonPhase t k u) := by
+  rw [weightedPoissonCutoff, Real.rpow_def_of_pos hu]
+  simp only [smul_eq_mul, Complex.real_smul, Complex.ofReal_mul,
+    Complex.ofReal_exp, Complex.ofReal_neg]
+  let A : ℂ :=
+    Complex.exp (-(2 : ℂ) * (Real.pi : ℂ) * (u : ℂ) * (k : ℂ) * I)
+  let B : ℂ :=
+    Complex.exp (-((sigma : ℂ) + I * t) * (Real.log u : ℂ))
+  let C : ℂ := Complex.exp ((Real.log u : ℂ) * (-sigma : ℂ))
+  let D : ℂ := Complex.exp (I * (weightedPoissonPhase t k u : ℂ))
+  let b : ℂ := intervalPlateauBump x N u
+  change A * (b * B) = b * C * D
+  calc
+    A * (b * B) = b * (A * B) := by ring
+    _ = b * (C * D) := by
+      congr 1
+      dsimp [A, B, C, D]
+      rw [← Complex.exp_add, ← Complex.exp_add]
+      congr 1
+      apply Complex.ext <;> simp [weightedPoissonPhase] <;> ring
+    _ = b * C * D := by ring
+
+/-- The Fourier transform is supported on the same constant-width enlarged
+interval as the plateau.  This fixes the Fourier sign and `2*pi`
+normalization before stationary modes are extracted. -/
+theorem fourier_weightedPoissonCutoff_eq_intervalIntegral
+    (s : ℂ) {x N : ℝ} (hxN : x ≤ N) (k : ℤ) :
+    𝓕 (weightedPoissonCutoff s x N) k =
+      ∫ u in (x - 2)..(N + 2),
+        Complex.exp ((-2 * Real.pi * u * (k : ℝ) : ℝ) * I) •
+          weightedPoissonCutoff s x N u := by
+  rw [Real.fourier_real_eq_integral_exp_smul]
+  apply (intervalIntegral.integral_eq_integral_of_support_subset ?_).symm
+  intro u hu
+  have hmnR : x ≤ N := hxN
+  have hleft : x - 2 < u := by
+    apply lt_of_not_ge
+    intro hul
+    apply hu
+    simp [weightedPoissonCutoff,
+      intervalPlateauBump_eq_zero_of_le hmnR hul]
+  have hright : u < N + 2 := by
+    apply lt_of_not_ge
+    intro hur
+    apply hu
+    simp [weightedPoissonCutoff,
+      intervalPlateauBump_eq_zero_of_ge hmnR hur]
+  exact ⟨hleft, hright.le⟩
+
+/-- Fourier transform in the positive-weight oscillatory form used by the
+existing first- and second-derivative integral estimates. -/
+theorem fourier_weightedPoissonCutoff_eq_phaseIntegral
+    (sigma t : ℝ) {x N : ℝ} (hx : 2 < x) (hxN : x ≤ N) (k : ℤ) :
+    𝓕 (weightedPoissonCutoff ((sigma : ℂ) + I * t) x N) k =
+      ∫ u in (x - 2)..(N + 2),
+        (intervalPlateauBump x N u * u ^ (-sigma)) •
+          Complex.exp (I * weightedPoissonPhase t k u) := by
+  rw [fourier_weightedPoissonCutoff_eq_intervalIntegral _ hxN]
+  apply intervalIntegral.integral_congr
+  intro u hu
+  have hbounds : u ∈ Icc (x - 2) (N + 2) := by
+    have horder : x - 2 ≤ N + 2 := by linarith
+    rw [uIcc_of_le horder] at hu
+    exact hu
+  apply weightedPoissonCutoff_fourierIntegrand_eq
+  linarith [hbounds.1]
+
 /-- Whole-line Poisson summation for the smoothed Mellin cutoff.  This is an
 actual theorem obtained from the Schwartz Poisson formula, not an analytic
 interface or an axiom. -/
