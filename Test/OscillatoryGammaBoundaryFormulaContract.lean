@@ -1,0 +1,12 @@
+import HardyTheorem.OscillatoryGammaBoundaryFormula
+
+open Real Complex Set MeasureTheory Filter Topology
+
+namespace HardyTheorem.OscillatoryGammaBoundaryFormula
+
+#check dampedGammaNegWhole_tan_eq
+#print axioms dampedGammaNegWhole_tan_eq
+#check oscillatoryGammaNegWhole_eq
+#print axioms oscillatoryGammaNegWhole_eq
+
+end HardyTheorem.OscillatoryGammaBoundaryFormula

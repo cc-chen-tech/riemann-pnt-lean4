@@ -1099,6 +1099,29 @@ the convention that a nonintegrable set integral is zero.  The remaining
 Gamma gate is the positive-real scaling of the rotated Mellin identity and
 limit uniqueness; no further tail estimate is needed.
 
+That remaining unit-frequency Gamma gate is now formal.  For
+`0<Re(z)<1`, positive-real scaling of the already proved rotated Mellin
+identity gives, for `0<epsilon<pi/2`,
+
+\[
+ J^-_{\tan\epsilon}(z,1)
+ = (\cos\epsilon)^z
+   e^{-i(\pi/2-\epsilon)z}\Gamma(z).
+\]
+
+Composing (8.17) with `tan epsilon -> 0+` and using continuity of the
+principal power at `cos 0=1`, Lean then proves
+
+\[
+ J^-_0(z,1)=e^{-i\pi z/2}\Gamma(z).                               \tag{8.18}
+\]
+
+The proof uses limit uniqueness in the nontrivial right-neighborhood filter;
+there is no appeal to a formal integral whose integrand is not absolutely
+integrable.  What remains for the exact Titchmarsh kernel is positive
+frequency, arbitrary positive scaling, and the weighted Poisson summation
+step.
+
 ## 9. Primary sources
 
 - J. B. Conrey, *More than two fifths of the zeros of the Riemann zeta
