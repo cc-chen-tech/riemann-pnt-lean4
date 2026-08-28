@@ -17180,6 +17180,192 @@ def original_master_type_product_support_audit(
     }
 
 
+def reciprocity_oriented_original_master_support_audit(
+    *,
+    rows: tuple[tuple[int, int, int, int, int, int, int, int], ...],
+    original_r_exponent: Fraction,
+    original_s_exponent: Fraction,
+    original_m_exponent: Fraction,
+    original_k_exponent: Fraction,
+    delta_exponent: Fraction,
+    poisson_exponent: Fraction,
+    type_factor_exponents: tuple[Fraction, Fraction, Fraction, Fraction],
+    symmetric_type_factorization_verified: bool,
+    smooth_reciprocity_adapter_verified: bool,
+) -> dict[str, object]:
+    """Orient every original master row by additive reciprocity.
+
+    A finite row is (r,s,a,n,p,b,c,u).  If the original r scale is
+    shorter than the s scale, additive reciprocity replaces the phase
+    -a*inverse(r)/s by a*inverse(s)/r-a/(r*s) modulo one and the symmetric
+    Möbius--log opening is applied to s.  Otherwise the original
+    orientation and the Type opening of r are retained.
+    """
+
+    rho = F(original_r_exponent)
+    sigma = F(original_s_exponent)
+    m = F(original_m_exponent)
+    k = F(original_k_exponent)
+    ell = F(delta_exponent)
+    h = F(poisson_exponent)
+    factors = tuple(F(value) for value in type_factor_exponents)
+    if len(factors) != 4:
+        raise ValueError("exactly four Type factor exponents are required")
+    if min((rho, sigma, m, k, ell, h, *factors)) < 0:
+        raise ValueError("all exponents must be nonnegative")
+    if not rows:
+        raise ValueError("at least one original-master row is required")
+
+    core_constraints = {
+        "m_plus_k_at_most_one": bool(m + k <= 1),
+        "afe_balance": bool(k + sigma == m + rho),
+        "delta_support": bool(ell <= m + rho - 1),
+        "poisson_support": bool(h <= sigma - m),
+        "product_label_support": bool(ell + h <= rho + sigma - 1),
+    }
+    if not all(core_constraints.values()):
+        raise ValueError("the supplied exponents must satisfy the core polytope")
+
+    swapped = bool(sigma > rho)
+    product_exponent = max(rho, sigma)
+    modulus_exponent = min(rho, sigma)
+    oriented_m = k if swapped else m
+    oriented_k = m if swapped else k
+    oriented_balance = bool(
+        oriented_k + modulus_exponent
+        == oriented_m + product_exponent
+    )
+    oriented_delta_cap = oriented_m + product_exponent - 1
+    oriented_poisson_cap = modulus_exponent - oriented_m
+    labels_below_modulus = bool(
+        ell <= oriented_delta_cap <= modulus_exponent
+        and h <= oriented_poisson_cap <= modulus_exponent
+    )
+
+    checked_rows: list[dict[str, object]] = []
+    for raw_row in rows:
+        if len(raw_row) != 8:
+            raise ValueError("each row must be (r,s,a,n,p,b,c,u)")
+        r, s, a, n, p, b, c, u = (int(value) for value in raw_row)
+        if min(r, s, n, p, b, c, u) <= 0:
+            raise ValueError("all arithmetic row entries except a must be positive")
+        if gcd(r, s) != 1:
+            raise ValueError("additive reciprocity requires gcd(r,s)=1")
+
+        inverse_r_mod_s = pow(r, -1, s) if s > 1 else 0
+        inverse_s_mod_r = pow(s, -1, r) if r > 1 else 0
+        original_phase = F(-a * inverse_r_mod_s, s)
+        reciprocal_phase = F(a * inverse_s_mod_r, r) - F(a, r * s)
+        reciprocity_difference = original_phase - reciprocal_phase
+        reciprocity_exact = bool(reciprocity_difference.denominator == 1)
+
+        type_entry = s if swapped else r
+        if n * p != type_entry:
+            raise ValueError(
+                "the oriented Type opening must satisfy n*p=type_entry"
+            )
+        if b * c * u != n:
+            raise ValueError("the quotient Type split must satisfy b*c*u=n")
+        checked_rows.append(
+            {
+                "r": r,
+                "s": s,
+                "product_label": a,
+                "orientation_swapped": swapped,
+                "oriented_type_entry": type_entry,
+                "full_type_product": b * c * u * p,
+                "full_type_product_equals_oriented_entry": bool(
+                    b * c * u * p == type_entry
+                ),
+                "original_phase": original_phase,
+                "reciprocal_phase": reciprocal_phase,
+                "reciprocity_difference": reciprocity_difference,
+                "reciprocity_exact_mod_one": reciprocity_exact,
+            }
+        )
+
+    finite_support_exact = all(
+        bool(row["full_type_product_equals_oriented_entry"])
+        and bool(row["reciprocity_exact_mod_one"])
+        for row in checked_rows
+    )
+    type_product_exponent = sum(factors, start=F(0))
+    support_hypotheses = bool(
+        symmetric_type_factorization_verified
+        and smooth_reciprocity_adapter_verified
+        and finite_support_exact
+        and oriented_balance
+        and labels_below_modulus
+    )
+    if support_hypotheses and type_product_exponent != product_exponent:
+        raise ValueError(
+            "the oriented exact Type product must have the longer scale exponent"
+        )
+
+    extra_reciprocal_phase_exponent = ell + h - rho - sigma
+    reciprocal_phase_is_smooth = bool(
+        extra_reciprocal_phase_exponent <= -1
+    )
+    primitive_label_energy = max(
+        ell + h,
+        2 * max(F(0), ell, h, ell + h - modulus_exponent),
+    )
+    product_residue_energy = max(
+        product_exponent,
+        2 * product_exponent - modulus_exponent,
+    )
+    fixed_row_squared_bound = (
+        modulus_exponent
+        + primitive_label_energy
+        + product_residue_energy
+    )
+    squared_target = 2 * (rho + sigma)
+    fixed_fibre_target_met = bool(
+        support_hypotheses
+        and reciprocal_phase_is_smooth
+        and fixed_row_squared_bound <= squared_target
+    )
+    return {
+        "rows": tuple(checked_rows),
+        "core_constraints": core_constraints,
+        "orientation_swapped": swapped,
+        "oriented_product_exponent": product_exponent,
+        "oriented_total_modulus_exponent": modulus_exponent,
+        "oriented_m_exponent": oriented_m,
+        "oriented_k_exponent": oriented_k,
+        "oriented_afe_balance_verified": oriented_balance,
+        "oriented_delta_cap": oriented_delta_cap,
+        "oriented_poisson_cap": oriented_poisson_cap,
+        "both_label_exponents_at_most_oriented_modulus": labels_below_modulus,
+        "type_factor_exponents": factors,
+        "type_product_exponent": type_product_exponent,
+        "finite_reciprocity_and_support_exact": finite_support_exact,
+        "symmetric_type_factorization_verified": bool(
+            symmetric_type_factorization_verified
+        ),
+        "smooth_reciprocity_adapter_verified": bool(
+            smooth_reciprocity_adapter_verified
+        ),
+        "extra_reciprocal_phase_exponent": extra_reciprocal_phase_exponent,
+        "extra_reciprocal_phase_has_core_power_minus_one": (
+            reciprocal_phase_is_smooth
+        ),
+        "primitive_product_label_energy_exponent": primitive_label_energy,
+        "product_residue_energy_exponent": product_residue_energy,
+        "fixed_row_squared_bound_exponent": fixed_row_squared_bound,
+        "fixed_row_squared_target_exponent": squared_target,
+        "oriented_fixed_fibre_target_met": fixed_fibre_target_met,
+        "all_core_boxes_short_product_wedge_removed_at_fixed_fibre": (
+            fixed_fibre_target_met
+        ),
+        "outer_mobius_weights_retained": True,
+        "signed_varying_oriented_modulus_and_phase_norm_proved": False,
+        "principal_resonant_global_reassembly_proved": False,
+        "determinant_nonzero_dispersion_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,

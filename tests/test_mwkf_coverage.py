@@ -5895,6 +5895,212 @@ def test_original_master_product_support_closes_only_the_balanced_maximal_wedge(
         )
 
 
+def test_reciprocity_orientation_removes_every_fixed_fibre_short_product_wedge() -> None:
+    """The longer original entry can always be the Type product."""
+
+    audit = getattr(
+        coverage_audit,
+        "reciprocity_oriented_original_master_support_audit",
+        None,
+    )
+    assert audit is not None, "reciprocity-oriented support audit is missing"
+
+    balanced = audit(
+        rows=((210, 143, 55, 30, 7, 2, 3, 5),),
+        original_r_exponent=F(3),
+        original_s_exponent=F(3),
+        original_m_exponent=F(1, 2),
+        original_k_exponent=F(1, 2),
+        delta_exponent=F(5, 2),
+        poisson_exponent=F(5, 2),
+        type_factor_exponents=(F(3, 4),) * 4,
+        symmetric_type_factorization_verified=True,
+        smooth_reciprocity_adapter_verified=True,
+    )
+    assert not balanced["orientation_swapped"]
+    assert balanced["finite_reciprocity_and_support_exact"]
+    assert balanced["oriented_product_exponent"] == F(3)
+    assert balanced["oriented_total_modulus_exponent"] == F(3)
+    assert balanced["primitive_product_label_energy_exponent"] == F(5)
+    assert balanced["product_residue_energy_exponent"] == F(3)
+    assert balanced["fixed_row_squared_bound_exponent"] == F(11)
+    assert balanced["fixed_row_squared_target_exponent"] == F(12)
+    assert balanced["oriented_fixed_fibre_target_met"]
+
+    r_long = audit(
+        rows=((30, 7, -11, 6, 5, 2, 3, 1),),
+        original_r_exponent=F(2),
+        original_s_exponent=F(1),
+        original_m_exponent=F(0),
+        original_k_exponent=F(1),
+        delta_exponent=F(1),
+        poisson_exponent=F(1),
+        type_factor_exponents=(F(1, 2),) * 4,
+        symmetric_type_factorization_verified=True,
+        smooth_reciprocity_adapter_verified=True,
+    )
+    assert not r_long["orientation_swapped"]
+    assert r_long["both_label_exponents_at_most_oriented_modulus"]
+    assert r_long["extra_reciprocal_phase_exponent"] == F(-1)
+    assert r_long["fixed_row_squared_bound_exponent"] == F(6)
+    assert r_long["fixed_row_squared_target_exponent"] == F(6)
+    assert r_long["all_core_boxes_short_product_wedge_removed_at_fixed_fibre"]
+
+    s_long = audit(
+        rows=((7, 30, 11, 6, 5, 2, 3, 1),),
+        original_r_exponent=F(1),
+        original_s_exponent=F(2),
+        original_m_exponent=F(1),
+        original_k_exponent=F(0),
+        delta_exponent=F(1),
+        poisson_exponent=F(1),
+        type_factor_exponents=(F(1, 2),) * 4,
+        symmetric_type_factorization_verified=True,
+        smooth_reciprocity_adapter_verified=True,
+    )
+    assert s_long["orientation_swapped"]
+    assert s_long["rows"][0]["oriented_type_entry"] == 30
+    assert s_long["rows"][0]["reciprocity_exact_mod_one"]
+    assert s_long["oriented_m_exponent"] == F(0)
+    assert s_long["oriented_k_exponent"] == F(1)
+    assert s_long["both_label_exponents_at_most_oriented_modulus"]
+    assert s_long["all_core_boxes_short_product_wedge_removed_at_fixed_fibre"]
+    assert s_long["outer_mobius_weights_retained"]
+    assert not s_long[
+        "signed_varying_oriented_modulus_and_phase_norm_proved"
+    ]
+    assert not s_long["principal_resonant_global_reassembly_proved"]
+    assert not s_long["determinant_nonzero_dispersion_proved"]
+    assert not s_long["coupled_kernel_gate_closed"]
+
+    modulus_one = audit(
+        rows=((1, 30, 11, 6, 5, 2, 3, 1),),
+        original_r_exponent=F(0),
+        original_s_exponent=F(1),
+        original_m_exponent=F(1),
+        original_k_exponent=F(0),
+        delta_exponent=F(0),
+        poisson_exponent=F(0),
+        type_factor_exponents=(F(1), F(0), F(0), F(0)),
+        symmetric_type_factorization_verified=True,
+        smooth_reciprocity_adapter_verified=True,
+    )
+    assert modulus_one["orientation_swapped"]
+    assert modulus_one["oriented_total_modulus_exponent"] == F(0)
+    assert modulus_one["rows"][0]["reciprocity_exact_mod_one"]
+    assert modulus_one["fixed_row_squared_bound_exponent"] == F(2)
+    assert modulus_one["fixed_row_squared_target_exponent"] == F(2)
+    assert modulus_one[
+        "all_core_boxes_short_product_wedge_removed_at_fixed_fibre"
+    ]
+
+    missing_adapter = audit(
+        rows=((7, 30, 11, 6, 5, 2, 3, 1),),
+        original_r_exponent=F(1),
+        original_s_exponent=F(2),
+        original_m_exponent=F(1),
+        original_k_exponent=F(0),
+        delta_exponent=F(1),
+        poisson_exponent=F(1),
+        type_factor_exponents=(F(1, 2),) * 4,
+        symmetric_type_factorization_verified=True,
+        smooth_reciprocity_adapter_verified=False,
+    )
+    assert missing_adapter["finite_reciprocity_and_support_exact"]
+    assert not missing_adapter["oriented_fixed_fibre_target_met"]
+
+    checked_boxes = 0
+    reduced_scales = [F(index, 4) for index in range(13)]
+    afe_scales = [F(index, 4) for index in range(5)]
+    label_scales = [F(index, 4) for index in range(13)]
+    for rho in reduced_scales:
+        for sigma in reduced_scales:
+            for m in afe_scales:
+                for k in afe_scales:
+                    if m + k > 1 or k + sigma != m + rho:
+                        continue
+                    for ell in label_scales:
+                        if ell > m + rho - 1:
+                            continue
+                        for h in label_scales:
+                            if h > sigma - m or ell + h > rho + sigma - 1:
+                                continue
+                            swapped = sigma > rho
+                            if swapped:
+                                row = (
+                                    1 if rho == 0 else 7,
+                                    30,
+                                    11,
+                                    6,
+                                    5,
+                                    2,
+                                    3,
+                                    1,
+                                )
+                            else:
+                                row = (
+                                    30,
+                                    1 if sigma == 0 else 7,
+                                    -11,
+                                    6,
+                                    5,
+                                    2,
+                                    3,
+                                    1,
+                                )
+                            product_exponent = max(rho, sigma)
+                            grid_result = audit(
+                                rows=(row,),
+                                original_r_exponent=rho,
+                                original_s_exponent=sigma,
+                                original_m_exponent=m,
+                                original_k_exponent=k,
+                                delta_exponent=ell,
+                                poisson_exponent=h,
+                                type_factor_exponents=(
+                                    product_exponent,
+                                    F(0),
+                                    F(0),
+                                    F(0),
+                                ),
+                                symmetric_type_factorization_verified=True,
+                                smooth_reciprocity_adapter_verified=True,
+                            )
+                            assert grid_result[
+                                "all_core_boxes_short_product_wedge_removed_at_fixed_fibre"
+                            ]
+                            checked_boxes += 1
+    assert checked_boxes == 5936
+
+    with pytest.raises(ValueError, match="gcd"):
+        audit(
+            rows=((6, 30, 1, 6, 5, 2, 3, 1),),
+            original_r_exponent=F(1),
+            original_s_exponent=F(2),
+            original_m_exponent=F(1),
+            original_k_exponent=F(0),
+            delta_exponent=F(1),
+            poisson_exponent=F(1),
+            type_factor_exponents=(F(1, 2),) * 4,
+            symmetric_type_factorization_verified=True,
+            smooth_reciprocity_adapter_verified=True,
+        )
+
+    with pytest.raises(ValueError, match="core polytope"):
+        audit(
+            rows=((7, 30, 1, 6, 5, 2, 3, 1),),
+            original_r_exponent=F(1),
+            original_s_exponent=F(2),
+            original_m_exponent=F(0),
+            original_k_exponent=F(0),
+            delta_exponent=F(1),
+            poisson_exponent=F(1),
+            type_factor_exponents=(F(1, 2),) * 4,
+            symmetric_type_factorization_verified=True,
+            smooth_reciprocity_adapter_verified=True,
+        )
+
+
 def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
     """Shen's q-average is inverse-only and far below the coupled target."""
 
