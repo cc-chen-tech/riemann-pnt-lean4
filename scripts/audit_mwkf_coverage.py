@@ -26237,6 +26237,88 @@ def triple_centered_uniform_ratio_completion_audit(
     }
 
 
+def uniform_ratio_completion_published_coverage_audit(
+    *,
+    long_prime_exponent: Fraction,
+    short_prime_exponent: Fraction,
+    required_WRFE_energy_saving: Fraction,
+) -> dict[str, object]:
+    """Map fixed-modulus Kloosterman bounds to uniform ratio completion.
+
+    A point mass minus the uniform unit average has full nonprincipal
+    Fourier support.  Thus at a long prime modulus ``P=T^sigma_L`` both
+    completed ratio variables have length ``M=N=P``.  This helper inserts
+    that literal full-residue length into the published MQW, Blomer--
+    Pascadi, and Pascadi size margins.  It is a rejection audit only; the
+    physical completion has three varying moduli and level-dependent
+    coefficients, which are stronger mismatches than the failed numeric
+    conditions recorded here.
+    """
+
+    sigma_long = F(long_prime_exponent)
+    sigma_short = F(short_prime_exponent)
+    required_saving = F(required_WRFE_energy_saving)
+    if min(sigma_long, sigma_short, required_saving) < 0:
+        raise ValueError("all exponent inputs must be nonnegative")
+    if sigma_long < sigma_short:
+        raise ValueError("the long-prime exponent must dominate the short one")
+
+    m_exponent = sigma_long
+    n_exponent = sigma_long
+    mqw_first_lhs = F(7, 5) * m_exponent + n_exponent
+    mqw_first_rhs = F(3, 2) * sigma_long
+    mqw_product_lhs = m_exponent + n_exponent
+    mqw_product_rhs = F(5, 4) * sigma_long
+    mqw_first_deficit = _positive_part(mqw_first_lhs - mqw_first_rhs)
+    mqw_product_deficit = _positive_part(
+        mqw_product_lhs - mqw_product_rhs
+    )
+
+    blomer_pascadi_margins = (
+        -F(1, 32),
+        -F(1, 8),
+        -F(5, 18),
+    )
+    pascadi_best_full_residue_margin = -F(1, 6)
+    mqw_hypotheses = bool(
+        mqw_first_deficit == 0 and mqw_product_deficit == 0
+    )
+    bp_saving = max(blomer_pascadi_margins) > 0
+    pascadi_saving = pascadi_best_full_residue_margin > 0
+    return {
+        "long_modulus_exponent": sigma_long,
+        "short_modulus_exponent": sigma_short,
+        "required_WRFE_energy_saving": required_saving,
+        "full_ratio_fourier_length_exponents": (
+            m_exponent,
+            n_exponent,
+        ),
+        "mqw_M_7_over_5_N_lhs_exponent": mqw_first_lhs,
+        "mqw_M_7_over_5_N_rhs_exponent": mqw_first_rhs,
+        "mqw_M_7_over_5_N_condition_deficit": mqw_first_deficit,
+        "mqw_MN_lhs_exponent": mqw_product_lhs,
+        "mqw_MN_rhs_exponent": mqw_product_rhs,
+        "mqw_MN_condition_deficit": mqw_product_deficit,
+        "blomer_pascadi_full_residue_margins": (
+            blomer_pascadi_margins
+        ),
+        "pascadi_average_best_full_residue_margin": (
+            pascadi_best_full_residue_margin
+        ),
+        "three_varying_ratio_moduli_present": True,
+        "literal_coefficients_remain_level_dependent": True,
+        "mqw_hypotheses_verified": mqw_hypotheses,
+        "blomer_pascadi_power_saving": bp_saving,
+        "pascadi_average_power_saving": pascadi_saving,
+        "new_published_cell_covered": bool(
+            mqw_hypotheses or bp_saving or pascadi_saving
+        ),
+        "generalized_determinant_bound_proved": False,
+        "WRFE_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def short_prime_weighted_profile_ttstar_audit(
     *,
     short_prime: int,

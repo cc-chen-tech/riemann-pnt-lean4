@@ -81,6 +81,7 @@
 > | Primitive-ray factorization of the all-incidence zero determinant | Section 9.188 assumes only the literal factorization \(w_p(m,n)=f_p(m)g_p(n)\).  Every incident lift has a unique primitive core \((g,\ell,k)=(s,m,n)/(s,m,n)\) on \(pg=q\ell+Dk\).  For \(p_2=p_1+rq\), determinant zero is exactly equality of the two primitive cores after the shear \((g,\ell,k)\mapsto(g,\ell+rg,k)\).  Consequently the two dilation variables sum independently into one-dimensional ray profiles \(\mathcal L_p(g,\ell,k)\), giving the exact factorization (9.1260).  This is a candidate entry point for LCM square-energy, but no such bound is inferred: the primitive plane, prime shift, physical Type weights, and seven density terms must still be retained |
 > | Ray Type-reassembly boundary | Section 9.189 restores the literal meanings of the two ray factors.  The \(F\)-lift \(f_p(u\ell)\) is the \(h\delta\)/cofactor convolution, while only the \(G\)-lift carries \(\mu(uk)\).  On squarefree coprime support this becomes one dilation sign \(\mu(uk)=\mu(u)\mu(k)\), not two Selberg coefficients.  Moreover the original Type-I/II multipliers at the product \(uk\) do not separate: for \(U=V=3\), \(k=(2,5)\), \(u=(3,7)\), the Type-I matrix has determinant \(-2\), whereas the fully reassembled Möbius matrix is rank one.  Thus Type blocks must first be reassembled before a new one-sided split in \(u\).  There is no reciprocal-LCM kernel in (9.1261), so the proved LCM quadratic bound does not apply directly; the new dilation Type estimate remains open |
 > | Uniform-ratio completion of all density terms | Section 9.190 rewrites each density \(1/\varphi(\ell)\) as the exact average of a full incidence over a dummy unit ratio.  The outer actual ratio is \(a^*=1\), and the inner actual ratios are \(c_{p_i}^*\equiv D\overline q\pmod {p_i}\).  Thus all eight terms of the triple-centered product become signed averages of three incidence indicators before any absolute value.  This supplies quotient coordinates to the seven density terms, but the dummy ratios change the determinant equation and do not preserve the original common \(t\).  The finite completion and principal-mode deletion are exact; the resulting generalized-determinant estimate remains unproved |
+> | Published coverage of the completed ratios | Section 9.191 inserts the literal full nonprincipal ratio spectrum into Milićević--Qin--Wu, Blomer--Pascadi, and Pascadi.  On the extreme long-prime modulus \(p=T^2\), both completed Fourier variables have length \(p\).  MQW misses its \(M^{7/5}N<p^{3/2}\) and \(MN\leq p^{5/4}\) conditions by \(T^{9/5}\) and \(T^{3/2}\), respectively.  At full residue length all three Blomer--Pascadi margins are negative, and Pascadi's averaged alternative has best margin \(-1/6\) in the modulus exponent.  The actual family additionally has three varying moduli and level-dependent Type/AFE coefficients.  Hence uniform-ratio completion creates no new published cell; it identifies the hypotheses of the new generalized-determinant theorem that would be needed |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -26881,6 +26882,74 @@ the three unit groups, verifies all eight full-incidence terms against
 the direct centered product, and keeps both the generalized-determinant
 and (WRFE) flags false.
 
+### 9.191 Published fixed-modulus bounds do not cover the completed ratios
+
+Uniform-ratio completion is algebraically exhaustive, but it does not
+shorten the ratio Fourier support.  A point mass minus the uniform unit
+average has multiplicative Fourier coefficient zero at the principal
+character and modulus one at every nonprincipal character.  Thus on a
+long-prime modulus \(p=T^{\sigma_L}\), the two inner completed variables
+both have the full length
+
+\[
+ \boxed{M=N=p=T^{\sigma_L}.}
+ \tag{9.1273}
+\]
+
+At the extreme residual face \(\sigma_L=2\) and
+\(\sigma_S=3/2\).  Substitution of (9.1273) into the two decisive MQW
+size conditions (9.22) gives
+
+\[
+ \begin{aligned}
+ M^{7/5}N&=T^{24/5},&p^{3/2}&=T^3,
+ &\text{deficit}&=T^{9/5},\\
+ MN&=T^4,&p^{5/4}&=T^{5/2},
+ &\text{deficit}&=T^{3/2}.
+ \end{aligned}
+ \tag{9.1274}
+\]
+
+Therefore Milićević--Qin--Wu Theorem 1.1 cannot be applied even after
+two of the three ratio labels are frozen.  The obstruction is a failed
+hypothesis, not merely an insufficient saving.
+
+For Blomer--Pascadi Theorem 1.1, the full-residue parameter is
+\(\nu=1\).  The exact three margins already computed in (9.140) are
+
+\[
+ \boxed{
+ \left(-\frac1{32},-\frac18,-\frac5{18}\right),}
+ \tag{9.1275}
+\]
+
+so all three Blomer--Pascadi margins are negative.  For Pascadi's
+modulus-averaged Corollary 7.9, (9.143) gives
+
+\[
+ \max(\mathfrak p_1,\mathfrak p_2)
+ =-\frac{1+\tau}{6}\leq-\frac16.
+ \tag{9.1276}
+\]
+
+These are optimistic fixed-kernel comparisons.  The physical completed
+family is harder: \(q,p_1,p_2\) all vary, its three actual ratios depend
+on those levels, and the reassembled Möbius/Type plus AFE coefficient is
+level dependent.  None of the cited theorems accepts that coefficient
+class while summing the three modulus families before Cauchy.
+
+Consequently Section 9.190 creates no new published polytope cell.  Its
+gain is a precise new theorem interface: a generalized-determinant or
+equivalent three-character dispersion estimate for the fully completed,
+principal-deleted coefficient class.  The required WRFE energy saving
+is \(T^{-1/2+\varepsilon}\) at the extreme face, but no positive saving
+from the cited fixed-modulus bounds is available there.
+
+The helper `uniform_ratio_completion_published_coverage_audit` records
+(9.1274)--(9.1276) in the physical \(T\)-exponents and leaves every
+published-coverage, generalized-determinant, (WRFE), and coupled-kernel
+flag false.
+
 ## 10. What has and has not been proved
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
@@ -27149,6 +27218,15 @@ principal ratio modes cancel before absolute values.  The dummy ratios
 do not preserve the special common \(t\); they lead to the generalized
 determinant equation (9.1272).  Neither its dispersion estimate nor an
 equivalent multiplicative-orthogonality bound is proved.
+
+Section 9.191 maps that completed family back to the published coverage
+table.  Its ratio Fourier support is full.  At the extreme face, MQW
+fails its two size conditions by \(T^{9/5}\) and \(T^{3/2}\); the three
+Blomer--Pascadi full-residue margins and Pascadi's best averaged margin
+are all negative.  Since the real family additionally has three varying
+moduli and level-dependent physical coefficients, no new published cell
+is obtained.  A genuinely new joint generalized-determinant/three-
+character estimate is still required.
 
 **Current classification: Young closes each fixed scalar stratum and the
 globally aggregated transition range \(\tau\geq1/4\); the equivalent

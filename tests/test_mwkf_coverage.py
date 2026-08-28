@@ -9346,6 +9346,42 @@ def test_all_eight_centering_terms_admit_uniform_ratio_incidence_completion() ->
     assert "does not preserve the original common determinant" in text
 
 
+def test_uniform_ratio_completion_has_no_new_published_full_residue_coverage() -> None:
+    audit = getattr(
+        coverage_audit,
+        "uniform_ratio_completion_published_coverage_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        long_prime_exponent=F(2),
+        short_prime_exponent=F(3, 2),
+        required_WRFE_energy_saving=F(1, 2),
+    )
+    assert result["long_modulus_exponent"] == F(2)
+    assert result["full_ratio_fourier_length_exponents"] == (F(2), F(2))
+    assert result["mqw_M_7_over_5_N_condition_deficit"] == F(9, 5)
+    assert result["mqw_MN_condition_deficit"] == F(3, 2)
+    assert result["blomer_pascadi_full_residue_margins"] == (
+        F(-1, 32),
+        F(-1, 8),
+        F(-5, 18),
+    )
+    assert result["pascadi_average_best_full_residue_margin"] == F(-1, 6)
+    assert result["three_varying_ratio_moduli_present"]
+    assert result["literal_coefficients_remain_level_dependent"]
+    assert not result["mqw_hypotheses_verified"]
+    assert not result["blomer_pascadi_power_saving"]
+    assert not result["pascadi_average_power_saving"]
+    assert not result["new_published_cell_covered"]
+    assert not result["WRFE_proved"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.191 Published fixed-modulus bounds do not cover the completed ratios" in text
+    assert r"T^{9/5}" in text
+    assert r"T^{3/2}" in text
+    assert "all three Blomer--Pascadi margins are negative" in text
+
+
 def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
     text = OFFDIAGONAL_NOTE.read_text()
     assert (
