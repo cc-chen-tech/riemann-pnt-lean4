@@ -21434,6 +21434,344 @@ def symmetric_afe_direction_reassembly_audit(
     }
 
 
+def bounded_short_determinant_type_split_audit(
+    *,
+    rows: tuple[tuple[int, int, int, int, int], ...],
+    base_row_coefficients: tuple[Fraction, ...],
+    h_weights: tuple[tuple[int, Fraction], ...],
+    delta_weights: tuple[tuple[int, Fraction], ...],
+    short_cutoff_u: int,
+    short_cutoff_v: int,
+    maximum_short_determinant: int,
+) -> dict[str, object]:
+    """Open the bounded-``D`` square after an exact two-row Type split.
+
+    A row is ``(q,k,y,n,p)``.  The first three entries are the physical
+    modulus, nonzero Type frequency, and unit residue used in Section
+    9.152.  The long Type entry is ``w=n*p`` with Möbius sign
+    ``mu(n)mu(p)``.  Only ``mu(n)`` is decomposed into the remainder-free
+    small, Type-I, and Type-II multipliers of (9.934)--(9.935).
+
+    The product-label weight is not accepted as an arbitrary sequence:
+    it is built exactly as ``W(a)=sum_{h*delta=a} f(h)g(delta)``.  The
+    helper opens one global square, restricts only after opening it to
+    nonzero ``|D| <= D_0``, and verifies that the nine ordered Type blocks
+    reassemble the raw bounded-determinant master.  It proves no analytic
+    bound for any block.
+    """
+
+    supplied_rows = tuple(
+        tuple(int(value) for value in row) for row in rows
+    )
+    coefficients = tuple(F(value) for value in base_row_coefficients)
+    h_data = tuple((int(label), F(weight)) for label, weight in h_weights)
+    delta_data = tuple(
+        (int(label), F(weight)) for label, weight in delta_weights
+    )
+    cutoff_u = int(short_cutoff_u)
+    cutoff_v = int(short_cutoff_v)
+    determinant_cutoff = int(maximum_short_determinant)
+    if not supplied_rows or len(supplied_rows) != len(coefficients):
+        raise ValueError("rows and coefficients must have equal positive length")
+    if any(len(row) != 5 for row in supplied_rows):
+        raise ValueError("each row must be (q,k,y,n,p)")
+    if not h_data or not delta_data:
+        raise ValueError("both product-label factor families must be nonempty")
+    if any(label == 0 for label, _ in h_data + delta_data):
+        raise ValueError("h and delta labels must be nonzero")
+    if cutoff_u < 1 or cutoff_v < 1 or determinant_cutoff < 1:
+        raise ValueError("Type cutoffs and D cutoff must be positive")
+
+    boundary = max(cutoff_u, cutoff_v)
+    type_names = ("small", "I", "II")
+    product_weights: dict[int, Fraction] = {}
+    for h, h_weight in h_data:
+        for delta, delta_weight in delta_data:
+            product = h * delta
+            product_weights[product] = (
+                product_weights.get(product, F(0))
+                + h_weight * delta_weight
+            )
+
+    checked_rows: list[dict[str, object]] = []
+    all_splits_exact = True
+    all_signs_retained = True
+    for (modulus, frequency, residue, type_n, type_p), base in zip(
+        supplied_rows, coefficients
+    ):
+        if modulus <= 1 or _finite_mobius(modulus) == 0:
+            raise ValueError("every modulus must be squarefree and exceed one")
+        if frequency == 0 or gcd(residue, modulus) != 1:
+            raise ValueError("Type frequency must be nonzero and residue a unit")
+        if min(type_n, type_p) <= 0:
+            raise ValueError("Type factors must be positive")
+        if (
+            _finite_mobius(type_n) == 0
+            or _finite_mobius(type_p) == 0
+            or gcd(type_n, type_p) != 1
+            or gcd(type_n * type_p, modulus) != 1
+        ):
+            raise ValueError("the Type entry must have squarefree coprime support")
+
+        type_gcd = gcd(frequency, modulus)
+        reduced_modulus = modulus // type_gcd
+        reduced_frequency = frequency // type_gcd
+        numerator = (-reduced_frequency * residue) % reduced_modulus
+        if gcd(numerator, reduced_modulus) != 1:
+            raise ValueError("the reduced product frequency must be primitive")
+
+        mu_n = _finite_mobius(type_n)
+        mu_p = _finite_mobius(type_p)
+        if type_n <= boundary:
+            multipliers = {"small": mu_n, "I": 0, "II": 0}
+        else:
+            short_short = sum(
+                _finite_mobius(first) * _finite_mobius(second)
+                for first in _positive_divisors(type_n)
+                if first <= cutoff_u
+                for second in _positive_divisors(type_n // first)
+                if second <= cutoff_v
+            )
+            long_long = sum(
+                _finite_mobius(first) * _finite_mobius(second)
+                for first in _positive_divisors(type_n)
+                if first > cutoff_u
+                for second in _positive_divisors(type_n // first)
+                if second > cutoff_v
+            )
+            multipliers = {
+                "small": 0,
+                "I": -short_short,
+                "II": long_long,
+            }
+        split_exact = sum(multipliers.values()) == mu_n
+        raw_sign = _finite_mobius(modulus) * mu_n * mu_p
+        block_signs = {
+            name: _finite_mobius(modulus) * mu_p * multiplier
+            for name, multiplier in multipliers.items()
+        }
+        signs_reassemble = sum(block_signs.values()) == raw_sign
+        all_splits_exact = bool(all_splits_exact and split_exact)
+        all_signs_retained = bool(all_signs_retained and signs_reassemble)
+        checked_rows.append(
+            {
+                "modulus": modulus,
+                "frequency": frequency,
+                "residue": residue,
+                "type_cofactor": type_n,
+                "prime_bearing_factor": type_p,
+                "type_entry": type_n * type_p,
+                "type_frequency_gcd": type_gcd,
+                "reduced_modulus": reduced_modulus,
+                "reduced_numerator": numerator,
+                "base_coefficient": base,
+                "type_multipliers": multipliers,
+                "raw_modulus_type_mobius_sign": raw_sign,
+                "block_modulus_type_mobius_signs": block_signs,
+                "pointwise_type_split_exact": split_exact,
+                "block_signs_reassemble_raw_sign": signs_reassemble,
+            }
+        )
+
+    def additive_phase(value: Fraction) -> complex:
+        return cmath.exp(2j * cmath.pi * float(value))
+
+    def inverse_mod(value: int, modulus: int) -> int:
+        return 0 if modulus == 1 else pow(value, -1, modulus)
+
+    def row_phase(row: dict[str, object], product_label: int) -> complex:
+        modulus = int(row["modulus"])
+        reduced_modulus = int(row["reduced_modulus"])
+        numerator = int(row["reduced_numerator"])
+        residue = int(row["residue"])
+        return additive_phase(
+            F(product_label * numerator, reduced_modulus)
+            + F(inverse_mod(residue, modulus), modulus)
+        )
+
+    def row_amplitude(
+        row: dict[str, object],
+        product_label: int,
+        block: str | None,
+    ) -> complex:
+        modulus = int(row["modulus"])
+        base = F(row["base_coefficient"])
+        if block is None:
+            sign = int(row["raw_modulus_type_mobius_sign"])
+        else:
+            block_signs = dict(row["block_modulus_type_mobius_signs"])
+            sign = int(block_signs[block])
+        return complex(base * F(sign, modulus)) * row_phase(
+            row, product_label
+        )
+
+    direct_h_delta_energy = sum(
+        (
+            complex(h_weight * delta_weight)
+            * abs(
+                sum(
+                    (
+                        row_amplitude(row, h * delta, None)
+                        for row in checked_rows
+                    ),
+                    0j,
+                )
+            )
+            ** 2
+            for h, h_weight in h_data
+            for delta, delta_weight in delta_data
+        ),
+        0j,
+    )
+    grouped_product_energy = sum(
+        (
+            complex(weight)
+            * abs(
+                sum(
+                    (
+                        row_amplitude(row, product_label, None)
+                        for row in checked_rows
+                    ),
+                    0j,
+                )
+            )
+            ** 2
+            for product_label, weight in product_weights.items()
+        ),
+        0j,
+    )
+
+    def product_fourier(frequency_difference: Fraction) -> complex:
+        return sum(
+            (
+                complex(weight)
+                * additive_phase(F(product_label) * frequency_difference)
+                for product_label, weight in product_weights.items()
+            ),
+            0j,
+        )
+
+    block_terms = {
+        (left, right): 0j for left in type_names for right in type_names
+    }
+    raw_bounded_master = 0j
+    determinant_factorization = True
+    bounded_pair_count = 0
+    for left in checked_rows:
+        for right in checked_rows:
+            left_q = int(left["modulus"])
+            right_q = int(right["modulus"])
+            left_reduced_q = int(left["reduced_modulus"])
+            right_reduced_q = int(right["reduced_modulus"])
+            left_x = int(left["reduced_numerator"])
+            right_x = int(right["reduced_numerator"])
+            raw_delta = left_x * right_reduced_q - right_x * left_reduced_q
+            period = left_reduced_q * right_reduced_q
+            circular_delta = min(
+                (raw_delta - period, raw_delta, raw_delta + period),
+                key=lambda value: (abs(value), value < 0),
+            )
+            if circular_delta == 0:
+                continue
+            common = gcd(left_reduced_q, right_reduced_q)
+            divides = circular_delta % common == 0
+            determinant_factorization = bool(
+                determinant_factorization and divides
+            )
+            short_determinant = circular_delta // common
+            if abs(short_determinant) > determinant_cutoff:
+                continue
+            bounded_pair_count += 1
+            frequency_difference = (
+                F(left_x, left_reduced_q)
+                - F(right_x, right_reduced_q)
+            )
+            inverse_phase = (
+                F(inverse_mod(int(left["residue"]), left_q), left_q)
+                - F(inverse_mod(int(right["residue"]), right_q), right_q)
+            )
+            common_factor = (
+                additive_phase(inverse_phase)
+                * product_fourier(frequency_difference)
+            )
+            left_raw = F(
+                int(left["raw_modulus_type_mobius_sign"]), left_q
+            ) * F(left["base_coefficient"])
+            right_raw = F(
+                int(right["raw_modulus_type_mobius_sign"]), right_q
+            ) * F(right["base_coefficient"])
+            raw_bounded_master += (
+                complex(left_raw)
+                * complex(right_raw).conjugate()
+                * common_factor
+            )
+            for left_name in type_names:
+                left_signs = dict(left["block_modulus_type_mobius_signs"])
+                left_coefficient = F(int(left_signs[left_name]), left_q) * F(
+                    left["base_coefficient"]
+                )
+                for right_name in type_names:
+                    right_signs = dict(
+                        right["block_modulus_type_mobius_signs"]
+                    )
+                    right_coefficient = F(
+                        int(right_signs[right_name]), right_q
+                    ) * F(right["base_coefficient"])
+                    block_terms[(left_name, right_name)] += (
+                        complex(left_coefficient)
+                        * complex(right_coefficient).conjugate()
+                        * common_factor
+                    )
+
+    block_sum = sum(block_terms.values(), 0j)
+    tolerance = 1e-8
+    h_delta_grouping_exact = bool(
+        abs(direct_h_delta_energy - grouped_product_energy) <= tolerance
+    )
+    type_reassembly_exact = bool(
+        abs(raw_bounded_master - block_sum) <= tolerance
+    )
+    ordered_bounds = {key: False for key in block_terms}
+    return {
+        "rows": tuple(checked_rows),
+        "product_label_weights": product_weights,
+        "direct_h_delta_energy": direct_h_delta_energy,
+        "grouped_product_label_energy": grouped_product_energy,
+        "raw_bounded_D_master": raw_bounded_master,
+        "ordered_type_block_masters": block_terms,
+        "ordered_type_block_sum": block_sum,
+        "bounded_D_ordered_pair_count": bounded_pair_count,
+        "all_rows_have_exact_remainder_free_type_split": all_splits_exact,
+        "product_label_is_exact_h_delta_convolution": True,
+        "direct_h_delta_sum_equals_grouped_product_label_sum": (
+            h_delta_grouping_exact
+        ),
+        "all_nine_ordered_cross_type_blocks_retained": bool(
+            len(block_terms) == 9
+        ),
+        "nine_type_blocks_reassemble_full_bounded_D_master": (
+            type_reassembly_exact
+        ),
+        "bounded_D_rows_have_exact_g_times_D_factorization": (
+            determinant_factorization
+        ),
+        "outer_modulus_and_type_mobius_signs_retained_before_pair_sum": (
+            all_signs_retained
+        ),
+        "no_absolute_values_taken_before_bounded_D_grouping": True,
+        "bounded_D_master_is_nonzero_on_fixture": bool(
+            abs(raw_bounded_master) > tolerance
+        ),
+        "bounded_D_raw_exponent": F(5),
+        "bounded_D_target_exponent": F(4),
+        "bounded_D_required_saving_exponent": F(1),
+        "ordered_type_block_bounds_proved": ordered_bounds,
+        "bounded_D_packet_exhaustive_bound_proved": False,
+        "level_dependent_dskm_offdiagonal_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,

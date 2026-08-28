@@ -7364,6 +7364,64 @@ def test_AFE_direction_reinforcement_is_documented_before_other_cancellations() 
     assert "remains unproved" in text
 
 
+def test_bounded_D_master_retains_product_labels_and_all_nine_type_blocks() -> None:
+    audit = getattr(
+        coverage_audit,
+        "bounded_short_determinant_type_split_audit",
+        None,
+    )
+    assert audit is not None, "bounded-D Type split audit is missing"
+    result = audit(
+        rows=(
+            # q, k, y, Type cofactor n, prime-bearing p
+            (7, 4, 1, 1, 11),
+            (7, 4, 1, 6, 13),
+            (7, 4, 1, 30, 17),
+            (5, 3, 1, 1, 7),
+            (5, 3, 1, 6, 7),
+            (5, 3, 1, 42, 11),
+        ),
+        base_row_coefficients=(F(2), F(-1), F(3), F(5), F(-2), F(4)),
+        h_weights=((-2, F(1)), (1, F(2)), (3, F(-1))),
+        delta_weights=((-1, F(2)), (2, F(1))),
+        short_cutoff_u=2,
+        short_cutoff_v=2,
+        maximum_short_determinant=1,
+    )
+    assert result["all_rows_have_exact_remainder_free_type_split"]
+    assert result["product_label_is_exact_h_delta_convolution"]
+    assert result["direct_h_delta_sum_equals_grouped_product_label_sum"]
+    assert result["all_nine_ordered_cross_type_blocks_retained"]
+    assert result["nine_type_blocks_reassemble_full_bounded_D_master"]
+    assert result["bounded_D_rows_have_exact_g_times_D_factorization"]
+    assert result["outer_modulus_and_type_mobius_signs_retained_before_pair_sum"]
+    assert result["no_absolute_values_taken_before_bounded_D_grouping"]
+    assert result["bounded_D_master_is_nonzero_on_fixture"]
+    assert result["bounded_D_raw_exponent"] == F(5)
+    assert result["bounded_D_target_exponent"] == F(4)
+    assert result["bounded_D_required_saving_exponent"] == F(1)
+    assert set(result["ordered_type_block_bounds_proved"]) == {
+        (left, right)
+        for left in ("small", "I", "II")
+        for right in ("small", "I", "II")
+    }
+    assert not any(result["ordered_type_block_bounds_proved"].values())
+    assert not result["bounded_D_packet_exhaustive_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_bounded_D_type_split_is_documented_as_the_one_power_gate() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.156 The bounded-determinant master has nine exact Type blocks" in text
+    assert r"W_\omega(a)=\sum_{h\delta=a}f_\omega(h)g_\omega(\delta)" in text
+    assert r"\sum_{\alpha,\beta\in\{\mathrm{small},\mathrm I,\mathrm{II}\}}" in text
+    assert r"\mathscr S_{|D|\leq D_0}^{\alpha,\beta}" in text
+    assert r"E_{|D|\asymp1}=5" in text
+    assert "one-power" in text
+    assert "all nine" in text
+    assert "remains unproved" in text
+
+
 def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
     """Shen's q-average is inverse-only and far below the coupled target."""
 

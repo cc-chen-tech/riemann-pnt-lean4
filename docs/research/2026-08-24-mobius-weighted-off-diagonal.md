@@ -48,6 +48,7 @@
 > | Inactive Type-lift conservation | Section 9.153 audits the whole nonunit-frequency exponent polytope.  If \((k_i,q_i)=T^{\delta_i}\), then the active collar shrinks to \(\kappa_D=1-\delta_1-\delta_2\), but the two CRT fibres have combined exponent \(\delta_1+\delta_2\).  Together with the product-label Poisson normalization \(T^{-1}\), the net mass per modulus pair is unchanged.  At common reduced gcd \(T^\gamma\), the raw outer exponent is \(6-\gamma\), so the target requires \(2-\gamma\) saving.  The four surviving outer Möbius variables have volume exponent \(6-2\gamma\); a full square root would save \(3-\gamma\), leaving exactly one power of margin.  This is a feasibility identity, not a proved cancellation estimate |
 > | Unit short-determinant face | Section 9.154 gives an exact centered finite witness with adjacent fractions \(3/7\) and \(2/5\): both fixed-modulus packets have zero unit mean, but their \(D=1\) cross atom is nonzero.  For \(D=1\) the modular inverse term in (9.1014) is trivial, while the two rational tails reconstruct the original inverse phase modulo one.  On the primitive balanced face, restricting \(|D|\asymp1\) removes the whole \(T^{1-\gamma}\) collar and leaves raw exponent five against target four.  Thus only one power remains, but neither the actual AFE coefficient on this face nor the required bounded-\(D\) four-Möbius cancellation is proved |
 > | Symmetric AFE direction ledger | Section 9.155 returns to the exact contour identity (2.3e)--(2.4).  After the canonical \(z\mapsto-z\) and summation-name exchange, the two functional-equation directions are the same packet, so the factor 2 in (2.4) and (4.5) is reinforcement, not a sign choice.  Every downstream linear dyadic/Poisson/centering/bounded-\(|D|\) projection therefore maps the unfolded pair to twice one direction.  Any exact deletion of the unit-determinant face must come from a zero one-direction coefficient or reassembly with reflection, the principal ledger, or the explicit diagonal; that reassembly remains open |
+> | Bounded-determinant Type master | Section 9.156 inserts the exact small/I/II split before restricting the one opened global square to \(0<|D|\leq D_0\).  The product-label weight is retained as \(W_\omega(a)=\sum_{h\delta=a}f_\omega(h)g_\omega(\delta)\), not replaced by arbitrary coefficients.  All nine ordered Type cross blocks reassemble the bounded-\(D\) master exactly, with the modulus and Type Möbius signs still linear before the pair sum.  The primitive bounded-\(D\) target still needs one power.  The published-coverage table has no complete row: fixed-modulus estimates lose the signed varying-level packet, while the long--long results do not supply the required power or physical adapter |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -22414,6 +22415,142 @@ finite linear maps.  Its first row may be used as a bounded-\(D\)
 selector.  It marks the direction reinforcement exact while leaving the
 reflection/diagonal reassembly, bounded-\(D\) coefficient, analytic
 four-Möbius bound, and coupled-kernel flags false.
+
+### 9.156 The bounded-determinant master has nine exact Type blocks
+
+The Type split can be inserted at the bounded-determinant face without
+turning the product label into an arbitrary sequence.  Work first with
+one finite smooth/projective atom \(\omega\).  Its product-label weight
+has the exact multiplicative convolution form
+
+\[
+ \boxed{
+ W_\omega(a)=\sum_{h\delta=a}f_\omega(h)g_\omega(\delta),
+ \qquad h\delta\ne0.}
+ \tag{9.1035}
+\]
+
+Thus for every frequency \(\xi\), before taking an absolute value,
+
+\[
+ \boxed{
+ \sum_aW_\omega(a)e(a\xi)
+ =\sum_{h\ne0}\sum_{\delta\ne0}
+   f_\omega(h)g_\omega(\delta)e(h\delta\xi).}
+ \tag{9.1036}
+\]
+
+This is the finite form in which the original \(a=h\delta\) structure
+from (4.5) survives the projective decomposition.
+
+For a completed row \(i\), retain the notation
+\((q_i,k_i,y_i,d_i,Q_i,K_i,x_i)\) of Sections 9.151--9.152.  Open its
+long Type entry as \(w_i=n_ip_i\), with
+\(\mu(w_i)=\mu(n_i)\mu(p_i)\) on the squarefree coprime support.  For
+fixed cutoffs \(U,V\), put
+
+\[
+ \mu(n)=\lambda_{\rm small}(n)+\lambda_{\rm I}(n)
+       +\lambda_{\rm II}(n)
+ \tag{9.1037}
+\]
+
+with the three exact multipliers in (9.934).  Formula (9.935) proves
+(9.1037) pointwise, including all endpoints and with no mixed rectangle.
+Define the three row amplitudes
+
+\[
+ \mathscr F_\omega^\alpha(a)
+ :=\sum_i c_{\omega,i}\frac{\mu(q_i)\mu(p_i)
+       \lambda_\alpha(n_i)}{q_i}
+ e\!\left(\frac{ax_i}{Q_i}+\frac{\overline y_i}{q_i}\right),
+ \quad
+ \alpha\in\{\mathrm{small},\mathrm I,\mathrm{II}\}.
+ \tag{9.1038}
+\]
+
+Then \(\mathscr F_\omega=\sum_\alpha\mathscr F_\omega^\alpha\)
+exactly.  Open this *single* global square and only afterwards restrict
+the ordered row pair by
+
+\[
+ 0<|D_{ij}|\leq D_0,
+ \qquad
+ x_iQ_j-x_jQ_i-\ell Q_iQ_j=(Q_i,Q_j)D_{ij}.
+ \tag{9.1039}
+\]
+
+Let \(\mathscr S_{|D|\leq D_0}^{\alpha,\beta}\) denote the resulting
+ordered cross term with the left row taken from \(\alpha\) and the right
+row from \(\beta\).  Equations (9.1035)--(9.1039) give the finite identity
+
+\[
+ \boxed{
+ \mathscr S_{|D|\leq D_0}
+ =\sum_{\alpha,\beta\in\{\mathrm{small},\mathrm I,\mathrm{II}\}}
+   \mathscr S_{|D|\leq D_0}^{\alpha,\beta}.}
+ \tag{9.1040}
+\]
+
+All nine ordered blocks occur.  In a summand of the
+\((\alpha,\beta)\)-block the complete displayed arithmetic coefficient is
+
+\[
+ \boxed{
+ \mu(q_i)\mu(q_j)\mu(p_i)\mu(p_j)
+ \lambda_\alpha(n_i)\lambda_\beta(n_j),}
+ \tag{9.1041}
+\]
+
+and (9.1036) retains the phase product \(h\delta\).  No modulus-wise
+Cauchy step, rowwise absolute value, or independent estimate of the nine
+blocks is used to prove (9.1040).  If the outer squarefree moduli are
+further decomposed as in (9.1017), their common \(g\)-sign squares away
+while the four signs \(\mu(d_1)\mu(d_2)\mu(r_1)\mu(r_2)\) remain in
+addition to the Type multipliers in (9.1041).
+
+On the primitive balanced face, bounded nonzero \(D\) has the exact
+ledger already found in (9.1031):
+
+\[
+ \boxed{E_{|D|\asymp1}=5,\qquad E_{\rm target}=4,
+        \qquad S_{\rm need}=1.}
+ \tag{9.1042}
+\]
+
+The relevant published-estimate coverage table is now attached to the
+actual nine-block interface:
+
+| ordered Type block | retained obstruction | direct published coverage |
+|---|---|---|
+| small--small | two varying squarefree levels, four outer Möbius signs, and the moving \(h\delta\) packet | none; fixed-row energy cannot see the outer signs |
+| small--I and I--small | one short--short divisor polynomial and one unsplit small row inside the same bounded determinant | none; (9.716)--(9.738) give an exact character model but no signed varying-level moment |
+| I--I | two short--short divisor polynomials with level-dependent Fourier weights | none; Blomer--Pascadi and BRS do not accept both physical coefficient sequences varying with the level |
+| any block containing exactly one II row | one long--long near-determinant packet coupled to the other row and to \(h\delta\) | none; existing multilinear bounds either fix the modulus or lose a fixed power on the balanced cell |
+| II--II | two long--long packets and the full bounded determinant incidence | none; this contains the balanced Möbius-convolution/mixed-fourth-moment gate of Sections 4.59--4.62 |
+
+The table does not say that the cited theorems are ineffective on their
+own hypotheses.  It records that no theorem already audited here proves
+the complete global estimate for any one of the nine physical blocks.
+In particular, summing nine separate hypothetical bounds would be valid
+only after each bound retained the same varying-level coefficient and
+the factorization (9.1035); those hypotheses are precisely what is
+missing.
+
+Thus the bounded-determinant part has been reduced to an exact Type
+interface rather than an arbitrary coupled-kernel placeholder.  The
+weakest remaining local target is a one-power estimate for the signed
+sum of all nine blocks in (9.1040), allowing cancellation between blocks
+before any absolute value.  That estimate, the packet-exhaustive physical
+adapter, LDSKM, and the coupled-kernel gate remain unproved.
+
+The helper `bounded_short_determinant_type_split_audit` constructs
+(9.1035)--(9.1041) for arbitrary finite rational \(h\)- and
+\(\delta\)-weights.  It verifies the direct and grouped product-label
+sums, every rowwise Type identity, the exact \(gD\) factorization, and
+reassembly of all nine ordered blocks after the bounded-\(D\) selector.
+It records the exponent ledger (9.1042), while every block-bound and
+coupled-kernel flag remains false.
 
 ## 10. What has and has not been proved
 
