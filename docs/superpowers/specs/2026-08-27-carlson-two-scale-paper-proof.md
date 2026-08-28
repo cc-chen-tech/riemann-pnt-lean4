@@ -778,9 +778,12 @@ a final density axiom:
    energy at most `2(1+log(2^K X))^4`, uniformly in the level.  The levelwise
    Gaussian Schur mean square is now formal too: under `2(2^K X)<=Delta`, the
    sum of the Gaussian block moments has exactly the common Gaussian-mass
-   factor times this polylogarithmic energy.  The remaining part of
-   (8.4)--(8.6) is its summation through the pointwise tree envelope and the
-   exact identification with the moving mollified prefix polynomial.
+   factor times this polylogarithmic energy.  Its summation over the complete
+   tree is now formal and costs only one factor `K+1`.  The remaining part of
+   (8.4)--(8.6) is the exact identification of every raw block sum with its
+   collected block polynomial, followed by integrating the pointwise prefix
+   inequality; this supplies the second factor `K+1` and hence the intended
+   logarithmic-square maximal loss.
 2. use item 1 for
    the left boundary norm, insert it into the proved closed-strip Hadamard
    specialization, and insert the resulting local norm into the now-proved

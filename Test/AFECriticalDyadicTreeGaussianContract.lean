@@ -1,0 +1,5 @@
+import HardyTheorem.AFECriticalDyadicTreeGaussian
+
+#check HardyTheorem.AFE.sum_integral_gaussian_normSq_dyadicMollifiedCriticalTree_le
+
+#print axioms HardyTheorem.AFE.sum_integral_gaussian_normSq_dyadicMollifiedCriticalTree_le
