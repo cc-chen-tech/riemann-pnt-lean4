@@ -6950,6 +6950,63 @@ def test_second_principal_poisson_balanced_dual_length_is_half_power() -> None:
     assert "doesnotboundthenonzerosecond-dualmaster" in "".join(text.split())
 
 
+def test_second_poisson_closes_the_joint_ramanujan_principal_polytope() -> None:
+    """The proper-divisor row must be included before claiming closure."""
+
+    audit = getattr(
+        coverage_audit,
+        "ramanujan_principal_second_poisson_closure_audit",
+        None,
+    )
+    assert audit is not None, "joint Ramanujan second-Poisson audit is missing"
+    result = audit(
+        r_exponent=F(3),
+        s_exponent=F(3),
+        physical_m_exponent=F(1, 2),
+        physical_k_exponent=F(1, 2),
+        w_exponents=(F(0), F(1, 4), F(1, 2)),
+        squarefree_moduli=(1, 6, 30, 210),
+        all_h_and_delta_blocks_reassembled=True,
+        k_packet_zero_mellin_verified=True,
+        nonzero_stationary_phase_bound_verified=True,
+        ramanujan_short_sum_bound_verified=True,
+        proper_divisor_joint_reassembly_verified=True,
+        centered_resonant_projector_bound_verified=True,
+        original_afe_packet_map_verified=True,
+    )
+    assert result["all_squarefree_origin_divisor_sums_exact"]
+    assert result["u_one_deleted_origin_reassembles_afe_diagonal"]
+    assert result["joint_principal_zero_dual_mode_vanishes"]
+    assert result["all_w_c_splits_within_target"]
+    rows = result["split_rows"]
+    assert tuple(row["principal_bound_exponent"] for row in rows) == (
+        F(1, 2),
+        F(3, 4),
+        F(1),
+    )
+    assert tuple(row["target_margin"] for row in rows) == (
+        F(1, 2),
+        F(1, 4),
+        F(0),
+    )
+    assert result["joint_ramanujan_principal_bound_proved"]
+    assert result["diagonal_plus_joint_principal_is_nonzero_second_dual_master"]
+    assert result["only_centered_nonzero_determinant_gate_remains"]
+    assert not result["nonzero_determinant_dispersion_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_joint_principal_closure_is_documented_without_closing_the_full_gate() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.147 Second Poisson closes the full Ramanujan principal ledger" in text
+    assert r"\Psi_{r,u,w,c,n}^{K,M}(x)" in text
+    assert r"E_{\rm pr}^{(2)}(\omega)" in text
+    assert r"\mathcal D+\mathcal J_{\rm Ram}" in text
+    assert "the only remaining analytic obligation in this route" in text
+    assert "nonzero reduced-determinant" in text
+    assert r"\tag{9.984}" in text
+
+
 def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
     """Shen's q-average is inverse-only and far below the coupled target."""
 

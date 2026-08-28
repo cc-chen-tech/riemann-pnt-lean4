@@ -7,8 +7,8 @@
 > | LCM main quadratic form | proved separately; its normalization is rechecked below |
 > | Exact AFE and shifted-divisor identity | proved after audit in Sections 2--3 |
 > | Poisson zero/nonzero-mode identity | proved after the corrections in Section 4 |
-> | Principal inverse-phase harmonics plus the raw zero mode | exact gcd-sampled reassembly proved in Section 9.106; sampled master unbounded |
-> | Principal-extracted Ramanujan/Type gate | exact proper-divisor mean and centered Type I/II split proved in Section 9.107; separate analytic bounds are sufficient but stronger than the joint residual gate |
+> | Principal inverse-phase harmonics plus the raw zero mode | exact gcd-sampled reassembly proved in Section 9.106; the complete sampled/proper-divisor principal ledger is bounded in Section 9.147 |
+> | Principal-extracted Ramanujan/Type gate | exact proper-divisor mean and centered Type I/II split proved in Section 9.107; Section 9.147 closes the joint principal row, leaving only centered nonzero reduced determinant |
 > | Centered Type-I completion | zero dual mode removed and rank-one Ramanujan correction closed in Sections 9.108--9.109; global nonzero spectrum unproved |
 > | Joint all-character/conductor master | exact \(q=1\) principal plus \(q>1\) centered recombination proved in Section 9.113; signed cross-\(q\) estimate unproved, with standard large-sieve deficit \(T^{5/2}\) |
 > | Joint conductor LCM reduction | common inactive cofactor isolated at divisor cost in Section 9.115; jointly primitive cross-modulus core unproved |
@@ -36,9 +36,10 @@
 > | Oriented principal Möbius fusion | Section 9.141 observes that the canonical principal row has fewer independent signs than the centered row.  With \(d=(|h\delta|,v)\) and \(m=dw\), the unit support gives \((m,v)=d\), so \((d,w)\leftrightarrow m\) is bijective and \(\mu(d)\mu(w)/\varphi(v/d)=\mu(m)/\varphi(v/(m,v))\).  Thus the full principal contribution is one moving-gcd Möbius sum and its exact Type decomposition has three blocks, while only the centered contribution retains the genuine two-Möbius nine-block dispersion.  On the top conductor \(d=1\), however, \(m=w\), so the length-\(T^3\) Type mean remains unproved |
 > | High-conductor centered saving ledger | Section 9.142 recalibrates the remaining primitive-character slice after principal fusion.  On the balanced face its ideal fourth-moment energy is \(T^{10+\gamma}\) against target \(T^{12}\).  Thus \(\gamma\leq2\) is already inside the ideal envelope, while \(2<\gamma\leq3\) needs only the pre-square signed-conductor gain \(T^{-(\gamma-2)/2}=q^{-(\gamma-2)/(2\gamma)}\).  At \(q=T^3\) the missing gain is \(T^{-1/2}=q^{-1/6}\), much weaker than square-root cancellation in the modulus.  No published Gauss-sum/character large sieve located here retains the moving physical coefficient, \(h\delta\), and outer Möbius sign needed to prove this gain |
 > | Primitive centered one-PV hybrid | Section 9.143 is an intermediate exponent improvement: Pólya--Vinogradov on the longer product-label factor and ordinary fourth moments on the shorter factor and Type polynomial give \(E_{\rm PV}(\gamma)\leq13-\gamma/2\) for \(2\leq\gamma\leq3\), hence \(23/2\) at the top.  Section 9.144 supersedes its conditional adapter ledger by applying Pólya--Vinogradov to both centered label factors |
-> | Packet-exhaustive two-PV centered projector | Section 9.144 first partitions every nonprincipal ambient character by primitive conductor \(q_\psi\), retaining the inverse-totient Euler weight of the imprimitive cofactor.  Four-variable Fourier expansion and exact divisor expansion of the three inactive unit masks leave a common Type sequence across \(q_\psi\).  Pólya--Vinogradov on both label factors gives \(M_4(F)\leq T^{6\gamma+4r+\varepsilon}\), while the ordinary Type fourth moment gives exponent \(12\).  If \(v=\gamma+\kappa+r=3\), the centered resonant projector exponent is \(12-2\kappa\leq12\).  Thus all primitive and imprimitive centered resonant character rows are within target for the registered physical core.  The sampled/Ramanujan principal ledger and nonzero reduced-determinant dispersion remain unproved, so the coupled-kernel gate and full twisted moment are still open |
-> | Fused-principal/Ramanujan-sampled bridge | Section 9.145 proves row by row that the ambient and reduced Ramanujan densities agree; after multiplication by the outer Möbius signs, the canonical, ambient-Ramanujan, and fused moving-gcd coefficients all equal \(\mu(m)/\varphi(q)\), where \(d=(|h\delta|,v)\), \(q=v/d\), and \(m=dw\).  Hence the fused master (9.940) is exactly the earlier nonzero-\(h\) Ramanujan principal projection, not another main term.  Adding the raw \(h=0\) packet gives the gcd-sampled lattice plus the proper-divisor mean from (9.710a).  This removes a duplicated gate description but does not bound the sampled principal lattice |
-> | Second Poisson zero mode and diagonal | Section 9.146 applies coprime Poisson to the exact \(\delta _0\)-sum in (9.703).  After the original \(K\)-partition is reassembled, its zero dual mode is the Mellin transform of \(V_t\) at \(s_t\) and vanishes exactly because \(G_t(s_t)=0\).  The sole deleted-origin correction occurs at \(s_0=1\) and is coefficient by coefficient the AFE diagonal.  Thus \(\mathcal D+\mathcal P^{\rm all}\) is an exact nonzero-second-dual master with \(k\asymp T/K\), hence \(k\asymp T^{1/2}\) on the balanced face.  This removes a possible residual main term but does not estimate the surviving two-Möbius master or the nonzero determinant family |
+> | Packet-exhaustive two-PV centered projector | Section 9.144 first partitions every nonprincipal ambient character by primitive conductor \(q_\psi\), retaining the inverse-totient Euler weight of the imprimitive cofactor.  Four-variable Fourier expansion and exact divisor expansion of the three inactive unit masks leave a common Type sequence across \(q_\psi\).  Pólya--Vinogradov on both label factors gives \(M_4(F)\leq T^{6\gamma+4r+\varepsilon}\), while the ordinary Type fourth moment gives exponent \(12\).  If \(v=\gamma+\kappa+r=3\), the centered resonant projector exponent is \(12-2\kappa\leq12\).  Thus all primitive and imprimitive centered resonant character rows are within target for the registered physical core.  Section 9.147 subsequently closes the principal ledger, so only nonzero reduced-determinant dispersion remains in this route |
+> | Fused-principal/Ramanujan-sampled bridge | Section 9.145 proves row by row that the ambient and reduced Ramanujan densities agree; after multiplication by the outer Möbius signs, the canonical, ambient-Ramanujan, and fused moving-gcd coefficients all equal \(\mu(m)/\varphi(q)\), where \(d=(|h\delta|,v)\), \(q=v/d\), and \(m=dw\).  Hence the fused master (9.940) is exactly the earlier nonzero-\(h\) Ramanujan principal projection, not another main term.  Adding the raw \(h=0\) packet gives the gcd-sampled lattice plus the proper-divisor mean from (9.710a); Section 9.147 bounds this unique joint ledger |
+> | Second Poisson zero mode and diagonal | Section 9.146 applies coprime Poisson to the exact \(\delta _0\)-sum in (9.703).  After the original \(K\)-partition is reassembled, its zero dual mode is the Mellin transform of \(V_t\) at \(s_t\) and vanishes exactly because \(G_t(s_t)=0\).  The sole deleted-origin correction occurs at \(s_0=1\) and is coefficient by coefficient the AFE diagonal.  Thus \(\mathcal D+\mathcal P^{\rm all}\) is an exact nonzero-second-dual master with \(k\asymp T/K\); Section 9.147 applies the same transform to the proper-divisor-completed principal row and estimates it |
+> | Full Ramanujan principal closure | Section 9.147 applies second Poisson to the exact joint sampled/proper-divisor lattice.  Its zero dual mode vanishes, its unique deleted-origin divisor sum returns the AFE diagonal, and two-dimensional stationary phase plus the Ramanujan short-sum bound gives \(E_{\rm pr}^{(2)}(\omega)=1-(m-\omega)\leq1\) for every \(w,c\) split.  Hence the whole principal contribution is \(O(T^{1+\varepsilon})\) unconditionally.  Together with Section 9.144, this reduces the remaining sufficient gate to centered \(\Delta_{\rm red}\ne0\) dispersion only |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -21175,6 +21176,209 @@ modulus-one deleted origin, and the exact denominator identity in
 separately, derives the balanced \(T^{1/2}\) dual length, and leaves the
 nonzero-second-dual analytic and coupled-kernel flags false.
 
+### 9.147 Second Poisson closes the full Ramanujan principal ledger
+
+Section 9.146 treated the direct sampled row.  The analytic obligation is
+the joint row \(\mathcal P^{\rm all}+\mathcal M^{\rm prop}\), not its two
+summands separately.  Equation (9.710a) and the reverse-Poisson lattice
+(9.69) give a form on which the same second Poisson transform closes the
+whole principal contribution.
+
+Reassemble all \(h\)- and \(\delta\)-dyadic blocks before taking an
+absolute value.  In (9.69), write \(s=uwc\), \(\delta=w\delta _1\), and
+retain the \(K,M\)-partitions.  Restoring the smooth factors suppressed in
+(9.69), the joint Ramanujan principal ledger is exactly
+
+\[
+\boxed{
+\begin{aligned}
+ \mathcal J_{{\rm Ram},q;R,S,K,M}
+ :={}&\frac2q
+ \sum_{\substack{u,w,c,r\ge1\\s=uwc,\ (q,r)=(q,s)=(r,s)=1}}
+ \frac{\mu(r)p_N(qr)p_N(qs)F_R(r)F_S(s)}
+      {\sqrt{rs}\,s}
+ \frac{uw\mu(u)\mu(w)}{\varphi(s)}\,wc\\
+ &\times\sum_n
+ \sum_{\substack{\delta _1\ne0\\(\delta _1,u)=1}}
+ \mathcal F_{r,uwc,w\delta _1}(nwc),
+\end{aligned}}
+\tag{9.975}
+\]
+
+with the restrictions \(qr,qs\le N\) understood.  The factor
+\(uw\mu(u)\mu(w)/\varphi(s)\) is the exact divisor in (9.66), and
+\(wc\sum_n\) is the lattice term in (9.67).  Thus (9.975) is not a new
+model or a separated-weight replacement: globally,
+\(\mathcal J_{\rm Ram}=\mathcal P^{\rm all}+\mathcal M^{\rm prop}\).
+
+For real \(x\), put
+
+\[
+ \boxed{
+ \Psi_{r,u,w,c,n}^{K,M}(x)
+ :=\mathcal F_{r,uwc,wx}(nwc),\qquad
+ \widehat\Psi(\xi):=\int_{\mathbb R}\Psi(x)e(-\xi x)\,dx.}
+ \tag{9.976}
+\]
+
+The condition \((u,\delta _1)=1\) now has the boundary-exact transform
+
+\[
+ \boxed{
+ \sum_{\substack{x\in\mathbb Z\setminus\{0\}\\(x,u)=1}}\Psi(x)
+ =\frac1u\sum_{k\in\mathbb Z}c_u(k)\widehat\Psi(k/u)
+  -\mathbf1_{u=1}\Psi(0).}
+ \tag{9.977}
+\]
+
+Its zero dual mode vanishes for the same AFE reason as (9.969).  Indeed,
+with \(y=(ncr+x)/(uc)\), local finiteness of the \(K\)-partition gives
+
+\[
+\begin{aligned}
+ \sum_K\widehat\Psi(0)
+ ={}&\frac{ucF_M(nwc)}{\sqrt{nwc}}
+ \int_{\mathbb R}W(t/T)\left(\frac{u}{nr}\right)^{it}\\
+ &\quad\times
+ \left\{\int_0^\infty V_t(nwc\,y)y^{s_t-1}\,dy\right\}dt=0,
+ \qquad G_t(s_t)=0.
+\end{aligned}
+ \tag{9.978}
+\]
+
+The deleted origin in (9.977) also has no residual ambiguity.  It occurs
+only for \(u=1\).  Summing the then-allowed factorizations \(s=wc\) uses
+
+\[
+ \boxed{
+ \sum_{w\mid s}w\mu(w)=\mu(s)\varphi(s),\qquad
+ m_2=ns,\quad m_1=nr,\quad m_1s=m_2r.}
+ \tag{9.979}
+\]
+
+After the factors in (9.975) are restored, (9.979) is coefficient by
+coefficient the negative of the AFE diagonal.  Consequently, if
+\(\mathcal J_{\rm Ram}^{(2),\ne0}\) denotes the \(k\ne0\) part of
+(9.977) inserted into (9.975), then
+
+\[
+ \boxed{
+ \mathcal D+\mathcal J_{\rm Ram}
+ =\mathcal J_{\rm Ram}^{(2),\ne0}.}
+ \tag{9.980}
+\]
+
+It remains to estimate, rather than merely rename, the right side.  Put
+
+\[
+ A:=\frac{2\pi kncr}{u},\qquad X:=\frac{n^2wcr}{u}.
+\]
+
+For \(k>0\), make the changes
+\(x=ncr(v-1)\) and \(t=A\tau\).  The complete oscillatory phase is
+
+\[
+ \boxed{
+ A\{\tau\log v-(v-1)\},\qquad
+ (v,\tau)=(1,1),\qquad
+ \det
+ \begin{pmatrix}-1&1\\1&0\end{pmatrix}=-1.}
+ \tag{9.981}
+\]
+
+The critical phase is zero.  The two-dimensional stationary-phase
+formula, together with (2.5), is uniform in every retained packet and
+gives
+
+\[
+\begin{aligned}
+ \widehat\Psi(k/u)
+ ={}&2\pi F_M(nwc)\sqrt{\frac{ucr}{w}}
+ F_K(nr/u)W(A/T)V_A(X)\\
+ &+O_{B,W}\!\left(T^{-1}\mathscr L^B
+       \sqrt{\frac{ucr}{w}}\right)
+\end{aligned}
+ \tag{9.982}
+\]
+
+on \(A\asymp T\); outside this range repeated nonstationary integration
+by parts gives an arbitrary power saving.  Negative \(k\) is likewise
+nonstationary because \(t>0\).  Notice that (9.982) has no residual
+Kloosterman phase: the rational phase and the archimedean saddle cancel
+at the critical point.  The surviving frequencies satisfy
+
+\[
+ 0<k\ll\frac{T}{cK}\mathscr L^B.
+\]
+
+For squarefree \(u\), the already proved Ramanujan estimate (9.723) now
+gives
+
+\[
+ \boxed{
+ \sum_{k\ne0}|c_u(k)\widehat\Psi(k/u)|
+ \ll_{\varepsilon,B,W}
+ u^\varepsilon\frac{T}{cK}
+ \sqrt{\frac{ucr}{w}}\,\mathscr L^B.}
+ \tag{9.983}
+\]
+
+This is exactly the missing fixed-power saving.  Let
+\(R=T^\rho\), \(S=T^\sigma\), \(M=T^m\), \(K=T^\kappa\), and split
+\(w=T^\omega\), \(c=T^{m-\omega}\).  The principal top-face support
+(9.71) gives \(u=T^{\sigma-m+o(1)}\), while (5.7) gives
+\(\kappa+\sigma=m+\rho\).  Inserting (9.983) into the exact coefficients
+of (9.975), using \(\varphi(s)^{-1}\ll_\varepsilon s^{-1+\varepsilon}\),
+and summing \(r,u,w,c,n\) yields
+
+\[
+ \boxed{
+ |\mathcal J_{{\rm Ram},q;R,S,K,M}^{(2),\ne0}(\omega)|
+ \ll_{\varepsilon,W}\frac{T^\varepsilon}{q}
+ \frac{RWT}{KS},\qquad
+ E_{\rm pr}^{(2)}(\omega)
+ =1+\rho-\sigma+\omega-\kappa
+ =1-(m-\omega)\le1.}
+ \tag{9.984}
+\]
+
+Here \(W=T^\omega\le M\); the \(n\)-length is \(M/(wc)\), and all
+factorization and coprimality sums cost only \(T^\varepsilon\).  The
+worst endpoint is \(c=1\), where (9.984) reaches, but does not exceed,
+the target.  Summing the logarithmically many packets and
+\(q^{-1}\)-weights therefore proves unconditionally
+
+\[
+ \mathcal J_{\rm Ram}^{(2),\ne0}
+ \ll_{\varepsilon,W}T^{1+\varepsilon}.
+\]
+
+Combining (9.973), (9.980), and the centered resonant bound of Section
+9.144 shows that the only remaining analytic obligation in this route is
+the **nonzero reduced-determinant** part of \(\mathcal C^\circ\).  In
+particular, the previous coupled-kernel gate may now be replaced by the
+strictly weaker sufficient gate
+
+\[
+ \mathcal C^\circ_{\Delta_{\rm red}\ne0}
+ \ll_{\varepsilon,W}T^{1+\varepsilon}
+ \quad\Longrightarrow\quad
+ I_{T^3,W}(T),\ \mathcal R_{T^3,T}
+ \ll_{\varepsilon,W}T^{1+\varepsilon}.
+\]
+
+The implication is proved; its nonzero-determinant hypothesis is not.
+Thus Section 9.147 closes every principal/Ramanujan row without using
+Möbius cancellation, but it does not close the full coupled-kernel gate
+or the twisted moment.
+
+The finite helper
+`ramanujan_principal_second_poisson_closure_audit` checks (9.979), the
+full \(w,c\) exponent polytope in (9.984), and every structural flag used
+to promote the joint principal bound.  It records the centered resonant
+input separately and keeps the nonzero-determinant and full-gate flags
+false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -22152,8 +22356,9 @@ Proved in this note:
 | Oriented principal cofactor--Type fusion | exact reduction from two Möbius signs to one moving-gcd sign; top analytic mean unproved | With \(d=(|h\delta|,v)\) and \(m=dw\), the unit support gives the bijection (9.938) and the coefficient identity (9.939).  Hence (9.940) rewrites the entire canonical principal contribution as one Möbius sum with the exact incidence \((m,v)=(|h\delta|,v)\), without separating the packet weight.  Its remainder-free decomposition has only the three blocks (9.941); the centered family alone retains the genuine two-Möbius nine-block dispersion.  At top reduced conductor \(d=1\), however, \(m=w\), so the length-\(T^3\) one-Möbius Type mean and the joint principal--centered bound remain unproved |
 | Centered primitive-conductor residual polytope | exact fallback calibration, superseded on centered rows | The generic fourth-moment deficit and its sufficient signed \(q^{-1/6}\) top gain are (9.942)--(9.945).  The one-PV hybrid (9.946)--(9.952) then closes the adapted primitive exponent polytope.  Section 9.144 proves a stronger two-PV estimate on the packet-exhaustive physical centered projector, so no signed conductor input is now needed for this resonant component |
 | Packet-exhaustive centered two-PV projector | primitive and imprimitive resonant rows proved within target | Equations (9.953)--(9.958) partition all nonprincipal ambient characters by primitive conductor, retain the imprimitive \(1/\varphi(k)\) Euler weight, and prove the common-\(q_\psi\) Type coefficient adapter using four-variable Fourier separation and exact unit-mask divisor expansion.  Pólya--Vinogradov on both label factors gives \(M_4(F)\leq6\gamma+4r\), (9.959).  With the ordinary Type fourth moment, the physical centered resonant projector exponent is \(12-2\kappa\leq12\), (9.960)--(9.961).  This bounds the recombined Möbius Type polynomial before any separate nine-block absolute values.  The sampled/Ramanujan principal master and nonzero reduced-determinant dispersion remain unproved, so neither the full projector nor the coupled-kernel gate is closed |
-| Fused-principal/Ramanujan-sampled bridge | exact identification; one principal estimate remains unproved | For \(d=(|h\delta|,v)\), \(q=v/d\), \(A=h\delta/d\), the squarefree Ramanujan formula gives \(\rho_v(h\delta)=\rho_q(A)=\mu(q)/\varphi(q)\), (9.962)--(9.963).  Multiplication by \(\mu(v)\mu(w)\) then gives exactly the fused moving-gcd coefficient \(\mu(dw)/\varphi(q)\), (9.964).  Hence (9.965) identifies the canonical principal master with the earlier nonzero-\(h\) Ramanujan projection, and adding the raw zero mode gives the gcd-sampled lattice plus proper-divisor mean, (9.966).  These are alternative coordinates for one principal obligation, not separate main terms.  The sampled principal analytic bound and nonzero determinant dispersion remain open |
-| Second principal Poisson zero/diagonal ledger | exact global reassembly; nonzero dual estimate remains unproved | Coprime Poisson in \(\delta_0\) has the unique deleted-origin correction \(-\mathbf1_{s_0=1}\Phi(0)\), (9.968).  After all physical \(K\)-packets are restored, its zero dual transform is \(G_t(s_t)g_t(s_t)/s_t=0\), (9.969), while the deleted origin is exactly the \(\ell=n\) AFE diagonal, (9.970).  Hence \(\mathcal D+\mathcal P^{\rm all}=\mathcal P^{(2),\ne0}\), (9.972), with effective \(k\asymp T/K\), (9.974).  On the balanced face this is a short \(T^{1/2+o(1)}\) nonzero dual family, but it retains the two long Selberg--Möbius coefficients and must still be combined with the proper-divisor row before Cauchy |
+| Fused-principal/Ramanujan-sampled bridge | exact identification; analytic estimate supplied in Section 9.147 | For \(d=(|h\delta|,v)\), \(q=v/d\), \(A=h\delta/d\), the squarefree Ramanujan formula gives \(\rho_v(h\delta)=\rho_q(A)=\mu(q)/\varphi(q)\), (9.962)--(9.963).  Multiplication by \(\mu(v)\mu(w)\) then gives exactly the fused moving-gcd coefficient \(\mu(dw)/\varphi(q)\), (9.964).  Hence (9.965) identifies the canonical principal master with the earlier nonzero-\(h\) Ramanujan projection, and adding the raw zero mode gives the gcd-sampled lattice plus proper-divisor mean, (9.966).  These are alternative coordinates for the joint row bounded in (9.984), not separate main terms |
+| Second principal Poisson zero/diagonal ledger | exact global reassembly; intermediate step to full principal closure | Coprime Poisson in \(\delta_0\) has the unique deleted-origin correction \(-\mathbf1_{s_0=1}\Phi(0)\), (9.968).  After all physical \(K\)-packets are restored, its zero dual transform is \(G_t(s_t)g_t(s_t)/s_t=0\), (9.969), while the deleted origin is exactly the \(\ell=n\) AFE diagonal, (9.970).  Hence \(\mathcal D+\mathcal P^{\rm all}=\mathcal P^{(2),\ne0}\), (9.972), with effective \(k\asymp T/K\), (9.974).  Section 9.147 performs the required proper-divisor recombination before estimating |
+| Full Ramanujan principal second-Poisson closure | proved unconditionally; centered nonzero determinant remains | The exact joint row is (9.975).  Coprime Poisson in \(\delta_1\) has zero Mellin mode by \(G_t(s_t)=0\), (9.978), and the \(u=1\) deleted-origin sum is the AFE diagonal by \(\sum_{w\mid s}w\mu(w)=\mu(s)\varphi(s)\), (9.979)--(9.980).  The nonzero transform has a phase-zero nondegenerate saddle, (9.981), and Ramanujan averaging gives (9.983).  Every \(w=T^\omega,c=T^{m-\omega}\) split then satisfies \(E_{\rm pr}^{(2)}(\omega)=1-(m-\omega)\le1\), (9.984).  Thus the complete principal contribution is \(O(T^{1+\varepsilon})\); after Section 9.144, only centered \(\Delta_{\rm red}\ne0\) dispersion remains |
 | August 2026 varying-modulus projection | genuine inverse-only \(q\)-average; quantitatively and structurally insufficient | Shen's Theorem 4 gives \(\sum_{q\sim Q}|\Delta|^2\ll\|\alpha\|_2^2N^{11/12}Q^{1+\varepsilon}\), (9.894).  Its underlying bilinear form is \(e(a\bar m/q)\), (9.895), and at \(M=Q=T^3,|a|\leq T^5\) saves only \(T^{1/8}\) linearly, leaving deficit \(15/8\), (9.896)--(9.897).  It fixes \(a\), omits the direct phase, and requires a modulus-independent product coefficient.  Mohammadi's (9.898) retains a direct-plus-inverse product phase but only over one fixed finite field.  Neither theorem retains the physical moving \(h\delta\) family, the two-Möbius Type packet, and the signed varying squarefree-modulus norm together |
 | Fixed-row energy phase-alignment obstruction | exact no-go for rowwise norm proofs; physical cross-row rigidity still available | For arbitrary signs \(\varepsilon_i\) and nonnegative amplitudes \(a_i\), the one-dimensional choice \(C_i=\varepsilon_i a_i,U_i=1\) saturates the triangle bound, (9.899).  Hence the outer Möbius signs can be absorbed by independent row phases, and no theorem stated only through separate fixed-\((s,\vartheta)\) energies can produce an outer power saving.  A successful estimate must retain a common cross-modulus Type/AFE constraint or the nonzero-determinant incidence before rowwise Cauchy.  This does not assert that the physical packet itself saturates the bound |
 | Balanced double-Möbius cross-conductor Gram | exact pre-Cauchy phase and zero-orbit collapse; nonzero spectral norm unproved | The residual is regrouped as \(\sum_b\mu(b)\mathcal A_b\) with \(\mu(c)\), outer conductor signs, all packet weights, and \(a=h\delta\) inside \(\mathcal A_b\), (9.832)--(9.834).  Opening the one global square gives the exact modulus \([G_1,G_2]\) and phase \(Db+E\bar b\), (9.835)--(9.837).  For squarefree unit rows, \(D=E=0\) forces \(G_1=G_2\), equality of the invariant \(B_ia_i k_i^{-2}\), and one \(c_2\)-residue for each \(c_1\), (9.838)--(9.839); hence no cross-conductor zero orbit survives.  A complete AFE/reflection norm for the invariant fibres and a signed varying-LCM estimate for every nonzero \((D,E)\) remain open |
@@ -22173,7 +22378,7 @@ Proved in this note:
 | Two-taper weighted interaction adapter | exact sparse-axis/mixed split; smooth norm handled by the next row | For arbitrary \(W(r,s)\), (9.674)--(9.677) split the complete weighted lattice into the anchored core, two axis variations, and one mixed interaction.  Each axis variation sums the other taper into the one-prime core (9.675); only \(\Delta_{12}W\) retains the full coprime lattice.  It vanishes for additive weights and factorizes for rank-one weights, (9.678).  Equation (9.679) retains both inclusive reflected tails and their double-boundary correction.  Section 9.104 removes its smooth-weight cost; the resulting arithmetic tail rectangles and centered dispersion remain unproved |
 | Two-dimensional mixed Abel adapter | smooth variation cost controlled; fixed rectangle handled next | Ordering both divisor lattices gives the exact pointwise telescoping and suffix identity (9.681)--(9.683).  Hence the mixed pairing is bounded by the adjacent-increment \(\ell^1\) norm times the largest arithmetic upper-right rectangle, (9.684).  The fundamental theorem of calculus and (5.14) bound the first factor by \(T^\varepsilon\) on every supplied physical dyadic weight, (9.685).  Reflection makes both remaining cofactor coordinates \(O(T^{2+o(1)})\) on the balanced face, (9.686).  Section 9.105 bounds each fixed-label rectangle; their joint signed AFE/reflection sum and the exhaustive packet map remain unproved |
 | Fixed-label principal divisor bound | local two-taper operator proved at \(T^\varepsilon\) cost; global packet sum unproved | Every suffix rectangle has at most \(\tau(R_1)\tau(R_2)\) entries and bounded taper factors, (9.687)--(9.688).  Together with the mixed Abel variation this proves (9.689) for each supplied fixed dyadic packet and fixed label pair.  The anchor, axes, and all three weighted boundaries have the same divisor-bound cost.  This does not permit absolute summation over all AFE/\(h,\delta\)/Type/dyadic/reflection labels; the packet-exhaustive normalization, principal twisted-moment estimate, and centered dispersion remain unproved |
-| Original principal \(h\)-harmonic projection | exact packet-exhaustive gcd-sampled reassembly; sampled master unbounded | Before the \(H\)-dyadic split, \(s\mid h\delta\) is exactly \(h=(s/(s,\delta))j\).  Poisson summation gives (9.693)--(9.694), so the nonzero principal harmonics plus the literal raw \(h=0\) packet are exactly the \((s,\delta)\)-spaced physical lattice, (9.695), and the main-term ledger becomes (9.696)--(9.697) without choosing a principal density.  Physical support and the core inequalities force \(M/(32\mathscr L^B)\le(s,\delta)\le2M\), making both new Poisson coordinates polylogarithmically short, (9.698)--(9.702).  The reduced master (9.703) still has both long Möbius weights; neither its analytic bound nor the complementary centered-harmonic dispersion is proved |
+| Original principal \(h\)-harmonic projection | exact packet-exhaustive gcd-sampled reassembly; subsequently bounded jointly | Before the \(H\)-dyadic split, \(s\mid h\delta\) is exactly \(h=(s/(s,\delta))j\).  Poisson summation gives (9.693)--(9.694), so the nonzero principal harmonics plus the literal raw \(h=0\) packet are exactly the \((s,\delta)\)-spaced physical lattice, (9.695), and the main-term ledger becomes (9.696)--(9.697) without choosing a principal density.  Physical support and the core inequalities force \(M/(32\mathscr L^B)\le(s,\delta)\le2M\), making both new Poisson coordinates polylogarithmically short, (9.698)--(9.702).  Section 9.147 combines this row with its proper-divisor complement and proves the principal bound; the complementary centered nonzero-determinant dispersion remains open |
 | Principal-extracted Ramanujan and centered Type gate | exact nonoverlapping split; separate analytic bounds superseded by the joint master | Equation (9.706) splits the inverse phase into the literal \(s\mid h\delta\) family, its Ramanujan mean with that family removed, and a kernel that has zero unit-residue mean and vanishes on the removed labels, (9.707).  After the outer \(\mu(s)\), the residual mean has the proper-divisor-only formula (9.708), so the top reverse-Poisson divisor is deleted rather than counted twice.  The direct and proper-divisor pieces recombine before absolute values into the earlier reverse-Poisson principal lattice, (9.710a).  Applying (9.241) only to the centered kernel gives (9.711)--(9.712), retaining \(\mu(s)\mu(b)\mu(c)\), \(a=h\delta\), all endpoints, and no mixed rectangles.  The separate estimates in (9.714) remain sufficient but are stronger than necessary; Section 9.113 replaces them by the exact joint all-character form equivalent to (9.119) |
 | Centered Type-I additive completion | zero dual frequency and rank-one correction closed; pure nonzero spectrum unproved | The exact transform (9.716) is a Kloosterman sum minus the rank-one Ramanujan correction forced by centering.  Its \(k=0\) row vanishes identically, (9.717), and Poisson in \(r=bc\,n\) gives only \(k\ne0\) with dual length \(bc\,s/R\), (9.718)--(9.719).  The finite Ramanujan averages (9.721)--(9.724) bound the correction globally by \(HLUVT^\varepsilon\), (9.725), so it lies within target on \(HLUV\le RS\); the balanced \(U=V=T^{1/4}\) choice has a half-power margin.  No Möbius or Kloosterman cancellation is spent.  The remaining Type-I term is the pure nonzero spectrum \(S(k,-h\delta;s)\) in (9.728), which must still be estimated jointly with centered Type II and the outer signs |
 | Pure Type-I character bridge | exact Gauss-product factorization; global varying-modulus moment unproved | For every squarefree \(s\), arbitrary nonzero \(a,k\), and every character on \(U(s)\), (9.730) gives \(\sum_d\overline{\chi(d)}S(k\bar d,-a;s)=G_\chi(-a)G_\chi(k)\), including all nonunit gcd strata.  Inversion embeds the completed Type-I packet into the linear master (9.733), retaining outer \(\mu(s)\), inner \(\mu(b)\mu(c)\), \(a=h\delta\), and \(k\ne0\).  Fixed-modulus Cauchy would erase the outer sign, so the remaining target is a signed varying-modulus Gauss-product moment jointly with centered Type II; no analytic bound is asserted |

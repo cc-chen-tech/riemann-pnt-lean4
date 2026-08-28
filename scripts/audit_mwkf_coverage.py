@@ -19580,6 +19580,200 @@ def second_principal_coprime_poisson_audit(
     }
 
 
+def ramanujan_principal_second_poisson_closure_audit(
+    *,
+    r_exponent: Fraction,
+    s_exponent: Fraction,
+    physical_m_exponent: Fraction,
+    physical_k_exponent: Fraction,
+    w_exponents: tuple[Fraction, ...],
+    squarefree_moduli: tuple[int, ...],
+    all_h_and_delta_blocks_reassembled: bool,
+    k_packet_zero_mellin_verified: bool,
+    nonzero_stationary_phase_bound_verified: bool,
+    ramanujan_short_sum_bound_verified: bool,
+    proper_divisor_joint_reassembly_verified: bool,
+    centered_resonant_projector_bound_verified: bool,
+    original_afe_packet_map_verified: bool,
+) -> dict[str, object]:
+    """Audit the full Ramanujan-principal second-Poisson polytope.
+
+    On the top principal face write ``s=u*w*c``, with ``u=S/M`` and
+    ``w*c=M``.  Poisson in the coprime variable ``delta1`` has dual
+    length ``T/(c*K)``.  Its nonzero transform has stationary prefactor
+    ``sqrt(u*c*r/w)``.  Restoring every coefficient in the exact
+    Ramanujan lattice makes the fixed ``w=T^omega`` bound exponent
+
+    ``1 + rho - sigma + omega - kappa = 1 - (m-omega)``.
+
+    The last equality is the physical balance ``K*S=M*R``.  Thus every
+    split is within the ``T`` target, including the worst endpoint
+    ``c=1``.  The zero dual mode and deleted origin are kept as separate
+    exact hypotheses; no determinant estimate is inferred.
+    """
+
+    rho = F(r_exponent)
+    sigma = F(s_exponent)
+    m = F(physical_m_exponent)
+    kappa = F(physical_k_exponent)
+    omegas = tuple(F(value) for value in w_exponents)
+    moduli = tuple(int(value) for value in squarefree_moduli)
+    if min(rho, sigma, m, kappa) < 0:
+        raise ValueError("all physical exponents must be nonnegative")
+    if not omegas or any(omega < 0 or omega > m for omega in omegas):
+        raise ValueError("every w exponent must lie in [0,m]")
+    if not moduli or any(
+        modulus < 1 or _finite_mobius(modulus) == 0
+        for modulus in moduli
+    ):
+        raise ValueError("origin audit moduli must be positive and squarefree")
+
+    top_u = sigma - m
+    top_support = top_u >= 0
+    product_support = kappa + m <= 1
+    physical_balance = kappa + sigma == m + rho
+    split_rows: list[dict[str, object]] = []
+    for omega in omegas:
+        c_exponent = m - omega
+        dual_frequency = F(1) - kappa - c_exponent
+        transform_prefactor = (
+            rho + top_u + c_exponent - omega
+        ) / 2
+        coefficient_before_transform = (
+            m
+            + omega
+            - (rho + sigma) / 2
+            - 2 * sigma
+        )
+        coefficient_after_transform = (
+            coefficient_before_transform + transform_prefactor
+        )
+        outer_family_cardinality = sigma + rho
+        principal_bound = (
+            coefficient_after_transform
+            + dual_frequency
+            + outer_family_cardinality
+        )
+        target = F(1)
+        split_rows.append(
+            {
+                "w_exponent": omega,
+                "c_exponent": c_exponent,
+                "u_exponent": top_u,
+                "second_dual_frequency_exponent": dual_frequency,
+                "stationary_transform_prefactor_exponent": (
+                    transform_prefactor
+                ),
+                "coefficient_exponent_before_transform": (
+                    coefficient_before_transform
+                ),
+                "coefficient_exponent_after_transform": (
+                    coefficient_after_transform
+                ),
+                "outer_family_cardinality_exponent": (
+                    outer_family_cardinality
+                ),
+                "principal_bound_exponent": principal_bound,
+                "target_exponent": target,
+                "target_margin": target - principal_bound,
+                "balance_simplified_bound_exponent": F(1) - c_exponent,
+                "within_target": bool(
+                    dual_frequency >= 0 and principal_bound <= target
+                ),
+            }
+        )
+
+    def finite_totient(value: int) -> int:
+        result = value
+        for prime in _finite_prime_exponents(value):
+            result = result // prime * (prime - 1)
+        return result
+
+    origin_rows: list[dict[str, object]] = []
+    all_origin_sums_exact = True
+    for modulus in moduli:
+        divisor_sum = sum(
+            divisor * _finite_mobius(divisor)
+            for divisor in _positive_divisors(modulus)
+        )
+        expected = _finite_mobius(modulus) * finite_totient(modulus)
+        exact = divisor_sum == expected
+        all_origin_sums_exact = bool(all_origin_sums_exact and exact)
+        origin_rows.append(
+            {
+                "squarefree_modulus": modulus,
+                "sum_w_mu_w": divisor_sum,
+                "mu_s_phi_s": expected,
+                "origin_divisor_sum_exact": exact,
+            }
+        )
+
+    zero_mode = bool(
+        all_h_and_delta_blocks_reassembled
+        and k_packet_zero_mellin_verified
+    )
+    diagonal_reassembly = bool(
+        all_origin_sums_exact
+        and all_h_and_delta_blocks_reassembled
+        and proper_divisor_joint_reassembly_verified
+        and original_afe_packet_map_verified
+    )
+    numerical_coverage = bool(
+        top_support
+        and product_support
+        and physical_balance
+        and all(bool(row["within_target"]) for row in split_rows)
+    )
+    analytic_hypotheses = bool(
+        numerical_coverage
+        and zero_mode
+        and diagonal_reassembly
+        and nonzero_stationary_phase_bound_verified
+        and ramanujan_short_sum_bound_verified
+    )
+    only_determinant = bool(
+        analytic_hypotheses
+        and centered_resonant_projector_bound_verified
+    )
+    return {
+        "r_exponent": rho,
+        "s_exponent": sigma,
+        "physical_m_exponent": m,
+        "physical_k_exponent": kappa,
+        "top_u_exponent": top_u,
+        "split_rows": tuple(split_rows),
+        "origin_rows": tuple(origin_rows),
+        "top_principal_support_verified": top_support,
+        "afe_product_support_verified": product_support,
+        "physical_balance_ks_equals_mr_verified": physical_balance,
+        "all_squarefree_origin_divisor_sums_exact": all_origin_sums_exact,
+        "u_one_deleted_origin_reassembles_afe_diagonal": (
+            diagonal_reassembly
+        ),
+        "joint_principal_zero_dual_mode_vanishes": zero_mode,
+        "all_w_c_splits_within_target": numerical_coverage,
+        "nonzero_stationary_phase_bound_verified": bool(
+            nonzero_stationary_phase_bound_verified
+        ),
+        "ramanujan_short_sum_bound_verified": bool(
+            ramanujan_short_sum_bound_verified
+        ),
+        "proper_divisor_joint_reassembly_verified": bool(
+            proper_divisor_joint_reassembly_verified
+        ),
+        "joint_ramanujan_principal_bound_proved": analytic_hypotheses,
+        "diagonal_plus_joint_principal_is_nonzero_second_dual_master": (
+            diagonal_reassembly and zero_mode
+        ),
+        "centered_resonant_projector_bound_verified": bool(
+            centered_resonant_projector_bound_verified
+        ),
+        "only_centered_nonzero_determinant_gate_remains": only_determinant,
+        "nonzero_determinant_dispersion_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def shen_lehmer_varying_modulus_projection_audit(
     *,
     product_length_exponent: Fraction,
