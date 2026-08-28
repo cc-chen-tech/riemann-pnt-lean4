@@ -14516,6 +14516,209 @@ def divisor_lifted_quotient_type_split_audit(
     }
 
 
+def squarefree_projector_split_audit(
+    *,
+    max_label: int,
+    square_divisor_cutoff: int,
+) -> dict[str, object]:
+    """Verify the short/long square-divisor projector for ``mu^2``.
+
+    The exact identity
+
+    ``mu(n)^2 = sum_(d^2|n) mu(d)``
+
+    is split at ``d<=D``.  The aggregate number of long pairs
+    ``(d,m)`` with ``d>D`` and ``d^2*m<=X`` is at most ``X/D`` by the
+    integral tail for ``sum d^-2``.  This is the finite arithmetic
+    input for the Type-sign-free principal quotient trace completion.
+    The returned rows also verify that its coefficient is exactly
+    ``2*1_(n=1)-mu(n)^2``.
+    """
+
+    X = int(max_label)
+    D = int(square_divisor_cutoff)
+    if X < 1:
+        raise ValueError("max_label must be positive")
+    if D < 1:
+        raise ValueError("square_divisor_cutoff must be positive")
+
+    projector_rows: list[dict[str, object]] = []
+    for label in range(1, X + 1):
+        square_divisors = tuple(
+            divisor
+            for divisor in range(1, isqrt(label) + 1)
+            if label % (divisor * divisor) == 0
+        )
+        short_divisors = tuple(
+            divisor for divisor in square_divisors if divisor <= D
+        )
+        long_divisors = tuple(
+            divisor for divisor in square_divisors if divisor > D
+        )
+        short_coefficient = sum(
+            (_finite_mobius(divisor) for divisor in short_divisors),
+            0,
+        )
+        long_coefficient = sum(
+            (_finite_mobius(divisor) for divisor in long_divisors),
+            0,
+        )
+        projector_coefficient = short_coefficient + long_coefficient
+        principal_quotient_coefficient = (
+            1
+            if label == 1
+            else -(_finite_mobius(label) ** 2)
+        )
+        endpoint_density_coefficient = (
+            2 * int(label == 1) - projector_coefficient
+        )
+        projector_rows.append(
+            {
+                "label": label,
+                "square_divisors": square_divisors,
+                "short_square_divisors": short_divisors,
+                "long_square_divisors": long_divisors,
+                "short_projector_coefficient": short_coefficient,
+                "long_projector_coefficient": long_coefficient,
+                "projector_coefficient": projector_coefficient,
+                "mobius_square": _finite_mobius(label) ** 2,
+                "principal_quotient_coefficient": (
+                    principal_quotient_coefficient
+                ),
+                "endpoint_density_coefficient": (
+                    endpoint_density_coefficient
+                ),
+                "projector_identity_exact": (
+                    projector_coefficient == _finite_mobius(label) ** 2
+                ),
+                "principal_endpoint_density_reassembly_exact": (
+                    principal_quotient_coefficient
+                    == endpoint_density_coefficient
+                ),
+            }
+        )
+
+    long_pair_count = sum(
+        X // (divisor * divisor)
+        for divisor in range(D + 1, isqrt(X) + 1)
+    )
+    return {
+        "max_label": X,
+        "square_divisor_cutoff": D,
+        "projector_rows": tuple(projector_rows),
+        "squarefree_projector_identity_exact": all(
+            bool(row["projector_identity_exact"])
+            for row in projector_rows
+        ),
+        "short_plus_long_projector_exact": all(
+            int(row["projector_coefficient"])
+            == int(row["short_projector_coefficient"])
+            + int(row["long_projector_coefficient"])
+            for row in projector_rows
+        ),
+        "principal_endpoint_density_reassembly_exact": all(
+            bool(row["principal_endpoint_density_reassembly_exact"])
+            for row in projector_rows
+        ),
+        "long_square_divisor_pair_count": long_pair_count,
+        "long_square_divisor_pair_bound": F(X, D),
+        "long_square_divisor_pair_count_within_X_over_D": (
+            long_pair_count <= F(X, D)
+        ),
+    }
+
+
+def squarefree_density_trace_completion_audit(
+    *,
+    conductor_exponent: Fraction,
+    squarefree_length_exponent: Fraction,
+    squarefree_conductor: bool,
+    unit_trace_phase: bool,
+    separable_weight_adapter_verified: bool,
+) -> dict[str, object]:
+    """Audit completion of one fixed squarefree-density trace row.
+
+    Write the conductor as ``G=T^gamma`` and the squarefree Type length
+    as ``X=T^u``.  Split ``mu^2(n)=sum_(d^2|n)mu(d)`` at ``d=T^delta``.
+    Smooth completion in the remaining variable costs
+
+    ``X/G^(1/2) + D*G^(1/2)``,
+
+    while the long square-divisor tail costs ``X/D``.  Balancing the
+    last two terms gives ``delta=max(0,u/2-gamma/4)`` and the limiting
+    relative saving
+
+    ``max(0,min(gamma/2,u/2-gamma/4))``.
+
+    This is local coverage only.  It does not supply the physical
+    divisor-lift adapter or the signed outer ``Q,G,r0,h*delta`` sum.
+    """
+
+    gamma = F(conductor_exponent)
+    u = F(squarefree_length_exponent)
+    if gamma <= 0:
+        raise ValueError("conductor exponent must be positive")
+    if u < 0:
+        raise ValueError("squarefree length exponent must be nonnegative")
+
+    cutoff = _positive_part(u / 2 - gamma / 4)
+    complete_main_exponent = u - gamma / 2
+    short_remainder_exponent = cutoff + gamma / 2
+    long_tail_exponent = u - cutoff
+    optimized_nontrivial_exponent = max(
+        complete_main_exponent,
+        short_remainder_exponent,
+        long_tail_exponent,
+    )
+    optimized_bound_exponent = min(u, optimized_nontrivial_exponent)
+    saving = u - optimized_bound_exponent
+    formula_saving = _positive_part(
+        min(gamma / 2, u / 2 - gamma / 4)
+    )
+    hypotheses_verified = bool(
+        squarefree_conductor
+        and unit_trace_phase
+        and separable_weight_adapter_verified
+    )
+    published_local_coverage = bool(hypotheses_verified and saving > 0)
+
+    return {
+        "source": (
+            "classical smooth completion of a squarefree-modulus "
+            "Kloosterman trace plus mu^2(n)=sum_(d^2|n)mu(d)"
+        ),
+        "conductor_exponent": gamma,
+        "squarefree_length_exponent": u,
+        "optimized_square_divisor_cutoff_exponent": cutoff,
+        "complete_trace_main_exponent": complete_main_exponent,
+        "short_square_divisor_completion_remainder_exponent": (
+            short_remainder_exponent
+        ),
+        "long_square_divisor_tail_exponent": long_tail_exponent,
+        "optimized_bound_exponent": optimized_bound_exponent,
+        "limiting_local_saving_exponent": saving,
+        "closed_formula_saving_exponent": formula_saving,
+        "ledger_matches_closed_formula": saving == formula_saving,
+        "positive_saving_length_threshold": gamma / 2,
+        "saving_saturates_at_complete_trace_exponent": (
+            saving == gamma / 2 and saving > 0
+        ),
+        "squarefree_conductor_hypothesis_verified": bool(
+            squarefree_conductor
+        ),
+        "unit_trace_phase_hypothesis_verified": bool(unit_trace_phase),
+        "separable_weight_adapter_hypothesis_verified": bool(
+            separable_weight_adapter_verified
+        ),
+        "published_local_squarefree_density_coverage": (
+            published_local_coverage
+        ),
+        "divisor_lifted_physical_adapter_proved": False,
+        "global_principal_quotient_coverage": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def centered_type_phase_local_spectrum_audit(*, prime: int) -> dict[str, object]:
     """Compute the exact local Gram spectrum of the centered tensor.
 

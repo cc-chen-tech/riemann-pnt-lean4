@@ -4543,6 +4543,82 @@ def test_divisor_lifted_master_splits_the_true_type_quotient() -> None:
     assert unit_rows[35]["type_ii_coefficient"] == 2
 
 
+def test_squarefree_density_projector_has_half_conductor_trace_coverage() -> None:
+    projector = getattr(
+        coverage_audit,
+        "squarefree_projector_split_audit",
+        None,
+    )
+    assert projector is not None, "squarefree projector audit is missing"
+
+    finite = projector(max_label=96, square_divisor_cutoff=3)
+    assert finite["squarefree_projector_identity_exact"]
+    assert finite["short_plus_long_projector_exact"]
+    assert finite["principal_endpoint_density_reassembly_exact"]
+    assert finite["long_square_divisor_pair_count_within_X_over_D"]
+    rows = {row["label"]: row for row in finite["projector_rows"]}
+    assert rows[1]["principal_quotient_coefficient"] == 1
+    assert rows[30]["projector_coefficient"] == 1
+    assert rows[30]["principal_quotient_coefficient"] == -1
+    assert rows[4]["projector_coefficient"] == 0
+    assert rows[4]["principal_quotient_coefficient"] == 0
+    assert rows[12]["projector_coefficient"] == 0
+    assert rows[36]["short_projector_coefficient"] == -1
+    assert rows[36]["long_projector_coefficient"] == 1
+
+    exponent_audit = getattr(
+        coverage_audit,
+        "squarefree_density_trace_completion_audit",
+        None,
+    )
+    assert exponent_audit is not None, "squarefree trace ledger is missing"
+
+    boundary = exponent_audit(
+        conductor_exponent=F(3),
+        squarefree_length_exponent=F(3, 2),
+        squarefree_conductor=True,
+        unit_trace_phase=True,
+        separable_weight_adapter_verified=True,
+    )
+    assert boundary["optimized_square_divisor_cutoff_exponent"] == 0
+    assert boundary["limiting_local_saving_exponent"] == 0
+    assert not boundary["published_local_squarefree_density_coverage"]
+
+    conductor_length = exponent_audit(
+        conductor_exponent=F(3),
+        squarefree_length_exponent=F(3),
+        squarefree_conductor=True,
+        unit_trace_phase=True,
+        separable_weight_adapter_verified=True,
+    )
+    assert conductor_length[
+        "optimized_square_divisor_cutoff_exponent"
+    ] == F(3, 4)
+    assert conductor_length["limiting_local_saving_exponent"] == F(3, 4)
+    assert conductor_length["published_local_squarefree_density_coverage"]
+
+    saturated = exponent_audit(
+        conductor_exponent=F(3),
+        squarefree_length_exponent=F(5),
+        squarefree_conductor=True,
+        unit_trace_phase=True,
+        separable_weight_adapter_verified=True,
+    )
+    assert saturated["limiting_local_saving_exponent"] == F(3, 2)
+    assert saturated["saving_saturates_at_complete_trace_exponent"]
+
+    missing_adapter = exponent_audit(
+        conductor_exponent=F(3),
+        squarefree_length_exponent=F(3),
+        squarefree_conductor=True,
+        unit_trace_phase=True,
+        separable_weight_adapter_verified=False,
+    )
+    assert missing_adapter["limiting_local_saving_exponent"] == F(3, 4)
+    assert not missing_adapter["published_local_squarefree_density_coverage"]
+    assert not missing_adapter["global_principal_quotient_coverage"]
+
+
 def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:
     audit = getattr(
         coverage_audit,

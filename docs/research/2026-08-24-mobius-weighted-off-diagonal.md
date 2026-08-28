@@ -17,6 +17,7 @@
 > | Fixed-gcd Möbius--trace coverage | Section 9.118 proves the exact FKM exponent boundary on prime-conductor rows and audits a formal large-prime-factor transfer; every composite moving-gcd row and the global packet estimate remain unproved |
 > | Common-cofactor Möbius divisor lift | Section 9.119 fuses \(\mu(r_0)\mu(m)\) into one global \(\mu(M)\) with \(M=r_0m\), preserves \((M,Q)=(m,Q)\), and retains arbitrary physical packet weights at divisor cost; the resulting one-Möbius gate \({\rm DLMG}_3\), including \(Q=1\), remains unproved |
 > | Gcd-first quotient Type I/II split | Section 9.120 first fixes \(G=(M,Q)\), then applies the exact two-cutoff identity only to the true Type quotient \(N=M/(r_0G)\); the conductor is frozen, \(a=h\delta\) is retained, and the long block has \(\mu(b)\mu(c)\).  FKM covers the fixed-prime separated subpolytope (9.806)--(9.807), but the physical adapter and global dispersion remain unproved |
+> | Squarefree principal-quotient trace rows | Section 9.121 expands the retained squarefree density by \(\mu^2(N)=\sum_{d^2\mid N}\mu(d)\).  Classical completion gives a fixed-row saving \(\eta_{\rm sf}(\gamma,u)=[\min\{\gamma/2,u/2-\gamma/4\}]_+\) for a squarefree conductor, unit trace phase, and verified separated \(N\)-weight.  This covers only rows with \(u>\gamma/2\); conductor descent, the physical packet adapter, the signed outer reassembly, and all of \(\mathscr B\) remain unproved |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
 > | Direct published Region A--C coverage | proved/classified in Section 8 |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
@@ -17548,6 +17549,174 @@ Type-I/II estimate, and coupled-kernel flags remain false.  The exact-rational h
 atom from the still-missing divisor-lifted physical adapter and global
 outer average.
 
+### 9.121 Squarefree-density completion inside the principal quotient
+
+The absence of a Type Möbius sign in \(\mathscr Z_Q\) does not make its
+\(N>1\) rows unweighted: (9.808) still restricts \(N\) to squarefree
+integers.  This density can itself be expanded exactly as
+
+\[
+ \boxed{\mu^2(N)=\sum_{d^2\mid N}\mu(d).}
+ \tag{9.811}
+\]
+
+In particular, for each fixed outer row of (9.808),
+
+\[
+ \mathcal L(1)-\sum_{\substack{N>1\\\mu(N)\ne0}}\mathcal L(N)
+ =2\mathcal L(1)-\sum_{N\geq1}\mu^2(N)\mathcal L(N).
+ \tag{9.811a}
+\]
+
+Thus the isolated endpoint and the squarefree-density sum below account
+for the principal coefficient exactly; no sign or boundary is dropped.
+
+This produces an elementary fixed-row estimate on part of the principal
+quotient.  It is important to state its hypotheses before using it.
+Fix a squarefree conductor \(G\), integers \(B_0,a_0\) with
+\((a_0,G)=1\), and put
+
+\[
+ K_G(x)=\mathbf1_{(x,G)=1}
+ e_G\!\left(\overline K(B_0x-a_0\bar x)\right),
+ \tag{9.812}
+\]
+
+where \(\overline K\) is a unit modulo \(G\).  Its complete additive
+transform is a Kloosterman sum (with a harmless choice of signs):
+
+\[
+ \widehat K_G(t)
+ =\sum_{x\bmod G}K_G(x)e_G(-tx)
+ =S\!\left(\overline K B_0-t,-\overline K a_0;G\right).
+ \tag{9.813}
+\]
+
+Because the second argument is a unit, the CRT factorization and the
+prime Weil bound give, uniformly in \(t\),
+
+\[
+ |\widehat K_G(t)|
+ \leq \tau(G)G^{1/2}\ll_\varepsilon G^{1/2+\varepsilon}.
+ \tag{9.814}
+\]
+
+Thus smooth Poisson summation, or equivalently completion followed by
+partial summation, gives for a fixed smooth compactly supported \(V\)
+and \((c,G)=1\)
+
+\[
+ \sum_m V(m/Y)K_G(cm)
+ \ll_{\varepsilon,V}
+ \left(\frac{Y}{G^{1/2}}+G^{1/2}\right)G^\varepsilon.
+ \tag{9.815}
+\]
+
+The condition \((c,G)=1\) is automatic after (9.811) on an admissible
+row: if \(d^2\mid N\) and \((N,G)=1\), then \((d,G)=1\); the packet
+already has \((p,G)=1\).  No assertion is made here that all the other
+coprimality masks or the physical weight in (9.797) have already been
+put into the separated form required by (9.815).
+
+Suppose now that one such fixed row has a verified separated
+\(N\)-weight \(V(N/X)\), with bounded projective and derivative cost.
+Splitting (9.811) at \(d\leq D\), and writing \(N=d^2m\), gives the
+exact short/long decomposition
+
+\[
+ \begin{aligned}
+ \sum_N\mu^2(N)V(N/X)K_G(Np)
+ &=\sum_{d\leq D}\mu(d)
+   \sum_m V(d^2m/X)K_G(d^2mp)\\
+ &\quad+
+   \sum_{d>D}\mu(d)
+   \sum_m V(d^2m/X)K_G(d^2mp).
+ \end{aligned}
+ \tag{9.816}
+\]
+
+There is no truncation remainder.  Applying (9.815) to the short rows,
+and using \(\sum_{d>D,\ d^2m\ll X}1\ll X/D\) on the long rows, yields
+
+\[
+ \boxed{
+ \sum_N\mu^2(N)V(N/X)K_G(Np)
+ \ll_{\varepsilon,V}
+ \left(\frac{X}{G^{1/2}}+DG^{1/2}+\frac XD\right)
+ (GX)^\varepsilon.}
+ \tag{9.817}
+\]
+
+The endpoint \(N=1\) in (9.808), a possible deletion of \(N=1\) from
+the density sum, and fixed compact-support endpoints contribute
+\(O_V(1)\); they are explicit boundary terms and are absorbed by the
+right side of (9.817).  Likewise, replacing a sharp dyadic interval by
+the supplied smooth partition costs only its registered projective
+norm.  Formula (9.817) does not hide an infinite tail: all sums in the
+physical master are finite, while the displayed long-pair estimate is
+the elementary inequality
+\(\sum_{d>D}\lfloor X/d^2\rfloor\leq X/D\).
+
+Write \(G=T^\gamma\), \(X=T^u\), and \(D=T^\delta\).  The three
+exponents in (9.817) are
+
+\[
+ u-\frac\gamma2,\qquad
+ \delta+\frac\gamma2,\qquad
+ u-\delta.
+ \tag{9.818}
+\]
+
+Taking \(\delta=[u/2-\gamma/4]_+\), and retaining the trivial bound
+when the resulting expression is larger, gives the limiting local
+saving
+
+\[
+ \boxed{
+ \eta_{\rm sf}(\gamma,u)
+ =\left[\min\left\{\frac\gamma2,
+               \frac u2-\frac\gamma4\right\}\right]_+.}
+ \tag{9.819}
+\]
+
+It is positive exactly for \(u>\gamma/2\), and saturates at the complete
+trace saving \(\gamma/2\) when \(u\geq3\gamma/2\).  For example, at
+\(\gamma=3\), the boundary \(u=3/2\) has no power saving, \(u=3\)
+has saving \(3/4\), and every \(u\geq9/2\) has the saturated saving
+\(3/2\).  As throughout the coverage ledger, these are limiting
+exponents and allow an arbitrarily small \(T^\varepsilon\) loss.
+
+The exact coverage boundary is:
+
+| principal-quotient density row | input | status |
+|---|---|---|
+| squarefree \(G\), unit inverse phase, verified separated smooth \(N\)-weight, \(u>\gamma/2\) | (9.811), CRT--Weil, smooth completion | local power saving (9.819) |
+| same row with \(u\leq\gamma/2\) | (9.817) optimized against the trivial bound | no fixed power |
+| nonunit inverse phase | Kloosterman gcd factor is no longer harmless | descend to the true conductor before applying this argument |
+| arbitrary physical \(\mathcal L_{Q,G,r_0,\Pi}\) | no packet-exhaustive separated adapter proved | unproved physical row |
+| signed sum over \(Q,G,r_0,h,\delta,\Pi\) | no outer recombination used in (9.817) | unproved global principal quotient |
+| double-Möbius master \(\mathscr B\) | not present in (9.811)--(9.819) | unproved global dispersion |
+
+Consequently this section removes a genuine local subpolytope from the
+\(\mathscr Z\) ledger, including composite squarefree conductors.  It
+does **not** evaluate \(\mathscr Z\) in the complete AFE/reflection
+master: the rows with \(u\leq\gamma/2\), all required nonunit conductor
+descents, the physical nonseparable packet, and the signed outer
+reassembly remain.  It makes no progress on the two-Möbius
+\(\mathscr B\) estimate by itself, so neither \({\rm QTIID}_3\),
+\({\rm DLMG}_3\), nor the coupled-kernel gate is closed.
+
+The helper `squarefree_projector_split_audit` checks (9.811)--(9.811a),
+the exact short/long split, every finite endpoint through the supplied
+cutoff, and the bound
+\(\sum_{d>D}\lfloor X/d^2\rfloor\leq X/D\).
+The exact-rational helper `squarefree_density_trace_completion_audit`
+checks (9.818)--(9.819), including the zero-saving boundary and the
+saturated range.  Its local-coverage flag additionally requires the
+squarefree-conductor, unit-phase, and separated-weight hypotheses; its
+physical-adapter, global-principal, and coupled-kernel flags remain
+false.
+
 ## 10. What has and has not been proved
 
 **Current classification: Young closes each fixed scalar stratum and the
@@ -17779,9 +17948,13 @@ isolates an explicit Type-sign-free principal quotient from the genuine
   neither the physical divisor-lifted adapter nor the global outer
   average.  Finally, (9.808)--(9.810) split the unit-cutoff master
   exactly into a Type-sign-free squarefree principal quotient and a genuine
-  \(\mu(b)\mu(c)\) double-Möbius master.  Evaluating the former across
-  the complete AFE/reflection master and dispersing the latter are both
-  still open.**
+  \(\mu(b)\mu(c)\) double-Möbius master.  The squarefree projector and
+  classical trace completion (9.811)--(9.819) now give the local saving
+  \([\min\{\gamma/2,u/2-\gamma/4\}]_+\) on fixed squarefree-conductor,
+  unit-phase, separated principal rows.  The short rows
+  \(u\leq\gamma/2\), nonunit conductor descent, physical packet adapter,
+  signed outer principal reassembly, and the entire double-Möbius
+  dispersion are still open.**
 
 Proved in this note:
 
@@ -17865,6 +18038,15 @@ Proved in this note:
   \(\mu(b)\mu(c)\), and all coprimalities and physical weights intact.
   The identity is proved; neither the full principal reassembly nor the
   global double-Möbius dispersion is proved;
+* the squarefree-density fixed-row completion (9.811)--(9.819).
+  Expanding \(\mu^2(N)\), splitting the square divisor at \(D\), and
+  completing the resulting unit Kloosterman trace gives
+  \(XG^{-1/2}+DG^{1/2}+X/D\).  The optimized local saving is
+  \([\min\{\gamma/2,u/2-\gamma/4\}]_+\), positive exactly for
+  \(u>\gamma/2\).  This applies only to verified separated rows with
+  squarefree conductor and unit inverse phase; it proves neither the
+  physical adapter and signed outer \(\mathscr Z\) reassembly nor any
+  estimate for \(\mathscr B\);
 * the exact separation (5.2a) into a polylogarithmic core and a named tail,
   and the core-box normalization (5.3)--(5.15);
 * the implication
@@ -18388,6 +18570,7 @@ Proved in this note:
 | Fixed-gcd Möbius--trace coverage | exact prime-row exponent polytope; composite and packet-level gate unproved | At fixed \(g=T^\gamma\) and Möbius quotient length \(T^u\), FKM Theorem 1.7 gives the limiting saving \([\gamma/24-(\gamma-u)_+/6]_+\), positive exactly for prime nonexceptional rows with \(u>3\gamma/4\), (9.785)--(9.787).  Korolev--Shparlinski reaches \(u>\gamma/2\) only logarithmically, while Gong--Jia is inverse-only and also leaves a logarithmic term.  A formal extraction of a prime \(T^\lambda\mid g\), charged by the complementary Fourier cost, is positive at full local length only for \(\lambda>12\gamma/13\), (9.788), but no published Möbius--trace theorem accepts that cofactor multiplier.  Hence no composite row or global packet is declared covered; even the maximal local \(1/8\) saving leaves the diagnostic \(19/8\) of the standard \(T^{5/2}\) deficit, (9.789) |
 | Common-cofactor Möbius divisor lift | exact one-sign global reindexing at divisor cost; \({\rm DLMG}_3\) unproved | Restoring the \(r_0\)-sum before Cauchy and setting \(M=r_0m\) gives \(\mu(r_0)\mu(m)=\mu(M)\) and \((M,Q)=(m,Q)\), (9.790)--(9.793).  Every physical \(r_0\)-dependent packet weight, unit mask, boundary, and \(h\delta\) label stays inside the inner \(r_0\mid M\) sum.  Its Ramanujan projective cost is at most \(\tau(M)\), (9.794), so the separate external Möbius source is removed with no fixed-power loss.  The unique joint-conductor partition of all \((\lambda,\psi)\) pairs gives the exact sufficient one-Möbius gate \({\rm DLMG}_3\), (9.795): \(Q=1\) is the double-principal subrow, while \(Q>1\) contains both the rest of the inverse-principal row and all centered rows.  Its divisor-superposition coefficient still has conductor \((M,Q)\), and the required joint pre-Cauchy estimate is not supplied by the cited scalar trace theorems |
 | Gcd-first quotient Type I/II split | exact frozen-conductor two-sign reduction and fixed-prime subpolytope; global dispersion unproved | Disintegrating \(M=r_0GN\) with \(G=(M,Q)\) gives pairwise coprime \(r_0,G,N\) and \((N,Q)=1\), (9.796)--(9.798).  Applying the remainder-free two-cutoff identity only to \(\mu(N)\) yields (9.799)--(9.801): every boundary is explicit, mixed rectangles cancel, the conductor \(G\) and cofactor \(Q/G\) are frozen, and \(a=h\delta\) stays inside the physical packet.  At \(U=V=1\), (9.802) separates the \(N=1\) boundary and the Type-sign-free squarefree \(N>1\) quotient mean from the genuine \(\mu(b)\mu(c)\), \(b,c>1\), divisor family.  The recombined gate \({\rm QTIID}_3(U,V)\) is exactly equivalent to \({\rm DLMG}_3\), (9.803)--(9.804).  For a verified separated prime-conductor atom, FKM Theorem 1.17 gives (9.806), positive exactly on \(\min(x,y)>0,\max(x,y)>\gamma/2\), (9.807).  Equations (9.808)--(9.810) then retain every outer label while splitting the full unit-cutoff master as \(\mathscr Z_Q+\mathscr B_Q\), with no Type Möbius sign but explicit squarefree support in \(\mathscr Z_Q\), and the two nontrivial signs \(\mu(b)\mu(c)\) in \(\mathscr B_Q\).  The physical adapter, composite rows, full principal quotient evaluation, and signed global double-Möbius estimate remain open |
+| Squarefree principal-quotient trace completion | elementary fixed-row subpolytope proved; global principal master unproved | The exact projector \(\mu^2(N)=\sum_{d^2\mid N}\mu(d)\), (9.811), is split without remainder at \(d\leq D\).  For squarefree \(G\) and a unit inverse phase, CRT--Weil and smooth completion give \(XG^{-1/2}+DG^{1/2}+X/D\), (9.812)--(9.817).  Optimization yields \(\eta_{\rm sf}(\gamma,u)=[\min\{\gamma/2,u/2-\gamma/4\}]_+\), positive precisely for \(u>\gamma/2\), (9.818)--(9.819).  This is valid only after a separated physical \(N\)-weight is verified.  Rows with \(u\leq\gamma/2\), nonunit conductor descent, the packet-exhaustive adapter, signed \(Q,G,r_0,h,\delta,\Pi\) reassembly, and every \(\mathscr B\) row remain open |
 | Cross-modulus zero product frequency | exact same-\((s,t)\) diagonal; signed complement unproved | The primitive frequency \(\bar t_s/s\) is a reduced fraction.  Hence equality across two blocks forces \(s_1=s_2,t_1=t_2\), and every distinct pair has Farey spacing at least \((s_1s_2)^{-1}\), (9.601)--(9.603).  The ordinary additive large sieve (9.604) and the sum of fixed-modulus Cochrane--Shi energies both have balanced exponent \(11\), so spacing alone gives no new power.  The zero projector is classified, but its AFE/Type reassembly and the signed nonzero-frequency cross-modulus estimate remain unproved |
 | Cross-modulus frequency Euler centering | exact local density and mean-zero divisor expansion; weighted lift handled next | For \(s_i=gr_i\), CRT gives the exact multiplicity (9.606) of every circular numerator \(\kappa\).  The common Möbius sign cancels as \(\mu(s_1)\mu(s_2)=\mu(r_1)\mu(r_2)\), while (9.608)--(9.610) split the multiplicity into the explicit density \(\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) and Euler blocks containing a mean-zero factor \(1_{p\mid\kappa}-1/p\).  Section 9.93 lifts this to arbitrary fixed-pair packet weights; the signed estimate for the resulting centered blocks remains unproved |
 | Weighted CRT packet centering | exact orthogonal projection; principal reassembly and centered dispersion unproved | Conditional expectations in the prime CRT coordinates give the Hoeffding decomposition (9.612)--(9.615) for an arbitrary fixed-\((s_1,s_2)\) packet.  The weighted fibre identity (9.616) separates \(\bar W\varphi(s_1)\varphi(s_2)/[s_1,s_2]\) from two terms whose total \(\kappa\)-mass is exactly zero.  Linearity (9.618) retains \(h\delta\), both Type Möbius weights, the outer cofactor signs, and all nine ordered Type blocks at divisor cost \(T^\varepsilon\).  Zero marginals do not themselves give power cancellation; the AFE/reflection principal ledger and the global signed norm of the centered blocks remain open |
