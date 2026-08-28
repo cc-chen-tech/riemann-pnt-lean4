@@ -1,0 +1,5 @@
+import HardyTheorem.AFECriticalTwoCutoffBridge
+
+#check HardyTheorem.AFE.criticalAfeFixedPolynomialEnergy
+#check HardyTheorem.AFE.criticalAfeFixedPolynomialEnergy_nonneg
+#check HardyTheorem.AFE.normSq_criticalAfeProduct_le_three_twoCutoffEnergies
