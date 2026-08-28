@@ -1323,21 +1323,24 @@ For
 \]
 
 one has `0 <= P(x) <= 1` on `[0,1]`: all coefficients are nonnegative, and
-`x^3 <= x`, `x^5 <= x` there.  If `1 <= n <= Y`, then
+`x^3 <= x`, `x^5 <= x` there.  Assume throughout this calculation that the
+integer cutoff satisfies `Y>=2` and that `sigma_0<=1/2`.  If
+`1 <= n <= Y`, then
 
 \[
   x_{n,Y}={\log(Y/n)\over\log Y}\in[0,1].
 \]
 
-Consequently, when `sigma_0 <= 1/2`, every nonconstant coefficient in
-Conrey's equation-(33) mollifier satisfies
+Consequently, every nonconstant coefficient in Conrey's equation-(33)
+mollifier satisfies
 
 \[
  \left|\mu(n)P(x_{n,Y})n^{\sigma_0-1/2}\right|\le1.
 \]
 
 Writing `sigma=Re s>1` and using the exact constant coefficient `b(1)=1`
-therefore gives, uniformly in `Im s` and in the cutoff `Y`,
+therefore gives, uniformly in `Im s` and over the admissible cutoffs
+`Y>=2`,
 
 \[
 \begin{aligned}
@@ -1364,7 +1367,7 @@ Thus the corrected moving edge has the explicit bound
 \[
  \boxed{\quad
   \left|B(2\log L+it,P)-1\right|\le {3\over L}
-  \quad(L\ge e).\quad}
+  \quad(L\ge e,\ Y\ge2,\ \sigma_0\le1/2).\quad}
 \tag{B-moving}
 \]
 
