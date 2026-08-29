@@ -2,6 +2,9 @@ import PrimeNumberTheorem.MWKFCubicFiniteExpansion
 
 #print axioms PrimeNumberTheorem.MWKFCubic.cubicMollifier_eq_sum
 #print axioms PrimeNumberTheorem.MWKFCubic.cubicMollifierNormSq_eq_doubleSum
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicCriticalPair_eq_exp
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicTwistedIntegrand_eq_invSqrt_mul_standard
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicTwistedMoment_eq_invSqrt_mul_standard
 #print axioms PrimeNumberTheorem.MWKFCubic.continuous_cubicTwistedIntegrand
 #print axioms PrimeNumberTheorem.MWKFCubic.hasCompactSupport_cubicTwistedIntegrand
 #print axioms PrimeNumberTheorem.MWKFCubic.integrable_cubicTwistedIntegrand

@@ -9,6 +9,8 @@ namespace PrimeNumberTheorem.MWKFCubic
 #check cubicMollifierCoefficient
 #check cubicTwistedIntegrand
 #check cubicTwistedMoment
+#check cubicStandardTwistedIntegrand
+#check cubicStandardTwistedMoment
 #check cubicComplexMollifiedSecondMoment
 
 #check (@cubicMollifier_eq_sum :
@@ -27,6 +29,28 @@ namespace PrimeNumberTheorem.MWKFCubic
           ((1 / (d : ℂ) ^ ((1 / 2 : ℂ) + I * t)) *
             (starRingEnd ℂ)
               (1 / (e : ℂ) ^ ((1 / 2 : ℂ) + I * t))))
+
+#check (@cubicCriticalPair_eq_exp :
+  ∀ {d e : ℕ}, d ≠ 0 → e ≠ 0 → ∀ t : ℝ,
+    (1 / (d : ℂ) ^ ((1 / 2 : ℂ) + I * t)) *
+        (starRingEnd ℂ) (1 / (e : ℂ) ^ ((1 / 2 : ℂ) + I * t)) =
+      (((Real.sqrt (d * e) : ℝ) : ℂ)⁻¹) *
+        Complex.exp
+          ((I * ((Real.log e - Real.log d : ℝ) : ℂ)) * t))
+
+#check (@cubicTwistedIntegrand_eq_invSqrt_mul_standard :
+  ∀ (W : CubicTestWeight) (T : ℝ) {d e : ℕ},
+    d ≠ 0 → e ≠ 0 → ∀ t : ℝ,
+      cubicTwistedIntegrand W T d e t =
+        (((Real.sqrt (d * e) : ℝ) : ℂ)⁻¹) *
+          cubicStandardTwistedIntegrand W T d e t)
+
+#check (@cubicTwistedMoment_eq_invSqrt_mul_standard :
+  ∀ (W : CubicTestWeight) (T : ℝ) {d e : ℕ},
+    d ≠ 0 → e ≠ 0 →
+      cubicTwistedMoment W T d e =
+        (((Real.sqrt (d * e) : ℝ) : ℂ)⁻¹) *
+          cubicStandardTwistedMoment W T d e)
 
 #check (@integrable_cubicTwistedIntegrand :
   ∀ (W : CubicTestWeight) {T : ℝ} (hT : T ≠ 0)

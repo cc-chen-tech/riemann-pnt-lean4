@@ -50,6 +50,20 @@ noncomputable def cubicTwistedMoment
     (W : CubicTestWeight) (T : ℝ) (d e : ℕ) : ℂ :=
   ∫ t : ℝ, cubicTwistedIntegrand W T d e t
 
+/-- The standard arithmetic twist with phase `exp(it(log e-log d))`, before
+the mollifier amplitude `1/sqrt(de)` is attached. -/
+noncomputable def cubicStandardTwistedIntegrand
+    (W : CubicTestWeight) (T : ℝ) (d e : ℕ) (t : ℝ) : ℂ :=
+  W (t / T) •
+    ((Complex.normSq (riemannZeta ((1 / 2 : ℂ) + I * t)) : ℂ) *
+      Complex.exp
+        ((I * ((Real.log e - Real.log d : ℝ) : ℂ)) * t))
+
+/-- The genuine standard twisted second moment attached to `(d,e)`. -/
+noncomputable def cubicStandardTwistedMoment
+    (W : CubicTestWeight) (T : ℝ) (d e : ℕ) : ℂ :=
+  ∫ t : ℝ, cubicStandardTwistedIntegrand W T d e t
+
 /-- The actual cubic moment, viewed as a complex integral. -/
 noncomputable def cubicComplexMollifiedSecondMoment
     (W : CubicTestWeight) (T : ℝ) : ℂ :=
@@ -75,6 +89,100 @@ theorem cubicMollifierNormSq_eq_doubleSum (T t : ℝ) :
   apply Finset.sum_congr rfl
   intro d hd
   ring
+
+private theorem cubic_inv_nat_cpow_half_eq_inv_sqrt (n : ℕ) :
+    ((n : ℂ) ^ (1 / 2 : ℂ))⁻¹ = ((Real.sqrt n : ℝ) : ℂ)⁻¹ := by
+  congr 1
+  calc
+    (n : ℂ) ^ (1 / 2 : ℂ) =
+        (((n : ℝ) ^ (1 / 2 : ℝ) : ℝ) : ℂ) := by
+      rw [show (1 / 2 : ℂ) = ((1 / 2 : ℝ) : ℂ) by norm_num]
+      exact (Complex.ofReal_cpow (by positivity : (0 : ℝ) ≤ n) (1 / 2)).symm
+    _ = ((Real.sqrt n : ℝ) : ℂ) := by rw [Real.sqrt_eq_rpow]
+
+private theorem cubic_conj_inv_nat_cpow_criticalLine_eq_exp
+    {n : ℕ} (hn : n ≠ 0) (t : ℝ) :
+    (starRingEnd ℂ)
+        (1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)) =
+      ((Real.sqrt n : ℝ) : ℂ)⁻¹ *
+        Complex.exp ((I * (Real.log n : ℂ)) * t) := by
+  rw [HardyTheorem.inv_nat_cpow_criticalLine_eq_exp hn t, map_mul,
+    cubic_inv_nat_cpow_half_eq_inv_sqrt, map_inv₀,
+    Complex.conj_ofReal, ← Complex.exp_conj]
+  congr 2
+  simp only [map_mul, map_neg, conj_I, Complex.conj_ofReal]
+  ring
+
+/-- Exact critical-line normalization of one ordered mollifier pair.  This is
+the phase `exp(it log(e/d))` with the complete `1/sqrt(de)` amplitude. -/
+theorem cubicCriticalPair_eq_exp
+    {d e : ℕ} (hd : d ≠ 0) (he : e ≠ 0) (t : ℝ) :
+    (1 / (d : ℂ) ^ ((1 / 2 : ℂ) + I * t)) *
+        (starRingEnd ℂ) (1 / (e : ℂ) ^ ((1 / 2 : ℂ) + I * t)) =
+      (((Real.sqrt (d * e) : ℝ) : ℂ)⁻¹) *
+        Complex.exp
+          ((I * ((Real.log e - Real.log d : ℝ) : ℂ)) * t) := by
+  rw [HardyTheorem.inv_nat_cpow_criticalLine_eq_exp hd t,
+    cubic_inv_nat_cpow_half_eq_inv_sqrt,
+    cubic_conj_inv_nat_cpow_criticalLine_eq_exp he t]
+  have hsqrt :
+      ((Real.sqrt d : ℝ) : ℂ)⁻¹ * ((Real.sqrt e : ℝ) : ℂ)⁻¹ =
+        ((Real.sqrt (d * e) : ℝ) : ℂ)⁻¹ := by
+    rw [← mul_inv]
+    congr 1
+    rw [Real.sqrt_mul (by positivity : (0 : ℝ) ≤ d)]
+    norm_cast
+  have hexp :
+      Complex.exp ((-I * (Real.log d : ℂ)) * t) *
+          Complex.exp ((I * (Real.log e : ℂ)) * t) =
+        Complex.exp
+          ((I * ((Real.log e - Real.log d : ℝ) : ℂ)) * t) := by
+    rw [← Complex.exp_add]
+    congr 1
+    push_cast
+    ring
+  calc
+    ((Real.sqrt d : ℝ) : ℂ)⁻¹ *
+          Complex.exp ((-I * (Real.log d : ℂ)) * t) *
+        (((Real.sqrt e : ℝ) : ℂ)⁻¹ *
+          Complex.exp ((I * (Real.log e : ℂ)) * t)) =
+        (((Real.sqrt d : ℝ) : ℂ)⁻¹ *
+          ((Real.sqrt e : ℝ) : ℂ)⁻¹) *
+          (Complex.exp ((-I * (Real.log d : ℂ)) * t) *
+            Complex.exp ((I * (Real.log e : ℂ)) * t)) := by ring
+    _ = (((Real.sqrt (d * e) : ℝ) : ℂ)⁻¹) *
+        Complex.exp
+          ((I * ((Real.log e - Real.log d : ℝ) : ℂ)) * t) := by
+      rw [hsqrt, hexp]
+
+/-- The monomial-normalized twisted integrand is exactly `1/sqrt(de)` times
+the standard arithmetic twist. -/
+theorem cubicTwistedIntegrand_eq_invSqrt_mul_standard
+    (W : CubicTestWeight) (T : ℝ) {d e : ℕ}
+    (hd : d ≠ 0) (he : e ≠ 0) (t : ℝ) :
+    cubicTwistedIntegrand W T d e t =
+      (((Real.sqrt (d * e) : ℝ) : ℂ)⁻¹) *
+        cubicStandardTwistedIntegrand W T d e t := by
+  unfold cubicTwistedIntegrand cubicTwistOscillator
+    cubicStandardTwistedIntegrand
+  rw [mul_assoc, cubicCriticalPair_eq_exp hd he t]
+  simp only [Complex.real_smul]
+  ring
+
+/-- The same exact normalization after integration over the full real line. -/
+theorem cubicTwistedMoment_eq_invSqrt_mul_standard
+    (W : CubicTestWeight) (T : ℝ) {d e : ℕ}
+    (hd : d ≠ 0) (he : e ≠ 0) :
+    cubicTwistedMoment W T d e =
+      (((Real.sqrt (d * e) : ℝ) : ℂ)⁻¹) *
+        cubicStandardTwistedMoment W T d e := by
+  unfold cubicTwistedMoment cubicStandardTwistedMoment
+  rw [show (fun t : ℝ ↦ cubicTwistedIntegrand W T d e t) =
+      fun t : ℝ ↦ (((Real.sqrt (d * e) : ℝ) : ℂ)⁻¹) *
+        cubicStandardTwistedIntegrand W T d e t by
+    funext t
+    exact cubicTwistedIntegrand_eq_invSqrt_mul_standard W T hd he t]
+  rw [integral_const_mul]
 
 private theorem continuous_cubicCriticalMonomial
     {n : ℕ} (hn : n ≠ 0) :
