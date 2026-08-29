@@ -43,3 +43,30 @@ example {g g0 g1 L tau : ℝ} {m : ℕ}
   exact exists_conreyDegreeOneEta_regularFactor_continuousLog horder
 
 #print axioms exists_conreyDegreeOneEta_regularFactor_continuousLog
+
+-- The local left/right logarithms exponentiate to the actual eta restriction,
+-- and their symmetric limiting argument gap is exactly the zero multiplicity
+-- times pi.
+example {g g0 g1 L tau : ℝ} {m : ℕ}
+    (horder :
+      analyticOrderAt (conreyDegreeOneEta g g0 g1 L)
+        (conreyCriticalPoint tau) = m) :
+    ∃ delta : ℝ, ∃ ell : ℝ → ℂ,
+      0 < delta ∧
+      ContinuousOn ell (Set.Ioo (tau - delta) (tau + delta)) ∧
+      (∀ t ∈ Set.Ioo (tau - delta) tau,
+        Complex.exp
+            (MathlibAux.verticalPowerLeftLog m (tau - t) + ell t) =
+          conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t)) ∧
+      (∀ t ∈ Set.Ioo tau (tau + delta),
+        Complex.exp
+            (MathlibAux.verticalPowerRightLog m (t - tau) + ell t) =
+          conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t)) ∧
+      Tendsto
+        (fun r =>
+          (MathlibAux.verticalPowerRightLog m r + ell (tau + r)).im -
+            (MathlibAux.verticalPowerLeftLog m r + ell (tau - r)).im)
+        (nhdsWithin 0 (Set.Ioi 0)) (nhds ((m : ℝ) * Real.pi)) := by
+  exact exists_conreyDegreeOneEta_local_argument_bridge horder
+
+#print axioms exists_conreyDegreeOneEta_local_argument_bridge

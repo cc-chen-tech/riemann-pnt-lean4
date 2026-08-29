@@ -145,11 +145,13 @@ The proof should be split into four reusable layers.
 Layers 1 and 2 are now formalized in `MathlibAux/ArgumentCrossing.lean` as
 `argumentCrossingIndices_sdiff_card_lower_bound`,
 `mem_argumentCrossingBridgeIndices_iff`, and
-`argumentCrossingBridgeIndices_card`.  Layers 3 and 4, especially the local
-analytic phase alignment and the disjoint global attribution, remain the
-actual equation-(41) gate.  No equation-(41) or Conrey simple-zero proportion
-claim should be made before all four layers are connected to the actual
-`eta`.
+`argumentCrossingBridgeIndices_card`.  Layer 3 is now formalized for the
+actual `eta` by the vertical order factorization, the continuous logarithm of
+its regular factor, and `exists_conreyDegreeOneEta_local_argument_bridge`.
+Layer 4--the disjoint global attribution across every zero in the finite
+height interval--remains the actual equation-(41) gate.  No equation-(41) or
+Conrey simple-zero proportion claim should be made before that layer is
+connected to the actual `eta`.
 
 ## 6. Analytic-order specialization on the critical line
 
@@ -216,7 +218,26 @@ analytic/nonzero neighborhood of `h` to a symmetric interval
 \]
 
 throughout that interval.  Consequently the local branch-cut problem is
-closed.  The next assembly step must shrink once more so that the order
-factorization (6) holds pointwise on the same interval, add `ell` to the two
-explicit singular-power logarithms, and prove that their exponentials are the
-actual left and right restrictions of `eta`.
+closed.
+
+The final local assembly is now exact in
+`exists_conreyDegreeOneEta_local_argument_bridge`.  After one common
+shrinking, the two functions
+
+\[
+  L_-(r)=L_{\mathrm{left}}(m,r)+\ell(\tau-r),\qquad
+  L_+(r)=L_{\mathrm{right}}(m,r)+\ell(\tau+r)
+\]
+
+exponentiate to the actual values of `eta` on the two sides of the zero, and
+
+\[
+  \operatorname{Im}L_+(r)-\operatorname{Im}L_-(r)\longrightarrow m\pi
+  \qquad(r\downarrow0).
+\]
+
+Thus Layer 3 is closed without a principal-log branch assumption.  The
+remaining work is genuinely global: enumerate the finitely many critical-line
+zeros, align the component lifts with these local bridges, charge bridge
+levels with total cost at most the sum of their orders, and inject every
+uncharged global level into a distinct nonzero real-part crossing.

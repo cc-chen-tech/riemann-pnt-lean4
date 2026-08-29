@@ -1995,7 +1995,20 @@ That regular-factor logarithm is now constructed.  The generic theorem
 connected real interval, so it remains valid when the principal logarithm
 would cross its branch cut.  Its actual `eta` specialization produces
 `delta>0` and one continuous `ell` on `(tau-delta,tau+delta)` with
-`exp (ell t)=h(1/2+it)` everywhere.  The remaining local assembly is to place
-the order factorization on the same shrunken interval and add `ell` to the two
-explicit power logarithms; global reconciliation and level attribution are
-still open.
+`exp (ell t)=h(1/2+it)` everywhere.
+
+The local assembly is now complete in
+`exists_conreyDegreeOneEta_local_argument_bridge`.  On one common shrunken
+interval, adding `ell` to the explicit left and right singular-power
+logarithms exponentiates to the actual `eta(1/2+it)` on both sides, and the
+difference of their imaginary parts tends to exactly `m*pi` at the zero.
+This closes the local analytic phase-alignment layer without selecting the
+principal logarithm.
+
+The equation-(41) gate is therefore now purely global: construct the finite
+ordered zero partition, reconcile all component lifts with the local bridges,
+prove that the union of charged bridge levels has cardinality at most the sum
+of zero orders, and inject every remaining global level into a distinct
+nonzero real-part crossing.  Equation (41), equations (38)--(40), and the
+long `theta<4/7` mollified mean square remain open, so the Conrey two-fifths
+claim is still not proved.

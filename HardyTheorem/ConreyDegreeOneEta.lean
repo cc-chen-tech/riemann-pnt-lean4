@@ -233,6 +233,144 @@ theorem exists_conreyDegreeOneEta_regularFactor_continuousLog
   exact ⟨h, delta, ell, hdelta, hhanalytic, hhne,
     hellContinuous, hellExp, hfactorReal⟩
 
+/-- The complete local argument bridge at an order-`m` critical-line zero.
+On the two punctured sides, explicit logarithms exponentiate to the actual
+`eta` restriction, and their symmetric argument gap tends to exactly `m * π`.
+-/
+theorem exists_conreyDegreeOneEta_local_argument_bridge
+    {g g0 g1 L tau : ℝ} {m : ℕ}
+    (horder :
+      analyticOrderAt (conreyDegreeOneEta g g0 g1 L)
+        (conreyCriticalPoint tau) = m) :
+    ∃ delta : ℝ, ∃ ell : ℝ → ℂ,
+      0 < delta ∧
+      ContinuousOn ell (Set.Ioo (tau - delta) (tau + delta)) ∧
+      (∀ t ∈ Set.Ioo (tau - delta) tau,
+        Complex.exp
+            (MathlibAux.verticalPowerLeftLog m (tau - t) + ell t) =
+          conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t)) ∧
+      (∀ t ∈ Set.Ioo tau (tau + delta),
+        Complex.exp
+            (MathlibAux.verticalPowerRightLog m (t - tau) + ell t) =
+          conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t)) ∧
+      Tendsto
+        (fun r =>
+          (MathlibAux.verticalPowerRightLog m r + ell (tau + r)).im -
+            (MathlibAux.verticalPowerLeftLog m r + ell (tau - r)).im)
+        (nhdsWithin 0 (Set.Ioi 0)) (nhds ((m : ℝ) * Real.pi)) := by
+  rcases exists_conreyDegreeOneEta_regularFactor_continuousLog horder with
+    ⟨h, delta0, ell, hdelta0, hhanalytic, hhne,
+      hellContinuous, hellExp, hfactorEventually⟩
+  rcases Metric.mem_nhds_iff.mp hfactorEventually with
+    ⟨epsilon, hepsilon, hfactorBall⟩
+  let delta := min delta0 epsilon / 2
+  have hminPos : 0 < min delta0 epsilon := lt_min hdelta0 hepsilon
+  have hdelta : 0 < delta := by dsimp [delta]; positivity
+  have hdeltaLt0 : delta < delta0 := by
+    dsimp [delta]
+    nlinarith [min_le_left delta0 epsilon]
+  have hdeltaLtEpsilon : delta < epsilon := by
+    dsimp [delta]
+    nlinarith [min_le_right delta0 epsilon]
+  have hsmallToBig :
+      Set.Ioo (tau - delta) (tau + delta) ⊆
+        Set.Ioo (tau - delta0) (tau + delta0) := by
+    intro t ht
+    exact ⟨by linarith [ht.1], by linarith [ht.2]⟩
+  have hfactorOn : ∀ t ∈ Set.Ioo (tau - delta) (tau + delta),
+      conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) =
+        (I * ((t - tau : ℝ) : ℂ)) ^ m * h (conreyCriticalPoint t) := by
+    intro t ht
+    apply hfactorBall
+    rw [Metric.mem_ball, Real.dist_eq, abs_lt]
+    exact ⟨by linarith [ht.1], by linarith [ht.2]⟩
+  have hellContinuousSmall :
+      ContinuousOn ell (Set.Ioo (tau - delta) (tau + delta)) :=
+    hellContinuous.mono hsmallToBig
+  have hleftExp : ∀ t ∈ Set.Ioo (tau - delta) tau,
+      Complex.exp
+          (MathlibAux.verticalPowerLeftLog m (tau - t) + ell t) =
+        conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) := by
+    intro t ht
+    have htSmall : t ∈ Set.Ioo (tau - delta) (tau + delta) :=
+      ⟨ht.1, ht.2.trans (lt_add_of_pos_right tau hdelta)⟩
+    have htBig := hsmallToBig htSmall
+    have hr : 0 < tau - t := sub_pos.mpr ht.2
+    have hbase :
+        -I * ((tau - t : ℝ) : ℂ) = I * ((t - tau : ℝ) : ℂ) := by
+      push_cast
+      ring
+    calc
+      Complex.exp
+          (MathlibAux.verticalPowerLeftLog m (tau - t) + ell t) =
+          Complex.exp (MathlibAux.verticalPowerLeftLog m (tau - t)) *
+            Complex.exp (ell t) := Complex.exp_add _ _
+      _ = (-I * ((tau - t : ℝ) : ℂ)) ^ m * h (conreyCriticalPoint t) := by
+        rw [MathlibAux.exp_verticalPowerLeftLog m hr, hellExp t htBig]
+      _ = (I * ((t - tau : ℝ) : ℂ)) ^ m * h (conreyCriticalPoint t) := by
+        rw [hbase]
+      _ = conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) :=
+        (hfactorOn t htSmall).symm
+  have hrightExp : ∀ t ∈ Set.Ioo tau (tau + delta),
+      Complex.exp
+          (MathlibAux.verticalPowerRightLog m (t - tau) + ell t) =
+        conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) := by
+    intro t ht
+    have htSmall : t ∈ Set.Ioo (tau - delta) (tau + delta) :=
+      ⟨(sub_lt_self tau hdelta).trans ht.1, ht.2⟩
+    have htBig := hsmallToBig htSmall
+    have hr : 0 < t - tau := sub_pos.mpr ht.1
+    calc
+      Complex.exp
+          (MathlibAux.verticalPowerRightLog m (t - tau) + ell t) =
+          Complex.exp (MathlibAux.verticalPowerRightLog m (t - tau)) *
+            Complex.exp (ell t) := Complex.exp_add _ _
+      _ = (I * ((t - tau : ℝ) : ℂ)) ^ m * h (conreyCriticalPoint t) := by
+        rw [MathlibAux.exp_verticalPowerRightLog m hr, hellExp t htBig]
+      _ = conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) :=
+        (hfactorOn t htSmall).symm
+  have htauBig : tau ∈ Set.Ioo (tau - delta0) (tau + delta0) := by
+    constructor <;> linarith
+  have hellAt : ContinuousAt ell tau :=
+    hellContinuous.continuousAt (isOpen_Ioo.mem_nhds htauBig)
+  have htId : Tendsto (fun r : ℝ => r)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) :=
+    tendsto_id.mono_left nhdsWithin_le_nhds
+  have htPlus : Tendsto (fun r : ℝ => tau + r)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds tau) := by
+    simpa using tendsto_const_nhds.add htId
+  have htMinus : Tendsto (fun r : ℝ => tau - r)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds tau) := by
+    simpa using tendsto_const_nhds.sub htId
+  have hplusIm : Tendsto (fun r : ℝ => (ell (tau + r)).im)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds (ell tau).im) :=
+    Complex.continuous_im.continuousAt.tendsto.comp
+      (hellAt.tendsto.comp htPlus)
+  have hminusIm : Tendsto (fun r : ℝ => (ell (tau - r)).im)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds (ell tau).im) :=
+    Complex.continuous_im.continuousAt.tendsto.comp
+      (hellAt.tendsto.comp htMinus)
+  have hregularDiff : Tendsto
+      (fun r : ℝ => (ell (tau + r)).im - (ell (tau - r)).im)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) := by
+    simpa using hplusIm.sub hminusIm
+  have htotal : Tendsto
+      (fun r : ℝ => (m : ℝ) * Real.pi +
+        ((ell (tau + r)).im - (ell (tau - r)).im))
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds ((m : ℝ) * Real.pi)) := by
+    simpa using (tendsto_const_nhds.add hregularDiff)
+  have hphase : Tendsto
+      (fun r =>
+        (MathlibAux.verticalPowerRightLog m r + ell (tau + r)).im -
+          (MathlibAux.verticalPowerLeftLog m r + ell (tau - r)).im)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds ((m : ℝ) * Real.pi)) := by
+    convert htotal using 1
+    funext r
+    simp only [Complex.add_im]
+    have hm := MathlibAux.verticalPowerRightLog_im_sub_left m r
+    linarith
+  exact ⟨delta, ell, hdelta, hellContinuousSmall, hleftExp, hrightExp, hphase⟩
+
 /-- On the critical line, the real part of Conrey's degree-one `eta` is
 exactly the leading real coefficient times `xi`. -/
 theorem conreyDegreeOneEta_re_on_criticalLine (g g0 g1 L t : ℝ) :
