@@ -2543,6 +2543,8 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovLogVanDerCorputContract,
     `MathlibAux.IntervalOscillatoryIntegrationByParts,
     `MathlibAux.IntervalOscillatorySecondIntegrationByParts,
+    `MathlibAux.PositiveRpowIntervalIntegral,
+    `Test.PositiveRpowIntervalIntegralContract,
     `MathlibAux.OscillatoryPhaseQuotient,
     `HardyTheorem.AFEExplicitPlateauCutoff,
     `HardyTheorem.AFEExplicitMellinAmplitude,
