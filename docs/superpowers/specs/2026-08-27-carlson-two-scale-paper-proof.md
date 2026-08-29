@@ -1352,7 +1352,23 @@ are now formal too:
 
 Thus the remaining derivative gate is only the elementary product with the
 Mellin amplitude `u^(-sigma)` on the positive support interval; no cutoff
-constant can depend on height.
+constant can depend on height.  That exact product rule is now formal.  With
+`A=w_{x,N}u^(-sigma)`, Lean proves, for `u!=0`,
+
+\[
+ A'=w'u^{-\sigma}-\sigma w u^{-\sigma-1},
+\]
+
+and
+
+\[
+ A''=w''u^{-\sigma}-2\sigma w'u^{-\sigma-1}
+     +\sigma(\sigma+1)w u^{-\sigma-2}.                    \tag{8.22e''''''''}
+\]
+
+Both real and complex-embedded `HasDerivAt` statements pass the axiom audit.
+The next step is the pointwise size bound on the positive support and its
+integration in the four classes of (8.22e'''').
 
 For the Poisson far tail, the next remaining lemma is therefore explicit:
 instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, use (8.22e') to bound the

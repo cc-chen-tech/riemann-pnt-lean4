@@ -1,0 +1,27 @@
+import HardyTheorem.AFEExplicitMellinAmplitude
+
+open HardyTheorem AFE
+
+#check mellinRpow
+#check mellinRpowDeriv
+#check mellinRpowSecondDeriv
+#check mellinRpowSecondDeriv_eq
+#check mellinRpow_hasDerivAt
+#check mellinRpowDeriv_hasDerivAt
+#check explicitMellinAmplitude
+#check explicitMellinAmplitudeDeriv
+#check explicitMellinAmplitudeSecondDeriv
+#check explicitMellinAmplitude_hasDerivAt
+#check explicitMellinAmplitudeDeriv_hasDerivAt
+#check explicitComplexMellinAmplitude
+#check explicitComplexMellinAmplitudeDeriv
+#check explicitComplexMellinAmplitudeSecondDeriv
+#check explicitComplexMellinAmplitude_hasDerivAt
+#check explicitComplexMellinAmplitudeDeriv_hasDerivAt
+
+#print axioms mellinRpow_hasDerivAt
+#print axioms mellinRpowDeriv_hasDerivAt
+#print axioms explicitMellinAmplitude_hasDerivAt
+#print axioms explicitMellinAmplitudeDeriv_hasDerivAt
+#print axioms explicitComplexMellinAmplitude_hasDerivAt
+#print axioms explicitComplexMellinAmplitudeDeriv_hasDerivAt
