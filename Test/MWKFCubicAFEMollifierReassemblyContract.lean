@@ -6,5 +6,9 @@ namespace PrimeNumberTheorem.MWKFCubic
 #check cubicAFEMollifierPairApproximation
 #check tendsto_cubicAFEMollifiedApproximation
 #check cubicAFEMollifiedApproximation_eq_pairSum
+#check summable_cubicAFEWeightFinite
+#check cubicAFECombinedSummandFinite
+#check summable_cubicAFECombinedSummandFinite
+#check cubicAFEMollifierPairApproximation_eq_tsum
 
 end PrimeNumberTheorem.MWKFCubic

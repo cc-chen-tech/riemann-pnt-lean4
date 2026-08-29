@@ -2,3 +2,5 @@ import PrimeNumberTheorem.MWKFCubicAFEMollifierReassembly
 
 #print axioms PrimeNumberTheorem.MWKFCubic.tendsto_cubicAFEMollifiedApproximation
 #print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEMollifiedApproximation_eq_pairSum
+#print axioms PrimeNumberTheorem.MWKFCubic.summable_cubicAFECombinedSummandFinite
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEMollifierPairApproximation_eq_tsum

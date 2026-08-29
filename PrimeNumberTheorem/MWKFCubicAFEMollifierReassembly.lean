@@ -61,5 +61,137 @@ theorem cubicAFEMollifiedApproximation_eq_pairSum
   intro e he
   ring
 
+/-- Absolute summability of the finite-height AFE weights.  This is inherited
+from the dominated-convergence `HasSum` before the vertical integral was
+normalized. -/
+theorem summable_cubicAFEWeightFinite
+    (t : ℝ) {X : ℝ} (hX : 1 / 2 < X) (V : ℝ) :
+    Summable (fun p : ℕ × ℕ ↦ cubicAFEWeightFinite t X V p) := by
+  have h :=
+    (hasSum_intervalIntegral_cubicAFENormalizedDirichletTerm t hX V).mul_left
+      (1 / (2 * Real.pi) : ℂ)
+  simpa only [cubicAFEWeightFinite] using h.summable
+
+/-- One fully expanded `(p,d,e)` term, with the exact combined arithmetic
+factor and the product-only Mellin weight kept separate. -/
+noncomputable def cubicAFECombinedSummandFinite
+    (W : CubicTestWeight) (T X V : ℝ) (d e : ℕ)
+    (t : ℝ) (p : ℕ × ℕ) : ℂ :=
+  (cubicMollifierCoefficient T d : ℂ) *
+    (cubicMollifierCoefficient T e : ℂ) * 2 *
+    (cubicAFECombinedArithmeticFactor t p d e *
+      cubicAFEProductWeightFinite t X V (cubicAFEPositiveIndexProduct p)) *
+    (W (t / T) : ℂ)
+
+theorem summable_cubicAFECombinedSummandFinite
+    (W : CubicTestWeight) (T : ℝ) {X : ℝ} (hX : 1 / 2 < X)
+    (V : ℝ) (d e : ℕ) (t : ℝ) :
+    Summable (fun p : ℕ × ℕ ↦
+      cubicAFECombinedSummandFinite W T X V d e t p) := by
+  let C : ℂ :=
+    (cubicMollifierCoefficient T d : ℂ) *
+      (cubicMollifierCoefficient T e : ℂ) * 2
+  have hsum := summable_cubicAFEWeightFinite t hX V
+  have hfun :
+      (fun p : ℕ × ℕ ↦
+        cubicAFECombinedSummandFinite W T X V d e t p) =
+      fun p : ℕ × ℕ ↦
+        C * cubicAFEWeightFinite t X V p *
+          ((1 / (d : ℂ) ^ cubicCriticalPoint t) *
+            (starRingEnd ℂ) (1 / (e : ℂ) ^ cubicCriticalPoint t)) *
+          (W (t / T) : ℂ) := by
+    funext p
+    rw [cubicAFEWeightFinite_eq_arithmetic_mul_productWeight]
+    unfold cubicAFECombinedSummandFinite cubicAFECombinedArithmeticFactor C
+    ring
+  rw [hfun]
+  exact (((hsum.mul_left C).mul_right
+    ((1 / (d : ℂ) ^ cubicCriticalPoint t) *
+      (starRingEnd ℂ) (1 / (e : ℂ) ^ cubicCriticalPoint t))).mul_right
+        (W (t / T) : ℂ))
+
+/-- Each ordered mollifier-pair approximation is exactly the absolutely
+convergent sum of its fully exposed `(p,d,e)` terms. -/
+theorem cubicAFEMollifierPairApproximation_eq_tsum
+    (W : CubicTestWeight) (T : ℝ) {X : ℝ} (hX : 1 / 2 < X)
+    (V : ℝ) (d e : ℕ) (t : ℝ) :
+    cubicAFEMollifierPairApproximation W T X V d e t =
+      ∑' p : ℕ × ℕ,
+        cubicAFECombinedSummandFinite W T X V d e t p := by
+  have _hsum :=
+    summable_cubicAFECombinedSummandFinite W T hX V d e t
+  let C : ℂ :=
+    (cubicMollifierCoefficient T d : ℂ) *
+      (cubicMollifierCoefficient T e : ℂ) * 2
+  let P : ℂ :=
+    (1 / (d : ℂ) ^ cubicCriticalPoint t) *
+      (starRingEnd ℂ) (1 / (e : ℂ) ^ cubicCriticalPoint t)
+  let Z : ℂ := ∑' p : ℕ × ℕ,
+    cubicAFEDirichletTerm t 0 p *
+      cubicAFEProductWeightFinite t X V (cubicAFEPositiveIndexProduct p)
+  have hZ : cubicAFEDoubleSumFinite t X V = Z := by
+    unfold cubicAFEDoubleSumFinite Z
+    apply tsum_congr
+    intro p
+    exact cubicAFEWeightFinite_eq_arithmetic_mul_productWeight t X V p
+  have hinner :
+      (∑' p : ℕ × ℕ,
+        cubicAFECombinedArithmeticFactor t p d e *
+          cubicAFEProductWeightFinite t X V
+            (cubicAFEPositiveIndexProduct p)) = Z * P := by
+    calc
+      (∑' p : ℕ × ℕ,
+          cubicAFECombinedArithmeticFactor t p d e *
+            cubicAFEProductWeightFinite t X V
+              (cubicAFEPositiveIndexProduct p)) =
+          ∑' p : ℕ × ℕ,
+            (cubicAFEDirichletTerm t 0 p *
+              cubicAFEProductWeightFinite t X V
+                (cubicAFEPositiveIndexProduct p)) * P := by
+            apply tsum_congr
+            intro p
+            unfold cubicAFECombinedArithmeticFactor P
+            ring
+      _ = Z * P := by rw [tsum_mul_right]
+  have hpair :
+      cubicAFEMollifierPairApproximation W T X V d e t =
+        C * (Z * P) * (W (t / T) : ℂ) := by
+    unfold cubicAFEMollifierPairApproximation C P
+    rw [hZ]
+    ring
+  have hrhs :
+      (∑' p : ℕ × ℕ,
+        cubicAFECombinedSummandFinite W T X V d e t p) =
+      C * (∑' p : ℕ × ℕ,
+        cubicAFECombinedArithmeticFactor t p d e *
+          cubicAFEProductWeightFinite t X V
+            (cubicAFEPositiveIndexProduct p)) * (W (t / T) : ℂ) := by
+    calc
+      (∑' p : ℕ × ℕ,
+        cubicAFECombinedSummandFinite W T X V d e t p) =
+          ∑' p : ℕ × ℕ,
+            C * (cubicAFECombinedArithmeticFactor t p d e *
+              cubicAFEProductWeightFinite t X V
+                (cubicAFEPositiveIndexProduct p)) * (W (t / T) : ℂ) := by
+              apply tsum_congr
+              intro p
+              unfold cubicAFECombinedSummandFinite C
+              ring
+      _ = C * (∑' p : ℕ × ℕ,
+          cubicAFECombinedArithmeticFactor t p d e *
+            cubicAFEProductWeightFinite t X V
+              (cubicAFEPositiveIndexProduct p)) * (W (t / T) : ℂ) := by
+            rw [tsum_mul_right, tsum_mul_left]
+  calc
+    cubicAFEMollifierPairApproximation W T X V d e t =
+        C * (Z * P) * (W (t / T) : ℂ) := hpair
+    _ = C * (∑' p : ℕ × ℕ,
+        cubicAFECombinedArithmeticFactor t p d e *
+          cubicAFEProductWeightFinite t X V
+            (cubicAFEPositiveIndexProduct p)) * (W (t / T) : ℂ) := by
+          rw [hinner]
+    _ = ∑' p : ℕ × ℕ,
+        cubicAFECombinedSummandFinite W T X V d e t p := hrhs.symm
+
 end MWKFCubic
 end PrimeNumberTheorem
