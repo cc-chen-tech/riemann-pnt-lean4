@@ -370,12 +370,12 @@ discrete group is constant.  The formal theorem
 lift can be normalized against a local bridge by one global deck
 transformation; the integer cannot drift along the overlap.
 
-What remains is the finite global assembly: include the bottom and top
-components, apply (11) on the actual overlaps with the local bridges, extract
-the compatible one-sided phase limits, convert the sorted zero/order data into
-the bridge list, and recursively construct `ArgumentPhasePartition`.  Until
-that assembly identifies the bridge-order sum with the intended critical-line
-zero count, equation (41) and the two-fifths conclusion remain open.
+At this stage the finite global assembly reduces to endpoint components,
+actual overlap alignment, and recursive construction of
+`ArgumentPhasePartition`; Section 8 records the later specialization and
+endpoint progress.  Until the final assembly identifies the bridge-order sum
+with the intended critical-line zero count, equation (41) and the two-fifths
+conclusion remain open.
 
 ## 8. Correct interval and count in Conrey's equation (41)
 
@@ -414,6 +414,20 @@ later step, not an implicit convention.
 The consecutive-gap result has now also been specialized to this exact
 `(U,T]` zero list.  Thus two consecutive entries of the sorted equation-(41)
 list bound an open interval on which the actual eta restriction is nonzero and
-admits one continuous logarithm on the entire interval.  The remaining
-component work is confined to the two endpoint components and the finite
-recursive alignment across the listed zeros.
+admits one continuous logarithm on the entire interval.  The next paragraph
+closes the two endpoint components; recursive alignment remains afterward.
+
+The endpoint components are now closed under the hypotheses actually needed
+to speak about endpoint arguments.  A nonzero value of eta at an ordinate
+extends to a nonzero real open neighborhood.  If the `(U,T]` zero list is
+nonempty and eta is nonzero at `U`, the interval from `U` to the first listed
+zero has one continuous logarithm on an open domain containing `U`.  Dually,
+if eta is nonzero at `T`, the interval from the last listed zero to `T` has one
+continuous logarithm on an open domain containing `T`; the hypotheses force
+the last zero to lie strictly below `T`.
+
+Consequently, when the list is nonempty and both endpoint values are nonzero,
+all first, interior, and last components required by (12) now exist as actual
+eta logarithm domains.  The remaining equation-(41) topology is the zero-list
+empty base case and the finite recursive use of (11) plus the local `m*pi`
+bridge limits to build one compatible `ArgumentPhasePartition`.

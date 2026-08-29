@@ -10,7 +10,7 @@ partition to Conrey's actual degree-one auxiliary function.  The divisor of
 directly, without introducing mollifier parameters.
 -/
 
-open Complex Set
+open Complex Set Filter
 open scoped BigOperators
 
 namespace HardyTheorem
@@ -301,6 +301,151 @@ theorem exists_conreyDegreeOneEta_continuousLog_between_consecutiveCriticalZeroO
       conreyDegreeOneEta_ne_zero_between_consecutiveCriticalZeroOrdinatesBetween
         hg hU ha hb hgap ht
   exact MathlibAux.exists_continuousLogOn_Ioo hab hetaContinuous hetaNe
+
+/-- A nonzero value of the actual eta restriction remains nonzero on a real
+open neighborhood of that ordinate. -/
+theorem exists_conreyDegreeOneEta_nonzero_real_neighborhood
+    {g g0 g1 L u : ℝ}
+    (hu : conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint u) ≠ 0) :
+    ∃ delta : ℝ, 0 < delta ∧
+      ∀ t ∈ Set.Ioo (u - delta) (u + delta),
+        conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) ≠ 0 := by
+  have hcriticalContinuous : Continuous conreyCriticalPoint := by
+    unfold conreyCriticalPoint
+    fun_prop
+  have hetaContinuousAt :
+      ContinuousAt
+        (fun t => conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t)) u :=
+    (analyticAt_conreyDegreeOneEta g g0 g1 L
+      (conreyCriticalPoint u)).continuousAt.comp
+        hcriticalContinuous.continuousAt
+  have hneEventually :
+      ∀ᶠ t in nhds u,
+        conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) ≠ 0 :=
+    hetaContinuousAt.eventually_ne hu
+  rcases Metric.mem_nhds_iff.mp hneEventually with
+    ⟨delta, hdelta, hball⟩
+  refine ⟨delta, hdelta, fun t ht => hball ?_⟩
+  rw [Metric.mem_ball, Real.dist_eq, abs_lt]
+  constructor <;> linarith [ht.1, ht.2]
+
+/-- If eta is nonzero at the lower endpoint `U`, the component from `U` to
+the first zero in `(U,T]` admits one logarithm on an open interval containing
+`U` and extending all the way to that zero. -/
+theorem exists_conreyDegreeOneEta_continuousLog_lowerEndpoint_to_firstZero
+    {g g0 g1 L U T tau : ℝ} (hg : g ≠ 0) (hU : 0 ≤ U)
+    (hUeta : conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint U) ≠ 0)
+    (htau : tau ∈
+      conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T)
+    (hfirst : ∀ u ∈
+      conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T,
+      tau ≤ u) :
+    ∃ delta : ℝ, ∃ ell : ℝ → ℂ,
+      0 < delta ∧ U ∈ Set.Ioo (U - delta) tau ∧
+      ContinuousOn ell (Set.Ioo (U - delta) tau) ∧
+      ∀ t ∈ Set.Ioo (U - delta) tau,
+        Complex.exp (ell t) =
+          conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) := by
+  rcases exists_conreyDegreeOneEta_nonzero_real_neighborhood hUeta with
+    ⟨delta, hdelta, hlocal⟩
+  have htauBetween :
+      tau ∈ conreyEtaCriticalZeroOrdinatesBetween g g0 g1 L U T :=
+    mem_conreyEtaCriticalZeroOrdinatesSortedBetween.mp htau
+  have htauData :=
+    (mem_conreyEtaCriticalZeroOrdinatesBetween hg hU).mp htauBetween
+  have hetaNe : ∀ t ∈ Set.Ioo (U - delta) tau,
+      conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) ≠ 0 := by
+    intro t ht
+    rcases lt_trichotomy t U with htU | rfl | hUt
+    · exact hlocal t ⟨ht.1, by linarith⟩
+    · exact hUeta
+    · intro hzero
+      have htBetween :
+          t ∈ conreyEtaCriticalZeroOrdinatesBetween g g0 g1 L U T :=
+        (mem_conreyEtaCriticalZeroOrdinatesBetween hg hU).mpr
+          ⟨hUt, le_trans ht.2.le htauData.2.1, hzero⟩
+      have htList : t ∈
+          conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T :=
+        mem_conreyEtaCriticalZeroOrdinatesSortedBetween.mpr htBetween
+      exact (not_le_of_gt ht.2) (hfirst t htList)
+  have hcriticalContinuous : Continuous conreyCriticalPoint := by
+    unfold conreyCriticalPoint
+    fun_prop
+  have hetaContinuous :
+      ContinuousOn
+        (fun t => conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t))
+        (Set.Ioo (U - delta) tau) := by
+    intro t _ht
+    exact ((analyticAt_conreyDegreeOneEta g g0 g1 L
+      (conreyCriticalPoint t)).continuousAt.comp
+        hcriticalContinuous.continuousAt).continuousWithinAt
+  have hdomain : U - delta < tau := by linarith [htauData.1]
+  rcases MathlibAux.exists_continuousLogOn_Ioo
+      hdomain hetaContinuous hetaNe with ⟨ell, hellContinuous, hellExp⟩
+  exact ⟨delta, ell, hdelta, ⟨by linarith, htauData.1⟩,
+    hellContinuous, hellExp⟩
+
+/-- If eta is nonzero at the upper endpoint `T`, the component from the last
+zero in `(U,T]` to `T` admits one logarithm on an open interval beginning at
+that zero and containing `T`. -/
+theorem exists_conreyDegreeOneEta_continuousLog_lastZero_to_upperEndpoint
+    {g g0 g1 L U T tau : ℝ} (hg : g ≠ 0) (hU : 0 ≤ U)
+    (hTeta : conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint T) ≠ 0)
+    (htau : tau ∈
+      conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T)
+    (hlast : ∀ u ∈
+      conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T,
+      u ≤ tau) :
+    ∃ delta : ℝ, ∃ ell : ℝ → ℂ,
+      0 < delta ∧ T ∈ Set.Ioo tau (T + delta) ∧
+      ContinuousOn ell (Set.Ioo tau (T + delta)) ∧
+      ∀ t ∈ Set.Ioo tau (T + delta),
+        Complex.exp (ell t) =
+          conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) := by
+  rcases exists_conreyDegreeOneEta_nonzero_real_neighborhood hTeta with
+    ⟨delta, hdelta, hlocal⟩
+  have htauBetween :
+      tau ∈ conreyEtaCriticalZeroOrdinatesBetween g g0 g1 L U T :=
+    mem_conreyEtaCriticalZeroOrdinatesSortedBetween.mp htau
+  have htauData :=
+    (mem_conreyEtaCriticalZeroOrdinatesBetween hg hU).mp htauBetween
+  have htauNeT : tau ≠ T := by
+    intro htauT
+    apply hTeta
+    rw [← htauT]
+    exact htauData.2.2
+  have htauT : tau < T := lt_of_le_of_ne htauData.2.1 htauNeT
+  have hetaNe : ∀ t ∈ Set.Ioo tau (T + delta),
+      conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) ≠ 0 := by
+    intro t ht
+    rcases lt_trichotomy t T with htT | rfl | hTt
+    · intro hzero
+      have htBetween :
+          t ∈ conreyEtaCriticalZeroOrdinatesBetween g g0 g1 L U T :=
+        (mem_conreyEtaCriticalZeroOrdinatesBetween hg hU).mpr
+          ⟨lt_trans htauData.1 ht.1, htT.le, hzero⟩
+      have htList : t ∈
+          conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T :=
+        mem_conreyEtaCriticalZeroOrdinatesSortedBetween.mpr htBetween
+      exact (not_le_of_gt ht.1) (hlast t htList)
+    · exact hTeta
+    · exact hlocal t ⟨by linarith, ht.2⟩
+  have hcriticalContinuous : Continuous conreyCriticalPoint := by
+    unfold conreyCriticalPoint
+    fun_prop
+  have hetaContinuous :
+      ContinuousOn
+        (fun t => conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t))
+        (Set.Ioo tau (T + delta)) := by
+    intro t _ht
+    exact ((analyticAt_conreyDegreeOneEta g g0 g1 L
+      (conreyCriticalPoint t)).continuousAt.comp
+        hcriticalContinuous.continuousAt).continuousWithinAt
+  have hdomain : tau < T + delta := by linarith
+  rcases MathlibAux.exists_continuousLogOn_Ioo
+      hdomain hetaContinuous hetaNe with ⟨ell, hellContinuous, hellExp⟩
+  exact ⟨delta, ell, hdelta, ⟨htauT, by linarith⟩,
+    hellContinuous, hellExp⟩
 
 /-- If no listed critical-line eta zero lies strictly between two listed
 ordinates, then the actual eta restriction is nonzero throughout that open
