@@ -340,9 +340,23 @@ function from `g != 0`; positivity uses both analyticity and the exact zero
 membership (8).  Consequently every listed zero carries the correct positive
 finite bridge multiplicity.
 
-What remains is the complementary-interval structure: prove that the open
-intervals between consecutive sorted ordinates are zero-free, choose
-compatible logarithmic lifts on them, convert the sorted zero/order data into
-the bridge list, and assemble all of it into `ArgumentPhasePartition`.  Until
-those steps identify the bridge-order sum with the intended critical-line zero
-count, equation (41) and the two-fifths conclusion remain open.
+The interior complementary intervals are now exact as well.  If `a<b` are
+listed ordinates with no listed ordinate strictly between them, then (8)
+forces
+
+\[
+  \eta(1/2+it)\ne0 \qquad (a<t<b).
+\tag{10}
+\]
+
+The actual eta curve is continuous there, so the covering-map argument gives
+one continuous logarithm on the whole open component `(a,b)`.  This is a
+genuine component argument lift, not a family of unrelated local logarithms.
+
+What remains is the finite global assembly: include the bottom and top
+components, normalize adjacent component lifts so their one-sided values
+differ by the corresponding positive order times `pi`, convert the sorted
+zero/order data into the bridge list, and recursively construct
+`ArgumentPhasePartition`.  Until that assembly identifies the bridge-order
+sum with the intended critical-line zero count, equation (41) and the
+two-fifths conclusion remain open.

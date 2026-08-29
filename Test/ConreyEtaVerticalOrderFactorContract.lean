@@ -45,6 +45,33 @@ example {g g0 g1 L T t : ℝ} (hg : g ≠ 0)
 
 #print axioms conreyEtaCriticalZeroOrderNat_pos
 
+-- Consecutive listed zero ordinates bound an actually zero-free eta component,
+-- and eta admits a continuous logarithm on that entire open component.
+example {g g0 g1 L T a b t : ℝ} (hg : g ≠ 0)
+    (ha : a ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T)
+    (hb : b ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T)
+    (hgap : ∀ u ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T,
+      ¬ (a < u ∧ u < b))
+    (ht : t ∈ Set.Ioo a b) :
+    conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) ≠ 0 := by
+  exact conreyDegreeOneEta_ne_zero_between_consecutiveCriticalZeroOrdinates
+    hg ha hb hgap ht
+
+example {g g0 g1 L T a b : ℝ} (hg : g ≠ 0) (hab : a < b)
+    (ha : a ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T)
+    (hb : b ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T)
+    (hgap : ∀ u ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T,
+      ¬ (a < u ∧ u < b)) :
+    ∃ ell : ℝ → ℂ,
+      ContinuousOn ell (Set.Ioo a b) ∧
+      ∀ t ∈ Set.Ioo a b,
+        Complex.exp (ell t) =
+          conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) := by
+  exact exists_conreyDegreeOneEta_continuousLog_between_consecutiveCriticalZeroOrdinates
+    hg hab ha hb hgap
+
+#print axioms exists_conreyDegreeOneEta_continuousLog_between_consecutiveCriticalZeroOrdinates
+
 -- Mutations caught: the exponent is the actual analytic order `m`, the
 -- vertical displacement is `I * (t - tau)`, and the regular factor stays
 -- nonzero on a real neighborhood of the zero ordinate.

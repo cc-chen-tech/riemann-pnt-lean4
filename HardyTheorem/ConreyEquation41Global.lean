@@ -176,4 +176,59 @@ theorem conreyEtaCriticalZeroOrderNat_pos
   rw [← Nat.cast_analyticOrderNatAt hfinite, hnatZero]
   simp
 
+/-- If no listed critical-line eta zero lies strictly between two listed
+ordinates, then the actual eta restriction is nonzero throughout that open
+interval. -/
+theorem conreyDegreeOneEta_ne_zero_between_consecutiveCriticalZeroOrdinates
+    {g g0 g1 L T a b t : ℝ} (hg : g ≠ 0)
+    (ha : a ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T)
+    (hb : b ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T)
+    (hgap : ∀ u ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T,
+      ¬ (a < u ∧ u < b))
+    (ht : t ∈ Set.Ioo a b) :
+    conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) ≠ 0 := by
+  intro hzero
+  have haFinset : a ∈ conreyEtaCriticalZeroOrdinates g g0 g1 L T :=
+    mem_conreyEtaCriticalZeroOrdinatesSorted.mp ha
+  have hbFinset : b ∈ conreyEtaCriticalZeroOrdinates g g0 g1 L T :=
+    mem_conreyEtaCriticalZeroOrdinatesSorted.mp hb
+  have haData := (mem_conreyEtaCriticalZeroOrdinates hg).mp haFinset
+  have hbData := (mem_conreyEtaCriticalZeroOrdinates hg).mp hbFinset
+  have htFinset : t ∈ conreyEtaCriticalZeroOrdinates g g0 g1 L T :=
+    (mem_conreyEtaCriticalZeroOrdinates hg).mpr
+      ⟨lt_trans haData.1 ht.1, le_trans ht.2.le hbData.2.1, hzero⟩
+  exact hgap t (mem_conreyEtaCriticalZeroOrdinatesSorted.mpr htFinset) ht
+
+/-- On every open component between consecutive actual critical-line eta
+zeros, the eta restriction has a continuous logarithm on the whole component.
+This is the component argument lift needed by equation (41). -/
+theorem exists_conreyDegreeOneEta_continuousLog_between_consecutiveCriticalZeroOrdinates
+    {g g0 g1 L T a b : ℝ} (hg : g ≠ 0) (hab : a < b)
+    (ha : a ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T)
+    (hb : b ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T)
+    (hgap : ∀ u ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T,
+      ¬ (a < u ∧ u < b)) :
+    ∃ ell : ℝ → ℂ,
+      ContinuousOn ell (Set.Ioo a b) ∧
+      ∀ t ∈ Set.Ioo a b,
+        Complex.exp (ell t) =
+          conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) := by
+  have hcriticalContinuous : Continuous conreyCriticalPoint := by
+    unfold conreyCriticalPoint
+    fun_prop
+  have hetaContinuous :
+      ContinuousOn
+        (fun t => conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t))
+        (Set.Ioo a b) := by
+    intro t _ht
+    exact ((analyticAt_conreyDegreeOneEta g g0 g1 L
+      (conreyCriticalPoint t)).continuousAt.comp
+        hcriticalContinuous.continuousAt).continuousWithinAt
+  have hetaNe : ∀ t ∈ Set.Ioo a b,
+      conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) ≠ 0 :=
+    fun t ht =>
+      conreyDegreeOneEta_ne_zero_between_consecutiveCriticalZeroOrdinates
+        hg ha hb hgap ht
+  exact MathlibAux.exists_continuousLogOn_Ioo hab hetaContinuous hetaNe
+
 end HardyTheorem
