@@ -8,6 +8,7 @@ namespace PrimeNumberTheorem.MWKFCubic
 #check cubicAFEPoleCanceller
 #check cubicAFEKernelG
 #check cubicAFECompletedExtension
+#check cubicAFECompletedIntegrand
 
 #check (@cubicCriticalPoint_ne_zero :
   ∀ t : ℝ, cubicCriticalPoint t ≠ 0)
@@ -42,6 +43,10 @@ namespace PrimeNumberTheorem.MWKFCubic
 #check (@differentiable_cubicAFECompletedExtension :
   ∀ t : ℝ, Differentiable ℂ (cubicAFECompletedExtension t))
 
+#check (@cubicAFECompletedExtension_neg :
+  ∀ (t : ℝ) (z : ℂ),
+    cubicAFECompletedExtension t (-z) = cubicAFECompletedExtension t z)
+
 #check (@cubicAFECompletedExtension_eq :
   ∀ (t : ℝ) (z : ℂ),
     cubicCriticalPoint t + z ≠ 0 →
@@ -52,5 +57,19 @@ namespace PrimeNumberTheorem.MWKFCubic
         cubicAFEKernelG t z *
           completedRiemannZeta (cubicCriticalPoint t + z) *
           completedRiemannZeta (1 - cubicCriticalPoint t + z))
+
+#check (@cubicAFECompletedExtension_zero :
+  ∀ t : ℝ,
+    cubicAFECompletedExtension t 0 =
+      completedRiemannZeta (cubicCriticalPoint t) *
+        completedRiemannZeta (1 - cubicCriticalPoint t))
+
+#check (@cubicAFECompletedIntegrand_residue_zero :
+  ∀ t : ℝ,
+    Filter.Tendsto
+      (fun z : ℂ ↦ z * cubicAFECompletedIntegrand t z)
+      (nhdsWithin (0 : ℂ) ({0}ᶜ))
+      (nhds (completedRiemannZeta (cubicCriticalPoint t) *
+        completedRiemannZeta (1 - cubicCriticalPoint t))))
 
 end PrimeNumberTheorem.MWKFCubic

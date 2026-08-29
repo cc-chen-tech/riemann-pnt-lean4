@@ -1,6 +1,6 @@
 import Mathlib.NumberTheory.LSeries.RiemannZeta
 
-open Complex
+open Complex Filter
 
 namespace PrimeNumberTheorem
 namespace MWKFCubic
@@ -41,6 +41,11 @@ noncomputable def cubicAFECompletedExtension (t : ℝ) (z : ℂ) : ℂ :=
     (completedRiemannZeta₀ (u + z) * (u + z) * (s - z) -
       (s - z) - (u + z))
 
+/-- The completed AFE integrand after the four moving poles have been removed;
+its only remaining singular factor is `1/z`. -/
+noncomputable def cubicAFECompletedIntegrand (t : ℝ) (z : ℂ) : ℂ :=
+  cubicAFECompletedExtension t z / z
+
 theorem cubicCriticalPoint_ne_zero (t : ℝ) :
     cubicCriticalPoint t ≠ 0 := by
   intro h
@@ -60,6 +65,40 @@ theorem differentiable_cubicAFECompletedExtension (t : ℝ) :
     differentiable_completedZeta₀
   unfold cubicAFECompletedExtension
   fun_prop
+
+set_option maxRecDepth 10000 in
+/-- The entire completed numerator retains the `z ↦ -z` symmetry supplied by
+the completed-zeta functional equation. -/
+theorem cubicAFECompletedExtension_neg (t : ℝ) (z : ℂ) :
+    cubicAFECompletedExtension t (-z) =
+      cubicAFECompletedExtension t z := by
+  have hleft :
+      completedRiemannZeta₀ (cubicCriticalPoint t + -z) =
+        completedRiemannZeta₀ (1 - cubicCriticalPoint t + z) := by
+    calc
+      completedRiemannZeta₀ (cubicCriticalPoint t + -z) =
+          completedRiemannZeta₀
+            (1 - (cubicCriticalPoint t + -z)) :=
+        (completedRiemannZeta₀_one_sub _).symm
+      _ = completedRiemannZeta₀ (1 - cubicCriticalPoint t + z) := by
+        congr 1
+        ring
+  have hright :
+      completedRiemannZeta₀ (1 - cubicCriticalPoint t + -z) =
+        completedRiemannZeta₀ (cubicCriticalPoint t + z) := by
+    calc
+      completedRiemannZeta₀ (1 - cubicCriticalPoint t + -z) =
+          completedRiemannZeta₀
+            (1 - (1 - cubicCriticalPoint t + -z)) :=
+        (completedRiemannZeta₀_one_sub _).symm
+      _ = completedRiemannZeta₀ (cubicCriticalPoint t + z) := by
+        congr 1
+        ring
+  unfold cubicAFECompletedExtension
+  dsimp only
+  rw [hleft, hright]
+  simp only [neg_sq]
+  ring
 
 set_option maxRecDepth 10000 in
 /-- Away from the original four poles, the explicit entire extension agrees
@@ -152,6 +191,42 @@ theorem cubicAFEKernelG_at_neg_half (t : ℝ) :
         cubicAFEKernelG t (-(1 / 2 : ℂ)) := by congr 1; ring
     _ = cubicAFEKernelG t (1 / 2 : ℂ) := cubicAFEKernelG_neg t _
     _ = 0 := cubicAFEKernelG_at_half t
+
+/-- The entire numerator has the expected value at the sole remaining pole. -/
+theorem cubicAFECompletedExtension_zero (t : ℝ) :
+    cubicAFECompletedExtension t 0 =
+      completedRiemannZeta (cubicCriticalPoint t) *
+        completedRiemannZeta (1 - cubicCriticalPoint t) := by
+  have hs : cubicCriticalPoint t ≠ 0 := cubicCriticalPoint_ne_zero t
+  have hu : 1 - cubicCriticalPoint t ≠ 0 :=
+    one_sub_cubicCriticalPoint_ne_zero t
+  have hsplus : cubicCriticalPoint t + 0 ≠ 0 := by simpa using hs
+  have husub : 1 - cubicCriticalPoint t - 0 ≠ 0 := by simpa using hu
+  have huplus : 1 - cubicCriticalPoint t + 0 ≠ 0 := by simpa using hu
+  have hssub : cubicCriticalPoint t - 0 ≠ 0 := by simpa using hs
+  simpa [cubicAFEKernelG_zero] using
+    cubicAFECompletedExtension_eq t 0 hsplus husub huplus hssub
+
+/-- In limit form, the residue of the pole-cleared completed integrand at
+`z=0` is exactly `Lambda(s_t)Lambda(1-s_t)`. -/
+theorem cubicAFECompletedIntegrand_residue_zero (t : ℝ) :
+    Tendsto
+      (fun z : ℂ ↦ z * cubicAFECompletedIntegrand t z)
+      (nhdsWithin (0 : ℂ) ({0}ᶜ))
+      (nhds (completedRiemannZeta (cubicCriticalPoint t) *
+        completedRiemannZeta (1 - cubicCriticalPoint t))) := by
+  have hcontinuous : ContinuousAt (cubicAFECompletedExtension t) 0 :=
+    (differentiable_cubicAFECompletedExtension t).continuous.continuousAt
+  have ht : Tendsto (cubicAFECompletedExtension t)
+      (nhdsWithin (0 : ℂ) ({0}ᶜ))
+      (nhds (cubicAFECompletedExtension t 0)) :=
+    hcontinuous.tendsto.mono_left nhdsWithin_le_nhds
+  rw [cubicAFECompletedExtension_zero t] at ht
+  refine ht.congr' ?_
+  filter_upwards [self_mem_nhdsWithin] with z hz
+  have hz0 : z ≠ 0 := by simpa using hz
+  unfold cubicAFECompletedIntegrand
+  field_simp [hz0]
 
 end MWKFCubic
 end PrimeNumberTheorem
