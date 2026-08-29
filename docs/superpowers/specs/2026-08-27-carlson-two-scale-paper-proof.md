@@ -1378,6 +1378,30 @@ come from two unit intervals, not from an interval of length `N`.  The next
 step is the pointwise size bound on the positive support and its integration
 in the four classes of (8.22e'''').
 
+The pointwise size part is now formal as well.  For `u>0`, the same absolute
+constants `C1,C2` give
+
+\[
+ |A(u)|\leq u^{-\sigma},
+\]
+
+\[
+ |A'(u)|\leq 2C_1u^{-\sigma}
+       +|\sigma|u^{-\sigma-1},
+\]
+
+and
+
+\[
+ |A''(u)|\leq (2C_2+2C_1^2)u^{-\sigma}
+       +4C_1|\sigma|u^{-\sigma-1}
+       +|\sigma||\sigma+1|u^{-\sigma-2}.                 \tag{8.22e''''''''''a}
+\]
+
+All three inequalities pass the allowed-axiom audit.  The still-open part of
+this step is integration after inserting the nonstationary lower bound for
+`|F'|`; no pointwise amplitude estimate remains implicit.
+
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
 

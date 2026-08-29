@@ -1,0 +1,11 @@
+import HardyTheorem.AFEExplicitMellinAmplitudeBounds
+
+open HardyTheorem AFE
+
+#check norm_explicitComplexMellinAmplitude_le
+#check norm_explicitComplexMellinAmplitudeDeriv_le
+#check norm_explicitComplexMellinAmplitudeSecondDeriv_le
+
+#print axioms norm_explicitComplexMellinAmplitude_le
+#print axioms norm_explicitComplexMellinAmplitudeDeriv_le
+#print axioms norm_explicitComplexMellinAmplitudeSecondDeriv_le
