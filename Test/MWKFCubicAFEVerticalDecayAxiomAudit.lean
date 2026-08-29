@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.MWKFCubicAFEVerticalDecay
+
+#print axioms PrimeNumberTheorem.MWKFCubic.exists_norm_completedRiemannZeta₀_le_on_reIcc
+#print axioms PrimeNumberTheorem.MWKFCubic.exists_norm_cubicAFECompletedIntegrand_horizontal_le
+#print axioms PrimeNumberTheorem.MWKFCubic.tendsto_cubicAFECompletedIntegrand_horizontalIntegral
+#print axioms PrimeNumberTheorem.MWKFCubic.tendsto_cubicAFECompletedIntegrand_verticalIntegral

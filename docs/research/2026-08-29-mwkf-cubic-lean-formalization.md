@@ -24,6 +24,10 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | exact finite-square contour identity `boundary integral = 2 pi i residue` | `rectangleBoundaryIntegral_cubicAFECompletedIntegrand` |
 | exact finite-height contour identity on every ordered rectangle containing zero, including `[-X,X] x [-V,V]` | `boundaryRectIntegral_cubicAFECompletedIntegrand`, `boundaryRectIntegral_cubicAFECompletedIntegrand_symmetric` |
 | oddness of the completed integrand, exact top/bottom and left/right edge changes of variables, and the normalized finite-height vertical identity | `cubicAFECompletedIntegrand_neg`, `cubicAFECompletedIntegrand_horizontal_symmetry`, `cubicAFECompletedIntegrand_vertical_symmetry`, `cubicAFEFiniteVerticalIdentity` |
+| uniform Mellin-transform bound on every closed vertical strip from endpoint absolute convergence | `exists_norm_mellin_le_on_reIcc` |
+| uniform closed-strip bound for Mathlib's entire completed-zeta numerator | `exists_norm_completedRiemannZeta₀_le_on_reIcc` |
+| explicit degree-six polynomial times Gaussian bound for the physical horizontal AFE edge | `exists_norm_cubicAFECompletedIntegrand_horizontal_le` |
+| vanishing of the horizontal edge and exact infinite-height vertical-line contour limit | `tendsto_cubicAFECompletedIntegrand_horizontalIntegral`, `tendsto_cubicAFECompletedIntegrand_verticalIntegral` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -37,13 +41,14 @@ axioms (`propext`, `Classical.choice`, and `Quot.sound`).
 This PR does **not** yet make the analytic theorem unconditional inside Lean.
 The left side is now the literal full-line integral, rather than an arbitrary
 function `I`, and its two finite mollifier factors have been expanded and
-interchanged with the integral.  The exact AFE/QCT decomposition of each
-twisted moment, reciprocal-LCM main-term
-asymptotic, the infinite-height contour limit (including a uniform vertical-strip
-bound for completed zeta), tail estimates, and especially the cubic MRSTT Mobius
-decorrelation theorem are not available as proved Lean imports.  The final
-facade therefore keeps `hexact`, `hmain`, and `hrem` as theorem hypotheses.
-They are local binders, not global axioms.
+interchanged with the integral.  The completed AFE contour has also been taken
+to infinite height using an explicit physical horizontal-edge majorant.  What
+remains is to divide out the gamma factors and prove the absolutely convergent
+Dirichlet-series AFE/QCT decomposition of each twisted moment, the
+reciprocal-LCM main-term asymptotic, every analytic tail estimate, and especially
+the cubic MRSTT Mobius decorrelation theorem.  The final facade therefore keeps
+`hexact`, `hmain`, and `hrem` as theorem hypotheses.  They are local binders,
+not global axioms.
 
 Consequently the accurate status is:
 
