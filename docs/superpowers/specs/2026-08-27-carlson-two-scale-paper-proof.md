@@ -1425,15 +1425,29 @@ point,
 the derivative identity for `R`, the specialized four-term norm bound, and
 the exact endpoint equalities `Q=R=0`.  Therefore every algebraic,
 differentiability, and boundary hypothesis of the twice-integrated
-nonstationary estimate has an explicit AFE witness.  The only remaining gate
-in this Poisson tail is the numerical integration of the four nonnegative
+nonstationary estimate has an explicit AFE witness.  Lean now also proves
+that `A''`, `F'''`, `Q'`, and `R'` are continuous at every positive
+nonstationary point.  Hence on `1<x<=N`, if `F'` has no zero in
+`[x-1,N+1]`, all interval-integrability hypotheses follow internally and
+the generic identity specializes without any additional analytic premise to
+
+\[
+ \left|\int_{x-1}^{N+1}A(u)e^{i\Psi_k(u)}\,du\right|
+ \leq \int_{x-1}^{N+1}|R'_k(u)|\,du.                       \tag{8.22e'''''''''''''}
+\]
+
+This theorem, including the three integrability deductions and four endpoint
+cancellations, passes the axiom audit with only `propext`,
+`Classical.choice`, and `Quot.sound`.  The only remaining gate in this
+Poisson tail is therefore the numerical integration of the four nonnegative
 majorants and the inverse-square frequency summation.
 
 For the Poisson far tail, the next remaining lemma is therefore explicit:
 instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, use (8.22e') to bound the
 four classes in (8.22e''''), and sum their
 inverse-square-or-better frequency decay.  No unspecified
-second-integration-by-parts principle remains.
+second-integration-by-parts principle, continuity premise, or integrability
+premise remains.
 
 The discrete endpoint bookkeeping is formal.  If `beta>=0`, remove the
 single integer nearest either side of `beta`.  For every `M>=0`, Lean proves
