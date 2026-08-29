@@ -3,6 +3,9 @@ import PrimeNumberTheorem.MWKFCubicAFEMollifierReassembly
 namespace PrimeNumberTheorem.MWKFCubic
 
 #check cubicAFEMollifiedApproximation
+#check cubicAFEMollifiedMomentFinite
+#check cubicAFEMollifiedApproximation_eq_zero_of_not_mem
+#check hasCompactSupport_cubicAFEMollifiedApproximation
 #check cubicAFEMollifierPairApproximation
 #check tendsto_cubicAFEMollifiedApproximation
 #check cubicAFEMollifiedApproximation_eq_pairSum

@@ -1,6 +1,6 @@
 import PrimeNumberTheorem.MWKFCubicAFECombinedPhase
 
-open Complex Filter
+open Complex Filter MeasureTheory Set
 open scoped BigOperators
 
 namespace PrimeNumberTheorem
@@ -20,6 +20,36 @@ noncomputable def cubicAFEMollifiedApproximation
     (Complex.normSq (HardyTheorem.selbergMoebiusMollifier
       (cubicMollifierLength T) (cubicCriticalPoint t)) : ℂ) *
     (W (t / T) : ℂ)
+
+/-- The full-line integral of the finite-height mollified AFE. -/
+noncomputable def cubicAFEMollifiedMomentFinite
+    (W : CubicTestWeight) (T X V : ℝ) : ℂ :=
+  ∫ t : ℝ, cubicAFEMollifiedApproximation W T X V t
+
+theorem cubicAFEMollifiedApproximation_eq_zero_of_not_mem
+    (W : CubicTestWeight) (T X V t : ℝ)
+    (ht : t / T ∉ Icc (1 : ℝ) 2) :
+    cubicAFEMollifiedApproximation W T X V t = 0 := by
+  have hW : W (t / T) = 0 := by
+    by_contra hne
+    exact ht (W.support_subset hne)
+  simp [cubicAFEMollifiedApproximation, hW]
+
+/-- For nonzero scale, every finite-height AFE approximation has compact
+support supplied solely by the physical test weight. -/
+theorem hasCompactSupport_cubicAFEMollifiedApproximation
+    (W : CubicTestWeight) {T : ℝ} (hT : T ≠ 0) (X V : ℝ) :
+    HasCompactSupport (cubicAFEMollifiedApproximation W T X V) := by
+  rw [show cubicAFEMollifiedApproximation W T X V = fun t : ℝ ↦
+      W (t / T) •
+        ((2 * cubicAFEDoubleSumFinite t X V) *
+          (Complex.normSq (HardyTheorem.selbergMoebiusMollifier
+            (cubicMollifierLength T) (cubicCriticalPoint t)) : ℂ)) by
+    funext t
+    unfold cubicAFEMollifiedApproximation
+    rw [Complex.real_smul]
+    ring]
+  exact (W.hasCompactSupport_dilate hT).smul_right
 
 /-- The contribution of one ordered mollifier pair before expanding the AFE
 double Dirichlet series. -/

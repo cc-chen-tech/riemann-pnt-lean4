@@ -45,6 +45,7 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | exact expansion of each ordered mollifier pair into the full combined `p`-sum | `cubicAFEMollifierPairApproximation_eq_tsum` |
 | complete finite-height representation as `sum_d sum_e tsum_p` | `cubicAFEMollifiedApproximation_eq_tripleSum` |
 | itemwise full amplitude/phase and phase-free exact diagonal | `cubicAFECombinedSummandFinite_eq_exp`, `cubicAFECombinedSummandFinite_eq_on_diagonal` |
+| finite-height full-line moment and exact compact physical support | `cubicAFEMollifiedMomentFinite`, `cubicAFEMollifiedApproximation_eq_zero_of_not_mem`, `hasCompactSupport_cubicAFEMollifiedApproximation` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -61,7 +62,8 @@ function `I`, and its two finite mollifier factors have been expanded and
 interchanged with the integral.  The completed AFE contour has also been taken
 to infinite height using an explicit physical horizontal-edge majorant.  What
 remains is to carry the now-combined AFE--mollifier arithmetic factor through
-the twisted-moment integral and QCT decomposition, prove the reciprocal-LCM main-term asymptotic
+the twisted-moment integral (including a uniform integrable majorant for the
+finite-height limit) and QCT decomposition, prove the reciprocal-LCM main-term asymptotic
 and every analytic tail estimate, and especially prove the cubic MRSTT Mobius
 decorrelation theorem.  The final facade therefore keeps
 `hexact`, `hmain`, and `hrem` as theorem hypotheses.  They are local binders,
