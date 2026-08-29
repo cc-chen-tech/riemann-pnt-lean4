@@ -1307,14 +1307,20 @@ condition.  Lean now defines the corresponding second quotient
 \]
 
 the exact four product-rule terms in `Q''`, and the exact quotient-rule
-derivative of `R`.  Algebraically collecting that derivative into the four
-amplitude classes `A''`, `A'F''`, `AF'''`, and `A(F'')^2`, followed by its
-L1 estimates, remains to be proved.
+derivative of `R`.  Lean now also proves the collected identity
+
+\[
+ R'=-\frac{A''}{(F')^2}
+     +\frac{3F''A'}{(F')^3}
+     +\frac{F'''A}{(F')^3}
+     -\frac{3(F'')^2A}{(F')^4}.                              \tag{8.22e''''}
+\]
+
+Thus only the L1 estimates for these four amplitude classes remain.
 
 For the Poisson far tail, the next remaining lemma is therefore explicit:
-instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, collect the already-formal
-`R'` identity into four amplitude classes, use (8.22e') to bound them, and
-sum their
+instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, use (8.22e') to bound the
+four classes in (8.22e''''), and sum their
 inverse-square-or-better frequency decay.  No unspecified
 second-integration-by-parts principle remains.
 

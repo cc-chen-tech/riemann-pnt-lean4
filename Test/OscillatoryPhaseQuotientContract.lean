@@ -14,6 +14,8 @@ open Complex
 #check MathlibAux.oscillatoryPhaseQuotientDerivative_eq_zero
 #check MathlibAux.oscillatorySecondPhaseQuotient
 #check MathlibAux.oscillatorySecondPhaseQuotientDerivative
+#check MathlibAux.oscillatorySecondPhaseQuotientDerivativeCollected
+#check MathlibAux.oscillatorySecondPhaseQuotientDerivative_eq_collected
 #check MathlibAux.oscillatorySecondPhaseQuotient_hasDerivAt
 #check MathlibAux.oscillatorySecondPhaseQuotient_mul_phaseVelocity
 #check MathlibAux.oscillatorySecondPhaseQuotient_eq_zero
@@ -22,6 +24,7 @@ open Complex
 #print axioms MathlibAux.phaseReciprocalDerivative_hasDerivAt
 #print axioms MathlibAux.oscillatoryPhaseQuotientDerivative_hasDerivAt
 #print axioms MathlibAux.oscillatorySecondPhaseQuotient_hasDerivAt
+#print axioms MathlibAux.oscillatorySecondPhaseQuotientDerivative_eq_collected
 #print axioms MathlibAux.oscillatoryPhaseQuotient_differentiableAt
 #print axioms MathlibAux.oscillatoryPhaseQuotient_mul_phaseVelocity
 #print axioms MathlibAux.oscillatoryPhaseQuotient_eq_zero
