@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.MWKFCubicAFEArithmetic
+
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEDirichletTerm_zero_eq_exp
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEDoubleSumFinite_eq_arithmetic
