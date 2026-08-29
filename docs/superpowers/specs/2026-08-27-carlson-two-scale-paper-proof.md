@@ -1413,6 +1413,34 @@ the exact next lemma is a velocity-gap lemma on `[x-1,N+1]`, followed by the
 ordinary integrals of these already explicit nonnegative functions; neither
 amplitude expansion nor quotient algebra remains open.
 
+The velocity-gap lemma is now formal in all three required regions.  For
+`t>=0`, `u>0`, and `k>=0`, Lean proves the exact identity
+
+\[
+ |F'_k(u)|=\frac tu+2\pi k,
+\]
+
+and hence both `t/u` and `2*pi*k` are lower bounds.  For a negative mode
+`k=-m` and `u in [a,b]`, it proves
+
+\[
+ \frac tb-2\pi m\leq |F'_{-m}(u)|
+ \quad\hbox{when }2\pi m\leq\frac tb,
+\]
+
+and
+
+\[
+ 2\pi m-\frac ta\leq |F'_{-m}(u)|
+ \quad\hbox{when }\frac ta\leq2\pi m.                     \tag{8.22e''''''''''b}
+\]
+
+The exact `2*pi` normalization is retained, and all three statements pass
+the allowed-axiom audit.  After the closest endpoint integers are kept in the
+expanded stationary band, the remaining open step is therefore only to turn
+the positive gaps in (8.22e''''''''''b) into reciprocal powers, integrate
+the rpow majorants, and invoke the already proved shifted harmonic sums.
+
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
 
