@@ -1,7 +1,18 @@
-import HardyTheorem.ConreyDegreeOneEta
+import HardyTheorem.ConreyEquation41Global
 
 open Complex Filter
 open HardyTheorem
+
+-- The actual finite critical-line eta-zero ordinates are exactly the positive
+-- ordinates up to T where eta vanishes; auxiliary mollifier parameters do not
+-- enter the resulting membership predicate.
+example {g g0 g1 L T t : ℝ} (hg : g ≠ 0) :
+    t ∈ conreyEtaCriticalZeroOrdinates g g0 g1 L T ↔
+      0 < t ∧ t ≤ T ∧
+        conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) = 0 := by
+  exact mem_conreyEtaCriticalZeroOrdinates hg
+
+#print axioms mem_conreyEtaCriticalZeroOrdinates
 
 -- Mutations caught: the exponent is the actual analytic order `m`, the
 -- vertical displacement is `I * (t - tau)`, and the regular factor stays

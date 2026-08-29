@@ -294,9 +294,41 @@ exponentiate to the actual values of `eta` on the two sides of the zero, and
 \]
 
 Thus Layer 3 is closed without a principal-log branch assumption.  The
-remaining work is the actual finite-divisor construction: enumerate the
-critical-line zeros, build the zero-free component curves and compatible
-endpoint lifts, and instantiate `ArgumentPhasePartition`.  Once instantiated,
-the abstract theorem already injects every uncharged global level into a
-distinct component-tagged nonzero real-part crossing, and the bridge union is
-already bounded by the sum of zero orders even when bridge-level sets overlap.
+remaining work is to order the actual finite divisor, build the zero-free
+component curves and compatible endpoint lifts, and instantiate
+`ArgumentPhasePartition`.  Once instantiated, the abstract theorem already
+injects every uncharged global level into a distinct component-tagged nonzero
+real-part crossing, and the bridge union is already bounded by the sum of zero
+orders even when bridge-level sets overlap.
+
+## 7. The actual finite critical-line divisor
+
+The first global-specialization step no longer uses an abstract list of zeros.
+For fixed `T`, let
+
+\[
+  K_T=\{1/2+it:0\le t\le T\}.
+\]
+
+This is compact.  Since `conreyDegreeOneEta g g0 g1 L` is analytic on a
+neighborhood of `K_T` and is not identically zero when `g != 0`, its analytic
+divisor has finite support on `K_T`.  Filtering to positive imaginary part and
+projecting to ordinates therefore gives an actual finite set
+`conreyEtaCriticalZeroOrdinates`.  Lean proves the exact membership statement
+
+\[
+ t\in Z_\eta(T)
+ \quad\Longleftrightarrow\quad
+ 0<t\le T\ \text{ and }\ \eta(1/2+it)=0.
+\tag{8}
+\]
+
+No mollifier parameter enters this definition or equivalence.  Thus the
+finiteness/enumeration source required by equation (41) is now tied directly
+to the actual degree-one eta function.  What remains is not finiteness but
+structure: sort these ordinates, attach their finite analytic orders, prove
+the complementary intervals are zero-free, choose compatible logarithmic
+lifts on them, and assemble the resulting data into
+`ArgumentPhasePartition`.  Until those steps identify the bridge-order sum
+with the intended critical-line zero count, equation (41) and the two-fifths
+conclusion remain open.
