@@ -1299,12 +1299,22 @@ as well as `Q(iF')=A`; it also proves that `A=0` implies `Q=0`, so the
 first endpoint condition follows directly from the cutoff endpoint
 condition.  Lean now defines the corresponding second quotient
 `R=Q'/(iF')`, proves `R(iF')=Q'`, and proves the sharp endpoint implication
-`A=A'=0 -> R=0`.  The derivative formula and L1 estimates for `R'` remain
-to be proved.
+`A=A'=0 -> R=0`.  It also proves
+
+\[
+ \left(-\frac{F''}{(F')^2}\right)'
+ =-\frac{F'''}{(F')^2}+\frac{2(F'')^2}{(F')^3},
+\]
+
+the exact four product-rule terms in `Q''`, and the exact quotient-rule
+derivative of `R`.  Algebraically collecting that derivative into the four
+amplitude classes `A''`, `A'F''`, `AF'''`, and `A(F'')^2`, followed by its
+L1 estimates, remains to be proved.
 
 For the Poisson far tail, the next remaining lemma is therefore explicit:
-instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, calculate `R'`, use
-(8.22e') to bound its four terms, and sum their
+instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, collect the already-formal
+`R'` identity into four amplitude classes, use (8.22e') to bound them, and
+sum their
 inverse-square-or-better frequency decay.  No unspecified
 second-integration-by-parts principle remains.
 

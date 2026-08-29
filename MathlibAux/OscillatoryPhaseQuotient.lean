@@ -25,6 +25,29 @@ noncomputable def oscillatoryPhaseQuotientDerivative
   (((v⁻¹ x : ℝ) : ℂ) * ((-I) * A' x) +
     ((-v' x / (v x) ^ 2 : ℝ) : ℂ) * ((-I) * A x))
 
+/-- Derivative of the real coefficient `-v'/v^2` which occurs in the
+first quotient derivative. -/
+theorem phaseReciprocalDerivative_hasDerivAt
+    {v v' v'' : ℝ → ℝ} {x : ℝ}
+    (hv : HasDerivAt v (v' x) x) (hv' : HasDerivAt v' (v'' x) x)
+    (hv0 : v x ≠ 0) :
+    HasDerivAt (fun y => -v' y / (v y) ^ 2)
+      (-v'' x / (v x) ^ 2 + 2 * (v' x) ^ 2 / (v x) ^ 3) x := by
+  convert hv'.neg.div (hv.pow 2) (pow_ne_zero 2 hv0) using 1 <;> try rfl
+  simp only [Pi.pow_apply, Pi.neg_apply, pow_two]
+  field_simp [hv0]
+  ring
+
+/-- The exact four product-rule terms in the derivative of
+`oscillatoryPhaseQuotientDerivative`. -/
+noncomputable def oscillatoryPhaseQuotientSecondDerivative
+    (A A' A'' : ℝ → ℂ) (v v' v'' : ℝ → ℝ) (x : ℝ) : ℂ :=
+  ((((-v' x / (v x) ^ 2 : ℝ) : ℂ) * ((-I) * A' x) +
+      (((v⁻¹ x : ℝ) : ℂ) * ((-I) * A'' x))) +
+    (((-v'' x / (v x) ^ 2 + 2 * (v' x) ^ 2 / (v x) ^ 3 : ℝ) : ℂ) *
+        ((-I) * A x) +
+      (((-v' x / (v x) ^ 2 : ℝ) : ℂ) * ((-I) * A' x))))
+
 /-- Exact quotient-rule derivative for the first oscillatory quotient. -/
 theorem oscillatoryPhaseQuotient_hasDerivAt
     {A A' : ℝ → ℂ} {v v' : ℝ → ℝ} {x : ℝ}
@@ -44,6 +67,27 @@ theorem oscillatoryPhaseQuotient_differentiableAt
     (hv0 : v x ≠ 0) :
     DifferentiableAt ℝ (oscillatoryPhaseQuotient A v) x :=
   (oscillatoryPhaseQuotient_hasDerivAt hA hv hv0).differentiableAt
+
+/-- Exact second derivative of the first quotient, retaining its four
+product-rule terms for later termwise bounds. -/
+theorem oscillatoryPhaseQuotientDerivative_hasDerivAt
+    {A A' A'' : ℝ → ℂ} {v v' v'' : ℝ → ℝ} {x : ℝ}
+    (hA : HasDerivAt A (A' x) x) (hA' : HasDerivAt A' (A'' x) x)
+    (hv : HasDerivAt v (v' x) x) (hv' : HasDerivAt v' (v'' x) x)
+    (hv0 : v x ≠ 0) :
+    HasDerivAt (oscillatoryPhaseQuotientDerivative A A' v v')
+      (oscillatoryPhaseQuotientSecondDerivative A A' A'' v v' v'' x) x := by
+  have hc : HasDerivAt (fun y : ℝ => ((v⁻¹ y : ℝ) : ℂ))
+      ((-v' x / (v x) ^ 2 : ℝ) : ℂ) x := by
+    simpa using! (hv.inv hv0).ofReal_comp
+  have hd := (phaseReciprocalDerivative_hasDerivAt hv hv' hv0).ofReal_comp
+  have hB : HasDerivAt (fun y : ℝ => (-I) * A y) ((-I) * A' x) x :=
+    hA.const_mul (-I)
+  have hB' : HasDerivAt (fun y : ℝ => (-I) * A' y) ((-I) * A'' x) x :=
+    hA'.const_mul (-I)
+  simpa only [oscillatoryPhaseQuotientDerivative,
+    oscillatoryPhaseQuotientSecondDerivative, Pi.mul_apply, Pi.add_apply] using!
+    (hc.mul hB').add (hd.mul hB)
 
 /-- The real-scalar representation is exactly division by `i v`: multiplying
 the quotient back by the phase velocity recovers the amplitude. -/
@@ -78,6 +122,23 @@ parts: `R=Q'/(i v)`. -/
 noncomputable def oscillatorySecondPhaseQuotient
     (A A' : ℝ → ℂ) (v v' : ℝ → ℝ) (x : ℝ) : ℂ :=
   oscillatoryPhaseQuotient (oscillatoryPhaseQuotientDerivative A A' v v') v x
+
+/-- The exact derivative amplitude of the second quotient. -/
+noncomputable def oscillatorySecondPhaseQuotientDerivative
+    (A A' A'' : ℝ → ℂ) (v v' v'' : ℝ → ℝ) (x : ℝ) : ℂ :=
+  oscillatoryPhaseQuotientDerivative
+    (oscillatoryPhaseQuotientDerivative A A' v v')
+    (oscillatoryPhaseQuotientSecondDerivative A A' A'' v v' v'') v v' x
+
+theorem oscillatorySecondPhaseQuotient_hasDerivAt
+    {A A' A'' : ℝ → ℂ} {v v' v'' : ℝ → ℝ} {x : ℝ}
+    (hA : HasDerivAt A (A' x) x) (hA' : HasDerivAt A' (A'' x) x)
+    (hv : HasDerivAt v (v' x) x) (hv' : HasDerivAt v' (v'' x) x)
+    (hv0 : v x ≠ 0) :
+    HasDerivAt (oscillatorySecondPhaseQuotient A A' v v')
+      (oscillatorySecondPhaseQuotientDerivative A A' A'' v v' v'' x) x := by
+  exact oscillatoryPhaseQuotient_hasDerivAt
+    (oscillatoryPhaseQuotientDerivative_hasDerivAt hA hA' hv hv' hv0) hv hv0
 
 theorem oscillatorySecondPhaseQuotient_mul_phaseVelocity
     {A A' : ℝ → ℂ} {v v' : ℝ → ℝ} {x : ℝ}
