@@ -44,3 +44,16 @@ example (m : ℕ) (r : ℝ) :
   exact verticalPowerRightLog_im_sub_left m r
 
 #print axioms verticalPowerRightLog_im_sub_left
+
+-- A nonvanishing continuous complex curve on a real open interval admits one
+-- continuous logarithm across the entire interval, even when the principal
+-- logarithm would cross its branch cut.
+example {g : ℝ → ℂ} {a b : ℝ} (hab : a < b)
+    (hg : ContinuousOn g (Set.Ioo a b))
+    (hne : ∀ x ∈ Set.Ioo a b, g x ≠ 0) :
+    ∃ ell : ℝ → ℂ,
+      ContinuousOn ell (Set.Ioo a b) ∧
+      ∀ x ∈ Set.Ioo a b, Complex.exp (ell x) = g x := by
+  exact exists_continuousLogOn_Ioo hab hg hne
+
+#print axioms exists_continuousLogOn_Ioo

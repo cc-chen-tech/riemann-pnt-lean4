@@ -199,3 +199,24 @@ The singular-power part of that statement is now exact.  The definitions
 The common `m*log r` term cancels in (7).  It remains to add the same local
 continuous logarithm of the regular factor `h` to both sides and connect the
 resulting component lifts to the global path.
+
+The regular-factor logarithm is now constructed without choosing the
+principal branch.  First, `exists_continuousLogOn_Ioo` proves that every
+nonvanishing continuous complex curve on a real open interval has a continuous
+lift `ell` through `Complex.exp`; the proof uses convexity of the interval,
+contractibility, simple connectedness, and the exponential covering map.
+
+The actual specialization
+`exists_conreyDegreeOneEta_regularFactor_continuousLog` then shrinks the
+analytic/nonzero neighborhood of `h` to a symmetric interval
+`(tau-delta,tau+delta)` and supplies
+
+\[
+  e^{\ell(t)}=h(1/2+it)
+\]
+
+throughout that interval.  Consequently the local branch-cut problem is
+closed.  The next assembly step must shrink once more so that the order
+factorization (6) holds pointwise on the same interval, add `ell` to the two
+explicit singular-power logarithms, and prove that their exponentials are the
+actual left and right restrictions of `eta`.

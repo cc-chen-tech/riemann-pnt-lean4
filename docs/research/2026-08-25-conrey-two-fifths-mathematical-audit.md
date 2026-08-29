@@ -1989,3 +1989,13 @@ phase jump is closed.  What remains locally is to construct one continuous
 logarithm of the nonvanishing regular factor `h` across the zero and add it to
 both explicit power logarithms; the global component attribution is still
 downstream.
+
+That regular-factor logarithm is now constructed.  The generic theorem
+`exists_continuousLogOn_Ioo` uses the exponential covering map on a simply
+connected real interval, so it remains valid when the principal logarithm
+would cross its branch cut.  Its actual `eta` specialization produces
+`delta>0` and one continuous `ell` on `(tau-delta,tau+delta)` with
+`exp (ell t)=h(1/2+it)` everywhere.  The remaining local assembly is to place
+the order factorization on the same shrunken interval and add `ell` to the two
+explicit power logarithms; global reconciliation and level attribution are
+still open.

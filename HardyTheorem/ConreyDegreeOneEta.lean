@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.RiemannVonMangoldt.CompletedZetaSymmetry
+import MathlibAux.ArgumentCrossing
 
 open Complex Filter
 open scoped ComplexConjugate
@@ -167,6 +168,70 @@ theorem exists_conreyDegreeOneEta_vertical_order_factor
       apply Complex.ext <;> simp [conreyCriticalPoint]
     simpa [hdisplacement] using ht
   exact ⟨h, hhanalytic, hhne, hhneReal, hfactorReal⟩
+
+/-- The regular factor at a finite-order critical-line zero admits one
+continuous logarithm on a symmetric interval across the zero.  The logarithm
+is obtained from the exponential covering map and therefore has no principal
+branch-cut assumption. -/
+theorem exists_conreyDegreeOneEta_regularFactor_continuousLog
+    {g g0 g1 L tau : ℝ} {m : ℕ}
+    (horder :
+      analyticOrderAt (conreyDegreeOneEta g g0 g1 L)
+        (conreyCriticalPoint tau) = m) :
+    ∃ h : ℂ → ℂ, ∃ delta : ℝ, ∃ ell : ℝ → ℂ,
+      0 < delta ∧
+      AnalyticAt ℂ h (conreyCriticalPoint tau) ∧
+      h (conreyCriticalPoint tau) ≠ 0 ∧
+      ContinuousOn ell (Set.Ioo (tau - delta) (tau + delta)) ∧
+      (∀ t ∈ Set.Ioo (tau - delta) (tau + delta),
+        Complex.exp (ell t) = h (conreyCriticalPoint t)) ∧
+      (∀ᶠ t in nhds tau,
+        conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) =
+          (I * ((t - tau : ℝ) : ℂ)) ^ m *
+            h (conreyCriticalPoint t)) := by
+  rcases exists_conreyDegreeOneEta_vertical_order_factor horder with
+    ⟨h, hhanalytic, hhne, hhneReal, hfactorReal⟩
+  have hcriticalContinuous : Continuous conreyCriticalPoint := by
+    unfold conreyCriticalPoint
+    fun_prop
+  have hcriticalTendsto :
+      Tendsto conreyCriticalPoint (nhds tau)
+        (nhds (conreyCriticalPoint tau)) :=
+    hcriticalContinuous.continuousAt
+  have hhanalyticReal :
+      ∀ᶠ t in nhds tau, AnalyticAt ℂ h (conreyCriticalPoint t) :=
+    hcriticalTendsto.eventually hhanalytic.eventually_analyticAt
+  have hgood :
+      ∀ᶠ t in nhds tau,
+        AnalyticAt ℂ h (conreyCriticalPoint t) ∧
+          h (conreyCriticalPoint t) ≠ 0 :=
+    hhanalyticReal.and hhneReal
+  rcases Metric.mem_nhds_iff.mp hgood with ⟨epsilon, hepsilon, hball⟩
+  let delta := epsilon / 2
+  have hdelta : 0 < delta := by dsimp [delta]; positivity
+  have hintervalGood : ∀ t ∈ Set.Ioo (tau - delta) (tau + delta),
+      AnalyticAt ℂ h (conreyCriticalPoint t) ∧
+        h (conreyCriticalPoint t) ≠ 0 := by
+    intro t ht
+    apply hball
+    rcases ht with ⟨htLower, htUpper⟩
+    rw [Metric.mem_ball, Real.dist_eq, abs_lt]
+    dsimp [delta] at htLower htUpper ⊢
+    constructor <;> linarith
+  have hregularContinuous :
+      ContinuousOn (fun t => h (conreyCriticalPoint t))
+        (Set.Ioo (tau - delta) (tau + delta)) := by
+    intro t ht
+    exact ((hintervalGood t ht).1.continuousAt.comp
+      hcriticalContinuous.continuousAt).continuousWithinAt
+  have hregularNe : ∀ t ∈ Set.Ioo (tau - delta) (tau + delta),
+      h (conreyCriticalPoint t) ≠ 0 := fun t ht => (hintervalGood t ht).2
+  rcases MathlibAux.exists_continuousLogOn_Ioo
+      (show tau - delta < tau + delta by linarith)
+      hregularContinuous hregularNe with
+    ⟨ell, hellContinuous, hellExp⟩
+  exact ⟨h, delta, ell, hdelta, hhanalytic, hhne,
+    hellContinuous, hellExp, hfactorReal⟩
 
 /-- On the critical line, the real part of Conrey's degree-one `eta` is
 exactly the leading real coefficient times `xi`. -/

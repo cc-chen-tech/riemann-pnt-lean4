@@ -1,4 +1,6 @@
 import Mathlib.Analysis.Complex.CoveringMap
+import Mathlib.Analysis.Complex.BranchLogRoot
+import Mathlib.Analysis.Convex.Contractible
 import Mathlib.Order.Interval.Finset.Floor
 import Mathlib.Topology.Homotopy.Lifting
 import Mathlib.Topology.Order.IntermediateValue
@@ -21,6 +23,28 @@ separate subtraction step represented by `N_{0,η}` in Conrey's argument.
 open Complex Set Topology
 
 namespace MathlibAux
+
+/-- A nonvanishing continuous complex-valued curve on a real open interval
+admits one continuous logarithm on the whole interval.  This uses the covering
+map `exp : ℂ → ℂˣ`; it does not impose the principal logarithm's branch cut. -/
+theorem exists_continuousLogOn_Ioo {g : ℝ → ℂ} {a b : ℝ} (hab : a < b)
+    (hg : ContinuousOn g (Ioo a b))
+    (hne : ∀ x ∈ Ioo a b, g x ≠ 0) :
+    ∃ ell : ℝ → ℂ,
+      ContinuousOn ell (Ioo a b) ∧
+      ∀ x ∈ Ioo a b, Complex.exp (ell x) = g x := by
+  have hnonempty : (Ioo a b).Nonempty := nonempty_Ioo.mpr hab
+  have hcontract : ContractibleSpace (Ioo a b) :=
+    (convex_Ioo a b).contractibleSpace hnonempty
+  have hsimply : IsSimplyConnected (Ioo a b) := by
+    change SimplyConnectedSpace (Ioo a b)
+    exact @SimplyConnectedSpace.ofContractible (Ioo a b) inferInstance hcontract
+  have hzero : 0 ∉ g '' Ioo a b := by
+    rintro ⟨x, hx, hgx⟩
+    exact hne x hx hgx
+  rcases Complex.exists_continuousOn_eqOn_exp_comp
+      hsimply isOpen_Ioo hg hzero with ⟨ell, hellContinuous, hellExp⟩
+  exact ⟨ell, hellContinuous, fun x hx => by simpa using hellExp hx⟩
 
 private noncomputable def nonzeroCurve (gamma : C(unitInterval, ℂ)) (hne : ∀ t, gamma t ≠ 0) :
     C(unitInterval, {z : ℂ // z ≠ 0}) :=
