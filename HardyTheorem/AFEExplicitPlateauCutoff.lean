@@ -152,6 +152,97 @@ theorem secondDeriv_smoothTransition_eq_zero_of_one_le {u : ℝ} (hu : 1 ≤ u) 
     exact Real.smoothTransition.monotone.deriv_nonneg
   exact hmin.deriv_eq_zero
 
+theorem explicitIntervalPlateauDeriv_eq_zero_of_le {x N u : ℝ}
+    (hu : u ≤ x - 1) :
+    explicitIntervalPlateauDeriv x N u = 0 := by
+  have harg : u - (x - 1) ≤ 0 := by linarith
+  rw [explicitIntervalPlateauDeriv,
+    Real.smoothTransition.zero_of_nonpos harg,
+    deriv_smoothTransition_eq_zero_of_nonpos harg]
+  ring
+
+theorem explicitIntervalPlateauDeriv_eq_zero_of_ge {x N u : ℝ}
+    (hu : N + 1 ≤ u) :
+    explicitIntervalPlateauDeriv x N u = 0 := by
+  have harg : (N + 1) - u ≤ 0 := by linarith
+  rw [explicitIntervalPlateauDeriv,
+    Real.smoothTransition.zero_of_nonpos harg,
+    deriv_smoothTransition_eq_zero_of_nonpos harg]
+  ring
+
+theorem explicitIntervalPlateauDeriv_eq_zero_of_mem_Icc
+    {x N u : ℝ} (hu : u ∈ Icc x N) :
+    explicitIntervalPlateauDeriv x N u = 0 := by
+  have hL : 1 ≤ u - (x - 1) := by linarith [hu.1]
+  have hR : 1 ≤ (N + 1) - u := by linarith [hu.2]
+  rw [explicitIntervalPlateauDeriv,
+    deriv_smoothTransition_eq_zero_of_one_le hL,
+    deriv_smoothTransition_eq_zero_of_one_le hR]
+  ring
+
+theorem explicitIntervalPlateauSecondDeriv_eq_zero_of_le {x N u : ℝ}
+    (hu : u ≤ x - 1) :
+    explicitIntervalPlateauSecondDeriv x N u = 0 := by
+  have harg : u - (x - 1) ≤ 0 := by linarith
+  rw [explicitIntervalPlateauSecondDeriv,
+    Real.smoothTransition.zero_of_nonpos harg,
+    deriv_smoothTransition_eq_zero_of_nonpos harg,
+    secondDeriv_smoothTransition_eq_zero_of_nonpos harg]
+  ring
+
+theorem explicitIntervalPlateauSecondDeriv_eq_zero_of_ge {x N u : ℝ}
+    (hu : N + 1 ≤ u) :
+    explicitIntervalPlateauSecondDeriv x N u = 0 := by
+  have harg : (N + 1) - u ≤ 0 := by linarith
+  rw [explicitIntervalPlateauSecondDeriv,
+    Real.smoothTransition.zero_of_nonpos harg,
+    deriv_smoothTransition_eq_zero_of_nonpos harg,
+    secondDeriv_smoothTransition_eq_zero_of_nonpos harg]
+  ring
+
+theorem explicitIntervalPlateauSecondDeriv_eq_zero_of_mem_Icc
+    {x N u : ℝ} (hu : u ∈ Icc x N) :
+    explicitIntervalPlateauSecondDeriv x N u = 0 := by
+  have hL : 1 ≤ u - (x - 1) := by linarith [hu.1]
+  have hR : 1 ≤ (N + 1) - u := by linarith [hu.2]
+  rw [explicitIntervalPlateauSecondDeriv,
+    deriv_smoothTransition_eq_zero_of_one_le hL,
+    deriv_smoothTransition_eq_zero_of_one_le hR,
+    secondDeriv_smoothTransition_eq_zero_of_one_le hL,
+    secondDeriv_smoothTransition_eq_zero_of_one_le hR]
+  ring
+
+/-- The first derivative is supported in the two unit transition strips. -/
+theorem explicitIntervalPlateauDeriv_eq_zero_of_not_mem_transitions
+    {x N u : ℝ}
+    (hu : u ∉ Icc (x - 1) x ∪ Icc N (N + 1)) :
+    explicitIntervalPlateauDeriv x N u = 0 := by
+  rw [mem_union, not_or] at hu
+  by_cases hleft : u ≤ x - 1
+  · exact explicitIntervalPlateauDeriv_eq_zero_of_le hleft
+  by_cases hright : N + 1 ≤ u
+  · exact explicitIntervalPlateauDeriv_eq_zero_of_ge hright
+  apply explicitIntervalPlateauDeriv_eq_zero_of_mem_Icc
+  constructor
+  · exact le_of_not_ge fun hux => hu.1 ⟨le_of_lt (lt_of_not_ge hleft), hux⟩
+  · exact le_of_not_ge fun hNu => hu.2 ⟨hNu, le_of_lt (lt_of_not_ge hright)⟩
+
+/-- The second derivative is supported in the same two unit transition
+strips. -/
+theorem explicitIntervalPlateauSecondDeriv_eq_zero_of_not_mem_transitions
+    {x N u : ℝ}
+    (hu : u ∉ Icc (x - 1) x ∪ Icc N (N + 1)) :
+    explicitIntervalPlateauSecondDeriv x N u = 0 := by
+  rw [mem_union, not_or] at hu
+  by_cases hleft : u ≤ x - 1
+  · exact explicitIntervalPlateauSecondDeriv_eq_zero_of_le hleft
+  by_cases hright : N + 1 ≤ u
+  · exact explicitIntervalPlateauSecondDeriv_eq_zero_of_ge hright
+  apply explicitIntervalPlateauSecondDeriv_eq_zero_of_mem_Icc
+  constructor
+  · exact le_of_not_ge fun hux => hu.1 ⟨le_of_lt (lt_of_not_ge hleft), hux⟩
+  · exact le_of_not_ge fun hNu => hu.2 ⟨hNu, le_of_lt (lt_of_not_ge hright)⟩
+
 theorem deriv_smoothTransition_hasCompactSupport :
     HasCompactSupport (deriv Real.smoothTransition) := by
   apply HasCompactSupport.intro (isCompact_Icc : IsCompact (Icc (0 : ℝ) 1))

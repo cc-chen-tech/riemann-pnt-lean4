@@ -1367,8 +1367,16 @@ and
 \]
 
 Both real and complex-embedded `HasDerivAt` statements pass the axiom audit.
-The next step is the pointwise size bound on the positive support and its
-integration in the four classes of (8.22e'''').
+Lean also proves that `w'` and `w''` vanish identically off
+
+\[
+ [x-1,x]\cup[N,N+1],                                      \tag{8.22e'''''''''}
+\]
+
+including vanishing throughout the plateau `[x,N]`.  Hence their L1 costs
+come from two unit intervals, not from an interval of length `N`.  The next
+step is the pointwise size bound on the positive support and its integration
+in the four classes of (8.22e'''').
 
 For the Poisson far tail, the next remaining lemma is therefore explicit:
 instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, use (8.22e') to bound the
