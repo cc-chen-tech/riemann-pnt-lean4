@@ -1402,6 +1402,17 @@ All three inequalities pass the allowed-axiom audit.  The still-open part of
 this step is integration after inserting the nonstationary lower bound for
 `|F'|`; no pointwise amplitude estimate remains implicit.
 
+Lean now composes these three bounds with the exact four-term estimate for
+`R'`.  The resulting theorem is precisely the sum of the `|F'|^{-2}` term
+times (8.22e''''''''''a), the `3|F''||F'|^{-3}` term times the `A'` bound,
+and the two `A` terms with coefficients `|F'''||F'|^{-3}` and
+`3|F''|^2|F'|^{-4}`.  Every multiplier is kept under an absolute value, so
+the composition uses only monotonicity of multiplication by a nonnegative
+number.  This combined majorant also passes the allowed-axiom audit.  Thus
+the exact next lemma is a velocity-gap lemma on `[x-1,N+1]`, followed by the
+ordinary integrals of these already explicit nonnegative functions; neither
+amplitude expansion nor quotient algebra remains open.
+
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
 

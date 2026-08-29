@@ -2552,6 +2552,8 @@ lean_lib RiemannPNT where
     `HardyTheorem.AFEExplicitPoissonQuotient,
     `HardyTheorem.AFEExplicitPoissonSecondIBP,
     `Test.AFEExplicitPoissonSecondIBPContract,
+    `HardyTheorem.AFEExplicitPoissonRemainderBound,
+    `Test.AFEExplicitPoissonRemainderBoundContract,
     `MathlibAux.IntervalOscillatoryIntegrationByPartsAxiomAudit,
     `Test.IntervalOscillatoryIntegrationByPartsContract,
     `HardyTheorem.SelbergLagDyadicGeometry,
