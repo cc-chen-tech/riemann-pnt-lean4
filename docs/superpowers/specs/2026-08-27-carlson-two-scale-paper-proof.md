@@ -1441,6 +1441,25 @@ expanded stationary band, the remaining open step is therefore only to turn
 the positive gaps in (8.22e''''''''''b) into reciprocal powers, integrate
 the rpow majorants, and invoke the already proved shifted harmonic sums.
 
+The reciprocal-power conversion is now formal for every natural `n`:
+
+\[
+ 0<g\leq |v|\quad\Longrightarrow\quad
+ \left|\frac{c}{v^n}\right|\leq\frac{|c|}{g^n}.           \tag{8.22e''''''''''c}
+\]
+
+Lean also fixes the numerator normalization (for `t>=0`, `u>0`)
+
+\[
+ |F''(u)|=\frac{t}{u^2},\qquad
+ |F'''(u)|=\frac{2t}{u^3}.                                \tag{8.22e''''''''''d}
+\]
+
+Both statements pass the allowed-axiom audit.  Consequently the only
+remaining part of this far-tail estimate is the interval integration of the
+resulting rpow monomials and the finite/infinite frequency summation; the
+passage from endpoint gap to denominator powers is no longer an open premise.
+
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
 

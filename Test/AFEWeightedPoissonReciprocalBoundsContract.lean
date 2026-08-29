@@ -1,0 +1,11 @@
+import HardyTheorem.AFEWeightedPoissonReciprocalBounds
+
+open HardyTheorem AFE
+
+#check abs_div_pow_le_div_gap_pow
+#check abs_weightedPoissonVelocityDeriv
+#check abs_weightedPoissonVelocitySecondDeriv
+
+#print axioms abs_div_pow_le_div_gap_pow
+#print axioms abs_weightedPoissonVelocityDeriv
+#print axioms abs_weightedPoissonVelocitySecondDeriv

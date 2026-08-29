@@ -2551,6 +2551,8 @@ lean_lib RiemannPNT where
     `HardyTheorem.AFEWeightedPoissonVelocity,
     `HardyTheorem.AFEWeightedPoissonVelocityBounds,
     `Test.AFEWeightedPoissonVelocityBoundsContract,
+    `HardyTheorem.AFEWeightedPoissonReciprocalBounds,
+    `Test.AFEWeightedPoissonReciprocalBoundsContract,
     `HardyTheorem.AFEExplicitPoissonQuotient,
     `HardyTheorem.AFEExplicitPoissonSecondIBP,
     `Test.AFEExplicitPoissonSecondIBPContract,
