@@ -21,6 +21,7 @@ separate subtraction step represented by `N_{0,η}` in Conrey's argument.
 -/
 
 open Complex Set Topology
+open scoped BigOperators
 
 namespace MathlibAux
 
@@ -139,6 +140,26 @@ theorem argumentCrossingBridgeIndices_card (alpha : ℝ) (m : ℕ) :
   rw [argumentCrossingBridgeIndices, show
     ⌈(alpha - Real.pi / 2) / Real.pi⌉ = ⌈x⌉ by rfl, hceil]
   exact_mod_cast hcardInt
+
+/-- The union of finitely many local phase bridges contains at most the sum
+of their multiplicities.  No disjointness hypothesis is needed: overlaps can
+only reduce the number of globally deleted argument levels. -/
+theorem card_biUnion_argumentCrossingBridgeIndices_le
+    {ι : Type*} [DecidableEq ι] (zeros : Finset ι)
+    (alpha : ι → ℝ) (multiplicity : ι → ℕ) :
+    (zeros.biUnion fun i =>
+      argumentCrossingBridgeIndices (alpha i) (multiplicity i)).card ≤
+      ∑ i ∈ zeros, multiplicity i := by
+  calc
+    (zeros.biUnion fun i =>
+        argumentCrossingBridgeIndices (alpha i) (multiplicity i)).card ≤
+        ∑ i ∈ zeros,
+          (argumentCrossingBridgeIndices (alpha i) (multiplicity i)).card :=
+      Finset.card_biUnion_le
+    _ = ∑ i ∈ zeros, multiplicity i := by
+      apply Finset.sum_congr rfl
+      intro i hi
+      exact argumentCrossingBridgeIndices_card (alpha i) (multiplicity i)
 
 /-- An explicit logarithm of the vertical order-`m` factor on the left of a
 zero, where `I * (t - tau) = -I * r` with `r > 0`. -/
@@ -282,6 +303,30 @@ theorem argumentCrossingIndices_sdiff_card_lower_bound
       ((argumentCrossingIndices alpha beta).card : ℝ) ≤
         (((argumentCrossingIndices alpha beta) \ bad).card : ℝ) + bad.card := by
     exact_mod_cast hcardNat
+  linarith
+
+/-- Deleting all levels swallowed by finitely many local zero bridges costs at
+most the sum of their orders, while retaining the single global endpoint loss.
+This is the finite multiplicity-accounting layer of Conrey equation (41). -/
+theorem argumentCrossingIndices_sdiff_bridgeUnion_card_lower_bound
+    {ι : Type*} [DecidableEq ι] {alpha beta : ℝ}
+    (zeros : Finset ι) (bridgeStart : ι → ℝ)
+    (multiplicity : ι → ℕ) :
+    (beta - alpha) / Real.pi - 1 - (∑ i ∈ zeros, multiplicity i) ≤
+      ((argumentCrossingIndices alpha beta) \
+        (zeros.biUnion fun i =>
+          argumentCrossingBridgeIndices (bridgeStart i) (multiplicity i))).card := by
+  let bad : Finset ℤ := zeros.biUnion fun i =>
+    argumentCrossingBridgeIndices (bridgeStart i) (multiplicity i)
+  have hdeleted := argumentCrossingIndices_sdiff_card_lower_bound
+    (alpha := alpha) (beta := beta) bad
+  have hbadNat : bad.card ≤ ∑ i ∈ zeros, multiplicity i := by
+    dsimp [bad]
+    exact card_biUnion_argumentCrossingBridgeIndices_le
+      zeros bridgeStart multiplicity
+  have hbadReal : (bad.card : ℝ) ≤ (∑ i ∈ zeros, multiplicity i : ℕ) := by
+    exact_mod_cast hbadNat
+  dsimp [bad] at hdeleted ⊢
   linarith
 
 theorem exists_argumentCrossing_of_level_mem_Icc

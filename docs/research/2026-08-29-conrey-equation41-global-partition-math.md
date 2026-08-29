@@ -148,10 +148,15 @@ Layers 1 and 2 are now formalized in `MathlibAux/ArgumentCrossing.lean` as
 `argumentCrossingBridgeIndices_card`.  Layer 3 is now formalized for the
 actual `eta` by the vertical order factorization, the continuous logarithm of
 its regular factor, and `exists_conreyDegreeOneEta_local_argument_bridge`.
-Layer 4--the disjoint global attribution across every zero in the finite
-height interval--remains the actual equation-(41) gate.  No equation-(41) or
-Conrey simple-zero proportion claim should be made before that layer is
-connected to the actual `eta`.
+The finite cardinality part of Layer 4 is also exact:
+`card_biUnion_argumentCrossingBridgeIndices_le` shows that the union of all
+local bridge-level sets costs at most the sum of their multiplicities, without
+requiring the bridges to be disjoint, and
+`argumentCrossingIndices_sdiff_bridgeUnion_card_lower_bound` preserves the
+single global endpoint loss after deleting this union.  The analytic global
+attribution across every zero in the finite height interval remains the actual
+equation-(41) gate.  No equation-(41) or Conrey simple-zero proportion claim
+should be made before that attribution is connected to the actual `eta`.
 
 ## 6. Analytic-order specialization on the critical line
 
@@ -239,5 +244,7 @@ exponentiate to the actual values of `eta` on the two sides of the zero, and
 Thus Layer 3 is closed without a principal-log branch assumption.  The
 remaining work is genuinely global: enumerate the finitely many critical-line
 zeros, align the component lifts with these local bridges, charge bridge
-levels with total cost at most the sum of their orders, and inject every
-uncharged global level into a distinct nonzero real-part crossing.
+levels to their bridge union, and inject every uncharged global level into a
+distinct nonzero real-part crossing.  The bridge union itself is already known
+to have cardinality at most the sum of the zero orders, even if different
+bridges contain the same half-odd-integer level.
