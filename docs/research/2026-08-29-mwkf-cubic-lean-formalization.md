@@ -31,6 +31,9 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | critical-line conjugation, nonvanishing fixed gamma product, and exact conversion from the completed product to `normSq zeta` | `one_sub_cubicCriticalPoint_eq_conj`, `cubicAFEGammaProduct_zero_ne`, `completedRiemannZeta_product_eq_gamma_mul_normSq` |
 | absolute summability of the physical `(m,n)` Dirichlet family for `re z > 1/2` | `summable_norm_cubicAFEDirichletTerm` |
 | exact completed-zeta double Dirichlet expansion and its pointwise normalized AFE-integrand form | `completedRiemannZeta_shifted_product_eq_tsum`, `cubicAFECompletedIntegrand_div_gamma_eq_tsum` |
+| continuity of the full physical AFE scalar and invariance of each Dirichlet-term norm along a vertical line | `continuous_cubicAFEScalar_vertical`, `norm_cubicAFEDirichletTerm_vertical_eq` |
+| exact finite-height interchange of the double Dirichlet series and vertical integral by dominated convergence | `hasSum_intervalIntegral_cubicAFENormalizedDirichletTerm` |
+| kernel-checked finite-height AFE whose normalized double sum converges to `normSq zeta(1/2+it)` | `cubicAFEDoubleSumFinite_eq`, `tendsto_two_mul_cubicAFEDoubleSumFinite` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -46,11 +49,11 @@ The left side is now the literal full-line integral, rather than an arbitrary
 function `I`, and its two finite mollifier factors have been expanded and
 interchanged with the integral.  The completed AFE contour has also been taken
 to infinite height using an explicit physical horizontal-edge majorant.  What
-remains is to justify termwise integration of that absolutely convergent
-Dirichlet family, finish the resulting AFE/QCT decomposition of each twisted
-moment, prove the reciprocal-LCM main-term asymptotic and every analytic tail
-estimate, and especially prove the cubic MRSTT Mobius decorrelation theorem.
-The final facade therefore keeps
+remains is to extract the exact arithmetic phase and product-variable weight
+from the now proved finite-height AFE, carry it through the twisted-moment
+integral and QCT decomposition, prove the reciprocal-LCM main-term asymptotic
+and every analytic tail estimate, and especially prove the cubic MRSTT Mobius
+decorrelation theorem.  The final facade therefore keeps
 `hexact`, `hmain`, and `hrem` as theorem hypotheses.  They are local binders,
 not global axioms.
 
