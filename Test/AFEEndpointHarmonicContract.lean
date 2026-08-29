@@ -1,0 +1,11 @@
+import HardyTheorem.AFEEndpointHarmonic
+
+open HardyTheorem AFE
+
+#check sum_reciprocal_below_floor_le_harmonic
+#check sum_reciprocal_above_floor_le_harmonic
+#check sum_reciprocal_below_floor_le_one_add_log
+#check sum_reciprocal_above_floor_le_one_add_log
+
+#print axioms sum_reciprocal_below_floor_le_one_add_log
+#print axioms sum_reciprocal_above_floor_le_one_add_log

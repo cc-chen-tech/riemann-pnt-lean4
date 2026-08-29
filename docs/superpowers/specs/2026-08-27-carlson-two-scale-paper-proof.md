@@ -1251,6 +1251,22 @@ to the nearest endpoint frequency.  Consequently these estimates are in the
 right normalization for the two harmonic endpoint sums; no uniform-gap
 coarsening has been introduced.
 
+The discrete endpoint bookkeeping is formal.  If `beta>=0`, remove the
+single integer nearest either side of `beta`.  For every `M>=0`, Lean proves
+
+\[
+ \sum_{1\leq j\leq M}
+ \frac1{\beta-(\lfloor\beta\rfloor-j)}\leq H_M,
+ \qquad
+ \sum_{1\leq j\leq M}
+ \frac1{\lfloor\beta\rfloor+1+j-\beta}\leq H_M,                 \tag{8.22f}
+\]
+
+and composes both with `H_M<=1+log M`.  The omitted nearest integer is to be
+kept in the expanded stationary/endpoint band and estimated by length; it
+is not absorbed into (8.22f).  Thus the finite nonstationary band contributes
+only the intended endpoint logarithm once (8.22d)--(8.22e) are summed.
+
 Thus only negative modes `k=-m<0` can be stationary, at
 `u=t/(2*pi*m)`.  At paper level, intersecting this point with the open
 support interval gives the stationary range
