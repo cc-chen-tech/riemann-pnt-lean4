@@ -2,6 +2,7 @@ import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 import Mathlib.Analysis.Fourier.PoissonSummation
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Analysis.SpecialFunctions.Pow.Complex
+import HardyTheorem.OscillatoryIntegral
 
 /-!
 # A smooth compact cutoff for the weighted Poisson step in the critical AFE
@@ -203,6 +204,74 @@ theorem weightedPoissonCutoff_tsum_eq_boundary_add_core (s : ℂ) {m n : ℕ}
 `s = sigma + I*t`, with mathlib's `exp (-2*pi*I*k*u)` convention. -/
 noncomputable def weightedPoissonPhase (t : ℝ) (k : ℤ) (u : ℝ) : ℝ :=
   -t * Real.log u - 2 * Real.pi * (k : ℝ) * u
+
+/-- Our Fourier-sign convention is the existing Mellin--Fourier phase with
+the integer frequency negated. -/
+theorem weightedPoissonPhase_eq_fourierMellinPhase_neg
+    (t : ℝ) (k : ℤ) (u : ℝ) :
+    weightedPoissonPhase t k u =
+      OscillatoryIntegral.fourierMellinPhase (-k) t u := by
+  simp [weightedPoissonPhase, OscillatoryIntegral.fourierMellinPhase]
+  ring
+
+/-- First derivative of the Poisson phase away from the logarithmic
+singularity. -/
+theorem weightedPoissonPhase_hasDerivAt
+    (t : ℝ) (k : ℤ) {u : ℝ} (hu : u ≠ 0) :
+    HasDerivAt (weightedPoissonPhase t k)
+      (-t / u - 2 * Real.pi * (k : ℝ)) u := by
+  unfold weightedPoissonPhase
+  simpa [div_eq_mul_inv, Pi.sub_def, Pi.mul_def] using
+    (((Real.hasDerivAt_log hu).const_mul (-t)).sub
+      ((hasDerivAt_id u).const_mul (2 * Real.pi * (k : ℝ))))
+
+theorem deriv_weightedPoissonPhase
+    (t : ℝ) (k : ℤ) {u : ℝ} (hu : u ≠ 0) :
+    deriv (weightedPoissonPhase t k) u =
+      -t / u - 2 * Real.pi * (k : ℝ) :=
+  (weightedPoissonPhase_hasDerivAt t k hu).deriv
+
+/-- For frequency `-m`, the only possible stationary point solves
+`2*pi*m=t/u`. -/
+theorem deriv_weightedPoissonPhase_neg_nat
+    (t : ℝ) (m : ℕ) {u : ℝ} (hu : u ≠ 0) :
+    deriv (weightedPoissonPhase t (-(m : ℤ))) u =
+      2 * Real.pi * (m : ℝ) - t / u := by
+  rw [deriv_weightedPoissonPhase t (-(m : ℤ)) hu]
+  push_cast
+  ring
+
+/-- A negative frequency has exactly one positive candidate stationary
+point.  This is the source of the dual Dirichlet polynomial in the AFE. -/
+theorem deriv_weightedPoissonPhase_neg_nat_eq_zero_iff
+    {t u : ℝ} {m : ℕ} (ht : 0 < t) (hu : 0 < u) (hm : 0 < m) :
+    deriv (weightedPoissonPhase t (-(m : ℤ))) u = 0 ↔
+      u = t / (2 * Real.pi * (m : ℝ)) := by
+  rw [deriv_weightedPoissonPhase_neg_nat t m hu.ne']
+  have hmR : 0 < (m : ℝ) := by exact_mod_cast hm
+  have hden : 0 < 2 * Real.pi * (m : ℝ) :=
+    mul_pos (mul_pos (by norm_num) Real.pi_pos) hmR
+  constructor
+  · intro h
+    apply (eq_div_iff hden.ne').2
+    field_simp [hu.ne'] at h
+    nlinarith
+  · intro h
+    rw [h]
+    field_simp [hden.ne', ht.ne']
+    ring
+
+/-- Frequencies `k >= 0` are strictly nonstationary when `t,u>0`; hence all
+stationary modes lie on the negative Fourier side. -/
+theorem deriv_weightedPoissonPhase_neg_of_nonneg
+    {t u : ℝ} {k : ℤ} (ht : 0 < t) (hu : 0 < u) (hk : 0 ≤ k) :
+    deriv (weightedPoissonPhase t k) u < 0 := by
+  rw [deriv_weightedPoissonPhase t k hu.ne']
+  have hkR : 0 ≤ (k : ℝ) := by exact_mod_cast hk
+  have hfirst : -t / u < 0 := div_neg_of_neg_of_pos (neg_neg_of_pos ht) hu
+  have hfreq : 0 ≤ 2 * Real.pi * (k : ℝ) :=
+    mul_nonneg (mul_nonneg (by norm_num) Real.pi_pos.le) hkR
+  exact lt_of_le_of_lt (sub_le_self _ hfreq) hfirst
 
 /-- Exact amplitude--phase normalization of a Fourier summand on the
 positive axis. -/

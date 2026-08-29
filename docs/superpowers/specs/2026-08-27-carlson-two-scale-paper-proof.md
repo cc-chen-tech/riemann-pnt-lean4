@@ -1209,8 +1209,28 @@ sign, the factor `2*pi`, the positive amplitude
 `w_{x,N}(u)u^(-sigma)`, and restriction of every Fourier integral to
 `[x-2,N+2]`.
 
-Only negative modes `k=-m<0` can be stationary, at
-`u=t/(2*pi*m)`.  Consequently the stationary range is exactly
+The corresponding phase geometry is now formal too.  With
+`Phi_k(u)=-t log u-2*pi*k*u`, Lean proves
+
+\[
+ \Phi_k'(u)=-\frac{t}{u}-2\pi k,\qquad
+ \Phi_{-m}'(u)=2\pi m-\frac{t}{u}.                              \tag{8.22b}
+\]
+
+For `t,u>0`, every `k>=0` has `Phi_k'(u)<0`; and for every positive natural
+number `m`,
+
+\[
+ \Phi_{-m}'(u)=0\quad\Longleftrightarrow\quad
+ u=\frac{t}{2\pi m}.                                           \tag{8.22c}
+\]
+
+These statements have only `propext`, `Classical.choice`, and `Quot.sound`
+in their axiom audit.
+
+Thus only negative modes `k=-m<0` can be stationary, at
+`u=t/(2*pi*m)`.  At paper level, intersecting this point with the open
+support interval gives the stationary range
 
 \[
   \frac{t}{2\pi(N+2)}<m<\frac{t}{2\pi(x-2)},                    \tag{8.23}

@@ -16,6 +16,12 @@ open HardyTheorem AFE
 #check weightedPoissonCutoff_tsum_eq_sum_Icc
 #check weightedPoissonCutoff_tsum_eq_boundary_add_core
 #check weightedPoissonPhase
+#check weightedPoissonPhase_eq_fourierMellinPhase_neg
+#check weightedPoissonPhase_hasDerivAt
+#check deriv_weightedPoissonPhase
+#check deriv_weightedPoissonPhase_neg_nat
+#check deriv_weightedPoissonPhase_neg_nat_eq_zero_iff
+#check deriv_weightedPoissonPhase_neg_of_nonneg
 #check weightedPoissonCutoff_fourierIntegrand_eq
 #check fourier_weightedPoissonCutoff_eq_intervalIntegral
 #check fourier_weightedPoissonCutoff_eq_phaseIntegral
@@ -24,6 +30,8 @@ open HardyTheorem AFE
 #print axioms intervalPlateauBump_eq_one
 #print axioms weightedPoissonCutoff_contDiff
 #print axioms weightedPoissonCutoff_tsum_eq_boundary_add_core
+#print axioms deriv_weightedPoissonPhase_neg_nat_eq_zero_iff
+#print axioms deriv_weightedPoissonPhase_neg_of_nonneg
 #print axioms weightedPoissonCutoff_fourierIntegrand_eq
 #print axioms fourier_weightedPoissonCutoff_eq_intervalIntegral
 #print axioms fourier_weightedPoissonCutoff_eq_phaseIntegral
