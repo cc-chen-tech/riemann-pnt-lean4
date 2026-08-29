@@ -397,6 +397,28 @@ private lemma hasDerivAt_fourierMellinPhase
     (((hasDerivAt_id x).const_mul (2 * Real.pi * (k : ℝ))).sub
       ((Real.hasDerivAt_log hx).const_mul t))
 
+/-- The curvature of the Mellin--Fourier phase is positive for positive
+height and is independent of the Fourier frequency. -/
+theorem iteratedDeriv_two_fourierMellinPhase
+    (k : ℤ) (t : ℝ) {x : ℝ} (hx : x ≠ 0) :
+    iteratedDeriv 2 (fourierMellinPhase k t) x = t / x ^ 2 := by
+  let g : ℝ → ℝ := fun y => 2 * Real.pi * (k : ℝ) - t / y
+  have h_event : deriv (fourierMellinPhase k t) =ᶠ[𝓝 x] g := by
+    filter_upwards [eventually_ne_nhds hx] with y hy
+    exact (hasDerivAt_fourierMellinPhase k t hy).deriv
+  rw [show 2 = 1 + 1 by omega, iteratedDeriv_succ, iteratedDeriv_one]
+  rw [h_event.deriv_eq]
+  have hconst : HasDerivAt (fun _y : ℝ => 2 * Real.pi * (k : ℝ)) 0 x :=
+    hasDerivAt_const x _
+  have hquot : HasDerivAt (fun y : ℝ => t / y) (-t / x ^ 2) x := by
+    have hd : DifferentiableAt ℝ (fun y : ℝ => t / y) x :=
+      differentiableAt_const t |>.div differentiableAt_id hx
+    simpa only [deriv_const_div_id] using hd.hasDerivAt
+  have hg : HasDerivAt g (t / x ^ 2) x := by
+    convert hconst.sub hquot using 1
+    all_goals first | rfl | ring
+  exact hg.deriv
+
 /-- A nonzero Fourier mode gains one inverse power of its frequency after it
 is combined with Mellin oscillation.  The range `|t| ≤ a` keeps every mode
 uniformly nonstationary on `[a, b]`. -/

@@ -45,3 +45,6 @@ example {a b t p : ℝ} (hab : a ≤ b) (ha : 0 < a) (hp : 0 < p)
 
 #print axioms HardyTheorem.OscillatoryIntegral.norm_integral_rpow_smul_cexp_fourierMellinPhase_le_of_stationary_right
 #print axioms HardyTheorem.OscillatoryIntegral.norm_integral_rpow_smul_cexp_fourierMellinPhase_le_of_stationary_left
+
+#check HardyTheorem.OscillatoryIntegral.iteratedDeriv_two_fourierMellinPhase
+#print axioms HardyTheorem.OscillatoryIntegral.iteratedDeriv_two_fourierMellinPhase

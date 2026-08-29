@@ -1251,6 +1251,18 @@ to the nearest endpoint frequency.  Consequently these estimates are in the
 right normalization for the two harmonic endpoint sums; no uniform-gap
 coarsening has been introduced.
 
+Lean also proves the exact curvature identity
+
+\[
+ \Psi_k''(u)=\frac{t}{u^2},                                    \tag{8.22e'}
+\]
+
+away from `u=0`.  In particular the curvature is positive at positive
+height and independent of `k`.  This is the normalized `F''` input for the
+remaining twice-integrated far-frequency estimate; treating
+`u^{-it}` as part of a nonoscillatory Fourier amplitude would instead create
+a spurious power loss and is explicitly not used.
+
 The discrete endpoint bookkeeping is formal.  If `beta>=0`, remove the
 single integer nearest either side of `beta`.  For every `M>=0`, Lean proves
 
