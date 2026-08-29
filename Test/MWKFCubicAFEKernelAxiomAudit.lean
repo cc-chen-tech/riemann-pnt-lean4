@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.MWKFCubicAFEKernel
+
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicCriticalPoint_ne_zero
+#print axioms PrimeNumberTheorem.MWKFCubic.one_sub_cubicCriticalPoint_ne_zero
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEKernelG_zero
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEKernelG_neg
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEKernelG_at_criticalPoint
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEKernelG_at_neg_criticalPoint
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEKernelG_at_one_sub_criticalPoint
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEKernelG_at_criticalPoint_sub_one
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEKernelG_at_half
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEKernelG_at_neg_half
