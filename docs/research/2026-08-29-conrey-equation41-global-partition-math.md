@@ -325,10 +325,24 @@ projecting to ordinates therefore gives an actual finite set
 
 No mollifier parameter enters this definition or equivalence.  Thus the
 finiteness/enumeration source required by equation (41) is now tied directly
-to the actual degree-one eta function.  What remains is not finiteness but
-structure: sort these ordinates, attach their finite analytic orders, prove
-the complementary intervals are zero-free, choose compatible logarithmic
-lifts on them, and assemble the resulting data into
-`ArgumentPhasePartition`.  Until those steps identify the bridge-order sum
-with the intended critical-line zero count, equation (41) and the two-fifths
-conclusion remain open.
+to the actual degree-one eta function.
+
+The finite set is now canonically sorted into a strictly increasing list.
+For every ordinate `t` in that list, Lean also proves
+
+\[
+  0<\operatorname{analyticOrderNatAt}(\eta,1/2+it)<\infty.
+\tag{9}
+\]
+
+The upper finiteness in (9) uses global nontriviality of the entire eta
+function from `g != 0`; positivity uses both analyticity and the exact zero
+membership (8).  Consequently every listed zero carries the correct positive
+finite bridge multiplicity.
+
+What remains is the complementary-interval structure: prove that the open
+intervals between consecutive sorted ordinates are zero-free, choose
+compatible logarithmic lifts on them, convert the sorted zero/order data into
+the bridge list, and assemble all of it into `ArgumentPhasePartition`.  Until
+those steps identify the bridge-order sum with the intended critical-line zero
+count, equation (41) and the two-fifths conclusion remain open.

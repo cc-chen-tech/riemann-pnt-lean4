@@ -112,4 +112,68 @@ theorem mem_conreyEtaCriticalZeroOrdinates
     · simpa
     · simpa
 
+/-- The actual positive critical-line eta-zero ordinates in increasing order. -/
+noncomputable def conreyEtaCriticalZeroOrdinatesSorted
+    (g g0 g1 L T : ℝ) : List ℝ :=
+  (conreyEtaCriticalZeroOrdinates g g0 g1 L T).sort
+
+@[simp]
+theorem length_conreyEtaCriticalZeroOrdinatesSorted
+    (g g0 g1 L T : ℝ) :
+    (conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T).length =
+      (conreyEtaCriticalZeroOrdinates g g0 g1 L T).card := by
+  unfold conreyEtaCriticalZeroOrdinatesSorted
+  exact Finset.length_sort (s :=
+    conreyEtaCriticalZeroOrdinates g g0 g1 L T) (· ≤ ·)
+
+@[simp]
+theorem mem_conreyEtaCriticalZeroOrdinatesSorted
+    {g g0 g1 L T t : ℝ} :
+    t ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T ↔
+      t ∈ conreyEtaCriticalZeroOrdinates g g0 g1 L T := by
+  unfold conreyEtaCriticalZeroOrdinatesSorted
+  exact Finset.mem_sort (s :=
+    conreyEtaCriticalZeroOrdinates g g0 g1 L T) (· ≤ ·)
+
+theorem pairwise_lt_conreyEtaCriticalZeroOrdinatesSorted
+    (g g0 g1 L T : ℝ) :
+    (conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T).Pairwise (· < ·) := by
+  unfold conreyEtaCriticalZeroOrdinatesSorted
+  exact (Finset.sortedLT_sort
+    (conreyEtaCriticalZeroOrdinates g g0 g1 L T)).pairwise
+
+/-- Every ordinate in the actual sorted eta-zero list has finite analytic
+order. -/
+theorem conreyEtaCriticalZeroOrder_ne_top
+    {g g0 g1 L T t : ℝ} (hg : g ≠ 0)
+    (_ht : t ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T) :
+    analyticOrderAt (conreyDegreeOneEta g g0 g1 L)
+      (conreyCriticalPoint t) ≠ ⊤ :=
+  analyticOrderAt_conreyDegreeOneEta_ne_top_of_g_ne_zero hg _
+
+/-- Every ordinate in the actual sorted eta-zero list has a positive natural
+analytic order.  This is its positive finite bridge multiplicity. -/
+theorem conreyEtaCriticalZeroOrderNat_pos
+    {g g0 g1 L T t : ℝ} (hg : g ≠ 0)
+    (ht : t ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T) :
+    0 < analyticOrderNatAt (conreyDegreeOneEta g g0 g1 L)
+      (conreyCriticalPoint t) := by
+  have htFinset : t ∈ conreyEtaCriticalZeroOrdinates g g0 g1 L T :=
+    mem_conreyEtaCriticalZeroOrdinatesSorted.mp ht
+  have hzero := (mem_conreyEtaCriticalZeroOrdinates hg).mp htFinset |>.2.2
+  have hanalytic :
+      AnalyticAt ℂ (conreyDegreeOneEta g g0 g1 L)
+        (conreyCriticalPoint t) :=
+    analyticOnNhd_conreyDegreeOneEta g g0 g1 L _ (by simp)
+  have horderNeZero :
+      analyticOrderAt (conreyDegreeOneEta g g0 g1 L)
+        (conreyCriticalPoint t) ≠ 0 :=
+    hanalytic.analyticOrderAt_ne_zero.mpr hzero
+  have hfinite := conreyEtaCriticalZeroOrder_ne_top hg ht
+  apply Nat.pos_of_ne_zero
+  intro hnatZero
+  apply horderNeZero
+  rw [← Nat.cast_analyticOrderNatAt hfinite, hnatZero]
+  simp
+
 end HardyTheorem

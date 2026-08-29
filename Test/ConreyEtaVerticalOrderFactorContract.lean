@@ -14,6 +14,37 @@ example {g g0 g1 L T t : ℝ} (hg : g ≠ 0) :
 
 #print axioms mem_conreyEtaCriticalZeroOrdinates
 
+-- The actual ordinates admit a canonical strictly increasing enumeration.
+example (g g0 g1 L T : ℝ) :
+    (conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T).length =
+      (conreyEtaCriticalZeroOrdinates g g0 g1 L T).card := by
+  exact length_conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T
+
+example {g g0 g1 L T t : ℝ} :
+    t ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T ↔
+      t ∈ conreyEtaCriticalZeroOrdinates g g0 g1 L T := by
+  exact mem_conreyEtaCriticalZeroOrdinatesSorted
+
+example (g g0 g1 L T : ℝ) :
+    (conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T).Pairwise (· < ·) := by
+  exact pairwise_lt_conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T
+
+-- Every listed zero has a finite positive analytic order, so it contributes a
+-- positive finite bridge multiplicity rather than an abstract weight.
+example {g g0 g1 L T t : ℝ} (hg : g ≠ 0)
+    (ht : t ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T) :
+    analyticOrderAt (conreyDegreeOneEta g g0 g1 L)
+      (conreyCriticalPoint t) ≠ ⊤ := by
+  exact conreyEtaCriticalZeroOrder_ne_top hg ht
+
+example {g g0 g1 L T t : ℝ} (hg : g ≠ 0)
+    (ht : t ∈ conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T) :
+    0 < analyticOrderNatAt (conreyDegreeOneEta g g0 g1 L)
+      (conreyCriticalPoint t) := by
+  exact conreyEtaCriticalZeroOrderNat_pos hg ht
+
+#print axioms conreyEtaCriticalZeroOrderNat_pos
+
 -- Mutations caught: the exponent is the actual analytic order `m`, the
 -- vertical displacement is `I * (t - tau)`, and the regular factor stays
 -- nonzero on a real neighborhood of the zero ordinate.
