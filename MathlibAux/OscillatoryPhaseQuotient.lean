@@ -18,14 +18,25 @@ noncomputable def oscillatoryPhaseQuotient
     (A : ℝ → ℂ) (v : ℝ → ℝ) (x : ℝ) : ℂ :=
   (v⁻¹) x • ((-I) * A x)
 
+/-- Exact quotient-rule derivative for the first oscillatory quotient. -/
+theorem oscillatoryPhaseQuotient_hasDerivAt
+    {A A' : ℝ → ℂ} {v v' : ℝ → ℝ} {x : ℝ}
+    (hA : HasDerivAt A (A' x) x) (hv : HasDerivAt v (v' x) x)
+    (hv0 : v x ≠ 0) :
+    HasDerivAt (oscillatoryPhaseQuotient A v)
+      (((v⁻¹ x : ℝ) : ℂ) * ((-I) * A' x) +
+        ((-v' x / (v x) ^ 2 : ℝ) : ℂ) * ((-I) * A x)) x := by
+  have hB : HasDerivAt (fun y : ℝ => (-I) * A y) ((-I) * A' x) x :=
+    hA.const_mul (-I)
+  simpa only [oscillatoryPhaseQuotient, Complex.real_smul] using!
+    (hv.inv hv0).smul hB
+
 theorem oscillatoryPhaseQuotient_differentiableAt
     {A A' : ℝ → ℂ} {v v' : ℝ → ℝ} {x : ℝ}
     (hA : HasDerivAt A (A' x) x) (hv : HasDerivAt v (v' x) x)
     (hv0 : v x ≠ 0) :
-    DifferentiableAt ℝ (oscillatoryPhaseQuotient A v) x := by
-  have hB : HasDerivAt (fun y : ℝ => (-I) * A y) ((-I) * A' x) x :=
-    hA.const_mul (-I)
-  exact ((hv.inv hv0).smul hB).differentiableAt
+    DifferentiableAt ℝ (oscillatoryPhaseQuotient A v) x :=
+  (oscillatoryPhaseQuotient_hasDerivAt hA hv hv0).differentiableAt
 
 /-- The real-scalar representation is exactly division by `i v`: multiplying
 the quotient back by the phase velocity recovers the amplitude. -/
