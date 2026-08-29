@@ -1332,7 +1332,17 @@ outside `[x-1,N+1]`.  Both transition strips therefore have fixed width one,
 and every derivative bound reduces to a bound for the single fixed function
 `eta`; there is no endpoint- or height-dependent bump constant.  These
 properties and compact support are formal with only the allowed axioms.  The
-next lemma is the uniform first- and second-derivative bound for (8.22e''''').
+first and second derivatives of `eta` are now proved to vanish outside
+`[0,1]`; compactness and continuity then give constants `C1,C2>=0` such that
+
+\[
+ |\eta'(u)|\leq C_1,
+ \qquad |\eta''(u)|\leq C_2                              \tag{8.22e''''''}
+\]
+
+for every real `u`.  These constants are absolute and independent of
+`x,N,t,k`.  The next lemma is the translated product-rule bound for
+`w_{x,N}'` and `w_{x,N}''`, followed by the Mellin amplitude derivatives.
 
 For the Poisson far tail, the next remaining lemma is therefore explicit:
 instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, use (8.22e') to bound the

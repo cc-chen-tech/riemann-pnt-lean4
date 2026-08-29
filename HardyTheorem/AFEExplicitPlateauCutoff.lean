@@ -1,4 +1,6 @@
 import Mathlib.Analysis.Calculus.ContDiff.Deriv
+import Mathlib.Analysis.Calculus.Deriv.Slope
+import Mathlib.Analysis.Calculus.LocalExtr.Basic
 import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 
 /-!
@@ -69,6 +71,85 @@ theorem explicitIntervalPlateau_hasCompactSupport (x N : ℝ) :
   rcases hu with hu | hu
   · exact explicitIntervalPlateau_eq_zero_of_le (le_of_lt (lt_of_not_ge hu))
   · exact explicitIntervalPlateau_eq_zero_of_ge (le_of_lt (lt_of_not_ge hu))
+
+theorem deriv_smoothTransition_eq_zero_of_nonpos {u : ℝ} (hu : u ≤ 0) :
+    deriv Real.smoothTransition u = 0 := by
+  have hmin : IsLocalMin Real.smoothTransition u := by
+    filter_upwards [] with y
+    rw [Real.smoothTransition.zero_of_nonpos hu]
+    exact Real.smoothTransition.nonneg y
+  exact hmin.deriv_eq_zero
+
+theorem deriv_smoothTransition_eq_zero_of_one_le {u : ℝ} (hu : 1 ≤ u) :
+    deriv Real.smoothTransition u = 0 := by
+  have hmax : IsLocalMax Real.smoothTransition u := by
+    filter_upwards [] with y
+    rw [Real.smoothTransition.one_of_one_le hu]
+    exact Real.smoothTransition.le_one y
+  exact hmax.deriv_eq_zero
+
+theorem secondDeriv_smoothTransition_eq_zero_of_nonpos {u : ℝ} (hu : u ≤ 0) :
+    deriv (deriv Real.smoothTransition) u = 0 := by
+  have hmin : IsLocalMin (deriv Real.smoothTransition) u := by
+    filter_upwards [] with y
+    rw [deriv_smoothTransition_eq_zero_of_nonpos hu]
+    exact Real.smoothTransition.monotone.deriv_nonneg
+  exact hmin.deriv_eq_zero
+
+theorem secondDeriv_smoothTransition_eq_zero_of_one_le {u : ℝ} (hu : 1 ≤ u) :
+    deriv (deriv Real.smoothTransition) u = 0 := by
+  have hmin : IsLocalMin (deriv Real.smoothTransition) u := by
+    filter_upwards [] with y
+    rw [deriv_smoothTransition_eq_zero_of_one_le hu]
+    exact Real.smoothTransition.monotone.deriv_nonneg
+  exact hmin.deriv_eq_zero
+
+theorem deriv_smoothTransition_hasCompactSupport :
+    HasCompactSupport (deriv Real.smoothTransition) := by
+  apply HasCompactSupport.intro (isCompact_Icc : IsCompact (Icc (0 : ℝ) 1))
+  intro u hu
+  rw [mem_Icc, not_and_or] at hu
+  rcases hu with hu | hu
+  · exact deriv_smoothTransition_eq_zero_of_nonpos (le_of_lt (lt_of_not_ge hu))
+  · exact deriv_smoothTransition_eq_zero_of_one_le (le_of_lt (lt_of_not_ge hu))
+
+theorem secondDeriv_smoothTransition_hasCompactSupport :
+    HasCompactSupport (deriv (deriv Real.smoothTransition)) := by
+  apply HasCompactSupport.intro (isCompact_Icc : IsCompact (Icc (0 : ℝ) 1))
+  intro u hu
+  rw [mem_Icc, not_and_or] at hu
+  rcases hu with hu | hu
+  · exact secondDeriv_smoothTransition_eq_zero_of_nonpos
+      (le_of_lt (lt_of_not_ge hu))
+  · exact secondDeriv_smoothTransition_eq_zero_of_one_le
+      (le_of_lt (lt_of_not_ge hu))
+
+/-- A height-independent global bound for the first derivative of the fixed
+transition function. -/
+theorem exists_uniform_smoothTransition_deriv_bound :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ u : ℝ, |deriv Real.smoothTransition u| ≤ C := by
+  have hcont : Continuous (deriv Real.smoothTransition) :=
+    (@Real.smoothTransition.contDiff 1).continuous_deriv le_rfl
+  rcases deriv_smoothTransition_hasCompactSupport.exists_bound_of_continuous hcont with
+    ⟨C, hC⟩
+  refine ⟨C, (abs_nonneg (deriv Real.smoothTransition 0)).trans (hC 0), ?_⟩
+  intro u
+  simpa only [Real.norm_eq_abs] using hC u
+
+/-- A height-independent global bound for the second derivative of the fixed
+transition function. -/
+theorem exists_uniform_smoothTransition_secondDeriv_bound :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ u : ℝ, |deriv (deriv Real.smoothTransition) u| ≤ C := by
+  have hdcont : ContDiff ℝ (⊤ : ℕ∞) (deriv Real.smoothTransition) :=
+    (contDiff_infty_iff_deriv.mp Real.smoothTransition.contDiff).2
+  have hcont : Continuous (deriv (deriv Real.smoothTransition)) :=
+    hdcont.continuous_deriv (by simp)
+  rcases secondDeriv_smoothTransition_hasCompactSupport.exists_bound_of_continuous hcont with
+    ⟨C, hC⟩
+  refine ⟨C, (abs_nonneg (deriv (deriv Real.smoothTransition) 0)).trans (hC 0), ?_⟩
+  intro u
+  simpa only [Real.norm_eq_abs] using hC u
 
 end AFE
 end HardyTheorem
