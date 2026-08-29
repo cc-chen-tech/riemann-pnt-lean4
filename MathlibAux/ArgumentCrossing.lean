@@ -47,6 +47,46 @@ theorem exists_continuousLogOn_Ioo {g : ℝ → ℂ} {a b : ℝ} (hab : a < b)
       hsimply isOpen_Ioo hg hzero with ⟨ell, hellContinuous, hellExp⟩
   exact ⟨ell, hellContinuous, fun x hx => by simpa using hellExp hx⟩
 
+/-- Two continuous logarithms of the same curve on a real open interval differ
+by one constant deck transformation `2 * π * I * k`.  In particular, the
+integer cannot vary from point to point on the connected interval. -/
+theorem exists_int_continuousLogs_eq_add_two_pi_I
+    {ell₁ ell₂ : ℝ → ℂ} {a b x₀ : ℝ}
+    (h₁ : ContinuousOn ell₁ (Ioo a b))
+    (h₂ : ContinuousOn ell₂ (Ioo a b))
+    (hexp : ∀ x ∈ Ioo a b, Complex.exp (ell₁ x) = Complex.exp (ell₂ x))
+    (hx₀ : x₀ ∈ Ioo a b) :
+    ∃ k : ℤ, ∀ x ∈ Ioo a b,
+      ell₁ x = ell₂ x + k * (2 * Real.pi * I) := by
+  let d : ℝ → ℂ := fun x => ell₁ x - ell₂ x
+  have hdContinuous : ContinuousOn d (Ioo a b) := h₁.sub h₂
+  have hdMaps : MapsTo d (Ioo a b)
+      (AddSubgroup.zmultiples (2 * Real.pi * I) : Set ℂ) := by
+    intro x hx
+    obtain ⟨k, hk⟩ := Complex.exp_eq_exp_iff_exists_int.mp (hexp x hx)
+    apply AddSubgroup.mem_zmultiples_iff.mpr
+    refine ⟨k, ?_⟩
+    rw [zsmul_eq_mul]
+    dsimp [d]
+    rw [hk]
+    abel
+  have hdDiscrete :
+      IsDiscrete (AddSubgroup.zmultiples (2 * Real.pi * I) : Set ℂ) := by
+    rw [SetLike.isDiscrete_iff_discreteTopology]
+    infer_instance
+  obtain ⟨k, hk⟩ :=
+    Complex.exp_eq_exp_iff_exists_int.mp (hexp x₀ hx₀)
+  refine ⟨k, fun x hx => ?_⟩
+  have hconst : d x = d x₀ :=
+    isPreconnected_Ioo.constant_of_mapsTo hdDiscrete hdContinuous hdMaps hx hx₀
+  calc
+    ell₁ x = ell₂ x + d x := by simp [d]
+    _ = ell₂ x + d x₀ := by rw [hconst]
+    _ = ell₂ x + k * (2 * Real.pi * I) := by
+      change ell₂ x + (ell₁ x₀ - ell₂ x₀) = _
+      rw [hk]
+      abel
+
 private noncomputable def nonzeroCurve (gamma : C(unitInterval, ℂ)) (hne : ∀ t, gamma t ≠ 0) :
     C(unitInterval, {z : ℂ // z ≠ 0}) :=
   ⟨fun t ↦ ⟨gamma t, hne t⟩, gamma.continuous.subtype_mk hne⟩

@@ -4,6 +4,19 @@ open Complex Set Topology
 
 namespace MathlibAux
 
+-- Two continuous logarithms of the same nonvanishing curve on an interval
+-- differ by one constant deck transformation, not a point-dependent choice.
+example {ell₁ ell₂ : ℝ → ℂ} {a b x₀ : ℝ}
+    (h₁ : ContinuousOn ell₁ (Set.Ioo a b))
+    (h₂ : ContinuousOn ell₂ (Set.Ioo a b))
+    (hexp : ∀ x ∈ Set.Ioo a b, Complex.exp (ell₁ x) = Complex.exp (ell₂ x))
+    (hx₀ : x₀ ∈ Set.Ioo a b) :
+    ∃ k : ℤ, ∀ x ∈ Set.Ioo a b,
+      ell₁ x = ell₂ x + k * (2 * Real.pi * Complex.I) := by
+  exact exists_int_continuousLogs_eq_add_two_pi_I h₁ h₂ hexp hx₀
+
+#print axioms exists_int_continuousLogs_eq_add_two_pi_I
+
 -- Mutation caught: a zero-free component whose endpoint argument decreases
 -- must still realize every half-odd-integer level between its endpoints.
 example (gamma : C(unitInterval, ℂ)) (hne : ∀ t, gamma t ≠ 0) (k : ℤ)

@@ -353,10 +353,26 @@ The actual eta curve is continuous there, so the covering-map argument gives
 one continuous logarithm on the whole open component `(a,b)`.  This is a
 genuine component argument lift, not a family of unrelated local logarithms.
 
+There is also no hidden branch-choice obstruction when this component lift is
+compared with a local zero bridge.  If `ell_1` and `ell_2` are two continuous
+logarithms of the same curve on a real open interval, then
+
+\[
+  \ell_1(t)=\ell_2(t)+2\pi i k
+  \quad\text{for every }t
+\tag{11}
+\]
+
+for one fixed integer `k`.  Indeed, their difference lies in the discrete
+deck group `2*pi*i*Z`, and a continuous map from a connected interval to this
+discrete group is constant.  The formal theorem
+`exists_int_continuousLogs_eq_add_two_pi_I` proves (11).  Hence a component
+lift can be normalized against a local bridge by one global deck
+transformation; the integer cannot drift along the overlap.
+
 What remains is the finite global assembly: include the bottom and top
-components, normalize adjacent component lifts so their one-sided values
-differ by the corresponding positive order times `pi`, convert the sorted
-zero/order data into the bridge list, and recursively construct
-`ArgumentPhasePartition`.  Until that assembly identifies the bridge-order
-sum with the intended critical-line zero count, equation (41) and the
-two-fifths conclusion remain open.
+components, apply (11) on the actual overlaps with the local bridges, extract
+the compatible one-sided phase limits, convert the sorted zero/order data into
+the bridge list, and recursively construct `ArgumentPhasePartition`.  Until
+that assembly identifies the bridge-order sum with the intended critical-line
+zero count, equation (41) and the two-fifths conclusion remain open.
