@@ -1378,6 +1378,17 @@ come from two unit intervals, not from an interval of length `N`.  The next
 step is the pointwise size bound on the positive support and its integration
 in the four classes of (8.22e'''').
 
+At both outer endpoints the real and complex amplitudes now satisfy the exact
+formal boundary conditions
+
+\[
+ A=A'=0.                                                   \tag{8.22e''''''''''}
+\]
+
+Consequently the previously proved implication `A=A'=0 -> R=0` applies
+without any limiting argument, and both boundary terms in the twice-integrated
+identity vanish.
+
 For the Poisson far tail, the next remaining lemma is therefore explicit:
 instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, use (8.22e') to bound the
 four classes in (8.22e''''), and sum their

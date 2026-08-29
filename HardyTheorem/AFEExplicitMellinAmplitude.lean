@@ -107,5 +107,57 @@ theorem explicitComplexMellinAmplitudeDeriv_hasDerivAt
     explicitComplexMellinAmplitudeSecondDeriv] using!
     (explicitMellinAmplitudeDeriv_hasDerivAt sigma x N hu).ofReal_comp
 
+theorem explicitMellinAmplitude_eq_zero_of_le
+    {sigma x N u : ℝ} (hu : u ≤ x - 1) :
+    explicitMellinAmplitude sigma x N u = 0 := by
+  rw [explicitMellinAmplitude, explicitIntervalPlateau_eq_zero_of_le hu,
+    zero_mul]
+
+theorem explicitMellinAmplitude_eq_zero_of_ge
+    {sigma x N u : ℝ} (hu : N + 1 ≤ u) :
+    explicitMellinAmplitude sigma x N u = 0 := by
+  rw [explicitMellinAmplitude, explicitIntervalPlateau_eq_zero_of_ge hu,
+    zero_mul]
+
+theorem explicitMellinAmplitudeDeriv_eq_zero_of_le
+    {sigma x N u : ℝ} (hu : u ≤ x - 1) :
+    explicitMellinAmplitudeDeriv sigma x N u = 0 := by
+  rw [explicitMellinAmplitudeDeriv,
+    explicitIntervalPlateauDeriv_eq_zero_of_le hu,
+    explicitIntervalPlateau_eq_zero_of_le hu]
+  ring
+
+theorem explicitMellinAmplitudeDeriv_eq_zero_of_ge
+    {sigma x N u : ℝ} (hu : N + 1 ≤ u) :
+    explicitMellinAmplitudeDeriv sigma x N u = 0 := by
+  rw [explicitMellinAmplitudeDeriv,
+    explicitIntervalPlateauDeriv_eq_zero_of_ge hu,
+    explicitIntervalPlateau_eq_zero_of_ge hu]
+  ring
+
+theorem explicitComplexMellinAmplitude_eq_zero_of_le
+    {sigma x N u : ℝ} (hu : u ≤ x - 1) :
+    explicitComplexMellinAmplitude sigma x N u = 0 := by
+  simp [explicitComplexMellinAmplitude,
+    explicitMellinAmplitude_eq_zero_of_le hu]
+
+theorem explicitComplexMellinAmplitude_eq_zero_of_ge
+    {sigma x N u : ℝ} (hu : N + 1 ≤ u) :
+    explicitComplexMellinAmplitude sigma x N u = 0 := by
+  simp [explicitComplexMellinAmplitude,
+    explicitMellinAmplitude_eq_zero_of_ge hu]
+
+theorem explicitComplexMellinAmplitudeDeriv_eq_zero_of_le
+    {sigma x N u : ℝ} (hu : u ≤ x - 1) :
+    explicitComplexMellinAmplitudeDeriv sigma x N u = 0 := by
+  simp [explicitComplexMellinAmplitudeDeriv,
+    explicitMellinAmplitudeDeriv_eq_zero_of_le hu]
+
+theorem explicitComplexMellinAmplitudeDeriv_eq_zero_of_ge
+    {sigma x N u : ℝ} (hu : N + 1 ≤ u) :
+    explicitComplexMellinAmplitudeDeriv sigma x N u = 0 := by
+  simp [explicitComplexMellinAmplitudeDeriv,
+    explicitMellinAmplitudeDeriv_eq_zero_of_ge hu]
+
 end AFE
 end HardyTheorem
