@@ -14,6 +14,33 @@ example {g g0 g1 L T t : ℝ} (hg : g ≠ 0) :
 
 #print axioms mem_conreyEtaCriticalZeroOrdinates
 
+-- Equation (41) uses the actual interval `(U,T]` (specialized to `U=2`),
+-- not the earlier convenience interval `(0,T]`.
+example {g g0 g1 L U T t : ℝ} (hg : g ≠ 0) (hU : 0 ≤ U) :
+    t ∈ conreyEtaCriticalZeroOrdinatesBetween g g0 g1 L U T ↔
+      U < t ∧ t ≤ T ∧
+        conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) = 0 := by
+  exact mem_conreyEtaCriticalZeroOrdinatesBetween hg hU
+
+example (g g0 g1 L U T : ℝ) :
+    (conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T).Pairwise
+      (· < ·) := by
+  exact pairwise_lt_conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T
+
+example {g g0 g1 L U T t : ℝ} (hg : g ≠ 0)
+    (ht : t ∈ conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T) :
+    0 < analyticOrderNatAt (conreyDegreeOneEta g g0 g1 L)
+      (conreyCriticalPoint t) := by
+  exact conreyEtaCriticalZeroOrderNat_pos_of_mem_sortedBetween hg ht
+
+example (g g0 g1 L U T : ℝ) :
+    conreyEtaCriticalZeroMultiplicityMassBetween g g0 g1 L U T =
+      ∑ t ∈ conreyEtaCriticalZeroOrdinatesBetween g g0 g1 L U T,
+        analyticOrderNatAt (conreyDegreeOneEta g g0 g1 L)
+          (conreyCriticalPoint t) := rfl
+
+#print axioms conreyEtaCriticalZeroOrderNat_pos_of_mem_sortedBetween
+
 -- The actual ordinates admit a canonical strictly increasing enumeration.
 example (g g0 g1 L T : ℝ) :
     (conreyEtaCriticalZeroOrdinatesSorted g g0 g1 L T).length =

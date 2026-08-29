@@ -112,6 +112,58 @@ theorem mem_conreyEtaCriticalZeroOrdinates
     · simpa
     · simpa
 
+/-- Actual critical-line eta-zero ordinates in `(U,T]`.  Conrey equation (41)
+uses the specialization `U = 2`. -/
+noncomputable def conreyEtaCriticalZeroOrdinatesBetween
+    (g g0 g1 L U T : ℝ) : Finset ℝ :=
+  (conreyEtaCriticalZeroOrdinates g g0 g1 L T).filter fun t => U < t
+
+/-- Exact membership in the actual eta-zero ordinate set on `(U,T]`, for a
+nonnegative lower endpoint. -/
+theorem mem_conreyEtaCriticalZeroOrdinatesBetween
+    {g g0 g1 L U T t : ℝ} (hg : g ≠ 0) (hU : 0 ≤ U) :
+    t ∈ conreyEtaCriticalZeroOrdinatesBetween g g0 g1 L U T ↔
+      U < t ∧ t ≤ T ∧
+        conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) = 0 := by
+  classical
+  rw [conreyEtaCriticalZeroOrdinatesBetween, Finset.mem_filter,
+    mem_conreyEtaCriticalZeroOrdinates hg]
+  constructor
+  · rintro ⟨⟨_ht0, htT, heta⟩, hUt⟩
+    exact ⟨hUt, htT, heta⟩
+  · rintro ⟨hUt, htT, heta⟩
+    exact ⟨⟨lt_of_le_of_lt hU hUt, htT, heta⟩, hUt⟩
+
+/-- The actual eta-zero ordinates in `(U,T]`, in increasing order. -/
+noncomputable def conreyEtaCriticalZeroOrdinatesSortedBetween
+    (g g0 g1 L U T : ℝ) : List ℝ :=
+  (conreyEtaCriticalZeroOrdinatesBetween g g0 g1 L U T).sort
+
+@[simp]
+theorem mem_conreyEtaCriticalZeroOrdinatesSortedBetween
+    {g g0 g1 L U T t : ℝ} :
+    t ∈ conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T ↔
+      t ∈ conreyEtaCriticalZeroOrdinatesBetween g g0 g1 L U T := by
+  unfold conreyEtaCriticalZeroOrdinatesSortedBetween
+  exact Finset.mem_sort (s :=
+    conreyEtaCriticalZeroOrdinatesBetween g g0 g1 L U T) (· ≤ ·)
+
+theorem pairwise_lt_conreyEtaCriticalZeroOrdinatesSortedBetween
+    (g g0 g1 L U T : ℝ) :
+    (conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T).Pairwise
+      (· < ·) := by
+  unfold conreyEtaCriticalZeroOrdinatesSortedBetween
+  exact (Finset.sortedLT_sort
+    (conreyEtaCriticalZeroOrdinatesBetween g g0 g1 L U T)).pairwise
+
+/-- The exact multiplicity loss `N_{0,eta}(U,T)` used by the phase bridges in
+equation (41).  Multiple zeros are charged by their analytic order. -/
+noncomputable def conreyEtaCriticalZeroMultiplicityMassBetween
+    (g g0 g1 L U T : ℝ) : ℕ :=
+  ∑ t ∈ conreyEtaCriticalZeroOrdinatesBetween g g0 g1 L U T,
+    analyticOrderNatAt (conreyDegreeOneEta g g0 g1 L)
+      (conreyCriticalPoint t)
+
 /-- The actual positive critical-line eta-zero ordinates in increasing order. -/
 noncomputable def conreyEtaCriticalZeroOrdinatesSorted
     (g g0 g1 L T : ℝ) : List ℝ :=
@@ -175,6 +227,21 @@ theorem conreyEtaCriticalZeroOrderNat_pos
   apply horderNeZero
   rw [← Nat.cast_analyticOrderNatAt hfinite, hnatZero]
   simp
+
+/-- Every zero in the equation-(41) interval `(U,T]` has positive bridge
+multiplicity. -/
+theorem conreyEtaCriticalZeroOrderNat_pos_of_mem_sortedBetween
+    {g g0 g1 L U T t : ℝ} (hg : g ≠ 0)
+    (ht : t ∈ conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T) :
+    0 < analyticOrderNatAt (conreyDegreeOneEta g g0 g1 L)
+      (conreyCriticalPoint t) := by
+  have htBetween :
+      t ∈ conreyEtaCriticalZeroOrdinatesBetween g g0 g1 L U T :=
+    mem_conreyEtaCriticalZeroOrdinatesSortedBetween.mp ht
+  have htGlobal : t ∈ conreyEtaCriticalZeroOrdinates g g0 g1 L T :=
+    (Finset.mem_filter.mp htBetween).1
+  exact conreyEtaCriticalZeroOrderNat_pos hg
+    (mem_conreyEtaCriticalZeroOrdinatesSorted.mpr htGlobal)
 
 /-- If no listed critical-line eta zero lies strictly between two listed
 ordinates, then the actual eta restriction is nonzero throughout that open

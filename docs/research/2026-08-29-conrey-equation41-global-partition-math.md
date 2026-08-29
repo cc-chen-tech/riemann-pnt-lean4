@@ -376,3 +376,37 @@ the compatible one-sided phase limits, convert the sorted zero/order data into
 the bridge list, and recursively construct `ArgumentPhasePartition`.  Until
 that assembly identifies the bridge-order sum with the intended critical-line
 zero count, equation (41) and the two-fifths conclusion remain open.
+
+## 8. Correct interval and count in Conrey's equation (41)
+
+The original paper ([Conrey 1989, pp. 7--8](https://aimath.org/~kaur/publications/24.pdf))
+fixes the argument interval at `2 <= t <= T`, not at
+`0 <= t <= T`.  Its equation (41) has left-hand side
+
+\[
+  {1\over\pi}\Delta\arg\eta(1/2+it)\big|_2^T-N_{0,\eta}(T),
+\tag{12}
+\]
+
+and immediately states that (12) is a lower bound for the number of
+`t in (2,T)` for which
+
+\[
+  \operatorname{Re}\eta(1/2+it)=0,
+  \qquad \eta(1/2+it)\ne0.
+\tag{13}
+\]
+
+Equation (42), with `Q` of degree one, then turns every point in (13) into a
+simple critical-line zero of `xi`; equation (43) is the resulting simple-zero
+proportion inequality.  The same lower endpoint `2` occurs in the mollified
+mean square.
+
+Accordingly, the actual formal object must be parameterized by a lower endpoint
+`U` and specialize to `(U,T]=(2,T]`.  Moreover, the bridge loss at a zero of
+analytic order `m` is `m`, so the exact `N_{0,eta}` object used by the phase
+partition is the sum of `analyticOrderNatAt eta` over this finite set.  A mere
+finset cardinality would undercharge multiple zeros and cannot justify (12).
+The endpoint values of eta must also be nonzero when endpoint arguments are
+used; endpoint avoidance or an admissible-height replacement is a separate
+later step, not an implicit convention.
