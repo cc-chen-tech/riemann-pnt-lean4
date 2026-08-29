@@ -28,6 +28,19 @@ noncomputable def cubicAFEPoleCanceller (t : ℝ) (z : ℂ) : ℂ :=
 noncomputable def cubicAFEKernelG (t : ℝ) (z : ℂ) : ℂ :=
   Complex.exp (z ^ 2) * cubicAFEPoleCanceller t z
 
+/-- The explicit entire extension of
+`G_t(z) Lambda(s_t+z) Lambda(1-s_t+z)`.  Each bracket is the numerator
+obtained after inserting Mathlib's entire `completedRiemannZeta₀` and
+clearing the two simple-pole denominators. -/
+noncomputable def cubicAFECompletedExtension (t : ℝ) (z : ℂ) : ℂ :=
+  let s := cubicCriticalPoint t
+  let u := 1 - s
+  Complex.exp (z ^ 2) * (1 - 4 * z ^ 2) / (s ^ 2 * u ^ 2) *
+    (completedRiemannZeta₀ (s + z) * (s + z) * (u - z) -
+      (u - z) - (s + z)) *
+    (completedRiemannZeta₀ (u + z) * (u + z) * (s - z) -
+      (s - z) - (u + z))
+
 theorem cubicCriticalPoint_ne_zero (t : ℝ) :
     cubicCriticalPoint t ≠ 0 := by
   intro h
@@ -39,6 +52,62 @@ theorem one_sub_cubicCriticalPoint_ne_zero (t : ℝ) :
   intro h
   have hre := congrArg Complex.re h
   norm_num [cubicCriticalPoint] at hre
+
+/-- The pole-cleared completed product is an entire function of the shift. -/
+theorem differentiable_cubicAFECompletedExtension (t : ℝ) :
+    Differentiable ℂ (cubicAFECompletedExtension t) := by
+  have hcompleted : Differentiable ℂ completedRiemannZeta₀ :=
+    differentiable_completedZeta₀
+  unfold cubicAFECompletedExtension
+  fun_prop
+
+set_option maxRecDepth 10000 in
+/-- Away from the original four poles, the explicit entire extension agrees
+with the literal product of the kernel and the two completed zeta factors. -/
+theorem cubicAFECompletedExtension_eq
+    (t : ℝ) (z : ℂ)
+    (hsplus : cubicCriticalPoint t + z ≠ 0)
+    (husub : 1 - cubicCriticalPoint t - z ≠ 0)
+    (huplus : 1 - cubicCriticalPoint t + z ≠ 0)
+    (hssub : cubicCriticalPoint t - z ≠ 0) :
+    cubicAFECompletedExtension t z =
+      cubicAFEKernelG t z *
+        completedRiemannZeta (cubicCriticalPoint t + z) *
+        completedRiemannZeta (1 - cubicCriticalPoint t + z) := by
+  have hs : cubicCriticalPoint t ≠ 0 := cubicCriticalPoint_ne_zero t
+  have hu : 1 - cubicCriticalPoint t ≠ 0 :=
+    one_sub_cubicCriticalPoint_ne_zero t
+  have hLambdaLeft :
+      completedRiemannZeta (cubicCriticalPoint t + z) =
+        (completedRiemannZeta₀ (cubicCriticalPoint t + z) *
+              (cubicCriticalPoint t + z) *
+              (1 - cubicCriticalPoint t - z) -
+            (1 - cubicCriticalPoint t - z) -
+            (cubicCriticalPoint t + z)) /
+          ((cubicCriticalPoint t + z) *
+            (1 - cubicCriticalPoint t - z)) := by
+    rw [completedRiemannZeta_eq]
+    rw [show 1 - (cubicCriticalPoint t + z) =
+      1 - cubicCriticalPoint t - z by ring]
+    field_simp [hsplus, husub]
+  have hLambdaRight :
+      completedRiemannZeta (1 - cubicCriticalPoint t + z) =
+        (completedRiemannZeta₀ (1 - cubicCriticalPoint t + z) *
+              (1 - cubicCriticalPoint t + z) *
+              (cubicCriticalPoint t - z) -
+            (cubicCriticalPoint t - z) -
+            (1 - cubicCriticalPoint t + z)) /
+          ((1 - cubicCriticalPoint t + z) *
+            (cubicCriticalPoint t - z)) := by
+    rw [completedRiemannZeta_eq]
+    rw [show 1 - (1 - cubicCriticalPoint t + z) =
+      cubicCriticalPoint t - z by ring]
+    field_simp [huplus, hssub]
+  rw [hLambdaLeft, hLambdaRight]
+  unfold cubicAFECompletedExtension cubicAFEKernelG cubicAFEPoleCanceller
+  dsimp only
+  field_simp [hs, hu, hsplus, husub, huplus, hssub]
+  ring
 
 theorem cubicAFEKernelG_zero (t : ℝ) :
     cubicAFEKernelG t 0 = 1 := by

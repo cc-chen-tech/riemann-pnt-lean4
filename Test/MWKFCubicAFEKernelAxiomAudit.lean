@@ -2,6 +2,8 @@ import PrimeNumberTheorem.MWKFCubicAFEKernel
 
 #print axioms PrimeNumberTheorem.MWKFCubic.cubicCriticalPoint_ne_zero
 #print axioms PrimeNumberTheorem.MWKFCubic.one_sub_cubicCriticalPoint_ne_zero
+#print axioms PrimeNumberTheorem.MWKFCubic.differentiable_cubicAFECompletedExtension
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFECompletedExtension_eq
 #print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEKernelG_zero
 #print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEKernelG_neg
 #print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEKernelG_at_criticalPoint
