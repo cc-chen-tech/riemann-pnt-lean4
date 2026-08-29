@@ -22,6 +22,8 @@ open HardyTheorem AFE
 #check deriv_weightedPoissonPhase_neg_nat
 #check deriv_weightedPoissonPhase_neg_nat_eq_zero_iff
 #check deriv_weightedPoissonPhase_neg_of_nonneg
+#check stationaryPoint_mem_Ioo_iff
+#check exists_stationaryPoint_in_Ioo_iff
 #check weightedPoissonCutoff_fourierIntegrand_eq
 #check fourier_weightedPoissonCutoff_eq_intervalIntegral
 #check fourier_weightedPoissonCutoff_eq_phaseIntegral
@@ -32,6 +34,8 @@ open HardyTheorem AFE
 #print axioms weightedPoissonCutoff_tsum_eq_boundary_add_core
 #print axioms deriv_weightedPoissonPhase_neg_nat_eq_zero_iff
 #print axioms deriv_weightedPoissonPhase_neg_of_nonneg
+#print axioms stationaryPoint_mem_Ioo_iff
+#print axioms exists_stationaryPoint_in_Ioo_iff
 #print axioms weightedPoissonCutoff_fourierIntegrand_eq
 #print axioms fourier_weightedPoissonCutoff_eq_intervalIntegral
 #print axioms fourier_weightedPoissonCutoff_eq_phaseIntegral

@@ -273,6 +273,59 @@ theorem deriv_weightedPoissonPhase_neg_of_nonneg
     mul_nonneg (mul_nonneg (by norm_num) Real.pi_pos.le) hkR
   exact lt_of_le_of_lt (sub_le_self _ hfreq) hfirst
 
+/-- Exact frequency range for which the stationary point of the negative
+mode `-m` lies in a positive open interval. -/
+theorem stationaryPoint_mem_Ioo_iff
+    {a b t : ℝ} {m : ℕ} (ha : 0 < a) (hab : a ≤ b)
+    (_ht : 0 < t) (hm : 0 < m) :
+    t / (2 * Real.pi * (m : ℝ)) ∈ Ioo a b ↔
+      t / b < 2 * Real.pi * (m : ℝ) ∧
+        2 * Real.pi * (m : ℝ) < t / a := by
+  have hb : 0 < b := ha.trans_le hab
+  have hmR : 0 < (m : ℝ) := by exact_mod_cast hm
+  have hc : 0 < 2 * Real.pi * (m : ℝ) :=
+    mul_pos (mul_pos (by norm_num) Real.pi_pos) hmR
+  constructor
+  · intro h
+    constructor
+    · apply (div_lt_iff₀ hb).2
+      have h' := (div_lt_iff₀ hc).1 h.2
+      nlinarith
+    · apply (lt_div_iff₀ ha).2
+      have h' := (lt_div_iff₀ hc).1 h.1
+      nlinarith
+  · intro h
+    constructor
+    · apply (lt_div_iff₀ hc).2
+      have h' := (lt_div_iff₀ ha).1 h.2
+      nlinarith
+    · apply (div_lt_iff₀ hc).2
+      have h' := (div_lt_iff₀ hb).1 h.1
+      nlinarith
+
+/-- Equivalently, the negative mode has a stationary point in `(a,b)` iff
+its frequency lies in the dual open interval. -/
+theorem exists_stationaryPoint_in_Ioo_iff
+    {a b t : ℝ} {m : ℕ} (ha : 0 < a) (hab : a ≤ b)
+    (ht : 0 < t) (hm : 0 < m) :
+    (∃ u ∈ Ioo a b,
+      deriv (weightedPoissonPhase t (-(m : ℤ))) u = 0) ↔
+      t / b < 2 * Real.pi * (m : ℝ) ∧
+        2 * Real.pi * (m : ℝ) < t / a := by
+  rw [← stationaryPoint_mem_Ioo_iff ha hab ht hm]
+  constructor
+  · rintro ⟨u, hu, hderiv⟩
+    have hu_pos : 0 < u := ha.trans hu.1
+    rw [deriv_weightedPoissonPhase_neg_nat_eq_zero_iff ht hu_pos hm] at hderiv
+    rwa [hderiv] at hu
+  · intro hu
+    refine ⟨t / (2 * Real.pi * (m : ℝ)), hu, ?_⟩
+    have hpoint_pos : 0 < t / (2 * Real.pi * (m : ℝ)) := by
+      have hmR : 0 < (m : ℝ) := by exact_mod_cast hm
+      positivity
+    exact (deriv_weightedPoissonPhase_neg_nat_eq_zero_iff
+      ht hpoint_pos hm).2 rfl
+
 /-- Exact amplitude--phase normalization of a Fourier summand on the
 positive axis. -/
 theorem weightedPoissonCutoff_fourierIntegrand_eq

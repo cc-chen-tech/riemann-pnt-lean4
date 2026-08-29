@@ -1268,8 +1268,9 @@ is not absorbed into (8.22f).  Thus the finite nonstationary band contributes
 only the intended endpoint logarithm once (8.22d)--(8.22e) are summed.
 
 Thus only negative modes `k=-m<0` can be stationary, at
-`u=t/(2*pi*m)`.  At paper level, intersecting this point with the open
-support interval gives the stationary range
+`u=t/(2*pi*m)`.  Lean now proves both the point-membership equivalence and
+the equivalent existential statement for a zero of the phase derivative.
+Intersecting the point with the open support interval gives exactly
 
 \[
   \frac{t}{2\pi(N+2)}<m<\frac{t}{2\pi(x-2)},                    \tag{8.23}
