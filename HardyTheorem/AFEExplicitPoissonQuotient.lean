@@ -22,6 +22,14 @@ noncomputable def explicitPoissonFirstQuotient
     (explicitComplexMellinAmplitude sigma x N)
     (weightedPoissonVelocity t k) u
 
+noncomputable def explicitPoissonFirstQuotientDerivative
+    (sigma x N t : ℝ) (k : ℤ) (u : ℝ) : ℂ :=
+  MathlibAux.oscillatoryPhaseQuotientDerivative
+    (explicitComplexMellinAmplitude sigma x N)
+    (explicitComplexMellinAmplitudeDeriv sigma x N)
+    (weightedPoissonVelocity t k)
+    (weightedPoissonVelocityDeriv t) u
+
 noncomputable def explicitPoissonSecondQuotient
     (sigma x N t : ℝ) (k : ℤ) (u : ℝ) : ℂ :=
   MathlibAux.oscillatorySecondPhaseQuotient
@@ -48,6 +56,15 @@ theorem explicitPoissonFirstQuotient_mul_velocity
       explicitComplexMellinAmplitude sigma x N u := by
   exact MathlibAux.oscillatoryPhaseQuotient_mul_phaseVelocity hv0
 
+theorem explicitPoissonFirstQuotient_hasDerivAt
+    (sigma x N t : ℝ) (k : ℤ) {u : ℝ}
+    (hu : u ≠ 0) (hv0 : weightedPoissonVelocity t k u ≠ 0) :
+    HasDerivAt (explicitPoissonFirstQuotient sigma x N t k)
+      (explicitPoissonFirstQuotientDerivative sigma x N t k u) u := by
+  exact MathlibAux.oscillatoryPhaseQuotient_hasDerivAt
+    (explicitComplexMellinAmplitude_hasDerivAt sigma x N hu)
+    (weightedPoissonVelocity_hasDerivAt t k hu) hv0
+
 theorem explicitPoissonSecondQuotient_mul_velocity
     {sigma x N t u : ℝ} {k : ℤ}
     (hv0 : weightedPoissonVelocity t k u ≠ 0) :
@@ -59,6 +76,14 @@ theorem explicitPoissonSecondQuotient_mul_velocity
         (weightedPoissonVelocity t k)
         (weightedPoissonVelocityDeriv t) u := by
   exact MathlibAux.oscillatorySecondPhaseQuotient_mul_phaseVelocity hv0
+
+theorem explicitPoissonSecondQuotient_mul_velocity_eq_firstDerivative
+    {sigma x N t u : ℝ} {k : ℤ}
+    (hv0 : weightedPoissonVelocity t k u ≠ 0) :
+    explicitPoissonSecondQuotient sigma x N t k u *
+        (I * (weightedPoissonVelocity t k u : ℂ)) =
+      explicitPoissonFirstQuotientDerivative sigma x N t k u := by
+  exact explicitPoissonSecondQuotient_mul_velocity hv0
 
 theorem explicitPoissonSecondQuotient_hasDerivAt
     (sigma x N t : ℝ) (k : ℤ) {u : ℝ}
