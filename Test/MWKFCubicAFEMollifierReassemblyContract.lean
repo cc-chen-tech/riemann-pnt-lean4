@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.MWKFCubicAFEMollifierReassembly
+
+namespace PrimeNumberTheorem.MWKFCubic
+
+#check cubicAFEMollifiedApproximation
+#check cubicAFEMollifierPairApproximation
+#check tendsto_cubicAFEMollifiedApproximation
+#check cubicAFEMollifiedApproximation_eq_pairSum
+
+end PrimeNumberTheorem.MWKFCubic

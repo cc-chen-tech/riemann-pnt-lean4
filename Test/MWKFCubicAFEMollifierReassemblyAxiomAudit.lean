@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.MWKFCubicAFEMollifierReassembly
+
+#print axioms PrimeNumberTheorem.MWKFCubic.tendsto_cubicAFEMollifiedApproximation
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEMollifiedApproximation_eq_pairSum
