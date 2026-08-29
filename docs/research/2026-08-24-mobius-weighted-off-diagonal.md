@@ -85,6 +85,8 @@
 > | Completed double-Type generalized-determinant master | Section 9.192 combines the uniform-ratio completion with both literal Type Möbius variables.  Each physical product label remains \(a_i=h_i\delta_i\); both raw \(\mu(n_i)\) are first restored and then split by the exact small/I/II identity.  Every ordered block retains all three actual-minus-uniform ratio projectors.  Type I and II expose the short-factor coefficients \(\mu(b_i)\mu(c_i)\), while their quotient residuals have Möbius coefficient one.  On the top support `small` vanishes and all four I--I, I--II, II--I, and II--II blocks must remain signed.  The finite GDTM reassembly is exact and equivalent to the WRFE integrand; no individual block estimate or GDTM bound is proved |
 > | Triple-character form and mutual-phase rank obstruction | Section 9.193 inverts all three centered ratio kernels simultaneously.  Only nonprincipal characters occur, and each Type-I/II factor becomes two short Möbius character polynomials times one unsigned residual character polynomial.  The surviving phase contains \(\xi(p_1\overline {p_2})\chi_1(q)\overline{\chi_2(q)}\).  For any fixed long prime \(p\) and \(J<p-1\) distinct short-prime labels, the nonprincipal evaluation matrix \(M_{j,\chi}=\chi(q_j)\) has exact Gram matrix \((p-1)I_J-\mathbf1\mathbf1^\ast\), hence full row rank \(J\).  With \(J\asymp Q/\log Q\), the raw phase cannot have a subpolynomial-size exact rank-one common-coefficient decomposition.  This rules out algebraically separating the phase and then applying the ordinary large sieve; it does not rule out cancellation from the physical coefficients.  The equivalent joint tensor gate TCGDTM remains unproved |
 > | Canonical secondary-zero ledger | Section 9.194 identifies the fully recombined secondary zero packet with the diagonal-removed Fourier Gram of the length-\(N\) Selberg--Möbius polynomial.  The second symmetric AFE direction reinforces it, while adding the explicit diagonal restores the full long-polynomial energy.  Its kernel is not reciprocal-LCM, and at \(N=T^3\) the classical mean-value bound misses the target by exactly \(T^2\).  Thus the zero packet is neither an algebraically cancelled term nor an already evaluable secondary constant; it is the same banded two-Möbius correlation that must remain coupled to the nonzero packets |
+> | Physical zero-Mellin reflection adapter | Section 9.195 composes the literal four-variable \((d,n,e,m)\) sum with \((x,y)=(dn,em)\), then substitutes \(B_{N,0}=F_0-R_N\) before any absolute value.  For every supplied finite AFE/\(h,\delta\)/dyadic packet family it retains both distinct reflection cross terms and the explicit diagonal, with no endpoint error.  This proves the finite physical arithmetic adapter; proving that the supplied kernels exhaust the continuous packet decomposition of (4.5) remains analytic and unproved |
+> | Unified zero/nonzero signed operator | Section 9.196 double-centers only the total nonzero-frequency kernel.  Its row/column projection is joined to the canonical zero Gram, giving \(K_{\rm full}=K_{\rm res}+K_{\rm cent}\) with weighted zero row and column sums for \(K_{\rm cent}\).  Forming \(TT^*\) after this identity retains both mixed terms \(K_{\rm res}K_{\rm cent}^*\) and \(K_{\rm cent}K_{\rm res}^*\).  The finite operator and Gram identities are exact; no separate resonant, centered, or coupled norm estimate is proved |
 > | August 2026 varying-modulus audit | Shen's Theorem 4 genuinely averages an inverse-only discrepancy over odd \(q\sim Q\), but its underlying DFI/Bettin--Chandee bilinear envelope saves only \(T^{1/8}\) linearly at \(M=Q=T^3\), against the required \(T^2\), and fixes the inverse numerator before Minkowski.  It has neither the simultaneous direct phase nor the joint \(h\delta\)/modulus-dependent Type packet.  Mohammadi's small-box theorem handles the matching direct-plus-inverse product phase only over one fixed finite field, not a varying squarefree-modulus family.  Neither closes (9.884) |
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
@@ -27391,6 +27393,178 @@ AFE sign and a second diagonal subtraction.  The helper deliberately
 marks reciprocal-LCM identification and the analytic resonant bound
 false.
 
+### 9.195 The four-variable packet has an exact physical reflection adapter
+
+The remaining qualification after (9.448) was that its pair kernels were
+accepted as data.  At Mellin frequency zero, the arithmetic part of that
+adapter can be composed without an asymptotic argument.  Let a supplied
+finite packet be
+
+\[
+ \pi=(\sigma,h,\delta,\nu),\qquad h\delta\ne0,
+\tag{9.1299}
+\]
+
+and let \(W_\pi(x,y)\) be its literal pair kernel, extended by zero.  For
+arbitrary finite mollifier coefficients \(a_d\) and zeta coefficients
+\(z_n\), put
+
+\[
+ \boxed{B(x):=\sum_{dn=x}a_dz_n.}
+\tag{9.1300}
+\]
+
+The map \((d,n)\mapsto x=dn\) on each side gives, packet by packet,
+
+\[
+ \boxed{
+ \sum_{d,e,n,m}a_da_ez_nz_mW_\pi(dn,em)
+ =\sum_{x,y}B(x)B(y)W_\pi(x,y).}
+\tag{9.1301}
+\]
+
+Repeated factorizations of \(x\) and \(y\) are summed inside \(B\); none
+is discarded.  Summing (9.1301) over \(\pi\) before taking an absolute
+value retains both AFE directions and every \(h,\delta,\nu\) label.
+
+At zero Mellin frequency, (9.362) supplies the coefficientwise identity
+\(B=F_0-R_N\).  For the combined kernel
+\(W=\sum_\pi W_\pi\), substitution into the right side of (9.1301)
+therefore gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ \sum_\pi\sum_{x,y}W_\pi(x,y)B(x)B(y)-\mathcal D_B
+ ={}&E_W(F_0,F_0)-E_W(F_0,R_N)\\
+ &-E_W(R_N,F_0)+E_W(R_N,R_N)-\mathcal D_B.
+ \end{aligned}}
+\tag{9.1302}
+\]
+
+The two cross terms in (9.1302) are ordered and generally unequal.  The
+strict reflected-cofactor endpoints are already those of (9.362) and
+(9.416), so (9.1300)--(9.1302) introduce no boundary correction.  This
+is the complete **finite arithmetic adapter** from the original
+four-variable packet to the reflection master.
+
+Its scope must remain precise.  Formula (9.1301) accepts the literal
+finite kernels supplied by the analytic decomposition.  It does not by
+itself prove that a proposed finite list of \(W_\pi\) is the exhaustive
+image of the continuous kernel (4.4) after every later completion.  That
+packet-exhaustiveness statement still requires a partition-of-unity and
+Poisson/reflection audit at the analytic level.  Thus the arithmetic
+adapter is proved, while the continuous (4.5)-to-packet exhaustiveness
+and every analytic estimate remain unproved.
+
+The helper `physical_zero_mellin_reflection_adapter_sides` verifies
+(9.1300)--(9.1302) with exact rational data.  Its fixture has product
+coefficients \((2,-2,1,-1)\), direct and paired sums \(-41\), ordered
+cross terms \(-22\) and \(0\), reflected--reflected term \(2\), and
+explicit diagonal \(14\).  Both forms of the remainder are therefore
+\(-55\).  The helper retains the AFE, \(h,\delta\), and dyadic labels,
+but marks analytic packet exhaustiveness and the operator bound false.
+
+### 9.196 Canonical zero and the centered complement form one signed operator
+
+The canonical zero Gram must now be combined with the nonzero packets
+without centering it by an arbitrary product density.  On a finite common
+index set let \(K_0\) be the canonical diagonal-removed kernel from
+(9.1294), and let
+
+\[
+ K_{\ne0}:=\sum_{\pi\in\mathfrak P_{\ne0}}K_\pi
+\tag{9.1303}
+\]
+
+be the complete signed nonzero-frequency kernel.  For any supplied left
+and right density weights \(p,q\), double-center only this complement
+once:
+
+\[
+ \begin{aligned}
+ r_i&:=\sum_jq_jK_{\ne0}(i,j),&
+ c_j&:=\sum_ip_iK_{\ne0}(i,j),\\
+ m&:=\sum_{i,j}p_iq_jK_{\ne0}(i,j),&
+ K_{\rm cent}(i,j)&:=K_{\ne0}(i,j)-r_i-c_j+m.
+ \end{aligned}
+\tag{9.1304}
+\]
+
+Then
+
+\[
+ \boxed{
+ \sum_jq_jK_{\rm cent}(i,j)=0,
+ \qquad
+ \sum_ip_iK_{\rm cent}(i,j)=0.}
+\tag{9.1305}
+\]
+
+Put \(P_{\ne0}:=K_{\ne0}-K_{\rm cent}\) and define
+
+\[
+ \boxed{
+ K_{\rm res}:=K_0+P_{\ne0},\qquad
+ K_{\rm full}:=K_0+K_{\ne0}
+              =K_{\rm res}+K_{\rm cent}.}
+\tag{9.1306}
+\]
+
+Thus the row/column projection of the nonzero complement is returned to
+the resonant ledger before any norm estimate, while the canonical zero
+Gram is never subjected to an arbitrary product centering.  For the
+physical coefficient vector \(a\),
+
+\[
+ \boxed{
+ a^tK_{\rm full}a
+ =a^tK_{\rm res}a+a^tK_{\rm cent}a.}
+\tag{9.1307}
+\]
+
+The important point appears after the single global \(TT^*\) step:
+
+\[
+ \boxed{
+ \begin{aligned}
+ K_{\rm full}K_{\rm full}^*
+ ={}&K_{\rm res}K_{\rm res}^*
+   +K_{\rm res}K_{\rm cent}^*\\
+  &+K_{\rm cent}K_{\rm res}^*
+   +K_{\rm cent}K_{\rm cent}^*.
+ \end{aligned}}
+\tag{9.1308}
+\]
+
+Neither mixed term in (9.1308) may be discarded.  In particular, a
+separate positive bound for the canonical resonant energy returns the
+\(T^2\) long-polynomial gap from Section 9.194, while a separate absolute
+bound for every \(K_\pi\) destroys the outer Möbius cancellation.  The
+next analytic theorem must therefore estimate (9.1308) as a signed global
+Gram, or prove an exact reassembly which places its two mixed terms inside
+an already bounded diagonal form.
+
+The helper `unified_signed_zero_nonzero_operator_sides` verifies
+(9.1303)--(9.1308).  Its nonsymmetric finite fixture has canonical-zero,
+raw-nonzero, and full bilinear contributions \(-8,17,9\).  After one
+centering, the resonant and centered contributions are \(-9,18\).  At
+the \(TT^*\) level the four terms are
+
+\[
+ 50-48-48+72=26,
+\tag{9.1309}
+\]
+
+equal to the direct full energy \(26\).  Deleting either mixed term is
+therefore detected.  This proves the finite unified signed operator and
+its zero-row/zero-column complement.  As in Section 9.69, different
+supplied \(p,q\) move mass between \(K_{\rm res}\) and
+\(K_{\rm cent}\) while leaving \(K_{\rm full}\) unchanged; the helper
+does not claim that the physical nonzero-packet density has already been
+derived.  It proves no resonant norm, nonzero-determinant spectral
+estimate, or coupled-kernel bound.
+
 ## 10. What has and has not been proved
 
 **Canonical zero-frequency outcome.**  Section 9.194 completes the
@@ -27404,6 +27578,19 @@ not an independently evaluated secondary main term.  Its required bound
 is the same banded two-Möbius problem already isolated by
 \({\rm SC}_{2/3}\)/\({\rm MS}_{2/3}\).  The finite Gram identity is proved;
 the analytic \(T^2\) saving and the full coupled-kernel gate are not.
+
+**Physical adapter and unified operator.**  Section 9.195 proves the
+finite arithmetic adapter from the original \((d,n,e,m)\) variables to
+the two product coefficients and then to the four ordered reflection
+terms, with every supplied AFE/\(h,\delta\)/dyadic label and the explicit
+diagonal retained.  The missing statement is now specifically analytic
+packet exhaustiveness from the continuous kernel (4.5), not the finite
+product/reflection algebra.  Section 9.196 then centers the summed
+nonzero-frequency complement exactly once, joins its resonant projection
+to the canonical zero Gram, and forms one signed \(TT^*\).  Both mixed
+resonant--centered Gram terms remain.  The unified finite operator is
+proved; its \(T^2\) norm saving, determinant-nonzero spectral estimate,
+and the coupled-kernel gate remain unproved.
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
 complete active-principal character projection within the required

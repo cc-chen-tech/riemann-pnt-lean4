@@ -1503,6 +1503,121 @@ def test_canonical_secondary_zero_is_offdiagonal_long_polynomial_energy() -> Non
     assert not sides.canonical_resonant_bound_proved
 
 
+def test_physical_zero_mellin_adapter_keeps_both_reflection_cross_terms() -> None:
+    """Catch losing a product factorization, packet label, cross term, or diagonal."""
+    sides = type_identity.physical_zero_mellin_reflection_adapter_sides(
+        mollifier_weights={1: F(1), 2: F(-1)},
+        zeta_weights={1: F(2), 3: F(1)},
+        completed_coefficients={1: F(2), 2: F(-1), 3: F(1), 6: F(-3)},
+        reflected_coefficients={2: F(1), 6: F(-2)},
+        secondary_zero_packets=(
+            type_identity.SecondaryZeroPacket(
+                "main",
+                1,
+                2,
+                "H1-D2",
+                {(1, 2): F(3), (2, 1): F(5), (3, 6): F(-1)},
+            ),
+            type_identity.SecondaryZeroPacket(
+                "dual",
+                -2,
+                -1,
+                "H2-D1",
+                {(6, 3): F(4), (2, 2): F(2), (1, 6): F(7)},
+            ),
+        ),
+        explicit_diagonal_weights={1: F(1), 2: F(3), 6: F(-2)},
+    )
+
+    assert sides.product_coefficients == (
+        (1, F(2)),
+        (2, F(-2)),
+        (3, F(1)),
+        (6, F(-1)),
+    )
+    assert sides.packet_contributions == (
+        ("main", 1, 2, "H1-D2", F(-31), F(-31)),
+        ("dual", -2, -1, "H2-D1", F(-10), F(-10)),
+    )
+    assert sides.direct_four_variable_sum == F(-41)
+    assert sides.paired_product_sum == F(-41)
+    assert sides.completed_completed == F(-65)
+    assert sides.completed_reflected == F(-22)
+    assert sides.reflected_completed == F(0)
+    assert sides.reflected_reflected == F(2)
+    assert sides.explicit_diagonal == F(14)
+    assert sides.direct_remainder == F(-55)
+    assert sides.reflected_remainder == F(-55)
+    assert sides.afe_directions_retained == ("main", "dual")
+    assert sides.full_afe_direction_pair_present
+    assert sides.product_coefficients_equal_completed_minus_reflected
+    assert sides.four_variable_to_product_pairing_exact
+    assert sides.reflection_expansion_exact
+    assert sides.full_supplied_packet_adapter_exact
+    assert sides.original_h_delta_and_dyadic_labels_retained
+    assert not sides.analytic_packet_family_exhaustive
+    assert not sides.unified_signed_operator_bound_proved
+
+
+def test_unified_signed_operator_centers_nonzero_packets_only_once() -> None:
+    """Catch dropping either resonant-centered TT* cross term after centering."""
+    sides = type_identity.unified_signed_zero_nonzero_operator_sides(
+        coefficients={1: F(2), 2: F(-1)},
+        canonical_zero_kernel={(1, 2): F(2), (2, 1): F(2)},
+        nonzero_frequency_packets=(
+            type_identity.SecondaryZeroPacket(
+                "main",
+                1,
+                2,
+                "H1-D2",
+                {(1, 1): F(3), (2, 1): F(-1), (2, 2): F(2)},
+            ),
+            type_identity.SecondaryZeroPacket(
+                "dual",
+                -2,
+                -1,
+                "H2-D1",
+                {(1, 2): F(1), (2, 2): F(3)},
+            ),
+        ),
+        left_density_weights={1: F(1, 2), 2: F(1, 2)},
+        right_density_weights={1: F(1, 2), 2: F(1, 2)},
+    )
+
+    assert sides.nonzero_packet_contributions == (
+        ("main", 1, 2, "H1-D2", F(16)),
+        ("dual", -2, -1, "H2-D1", F(1)),
+    )
+    assert sides.canonical_zero_contribution == F(-8)
+    assert sides.raw_nonzero_contribution == F(17)
+    assert sides.unified_direct_contribution == F(9)
+    assert sides.nonzero_resonant_projection_contribution == F(-1)
+    assert sides.resonant_contribution == F(-9)
+    assert sides.centered_contribution == F(18)
+    assert sides.recombined_contribution == F(9)
+    assert sides.centered_kernel_entries == (
+        (1, 1, F(2)),
+        (1, 2, F(-2)),
+        (2, 1, F(-2)),
+        (2, 2, F(2)),
+    )
+    assert all(value == 0 for _, value in sides.weighted_centered_row_sums)
+    assert all(value == 0 for _, value in sides.weighted_centered_column_sums)
+    assert sides.direct_ttstar_energy == F(26)
+    assert sides.resonant_ttstar_energy == F(50)
+    assert sides.resonant_centered_ttstar_cross == F(-48)
+    assert sides.centered_resonant_ttstar_cross == F(-48)
+    assert sides.centered_ttstar_energy == F(72)
+    assert sides.recombined_ttstar_energy == F(26)
+    assert sides.signed_kernel_recombination_exact
+    assert sides.ttstar_recombination_exact
+    assert sides.nonzero_centered_once
+    assert sides.packet_labels_retained_before_ttstar
+    assert not sides.physical_nonzero_density_derived
+    assert not sides.separate_resonant_or_centered_bound_proved
+    assert not sides.coupled_kernel_gate_closed
+
+
 def test_zero_frequency_master_requires_probability_density_weights() -> None:
     packet = type_identity.SecondaryZeroPacket(
         "main", 1, 1, "unit", {(1, 1): F(1)}

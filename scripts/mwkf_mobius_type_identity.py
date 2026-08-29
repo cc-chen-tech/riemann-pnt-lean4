@@ -120,6 +120,64 @@ class CanonicalSecondaryZeroEnergy:
 
 
 @dataclass(frozen=True)
+class PhysicalZeroMellinReflectionAdapter:
+    product_coefficients: tuple[tuple[int, Fraction], ...]
+    packet_contributions: tuple[
+        tuple[str, int, int, str, Fraction, Fraction], ...
+    ]
+    direct_four_variable_sum: Fraction
+    paired_product_sum: Fraction
+    completed_completed: Fraction
+    completed_reflected: Fraction
+    reflected_completed: Fraction
+    reflected_reflected: Fraction
+    explicit_diagonal: Fraction
+    direct_remainder: Fraction
+    reflected_remainder: Fraction
+    afe_directions_retained: tuple[str, ...]
+    full_afe_direction_pair_present: bool
+    product_coefficients_equal_completed_minus_reflected: bool
+    four_variable_to_product_pairing_exact: bool
+    reflection_expansion_exact: bool
+    full_supplied_packet_adapter_exact: bool
+    original_h_delta_and_dyadic_labels_retained: bool
+    analytic_packet_family_exhaustive: bool
+    unified_signed_operator_bound_proved: bool
+
+
+@dataclass(frozen=True)
+class UnifiedSignedZeroNonzeroOperator:
+    nonzero_packet_contributions: tuple[
+        tuple[str, int, int, str, Fraction], ...
+    ]
+    canonical_zero_contribution: Fraction
+    raw_nonzero_contribution: Fraction
+    unified_direct_contribution: Fraction
+    nonzero_resonant_projection_contribution: Fraction
+    resonant_contribution: Fraction
+    centered_contribution: Fraction
+    recombined_contribution: Fraction
+    centered_kernel_entries: tuple[tuple[int, int, Fraction], ...]
+    resonant_kernel_entries: tuple[tuple[int, int, Fraction], ...]
+    unified_kernel_entries: tuple[tuple[int, int, Fraction], ...]
+    weighted_centered_row_sums: tuple[tuple[int, Fraction], ...]
+    weighted_centered_column_sums: tuple[tuple[int, Fraction], ...]
+    direct_ttstar_energy: Fraction
+    resonant_ttstar_energy: Fraction
+    resonant_centered_ttstar_cross: Fraction
+    centered_resonant_ttstar_cross: Fraction
+    centered_ttstar_energy: Fraction
+    recombined_ttstar_energy: Fraction
+    signed_kernel_recombination_exact: bool
+    ttstar_recombination_exact: bool
+    nonzero_centered_once: bool
+    packet_labels_retained_before_ttstar: bool
+    physical_nonzero_density_derived: bool
+    separate_resonant_or_centered_bound_proved: bool
+    coupled_kernel_gate_closed: bool
+
+
+@dataclass(frozen=True)
 class BBLRZeroFrequencyReindex:
     direct_sum: Fraction
     reindexed_sum: Fraction
@@ -2661,6 +2719,476 @@ def canonical_secondary_zero_energy_sides(
         ),
         reciprocal_lcm_kernel_identified=False,
         canonical_resonant_bound_proved=False,
+    )
+
+
+def physical_zero_mellin_reflection_adapter_sides(
+    *,
+    mollifier_weights: dict[int, Fraction],
+    zeta_weights: dict[int, Fraction],
+    completed_coefficients: dict[int, Fraction],
+    reflected_coefficients: dict[int, Fraction],
+    secondary_zero_packets: tuple[SecondaryZeroPacket, ...],
+    explicit_diagonal_weights: dict[int, Fraction],
+) -> PhysicalZeroMellinReflectionAdapter:
+    """Compose product pairing and the two-sided zero-Mellin reflection.
+
+    For each labelled packet this verifies the finite bijection
+    ``(d,n,e,m) -> (x=d*n,y=e*m)`` before any absolute value.  The paired
+    coefficient is then compared with the supplied physical reflection
+    ``B(x)=F(x)-R(x)``.  Both nonsymmetric cross terms and the explicit
+    equal-product diagonal remain in the returned master.
+
+    The function proves the adapter for the supplied finite packet family.
+    It does not assert that an analytic decomposition of equation (4.5)
+    has supplied every AFE/dyadic packet, and it proves no operator bound.
+    """
+
+    if not mollifier_weights or not zeta_weights:
+        raise ValueError("mollifier and zeta coefficient families are required")
+    coefficient_families = (
+        mollifier_weights,
+        zeta_weights,
+        completed_coefficients,
+        reflected_coefficients,
+    )
+    if any(index <= 0 for family in coefficient_families for index in family):
+        raise ValueError("all physical coefficient indices must be positive")
+    if not secondary_zero_packets:
+        raise ValueError("at least one secondary-zero packet is required")
+    if any(packet.poisson_frequency_h == 0 for packet in secondary_zero_packets):
+        raise ValueError("the physical secondary packet requires h nonzero")
+    if any(packet.additive_shift_delta == 0 for packet in secondary_zero_packets):
+        raise ValueError("the physical off-diagonal packet requires delta nonzero")
+    if any(
+        not packet.afe_direction or not packet.dyadic_label
+        for packet in secondary_zero_packets
+    ):
+        raise ValueError("every packet requires AFE and dyadic labels")
+    if any(
+        left <= 0 or right <= 0
+        for packet in secondary_zero_packets
+        for left, right in packet.pair_kernel
+    ):
+        raise ValueError("physical pair-kernel indices must be positive")
+    if any(index <= 0 for index in explicit_diagonal_weights):
+        raise ValueError("explicit diagonal indices must be positive")
+
+    mollifier = {
+        index: Fraction(weight) for index, weight in mollifier_weights.items()
+    }
+    zeta = {index: Fraction(weight) for index, weight in zeta_weights.items()}
+    completed = {
+        index: Fraction(weight) for index, weight in completed_coefficients.items()
+    }
+    reflected = {
+        index: Fraction(weight) for index, weight in reflected_coefficients.items()
+    }
+
+    products: dict[int, Fraction] = {}
+    for divisor, divisor_weight in mollifier.items():
+        for zeta_index, zeta_weight in zeta.items():
+            product = divisor * zeta_index
+            products[product] = products.get(product, Fraction(0)) + (
+                divisor_weight * zeta_weight
+            )
+
+    def direct_packet(packet: SecondaryZeroPacket) -> Fraction:
+        return sum(
+            (
+                left_divisor_weight
+                * left_zeta_weight
+                * right_divisor_weight
+                * right_zeta_weight
+                * Fraction(
+                    packet.pair_kernel.get(
+                        (
+                            left_divisor * left_zeta_index,
+                            right_divisor * right_zeta_index,
+                        ),
+                        Fraction(0),
+                    )
+                )
+                for left_divisor, left_divisor_weight in mollifier.items()
+                for left_zeta_index, left_zeta_weight in zeta.items()
+                for right_divisor, right_divisor_weight in mollifier.items()
+                for right_zeta_index, right_zeta_weight in zeta.items()
+            ),
+            Fraction(0),
+        )
+
+    def paired_packet(packet: SecondaryZeroPacket) -> Fraction:
+        return sum(
+            (
+                left_weight
+                * right_weight
+                * Fraction(
+                    packet.pair_kernel.get((left, right), Fraction(0))
+                )
+                for left, left_weight in products.items()
+                for right, right_weight in products.items()
+            ),
+            Fraction(0),
+        )
+
+    packet_contributions = tuple(
+        (
+            packet.afe_direction,
+            packet.poisson_frequency_h,
+            packet.additive_shift_delta,
+            packet.dyadic_label,
+            direct_packet(packet),
+            paired_packet(packet),
+        )
+        for packet in secondary_zero_packets
+    )
+    direct_sum = sum(
+        (entry[4] for entry in packet_contributions), Fraction(0)
+    )
+    paired_sum = sum(
+        (entry[5] for entry in packet_contributions), Fraction(0)
+    )
+    combined_kernel: dict[tuple[int, int], Fraction] = {}
+    for packet in secondary_zero_packets:
+        for pair, weight in packet.pair_kernel.items():
+            combined_kernel[pair] = combined_kernel.get(
+                pair, Fraction(0)
+            ) + Fraction(weight)
+
+    def pair_sum(
+        left_coefficients: dict[int, Fraction],
+        right_coefficients: dict[int, Fraction],
+    ) -> Fraction:
+        return sum(
+            (
+                weight
+                * left_coefficients.get(left, Fraction(0))
+                * right_coefficients.get(right, Fraction(0))
+                for (left, right), weight in combined_kernel.items()
+            ),
+            Fraction(0),
+        )
+
+    completed_completed = pair_sum(completed, completed)
+    completed_reflected = pair_sum(completed, reflected)
+    reflected_completed = pair_sum(reflected, completed)
+    reflected_reflected = pair_sum(reflected, reflected)
+    reflected_pair_sum = (
+        completed_completed
+        - completed_reflected
+        - reflected_completed
+        + reflected_reflected
+    )
+    diagonal = sum(
+        (
+            Fraction(weight) * products.get(index, Fraction(0)) ** 2
+            for index, weight in explicit_diagonal_weights.items()
+        ),
+        Fraction(0),
+    )
+    support = set(products) | set(completed) | set(reflected)
+    coefficient_adapter = all(
+        products.get(index, Fraction(0))
+        == completed.get(index, Fraction(0))
+        - reflected.get(index, Fraction(0))
+        for index in support
+    )
+    pairing_exact = all(entry[4] == entry[5] for entry in packet_contributions)
+    reflection_exact = paired_sum == reflected_pair_sum
+    directions = tuple(
+        dict.fromkeys(packet.afe_direction for packet in secondary_zero_packets)
+    )
+    labels_retained = len(packet_contributions) == len(secondary_zero_packets)
+    return PhysicalZeroMellinReflectionAdapter(
+        product_coefficients=tuple(sorted(products.items())),
+        packet_contributions=packet_contributions,
+        direct_four_variable_sum=direct_sum,
+        paired_product_sum=paired_sum,
+        completed_completed=completed_completed,
+        completed_reflected=completed_reflected,
+        reflected_completed=reflected_completed,
+        reflected_reflected=reflected_reflected,
+        explicit_diagonal=diagonal,
+        direct_remainder=direct_sum - diagonal,
+        reflected_remainder=reflected_pair_sum - diagonal,
+        afe_directions_retained=directions,
+        full_afe_direction_pair_present=(set(directions) == {"main", "dual"}),
+        product_coefficients_equal_completed_minus_reflected=coefficient_adapter,
+        four_variable_to_product_pairing_exact=pairing_exact,
+        reflection_expansion_exact=reflection_exact,
+        full_supplied_packet_adapter_exact=(
+            coefficient_adapter
+            and pairing_exact
+            and reflection_exact
+            and direct_sum - diagonal == reflected_pair_sum - diagonal
+        ),
+        original_h_delta_and_dyadic_labels_retained=labels_retained,
+        analytic_packet_family_exhaustive=False,
+        unified_signed_operator_bound_proved=False,
+    )
+
+
+def unified_signed_zero_nonzero_operator_sides(
+    *,
+    coefficients: dict[int, Fraction],
+    canonical_zero_kernel: dict[tuple[int, int], Fraction],
+    nonzero_frequency_packets: tuple[SecondaryZeroPacket, ...],
+    left_density_weights: dict[int, Fraction],
+    right_density_weights: dict[int, Fraction],
+) -> UnifiedSignedZeroNonzeroOperator:
+    """Center the nonzero complement once and retain the full signed TT*.
+
+    The raw nonzero-frequency kernel is double-centered against the supplied
+    finite densities.  Its row/column projection is joined to the canonical
+    zero Gram in ``K_res``; the zero-row/zero-column remainder is ``K_cent``.
+    The identity
+
+    ``K_full = K_res + K_cent = K_zero + K_nonzero``
+
+    is checked before forming ``TT*``.  Both mixed Gram terms are then kept
+    explicitly.  No separate norm estimate is inferred from this algebra.
+    """
+
+    if not coefficients:
+        raise ValueError("at least one operator coefficient is required")
+    indices = tuple(sorted(coefficients))
+    if any(index <= 0 for index in indices):
+        raise ValueError("operator indices must be positive")
+    if set(left_density_weights) != set(indices):
+        raise ValueError("left density support must equal the operator support")
+    if set(right_density_weights) != set(indices):
+        raise ValueError("right density support must equal the operator support")
+    left_density = {
+        index: Fraction(left_density_weights[index]) for index in indices
+    }
+    right_density = {
+        index: Fraction(right_density_weights[index]) for index in indices
+    }
+    if any(weight < 0 for weight in left_density.values()) or any(
+        weight < 0 for weight in right_density.values()
+    ):
+        raise ValueError("density weights must be nonnegative")
+    if sum(left_density.values(), Fraction(0)) != 1:
+        raise ValueError("left density weights must sum to one")
+    if sum(right_density.values(), Fraction(0)) != 1:
+        raise ValueError("right density weights must sum to one")
+    if not nonzero_frequency_packets:
+        raise ValueError("at least one nonzero-frequency packet is required")
+    if any(
+        packet.poisson_frequency_h == 0
+        or packet.additive_shift_delta == 0
+        or not packet.afe_direction
+        or not packet.dyadic_label
+        for packet in nonzero_frequency_packets
+    ):
+        raise ValueError("every nonzero packet requires nonzero h,delta and labels")
+    admitted_pairs = {(left, right) for left in indices for right in indices}
+    if any(pair not in admitted_pairs for pair in canonical_zero_kernel):
+        raise ValueError("canonical zero kernel leaves the operator support")
+    if any(
+        pair not in admitted_pairs
+        for packet in nonzero_frequency_packets
+        for pair in packet.pair_kernel
+    ):
+        raise ValueError("nonzero packet kernel leaves the operator support")
+
+    coeff = {index: Fraction(coefficients[index]) for index in indices}
+
+    def normalized_kernel(
+        kernel: dict[tuple[int, int], Fraction],
+    ) -> dict[tuple[int, int], Fraction]:
+        return {
+            (left, right): Fraction(
+                kernel.get((left, right), Fraction(0))
+            )
+            for left in indices
+            for right in indices
+        }
+
+    canonical = normalized_kernel(canonical_zero_kernel)
+    packet_kernels = tuple(
+        normalized_kernel(packet.pair_kernel)
+        for packet in nonzero_frequency_packets
+    )
+    raw_nonzero = {
+        pair: sum((kernel[pair] for kernel in packet_kernels), Fraction(0))
+        for pair in admitted_pairs
+    }
+
+    def quadratic(kernel: dict[tuple[int, int], Fraction]) -> Fraction:
+        return sum(
+            (
+                coeff[left] * kernel[(left, right)] * coeff[right]
+                for left in indices
+                for right in indices
+            ),
+            Fraction(0),
+        )
+
+    packet_contributions = tuple(
+        (
+            packet.afe_direction,
+            packet.poisson_frequency_h,
+            packet.additive_shift_delta,
+            packet.dyadic_label,
+            quadratic(kernel),
+        )
+        for packet, kernel in zip(nonzero_frequency_packets, packet_kernels)
+    )
+    row_means = {
+        left: sum(
+            (
+                right_density[right] * raw_nonzero[(left, right)]
+                for right in indices
+            ),
+            Fraction(0),
+        )
+        for left in indices
+    }
+    column_means = {
+        right: sum(
+            (
+                left_density[left] * raw_nonzero[(left, right)]
+                for left in indices
+            ),
+            Fraction(0),
+        )
+        for right in indices
+    }
+    grand_mean = sum(
+        (left_density[left] * row_means[left] for left in indices),
+        Fraction(0),
+    )
+    centered = {
+        (left, right): (
+            raw_nonzero[(left, right)]
+            - row_means[left]
+            - column_means[right]
+            + grand_mean
+        )
+        for left in indices
+        for right in indices
+    }
+    nonzero_projection = {
+        pair: raw_nonzero[pair] - centered[pair] for pair in admitted_pairs
+    }
+    resonant = {
+        pair: canonical[pair] + nonzero_projection[pair]
+        for pair in admitted_pairs
+    }
+    unified = {
+        pair: canonical[pair] + raw_nonzero[pair] for pair in admitted_pairs
+    }
+    recombined = {
+        pair: resonant[pair] + centered[pair] for pair in admitted_pairs
+    }
+    weighted_rows = tuple(
+        (
+            left,
+            sum(
+                (
+                    right_density[right] * centered[(left, right)]
+                    for right in indices
+                ),
+                Fraction(0),
+            ),
+        )
+        for left in indices
+    )
+    weighted_columns = tuple(
+        (
+            right,
+            sum(
+                (
+                    left_density[left] * centered[(left, right)]
+                    for left in indices
+                ),
+                Fraction(0),
+            ),
+        )
+        for right in indices
+    )
+
+    def adjoint_output(
+        kernel: dict[tuple[int, int], Fraction],
+    ) -> dict[int, Fraction]:
+        return {
+            right: sum(
+                (coeff[left] * kernel[(left, right)] for left in indices),
+                Fraction(0),
+            )
+            for right in indices
+        }
+
+    unified_output = adjoint_output(unified)
+    resonant_output = adjoint_output(resonant)
+    centered_output = adjoint_output(centered)
+
+    def output_inner(
+        left: dict[int, Fraction], right: dict[int, Fraction]
+    ) -> Fraction:
+        return sum(
+            (left[index] * right[index] for index in indices), Fraction(0)
+        )
+
+    direct_ttstar = output_inner(unified_output, unified_output)
+    resonant_ttstar = output_inner(resonant_output, resonant_output)
+    resonant_centered = output_inner(resonant_output, centered_output)
+    centered_resonant = output_inner(centered_output, resonant_output)
+    centered_ttstar = output_inner(centered_output, centered_output)
+    recombined_ttstar = (
+        resonant_ttstar
+        + resonant_centered
+        + centered_resonant
+        + centered_ttstar
+    )
+    kernel_recombines = unified == recombined
+    labels_retained = len(packet_contributions) == len(
+        nonzero_frequency_packets
+    )
+    return UnifiedSignedZeroNonzeroOperator(
+        nonzero_packet_contributions=packet_contributions,
+        canonical_zero_contribution=quadratic(canonical),
+        raw_nonzero_contribution=quadratic(raw_nonzero),
+        unified_direct_contribution=quadratic(unified),
+        nonzero_resonant_projection_contribution=quadratic(
+            nonzero_projection
+        ),
+        resonant_contribution=quadratic(resonant),
+        centered_contribution=quadratic(centered),
+        recombined_contribution=quadratic(recombined),
+        centered_kernel_entries=tuple(
+            (left, right, centered[(left, right)])
+            for left in indices
+            for right in indices
+        ),
+        resonant_kernel_entries=tuple(
+            (left, right, resonant[(left, right)])
+            for left in indices
+            for right in indices
+        ),
+        unified_kernel_entries=tuple(
+            (left, right, unified[(left, right)])
+            for left in indices
+            for right in indices
+        ),
+        weighted_centered_row_sums=weighted_rows,
+        weighted_centered_column_sums=weighted_columns,
+        direct_ttstar_energy=direct_ttstar,
+        resonant_ttstar_energy=resonant_ttstar,
+        resonant_centered_ttstar_cross=resonant_centered,
+        centered_resonant_ttstar_cross=centered_resonant,
+        centered_ttstar_energy=centered_ttstar,
+        recombined_ttstar_energy=recombined_ttstar,
+        signed_kernel_recombination_exact=kernel_recombines,
+        ttstar_recombination_exact=(
+            kernel_recombines and direct_ttstar == recombined_ttstar
+        ),
+        nonzero_centered_once=True,
+        packet_labels_retained_before_ttstar=labels_retained,
+        physical_nonzero_density_derived=False,
+        separate_resonant_or_centered_bound_proved=False,
+        coupled_kernel_gate_closed=False,
     )
 
 
