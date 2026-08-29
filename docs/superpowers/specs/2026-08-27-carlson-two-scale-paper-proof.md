@@ -1414,6 +1414,21 @@ Each `HasDerivAt` statement is proved for `u!=0` and passes the allowed-axiom
 audit.  Thus (8.22e''''''''''') can now be instantiated with exact powers of
 `t` and `u`.
 
+That instantiation is now formal as a single object.  For each Poisson mode,
+Lean defines the actual `Q`, `R`, and `R'`, and proves, away from a stationary
+point,
+
+\[
+ Q(iF')=A,qquad R(iF')=Q',
+\]
+
+the derivative identity for `R`, the specialized four-term norm bound, and
+the exact endpoint equalities `Q=R=0`.  Therefore every algebraic,
+differentiability, and boundary hypothesis of the twice-integrated
+nonstationary estimate has an explicit AFE witness.  The only remaining gate
+in this Poisson tail is the numerical integration of the four nonnegative
+majorants and the inverse-square frequency summation.
+
 For the Poisson far tail, the next remaining lemma is therefore explicit:
 instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, use (8.22e') to bound the
 four classes in (8.22e''''), and sum their

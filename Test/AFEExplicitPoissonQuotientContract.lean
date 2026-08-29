@@ -1,0 +1,22 @@
+import HardyTheorem.AFEExplicitPoissonQuotient
+
+open HardyTheorem AFE
+
+#check explicitPoissonFirstQuotient
+#check explicitPoissonSecondQuotient
+#check explicitPoissonSecondQuotientDerivative
+#check explicitPoissonFirstQuotient_mul_velocity
+#check explicitPoissonSecondQuotient_mul_velocity
+#check explicitPoissonSecondQuotient_hasDerivAt
+#check norm_explicitPoissonSecondQuotientDerivative_le
+#check explicitPoissonFirstQuotient_eq_zero_of_le
+#check explicitPoissonFirstQuotient_eq_zero_of_ge
+#check explicitPoissonSecondQuotient_eq_zero_of_le
+#check explicitPoissonSecondQuotient_eq_zero_of_ge
+
+#print axioms explicitPoissonFirstQuotient_mul_velocity
+#print axioms explicitPoissonSecondQuotient_mul_velocity
+#print axioms explicitPoissonSecondQuotient_hasDerivAt
+#print axioms norm_explicitPoissonSecondQuotientDerivative_le
+#print axioms explicitPoissonFirstQuotient_eq_zero_of_le
+#print axioms explicitPoissonSecondQuotient_eq_zero_of_ge

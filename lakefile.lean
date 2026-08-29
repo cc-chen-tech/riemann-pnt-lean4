@@ -2547,6 +2547,7 @@ lean_lib RiemannPNT where
     `HardyTheorem.AFEExplicitPlateauCutoff,
     `HardyTheorem.AFEExplicitMellinAmplitude,
     `HardyTheorem.AFEWeightedPoissonVelocity,
+    `HardyTheorem.AFEExplicitPoissonQuotient,
     `MathlibAux.IntervalOscillatoryIntegrationByPartsAxiomAudit,
     `Test.IntervalOscillatoryIntegrationByPartsContract,
     `HardyTheorem.SelbergLagDyadicGeometry,
