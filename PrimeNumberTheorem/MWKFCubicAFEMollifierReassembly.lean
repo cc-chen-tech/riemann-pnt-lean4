@@ -193,5 +193,55 @@ theorem cubicAFEMollifierPairApproximation_eq_tsum
     _ = ∑' p : ℕ × ℕ,
         cubicAFECombinedSummandFinite W T X V d e t p := hrhs.symm
 
+/-- The complete finite-height mollified AFE as a finite `(d,e)` sum of
+absolutely convergent `p`-sums. -/
+theorem cubicAFEMollifiedApproximation_eq_tripleSum
+    (W : CubicTestWeight) (T : ℝ) {X : ℝ} (hX : 1 / 2 < X)
+    (V t : ℝ) :
+    cubicAFEMollifiedApproximation W T X V t =
+      ∑ d ∈ cubicMollifierSupport T, ∑ e ∈ cubicMollifierSupport T,
+        ∑' p : ℕ × ℕ,
+          cubicAFECombinedSummandFinite W T X V d e t p := by
+  rw [cubicAFEMollifiedApproximation_eq_pairSum]
+  apply Finset.sum_congr rfl
+  intro d hd
+  apply Finset.sum_congr rfl
+  intro e he
+  exact cubicAFEMollifierPairApproximation_eq_tsum W T hX V d e t
+
+/-- Fully exposed amplitude and oscillatory phase of one combined summand. -/
+theorem cubicAFECombinedSummandFinite_eq_exp
+    (W : CubicTestWeight) (T X V : ℝ) {d e : ℕ}
+    (hd : d ≠ 0) (he : e ≠ 0) (t : ℝ) (p : ℕ × ℕ) :
+    cubicAFECombinedSummandFinite W T X V d e t p =
+      (cubicMollifierCoefficient T d : ℂ) *
+        (cubicMollifierCoefficient T e : ℂ) * 2 *
+        (((((Real.sqrt (cubicAFEPositiveIndexProduct p) : ℝ) : ℂ)⁻¹) *
+          (((Real.sqrt (d * e) : ℝ) : ℂ)⁻¹)) *
+          Complex.exp
+            ((I * (cubicAFECombinedLogPhase p d e : ℂ)) * t) *
+          cubicAFEProductWeightFinite t X V
+            (cubicAFEPositiveIndexProduct p)) *
+        (W (t / T) : ℂ) := by
+  unfold cubicAFECombinedSummandFinite
+  rw [cubicAFECombinedArithmeticFactor_eq_exp t p hd he]
+
+/-- On the exact multiplicative diagonal the fully expanded combined summand
+has no oscillatory exponential. -/
+theorem cubicAFECombinedSummandFinite_eq_on_diagonal
+    (W : CubicTestWeight) (T X V : ℝ) {d e : ℕ}
+    (hd : 0 < d) (he : 0 < e) (t : ℝ) (p : ℕ × ℕ)
+    (hdiag : (p.2 + 1) * e = (p.1 + 1) * d) :
+    cubicAFECombinedSummandFinite W T X V d e t p =
+      (cubicMollifierCoefficient T d : ℂ) *
+        (cubicMollifierCoefficient T e : ℂ) * 2 *
+        (((Real.sqrt (cubicAFEPositiveIndexProduct p) : ℝ) : ℂ)⁻¹ *
+          ((Real.sqrt (d * e) : ℝ) : ℂ)⁻¹ *
+          cubicAFEProductWeightFinite t X V
+            (cubicAFEPositiveIndexProduct p)) *
+        (W (t / T) : ℂ) := by
+  unfold cubicAFECombinedSummandFinite
+  rw [cubicAFECombinedArithmeticFactor_eq_on_diagonal t p hd he hdiag]
+
 end MWKFCubic
 end PrimeNumberTheorem

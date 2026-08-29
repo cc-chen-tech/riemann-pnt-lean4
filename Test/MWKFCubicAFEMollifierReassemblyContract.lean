@@ -10,5 +10,8 @@ namespace PrimeNumberTheorem.MWKFCubic
 #check cubicAFECombinedSummandFinite
 #check summable_cubicAFECombinedSummandFinite
 #check cubicAFEMollifierPairApproximation_eq_tsum
+#check cubicAFEMollifiedApproximation_eq_tripleSum
+#check cubicAFECombinedSummandFinite_eq_exp
+#check cubicAFECombinedSummandFinite_eq_on_diagonal
 
 end PrimeNumberTheorem.MWKFCubic
