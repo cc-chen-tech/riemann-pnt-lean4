@@ -33,6 +33,14 @@ theorem hasCompactSupport (W : CubicTestWeight) : HasCompactSupport W := by
   exact HasCompactSupport.of_support_subset_isCompact isCompact_Icc
     W.support_subset
 
+/-- A nonzero dilation preserves the compact support supplied by the test
+weight.  This is shared by the actual moment and every finite twisted term. -/
+theorem hasCompactSupport_dilate
+    (W : CubicTestWeight) {T : ℝ} (hT : T ≠ 0) :
+    HasCompactSupport (fun t : ℝ ↦ W (t / T)) := by
+  have h := W.hasCompactSupport.comp_smul (c := T⁻¹) (inv_ne_zero hT)
+  simpa [div_eq_mul_inv, smul_eq_mul, mul_comm] using h
+
 end CubicTestWeight
 
 /-- The exact integer cutoff `floor(T^3)`.  Natural floor is zero for negative
@@ -101,11 +109,8 @@ theorem continuous_cubicMomentIntegrand
 theorem hasCompactSupport_cubicMomentIntegrand
     (W : CubicTestWeight) {T : ℝ} (hT : T ≠ 0) :
     HasCompactSupport (cubicMomentIntegrand W T) := by
-  have hscaled : HasCompactSupport (fun t : ℝ ↦ W (t / T)) := by
-    have h := W.hasCompactSupport.comp_smul (c := T⁻¹) (inv_ne_zero hT)
-    simpa [div_eq_mul_inv, smul_eq_mul, mul_comm] using h
   unfold cubicMomentIntegrand
-  exact hscaled.mul_left
+  exact (W.hasCompactSupport_dilate hT).mul_left
 
 /-- The full-real-axis integral defining the actual cubic moment is genuine
 (not the default value of a nonintegrable Bochner integral). -/

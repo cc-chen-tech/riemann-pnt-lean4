@@ -5,6 +5,7 @@ open Complex MeasureTheory Set
 namespace PrimeNumberTheorem.MWKFCubic
 
 #check CubicTestWeight
+#check CubicTestWeight.hasCompactSupport_dilate
 #check cubicMollifierLength
 #check cubicMomentIntegrand
 #check cubicMollifiedSecondMoment
@@ -22,5 +23,9 @@ namespace PrimeNumberTheorem.MWKFCubic
 #check (@integrable_cubicMomentIntegrand :
   ∀ (W : CubicTestWeight) {T : ℝ}, T ≠ 0 →
     Integrable (cubicMomentIntegrand W T))
+
+#check (@CubicTestWeight.hasCompactSupport_dilate :
+  ∀ (W : CubicTestWeight) {T : ℝ}, T ≠ 0 →
+    HasCompactSupport (fun t : ℝ ↦ W (t / T)))
 
 end PrimeNumberTheorem.MWKFCubic

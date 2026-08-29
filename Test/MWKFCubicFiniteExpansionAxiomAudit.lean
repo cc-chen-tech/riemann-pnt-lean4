@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.MWKFCubicFiniteExpansion
+
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicMollifier_eq_sum
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicMollifierNormSq_eq_doubleSum
+#print axioms PrimeNumberTheorem.MWKFCubic.continuous_cubicTwistedIntegrand
+#print axioms PrimeNumberTheorem.MWKFCubic.hasCompactSupport_cubicTwistedIntegrand
+#print axioms PrimeNumberTheorem.MWKFCubic.integrable_cubicTwistedIntegrand
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicComplexMollifiedSecondMoment_eq_ofReal
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicComplexMollifiedSecondMoment_eq_twisted_sum

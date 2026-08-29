@@ -38,6 +38,72 @@ theorem gcd_extraction
   · simpa [Nat.mul_comm] using (Nat.div_mul_cancel hdvdD).symm
   · simpa [Nat.mul_comm] using (Nat.div_mul_cancel hdvdE).symm
 
+/-- On coprime residual moduli, the multiplicative diagonal has one and only
+one common scale.  The positivity of `r` is exactly what permits cancellation
+after Euclid's lemma extracts `r ∣ m`. -/
+theorem coprime_diagonal_parameterization
+    {m n r s : ℕ} (hr : 0 < r) (hrs : Nat.Coprime r s) :
+    m * s = n * r ↔ ∃ l : ℕ, m = l * r ∧ n = l * s := by
+  constructor
+  · intro h
+    have hr_dvd_ms : r ∣ m * s := by
+      refine ⟨n, ?_⟩
+      simpa [Nat.mul_comm] using h
+    have hr_dvd_m : r ∣ m := (hrs.dvd_mul_right).mp hr_dvd_ms
+    obtain ⟨l, hl⟩ := hr_dvd_m
+    have hcancel : r * (l * s) = r * n := by
+      calc
+        r * (l * s) = (r * l) * s := by ac_rfl
+        _ = m * s := by rw [hl]
+        _ = n * r := h
+        _ = r * n := by ac_rfl
+    have hls : l * s = n := Nat.mul_left_cancel hr hcancel
+    exact ⟨l, by simpa [Nat.mul_comm] using hl, hls.symm⟩
+  · rintro ⟨l, rfl, rfl⟩
+    ac_rfl
+
+/-- After extracting `q=gcd(d,e)`, the original diagonal `m e = n d` is
+exactly the coprime ray `m=l(d/q)`, `n=l(e/q)`. -/
+theorem diagonal_eq_iff_exists_scale
+    {d e m n : ℕ} (hd : 0 < d) (_he : 0 < e) :
+    m * e = n * d ↔
+      ∃ l : ℕ,
+        m = l * (d / Nat.gcd d e) ∧
+        n = l * (e / Nat.gcd d e) := by
+  let q := Nat.gcd d e
+  let r := d / q
+  let s := e / q
+  have hq : 0 < q := Nat.gcd_pos_of_pos_left e hd
+  have hq0 : q ≠ 0 := Nat.ne_of_gt hq
+  obtain ⟨hdq, heq, hrs⟩ := gcd_extraction (d := d) (e := e) hq0
+  have hdqr : d = q * r := by simpa [q, r] using hdq
+  have heqs : e = q * s := by simpa [q, s] using heq
+  have hrs' : Nat.Coprime r s := by simpa [q, r, s] using hrs
+  have hr : 0 < r := by
+    rw [Nat.pos_iff_ne_zero]
+    intro hr0
+    rw [hr0, mul_zero] at hdqr
+    omega
+  have hscaled : m * e = n * d ↔ m * s = n * r := by
+    constructor
+    · intro h
+      apply Nat.mul_left_cancel hq
+      calc
+        q * (m * s) = m * (q * s) := by ac_rfl
+        _ = m * e := by rw [← heqs]
+        _ = n * d := h
+        _ = n * (q * r) := by rw [hdqr]
+        _ = q * (n * r) := by ac_rfl
+    · intro h
+      calc
+        m * e = m * (q * s) := by rw [heqs]
+        _ = q * (m * s) := by ac_rfl
+        _ = q * (n * r) := by rw [h]
+        _ = n * (q * r) := by ac_rfl
+        _ = n * d := by rw [← hdqr]
+  rw [hscaled]
+  exact coprime_diagonal_parameterization hr hrs'
+
 /-- With the natural support condition, the additive shifted equation and
 the complementary-divisor equation are literally equivalent. -/
 theorem shifted_eq_complementary_divisor

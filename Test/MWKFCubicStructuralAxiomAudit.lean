@@ -2,6 +2,8 @@ import PrimeNumberTheorem.MWKFCubicStructural
 
 #print axioms PrimeNumberTheorem.MWKFCubic.gcd_scaled_eq_iff_coprime
 #print axioms PrimeNumberTheorem.MWKFCubic.gcd_extraction
+#print axioms PrimeNumberTheorem.MWKFCubic.coprime_diagonal_parameterization
+#print axioms PrimeNumberTheorem.MWKFCubic.diagonal_eq_iff_exists_scale
 #print axioms PrimeNumberTheorem.MWKFCubic.shifted_eq_complementary_divisor
 #print axioms PrimeNumberTheorem.MWKFCubic.sum_partition_by_shell
 #print axioms PrimeNumberTheorem.MWKFCubic.sum_moebius_convolution_divisors
