@@ -48,5 +48,11 @@ theorem weightedPoissonVelocityDeriv_hasDerivAt
   simp [weightedPoissonVelocitySecondDeriv]
   field_simp [hu]
 
+theorem weightedPoissonVelocitySecondDeriv_continuousAt
+    (t : ℝ) {u : ℝ} (hu : u ≠ 0) :
+    ContinuousAt (weightedPoissonVelocitySecondDeriv t) u := by
+  unfold weightedPoissonVelocitySecondDeriv
+  exact continuousAt_const.div₀ (continuousAt_id.pow 3) (pow_ne_zero 3 hu)
+
 end AFE
 end HardyTheorem

@@ -221,6 +221,79 @@ theorem oscillatorySecondPhaseQuotient_hasDerivAt
   exact oscillatoryPhaseQuotient_hasDerivAt
     (oscillatoryPhaseQuotientDerivative_hasDerivAt hA hA' hv hv' hv0) hv hv0
 
+theorem oscillatoryPhaseQuotientDerivative_continuousAt
+    {A A' : ℝ → ℂ} {v v' : ℝ → ℝ} {x : ℝ}
+    (hA : ContinuousAt A x) (hA' : ContinuousAt A' x)
+    (hv : ContinuousAt v x) (hv' : ContinuousAt v' x)
+    (hv0 : v x ≠ 0) :
+    ContinuousAt (oscillatoryPhaseQuotientDerivative A A' v v') x := by
+  have hinv : ContinuousAt v⁻¹ x := hv.inv₀ hv0
+  have hratio : ContinuousAt (fun y => -v' y / (v y) ^ 2) x :=
+    hv'.neg.div₀ (hv.pow 2) (pow_ne_zero 2 hv0)
+  have hinvC : ContinuousAt (fun y => ((v⁻¹ y : ℝ) : ℂ)) x := by
+    change ContinuousAt (Complex.ofReal ∘ v⁻¹) x
+    exact Complex.continuous_ofReal.continuousAt.comp hinv
+  have hratioC : ContinuousAt
+      (fun y => ((-v' y / (v y) ^ 2 : ℝ) : ℂ)) x := by
+    change ContinuousAt
+      (Complex.ofReal ∘ fun y => -v' y / (v y) ^ 2) x
+    exact Complex.continuous_ofReal.continuousAt.comp hratio
+  unfold oscillatoryPhaseQuotientDerivative
+  exact (hinvC.mul (continuousAt_const.mul hA')).add
+    (hratioC.mul (continuousAt_const.mul hA))
+
+theorem oscillatoryPhaseQuotientSecondDerivative_continuousAt
+    {A A' A'' : ℝ → ℂ} {v v' v'' : ℝ → ℝ} {x : ℝ}
+    (hA : ContinuousAt A x) (hA' : ContinuousAt A' x)
+    (hA'' : ContinuousAt A'' x) (hv : ContinuousAt v x)
+    (hv' : ContinuousAt v' x) (hv'' : ContinuousAt v'' x)
+    (hv0 : v x ≠ 0) :
+    ContinuousAt
+      (oscillatoryPhaseQuotientSecondDerivative A A' A'' v v' v'') x := by
+  have hinv : ContinuousAt v⁻¹ x := hv.inv₀ hv0
+  have hratio : ContinuousAt (fun y => -v' y / (v y) ^ 2) x :=
+    hv'.neg.div₀ (hv.pow 2) (pow_ne_zero 2 hv0)
+  have hratio' : ContinuousAt
+      (fun y => -v'' y / (v y) ^ 2 + 2 * (v' y) ^ 2 / (v y) ^ 3) x :=
+    (hv''.neg.div₀ (hv.pow 2) (pow_ne_zero 2 hv0)).add
+      ((continuousAt_const.mul (hv'.pow 2)).div₀
+        (hv.pow 3) (pow_ne_zero 3 hv0))
+  have hinvC : ContinuousAt (fun y => ((v⁻¹ y : ℝ) : ℂ)) x := by
+    change ContinuousAt (Complex.ofReal ∘ v⁻¹) x
+    exact Complex.continuous_ofReal.continuousAt.comp hinv
+  have hratioC : ContinuousAt
+      (fun y => ((-v' y / (v y) ^ 2 : ℝ) : ℂ)) x := by
+    change ContinuousAt
+      (Complex.ofReal ∘ fun y => -v' y / (v y) ^ 2) x
+    exact Complex.continuous_ofReal.continuousAt.comp hratio
+  have hratio'C : ContinuousAt
+      (fun y => ((-v'' y / (v y) ^ 2 +
+        2 * (v' y) ^ 2 / (v y) ^ 3 : ℝ) : ℂ)) x := by
+    change ContinuousAt
+      (Complex.ofReal ∘ fun y => -v'' y / (v y) ^ 2 +
+        2 * (v' y) ^ 2 / (v y) ^ 3) x
+    exact Complex.continuous_ofReal.continuousAt.comp hratio'
+  unfold oscillatoryPhaseQuotientSecondDerivative
+  exact ((hratioC.mul (continuousAt_const.mul hA')).add
+      (hinvC.mul (continuousAt_const.mul hA''))).add
+    ((hratio'C.mul (continuousAt_const.mul hA)).add
+      (hratioC.mul (continuousAt_const.mul hA')))
+
+theorem oscillatorySecondPhaseQuotientDerivative_continuousAt
+    {A A' A'' : ℝ → ℂ} {v v' v'' : ℝ → ℝ} {x : ℝ}
+    (hA : ContinuousAt A x) (hA' : ContinuousAt A' x)
+    (hA'' : ContinuousAt A'' x) (hv : ContinuousAt v x)
+    (hv' : ContinuousAt v' x) (hv'' : ContinuousAt v'' x)
+    (hv0 : v x ≠ 0) :
+    ContinuousAt
+      (oscillatorySecondPhaseQuotientDerivative A A' A'' v v' v'') x := by
+  exact oscillatoryPhaseQuotientDerivative_continuousAt
+    (oscillatoryPhaseQuotientDerivative_continuousAt
+      hA hA' hv hv' hv0)
+    (oscillatoryPhaseQuotientSecondDerivative_continuousAt
+      hA hA' hA'' hv hv' hv'' hv0)
+    hv hv' hv0
+
 theorem oscillatorySecondPhaseQuotient_mul_phaseVelocity
     {A A' : ℝ → ℂ} {v v' : ℝ → ℝ} {x : ℝ}
     (hv0 : v x ≠ 0) :

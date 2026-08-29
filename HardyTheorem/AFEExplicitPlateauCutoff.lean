@@ -78,6 +78,21 @@ theorem explicitIntervalPlateauDeriv_hasDerivAt (x N u : ℝ) :
   simp [explicitIntervalPlateauSecondDeriv, Function.comp_apply]
   ring
 
+theorem explicitIntervalPlateauSecondDeriv_continuous (x N : ℝ) :
+    Continuous (explicitIntervalPlateauSecondDeriv x N) := by
+  have h₀diff : ContDiff ℝ (⊤ : ℕ∞) Real.smoothTransition :=
+    Real.smoothTransition.contDiff
+  have h₀ : Continuous Real.smoothTransition :=
+    h₀diff.continuous
+  have h₁ : Continuous (deriv Real.smoothTransition) :=
+    (@Real.smoothTransition.contDiff 1).continuous_deriv le_rfl
+  have hd₁ : ContDiff ℝ (⊤ : ℕ∞) (deriv Real.smoothTransition) :=
+    (contDiff_infty_iff_deriv.mp Real.smoothTransition.contDiff).2
+  have h₂ : Continuous (deriv (deriv Real.smoothTransition)) :=
+    hd₁.continuous_deriv (by simp)
+  unfold explicitIntervalPlateauSecondDeriv
+  fun_prop
+
 theorem explicitIntervalPlateau_eq_one {x N u : ℝ} (hu : u ∈ Icc x N) :
     explicitIntervalPlateau x N u = 1 := by
   rw [explicitIntervalPlateau,

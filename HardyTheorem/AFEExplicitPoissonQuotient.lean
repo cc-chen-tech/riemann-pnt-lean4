@@ -96,6 +96,28 @@ theorem explicitPoissonSecondQuotient_hasDerivAt
     (weightedPoissonVelocity_hasDerivAt t k hu)
     (weightedPoissonVelocityDeriv_hasDerivAt t hu) hv0
 
+theorem explicitPoissonFirstQuotientDerivative_continuousAt
+    (sigma x N t : ℝ) (k : ℤ) {u : ℝ}
+    (hu : u ≠ 0) (hv0 : weightedPoissonVelocity t k u ≠ 0) :
+    ContinuousAt (explicitPoissonFirstQuotientDerivative sigma x N t k) u := by
+  exact MathlibAux.oscillatoryPhaseQuotientDerivative_continuousAt
+    (explicitComplexMellinAmplitude_hasDerivAt sigma x N hu).continuousAt
+    (explicitComplexMellinAmplitudeDeriv_hasDerivAt sigma x N hu).continuousAt
+    (weightedPoissonVelocity_hasDerivAt t k hu).continuousAt
+    (weightedPoissonVelocityDeriv_hasDerivAt t hu).continuousAt hv0
+
+theorem explicitPoissonSecondQuotientDerivative_continuousAt
+    (sigma x N t : ℝ) (k : ℤ) {u : ℝ}
+    (hu : u ≠ 0) (hv0 : weightedPoissonVelocity t k u ≠ 0) :
+    ContinuousAt (explicitPoissonSecondQuotientDerivative sigma x N t k) u := by
+  exact MathlibAux.oscillatorySecondPhaseQuotientDerivative_continuousAt
+    (explicitComplexMellinAmplitude_hasDerivAt sigma x N hu).continuousAt
+    (explicitComplexMellinAmplitudeDeriv_hasDerivAt sigma x N hu).continuousAt
+    (explicitComplexMellinAmplitudeSecondDeriv_continuousAt sigma x N hu)
+    (weightedPoissonVelocity_hasDerivAt t k hu).continuousAt
+    (weightedPoissonVelocityDeriv_hasDerivAt t hu).continuousAt
+    (weightedPoissonVelocitySecondDeriv_continuousAt t hu) hv0
+
 theorem norm_explicitPoissonSecondQuotientDerivative_le
     {sigma x N t u : ℝ} {k : ℤ}
     (hv0 : weightedPoissonVelocity t k u ≠ 0) :

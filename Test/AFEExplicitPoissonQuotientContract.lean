@@ -16,6 +16,10 @@ open HardyTheorem AFE
 #check explicitPoissonFirstQuotient_eq_zero_of_ge
 #check explicitPoissonSecondQuotient_eq_zero_of_le
 #check explicitPoissonSecondQuotient_eq_zero_of_ge
+#check explicitComplexMellinAmplitudeSecondDeriv_continuousAt
+#check weightedPoissonVelocitySecondDeriv_continuousAt
+#check explicitPoissonFirstQuotientDerivative_continuousAt
+#check explicitPoissonSecondQuotientDerivative_continuousAt
 
 #print axioms explicitPoissonFirstQuotient_mul_velocity
 #print axioms explicitPoissonFirstQuotient_hasDerivAt
@@ -25,3 +29,5 @@ open HardyTheorem AFE
 #print axioms norm_explicitPoissonSecondQuotientDerivative_le
 #print axioms explicitPoissonFirstQuotient_eq_zero_of_le
 #print axioms explicitPoissonSecondQuotient_eq_zero_of_ge
+#print axioms explicitPoissonFirstQuotientDerivative_continuousAt
+#print axioms explicitPoissonSecondQuotientDerivative_continuousAt

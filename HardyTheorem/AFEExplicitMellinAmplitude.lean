@@ -107,6 +107,42 @@ theorem explicitComplexMellinAmplitudeDeriv_hasDerivAt
     explicitComplexMellinAmplitudeSecondDeriv] using!
     (explicitMellinAmplitudeDeriv_hasDerivAt sigma x N hu).ofReal_comp
 
+theorem mellinRpowSecondDeriv_continuousAt
+    {sigma u : ℝ} (hu : u ≠ 0) :
+    ContinuousAt (mellinRpowSecondDeriv sigma) u := by
+  rw [show mellinRpowSecondDeriv sigma = fun y =>
+      (-sigma) * (-sigma - 1) * y ^ (-sigma - 2) by
+    funext y
+    exact mellinRpowSecondDeriv_eq sigma y]
+  exact (continuousAt_const.mul continuousAt_const).mul
+    (Real.continuousAt_rpow_const u (-sigma - 2) (Or.inl hu))
+
+theorem explicitMellinAmplitudeSecondDeriv_continuousAt
+    (sigma x N : ℝ) {u : ℝ} (hu : u ≠ 0) :
+    ContinuousAt (explicitMellinAmplitudeSecondDeriv sigma x N) u := by
+  have hplateau₂ : ContinuousAt (explicitIntervalPlateauSecondDeriv x N) u :=
+    (explicitIntervalPlateauSecondDeriv_continuous x N).continuousAt
+  have hplateau₁ : ContinuousAt (explicitIntervalPlateauDeriv x N) u :=
+    (explicitIntervalPlateauDeriv_hasDerivAt x N u).continuousAt
+  have hplateau₀ : ContinuousAt (explicitIntervalPlateau x N) u :=
+    (explicitIntervalPlateau_hasDerivAt x N u).continuousAt
+  have hpow₀ : ContinuousAt (mellinRpow sigma) u :=
+    (mellinRpow_hasDerivAt (sigma := sigma) hu).continuousAt
+  have hpow₁ : ContinuousAt (mellinRpowDeriv sigma) u :=
+    (mellinRpowDeriv_hasDerivAt (sigma := sigma) hu).continuousAt
+  have hpow₂ : ContinuousAt (mellinRpowSecondDeriv sigma) u :=
+    mellinRpowSecondDeriv_continuousAt hu
+  unfold explicitMellinAmplitudeSecondDeriv
+  fun_prop
+
+theorem explicitComplexMellinAmplitudeSecondDeriv_continuousAt
+    (sigma x N : ℝ) {u : ℝ} (hu : u ≠ 0) :
+    ContinuousAt (explicitComplexMellinAmplitudeSecondDeriv sigma x N) u := by
+  change ContinuousAt
+    (Complex.ofReal ∘ explicitMellinAmplitudeSecondDeriv sigma x N) u
+  exact Complex.continuous_ofReal.continuousAt.comp
+    (explicitMellinAmplitudeSecondDeriv_continuousAt sigma x N hu)
+
 theorem explicitMellinAmplitude_eq_zero_of_le
     {sigma x N u : ℝ} (hu : u ≤ x - 1) :
     explicitMellinAmplitude sigma x N u = 0 := by
