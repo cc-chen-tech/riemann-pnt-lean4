@@ -3,12 +3,20 @@ import MathlibAux.OscillatoryPhaseQuotient
 open Complex
 
 #check MathlibAux.oscillatoryPhaseQuotient
+#check MathlibAux.oscillatoryPhaseQuotientDerivative
 #check MathlibAux.oscillatoryPhaseQuotient_hasDerivAt
 #check MathlibAux.oscillatoryPhaseQuotient_differentiableAt
 #check MathlibAux.oscillatoryPhaseQuotient_mul_phaseVelocity
 #check MathlibAux.oscillatoryPhaseQuotient_eq_zero
+#check MathlibAux.oscillatoryPhaseQuotientDerivative_eq_zero
+#check MathlibAux.oscillatorySecondPhaseQuotient
+#check MathlibAux.oscillatorySecondPhaseQuotient_mul_phaseVelocity
+#check MathlibAux.oscillatorySecondPhaseQuotient_eq_zero
 
 #print axioms MathlibAux.oscillatoryPhaseQuotient_hasDerivAt
 #print axioms MathlibAux.oscillatoryPhaseQuotient_differentiableAt
 #print axioms MathlibAux.oscillatoryPhaseQuotient_mul_phaseVelocity
 #print axioms MathlibAux.oscillatoryPhaseQuotient_eq_zero
+#print axioms MathlibAux.oscillatoryPhaseQuotientDerivative_eq_zero
+#print axioms MathlibAux.oscillatorySecondPhaseQuotient_mul_phaseVelocity
+#print axioms MathlibAux.oscillatorySecondPhaseQuotient_eq_zero

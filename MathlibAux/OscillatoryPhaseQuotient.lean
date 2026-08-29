@@ -18,17 +18,24 @@ noncomputable def oscillatoryPhaseQuotient
     (A : ℝ → ℂ) (v : ℝ → ℝ) (x : ℝ) : ℂ :=
   (v⁻¹) x • ((-I) * A x)
 
+/-- The derivative amplitude produced by the quotient rule for
+`oscillatoryPhaseQuotient A v`, given derivatives `A'` and `v'`. -/
+noncomputable def oscillatoryPhaseQuotientDerivative
+    (A A' : ℝ → ℂ) (v v' : ℝ → ℝ) (x : ℝ) : ℂ :=
+  (((v⁻¹ x : ℝ) : ℂ) * ((-I) * A' x) +
+    ((-v' x / (v x) ^ 2 : ℝ) : ℂ) * ((-I) * A x))
+
 /-- Exact quotient-rule derivative for the first oscillatory quotient. -/
 theorem oscillatoryPhaseQuotient_hasDerivAt
     {A A' : ℝ → ℂ} {v v' : ℝ → ℝ} {x : ℝ}
     (hA : HasDerivAt A (A' x) x) (hv : HasDerivAt v (v' x) x)
     (hv0 : v x ≠ 0) :
     HasDerivAt (oscillatoryPhaseQuotient A v)
-      (((v⁻¹ x : ℝ) : ℂ) * ((-I) * A' x) +
-        ((-v' x / (v x) ^ 2 : ℝ) : ℂ) * ((-I) * A x)) x := by
+      (oscillatoryPhaseQuotientDerivative A A' v v' x) x := by
   have hB : HasDerivAt (fun y : ℝ => (-I) * A y) ((-I) * A' x) x :=
     hA.const_mul (-I)
-  simpa only [oscillatoryPhaseQuotient, Complex.real_smul] using!
+  simpa only [oscillatoryPhaseQuotient, oscillatoryPhaseQuotientDerivative,
+    Complex.real_smul] using!
     (hv.inv hv0).smul hB
 
 theorem oscillatoryPhaseQuotient_differentiableAt
@@ -57,5 +64,35 @@ theorem oscillatoryPhaseQuotient_eq_zero
     (hA : A x = 0) :
     oscillatoryPhaseQuotient A v x = 0 := by
   simp [oscillatoryPhaseQuotient, hA]
+
+/-- If both the amplitude and its first derivative vanish, then the first
+quotient derivative vanishes. -/
+theorem oscillatoryPhaseQuotientDerivative_eq_zero
+    {A A' : ℝ → ℂ} {v v' : ℝ → ℝ} {x : ℝ}
+    (hA : A x = 0) (hA' : A' x = 0) :
+    oscillatoryPhaseQuotientDerivative A A' v v' x = 0 := by
+  simp [oscillatoryPhaseQuotientDerivative, hA, hA']
+
+/-- The quotient used in the second nonlinear oscillatory integration by
+parts: `R=Q'/(i v)`. -/
+noncomputable def oscillatorySecondPhaseQuotient
+    (A A' : ℝ → ℂ) (v v' : ℝ → ℝ) (x : ℝ) : ℂ :=
+  oscillatoryPhaseQuotient (oscillatoryPhaseQuotientDerivative A A' v v') v x
+
+theorem oscillatorySecondPhaseQuotient_mul_phaseVelocity
+    {A A' : ℝ → ℂ} {v v' : ℝ → ℝ} {x : ℝ}
+    (hv0 : v x ≠ 0) :
+    oscillatorySecondPhaseQuotient A A' v v' x * (I * (v x : ℂ)) =
+      oscillatoryPhaseQuotientDerivative A A' v v' x := by
+  exact oscillatoryPhaseQuotient_mul_phaseVelocity hv0
+
+/-- The second quotient has zero endpoint value when the amplitude and its
+first derivative both have zero endpoint value. -/
+theorem oscillatorySecondPhaseQuotient_eq_zero
+    {A A' : ℝ → ℂ} {v v' : ℝ → ℝ} {x : ℝ}
+    (hA : A x = 0) (hA' : A' x = 0) :
+    oscillatorySecondPhaseQuotient A A' v v' x = 0 := by
+  apply oscillatoryPhaseQuotient_eq_zero
+  exact oscillatoryPhaseQuotientDerivative_eq_zero hA hA'
 
 end MathlibAux

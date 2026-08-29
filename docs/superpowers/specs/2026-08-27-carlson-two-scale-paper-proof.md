@@ -1297,12 +1297,14 @@ At every point where `F'` is nonzero, Lean proves the exact derivative
 
 as well as `Q(iF')=A`; it also proves that `A=0` implies `Q=0`, so the
 first endpoint condition follows directly from the cutoff endpoint
-condition.  The corresponding second quotient `R=Q'/(iF')` and the
-endpoint/L1 estimates for `R'` remain to be proved.
+condition.  Lean now defines the corresponding second quotient
+`R=Q'/(iF')`, proves `R(iF')=Q'`, and proves the sharp endpoint implication
+`A=A'=0 -> R=0`.  The derivative formula and L1 estimates for `R'` remain
+to be proved.
 
 For the Poisson far tail, the next remaining lemma is therefore explicit:
-instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, set `R=Q'/(iF')`, use
-(8.22e') to bound the four terms in `R'`, and sum their
+instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, calculate `R'`, use
+(8.22e') to bound its four terms, and sum their
 inverse-square-or-better frequency decay.  No unspecified
 second-integration-by-parts principle remains.
 
