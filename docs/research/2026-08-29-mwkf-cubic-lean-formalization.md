@@ -37,6 +37,8 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | exact factorization of each shifted Dirichlet term into its critical-line coefficient and an `(mn)^(-z)` monomial | `cubicAFEDirichletTerm_eq_zero_mul_product` |
 | explicit `1/sqrt(mn)` amplitude and `exp(it(log n-log m))` phase | `cubicAFEDirichletTerm_zero_eq_exp` |
 | finite-height AFE written with a Mellin weight depending on the two indices only through their product | `cubicAFEWeightFinite_eq_arithmetic_mul_productWeight`, `cubicAFEDoubleSumFinite_eq_arithmetic` |
+| exact combined AFE--mollifier phase as `log((p.2+1)e)-log((p.1+1)d)` | `cubicAFECombinedLogPhase_eq_log_products`, `cubicAFECombinedArithmeticFactor_eq_exp` |
+| exact structural diagonal `(p.2+1)e=(p.1+1)d`, on which the complete oscillatory factor is one | `cubicAFECombinedLogPhase_eq_zero_of_diagonal`, `cubicAFECombinedArithmeticFactor_eq_on_diagonal` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -52,8 +54,8 @@ The left side is now the literal full-line integral, rather than an arbitrary
 function `I`, and its two finite mollifier factors have been expanded and
 interchanged with the integral.  The completed AFE contour has also been taken
 to infinite height using an explicit physical horizontal-edge majorant.  What
-remains is to carry this exact arithmetic AFE through the twisted-moment
-integral and QCT decomposition, prove the reciprocal-LCM main-term asymptotic
+remains is to carry the now-combined AFE--mollifier arithmetic factor through
+the twisted-moment integral and QCT decomposition, prove the reciprocal-LCM main-term asymptotic
 and every analytic tail estimate, and especially prove the cubic MRSTT Mobius
 decorrelation theorem.  The final facade therefore keeps
 `hexact`, `hmain`, and `hrem` as theorem hypotheses.  They are local binders,

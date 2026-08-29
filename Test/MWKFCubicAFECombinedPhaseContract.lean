@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.MWKFCubicAFECombinedPhase
+
+namespace PrimeNumberTheorem.MWKFCubic
+
+#check cubicAFECombinedLogPhase
+#check cubicAFECombinedLogPhase_eq_log_products
+#check cubicAFECombinedLogPhase_eq_zero_of_diagonal
+#check cubicAFECombinedArithmeticFactor
+#check cubicAFECombinedArithmeticFactor_eq_exp
+#check cubicAFECombinedArithmeticFactor_eq_on_diagonal
+
+end PrimeNumberTheorem.MWKFCubic
