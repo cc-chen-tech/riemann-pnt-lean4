@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.MWKFCubicAFEDirichlet
+
+#print axioms PrimeNumberTheorem.MWKFCubic.completedRiemannZeta_shifted_product_eq_tsum
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFECompletedIntegrand_div_gamma_eq_tsum
