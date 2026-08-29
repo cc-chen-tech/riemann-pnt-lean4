@@ -1263,6 +1263,31 @@ remaining twice-integrated far-frequency estimate; treating
 `u^{-it}` as part of a nonoscillatory Fourier amplitude would instead create
 a spurious power loss and is explicitly not used.
 
+The exact twice-integrated nonlinear-phase identity is now formal.  Write
+`E=exp(iF)` and choose quotient amplitudes `Q,R` satisfying
+
+\[
+ A=Q(iF'),\qquad Q'=R(iF').                                  \tag{8.22e''}
+\]
+
+If `Q,Q',R,R'` have the stated interval differentiability/integrability and
+both `Q` and `R` vanish at both endpoints, two integrations by parts give
+
+\[
+ \int_a^b A(u)e^{iF(u)}du
+   =\int_a^b R'(u)e^{iF(u)}du,
+ \qquad
+ \left|\int_a^b A(u)e^{iF(u)}du\right|
+   \leq\int_a^b|R'(u)|du.                                    \tag{8.22e'''}
+\]
+
+The Lean theorem is purely algebraic/analytic infrastructure and its axiom
+audit has only the allowed three axioms.  For the Poisson far tail, the next
+remaining lemma is therefore explicit: instantiate `A=w_{x,N}u^{-sigma}`,
+`F=Psi_k`, calculate `Q=A/(iF')` and `R=Q'/(iF')`, use (8.22e') to bound
+the four terms in `R'`, and sum their inverse-square-or-better frequency
+decay.  No unspecified second-integration-by-parts principle remains.
+
 The discrete endpoint bookkeeping is formal.  If `beta>=0`, remove the
 single integer nearest either side of `beta`.  For every `M>=0`, Lean proves
 

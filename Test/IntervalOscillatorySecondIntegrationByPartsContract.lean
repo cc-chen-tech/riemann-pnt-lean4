@@ -1,0 +1,9 @@
+import MathlibAux.IntervalOscillatorySecondIntegrationByParts
+
+open Complex MeasureTheory Set
+
+#check MathlibAux.intervalIntegral_mul_cexp_phase_eq_secondRemainder
+#check MathlibAux.norm_intervalIntegral_mul_cexp_phase_le_secondRemainder
+
+#print axioms MathlibAux.intervalIntegral_mul_cexp_phase_eq_secondRemainder
+#print axioms MathlibAux.norm_intervalIntegral_mul_cexp_phase_le_secondRemainder
