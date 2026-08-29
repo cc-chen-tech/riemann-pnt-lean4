@@ -428,6 +428,17 @@ the last zero to lie strictly below `T`.
 
 Consequently, when the list is nonempty and both endpoint values are nonzero,
 all first, interior, and last components required by (12) now exist as actual
-eta logarithm domains.  The remaining equation-(41) topology is the zero-list
-empty base case and the finite recursive use of (11) plus the local `m*pi`
-bridge limits to build one compatible `ArgumentPhasePartition`.
+eta logarithm domains.
+
+The zero-list empty base case is now closed too.  If `U <= T`, eta is nonzero
+at both endpoints, and the `(U,T]` zero finset is empty, the endpoint
+neighborhoods and the empty-zero condition combine into one zero-free open
+interval containing both `U` and `T`; eta has one continuous logarithm there.
+This supplies the data for `ArgumentPhasePartition.single` without inventing
+any bridge.
+
+Thus every component-existence branch is now available.  The remaining
+equation-(41) topology is the finite recursive choice and normalization of
+these logarithms using (11), extraction of the local `m*pi` bridge endpoints,
+and construction of one compatible `ArgumentPhasePartition` whose bridge
+multiplicity sum is exactly `conreyEtaCriticalZeroMultiplicityMassBetween`.

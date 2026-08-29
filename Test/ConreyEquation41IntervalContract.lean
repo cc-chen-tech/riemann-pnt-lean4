@@ -78,3 +78,23 @@ example {g g0 g1 L U T tau : ℝ} (hg : g ≠ 0) (hU : 0 ≤ U)
 
 #print axioms exists_conreyDegreeOneEta_continuousLog_lowerEndpoint_to_firstZero
 #print axioms exists_conreyDegreeOneEta_continuousLog_lastZero_to_upperEndpoint
+
+-- Mutation caught: when the equation-(41) zero list is empty, the whole
+-- endpoint interval is one component and must use the `.single` partition
+-- case rather than inventing a zero bridge.
+example {g g0 g1 L U T : ℝ} (hg : g ≠ 0) (hU : 0 ≤ U) (hUT : U ≤ T)
+    (hUeta : conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint U) ≠ 0)
+    (hTeta : conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint T) ≠ 0)
+    (hEmpty : conreyEtaCriticalZeroOrdinatesBetween g g0 g1 L U T = ∅) :
+    ∃ deltaU deltaT : ℝ, ∃ ell : ℝ → ℂ,
+      0 < deltaU ∧ 0 < deltaT ∧
+      U ∈ Set.Ioo (U - deltaU) (T + deltaT) ∧
+      T ∈ Set.Ioo (U - deltaU) (T + deltaT) ∧
+      ContinuousOn ell (Set.Ioo (U - deltaU) (T + deltaT)) ∧
+      ∀ t ∈ Set.Ioo (U - deltaU) (T + deltaT),
+        Complex.exp (ell t) =
+          conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) := by
+  exact exists_conreyDegreeOneEta_continuousLog_of_zeroInterval_empty
+    hg hU hUT hUeta hTeta hEmpty
+
+#print axioms exists_conreyDegreeOneEta_continuousLog_of_zeroInterval_empty
