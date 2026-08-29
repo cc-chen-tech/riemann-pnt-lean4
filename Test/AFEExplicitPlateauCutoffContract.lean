@@ -1,0 +1,17 @@
+import HardyTheorem.AFEExplicitPlateauCutoff
+
+open Set
+open HardyTheorem AFE
+
+#check explicitIntervalPlateau
+#check explicitIntervalPlateau_contDiff
+#check explicitIntervalPlateau_eq_one
+#check explicitIntervalPlateau_eq_zero_of_le
+#check explicitIntervalPlateau_eq_zero_of_ge
+#check explicitIntervalPlateau_nonneg
+#check explicitIntervalPlateau_le_one
+#check explicitIntervalPlateau_hasCompactSupport
+
+#print axioms explicitIntervalPlateau_contDiff
+#print axioms explicitIntervalPlateau_eq_one
+#print axioms explicitIntervalPlateau_hasCompactSupport

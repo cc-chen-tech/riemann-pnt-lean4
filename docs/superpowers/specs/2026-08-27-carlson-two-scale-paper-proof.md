@@ -1318,6 +1318,22 @@ derivative of `R`.  Lean now also proves the collected identity
 
 Thus only the L1 estimates for these four amplitude classes remain.
 
+For those quantitative estimates the earlier `ContDiffBump` plateau is not
+used: its public API exposes smoothness and support but no derivative bound
+uniform in the two endpoints.  Lean now contains the explicit replacement
+
+\[
+ w_{x,N}(u)=\eta(u-x+1)\eta(N+1-u),
+ \qquad \eta=\operatorname{smoothTransition}.                \tag{8.22e'''''}
+\]
+
+It is `C-infinity`, lies in `[0,1]`, is exactly one on `[x,N]`, and vanishes
+outside `[x-1,N+1]`.  Both transition strips therefore have fixed width one,
+and every derivative bound reduces to a bound for the single fixed function
+`eta`; there is no endpoint- or height-dependent bump constant.  These
+properties and compact support are formal with only the allowed axioms.  The
+next lemma is the uniform first- and second-derivative bound for (8.22e''''').
+
 For the Poisson far tail, the next remaining lemma is therefore explicit:
 instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, use (8.22e') to bound the
 four classes in (8.22e''''), and sum their

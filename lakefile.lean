@@ -2544,6 +2544,7 @@ lean_lib RiemannPNT where
     `MathlibAux.IntervalOscillatoryIntegrationByParts,
     `MathlibAux.IntervalOscillatorySecondIntegrationByParts,
     `MathlibAux.OscillatoryPhaseQuotient,
+    `HardyTheorem.AFEExplicitPlateauCutoff,
     `MathlibAux.IntervalOscillatoryIntegrationByPartsAxiomAudit,
     `Test.IntervalOscillatoryIntegrationByPartsContract,
     `HardyTheorem.SelbergLagDyadicGeometry,
