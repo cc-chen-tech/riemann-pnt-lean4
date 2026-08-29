@@ -1341,8 +1341,18 @@ first and second derivatives of `eta` are now proved to vanish outside
 \]
 
 for every real `u`.  These constants are absolute and independent of
-`x,N,t,k`.  The next lemma is the translated product-rule bound for
-`w_{x,N}'` and `w_{x,N}''`, followed by the Mellin amplitude derivatives.
+`x,N,t,k`.  The exact translated product rules and their uniform consequences
+are now formal too:
+
+\[
+ |w_{x,N}'(u)|\leq 2C_1,
+ \qquad
+ |w_{x,N}''(u)|\leq 2C_2+2C_1^2.                         \tag{8.22e'''''''}
+\]
+
+Thus the remaining derivative gate is only the elementary product with the
+Mellin amplitude `u^(-sigma)` on the positive support interval; no cutoff
+constant can depend on height.
 
 For the Poisson far tail, the next remaining lemma is therefore explicit:
 instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, use (8.22e') to bound the

@@ -25,10 +25,58 @@ noncomputable def explicitIntervalPlateau (x N u : ℝ) : ℝ :=
   Real.smoothTransition (u - (x - 1)) *
     Real.smoothTransition ((N + 1) - u)
 
+/-- The exact first derivative of the explicit plateau. -/
+noncomputable def explicitIntervalPlateauDeriv (x N u : ℝ) : ℝ :=
+  deriv Real.smoothTransition (u - (x - 1)) *
+      Real.smoothTransition ((N + 1) - u) -
+    Real.smoothTransition (u - (x - 1)) *
+      deriv Real.smoothTransition ((N + 1) - u)
+
+/-- The exact second derivative of the explicit plateau. -/
+noncomputable def explicitIntervalPlateauSecondDeriv (x N u : ℝ) : ℝ :=
+  deriv (deriv Real.smoothTransition) (u - (x - 1)) *
+      Real.smoothTransition ((N + 1) - u) -
+    2 * deriv Real.smoothTransition (u - (x - 1)) *
+      deriv Real.smoothTransition ((N + 1) - u) +
+    Real.smoothTransition (u - (x - 1)) *
+      deriv (deriv Real.smoothTransition) ((N + 1) - u)
+
 theorem explicitIntervalPlateau_contDiff (x N : ℝ) :
     ContDiff ℝ (⊤ : ℕ∞) (explicitIntervalPlateau x N) := by
   exact (Real.smoothTransition.contDiff.comp (contDiff_id.sub contDiff_const)).mul
     (Real.smoothTransition.contDiff.comp (contDiff_const.sub contDiff_id))
+
+theorem explicitIntervalPlateau_hasDerivAt (x N u : ℝ) :
+    HasDerivAt (explicitIntervalPlateau x N)
+      (explicitIntervalPlateauDeriv x N u) u := by
+  have hdiff : Differentiable ℝ Real.smoothTransition :=
+    (@Real.smoothTransition.contDiff 1).differentiable one_ne_zero
+  have hL := (hdiff (u - (x - 1))).hasDerivAt.comp u
+    (hasDerivAt_id u |>.sub_const (x - 1))
+  have hR := (hdiff ((N + 1) - u)).hasDerivAt.comp u
+    (hasDerivAt_const u (N + 1) |>.sub (hasDerivAt_id u))
+  convert! hL.mul hR using 1
+  simp [explicitIntervalPlateauDeriv, Function.comp_apply]
+  ring
+
+theorem explicitIntervalPlateauDeriv_hasDerivAt (x N u : ℝ) :
+    HasDerivAt (explicitIntervalPlateauDeriv x N)
+      (explicitIntervalPlateauSecondDeriv x N u) u := by
+  have hdiff : Differentiable ℝ Real.smoothTransition :=
+    (@Real.smoothTransition.contDiff 1).differentiable one_ne_zero
+  have hdiff' : Differentiable ℝ (deriv Real.smoothTransition) :=
+    (@Real.smoothTransition.contDiff 2).differentiable_deriv_two
+  have hL := (hdiff (u - (x - 1))).hasDerivAt.comp u
+    (hasDerivAt_id u |>.sub_const (x - 1))
+  have hR := (hdiff ((N + 1) - u)).hasDerivAt.comp u
+    (hasDerivAt_const u (N + 1) |>.sub (hasDerivAt_id u))
+  have hL' := (hdiff' (u - (x - 1))).hasDerivAt.comp u
+    (hasDerivAt_id u |>.sub_const (x - 1))
+  have hR' := (hdiff' ((N + 1) - u)).hasDerivAt.comp u
+    (hasDerivAt_const u (N + 1) |>.sub (hasDerivAt_id u))
+  convert! (hL'.mul hR).sub (hL.mul hR') using 1
+  simp [explicitIntervalPlateauSecondDeriv, Function.comp_apply]
+  ring
 
 theorem explicitIntervalPlateau_eq_one {x N u : ℝ} (hu : u ∈ Icc x N) :
     explicitIntervalPlateau x N u = 1 := by
@@ -150,6 +198,115 @@ theorem exists_uniform_smoothTransition_secondDeriv_bound :
   refine ⟨C, (abs_nonneg (deriv (deriv Real.smoothTransition) 0)).trans (hC 0), ?_⟩
   intro u
   simpa only [Real.norm_eq_abs] using hC u
+
+theorem abs_explicitIntervalPlateauDeriv_le
+    {C₁ : ℝ} (hC₁0 : 0 ≤ C₁)
+    (hC₁ : ∀ z : ℝ, |deriv Real.smoothTransition z| ≤ C₁)
+    (x N u : ℝ) :
+    |explicitIntervalPlateauDeriv x N u| ≤ 2 * C₁ := by
+  have hL0 := Real.smoothTransition.nonneg (u - (x - 1))
+  have hL1 := Real.smoothTransition.le_one (u - (x - 1))
+  have hR0 := Real.smoothTransition.nonneg ((N + 1) - u)
+  have hR1 := Real.smoothTransition.le_one ((N + 1) - u)
+  rw [explicitIntervalPlateauDeriv]
+  calc
+    |deriv Real.smoothTransition (u - (x - 1)) *
+          Real.smoothTransition (N + 1 - u) -
+        Real.smoothTransition (u - (x - 1)) *
+          deriv Real.smoothTransition (N + 1 - u)|
+        ≤ |deriv Real.smoothTransition (u - (x - 1))| *
+              |Real.smoothTransition (N + 1 - u)| +
+            |Real.smoothTransition (u - (x - 1))| *
+              |deriv Real.smoothTransition (N + 1 - u)| := by
+          rw [sub_eq_add_neg]
+          simpa only [abs_mul, abs_neg] using
+            abs_add_le
+              (deriv Real.smoothTransition (u - (x - 1)) *
+                Real.smoothTransition (N + 1 - u))
+              (-(Real.smoothTransition (u - (x - 1)) *
+                deriv Real.smoothTransition (N + 1 - u)))
+    _ ≤ C₁ * 1 + 1 * C₁ := by
+      rw [abs_of_nonneg hL0, abs_of_nonneg hR0]
+      apply add_le_add
+      · exact mul_le_mul (hC₁ _) hR1 hR0 hC₁0
+      · exact mul_le_mul hL1 (hC₁ _) (abs_nonneg _) zero_le_one
+    _ = 2 * C₁ := by ring
+
+theorem abs_explicitIntervalPlateauSecondDeriv_le
+    {C₁ C₂ : ℝ} (hC₁0 : 0 ≤ C₁) (hC₂0 : 0 ≤ C₂)
+    (hC₁ : ∀ z : ℝ, |deriv Real.smoothTransition z| ≤ C₁)
+    (hC₂ : ∀ z : ℝ, |deriv (deriv Real.smoothTransition) z| ≤ C₂)
+    (x N u : ℝ) :
+    |explicitIntervalPlateauSecondDeriv x N u| ≤
+      2 * C₂ + 2 * C₁ ^ 2 := by
+  have hL0 := Real.smoothTransition.nonneg (u - (x - 1))
+  have hL1 := Real.smoothTransition.le_one (u - (x - 1))
+  have hR0 := Real.smoothTransition.nonneg ((N + 1) - u)
+  have hR1 := Real.smoothTransition.le_one ((N + 1) - u)
+  rw [explicitIntervalPlateauSecondDeriv]
+  calc
+    |deriv (deriv Real.smoothTransition) (u - (x - 1)) *
+            Real.smoothTransition (N + 1 - u) -
+          2 * deriv Real.smoothTransition (u - (x - 1)) *
+            deriv Real.smoothTransition (N + 1 - u) +
+        Real.smoothTransition (u - (x - 1)) *
+          deriv (deriv Real.smoothTransition) (N + 1 - u)|
+        ≤ |deriv (deriv Real.smoothTransition) (u - (x - 1)) *
+              Real.smoothTransition (N + 1 - u) -
+            2 * deriv Real.smoothTransition (u - (x - 1)) *
+              deriv Real.smoothTransition (N + 1 - u)| +
+            |Real.smoothTransition (u - (x - 1)) *
+              deriv (deriv Real.smoothTransition) (N + 1 - u)| := abs_add_le _ _
+    _ ≤ |deriv (deriv Real.smoothTransition) (u - (x - 1))| *
+              |Real.smoothTransition (N + 1 - u)| +
+            2 * |deriv Real.smoothTransition (u - (x - 1))| *
+              |deriv Real.smoothTransition (N + 1 - u)| +
+            |Real.smoothTransition (u - (x - 1))| *
+              |deriv (deriv Real.smoothTransition) (N + 1 - u)| := by
+          calc
+            _ ≤ (|deriv (deriv Real.smoothTransition) (u - (x - 1))| *
+                    |Real.smoothTransition (N + 1 - u)| +
+                  2 * |deriv Real.smoothTransition (u - (x - 1))| *
+                    |deriv Real.smoothTransition (N + 1 - u)|) +
+                |Real.smoothTransition (u - (x - 1))| *
+                  |deriv (deriv Real.smoothTransition) (N + 1 - u)| := by
+              apply add_le_add
+              · rw [sub_eq_add_neg]
+                simpa only [abs_mul, abs_neg,
+                  abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)] using
+                  abs_add_le
+                    (deriv (deriv Real.smoothTransition) (u - (x - 1)) *
+                      Real.smoothTransition (N + 1 - u))
+                    (-(2 * deriv Real.smoothTransition (u - (x - 1)) *
+                      deriv Real.smoothTransition (N + 1 - u)))
+              · rw [abs_mul]
+            _ = _ := by ring
+    _ ≤ C₂ * 1 + 2 * C₁ * C₁ + 1 * C₂ := by
+      rw [abs_of_nonneg hL0, abs_of_nonneg hR0]
+      apply add_le_add
+      · apply add_le_add
+        · exact mul_le_mul (hC₂ _) hR1 hR0 hC₂0
+        · have hp := mul_le_mul
+              (hC₁ (u - (x - 1))) (hC₁ ((N + 1) - u))
+              (abs_nonneg (deriv Real.smoothTransition ((N + 1) - u))) hC₁0
+          convert mul_le_mul_of_nonneg_left hp (show (0 : ℝ) ≤ 2 by norm_num) using 1 <;>
+            ring
+      · exact mul_le_mul hL1 (hC₂ _) (abs_nonneg _) zero_le_one
+    _ = 2 * C₂ + 2 * C₁ ^ 2 := by ring
+
+/-- Uniform first- and second-derivative constants for every translated
+explicit plateau. -/
+theorem exists_uniform_explicitIntervalPlateau_deriv_bounds :
+    ∃ B₁ B₂ : ℝ, 0 ≤ B₁ ∧ 0 ≤ B₂ ∧
+      ∀ x N u : ℝ,
+        |explicitIntervalPlateauDeriv x N u| ≤ B₁ ∧
+        |explicitIntervalPlateauSecondDeriv x N u| ≤ B₂ := by
+  rcases exists_uniform_smoothTransition_deriv_bound with ⟨C₁, hC₁0, hC₁⟩
+  rcases exists_uniform_smoothTransition_secondDeriv_bound with ⟨C₂, hC₂0, hC₂⟩
+  refine ⟨2 * C₁, 2 * C₂ + 2 * C₁ ^ 2, by positivity, by positivity, ?_⟩
+  intro x N u
+  exact ⟨abs_explicitIntervalPlateauDeriv_le hC₁0 hC₁ x N u,
+    abs_explicitIntervalPlateauSecondDeriv_le hC₁0 hC₂0 hC₁ hC₂ x N u⟩
 
 end AFE
 end HardyTheorem

@@ -4,7 +4,11 @@ open Set
 open HardyTheorem AFE
 
 #check explicitIntervalPlateau
+#check explicitIntervalPlateauDeriv
+#check explicitIntervalPlateauSecondDeriv
 #check explicitIntervalPlateau_contDiff
+#check explicitIntervalPlateau_hasDerivAt
+#check explicitIntervalPlateauDeriv_hasDerivAt
 #check explicitIntervalPlateau_eq_one
 #check explicitIntervalPlateau_eq_zero_of_le
 #check explicitIntervalPlateau_eq_zero_of_ge
@@ -19,9 +23,15 @@ open HardyTheorem AFE
 #check secondDeriv_smoothTransition_hasCompactSupport
 #check exists_uniform_smoothTransition_deriv_bound
 #check exists_uniform_smoothTransition_secondDeriv_bound
+#check abs_explicitIntervalPlateauDeriv_le
+#check abs_explicitIntervalPlateauSecondDeriv_le
+#check exists_uniform_explicitIntervalPlateau_deriv_bounds
 
 #print axioms explicitIntervalPlateau_contDiff
+#print axioms explicitIntervalPlateau_hasDerivAt
+#print axioms explicitIntervalPlateauDeriv_hasDerivAt
 #print axioms explicitIntervalPlateau_eq_one
 #print axioms explicitIntervalPlateau_hasCompactSupport
 #print axioms exists_uniform_smoothTransition_deriv_bound
 #print axioms exists_uniform_smoothTransition_secondDeriv_bound
+#print axioms exists_uniform_explicitIntervalPlateau_deriv_bounds
