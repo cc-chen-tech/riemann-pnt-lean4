@@ -1282,11 +1282,24 @@ both `Q` and `R` vanish at both endpoints, two integrations by parts give
 \]
 
 The Lean theorem is purely algebraic/analytic infrastructure and its axiom
-audit has only the allowed three axioms.  For the Poisson far tail, the next
-remaining lemma is therefore explicit: instantiate `A=w_{x,N}u^{-sigma}`,
-`F=Psi_k`, calculate `Q=A/(iF')` and `R=Q'/(iF')`, use (8.22e') to bound
-the four terms in `R'`, and sum their inverse-square-or-better frequency
-decay.  No unspecified second-integration-by-parts principle remains.
+audit has only the allowed three axioms.  The first quotient is now also
+formalized without choosing a branch or a complex division convention:
+
+\[
+ Q(u)=(F'(u))^{-1}(-i)A(u).
+\]
+
+At every point where `F'` is nonzero, Lean proves that `Q` is differentiable
+and that `Q(iF')=A`; it also proves that `A=0` implies `Q=0`, so the first
+endpoint condition follows directly from the cutoff endpoint condition.
+The explicit formula for `Q'`, the corresponding second quotient
+`R=Q'/(iF')`, and the endpoint/L1 estimates for `R'` remain to be proved.
+
+For the Poisson far tail, the next remaining lemma is therefore explicit:
+instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, calculate `Q'` and
+`R=Q'/(iF')`, use (8.22e') to bound the four terms in `R'`, and sum their
+inverse-square-or-better frequency decay.  No unspecified
+second-integration-by-parts principle remains.
 
 The discrete endpoint bookkeeping is formal.  If `beta>=0`, remove the
 single integer nearest either side of `beta`.  For every `M>=0`, Lean proves

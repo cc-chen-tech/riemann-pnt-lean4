@@ -2543,6 +2543,7 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovLogVanDerCorputContract,
     `MathlibAux.IntervalOscillatoryIntegrationByParts,
     `MathlibAux.IntervalOscillatorySecondIntegrationByParts,
+    `MathlibAux.OscillatoryPhaseQuotient,
     `MathlibAux.IntervalOscillatoryIntegrationByPartsAxiomAudit,
     `Test.IntervalOscillatoryIntegrationByPartsContract,
     `HardyTheorem.SelbergLagDyadicGeometry,
