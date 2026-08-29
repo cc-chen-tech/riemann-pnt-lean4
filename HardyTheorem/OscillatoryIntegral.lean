@@ -476,6 +476,109 @@ theorem norm_integral_rpow_smul_cexp_fourierMellinPhase_le
     norm_integral_rpow_smul_cexp_phase_le_of_monotone_deriv_local
       hab ha hm hp hF hmono haway
 
+/-- If the stationary point of the Mellin--Fourier phase lies strictly to
+the right of `[a,b]`, the first-derivative bound retains the exact distance
+from the right endpoint. -/
+theorem norm_integral_rpow_smul_cexp_fourierMellinPhase_le_of_stationary_right
+    {a b t p : ℝ} (hab : a ≤ b) (ha : 0 < a) (hp : 0 < p)
+    (ht : 0 ≤ t) (k : ℤ)
+    (hgap : 0 < t / b - 2 * Real.pi * (k : ℝ)) :
+    ‖∫ x in a..b, x ^ (-p) •
+        Complex.exp (I * fourierMellinPhase k t x)‖ ≤
+      4 * a ^ (-p) / (t / b - 2 * Real.pi * (k : ℝ)) := by
+  let m : ℝ := t / b - 2 * Real.pi * (k : ℝ)
+  have hb : 0 < b := ha.trans_le hab
+  have hF : ∀ x ∈ Icc a b,
+      ContDiffAt ℝ 2 (fourierMellinPhase k t) x := by
+    intro x hx
+    have hx0 : x ≠ 0 := ne_of_gt (ha.trans_le hx.1)
+    unfold fourierMellinPhase
+    exact ((contDiffAt_const.mul contDiffAt_id).sub
+      (contDiffAt_const.mul (Real.contDiffAt_log.2 hx0)))
+  have hderiv : ∀ x ∈ Icc a b,
+      deriv (fourierMellinPhase k t) x =
+        2 * Real.pi * (k : ℝ) - t / x := by
+    intro x hx
+    exact (hasDerivAt_fourierMellinPhase k t
+      (ne_of_gt (ha.trans_le hx.1))).deriv
+  have hmono :
+      MonotoneOn (deriv (fourierMellinPhase k t)) (Icc a b) := by
+    intro x hx y hy hxy
+    rw [hderiv x hx, hderiv y hy]
+    have hxpos : 0 < x := ha.trans_le hx.1
+    have hypos : 0 < y := hxpos.trans_le hxy
+    have hdiv : t / y ≤ t / x := by
+      exact (div_le_div_iff₀ hypos hxpos).2
+        (mul_le_mul_of_nonneg_left hxy ht)
+    linarith
+  have haway : ∀ x ∈ Icc a b,
+      m ≤ |deriv (fourierMellinPhase k t) x| := by
+    intro x hx
+    rw [hderiv x hx]
+    have hxpos : 0 < x := ha.trans_le hx.1
+    have hdiv : t / b ≤ t / x := by
+      exact (div_le_div_iff₀ hb hxpos).2
+        (mul_le_mul_of_nonneg_left hx.2 ht)
+    have hneg : 2 * Real.pi * (k : ℝ) - t / x < 0 := by
+      linarith
+    rw [abs_of_neg hneg]
+    dsimp only [m]
+    linarith
+  simpa only [m] using
+    norm_integral_rpow_smul_cexp_phase_le_of_monotone_deriv_local
+      hab ha hgap hp hF (Or.inl hmono) haway
+
+/-- If the stationary point of the Mellin--Fourier phase lies strictly to
+the left of `[a,b]`, the first-derivative bound retains the exact distance
+from the left endpoint. -/
+theorem norm_integral_rpow_smul_cexp_fourierMellinPhase_le_of_stationary_left
+    {a b t p : ℝ} (hab : a ≤ b) (ha : 0 < a) (hp : 0 < p)
+    (ht : 0 ≤ t) (k : ℤ)
+    (hgap : 0 < 2 * Real.pi * (k : ℝ) - t / a) :
+    ‖∫ x in a..b, x ^ (-p) •
+        Complex.exp (I * fourierMellinPhase k t x)‖ ≤
+      4 * a ^ (-p) / (2 * Real.pi * (k : ℝ) - t / a) := by
+  let m : ℝ := 2 * Real.pi * (k : ℝ) - t / a
+  have hF : ∀ x ∈ Icc a b,
+      ContDiffAt ℝ 2 (fourierMellinPhase k t) x := by
+    intro x hx
+    have hx0 : x ≠ 0 := ne_of_gt (ha.trans_le hx.1)
+    unfold fourierMellinPhase
+    exact ((contDiffAt_const.mul contDiffAt_id).sub
+      (contDiffAt_const.mul (Real.contDiffAt_log.2 hx0)))
+  have hderiv : ∀ x ∈ Icc a b,
+      deriv (fourierMellinPhase k t) x =
+        2 * Real.pi * (k : ℝ) - t / x := by
+    intro x hx
+    exact (hasDerivAt_fourierMellinPhase k t
+      (ne_of_gt (ha.trans_le hx.1))).deriv
+  have hmono :
+      MonotoneOn (deriv (fourierMellinPhase k t)) (Icc a b) := by
+    intro x hx y hy hxy
+    rw [hderiv x hx, hderiv y hy]
+    have hxpos : 0 < x := ha.trans_le hx.1
+    have hypos : 0 < y := hxpos.trans_le hxy
+    have hdiv : t / y ≤ t / x := by
+      exact (div_le_div_iff₀ hypos hxpos).2
+        (mul_le_mul_of_nonneg_left hxy ht)
+    linarith
+  have haway : ∀ x ∈ Icc a b,
+      m ≤ |deriv (fourierMellinPhase k t) x| := by
+    intro x hx
+    rw [hderiv x hx]
+    have hxpos : 0 < x := ha.trans_le hx.1
+    have hdiv : t / x ≤ t / a := by
+      exact (div_le_div_iff₀ hxpos ha).2
+        (mul_le_mul_of_nonneg_left hx.1 ht)
+    have hpos : 0 < 2 * Real.pi * (k : ℝ) - t / x := by
+      linarith
+    rw [abs_of_pos hpos]
+    dsimp only [m]
+    linarith
+  simpa only [m] using
+    norm_integral_rpow_smul_cexp_phase_le_of_monotone_deriv_local
+      hab ha hgap hp hF (Or.inl hmono) haway
+
 private theorem deriv_growth_of_second_deriv_lower
     {F : ℝ → ℝ} {a b r : ℝ}
     (hF : ∀ x ∈ Icc a b, ContDiffAt ℝ 2 F x)

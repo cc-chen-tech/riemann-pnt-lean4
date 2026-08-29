@@ -1228,6 +1228,29 @@ number `m`,
 These statements have only `propext`, `Classical.choice`, and `Quot.sound`
 in their axiom audit.
 
+The exact nonstationary bounds on a positive core interval `[a,b]` are now
+formal as well.  For `t>=0`, `p>0`, and
+`Psi_k(u)=2*pi*k*u-t log u`, Lean proves
+
+\[
+ \left|\int_a^b u^{-p}e^{i\Psi_k(u)}du\right|
+ \leq \frac{4a^{-p}}{t/b-2\pi k}
+ \quad\left(t/b-2\pi k>0\right),                               \tag{8.22d}
+\]
+
+and
+
+\[
+ \left|\int_a^b u^{-p}e^{i\Psi_k(u)}du\right|
+ \leq \frac{4a^{-p}}{2\pi k-t/a}
+ \quad\left(2\pi k-t/a>0\right).                              \tag{8.22e}
+\]
+
+The proof uses the monotonicity of `Psi'_k` and retains the precise distance
+to the nearest endpoint frequency.  Consequently these estimates are in the
+right normalization for the two harmonic endpoint sums; no uniform-gap
+coarsening has been introduced.
+
 Thus only negative modes `k=-m<0` can be stationary, at
 `u=t/(2*pi*m)`.  At paper level, intersecting this point with the open
 support interval gives the stationary range
