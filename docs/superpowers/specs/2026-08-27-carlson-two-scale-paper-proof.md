@@ -1402,6 +1402,18 @@ The collected identity (8.22e'''') now also has its exact formal norm bound:
 The Lean statement retains absolute values on the four real coefficients,
 so no sign assumption or cancellation is silently used.
 
+For the actual Poisson phase, the full velocity chain is now formal:
+
+\[
+ F'=-\frac tu-2\pi k,qquad
+ F''=\frac{t}{u^2},qquad
+ F'''=-\frac{2t}{u^3}.                                    \tag{8.22e''''''''''''}
+\]
+
+Each `HasDerivAt` statement is proved for `u!=0` and passes the allowed-axiom
+audit.  Thus (8.22e''''''''''') can now be instantiated with exact powers of
+`t` and `u`.
+
 For the Poisson far tail, the next remaining lemma is therefore explicit:
 instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, use (8.22e') to bound the
 four classes in (8.22e''''), and sum their
