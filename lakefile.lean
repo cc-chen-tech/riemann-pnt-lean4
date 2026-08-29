@@ -2765,6 +2765,7 @@ lean_lib RiemannPNT where
     `Test.Zeta23SelbergBridgeAxiomAudit,
     `Test.ConreyDegreeOneEtaContract,
     `Test.ConreyEtaVerticalOrderFactorContract,
+    `Test.ConreyEquation41IntervalContract,
     `Test.ConreyDegreeOneV1Contract,
     `Test.ConreyDegreeOneNontrivialContract,
     `Test.ConreyMollifierProductContract,

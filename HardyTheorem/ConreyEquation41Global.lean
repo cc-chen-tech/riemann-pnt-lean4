@@ -243,6 +243,65 @@ theorem conreyEtaCriticalZeroOrderNat_pos_of_mem_sortedBetween
   exact conreyEtaCriticalZeroOrderNat_pos hg
     (mem_conreyEtaCriticalZeroOrdinatesSorted.mpr htGlobal)
 
+/-- Consecutive zeros in the actual equation-(41) interval `(U,T]` bound a
+zero-free open component of the eta restriction. -/
+theorem conreyDegreeOneEta_ne_zero_between_consecutiveCriticalZeroOrdinatesBetween
+    {g g0 g1 L U T a b t : ℝ} (hg : g ≠ 0) (hU : 0 ≤ U)
+    (ha : a ∈ conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T)
+    (hb : b ∈ conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T)
+    (hgap : ∀ u ∈ conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T,
+      ¬ (a < u ∧ u < b))
+    (ht : t ∈ Set.Ioo a b) :
+    conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) ≠ 0 := by
+  intro hzero
+  have haBetween :
+      a ∈ conreyEtaCriticalZeroOrdinatesBetween g g0 g1 L U T :=
+    mem_conreyEtaCriticalZeroOrdinatesSortedBetween.mp ha
+  have hbBetween :
+      b ∈ conreyEtaCriticalZeroOrdinatesBetween g g0 g1 L U T :=
+    mem_conreyEtaCriticalZeroOrdinatesSortedBetween.mp hb
+  have haData :=
+    (mem_conreyEtaCriticalZeroOrdinatesBetween hg hU).mp haBetween
+  have hbData :=
+    (mem_conreyEtaCriticalZeroOrdinatesBetween hg hU).mp hbBetween
+  have htBetween :
+      t ∈ conreyEtaCriticalZeroOrdinatesBetween g g0 g1 L U T :=
+    (mem_conreyEtaCriticalZeroOrdinatesBetween hg hU).mpr
+      ⟨lt_trans haData.1 ht.1, le_trans ht.2.le hbData.2.1, hzero⟩
+  exact hgap t
+    (mem_conreyEtaCriticalZeroOrdinatesSortedBetween.mpr htBetween) ht
+
+/-- The actual eta restriction has one continuous logarithm on every open
+component between consecutive equation-(41) zero ordinates. -/
+theorem exists_conreyDegreeOneEta_continuousLog_between_consecutiveCriticalZeroOrdinatesBetween
+    {g g0 g1 L U T a b : ℝ} (hg : g ≠ 0) (hU : 0 ≤ U) (hab : a < b)
+    (ha : a ∈ conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T)
+    (hb : b ∈ conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T)
+    (hgap : ∀ u ∈ conreyEtaCriticalZeroOrdinatesSortedBetween g g0 g1 L U T,
+      ¬ (a < u ∧ u < b)) :
+    ∃ ell : ℝ → ℂ,
+      ContinuousOn ell (Set.Ioo a b) ∧
+      ∀ t ∈ Set.Ioo a b,
+        Complex.exp (ell t) =
+          conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) := by
+  have hcriticalContinuous : Continuous conreyCriticalPoint := by
+    unfold conreyCriticalPoint
+    fun_prop
+  have hetaContinuous :
+      ContinuousOn
+        (fun t => conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t))
+        (Set.Ioo a b) := by
+    intro t _ht
+    exact ((analyticAt_conreyDegreeOneEta g g0 g1 L
+      (conreyCriticalPoint t)).continuousAt.comp
+        hcriticalContinuous.continuousAt).continuousWithinAt
+  have hetaNe : ∀ t ∈ Set.Ioo a b,
+      conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t) ≠ 0 :=
+    fun t ht =>
+      conreyDegreeOneEta_ne_zero_between_consecutiveCriticalZeroOrdinatesBetween
+        hg hU ha hb hgap ht
+  exact MathlibAux.exists_continuousLogOn_Ioo hab hetaContinuous hetaNe
+
 /-- If no listed critical-line eta zero lies strictly between two listed
 ordinates, then the actual eta restriction is nonzero throughout that open
 interval. -/

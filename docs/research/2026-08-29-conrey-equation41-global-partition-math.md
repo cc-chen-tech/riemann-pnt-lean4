@@ -410,3 +410,10 @@ finset cardinality would undercharge multiple zeros and cannot justify (12).
 The endpoint values of eta must also be nonzero when endpoint arguments are
 used; endpoint avoidance or an admissible-height replacement is a separate
 later step, not an implicit convention.
+
+The consecutive-gap result has now also been specialized to this exact
+`(U,T]` zero list.  Thus two consecutive entries of the sorted equation-(41)
+list bound an open interval on which the actual eta restriction is nonzero and
+admits one continuous logarithm on the entire interval.  The remaining
+component work is confined to the two endpoint components and the finite
+recursive alignment across the listed zeros.
