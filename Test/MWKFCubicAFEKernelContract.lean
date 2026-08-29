@@ -9,6 +9,7 @@ namespace PrimeNumberTheorem.MWKFCubic
 #check cubicAFEKernelG
 #check cubicAFECompletedExtension
 #check cubicAFECompletedIntegrand
+#check cubicAFEHolomorphicRemainder
 
 #check (@cubicCriticalPoint_ne_zero :
   ∀ t : ℝ, cubicCriticalPoint t ≠ 0)
@@ -71,5 +72,22 @@ namespace PrimeNumberTheorem.MWKFCubic
       (nhdsWithin (0 : ℂ) ({0}ᶜ))
       (nhds (completedRiemannZeta (cubicCriticalPoint t) *
         completedRiemannZeta (1 - cubicCriticalPoint t))))
+
+#check (@differentiable_cubicAFEHolomorphicRemainder :
+  ∀ t : ℝ, Differentiable ℂ (cubicAFEHolomorphicRemainder t))
+
+#check (@cubicAFECompletedIntegrand_eq_remainder_add :
+  ∀ (t : ℝ) {z : ℂ}, z ≠ 0 →
+    cubicAFECompletedIntegrand t z =
+      cubicAFEHolomorphicRemainder t z +
+        z⁻¹ * cubicAFECompletedExtension t 0)
+
+#check (@rectangleBoundaryIntegral_cubicAFECompletedIntegrand :
+  ∀ (t : ℝ) {R : ℝ}, 0 < R →
+    MathlibAux.rectangleBoundaryIntegral
+        (cubicAFECompletedIntegrand t) 0 R =
+      (2 * Real.pi * I) *
+        (completedRiemannZeta (cubicCriticalPoint t) *
+          completedRiemannZeta (1 - cubicCriticalPoint t)))
 
 end PrimeNumberTheorem.MWKFCubic

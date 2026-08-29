@@ -7,6 +7,9 @@ import PrimeNumberTheorem.MWKFCubicAFEKernel
 #print axioms PrimeNumberTheorem.MWKFCubic.cubicAFECompletedExtension_eq
 #print axioms PrimeNumberTheorem.MWKFCubic.cubicAFECompletedExtension_zero
 #print axioms PrimeNumberTheorem.MWKFCubic.cubicAFECompletedIntegrand_residue_zero
+#print axioms PrimeNumberTheorem.MWKFCubic.differentiable_cubicAFEHolomorphicRemainder
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFECompletedIntegrand_eq_remainder_add
+#print axioms PrimeNumberTheorem.MWKFCubic.rectangleBoundaryIntegral_cubicAFECompletedIntegrand
 #print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEKernelG_zero
 #print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEKernelG_neg
 #print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEKernelG_at_criticalPoint

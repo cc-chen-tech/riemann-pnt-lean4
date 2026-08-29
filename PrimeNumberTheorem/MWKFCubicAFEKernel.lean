@@ -1,6 +1,7 @@
 import Mathlib.NumberTheory.LSeries.RiemannZeta
+import MathlibAux.RectangleResidue
 
-open Complex Filter
+open Complex Filter Set
 
 namespace PrimeNumberTheorem
 namespace MWKFCubic
@@ -45,6 +46,11 @@ noncomputable def cubicAFECompletedExtension (t : ℝ) (z : ℂ) : ℂ :=
 its only remaining singular factor is `1/z`. -/
 noncomputable def cubicAFECompletedIntegrand (t : ℝ) (z : ℂ) : ℂ :=
   cubicAFECompletedExtension t z / z
+
+/-- The holomorphic remainder after subtracting the unique principal part at
+the origin. -/
+noncomputable def cubicAFEHolomorphicRemainder (t : ℝ) (z : ℂ) : ℂ :=
+  dslope (cubicAFECompletedExtension t) 0 z
 
 theorem cubicCriticalPoint_ne_zero (t : ℝ) :
     cubicCriticalPoint t ≠ 0 := by
@@ -227,6 +233,70 @@ theorem cubicAFECompletedIntegrand_residue_zero (t : ℝ) :
   have hz0 : z ≠ 0 := by simpa using hz
   unfold cubicAFECompletedIntegrand
   field_simp [hz0]
+
+/-- The divided difference supplying the regular part is entire. -/
+theorem differentiable_cubicAFEHolomorphicRemainder (t : ℝ) :
+    Differentiable ℂ (cubicAFEHolomorphicRemainder t) := by
+  unfold cubicAFEHolomorphicRemainder
+  rw [← differentiableOn_univ]
+  exact (Complex.differentiableOn_dslope
+    (isOpen_univ.mem_nhds (Set.mem_univ (0 : ℂ)))).2
+      (differentiable_cubicAFECompletedExtension t).differentiableOn
+
+/-- Off the origin, the completed integrand is its entire remainder plus the
+single explicit principal part. -/
+theorem cubicAFECompletedIntegrand_eq_remainder_add
+    (t : ℝ) {z : ℂ} (hz : z ≠ 0) :
+    cubicAFECompletedIntegrand t z =
+      cubicAFEHolomorphicRemainder t z +
+        z⁻¹ * cubicAFECompletedExtension t 0 := by
+  unfold cubicAFECompletedIntegrand cubicAFEHolomorphicRemainder
+  rw [dslope_of_ne _ hz]
+  simp only [slope_def_module, sub_zero, smul_eq_mul]
+  field_simp [hz]
+  ring
+
+/-- Every positively sized square centered at the origin encloses exactly the
+one remaining AFE pole, so its boundary integral is `2 pi i` times the exact
+completed-zeta residue. -/
+theorem rectangleBoundaryIntegral_cubicAFECompletedIntegrand
+    (t : ℝ) {R : ℝ} (hR : 0 < R) :
+    MathlibAux.rectangleBoundaryIntegral
+        (cubicAFECompletedIntegrand t) 0 R =
+      (2 * Real.pi * I) *
+        (completedRiemannZeta (cubicCriticalPoint t) *
+          completedRiemannZeta (1 - cubicCriticalPoint t)) := by
+  classical
+  let residue : ℂ → ℂ := fun _ ↦ cubicAFECompletedExtension t 0
+  let model : ℂ → ℂ := fun z ↦
+    cubicAFEHolomorphicRemainder t z +
+      ∑ p ∈ ({0} : Finset ℂ), (z - p)⁻¹ * residue p
+  have hpole : (0 : ℂ) ∈ MathlibAux.openRectangle 0 R := by
+    simp [MathlibAux.openRectangle, mem_reProdIm, hR]
+  have hmodel :=
+    MathlibAux.rectangleBoundaryIntegral_eq_finite_simple_pole_residue_sum_of_differentiableOn
+      (g := cubicAFEHolomorphicRemainder t) (c := (0 : ℂ))
+      hR ({0} : Finset ℂ) residue
+      (differentiable_cubicAFEHolomorphicRemainder t).differentiableOn
+      (by
+        intro p hp
+        simp only [Finset.mem_singleton] at hp
+        subst p
+        exact hpole)
+  have hboundary :
+      MathlibAux.rectangleBoundaryIntegral
+          (cubicAFECompletedIntegrand t) 0 R =
+        MathlibAux.rectangleBoundaryIntegral model 0 R := by
+    apply MathlibAux.rectangleBoundaryIntegral_congr_of_eqOn_boundary hR
+    intro z hzclosed hznotopen
+    have hz0 : z ≠ 0 := by
+      intro hz
+      subst z
+      exact hznotopen hpole
+    rw [cubicAFECompletedIntegrand_eq_remainder_add t hz0]
+    simp [model, residue]
+  rw [hboundary]
+  simpa [model, residue, cubicAFECompletedExtension_zero t] using hmodel
 
 end MWKFCubic
 end PrimeNumberTheorem
