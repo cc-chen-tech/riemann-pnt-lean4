@@ -161,6 +161,95 @@ theorem card_biUnion_argumentCrossingBridgeIndices_le
       intro i hi
       exact argumentCrossingBridgeIndices_card (alpha i) (multiplicity i)
 
+/-- A finite alternating argument partition.  Each constructor adds one
+genuine zero-free component from `a` to `b`, followed by an order-`m` positive
+phase bridge from `b` to the first endpoint `c` of the remaining partition.
+The lists retain the genuine component ranges and bridge data separately. -/
+inductive ArgumentPhasePartition :
+    ℝ → ℝ → List (ℝ × ℝ) → List (ℝ × ℕ) → Prop
+  | single (a b : ℝ) :
+      ArgumentPhasePartition a b [(a, b)] []
+  | cons {a b c d : ℝ} {m : ℕ}
+      {components : List (ℝ × ℝ)} {bridges : List (ℝ × ℕ)}
+      (halign : c = b + m * Real.pi)
+      (rest : ArgumentPhasePartition c d components bridges) :
+      ArgumentPhasePartition a d
+        ((a, b) :: components) ((b, m) :: bridges)
+
+/-- Every value between the global endpoint arguments of a finite partition
+lies either between the endpoints of a genuine component or in one of the
+positive half-open zero bridges.  Genuine components are unordered because
+their net argument change may be negative.  A bridge's excluded far endpoint
+is routed into the next genuine component. -/
+theorem ArgumentPhasePartition.exists_component_or_bridge
+    {start finish : ℝ} {components : List (ℝ × ℝ)}
+    {bridges : List (ℝ × ℕ)}
+    (partition : ArgumentPhasePartition start finish components bridges)
+    {x : ℝ} (hx : x ∈ uIcc start finish) :
+    (∃ component ∈ components, x ∈ uIcc component.1 component.2) ∨
+      ∃ bridge ∈ bridges,
+        x ∈ Ico bridge.1 (bridge.1 + bridge.2 * Real.pi) := by
+  induction partition with
+  | single a b =>
+      exact Or.inl ⟨(a, b), by simp, hx⟩
+  | @cons a b c d m components bridges halign rest ih =>
+      rcases Set.uIcc_subset_uIcc_union_uIcc
+          (a := a) (b := b) (c := d) hx with hab | hbd
+      · exact Or.inl ⟨(a, b), by simp, hab⟩
+      · rcases Set.uIcc_subset_uIcc_union_uIcc
+            (a := b) (b := c) (c := d) hbd with hbc | hcd
+        · have hbcLe : b ≤ c := by
+            rw [halign]
+            exact le_add_of_nonneg_right
+              (mul_nonneg (Nat.cast_nonneg m) Real.pi_pos.le)
+          have hbc' : x ∈ Icc b c := by
+            simpa [uIcc_of_le hbcLe] using hbc
+          by_cases hxc : x < c
+          · refine Or.inr ⟨(b, m), by simp, ?_⟩
+            simpa [halign] using (show x ∈ Ico b c from ⟨hbc'.1, hxc⟩)
+          · have hcx : c = x := le_antisymm (not_lt.mp hxc) hbc'.2
+            have hxRest : x ∈ uIcc c d := by
+              rw [← hcx]
+              exact left_mem_uIcc
+            rcases ih hxRest with
+              ⟨component, hcomponent, hxcomponent⟩ |
+              ⟨bridge, hbridge, hxbridge⟩
+            · exact Or.inl
+                ⟨component, List.mem_cons_of_mem (a, b) hcomponent, hxcomponent⟩
+            · exact Or.inr
+                ⟨bridge, List.mem_cons_of_mem (b, m) hbridge, hxbridge⟩
+        · rcases ih hcd with
+            ⟨component, hcomponent, hxcomponent⟩ |
+            ⟨bridge, hbridge, hxbridge⟩
+          · exact Or.inl
+              ⟨component, List.mem_cons_of_mem (a, b) hcomponent, hxcomponent⟩
+          · exact Or.inr
+              ⟨bridge, List.mem_cons_of_mem (b, m) hbridge, hxbridge⟩
+
+/-- If a globally covered value belongs to no half-open zero bridge, it lies
+on an actual occurrence of a genuine component.  Returning a list index keeps
+distinct component occurrences available even when their endpoint pairs are
+equal. -/
+theorem ArgumentPhasePartition.exists_component_index_of_forall_not_mem_bridge
+    {start finish : ℝ} {components : List (ℝ × ℝ)}
+    {bridges : List (ℝ × ℕ)}
+    (partition : ArgumentPhasePartition start finish components bridges)
+    {x : ℝ} (hx : x ∈ uIcc start finish)
+    (hnotBridge : ∀ bridge ∈ bridges,
+      x ∉ Ico bridge.1 (bridge.1 + bridge.2 * Real.pi)) :
+    ∃ i : Fin components.length,
+      x ∈ uIcc (components.get i).1 (components.get i).2 := by
+  rcases partition.exists_component_or_bridge hx with
+    ⟨component, hcomponent, hxcomponent⟩ |
+    ⟨bridge, hbridge, hxbridge⟩
+  · have hexists : ∃ component ∈ components,
+        x ∈ uIcc component.1 component.2 :=
+      ⟨component, hcomponent, hxcomponent⟩
+    exact (List.exists_mem_iff_get
+      (p := fun component : ℝ × ℝ =>
+        x ∈ uIcc component.1 component.2)).mp hexists
+  · exact (hnotBridge bridge hbridge hxbridge).elim
+
 /-- An explicit logarithm of the vertical order-`m` factor on the left of a
 zero, where `I * (t - tau) = -I * r` with `r > 0`. -/
 noncomputable def verticalPowerLeftLog (m : ℕ) (r : ℝ) : ℂ :=
@@ -347,6 +436,138 @@ theorem exists_argumentCrossing_of_level_mem_Icc
   rw [← exp_continuousArgumentLift_eq gamma hne t, Complex.exp_re, ht',
     argumentCrossingLevel, Real.cos_add_int_mul_pi, Real.cos_pi_div_two, mul_zero,
     mul_zero]
+
+/-- A zero-free component realizes every crossing level in the unordered
+interval between its endpoint arguments.  This is the form needed for global
+gluing because a component's net argument change may be negative. -/
+theorem exists_argumentCrossing_of_level_mem_uIcc
+    (gamma : C(unitInterval, ℂ)) (hne : ∀ t, gamma t ≠ 0) (k : ℤ)
+    (hlevel : argumentCrossingLevel k ∈
+      uIcc (continuousArgumentLift gamma hne 0).im
+        (continuousArgumentLift gamma hne 1).im) :
+    ∃ t : unitInterval,
+      (continuousArgumentLift gamma hne t).im = argumentCrossingLevel k ∧
+        (gamma t).re = 0 := by
+  let theta : unitInterval → ℝ := fun t ↦ (continuousArgumentLift gamma hne t).im
+  have htheta : Continuous theta :=
+    Complex.continuous_im.comp (continuousArgumentLift gamma hne).continuous
+  have hlevelTheta : argumentCrossingLevel k ∈ uIcc (theta 0) (theta 1) := by
+    simpa [theta] using hlevel
+  have htRange : argumentCrossingLevel k ∈ Set.range theta := by
+    by_cases horder : theta 0 ≤ theta 1
+    · exact intermediate_value_univ (0 : unitInterval) 1 htheta
+        (by simpa [uIcc_of_le horder] using hlevelTheta)
+    · have hreverse : theta 1 ≤ theta 0 := le_of_not_ge horder
+      exact intermediate_value_univ (1 : unitInterval) 0 htheta
+        (by simpa [uIcc_of_ge hreverse] using hlevelTheta)
+  rcases htRange with ⟨t, ht⟩
+  have ht' :
+      (continuousArgumentLift gamma hne t).im = argumentCrossingLevel k := by
+    simpa [theta] using ht
+  refine ⟨t, ht', ?_⟩
+  rw [← exp_continuousArgumentLift_eq gamma hne t, Complex.exp_re, ht',
+    argumentCrossingLevel, Real.cos_add_int_mul_pi, Real.cos_pi_div_two, mul_zero,
+    mul_zero]
+
+/-- A global level outside all zero bridges is realized on one indexed
+zero-free component curve. -/
+theorem ArgumentPhasePartition.exists_component_argumentCrossing_of_forall_not_mem_bridge
+    {start finish : ℝ} {components : List (ℝ × ℝ)}
+    {bridges : List (ℝ × ℕ)}
+    (partition : ArgumentPhasePartition start finish components bridges)
+    (gamma : Fin components.length → C(unitInterval, ℂ))
+    (hne : ∀ i t, gamma i t ≠ 0)
+    (hendpoints : ∀ i,
+      (continuousArgumentLift (gamma i) (hne i) 0).im =
+          (components.get i).1 ∧
+        (continuousArgumentLift (gamma i) (hne i) 1).im =
+          (components.get i).2)
+    {k : ℤ}
+    (hglobal : argumentCrossingLevel k ∈ uIcc start finish)
+    (hnotBridge : ∀ bridge ∈ bridges,
+      argumentCrossingLevel k ∉
+        Ico bridge.1 (bridge.1 + bridge.2 * Real.pi)) :
+    ∃ i : Fin components.length, ∃ t : unitInterval,
+      (continuousArgumentLift (gamma i) (hne i) t).im =
+          argumentCrossingLevel k ∧
+        (gamma i t).re = 0 := by
+  rcases partition.exists_component_index_of_forall_not_mem_bridge
+      hglobal hnotBridge with ⟨i, hi⟩
+  have hlevel : argumentCrossingLevel k ∈
+      uIcc (continuousArgumentLift (gamma i) (hne i) 0).im
+        (continuousArgumentLift (gamma i) (hne i) 1).im := by
+    rw [(hendpoints i).1, (hendpoints i).2]
+    exact hi
+  rcases exists_argumentCrossing_of_level_mem_uIcc
+      (gamma i) (hne i) k hlevel with ⟨t, ht⟩
+  exact ⟨i, t, ht⟩
+
+/-- A finite family of surviving global levels injects into component-tagged
+crossing points.  The component tag prevents equal local parameters on
+different zero-free components from being identified. -/
+theorem ArgumentPhasePartition.exists_injective_component_argumentCrossings
+    {start finish : ℝ} {components : List (ℝ × ℝ)}
+    {bridges : List (ℝ × ℕ)}
+    (partition : ArgumentPhasePartition start finish components bridges)
+    (gamma : Fin components.length → C(unitInterval, ℂ))
+    (hne : ∀ i t, gamma i t ≠ 0)
+    (hendpoints : ∀ i,
+      (continuousArgumentLift (gamma i) (hne i) 0).im =
+          (components.get i).1 ∧
+        (continuousArgumentLift (gamma i) (hne i) 1).im =
+          (components.get i).2)
+    (K : Finset ℤ)
+    (hglobal : ∀ k ∈ K, argumentCrossingLevel k ∈ uIcc start finish)
+    (hnotBridge : ∀ k ∈ K, ∀ bridge ∈ bridges,
+      argumentCrossingLevel k ∉
+        Ico bridge.1 (bridge.1 + bridge.2 * Real.pi)) :
+    ∃ crossing : (k : ↥K) →
+        Fin components.length × unitInterval,
+      Function.Injective crossing ∧
+        ∀ k : ↥K,
+          (continuousArgumentLift (gamma (crossing k).1)
+              (hne (crossing k).1) (crossing k).2).im =
+                argumentCrossingLevel k.1 ∧
+            (gamma (crossing k).1 (crossing k).2).re = 0 := by
+  classical
+  have hcross : ∀ k : ↥K,
+      ∃ w : Fin components.length × unitInterval,
+        (continuousArgumentLift (gamma w.1) (hne w.1) w.2).im =
+            argumentCrossingLevel k.1 ∧
+          (gamma w.1 w.2).re = 0 := by
+    intro k
+    rcases partition.exists_component_argumentCrossing_of_forall_not_mem_bridge
+        gamma hne hendpoints (hglobal k.1 k.2)
+          (hnotBridge k.1 k.2) with ⟨i, t, ht⟩
+    exact ⟨⟨i, t⟩, ht⟩
+  let crossing : (k : ↥K) →
+      Fin components.length × unitInterval := fun k =>
+    Classical.choose (hcross k)
+  have hcrossing : ∀ k : ↥K,
+      (continuousArgumentLift (gamma (crossing k).1)
+          (hne (crossing k).1) (crossing k).2).im =
+            argumentCrossingLevel k.1 ∧
+        (gamma (crossing k).1 (crossing k).2).re = 0 := by
+    intro k
+    exact Classical.choose_spec (hcross k)
+  refine ⟨crossing, ?_, hcrossing⟩
+  intro k l hkl
+  have hphaseEq := congrArg
+    (fun w : Fin components.length × unitInterval =>
+      (continuousArgumentLift (gamma w.1) (hne w.1) w.2).im) hkl
+  have hlevels : argumentCrossingLevel k.1 = argumentCrossingLevel l.1 := by
+    calc
+      argumentCrossingLevel k.1 =
+          (continuousArgumentLift (gamma (crossing k).1)
+            (hne (crossing k).1) (crossing k).2).im := (hcrossing k).1.symm
+      _ = (continuousArgumentLift (gamma (crossing l).1)
+            (hne (crossing l).1) (crossing l).2).im := hphaseEq
+      _ = argumentCrossingLevel l.1 := (hcrossing l).1
+  have hcasts : (k.1 : ℝ) = (l.1 : ℝ) := by
+    unfold argumentCrossingLevel at hlevels
+    nlinarith [Real.pi_pos]
+  apply Subtype.ext
+  exact_mod_cast hcasts
 
 theorem exists_injective_argumentCrossing_times
     (gamma : C(unitInterval, ℂ)) (hne : ∀ t, gamma t ≠ 0) (K : Finset ℤ)

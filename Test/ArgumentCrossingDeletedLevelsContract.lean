@@ -51,6 +51,37 @@ example {ι : Type*} [DecidableEq ι] {alpha beta : ℝ}
 #print axioms card_biUnion_argumentCrossingBridgeIndices_le
 #print axioms argumentCrossingIndices_sdiff_bridgeUnion_card_lower_bound
 
+-- Mutation caught: component endpoint arguments need not increase.  A finite
+-- alternating chain covers the global unordered endpoint interval by genuine
+-- unordered component ranges and positive half-open zero bridges.
+example {start finish : ℝ} {components : List (ℝ × ℝ)}
+    {bridges : List (ℝ × ℕ)}
+    (partition : ArgumentPhasePartition start finish components bridges)
+    {x : ℝ} (hx : x ∈ Set.uIcc start finish) :
+    (∃ component ∈ components,
+        x ∈ Set.uIcc component.1 component.2) ∨
+      ∃ bridge ∈ bridges,
+        x ∈ Set.Ico bridge.1 (bridge.1 + bridge.2 * Real.pi) := by
+  exact partition.exists_component_or_bridge hx
+
+#print axioms ArgumentPhasePartition.exists_component_or_bridge
+
+-- Once every half-open bridge is excluded, the surviving level is attached
+-- to an actual occurrence in the component list, so repeated endpoint pairs
+-- do not erase component identity.
+example {start finish : ℝ} {components : List (ℝ × ℝ)}
+    {bridges : List (ℝ × ℕ)}
+    (partition : ArgumentPhasePartition start finish components bridges)
+    {x : ℝ} (hx : x ∈ Set.uIcc start finish)
+    (hnotBridge : ∀ bridge ∈ bridges,
+      x ∉ Set.Ico bridge.1 (bridge.1 + bridge.2 * Real.pi)) :
+    ∃ i : Fin components.length,
+      x ∈ Set.uIcc (components.get i).1 (components.get i).2 := by
+  exact partition.exists_component_index_of_forall_not_mem_bridge hx hnotBridge
+
+#print axioms
+  ArgumentPhasePartition.exists_component_index_of_forall_not_mem_bridge
+
 -- The explicit logarithms of the two vertical power factors exponentiate to
 -- the correct sides and differ in argument by exactly `m * pi`.
 example (m : ℕ) {r : ℝ} (hr : 0 < r) :

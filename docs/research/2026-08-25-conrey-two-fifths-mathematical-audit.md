@@ -2012,8 +2012,22 @@ crossing.  The finite cost calculation is now closed independently of that
 analytic gluing: `card_biUnion_argumentCrossingBridgeIndices_le` bounds the
 union of all bridge-level sets by the sum of zero orders (overlap only helps),
 and `argumentCrossingIndices_sdiff_bridgeUnion_card_lower_bound` deletes that
-union while retaining exactly one global endpoint loss.  What remains is to
-prove that the actual component lifts place every non-crossing global level in
-this bridge union and to assemble the injection across components.  Equation
-(41), equations (38)--(40), and the long `theta<4/7` mollified mean square
-remain open, so the Conrey two-fifths claim is still not proved.
+union while retaining exactly one global endpoint loss.
+
+The abstract nonmonotone gluing and injection are now also closed.
+`ArgumentPhasePartition` alternates genuine component endpoint pairs with
+aligned order bridges.  Its coverage theorem uses unordered component
+intervals, so a component whose net argument decreases is not discarded; a
+bridge's excluded far endpoint is assigned to the next component.
+`exists_argumentCrossing_of_level_mem_uIcc` supplies the local crossing in
+either direction, and
+`ArgumentPhasePartition.exists_injective_component_argumentCrossings`
+assembles all surviving lattice levels into distinct component-tagged
+crossings.
+
+What remains for equation (41) is no longer the abstract finite combinatorics:
+construct this partition from the actual finite critical-line divisor of
+`eta`, choose compatible logarithmic lifts on every complementary interval,
+and prove that its bridge multiplicity sum is the actual `N_{0,eta}` term.
+Equation (41), equations (38)--(40), and the long `theta<4/7` mollified mean
+square remain open, so the Conrey two-fifths claim is still not proved.

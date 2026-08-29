@@ -121,6 +121,44 @@ This is the non-duplicative accounting required by equation (41): zero
 multiplicity pays only for phase levels swallowed by the zero bridges, while
 endpoint rounding is paid once globally.
 
+### 4.1 Nonmonotone-component correction
+
+No zero-free component argument is known to be monotone, and even its net
+endpoint change can be negative.  Therefore the finite gluing statement must
+not require a level on a genuine component to lie in the directed interval
+`Icc(alpha,beta)`.  The correct component range is the unordered interval
+
+\[
+  [[\alpha,\beta]]=[\min(\alpha,\beta),\max(\alpha,\beta)].
+\]
+
+The intermediate value theorem then produces the crossing whether the
+component lift rises or falls.  For example, a phase chain with vertices
+`0,10,-10,5` still covers every level between the global endpoints `0` and
+`5`, although its middle component is decreasing.  Any proof that discards
+that component because `10>-10` is invalid.
+
+The finite invariant is an alternating chain
+
+\[
+  [a_0,b_0],\ [b_0,b_0+m_0\pi),\
+  [[a_1,b_1]],\ldots,[[a_r,b_r]],
+  \qquad a_{j+1}=b_j+m_j\pi,
+\]
+
+where genuine components use closed unordered intervals and zero bridges use
+positive half-open intervals.  Repeated use of
+
+\[
+  [[x,z]]\subset [[x,y]]\cup[[y,z]]
+\]
+
+shows that every global endpoint level lies either on a genuine component or
+on a bridge.  At the exceptional far endpoint `b_j+m_j*pi`, the half-open
+bridge does not contain the level, but the next genuine component does.  This
+is precisely why the half-open convention is compatible with arbitrary
+nonmonotone component arguments.
+
 ## 5. Lean decomposition
 
 The proof should be split into four reusable layers.
@@ -153,10 +191,24 @@ The finite cardinality part of Layer 4 is also exact:
 local bridge-level sets costs at most the sum of their multiplicities, without
 requiring the bridges to be disjoint, and
 `argumentCrossingIndices_sdiff_bridgeUnion_card_lower_bound` preserves the
-single global endpoint loss after deleting this union.  The analytic global
-attribution across every zero in the finite height interval remains the actual
-equation-(41) gate.  No equation-(41) or Conrey simple-zero proportion claim
-should be made before that attribution is connected to the actual `eta`.
+single global endpoint loss after deleting this union.
+
+The abstract gluing part of Layer 4 is now formalized without a monotonicity
+assumption.  `ArgumentPhasePartition` records an alternating finite list of
+genuine components and aligned half-open order bridges.
+`ArgumentPhasePartition.exists_component_or_bridge` proves global coverage,
+including the far-endpoint routing described in Section 4.1;
+`exists_argumentCrossing_of_level_mem_uIcc` handles both increasing and
+decreasing component arguments; and
+`ArgumentPhasePartition.exists_injective_component_argumentCrossings` sends
+all surviving levels injectively to component-tagged real-part crossings.
+
+The remaining equation-(41) gate is the actual-`eta` specialization: construct
+this finite partition from the critical-line divisor, choose compatible lifts
+on every complementary interval, and identify the resulting bridge list and
+sum of orders with the existing `eta` zero count.  No equation-(41) or Conrey
+simple-zero proportion claim should be made before that specialization is
+proved.
 
 ## 6. Analytic-order specialization on the critical line
 
@@ -242,9 +294,9 @@ exponentiate to the actual values of `eta` on the two sides of the zero, and
 \]
 
 Thus Layer 3 is closed without a principal-log branch assumption.  The
-remaining work is genuinely global: enumerate the finitely many critical-line
-zeros, align the component lifts with these local bridges, charge bridge
-levels to their bridge union, and inject every uncharged global level into a
-distinct nonzero real-part crossing.  The bridge union itself is already known
-to have cardinality at most the sum of the zero orders, even if different
-bridges contain the same half-odd-integer level.
+remaining work is the actual finite-divisor construction: enumerate the
+critical-line zeros, build the zero-free component curves and compatible
+endpoint lifts, and instantiate `ArgumentPhasePartition`.  Once instantiated,
+the abstract theorem already injects every uncharged global level into a
+distinct component-tagged nonzero real-part crossing, and the bridge union is
+already bounded by the sum of zero orders even when bridge-level sets overlap.
