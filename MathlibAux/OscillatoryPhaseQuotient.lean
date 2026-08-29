@@ -161,6 +161,56 @@ theorem oscillatorySecondPhaseQuotientDerivative_eq_collected
   simp only [hinvpow1, hinv1, one_mul]
   ring
 
+/-- Triangle-inequality bound for the four collected classes in `R'`.
+Absolute values are retained on every real phase coefficient. -/
+theorem norm_oscillatorySecondPhaseQuotientDerivativeCollected_le
+    (A A' A'' : ℝ → ℂ) (v v' v'' : ℝ → ℝ) (x : ℝ) :
+    ‖oscillatorySecondPhaseQuotientDerivativeCollected
+        A A' A'' v v' v'' x‖ ≤
+      |1 / (v x) ^ 2| * ‖A'' x‖ +
+      |3 * v' x / (v x) ^ 3| * ‖A' x‖ +
+      |v'' x / (v x) ^ 3| * ‖A x‖ +
+      |3 * (v' x) ^ 2 / (v x) ^ 4| * ‖A x‖ := by
+  rw [oscillatorySecondPhaseQuotientDerivativeCollected]
+  calc
+    ‖-(((1 / (v x) ^ 2 : ℝ) : ℂ) * A'' x) +
+          (((3 * v' x / (v x) ^ 3 : ℝ) : ℂ) * A' x) +
+          (((v'' x / (v x) ^ 3 : ℝ) : ℂ) * A x) -
+        (((3 * (v' x) ^ 2 / (v x) ^ 4 : ℝ) : ℂ) * A x)‖
+        ≤ ‖-(((1 / (v x) ^ 2 : ℝ) : ℂ) * A'' x) +
+              (((3 * v' x / (v x) ^ 3 : ℝ) : ℂ) * A' x) +
+              (((v'' x / (v x) ^ 3 : ℝ) : ℂ) * A x)‖ +
+            ‖(((3 * (v' x) ^ 2 / (v x) ^ 4 : ℝ) : ℂ) * A x)‖ :=
+          norm_sub_le _ _
+    _ ≤ (‖-(((1 / (v x) ^ 2 : ℝ) : ℂ) * A'' x) +
+              (((3 * v' x / (v x) ^ 3 : ℝ) : ℂ) * A' x)‖ +
+            ‖(((v'' x / (v x) ^ 3 : ℝ) : ℂ) * A x)‖) +
+          ‖(((3 * (v' x) ^ 2 / (v x) ^ 4 : ℝ) : ℂ) * A x)‖ := by
+            gcongr
+            exact norm_add_le _ _
+    _ ≤ ((‖-(((1 / (v x) ^ 2 : ℝ) : ℂ) * A'' x)‖ +
+              ‖(((3 * v' x / (v x) ^ 3 : ℝ) : ℂ) * A' x)‖) +
+            ‖(((v'' x / (v x) ^ 3 : ℝ) : ℂ) * A x)‖) +
+          ‖(((3 * (v' x) ^ 2 / (v x) ^ 4 : ℝ) : ℂ) * A x)‖ := by
+            gcongr
+            exact norm_add_le _ _
+    _ = |1 / (v x) ^ 2| * ‖A'' x‖ +
+          |3 * v' x / (v x) ^ 3| * ‖A' x‖ +
+          |v'' x / (v x) ^ 3| * ‖A x‖ +
+          |3 * (v' x) ^ 2 / (v x) ^ 4| * ‖A x‖ := by
+            simp only [norm_neg, norm_mul, norm_real, Real.norm_eq_abs]
+
+theorem norm_oscillatorySecondPhaseQuotientDerivative_le
+    {A A' A'' : ℝ → ℂ} {v v' v'' : ℝ → ℝ} {x : ℝ}
+    (hv0 : v x ≠ 0) :
+    ‖oscillatorySecondPhaseQuotientDerivative A A' A'' v v' v'' x‖ ≤
+      |1 / (v x) ^ 2| * ‖A'' x‖ +
+      |3 * v' x / (v x) ^ 3| * ‖A' x‖ +
+      |v'' x / (v x) ^ 3| * ‖A x‖ +
+      |3 * (v' x) ^ 2 / (v x) ^ 4| * ‖A x‖ := by
+  rw [oscillatorySecondPhaseQuotientDerivative_eq_collected hv0]
+  exact norm_oscillatorySecondPhaseQuotientDerivativeCollected_le A A' A'' v v' v'' x
+
 theorem oscillatorySecondPhaseQuotient_hasDerivAt
     {A A' A'' : ℝ → ℂ} {v v' v'' : ℝ → ℝ} {x : ℝ}
     (hA : HasDerivAt A (A' x) x) (hA' : HasDerivAt A' (A'' x) x)

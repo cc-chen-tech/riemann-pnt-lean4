@@ -1389,6 +1389,19 @@ Consequently the previously proved implication `A=A'=0 -> R=0` applies
 without any limiting argument, and both boundary terms in the twice-integrated
 identity vanish.
 
+The collected identity (8.22e'''') now also has its exact formal norm bound:
+
+\[
+ \lVert R'\rVert\leq
+ \frac{\lVert A''\rVert}{|F'|^2}
+ +\frac{3|F''|\lVert A'\rVert}{|F'|^3}
+ +\frac{|F'''|\lVert A\rVert}{|F'|^3}
+ +\frac{3|F''|^2\lVert A\rVert}{|F'|^4}.                 \tag{8.22e'''''''''''}
+\]
+
+The Lean statement retains absolute values on the four real coefficients,
+so no sign assumption or cancellation is silently used.
+
 For the Poisson far tail, the next remaining lemma is therefore explicit:
 instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, use (8.22e') to bound the
 four classes in (8.22e''''), and sum their
