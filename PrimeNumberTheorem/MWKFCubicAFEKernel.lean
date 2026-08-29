@@ -1,7 +1,8 @@
 import Mathlib.NumberTheory.LSeries.RiemannZeta
-import MathlibAux.RectangleResidue
+import MathlibAux.BoundaryRectResidue
 
 open Complex Filter Set
+open scoped Interval
 
 namespace PrimeNumberTheorem
 namespace MWKFCubic
@@ -297,6 +298,195 @@ theorem rectangleBoundaryIntegral_cubicAFECompletedIntegrand
     simp [model, residue]
   rw [hboundary]
   simpa [model, residue, cubicAFECompletedExtension_zero t] using hmodel
+
+/-- Every ordered axis-parallel rectangle whose interior contains the origin
+has boundary integral `2 pi i` times the unique completed-zeta residue.  This
+is the finite-height contour identity used before sending the horizontal
+edges to infinity. -/
+theorem boundaryRectIntegral_cubicAFECompletedIntegrand
+    (t : ℝ) {x0 x1 y0 y1 : ℝ}
+    (hx0 : x0 < 0) (hx1 : 0 < x1) (hy0 : y0 < 0) (hy1 : 0 < y1) :
+    MathlibAux.boundaryRectIntegral
+        (cubicAFECompletedIntegrand t) x0 x1 y0 y1 =
+      (2 * Real.pi * I) *
+        (completedRiemannZeta (cubicCriticalPoint t) *
+          completedRiemannZeta (1 - cubicCriticalPoint t)) := by
+  classical
+  let residue : ℂ → ℂ := fun _ ↦ cubicAFECompletedExtension t 0
+  let model : ℂ → ℂ := fun z ↦
+    cubicAFEHolomorphicRemainder t z +
+      ∑ p ∈ ({0} : Finset ℂ), (z - p)⁻¹ * residue p
+  have hpole : x0 < (0 : ℂ).re ∧ (0 : ℂ).re < x1 ∧
+      y0 < (0 : ℂ).im ∧ (0 : ℂ).im < y1 := by
+    simpa using And.intro hx0 (And.intro hx1 (And.intro hy0 hy1))
+  have hmodel :=
+    MathlibAux.boundaryRectIntegral_eq_finite_simple_pole_residue_sum_of_differentiableOn
+      (g := cubicAFEHolomorphicRemainder t)
+      (x0 := x0) (x1 := x1) (y0 := y0) (y1 := y1)
+      ({0} : Finset ℂ) residue
+      (differentiable_cubicAFEHolomorphicRemainder t).differentiableOn
+      (by
+        intro p hp
+        simp only [Finset.mem_singleton] at hp
+        subst p
+        exact hpole)
+  have hboundary :
+      MathlibAux.boundaryRectIntegral
+          (cubicAFECompletedIntegrand t) x0 x1 y0 y1 =
+        MathlibAux.boundaryRectIntegral model x0 x1 y0 y1 := by
+    apply MathlibAux.boundaryRectIntegral_congr_of_eqOn_boundary
+    intro z hzclosed hznotInterior
+    have hz0 : z ≠ 0 := by
+      intro hz
+      subst z
+      exact hznotInterior hpole
+    rw [cubicAFECompletedIntegrand_eq_remainder_add t hz0]
+    simp [model, residue]
+  rw [hboundary]
+  simpa [model, residue, cubicAFECompletedExtension_zero t] using hmodel
+
+/-- Symmetric finite-height specialization of the exact AFE rectangle
+identity. -/
+theorem boundaryRectIntegral_cubicAFECompletedIntegrand_symmetric
+    (t : ℝ) {X V : ℝ} (hX : 0 < X) (hV : 0 < V) :
+    MathlibAux.boundaryRectIntegral
+        (cubicAFECompletedIntegrand t) (-X) X (-V) V =
+      (2 * Real.pi * I) *
+        (completedRiemannZeta (cubicCriticalPoint t) *
+          completedRiemannZeta (1 - cubicCriticalPoint t)) := by
+  exact boundaryRectIntegral_cubicAFECompletedIntegrand t
+    (by linarith) hX (by linarith) hV
+
+/-- The entire completed numerator is even, hence division by the sole
+remaining factor `z` makes the completed AFE integrand odd. -/
+theorem cubicAFECompletedIntegrand_neg (t : ℝ) (z : ℂ) :
+    cubicAFECompletedIntegrand t (-z) =
+      -cubicAFECompletedIntegrand t z := by
+  rcases eq_or_ne z 0 with rfl | hz
+  · simp [cubicAFECompletedIntegrand]
+  · unfold cubicAFECompletedIntegrand
+    rw [cubicAFECompletedExtension_neg]
+    field_simp [hz]
+
+/-- Oddness identifies the bottom horizontal edge of a symmetric rectangle
+with the negative of its top edge. -/
+theorem cubicAFECompletedIntegrand_horizontal_symmetry
+    (t X V : ℝ) :
+    (∫ x : ℝ in -X..X,
+        cubicAFECompletedIntegrand t ((x : ℂ) + (-V : ℂ) * I)) =
+      -(∫ x : ℝ in -X..X,
+        cubicAFECompletedIntegrand t ((x : ℂ) + (V : ℂ) * I)) := by
+  have hneg := intervalIntegral.integral_comp_neg
+    (f := fun x : ℝ ↦
+      cubicAFECompletedIntegrand t ((x : ℂ) + (V : ℂ) * I))
+    (a := -X) (b := X)
+  calc
+    (∫ x : ℝ in -X..X,
+        cubicAFECompletedIntegrand t ((x : ℂ) + (-V : ℂ) * I)) =
+        ∫ x : ℝ in -X..X,
+          -cubicAFECompletedIntegrand t ((-x : ℝ) + (V : ℂ) * I) := by
+            apply intervalIntegral.integral_congr
+            intro x _hx
+            change cubicAFECompletedIntegrand t
+                ((x : ℂ) + (-V : ℂ) * I) =
+              -cubicAFECompletedIntegrand t
+                ((-x : ℝ) + (V : ℂ) * I)
+            rw [← cubicAFECompletedIntegrand_neg t
+              ((-x : ℝ) + (V : ℂ) * I)]
+            congr 1
+            push_cast
+            ring
+    _ = -(∫ x : ℝ in -X..X,
+          cubicAFECompletedIntegrand t ((-x : ℝ) + (V : ℂ) * I)) := by
+            rw [intervalIntegral.integral_neg]
+    _ = -(∫ x : ℝ in -X..X,
+          cubicAFECompletedIntegrand t ((x : ℂ) + (V : ℂ) * I)) := by
+            congr 1
+            simpa using hneg
+
+/-- Oddness identifies the left vertical edge of a symmetric rectangle with
+the negative of its right edge. -/
+theorem cubicAFECompletedIntegrand_vertical_symmetry
+    (t X V : ℝ) :
+    (∫ y : ℝ in -V..V,
+        cubicAFECompletedIntegrand t ((-X : ℂ) + (y : ℂ) * I)) =
+      -(∫ y : ℝ in -V..V,
+        cubicAFECompletedIntegrand t ((X : ℂ) + (y : ℂ) * I)) := by
+  have hneg := intervalIntegral.integral_comp_neg
+    (f := fun y : ℝ ↦
+      cubicAFECompletedIntegrand t ((X : ℂ) + (y : ℂ) * I))
+    (a := -V) (b := V)
+  calc
+    (∫ y : ℝ in -V..V,
+        cubicAFECompletedIntegrand t ((-X : ℂ) + (y : ℂ) * I)) =
+        ∫ y : ℝ in -V..V,
+          -cubicAFECompletedIntegrand t ((X : ℂ) + (-y : ℝ) * I) := by
+            apply intervalIntegral.integral_congr
+            intro y _hy
+            change cubicAFECompletedIntegrand t
+                ((-X : ℂ) + (y : ℂ) * I) =
+              -cubicAFECompletedIntegrand t
+                ((X : ℂ) + (-y : ℝ) * I)
+            rw [← cubicAFECompletedIntegrand_neg t
+              ((X : ℂ) + (-y : ℝ) * I)]
+            congr 1
+            push_cast
+            ring
+    _ = -(∫ y : ℝ in -V..V,
+          cubicAFECompletedIntegrand t ((X : ℂ) + (-y : ℝ) * I)) := by
+            rw [intervalIntegral.integral_neg]
+    _ = -(∫ y : ℝ in -V..V,
+          cubicAFECompletedIntegrand t ((X : ℂ) + (y : ℂ) * I)) := by
+            congr 1
+            simpa using hneg
+
+/-- Exact finite-height AFE identity after exploiting the odd symmetry: the
+right vertical integral plus the explicit top-edge correction equals the
+completed-zeta residue. -/
+theorem cubicAFEFiniteVerticalIdentity
+    (t : ℝ) {X V : ℝ} (hX : 0 < X) (hV : 0 < V) :
+    (∫ y : ℝ in -V..V,
+        cubicAFECompletedIntegrand t ((X : ℂ) + (y : ℂ) * I)) +
+      I * (∫ x : ℝ in -X..X,
+        cubicAFECompletedIntegrand t ((x : ℂ) + (V : ℂ) * I)) =
+      Real.pi *
+        (completedRiemannZeta (cubicCriticalPoint t) *
+          completedRiemannZeta (1 - cubicCriticalPoint t)) := by
+  let H : ℂ := ∫ x : ℝ in -X..X,
+    cubicAFECompletedIntegrand t ((x : ℂ) + (V : ℂ) * I)
+  let R : ℂ := ∫ y : ℝ in -V..V,
+    cubicAFECompletedIntegrand t ((X : ℂ) + (y : ℂ) * I)
+  let L : ℂ := ∫ y : ℝ in -V..V,
+    cubicAFECompletedIntegrand t ((-X : ℂ) + (y : ℂ) * I)
+  let B : ℂ := ∫ x : ℝ in -X..X,
+    cubicAFECompletedIntegrand t ((x : ℂ) + (-V : ℂ) * I)
+  have hcontour :=
+    boundaryRectIntegral_cubicAFECompletedIntegrand_symmetric t hX hV
+  have hB : B = -H := by
+    exact cubicAFECompletedIntegrand_horizontal_symmetry t X V
+  have hL : L = -R := by
+    exact cubicAFECompletedIntegrand_vertical_symmetry t X V
+  change R + I * H = _
+  have hcontour' :
+      B - H + I * R - I * L =
+        (2 * Real.pi * I) *
+          (completedRiemannZeta (cubicCriticalPoint t) *
+            completedRiemannZeta (1 - cubicCriticalPoint t)) := by
+    simpa [MathlibAux.boundaryRectIntegral, smul_eq_mul, B, H, R, L] using hcontour
+  rw [hB, hL] at hcontour'
+  apply mul_left_cancel₀ (mul_ne_zero (by norm_num : (2 : ℂ) ≠ 0) I_ne_zero)
+  calc
+    (2 * I) * (R + I * H) = 2 * I * R + 2 * (I * I) * H := by ring
+    _ = -H - H + I * R - I * -R := by
+      rw [I_mul_I]
+      ring
+    _ = (2 * Real.pi * I) *
+          (completedRiemannZeta (cubicCriticalPoint t) *
+            completedRiemannZeta (1 - cubicCriticalPoint t)) := hcontour'
+    _ = (2 * I) *
+          (Real.pi *
+            (completedRiemannZeta (cubicCriticalPoint t) *
+              completedRiemannZeta (1 - cubicCriticalPoint t))) := by ring
 
 end MWKFCubic
 end PrimeNumberTheorem

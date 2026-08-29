@@ -1,6 +1,7 @@
 import PrimeNumberTheorem.MWKFCubicAFEKernel
 
 open Complex
+open scoped Interval
 
 namespace PrimeNumberTheorem.MWKFCubic
 
@@ -87,6 +88,52 @@ namespace PrimeNumberTheorem.MWKFCubic
     MathlibAux.rectangleBoundaryIntegral
         (cubicAFECompletedIntegrand t) 0 R =
       (2 * Real.pi * I) *
+        (completedRiemannZeta (cubicCriticalPoint t) *
+          completedRiemannZeta (1 - cubicCriticalPoint t)))
+
+#check (@boundaryRectIntegral_cubicAFECompletedIntegrand :
+  ∀ (t : ℝ) {x0 x1 y0 y1 : ℝ},
+    x0 < 0 → 0 < x1 → y0 < 0 → 0 < y1 →
+      MathlibAux.boundaryRectIntegral
+          (cubicAFECompletedIntegrand t) x0 x1 y0 y1 =
+        (2 * Real.pi * I) *
+          (completedRiemannZeta (cubicCriticalPoint t) *
+            completedRiemannZeta (1 - cubicCriticalPoint t)))
+
+#check (@boundaryRectIntegral_cubicAFECompletedIntegrand_symmetric :
+  ∀ (t : ℝ) {X V : ℝ}, 0 < X → 0 < V →
+    MathlibAux.boundaryRectIntegral
+        (cubicAFECompletedIntegrand t) (-X) X (-V) V =
+      (2 * Real.pi * I) *
+        (completedRiemannZeta (cubicCriticalPoint t) *
+          completedRiemannZeta (1 - cubicCriticalPoint t)))
+
+#check (@cubicAFECompletedIntegrand_neg :
+  ∀ (t : ℝ) (z : ℂ),
+    cubicAFECompletedIntegrand t (-z) =
+      -cubicAFECompletedIntegrand t z)
+
+#check (@cubicAFECompletedIntegrand_horizontal_symmetry :
+  ∀ (t X V : ℝ),
+    (∫ x : ℝ in -X..X,
+        cubicAFECompletedIntegrand t ((x : ℂ) + (-V : ℂ) * I)) =
+      -(∫ x : ℝ in -X..X,
+        cubicAFECompletedIntegrand t ((x : ℂ) + (V : ℂ) * I)))
+
+#check (@cubicAFECompletedIntegrand_vertical_symmetry :
+  ∀ (t X V : ℝ),
+    (∫ y : ℝ in -V..V,
+        cubicAFECompletedIntegrand t ((-X : ℂ) + (y : ℂ) * I)) =
+      -(∫ y : ℝ in -V..V,
+        cubicAFECompletedIntegrand t ((X : ℂ) + (y : ℂ) * I)))
+
+#check (@cubicAFEFiniteVerticalIdentity :
+  ∀ (t : ℝ) {X V : ℝ}, 0 < X → 0 < V →
+    (∫ y : ℝ in -V..V,
+        cubicAFECompletedIntegrand t ((X : ℂ) + (y : ℂ) * I)) +
+      I * (∫ x : ℝ in -X..X,
+        cubicAFECompletedIntegrand t ((x : ℂ) + (V : ℂ) * I)) =
+      Real.pi *
         (completedRiemannZeta (cubicCriticalPoint t) *
           completedRiemannZeta (1 - cubicCriticalPoint t)))
 
