@@ -166,3 +166,36 @@ example {g g0 g1 L tau : ℝ} {m : ℕ}
   exact exists_conreyDegreeOneEta_local_argument_bridge horder
 
 #print axioms exists_conreyDegreeOneEta_local_argument_bridge
+
+-- Mutation caught: Conrey's zero convention needs the two one-sided phase
+-- endpoints themselves, not only the limit of their difference.  The right
+-- endpoint must be the left endpoint plus exactly `m * pi`.
+example {g g0 g1 L tau : ℝ} {m : ℕ}
+    (horder :
+      analyticOrderAt (conreyDegreeOneEta g g0 g1 L)
+        (conreyCriticalPoint tau) = m) :
+    ∃ delta : ℝ, ∃ ell : ℝ → ℂ,
+      0 < delta ∧
+      ContinuousOn ell (Set.Ioo (tau - delta) (tau + delta)) ∧
+      (∀ t ∈ Set.Ioo (tau - delta) tau,
+        Complex.exp (MathlibAux.verticalPowerLeftLog m (tau - t) + ell t) =
+          conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t)) ∧
+      (∀ t ∈ Set.Ioo tau (tau + delta),
+        Complex.exp (MathlibAux.verticalPowerRightLog m (t - tau) + ell t) =
+          conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t)) ∧
+      Tendsto
+        (fun r =>
+          (MathlibAux.verticalPowerLeftLog m r + ell (tau - r)).im)
+        (nhdsWithin 0 (Set.Ioi 0))
+        (nhds ((ell tau).im - (m : ℝ) * Real.pi / 2)) ∧
+      Tendsto
+        (fun r =>
+          (MathlibAux.verticalPowerRightLog m r + ell (tau + r)).im)
+        (nhdsWithin 0 (Set.Ioi 0))
+        (nhds ((ell tau).im + (m : ℝ) * Real.pi / 2)) ∧
+      (ell tau).im + (m : ℝ) * Real.pi / 2 =
+        ((ell tau).im - (m : ℝ) * Real.pi / 2) +
+          (m : ℝ) * Real.pi := by
+  exact exists_conreyDegreeOneEta_local_argument_endpoint_limits horder
+
+#print axioms exists_conreyDegreeOneEta_local_argument_endpoint_limits

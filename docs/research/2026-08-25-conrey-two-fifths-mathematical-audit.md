@@ -1933,6 +1933,13 @@ actual product `V_1B` at the two selected horizontal heights.  Equations
 
 ## 28. Equation-(41) global deleted-level accounting
 
+> **Correction, 2026-08-30:** the proposed positive-jump attribution below
+> cannot be specialized directly to actual eta. Its generic crossing claim
+> has an entire-function counterexample. See
+> [the balanced-argument correction](2026-08-30-conrey-balanced-argument-correction.md).
+> The valid replacement counts strict interior levels componentwise and
+> charges component losses to the zero multiplicity. Equation (41) remains open.
+
 The next equation-(41) audit found that summing the zero-free crossing bound
 component by component is not sharp enough: it pays one floor/ceiling loss on
 each component and then risks charging the critical-line zeros a second time.

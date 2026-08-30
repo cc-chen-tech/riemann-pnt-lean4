@@ -371,6 +371,94 @@ theorem exists_conreyDegreeOneEta_local_argument_bridge
     linarith
   exact ⟨delta, ell, hdelta, hellContinuousSmall, hleftExp, hrightExp, hphase⟩
 
+/-- The two one-sided argument endpoints used by Conrey's zero convention.
+At an order-`m` critical-line zero they are the regular-factor argument minus
+and plus `m * pi / 2`, hence the right endpoint is exactly the left endpoint
+plus `m * pi`.  Keeping the two limits separately is essential when the open
+zero-free components are assembled into the global equation-(41) path. -/
+theorem exists_conreyDegreeOneEta_local_argument_endpoint_limits
+    {g g0 g1 L tau : ℝ} {m : ℕ}
+    (horder :
+      analyticOrderAt (conreyDegreeOneEta g g0 g1 L)
+        (conreyCriticalPoint tau) = m) :
+    ∃ delta : ℝ, ∃ ell : ℝ → ℂ,
+      0 < delta ∧
+      ContinuousOn ell (Set.Ioo (tau - delta) (tau + delta)) ∧
+      (∀ t ∈ Set.Ioo (tau - delta) tau,
+        Complex.exp (MathlibAux.verticalPowerLeftLog m (tau - t) + ell t) =
+          conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t)) ∧
+      (∀ t ∈ Set.Ioo tau (tau + delta),
+        Complex.exp (MathlibAux.verticalPowerRightLog m (t - tau) + ell t) =
+          conreyDegreeOneEta g g0 g1 L (conreyCriticalPoint t)) ∧
+      Tendsto
+        (fun r =>
+          (MathlibAux.verticalPowerLeftLog m r + ell (tau - r)).im)
+        (nhdsWithin 0 (Set.Ioi 0))
+        (nhds ((ell tau).im - (m : ℝ) * Real.pi / 2)) ∧
+      Tendsto
+        (fun r =>
+          (MathlibAux.verticalPowerRightLog m r + ell (tau + r)).im)
+        (nhdsWithin 0 (Set.Ioi 0))
+        (nhds ((ell tau).im + (m : ℝ) * Real.pi / 2)) ∧
+      (ell tau).im + (m : ℝ) * Real.pi / 2 =
+        ((ell tau).im - (m : ℝ) * Real.pi / 2) +
+          (m : ℝ) * Real.pi := by
+  rcases exists_conreyDegreeOneEta_local_argument_bridge horder with
+    ⟨delta, ell, hdelta, hellContinuous, hleftExp, hrightExp, hgap⟩
+  have htau : tau ∈ Set.Ioo (tau - delta) (tau + delta) := by
+    constructor <;> linarith
+  have hellAt : ContinuousAt ell tau :=
+    hellContinuous.continuousAt (isOpen_Ioo.mem_nhds htau)
+  have htId : Tendsto (fun r : ℝ => r)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) :=
+    tendsto_id.mono_left nhdsWithin_le_nhds
+  have htPlus : Tendsto (fun r : ℝ => tau + r)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds tau) := by
+    simpa using tendsto_const_nhds.add htId
+  have htMinus : Tendsto (fun r : ℝ => tau - r)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds tau) := by
+    simpa using tendsto_const_nhds.sub htId
+  have hplusIm : Tendsto (fun r : ℝ => (ell (tau + r)).im)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds (ell tau).im) :=
+    Complex.continuous_im.continuousAt.tendsto.comp
+      (hellAt.tendsto.comp htPlus)
+  have hminusIm : Tendsto (fun r : ℝ => (ell (tau - r)).im)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds (ell tau).im) :=
+    Complex.continuous_im.continuousAt.tendsto.comp
+      (hellAt.tendsto.comp htMinus)
+  have hleft : Tendsto
+      (fun r =>
+        (MathlibAux.verticalPowerLeftLog m r + ell (tau - r)).im)
+      (nhdsWithin 0 (Set.Ioi 0))
+      (nhds ((ell tau).im - (m : ℝ) * Real.pi / 2)) := by
+    have h :=
+      (tendsto_const_nhds : Tendsto
+        (fun _ : ℝ => -(m : ℝ) * Real.pi / 2)
+        (nhdsWithin 0 (Set.Ioi 0))
+        (nhds (-(m : ℝ) * Real.pi / 2))).add hminusIm
+    convert h using 1
+    · funext r
+      simp [MathlibAux.verticalPowerLeftLog, Complex.mul_im]
+      ring
+    · ring
+  have hright : Tendsto
+      (fun r =>
+        (MathlibAux.verticalPowerRightLog m r + ell (tau + r)).im)
+      (nhdsWithin 0 (Set.Ioi 0))
+      (nhds ((ell tau).im + (m : ℝ) * Real.pi / 2)) := by
+    have h :=
+      (tendsto_const_nhds : Tendsto
+        (fun _ : ℝ => (m : ℝ) * Real.pi / 2)
+        (nhdsWithin 0 (Set.Ioi 0))
+        (nhds ((m : ℝ) * Real.pi / 2))).add hplusIm
+    convert h using 1
+    · funext r
+      simp [MathlibAux.verticalPowerRightLog, Complex.mul_im]
+      ring
+    · ring
+  refine ⟨delta, ell, hdelta, hellContinuous, hleftExp, hrightExp, hleft, hright, ?_⟩
+  ring
+
 /-- On the critical line, the real part of Conrey's degree-one `eta` is
 exactly the leading real coefficient times `xi`. -/
 theorem conreyDegreeOneEta_re_on_criticalLine (g g0 g1 L t : ℝ) :

@@ -1,5 +1,11 @@
 # Conrey equation (41): global argument partition
 
+> **2026-08-30 数学勘误：下文的正跳跃全局计数设计不能直接用于实际 η。**
+> `D+ = Dseg + πM`；采用含正跳跃的 `D+` 时，原先的非零 crossing 下界
+> 有整函数反例。Sections 1–5 的全局解释已被
+> [分段变幅修正](2026-08-30-conrey-balanced-argument-correction.md) 取代。
+> 有限集合、局部因子化与 logarithm 引理仍可复用；式 (41) 尚未证明。
+
 ## 1. Exact target
 
 Put
@@ -158,6 +164,17 @@ on a bridge.  At the exceptional far endpoint `b_j+m_j*pi`, the half-open
 bridge does not contain the level, but the next genuine component does.  This
 is precisely why the half-open convention is compatible with arbitrary
 nonmonotone component arguments.
+
+This last statement is only an abstract closed-component statement.  The
+actual complementary intervals of `eta` are open at their zero endpoints.
+Their logarithms have one-sided limits there, but `eta` itself vanishes at the
+endpoint, so they cannot be supplied directly as nonvanishing closed curves
+to `exists_argumentCrossing_of_level_mem_uIcc`.  In particular, membership of
+the limiting phase in the closed unordered endpoint interval does not by
+itself prove that the level is attained at a nonzero interior point.  The
+actual specialization must use strict interior levels and the balanced
+component variation, as explained in Section 9 below; treating the limiting
+endpoint as an ordinary component point would leave a genuine endpoint gap.
 
 ## 5. Lean decomposition
 
@@ -442,3 +459,45 @@ equation-(41) topology is the finite recursive choice and normalization of
 these logarithms using (11), extraction of the local `m*pi` bridge endpoints,
 and construction of one compatible `ArgumentPhasePartition` whose bridge
 multiplicity sum is exactly `conreyEtaCriticalZeroMultiplicityMassBetween`.
+
+## 9. Source convention and the open-endpoint correction
+
+The source definition omitted from the short discussion around equation (41)
+is in [Conrey 1983, Section 4, p. 58](https://aimath.org/~kaur/publications/3.pdf).
+For a zero `1/2+i*t_0` of `Q_m` of multiplicity `n`, Conrey defines
+
+\[
+  \arg Q_m(1/2+i t_0^+)
+  =\arg Q_m(1/2+i t_0^-)+n\pi.
+\tag{14}
+\]
+
+This positive-jump convention must not be silently identified with the
+balanced variation in the 1989 equation-(32) boundary-half-weight formula.
+If `Dseg` is the sum of the open-component phase increments and `M` the zero
+multiplicity mass, the positive-jump variation is `Dplus = Dseg + pi*M`.
+The entire-function counterexample in the
+[balanced-argument correction](2026-08-30-conrey-balanced-argument-correction.md)
+disproves the old generic bound `crossings >= Dplus/pi-M-1`.  The valid
+replacement is a componentwise strict-interior count in terms of `Dseg`.
+
+The local Lean theorem has accordingly been strengthened.  Besides the
+difference limit, `exists_conreyDegreeOneEta_local_argument_endpoint_limits`
+now gives the two one-sided limits separately:
+
+\[
+  \theta_-(\tau)=\operatorname{Im}\ell(\tau)-{m\pi\over2},\qquad
+  \theta_+(\tau)=\operatorname{Im}\ell(\tau)+{m\pi\over2},
+\tag{15}
+\]
+
+and proves `theta_+(tau)=theta_-(tau)+m*pi`, while returning the two
+`exp = actual eta` identities for the same `ell`.  These limits transfer to
+any chosen component logarithm by a constant deck transformation; recursive
+positive-jump alignment is not needed for the balanced sum.  The new
+`ArgumentCrossingOpen` module proves the finite genuine-point count for
+disjoint open components.  The existing `ArgumentPhasePartition` remains a
+valid finite closed-curve combinatorial theorem, but it is not an
+actual-`eta` specialization.  Equation (41) remains open until the actual
+component limits and multiplicity budget are supplied and the balanced sum
+is identified with the actual boundary-half-weight contour formula.
