@@ -8,6 +8,7 @@ on paper, not by these examples. No global zero-free conclusion is certified.
 from collections import Counter
 from fractions import Fraction as F
 from math import gcd
+from pathlib import Path
 import unittest
 
 from check_physical_large_gcd_type_columns import (
@@ -46,6 +47,12 @@ def descent_exponent(r, s, eta):
 
 
 class SquarefreeTypeDescentChecks(unittest.TestCase):
+    def test_companion_markdown_has_no_embedded_controls(self):
+        note = Path(__file__).resolve().parents[1] / "docs/research/2026-08-31-physical-squarefree-type-descent.md"
+        bad = [(i, value) for i, value in enumerate(note.read_bytes())
+               if (value < 32 and value not in (9, 10)) or value == 127]
+        self.assertEqual(bad, [], "Markdown must not contain embedded ASCII controls")
+
     @staticmethod
     def coeff(length=17):
         return {n: F((-1)**n*(n % 4+1), n+2) for n in range(1, length+1)}

@@ -39,7 +39,7 @@ q=gp 或 p>g。D1 包含的是所有满足这个双整除筛选的原 FP3 行；
 设 R≥1,Q≥1，aₙ 为支撑于 1≤n≤2R 的任意共同复系数。定义
 \[
  U_q(k)=\sum_{(n,q)=1}a_ne_q(kn),\qquad
- \mathcal E=\sum_{Q<q\le2Q\atop q\ {m squarefree}}
+ \mathcal E=\sum_{Q<q\le2Q\atop q\ {\rm squarefree}}
                  \sum_{k\in U(q)}|U_q(k)|^2.
 \]
 对任意 ε>0，有
