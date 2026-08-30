@@ -510,7 +510,7 @@ exit 0），均仅依赖三条标准公理。实际有限轮廓的拼接已在�
 
 此数值余项界不宣称适用于一般 `g,g0,g1,P`。只给出右边的 argument
 界不能省去右边的对数模长积分。
-将待证 Littlewood 特化代入已证计数后，精确归一化应为
+将已证 Littlewood 特化代入已证计数后，精确归一化为
 
 \[
  N_{\rm simple}(T)\ge E_\eta/\pi
@@ -524,11 +524,13 @@ exit 0），均仅依赖三条标准公理。实际有限轮廓的拼接已在�
 `(T-U) log(CX/(T-U))`，再证明 `(T-U)/X→1`，不能提前删除长度差。
 
 还须注意现有 `ConreyLittlewoodMeanSquare` 要求左边整段非零，而
-实际左边允许有限零点。可利用已证对数模长可积性，对 `|F|²+epsilon`
-作正值 Jensen，再以控制收敛令 `epsilon↓0`；不能直接删掉现有定理的
-非零假设。收敛只要求几乎处处：先去掉有限零点集；当 `0<epsilon≤1`
-时以可积的 `|log|F|²|` 加常数控制。还须用非平凡性与连续性证明
-均方积分严格为正，才能对右端 logarithm 取极限；上面的 `C` 取正数。
+实际左边允许有限零点，不能直接删掉现有定理的非零假设。下一步采用
+更直接的指数 Jensen：先以实际有限零点表排除零测集，记 `f=|F|²`，
+则 `exp(log f)=f` 几乎处处；已证对数可积性给出 `log f` 可积，连续性
+给出 `f` 可积。在整个实轴上对凸函数 `exp` 应用 Jensen，得到
+`exp(avg(log f))≤avg(f)`，同时自动推出右侧均值严格正，再取 logarithm。
+由 `log |F|²=2 log |F|` 得到精确长度因子 `T-U`。这样无须另加
+`epsilon` 正则化及控制收敛层；该连接的 Lean 特化仍待完成。
 
 上述数学设计中的实际 Littlewood 特化现已由第 17 节完成；它没有
 同时给出 `E_eta` 的定量主项、同一高度上的无权 η argument 控制、长
@@ -588,8 +590,55 @@ exit 0），均仅依赖三条标准公理。实际有限轮廓的拼接已在�
 （8820 jobs，exit 0）；全量 Python 回归 546 passed。这里的 Lean
 构建是定向验证，不声称重新完成全库 release-baseline 构建。
 
-**下一步真实缺口已前移：**现有显式参数高度选择器与完整余项界仍须
-在同一组 `L,Y,R,U,T` 上接入本定理；左侧 logarithm 的 Jensen 连接
-须允许有限零点；`E_eta` 的定量主项、长 mollifier 均方渐近式及 DI
-输入、所有大高度的传递仍未完成。本节是实际有限轮廓／Littlewood
-计数链的闭合，不是完整 Conrey `>2/5`。
+现有显式参数高度选择器与完整余项界已在第 18 节接入同一组
+`L,Y,R,U,T`。左侧 logarithm 的 Jensen 连接仍须允许有限零点；
+`E_eta` 的定量主项、长 mollifier 均方渐近式及 DI 输入、最终正比例
+渐近推导仍未完成。本节是实际有限轮廓／Littlewood 计数链的闭合，
+不是完整 Conrey `>2/5`。
+
+## 18. 同参数良好高度与外部尺度的实际计数下界
+
+`ConreySelectedHeightCount` 将第 17 节直接接入定量高度选择器。
+先逐项展开定义，证明 `conreyEquation37BoundaryRemainder` 恰好等于
+实际产品的完整 `littlewoodRectangleNonleftRemainder`；只交换复数乘法
+`it=ti`，两个右边积分均未删除。
+
+选择器中的 `Creg,Cmass≥1` 为绝对常数。取
+`L0=40000+Creg+Cmass`，则 `L≥L0` 推出 `L≥40000` 以及
+`Creg,Cmass≤L≤exp L`；该阈值独立于 `Y,R`。对于每一组
+`2≤Y≤exp L`、`0<R≤6/5`、`L≥L0`，定理实际返回
+
+\[
+ U\in[A+1,A+2],\qquad T\in[X-1,X],\qquad U<T,
+ \quad A=2\log L,\ X=e^L.
+\]
+
+上下两边非零由同一产品的选择器给出。右边使用已有全局实部下界
+`Re F(A+it)≥3/10`，其 `1≤t≤X` 条件由返回的高度区间推出。
+因此上下、右三边非零不再由调用方提供；左边仍允许零点。
+`R/L≤3/100000` 和 `R/L>0` 同时保证 `0<sigma0<1/2`。
+
+记 `B(L)=507X/L+2.2·10^12 L^7+(A-sigma0)π`。由
+`Rem≤|Rem|≤B(L)`，除以正数 `πR/L` 后正确减弱第 17 节下界，
+再仅对规范计数使用 `N_simple(T)≤N_simple(X)`，得到
+
+\[
+ N_{\rm simple}(X)\ge\frac{E_\eta(A;U,T)}\pi
+ -\frac{\int_U^T\log|F(\sigma_0+it)|\,dt+B(L)}{\pi R/L}-1.
+\]
+
+所有 η、产品、积分和余项始终用相同的 `L,Y,R,U,T`；没有将 `L`
+换成 `log T`，也没有将积分区间偷偷扩大到 `[0,X]`。两项精确合约
+先因缺少目标定理失败，后通过正常定向 Lake 构建（exit 0）。独立
+只读审查未发现边界、参数、阈值或不等号方向问题；Python 全量回归
+546 passed，目标清单与依赖链检查通过。新端点的 156 个本地模块
+import 闭包无 Zeta23，外部根仅 Mathlib。
+
+新合约与第 17 节三个合约、既有规范计数及有限轮廓合约的最终组合
+构建通过（8858 jobs，exit 0）。两条新定理直接打印的公理依赖均仅为
+`propext`、`Classical.choice`、`Quot.sound`；生产模块和合约均加入默认
+Lake roots。没有声称全库 Lean release-baseline 或 GitHub CI 已通过。
+
+本节消去的是非左三边无零假设，并完成外部尺度的有限计数连接。
+左侧实际均方估计和 `E_eta` 的定量主项并没有由此得到；有限零点的
+指数 Jensen 连接及长 mollifier/DI 分析仍须完成，不能据此宣布 40%。
