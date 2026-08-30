@@ -16,6 +16,13 @@ not just OCR. The calculations below keep all small parameters separate.
 
 ## 1. The fixed negative-shift bidisc suffices
 
+Subsequent arithmetic audit: the radii in Sections 1–2 below are valid
+for the abstract Cauchy reduction, but direct use of Conrey 1983 Lemma 10
+requires a smaller neighborhood. The [arithmetic main-term proof](2026-08-30-conrey-arithmetic-main-term-proof.md)
+uses outer radius `21/40`, inner Cauchy radius `1/2`, and multiplier
+`5776/625`, since `theta(R+21/40)<1` whereas `theta(R+3/5)>1`.
+The dyadic error budget in Sections 3–6 is unchanged.
+
 Write `L=log T`, `R=6/5`, `rho=3/5`, and
 
 \[
