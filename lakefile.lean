@@ -2554,6 +2554,8 @@ lean_lib RiemannPNT where
     `HardyTheorem.AFEExplicitMellinAmplitude,
     `HardyTheorem.AFEExplicitMellinAmplitudeBounds,
     `Test.AFEExplicitMellinAmplitudeBoundsContract,
+    `HardyTheorem.AFEExplicitMellinSecondL1,
+    `Test.AFEExplicitMellinSecondL1Contract,
     `HardyTheorem.AFEWeightedPoissonVelocity,
     `HardyTheorem.AFEWeightedPoissonVelocityBounds,
     `Test.AFEWeightedPoissonVelocityBoundsContract,

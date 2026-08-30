@@ -1481,10 +1481,47 @@ outer interval has length one.  For `sigma>0` this gives the uniform target
  \leq 2D_2a^{-\sigma}+(4\sigma D_1+\sigma)a^{-\sigma-1}.
 \]
 
-This support-aware estimate, rather than the integrated coarse pointwise
-bound, is the next formal leaf.  Modes near the endpoint frequency continue
-to use the first-derivative harmonic bound; only the distant frequency tail
-uses the second-derivative estimate.
+This support-aware estimate is now formal in
+`AFEExplicitMellinSecondL1`, including its pointwise precursor, with no
+upper-cutoff dependence and only the allowed foundational axioms.
+Modes near the endpoint frequency continue to use the first-derivative
+harmonic bound; only the distant frequency tail uses the second-derivative
+estimate.
+
+For that tail no support refinement of the other three terms is necessary.
+For `sigma>0`, `t>=0`, and a constant gap `0<g<=|F'|`, put
+
+\[
+ B_2=2D_2a^{-\sigma}+(4\sigma D_1+\sigma)a^{-\sigma-1}.
+\]
+
+Retain the actual `|A''|` in the first term, and use the coarse bounds only
+in terms already multiplied by `u^(-2)` or faster decay.  The exact
+four-term quotient bound then gives
+
+\[
+ |R'|\leq g^{-2}|A''|
+  +\frac{6C_1t}{g^3}u^{-\sigma-2}
+  +\frac{(3\sigma+2)t}{g^3}u^{-\sigma-3}
+  +\frac{3t^2}{g^4}u^{-\sigma-4}.
+\]
+
+All coefficients are nonnegative.  Integrating and using
+`integral_a^b u^(-sigma-j) <= a^(1-sigma-j)/(sigma+j-1)` for `j=2,3,4`
+therefore proves the cutoff-uniform bound
+
+\[
+ \left|\int_a^{N+1} A(u)e^{iF(u)}\,du\right|
+ \leq \frac{B_2}{g^2}
+ +\frac{6C_1t}{g^3}\frac{a^{-\sigma-1}}{\sigma+1}
+ +\frac{(3\sigma+2)t}{g^3}\frac{a^{-\sigma-2}}{\sigma+2}
+ +\frac{3t^2}{g^4}\frac{a^{-\sigma-3}}{\sigma+3}.
+\]
+
+The proof uses the already established zero boundary terms at both ends.
+This is only a nonstationary-mode estimate: summation over the distant
+frequencies, the intermediate endpoint band, and replacement of the
+stationary integrals by their Gamma values remain separate obligations.
 
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
