@@ -120,6 +120,27 @@ class CheckpointChecks(unittest.TestCase):
         self.assertEqual(numerator-(7+r)*(7-r-z), (1+r+z)*pnum)
         self.assertNotEqual(numerator-(7+r)*(7-r-z), (1+r+z)*(pnum+1))
 
+    def test_gram_inverse_constant_vector_symbolic(self):
+        r, z = Poly({(1, 0): 1}), Poly({(0, 1): 1})
+        # Clear denominators from G_2^{-1}1=(1+r)/(h*ell)*(1,h-z,1).
+        gram_num = [[1+r, z, z*z-r-r*r],
+                    [z, 1+r, z], [z*z-r-r*r, z, 1+r]]
+        vector = [Poly(1), 1-r-z, Poly(1)]
+        for row in gram_num:
+            self.assertEqual(sum(a*b for a, b in zip(row, vector)),
+                             (1-r)*(1+r+z))
+        self.assertEqual((1+r)+z, 1+r+z)  # Depth-one row sum.
+
+    def test_hecke_test_telescopes_symbolic(self):
+        root, t = Poly({(1, 0): 1}), Poly({(0, 1): 1})
+        lambdas = [Poly(1), t]
+        for _ in range(2, 9):
+            lambdas.append(t*lambdas[-1]-lambdas[-2])
+        total = Poly(1)
+        for m in range(1, 9):
+            total += root**m*lambdas[m]-root**(m-1)*lambdas[m-1]
+            self.assertEqual(total, root**m*lambdas[m])
+
     def test_physical_hecke_vector_symbolic(self):
         r, z = Poly({(1, 0): 1}), Poly({(0, 1): 1})
         a0 = 9*r-r*r-22
