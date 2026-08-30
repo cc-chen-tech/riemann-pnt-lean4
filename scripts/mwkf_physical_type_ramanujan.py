@@ -21,6 +21,57 @@ def _kappa_radical(r, n):
     return sum(mobius(d)*d for d in divisors(gcd(r, abs(n))))
 
 
+def global_e_q_packet(M, B, q, j, k, l, ns, amplitude):
+    """GQ all-e/v fusion with the actual q masks and common n cutoff.
+
+    amplitude(M,B,n/v) supplies the already-adapted physical symbol;
+    its analytic hypotheses and outer C=HL/R are not verified here.
+    M may share primes with q; B may share primes with M, but not q.
+    Inactive parents return zero rather than a spurious factorization.
+    """
+    ns = tuple(ns)
+    if (any(not isinstance(a, int) or a < 1 for a in (M, B, q))
+            or any(not isinstance(a, int) or not a for a in (j, k, l, *ns))
+            or len(ns) != len(set(ns))):
+        raise ValueError("positive M,B,q; nonzero j,k,l; distinct nonzero integer n required")
+    q0 = _radical(q)
+    g = gcd(M, q0)
+    v, L = q0//g, M*(q0//g)
+    e = gcd(M, B)
+    A, b = M//e, B//e
+    active = bool(mobius(M) and mobius(B) and gcd(B, q0) == 1)
+    direct, fused, coefficients = 0j, 0j, {}
+    for n in ns:
+        coefficients[n] = F(mobius(B)*mobius(v)*_kappa_radical(L, n), B*L*abs(j)) if active else F(0)
+        if active:
+            value = amplitude(M, B, F(n, v))*cmath.exp(-2j*pi*float(F(n*k*l, j*B*v)))
+            for divisor in divisors(L):
+                if n % (L//divisor) == 0:
+                    direct += F(mobius(A)*mobius(b)*mobius(divisor), B*divisor*abs(j))*value
+            fused += coefficients[n]*value
+    return {"g": g, "v": v, "L": L, "allocation": (e, A, b) if active else None,
+            "coefficients": coefficients, "scaled_labels": tuple((n, F(n, v)) for n in ns),
+            "direct": direct, "fused": fused}
+
+
+def all_e_q_error_exponents(nu, a, beta, chi):
+    """GQ fixed-q all-e ledger, charging sqrt(rad(q)), not the q outer sum."""
+    chi = F(chi)
+    if chi < 0:
+        raise ValueError("nonnegative radical exponent chi required")
+    row = variable_kappa_error_exponents(nu, a, beta)
+    return {key: value+(chi/2 if key != "density" else 0) for key, value in row.items()}
+
+
+def primitive_q_resonant_j_family(M, kl, Jlo, Jhi, Bmax, q):
+    """GQ resonance with BOTH physical unit masks, not the canonical zero Gram."""
+    if not isinstance(q, int) or q < 1:
+        raise ValueError("positive integer q required")
+    row = primitive_resonant_j_family(M, kl, Jlo, Jhi, Bmax)
+    return {"rows": tuple(r for r in row["rows"] if gcd(r[1], q) == gcd(r[2], q) == 1),
+            "divisor_bound": row["divisor_bound"]}
+
+
 def variable_kappa_parameters(R, K, P, M, B, n, j, kl):
     """GP exact rational parameters at R=S, for positive integer scales.
 

@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-30 一般 q 的全 e 实际覆盖。** [GQ1–GQ10](2026-08-30-mwkf-all-e-general-q-coverage.md) 对多项式大小的固定 q 恢复全部 e；令 q₀=rad(q)、g=(M,q₀)、v=q₀/g、L=Mv，原单位条件精确化为 M,B 平方自由及 (B,q₀)=1。全 n Fourier 的 Jv 与原 1/v、µ(v) 符号消去，primitive 表示只增加 (B,q₀)=(h,q₀)=1 两个限制；整个精确共振仍为 T^{3+ε}。活跃 g 层的平方自由均值和联合斜率/B 采样给 GP6 乘 √q₀ 的误差，没有独立 e-shell 数量成本。新覆盖包括 (ν,a,χ,β)=(1,1/2,1/5,4/5) 与 (1,0,1/2,7/6)，χ=log_T q₀；后者有 B>T。此界不等于原 q 外层聚合，不提供固定 e 子和；canonical zero Gram、两个 reflection mixed 项、覆盖外补集和独立 AFE 尾仍未关闭。完整 twisted moment 未证明。
+
 > **2026-08-30 完整 κ 对偶频率族与新覆盖。** [GP1–GP13](2026-08-30-mwkf-variable-kappa-coverage.md) 将 all-e 光滑 core 扩展到固定 K≈T^ν、0<ν≤1，保留 J=P/K≈T^{1−ν}、n≈BJ 及精确归一化中的 X/M、P/(kl)。q=1、R=S=T³、P≈T 时，平方自由误差指数为 3−ν+3β/2；先完成较长光滑斜率后，两项指数为 2+a−ν+3β/2 与 3+a−ν+β/2。择优得到 GP8 的实际覆盖，包括 (ν,a,β)=(9/10,1/2,4/5) 和 (4/5,0,6/5)，后者有 B>T。全 n 完成保留 Jacobian J，完整 j 家族的精确 primitive 共振由联合除数计数达到 T^{3+ε}，不是把 j 当成固定个数。所有变换尾与整数端点分别计费。K≈1、一般 q、覆盖外 B、canonical zero Gram、两个 reflection mixed 项与独立 AFE 尾仍未关闭；完整 twisted moment 未证明。
 
 > **2026-08-30 全局斜率完成覆盖整个短 B 区域。** [GS1–GS9](2026-08-30-mwkf-global-slope-sampling.md) 在 q=1 平衡顶层，从全部 e 重组的 GE7 出发，先完成一条真实光滑短斜率，再对整个 B≈Y 区间采样；相位与 M 无关，故可合法使用平方自由 M 均值。采样成本 Y/Kmax+Kmin 保留整数 +1。K₁=K₂≈T^{1/2} 时，误差是 T^{3/2+ε}Y^{3/2}+T^{5/2+ε}Y^{1/2}，所以整个 Y≤T 的指定光滑 core 达到 T^{3+ε}，包括其非零 determinant 补集；此前未完成斜率时仅覆盖 Y≤T^{2/3}。一般 Kmin=T^a 的条件是 β≤min((4−2a)/3,2−2a)。更长 B、一般 q、原 canonical zero Gram、全部物理尾与完整 signed operator 仍未证明，不构成完整 twisted moment。
@@ -31,6 +33,7 @@
 >
 > | component | status in this note |
 > |---|---|
+> | General-q all-e physical coverage | GQ2 retains mu(v), fractional n/v and every actual unit mask. GQ4 cancels Jv against the outer v factor and leaves exactly the extra B/q0 and h/q0 units in the primitive sum; all exact resonances stay O(T^(3+epsilon)). On active g layers, GQ9 is GP6 times sqrt(rad(q)), with no separate e-shell cost, giving GQ10's new nontrivial-q coverage. This is a uniform fixed-q core result, not the original q outer sum or a full zero-Gram/reflection operator estimate |
 > | Variable-kappa all-e coverage | GP2 retains the exact compact scale ratios, j~J=P/K and n~BJ. GP8 covers beta<=2*nu/3 OR both beta<=2*(1+nu-a)/3 and beta<=2*(nu-a), for fixed 0<nu<=1 at q=1, R=S=T^3, P~T. This includes new K<T and some B>T cores, not fixed-e sub-sums. GP9 retains the Fourier Jacobian J; joint divisor counting bounds the entire j-family exact primitive resonance by T^(3+epsilon). K~1, other q/scales, uncovered B, canonical zero Gram and the complete signed operator remain open |
 > | General-unit Type-II density and e/b coverage | GU2 keeps primes shared by A and q and the induced mu(e) sign. At fixed q, GU9 bounds the arithmetic density summed over every e by HL*P/R; this is not the canonical zero Gram. GU10 charges the full E factor in the e-shell error, yielding top-core coverage eta+chi/2+3*beta/2<=1 with explicit endpoints. The original q outer sum, remaining long b/e and complete signed operator estimate stay open |
 > | Global-e primitive resonance | For q=1 at the balanced top, GE3 fuses M=Ae and B=eb with e=gcd(M,B). GE8 restores both mu(M) and mu(B). The entire exact primitive determinant-zero subterm, including every e and long b, is O(T^(3+epsilon)); the nonzero signed complement still has only an unsigned T^(5+epsilon) bound. This is not the canonical zero Gram or whole-packet coverage |
@@ -28587,6 +28590,44 @@ Neither zero row/column sums nor a full operator-norm estimate is
 proved. General q, K~1, other physical scales, uncovered B, both
 reflection mixed terms and independent AFE tails remain open.
 This is another genuine region/subterm bound, not the complete gate.
+
+### 9.216 General-q all-e fusion, primitive units and coverage
+
+The [general-q all-e note](2026-08-30-mwkf-all-e-general-q-coverage.md)
+retains all IC2 unit conditions for polynomially bounded fixed q.
+Put q0=rad(q), M=Ae, B=eb, g=gcd(M,q0), v=q0/g and L=Mv.
+The original allocations correspond exactly to squarefree M,B with
+gcd(B,q0)=1; neither gcd(M,B)=1 nor gcd(M,q0)=1 may be imposed.
+After all quotient-completion divisors are reassembled, the coefficient
+is C*mu(B)*mu(v)*kappa_L(n)/(B*M*v*abs(j)), the carrier is
+e(-n*k*l/(j*B*v)), and the full symbol has argument n/(B*J*v).
+
+GQ4 gives Fourier Jacobian Jv. It cancels the outer 1/v, while
+mu(v)*mu(L)=mu(M). The exact primitive expression is therefore GP10
+with only the extra units gcd(B,q0)=gcd(h,q0)=1. All physical signs
+and shared M/q0 primes remain. Exact resonance additionally forces
+g|j, and is a subset of GP11's joint divisor family; GQ6 bounds
+the entire B/e/j resonance by CP*T^epsilon=T^(3+epsilon), without
+a new q power. This is not the canonical zero Gram.
+
+For the full critical core, first split the compact M support into
+fixed intervals [X',2X'], X'~X. Only g<=2X' is active; setting M=g*m
+gives a squarefree mean of length X'/g>=1/2 with unit modulus q0,
+not q0*B. Preserve (d,q0)=1 in its divisor discrepancy. The full
+n mass is O(T^epsilon*(J*Y*v)^(3/2)), and the exact remaining
+factor sqrt(g)*v^(3/2)/q0 is sqrt(q0)/g. Summing active divisor g
+costs only T^epsilon. GQ9 is consequently GP6 multiplied by
+sqrt(q0), with no independent e-shell cardinality; its density
+still costs CP*T^epsilon.
+
+Thus GP7's three errors each gain chi/2, chi=log_T(q0), giving
+GQ10. New covered examples (nu,a,chi,beta)=(1,1/2,1/5,4/5)
+and (1,0,1/2,7/6) include nontrivial q and, in the latter case,
+B>T. All transform tails, integer endpoints and inactive g layers
+are explicitly accounted for. The fixed-q uniform conclusion is
+not an estimate of the original outer q sum or a fixed-e sub-sum.
+Coverage outside GQ10, K~1, other scales, canonical zero Gram,
+both reflection mixed terms and independent AFE tails remain open.
 
 ## 10. What has and has not been proved
 
