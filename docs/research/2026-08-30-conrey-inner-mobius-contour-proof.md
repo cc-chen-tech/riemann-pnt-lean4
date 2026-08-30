@@ -6,6 +6,10 @@
 先达到原文所用的最强倒数 ζ 对数界。新的原生 Lean 输入选为下文 (Z)：
 它控制实际的 `1/zeta`，不是把内层和或均方上界作为假设。
 
+后续推进已原生证明下文 (P1)：任意复移位和正实数截断下，实际互素
+Möbius 有限和等于真实 Euler 因子被积函数的 Perron 积分，且该积分
+绝对可积。这补齐移线的起点，不代表留数、路径误差或完整渐近已经形式化。
+
 Source for comparison: [Conrey 1983, Lemma 10, printed pp. 54–56](https://aimath.org/~kaur/publications/3.pdf).
 The full contour and residue pages were visually checked. The following
 proof keeps only the zero-order statement needed by the arithmetic sum;
@@ -142,6 +146,38 @@ The first derivative estimate follows by differentiating `z U(z) E_d(z)`;
 no prime-sum estimate for `F_d'/F_d` is required.
 
 ## 4. Perron identity and exact residue
+
+The degree-one identity needs only `d>=1`, `X>0`, `u>0` and
+`Re(alpha)+u>0`, without the later large-`H` restrictions. Explicitly,
+
+\[
+ \frac1{2\pi}\int_{\mathbb R}
+ \frac{X^{u+it}}{(u+it)^2\zeta(1+\alpha+u+it)F_d(1+\alpha+u+it)}\,dt
+ =\sum_{\substack{1\le n\le\lfloor X\rfloor\\(n,d)=1}}
+ \mu(n)n^{-1-\alpha}\log(X/n).
+\tag{P1}
+\]
+
+This is the unnormalized logarithmic sum `S_1`, not `G`:
+the linear profile `P(v)=v` adds the factor `1/H` only afterwards.
+The principal character modulo `d` is the coprimality indicator, and
+its Möbius twist is the reciprocal principal-character L-series.
+Absorbing `n^(-1-alpha)` into its coefficients gives the exact shift
+`s=1+alpha+w`, including complex `alpha`.
+
+On the vertical line the sum of absolute term norms is bounded by
+
+\[
+ \frac{X^u}{u^2+t^2}
+ \sum_{\substack{n\ge1\\(n,d)=1}}\frac{|\mu(n)|}{n^{1+\Re\alpha+u}}.
+\]
+
+The numerical series converges and the displayed function is integrable
+in `t`. Thus the full integrand is absolutely integrable, independently
+of conventions for totalized Bochner integrals. The logarithmic kernel
+is zero beyond `X` and equals `log(X/n)` below it. At `X=n` it is zero;
+for `0<X<1` the finite sum is empty, and at `X=1` it is also zero.
+The `dt/(2*pi)` normalization follows from `dw=i dt` on the upward line.
 
 Write `P(v)=sum_(j=1)^J p_j v^j`. Absolute convergence on `Re w=u`
 and the log-power Perron kernel give the actual identity
@@ -288,13 +324,20 @@ mean-square theorem.
 native inputs in Section 1. The existing `SelbergPerronKernel` and
 `SelbergPerronLSeries` already provide the degree-one logarithmic kernel
 and absolute L-series interchange; those are reusable, not new gaps.
-Native implementations of the finite Volterra profile transfer and actual
-coprime Perron identity, local residue/Cauchy calculation, all path
-integrability and contour transfers, and their assembly into (GV)
-remain necessary. The previous arithmetic outer average and the actual
+`HardyTheorem.ConreyCoprimeMobiusPerron` now proves (P1), including
+absolute integrability of the actual Euler integrand, arbitrary complex
+shift with `Re(alpha)+u>0`, and every positive real cutoff. The generic
+full-line integrability theorem is added to `SelbergPerronLSeries` and
+derived from actual summability, not assumed. The native endpoint
+expands the actual finite coprime Möbius sum, not an abstract series.
+
+Native implementations of the finite Volterra profile transfer,
+local residue/Cauchy calculation, the other path integrability estimates
+and contour transfers, and their assembly into (GV) remain necessary.
+The previous arithmetic outer average and the actual
 Gaussian/Estermann/DI mean-square chain also remain unfinished.
 
-## 8. Verification
+## 8. Verification: reciprocal strip
 
 - After building the required existing dependencies, the exact contract
   failed on the missing `exists_conrey_reciprocal_zeta_quarterPower_strip`.
@@ -314,3 +357,27 @@ Gaussian/Estermann/DI mean-square chain also remain unfinished.
 
 These are targeted Lean checks, not a new full-repository baseline or a
 claim that the complete inner sum or Conrey mean value has been formalized.
+
+## 9. Verification: actual coprime Perron identity
+
+- The new literal contract first failed only on the two missing intended
+  endpoints, after the existing dependencies had been built successfully.
+- `nice -n10 lake build Test.ConreyCoprimeMobiusPerronContract
+  HardyTheorem.SelbergS12PerronIdentity
+  Test.ConreyReciprocalZetaStripContract
+  Test.ConreyArithmeticEulerFactorContract`: exit 0, 8721 jobs.
+- Both `conrey_coprime_mobius_log_perron` and the generic
+  `integrable_selbergPerronLSeriesIntegrand` use only `propext`,
+  `Classical.choice`, and `Quot.sound`. The new module's eleven-local-module
+  import closure contains no Zeta23; the only external root is Mathlib.
+- The existing `Test/SelbergPerronLSeriesContract.lean` and
+  `Test/SelbergS12PerronIdentityContract.lean` were each checked separately
+  with `lake env lean`: both exit 0. The new module and contract are Lake roots.
+- Final Python regression: 546 passed (12.76s). Target inventory and
+  chain-gap checks passed; `git diff --check` was clean.
+- Independent read-only review found no remaining issue in the actual
+  coefficient, complex shift, integrability, real floor cutoff, endpoints,
+  normalization, or distinction between `S1` and `G=S1/H`.
+
+Only targeted Lean verification is claimed, not a fresh whole-repository
+baseline or a proof of the complete inner asymptotic or Conrey theorem.
