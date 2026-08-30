@@ -1,9 +1,11 @@
 # Lean status of the cubic MWKF route
 
-当前已将有限高度 AFE 到真实全线 mollified moment 的极限交换写成
-无额外解析假设的 Lean 定理：固定 `T != 0`、`X > 1/2`，完整物理误差
-有可积包络 `F(t) V^6 exp(-V^2)`。这不是 `T -> infinity` 的渐近式；
-QCT/Poisson、主项渐近和核心 Möbius 色散等输入仍须继续形式化。
+当前已将有限高度 AFE 到真实全线 mollified moment 的极限交换、
+物理时间积分与完整算术级数的换序，以及有限高度对角/非对角拆分，
+写成无额外解析假设的 Lean 定理。对角部分有严格的 gcd 射线双射重编号；
+所有 Möbius 系数与物理权均保留。这不是 `T -> infinity` 的渐近式，
+也没有断言两个拆分部分分别存在高度极限；QCT/Poisson、主项渐近和
+核心 Möbius 色散等输入仍须继续形式化。
 
 ## Machine-checked in this PR
 
@@ -57,6 +59,15 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | exact mollified horizontal-edge error with gamma factors, both mollifier factors and physical test weight retained | `cubicAFEMollifiedApproximation_sub_eq` |
 | constructed integrable envelope `F(t) V^6 exp(-V^2)` for every `V >= 1` | `exists_integrable_cubicAFE_error_envelope` |
 | unconditional finite-height AFE limit under the literal full-line mollified integral, at fixed nonzero `T` | `tendsto_cubicAFEMollifiedMomentFinite` |
+| joint scalar/Dirichlet continuity in time and vertical coordinate | `continuous_cubicAFEScalar_joint`, `continuous_cubicAFENormalizedDirichletTerm_joint` |
+| time-independent summable Dirichlet envelope for the finite-height weight | `norm_cubicAFEDirichletTerm_time_vertical_eq`, `norm_cubicAFEWeightFinite_le_envelope` |
+| actual physical time-integral/series interchange with a continuous compact multiplier | `hasSum_integral_cubicAFEWeightFinite_mul` |
+| exact outer multiplier and physical integral interchange for each ordered Möbius pair | `cubicAFECombinedSummandFinite_eq_outerWeight`, `hasSum_integral_cubicAFECombinedSummandFinite` |
+| full finite-height `sum_d sum_e tsum_p integral_t` representation and its recombined height limit | `cubicAFEMollifiedMomentFinite_eq_tripleIntegral`, `tendsto_cubicAFETripleIntegral` |
+| correctly oriented gcd diagonal ray with positive indices `m=(k+1)e/q`, `n=(k+1)d/q` | `cubicAFEDiagonalRay_succ`, `cubicAFEDiagonalRay_injective`, `cubicAFEDiagonalRay_surjective` |
+| bijective diagonal series reindexing, explicit index product, and phase-free full integrand | `tsum_cubicAFEDiagonal_eq_ray`, `cubicAFEPositiveIndexProduct_diagonalRay`, `cubicAFECombinedSummandFinite_diagonalRay` |
+| summability of both integrated subseries and exact split of the actual finite-height moment | `summable_integral_cubicAFE_diagonal_and_offDiagonal`, `cubicAFEMollifiedMomentFinite_eq_diagonal_add_offDiagonal` |
+| integrated diagonal ray formula and height limit for the recombined diagonal/off-diagonal expression only | `cubicAFEDiagonalMomentFinite_eq_ray`, `tendsto_cubicAFEDiagonal_add_offDiagonal` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -71,10 +82,14 @@ This PR does **not** yet make the analytic theorem unconditional inside Lean.
 The left side is now the literal full-line integral, rather than an arbitrary
 function `I`, and its two finite mollifier factors have been expanded and
 interchanged with the integral.  The completed AFE contour has also been taken
-to infinite height using an explicit physical horizontal-edge majorant.  What
-remains is to justify the time-integral/arithmetic-series interchanges in the
-combined AFE--mollifier expansion and carry it through the QCT decomposition,
-prove the reciprocal-LCM main-term asymptotic
+to infinite height using an explicit physical horizontal-edge majorant.  At
+each finite height the time-integral/arithmetic-series interchange is proved,
+and the integrated expression is split into two summable diagonal/off-diagonal
+subseries.  The diagonal ray is reindexed bijectively.  The height limit remains
+outside the recombined expression; separate limits and moving this limit
+through either infinite subseries have not been proved.  What remains is to
+carry the actual expression through the QCT/Poisson decomposition with all
+needed convergence arguments, prove the reciprocal-LCM main-term asymptotic
 and every analytic tail estimate, and especially prove the cubic MRSTT Mobius
 decorrelation theorem.  The final facade therefore keeps
 `hexact`, `hmain`, and `hrem` as theorem hypotheses.  They are local binders,
@@ -83,6 +98,8 @@ not global axioms.
 Consequently the accurate status is:
 
 - internal paper proof candidate and executable parameter audit;
-- kernel-checked structural/reassembly and fixed-`T` AFE integral-limit layers complete;
+- kernel-checked structural/reassembly, finite-height series/integral
+  interchange, diagonal split/reindexing, and fixed-`T` recombined AFE
+  integral-limit layers complete;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.

@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.MWKFCubicAFEOuterIntegral
+
+#print axioms PrimeNumberTheorem.MWKFCubic.continuous_cubicAFEScalar_joint
+#print axioms PrimeNumberTheorem.MWKFCubic.norm_cubicAFEWeightFinite_le_envelope
+#print axioms PrimeNumberTheorem.MWKFCubic.hasSum_integral_cubicAFEWeightFinite_mul
+#print axioms PrimeNumberTheorem.MWKFCubic.hasSum_integral_cubicAFECombinedSummandFinite
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEMollifiedMomentFinite_eq_tripleIntegral
+#print axioms PrimeNumberTheorem.MWKFCubic.tendsto_cubicAFETripleIntegral
