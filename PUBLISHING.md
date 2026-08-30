@@ -213,6 +213,28 @@ and
 
 ## Unproved Target Statements
 
+The research checkpoints in PR #501 and PR #502 do not change the theorem
+inventory or the publication boundaries above:
+
+- [Conductor-square checkpoint](docs/research/2026-08-30-conductor-square-spectral-checkpoint.md):
+  exact central local algebra and a conditional ordinary-cuspidal `7/71`
+  excess. L-depth, archimedean uniformity, global regularization/boundaries,
+  and the remaining spectral sectors must not be treated as established.
+- [Fixed-line transfer](docs/research/2026-08-30-fixed-line-eventual-zero-free-transfer.md):
+  a conditional analytic transfer from the full, unnormalized mollified-error
+  integral `I_sigma(T) = o(1/log T)`, with the same `N` throughout each height
+  interval, to uniform eventual exclusion. The input estimate and the finite
+  height range remain unproved; the `7/289` model margin does not prove them.
+
+Neither checkpoint adds a Lean theorem, an unconditional fifth-moment estimate,
+or an unconditional `14/17` / `2/3` zero-free result. Reproduce their finite
+guards separately from the full baseline:
+
+```sh
+python3 -B scripts/check_conductor_square_spectral_checkpoint.py
+python3 -B scripts/check_fixed_line_eventual_transfer.py
+```
+
 | File | Remaining `sorry` count | Main target statements |
 |---|---:|---|
 | `ZeroFreeRegion.lean` | 0 | Classical `c/log |t|` region proved; Vinogradov-Korobov remains a target |
