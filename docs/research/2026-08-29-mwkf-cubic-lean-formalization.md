@@ -1,5 +1,29 @@
 # Lean status of the cubic MWKF route
 
+## 2026-08-30 评审后的声明边界
+
+**无条件三次长度渐近式尚未证明，也尚未完整形式化。** 本 PR 的局部
+Lean 定理不以父 PR #483 的“完整内部证明”声明为前提。父 PR 的
+[归一化与聚合评审](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/483#pullrequestreview-5060905037)
+指出了三个未关闭问题：双 Poisson 的 `HL*mu(s)*c_s(...)/s^2`
+与后续短余因子外提 `1/S` 的来源；固定参数估计到完整外层求和的
+幂次成本；以及脚本中硬编码为 `True` 的分析条件。这里不尝试通过
+Lean 条件接口、有限测试或 Python coverage 标签补足这些不等式。
+
+上游随后在 `b520431e` 中纠正 `HL/S` 为 `HL`，并撤回可执行报告的
+全局完成状态，改为保留三类未证叶子。这修复了归一化和报告口径，
+没有证明仍缺的有符号节省、全外层聚合或尾项估计。本文后面的旧
+coverage 输出仅为历史记录，不是现行完成声明。
+
+最终接口需要实际矩的精确分解、真实主项极限及 `R(T)=o(T)` 三项。
+其中 `hmain` 与 `hrem` 均仍是未供应的解析输入。若建立固定完成深度
+的实际分解 `I=T*Q_J+R_J`，也不能直接把 `Q_J` 当作论文规范主项，
+或把 `R_J` 当作已有 little-o 估计的余项。
+
+极限次序按最终公式所需处理：先在固定 `T,X,J` 下证明全移位和的
+高度极限，再审查是否需要移除完成深度。固定非零移位的去深度极限
+不能直接提升为全移位结果；不要求、也不宣称任意交换两个极限。
+
 本次语义审计修正了一个实质错误：`85c165d9` 中的 `CubicTestWeight.smooth` 使用
 `ContDiff ℝ ⊤`，而当前 Mathlib 的这个外层 `⊤` 是 `ω`（实解析），
 不是 `∞`（任意阶光滑）。实解析且紧支撑于 `[1,2]` 的全实线函数
@@ -122,6 +146,25 @@ shift 上证明完整时间积分后的深度去截断。现又证明固定完�
 可以分别聚合。全部 shift 的深度去截断及任意深度/高度联合极限
 仍未证明。
 
+现在已另行证明对角 Mellin 核的完整时间/高度绝对可积性，并去掉
+实际对角积分的高度截断。与已证全 shift 零模高度极限及原矩高度
+极限合并，得到原非零频总和自身的独立高度极限。新定义
+`cubicAFECompletedNonzeroModeMomentVertical` 是原总和的 `limUnder`，
+其收敛由上述三个真实极限证明；不是把一个猜测主项从 `I` 中减去
+再把差值称为受控余项。
+
+因此对固定 `T != 0`、`X > 1/2` 和完成深度 `J`，已得到
+
+\[
+ I_{\lfloor T^3\rfloor,W}(T)=TQ_J(T;X)+R_J(T;X),\qquad
+ Q_J=\Re(D_\infty+Z_{J,\infty})/T,\quad R_J=\Re E_{J,\infty}.
+\]
+
+所有 shift、dyadic boxes 和有限 mollifier 外层都在高度极限之前
+依照原已证顺序求和；这里没有逐频率交换高度极限。该分解是固定
+完成深度的精确公式，尚未识别为论文规范主项，也不提供随 `T`
+一致的尾项、`Q_J` 的 `4/3` 极限或 `R_J=o(T)`。
+
 ## Machine-checked in this PR
 
 The following steps now have kernel-checked Lean proofs with no project axiom,
@@ -134,7 +177,8 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | exact diagonal ray `m e=n d` iff `m=l(d/q)`, `n=l(e/q)` | `diagonal_eq_iff_exists_scale` |
 | shifted/complementary-divisor equation | `shifted_eq_complementary_divisor` |
 | finite signed level recombination `((mu*mu)*1)(n)=mu(n)` | `sum_moebius_convolution_divisors` |
-| reciprocal-curve operator `x d/dx = x partial_x - xi partial_xi` | `normalized_reciprocalAmplitude_derivative` |
+| reciprocal-curve derivative restricted to separated amplitudes | `normalized_reciprocalAmplitude_derivative` |
+| jointly differentiable, possibly complex-valued coupled kernel with both partial derivatives and the physical weight derivative | `hasDerivAt_coupledReciprocalAmplitude`, `normalized_coupledReciprocalAmplitude_derivative` |
 | finite dyadic/shell little-o aggregation | `isLittleO_finset_sum` |
 | literal `N=floor(T^3)` zeta/Mobius integrand and full-line integral | `cubicMomentIntegrand`, `cubicMollifiedSecondMoment` |
 | continuity, compact support, and integrability of the literal moment | `continuous_cubicMomentIntegrand`, `hasCompactSupport_cubicMomentIntegrand`, `integrable_cubicMomentIntegrand` |
@@ -1386,9 +1430,50 @@ focused pytest：295 passed（14.61s）；deterministic coverage 退出码0。
 `admit`、`native_decide` 或 heartbeat/diagnostics 上调。这是单代理
 本地自审及内核核验，不是外部同行认证或远端 CI 成功记录。
 
+## 2026-08-31：独立高度极限、原始矩连接与双坐标评审修复
+
+`MWKFCubicAFEDiagonalHeight` 从实际对角级数的绝对收敛出发，
+控制 reciprocal-LCM/zeta 算术核的竖线范数。与已经证明的紧时间
+Gaussian 支配相乘，得到真实时间/高度产品核的 L1 性质，再由
+支配收敛和 Fubini 证明实际对角矩的独立高度极限。
+
+`MWKFCubicAFEInfiniteCompletedMoment` 使用原矩、对角及全 shift
+完成零模三个真实极限，证明原完成非零模总和收敛。由该总和的
+`limUnder` 定义无限高度非零模，然后推导实际的复数模式分解与
+实数 `I=T*Q_J+R_J`。外层有限 mollifier 和、全部非零 shift、
+dyadic 与内层频率维持原顺序；没有假定逐频率高度可交换。
+
+本次也修复 #496 的双坐标链式法则反馈。对任意实范数空间中的
+核 `Phi`（因此也允许复值核），要求在 `(x,lambda/x)` 联合
+Fréchet 可微，导数为 `D`，而非只要求两个偏导存在。证明
+
+\[
+ x\frac{d}{dx}\{W(x)\Phi(x,\lambda/x)\}
+ =xW'(x)\Phi(x,\lambda/x)
+ +W(x)\{xD(1,0)-(\lambda/x)D(0,1)\}.
+\]
+
+右侧的乘法对一般目标空间解释为实标量作用。回归使用非分离核
+`Phi(x,xi)=x+xi`、`lambda=4`、`x=2`：普通导数是 `0`，
+漏掉第一坐标项会给出 `-1`。原分离权引理仍保留且范围明确。
+这个局部链式法则不提供物理核随参数一致的半范数或 Fourier 尾界。
+
+自审结论：本批没有补足 `hmain` 或 `hrem`，也没有取消所有 shift
+求和后的完成深度截断。固定 `T,X,J` 的积分支配不能自动提升为
+`T -> infinity` 的一致估计。没有使用父 PR 的完成证书，也没有
+新增项目公理或通过不必要的任意极限交换改变目标。
+
+本批最终验证：136 个聚焦 Lean 契约/公理审计文件合并检查退出码 0，
+无错误、无警告；389 个完整公理报告仅包含 `propext`、
+`Classical.choice`、`Quot.sound`。新增解析模块已分别生成对象文件，
+没有提高 heartbeat、添加项目公理或使用 `native_decide`。
+非分离回归确实调用一般核定理，不能由旧分离权引理冒充通过。
+
 ## Remaining formalization boundary
 
-This PR does **not** yet make the analytic theorem unconditional inside Lean.
+The unconditional asymptotic is **not established**, either by this Lean PR
+or by the parent PR's disputed completion certificate. The independently
+proved local results below remain useful without that certificate.
 The left side is now the literal full-line integral, rather than an arbitrary
 function `I`, and its two finite mollifier factors have been expanded and
 interchanged with the integral.  The completed AFE contour has also been taken
@@ -1491,26 +1576,35 @@ proves full time/space absolute integrability of the uncut physical kernel
 at each nonzero shift. The actual completed kernels are bounded by its
 norm uniformly in depth. Dominated convergence and Fubini thus prove the
 time-integrated depth limit after the height limit at fixed nonzero shift.
-Arbitrary joint depth/height limits and the depth-removal limit of the
-complete shift-summed kernel remain unproved. The fixed-depth all-shift
+No arbitrary joint depth/height limit is asserted or required for these
+results. The ordered depth-removal limit of the complete shift-summed
+kernel remains unproved if an uncompleted expression is required. The fixed-depth all-shift
 height limit, in contrast, is supplied by the new lattice/Tannery argument.
 Neither compactness in the logarithmic-extension proof nor the
 Schwartz construction supplies uniform seminorm estimates in the varying
 physical parameters.
-The completed zero-mode height limit is now independent and includes both
-the full shift series and the finite mollifier sums. The remaining height
-limit of diagonal plus completed nonzero mode is obtained by subtraction;
-separate limits for those two terms are not asserted. What remains is to
+The completed zero-mode height limit is independent and includes both
+the full shift series and the finite mollifier sums. The actual diagonal
+now has its independent height limit, proved using physical time/height L1.
+Subtracting both independently convergent terms from the original moment
+proves convergence of the full original nonzero-mode sum. Its limit is not
+defined by subtraction. The resulting actual exact identity is
+`I=T*Q_J+R_J` at fixed depth, with `Q_J=Re(D+Z_J)/T` and `R_J=Re(E_J)`.
+This is neither an evaluation of the canonical principal part nor a bound
+on `R_J`. What remains is to
 carry the actual expression through the QCT/Poisson decomposition with all
 needed convergence arguments, prove the reciprocal-LCM main-term asymptotic
-and every analytic tail estimate, and especially prove the cubic MRSTT Mobius
-decorrelation theorem.  The final facade therefore keeps
+and every analytic tail estimate, and especially supply the required cubic
+Mobius decorrelation estimate with its full physical weights and outer sums.
+Calling that pending estimate an MRSTT input does not make it an applicable
+published theorem. The final facade therefore keeps
 `hexact`, `hmain`, and `hrem` as theorem hypotheses.  They are local binders,
 not global axioms.
 
 Consequently the accurate status is:
 
-- internal paper proof candidate and executable parameter audit;
+- a disputed parent proof candidate and an executable assumption ledger,
+  neither of which certifies the final asymptotic;
 - kernel-checked structural/reassembly, finite-height series/integral
   interchange, diagonal split/reindexing, signed-shift/progression regrouping,
   fixed-`T` recombined AFE integral limits, actual local physical-kernel
@@ -1549,6 +1643,9 @@ Consequently the accurate status is:
   translated lattice bounds, all-shift integrated domination uniform in
   height, original completed zero-mode all-shift height limit, separate
   completed-mode shift summability, full completed zero-mode moment height
-  limit and the corresponding diagonal-plus-nonzero-mode height limit;
-- full end-to-end Lean formalization still requires formalizing the named
-  analytic inputs, including the external MRSTT theorem.
+  limit, independent actual diagonal time/height L1 and height limit,
+  the original full nonzero-mode height limit and fixed-depth exact
+  infinite-height decomposition of the literal real moment;
+- full end-to-end proof and Lean formalization still require the actual
+  main-term limit, uniform tails and full cubic Mobius remainder estimate;
+  no complete applicable external theorem is being assumed here.

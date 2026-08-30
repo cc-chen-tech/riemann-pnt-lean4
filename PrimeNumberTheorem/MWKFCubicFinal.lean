@@ -8,15 +8,16 @@ open scoped Interval
 namespace PrimeNumberTheorem
 namespace MWKFCubic
 
-/-- The audited reciprocal-LCM main-term constant. -/
+/-- The target reciprocal-LCM main-term constant. Its definition does not
+prove that the actual principal part tends to this value. -/
 noncomputable def cubicMainConstant (W : ℝ → ℝ) : ℝ :=
   (4 / 3 : ℝ) * ∫ u in (1 : ℝ)..2, W u
 
 /-- The exact final `4/3` specialization of `long_mollifier_reassembly`.
 
 The two little-o hypotheses are intentionally visible.  In particular this
-statement cannot be mistaken for a formalization of the external cubic MRSTT
-input itself. -/
+statement does not supply a cubic Mobius decorrelation estimate. Neither
+the parent research PR nor a coverage-script status supplies these inputs. -/
 theorem cubic_long_mollifier_asymptotic_of_exact_inputs
     (W : ℝ → ℝ) (I Q R : ℝ → ℝ)
     (hexact : ∀ T, I T = T * Q T + R T)

@@ -8,6 +8,14 @@
    by the identity scale, and exact algebraic substitution.
 4. Add axiom-audit modules and run the focused Lean checks.
 5. Update the proof-status documentation with a machine-checked dependency
-   table.  Do not call the final analytic theorem Lean-formalized until the
-   MRSTT input itself has a checked implementation.
+   table. Do not claim the asymptotic proved or Lean-formalized until the
+   actual main-term limit and full-weight remainder estimate have valid
+   proofs and checked implementations. Parent-PR completion labels are not
+   evidence of those proofs.
 6. Commit, push, and open a ready-for-review stacked PR based on PR #483.
+
+Review gate (2026-08-30): the stacked base does not authorize incorporating
+#483's disputed analytic claims into main. Freeze independently verified
+local Lean results and audit their minimal main-relative dependencies before
+integration. Only the limit order actually needed by the final expression
+is required; arbitrary exchanges of depth and height are not a goal.

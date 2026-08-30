@@ -2,8 +2,10 @@
 
 ## Goal
 
-Formalize the exact, repository-local implication chain used by the cubic
-complementary-divisor proof of the `N = floor(T^3)` mollified second moment.
+Formalize independently valid local steps and the exact implication chain
+for the `N = floor(T^3)` mollified second moment. The parent cubic proof
+candidate has unresolved normalization and outer-aggregation issues; its
+completion certificate is not a mathematical input.
 No theorem may contain `sorry` or `admit`, and no analytic input may be hidden
 behind a newly declared `axiom`.
 
@@ -19,11 +21,12 @@ dependency without first constructing a new automorphic-forms library:
 5. the algebraic final reassembly from an exact decomposition, main-term
    asymptotic, and remainder little-o statement.
 
-The cubic MRSTT decorrelation input is not currently present in Mathlib.  It
-will therefore be named as a hypothesis of an implication theorem, never as a
-global axiom and never as an unconditional Lean theorem.  Replacing that
-hypothesis by a checked theorem requires a subsequent automorphic/ergodic
-formalization layer.
+The required full-weight cubic Mobius decorrelation estimate is not proved
+here. Naming an MRSTT route does not establish its applicability. The actual
+main-term limit and remainder little-o statement remain local hypotheses,
+never global axioms. Removing these hypotheses requires a valid analytic
+proof with all physical normalizations and outer sums, followed by its Lean
+formalization; it is not merely a missing library translation.
 
 ## Module layout
 

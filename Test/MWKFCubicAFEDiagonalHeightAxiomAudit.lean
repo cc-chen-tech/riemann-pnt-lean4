@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.MWKFCubicAFEDiagonalHeight
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms cubicAFEDiagonalMellinMass_nonneg
+#print axioms cubicAFEDiagonalMellinKernel_norm_le
+#print axioms continuous_cubicAFEDiagonalMellinKernel_joint
+#print axioms integrable_cubicAFEDiagonalMellinKernel
+#print axioms continuous_cubicAFEDiagonalPhysicalMellinKernel
+#print axioms integrable_cubicAFEDiagonalPhysicalMellinKernel
+#print axioms tendsto_cubicAFEDiagonalPhysicalDoubleIntegral_height
+#print axioms tendsto_cubicAFEDiagonalMomentFinite_height
