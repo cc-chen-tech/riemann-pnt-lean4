@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.MWKFCubicAFEUncutTime
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms integrable_cubicAFEEndpointTimeMass
+#print axioms integrable_cubicAFEEndpointSpatialPower
+#print axioms norm_cubicAFEUncutPhysicalKernel_le
+#print axioms tendsto_cubicAFECompletedPhysicalKernel_depth
+#print axioms stronglyMeasurable_cubicAFEUncutPhysicalKernel
+#print axioms integrable_cubicAFEUncutPhysicalKernel
+#print axioms norm_cubicAFECompletedPhysicalKernelVertical_le_uncut
+#print axioms tendsto_cubicAFECompletedPhysicalDoubleIntegral_depth

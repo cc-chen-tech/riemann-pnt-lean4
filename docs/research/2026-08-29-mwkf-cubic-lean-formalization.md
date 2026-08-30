@@ -112,8 +112,9 @@ Lean 定理使用原实 moment 的复数嵌入。已经证明每个 shift 的积
 最新进一步证明固定完成深度时，实际空间积分与高度极限可以交换，
 支配对全部实高度一致；之后可在固定时间按有序极限去掉空间完成截断。
 现已进一步把固定完成深度的高度极限穿过完整物理时间/空间双重积分，
-并接回固定 shift 的原全部 dyadic 零模之和。仍未证明积分后的深度
-去截断、全部 shift 的极限聚合或任意深度/高度联合极限。
+并接回固定 shift 的原全部 dyadic 零模之和。现已在每个固定非零
+shift 上证明完整时间积分后的深度去截断；全部 shift 的极限聚合及
+任意深度/高度联合极限仍未证明。
 
 ## Machine-checked in this PR
 
@@ -1169,6 +1170,101 @@ CompletedTime 的 red-stage 合约分别确认五个、六个目标声明缺失�
 和的整体极限与逐箱极限、单 shift 与全 shift 聚合。此为本地自审及
 内核核验，不是独立代理审阅、外部同行认证或远端 CI 成功记录。
 
+## 完整物理时间积分后的深度去截断
+
+本批闭合了固定非零 shift 上此前尚缺的 `J→infty` 积分极限。使用
+新的、与 J 无关的两端点可积支配，而不是把上一批随深度增长的
+`epsilon_J^(-X-1/2)` 视作统一常数。
+
+### 两端点产品权与真实二次换元
+
+新增 `MWKFCubicAFEEndpointPower.lean`，实际构造
+
+\[
+ E_X(P)=\mathbf1_{(0,1]}(P)P^{-1/2}
+       +\mathbf1_{(1,\infty)}(P)P^{-X-1/2},\qquad X>1/2.
+\]
+
+Lean 证明 E_X 全局非负、可测、在整条实线上可积，且在 P=1 处只取
+第一段一次。原完整权满足
+
+\[
+ |P^{-1/2}V_X(t,P)|\le
+ (1+\operatorname{NormMass}(t,-1/4)+\operatorname{NormMass}(t,X))E_X(P)
+ \quad(P>0).
+\]
+
+小产品段使用已核验的留数一换线，大产品段使用真实右线范数质量。
+前述两个质量都已证明时间连续与物理加权可积，不是新的支配假设。
+
+对于 `r,s>0`、`delta!=0`，令 `P(x)=x*(delta+r*x)/s`、
+`D={x>0,delta+r*x>0}`。证明 E_X(P(x)) 在整个 D 上可积，保留
+绝对 Jacobian 及 `|P'(x)|>=|delta|/s`，通过明确的逆因子 `s/|delta|`
+进行 L1 拉回。正、负 shift 均覆盖；该逆因子没有被声称为全 shift
+可和的界。原已提交的特定产品权换元定理未被覆盖或改成假设。
+
+### 与完成深度无关的实际双重支配
+
+新增 `MWKFCubicAFEUncutTime.lean`。定义
+
+\[
+ A(t)=\frac{|2a_T(d)a_T(e)|}{\sqrt{de}}|W(t/T)|
+       (1+\operatorname{NormMass}(t,-1/4)+\operatorname{NormMass}(t,X)),
+ \qquad S(x)=\mathbf1_D(x)E_X(P(x)).
+\]
+
+源码把 A 写为三个实际可积项之和，保持全部 mollifier 系数和归一化。
+已证 `A in L1(R)`、`S in L1(R)`，二者均不含 J。
+将完整原物理核在 D 外延零，记为 `K_D(t,x)=1_D(x)K_infinity(t,x)`，
+则已证 `|K_D(t,x)|<=A(t)S(x)`。其时间/空间联合强可测性来自实际
+完成核的逐点深度极限。因此 `K_D` 在整条乘积空间上真正绝对可积，
+不是仅有各个固定时间切片可积。
+
+完成权在 D 外精确为零，在 D 内至多为1且最终等于1。由此得到对
+所有 J 一致的 `|B_J*K_infinity|<=|K_D|`。以已证明可积的实际
+`|K_D|` 为支配，在乘积空间应用 dominated convergence，再用 Fubini
+及 indicator 积分恒等式，得到
+
+\[
+ \lim_{J\to\infty}\int_{\mathbb R}\!\int_{\mathbb R}
+   B_JK_\infty\,dx\,dt
+ =\int_{\mathbb R}\!\int_D K_\infty\,dx\,dt.
+\]
+
+Lean 声明是 `tendsto_cubicAFECompletedPhysicalDoubleIntegral_depth`，
+要求 `T!=0`、`X>1/2`、`d,e>0`、`delta!=0`。特别不删除最后一个
+条件：delta=0 的小产品拉回不受本条 Jacobian 下界控制。
+
+与上一批高度极限合起来，现有的是在每个固定非零 shift 上，先取
+高度极限，再在完整物理时间积分后去完成深度的有序极限。还不能
+推出任意 `J(V)` 联合极限、全部 shift 的极限换序、共同 Mellin 主项
+或参数一致的 `o(T)` 余项。
+
+### 本批验证与自审
+
+两个新源模块共325行，均已独立编译。EndpointPower 与 UncutTime
+的 red-stage 合约分别先确认五个、六个目标声明缺失。最终同次核验
+全部126个 MWKF contract/axiom-audit 文件，仅合并去重 imports，
+保留并检查全部正文；退出码0，无 error/warning。357条完整公理
+报告仅含 `propext`、`Classical.choice`、`Quot.sound`。
+
+新增回归检查产品分段在 P=1 恰取一次、P=0 时为零、负 shift 的
+真实域为 x>1、该域上的全时间/空间范数可积性、完整双重积分的
+深度极限、物理域边界处精确为零以及正 shift 的空间可积性。
+没有添加 delta=0 的未截断可积性断言。
+
+focused pytest：295 passed（45.73s）；deterministic coverage 退出码0。
+其 `unconditional asymptotic proved` 与 `residual_top_level_gates=0`
+仍是内部 Python 账本标签，不是最终 Lean 定理的证明证书。
+`git diff --check` 通过；新增源码及合约无占位符、新项目公理、
+`native_decide` 或 heartbeat/diagnostics 上调。
+
+自审逐项检查了小产品留数项、两条 Mellin 线的真实范数质量、
+二次换元的绝对 Jacobian、时间支配的物理系数、乘积空间强可测性、
+两端 Fubini 的实际 L1 条件以及支配与 J 无关。特别区分点态深度
+极限允许 delta=0 与全域可积性要求 delta!=0。这是单代理本地
+自审和 Lean 内核核验，不是外部同行审阅或远端 CI 成功记录。
+
 ## Remaining formalization boundary
 
 This PR does **not** yet make the analytic theorem unconditional inside Lean.
@@ -1260,8 +1356,14 @@ integral at fixed depth and shift. The original infinite dyadic zero-mode
 sum is identified with that integral at every finite height, so its height
 limit is now proved with the exact Poisson factor 1/s. This does not move
 the height limit through individual boxes. Nor does it supply the
-time-integrated depth limit, arbitrary joint depth/height limits, or
-the complete shift-summed zero-mode limit.
+complete shift-summed zero-mode limit. A new depth-independent two-endpoint
+product majorant, pulled back with the exact quadratic Jacobian, now also
+proves full time/space absolute integrability of the uncut physical kernel
+at each nonzero shift. The actual completed kernels are bounded by its
+norm uniformly in depth. Dominated convergence and Fubini thus prove the
+time-integrated depth limit after the height limit at fixed nonzero shift.
+Arbitrary joint depth/height limits and the complete shift-summed limit
+remain unproved.
 Neither compactness in the logarithmic-extension proof nor the
 Schwartz construction supplies uniform seminorm estimates in the varying
 physical parameters.
@@ -1309,6 +1411,9 @@ Consequently the accurate status is:
   domination, complete norm-mass time continuity and weighted integrability,
   actual completed physical product-space integrability, full time/space
   double-integral height limit, and the original all-dyadic zero-mode height
-  limit at fixed shift and completion depth with Poisson factor 1/s;
+  limit at fixed shift and completion depth with Poisson factor 1/s,
+  depth-independent two-endpoint majorization, its exact-Jacobian pullback,
+  actual uncut physical time/space L1 integrability and the full physical
+  double-integral depth limit at fixed nonzero shift;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.
