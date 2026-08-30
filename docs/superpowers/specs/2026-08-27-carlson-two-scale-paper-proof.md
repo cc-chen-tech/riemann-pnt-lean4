@@ -1900,14 +1900,28 @@ costs at most
  +\left(K-2+\frac4\pi H_{K-2}\right)N^{-\sigma}.
 \]
 
-This is the next lemma to assemble formally; the separate component
-estimates do not yet constitute its Lean proof.  In the final finite
+The single-mode estimate and its exact harmonic sum are now formal in
+`AFEExplicitPoissonInnerMode` and `AFEExplicitPoissonInnerSum`.  The latter
+also derives the `K-2` endpoint gap from the lower height-cell inequality;
+it is not supplied as an analytic hypothesis.  The two-contract build
+exits zero (8735 jobs including cached dependencies), with only the three
+allowed base axioms.  In the final finite
 frequency split one may choose `M=ceil(t/(pi*K))`.  For integer `K>=6`
 in the height cell, `2*K<=M<=2*K+5`.  All `m>M` then satisfy the existing
 far-tail condition, and all remaining finite nonstationary sums have
 length at most `M`.  This keeps their logarithm `O(1+log(K+1))` and all
 upper-transition errors inside a fixed-in-height multiple of
 `N^(-sigma)`, before the single primal cutoff limit is taken.
+
+The square-root cell itself has an explicit eventual threshold:
+`t>=72*pi` implies `K=floor(sqrt(t/(2*pi)))>=6` and
+`2*pi*K^2<=t<2*pi*(K+1)^2`.  This follows by squaring the nonnegative
+floor inequalities.  For the finite-frequency split, the upper cell
+bound also gives `t/(2*pi*K)<K+3`, hence
+`floor(t/(2*pi*K))<=K+2`.  Thus every `m>=K+4` is beyond the omitted
+nearest integer in the existing nonstationary harmonic sum.  These
+integer-cutoff facts, followed by the finite/infinite mode reassembly,
+are the next formal obligations; the complete weak AFE is still pending.
 
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
