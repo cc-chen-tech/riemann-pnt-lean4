@@ -1920,8 +1920,53 @@ floor inequalities.  For the finite-frequency split, the upper cell
 bound also gives `t/(2*pi*K)<K+3`, hence
 `floor(t/(2*pi*K))<=K+2`.  Thus every `m>=K+4` is beyond the omitted
 nearest integer in the existing nonstationary harmonic sum.  These
-integer-cutoff facts, followed by the finite/infinite mode reassembly,
-are the next formal obligations; the complete weak AFE is still pending.
+integer-cutoff facts are now formal in `AFEExplicitPoissonFrequencyCutoff`,
+including the exact natural floor at `t=72*pi` and the far-tail condition
+for every integer at or beyond `M`.  Its contract build exits zero
+(8698 jobs including cached dependencies), with only the three allowed
+base axioms.  The finite/infinite mode reassembly remains a formal
+obligation; the complete weak AFE is still pending.
+
+There is also a direct absolute-convergence bridge for the reassembly.
+For fixed `t,K,N`, let `S_m=|I_m|+|I_(-m)|` for `m>=1` and set `S_0=0`.
+For every `m>=M`, this equals the already summable far-mass sequence.
+Finite changes preserve summability, hence both signed mode series are
+absolutely summable.  Thus
+`sum_(k in Z) I_k=I_0+sum_(m>=1)(I_m+I_(-m))` follows without an
+additional analytic decay hypothesis.  This is at fixed finite `N`;
+it does not exchange the cutoff limit with an infinite series.
+
+On the critical line a fully explicit target for this reassembly is
+available.  Write
+
+\[
+ S=\frac{12(4C_1+2)}{\sqrt{\pi/2}}+\frac{4(1+4C_1)}\pi,
+ \qquad F=4C_2+4C_1^2+10C_1+7,
+ \qquad C_{\rm fin}=6+5S+\frac{4F}{\pi^2}+\frac{3+24C_1}{\pi}.
+\]
+
+For integer `K>=6`, a height in its square-root cell,
+`M=ceil(t/(pi*K))`, and integer `N>=2*K` with `2*t<=2*pi*N`, the
+component bounds imply the finite-cutoff target
+
+\[
+ \left|\left(\sum_{n=1}^N n^{-s}-\frac{N^{1-s}}{1-s}\right)
+       -D_K(s)-\sum_{m=1}^K G_m\right|
+ \leq C_{\rm fin}K^{-1/2}(1+\log M)
+       +\left(K-1+\frac4\pi H_{K-2}\right)N^{-1/2},
+ \qquad s=\tfrac12+it.
+\]
+
+Here the zero mode costs `2*K^(-1/2)+N^(-1/2)`; the five endpoint
+integrals cost `5*S*K^(-1/2)`; their two retained Gamma terms cost at
+most `4*K^(-1/2)`; the far tail costs `4*F*K^(-1/2)/pi^2`.
+The inner error contributes `(3+8*C1)*H_(K-2)/pi` and the two finite
+nonstationary bands together contribute `16*C1*H_M/pi`, all multiplied
+by `K^(-1/2)`.  Use `H_(K-2)<=H_M<=1+log M` and `1+log M>=1`.
+The upper-cutoff coefficient is exactly the inner coefficient plus the
+single zero-mode `N^(-1/2)` error.  This explicit target is not yet a
+Lean theorem; its remaining obligations are the finite partitions,
+absolute-convergence reindexing, and primal finite-sum identity.
 
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
