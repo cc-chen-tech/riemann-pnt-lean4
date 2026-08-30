@@ -174,6 +174,10 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | original integrated progression equals the sum of actual integrated Poisson boxes, with the stated nested summability | `cubicAFEProgressionIntegral_eq_dyadicPoisson`, `summable_integral_cubicAFEDyadicPoissonTerm`, `summable_shift_integral_cubicAFEDyadicPoissonTerm` |
 | literal finite mollifier support and all nonzero signed shifts give the exact finite-height Poisson moment | `cubicAFEDyadicPoissonMomentFinite`, `cubicAFEProgressionMomentFinite_eq_dyadicPoisson`, `cubicAFEMollifiedMomentFinite_eq_diagonal_add_dyadicPoisson` |
 | height limit of the recombined diagonal plus actual integrated Poisson moment only | `tendsto_cubicAFEDiagonal_add_dyadicPoisson` |
+| joint time/log-product continuity of the actual finite-height Mellin integral | `continuous_cubicAFELogProductWeightFinite_joint`, `continuousOn_cubicAFERealProductWeightFinite_joint` |
+| actual physical kernel jointly continuous on its exact positive-index region | `continuousOn_cubicAFEProgressionPhysicalSummand_joint` |
+| global joint continuity and joint compact support of the actual cutoff kernel | `continuous_cubicAFEProgressionCutoffSummand_joint`, `hasCompactSupport_cubicAFEProgressionCutoffSummand_joint` |
+| actual product-space integrability and time/Fourier interchange at each real frequency | `integrable_cubicAFEProgressionCutoffFourier_joint`, `integral_fourier_cubicAFEProgressionCutoffSummand` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -275,6 +279,49 @@ label still does not prove the remaining Lean analytic inputs. No project
 axiom, placeholder, native evaluation axiom, or raised heartbeat limit was
 introduced. These are local checks, not remote CI or external peer review.
 
+## 真实物理核的逐频率时间积分
+
+本批次补的是逐个 Fourier 频率的 Fubini，不是无穷频率级数的
+时间积分换序。令 `K(t,x)` 为已有的完整 cutoff progression 核：
+其中保留两侧 mollifier 系数、平方根振幅、完整 logarithmic phase、
+有限高度 Mellin 权和 `W(t/T)`，没有替换为抽象平滑函数。
+
+`MWKFCubicAFEJointKernel.lean` 从真实有限竖直积分证明 Mellin 权对
+`(t,z)` 的联合连续性，再沿正实乘积变量取 logarithm，得到物理核在
+正指标区域内的联合连续性。cutoff 的闭支撑位于该开区域；在闭支撑外
+cutoff 局部恒零，因此完整 cutoff 核在整个 `ℝ × ℝ` 上连续。
+其联合支撑包含于两个紧集的积：`W(t/T)` 的时间支撑与 cutoff 的
+空间支撑。这里要求 `T ≠ 0`，不假设任何未证明的联合正则性或可积性。
+
+`MWKFCubicAFEFourierTimeIntegral.lean` 因而得到每个实频率 `ξ` 的实际
+乘积空间可积性以及
+
+\[
+\int_{\mathbb R}\widehat{K(t,\cdot)}(\xi)\,dt
+=\widehat{\left(x\mapsto\int_{\mathbb R}K(t,x)\,dt\right)}(\xi).
+\]
+
+Fourier character 精确为 `exp(-2π i x ξ)`。结论包括 `ξ=0`、负 shift
+和模数一；不对 shift 添互素条件。所有结论目前是固定物理参数的局部
+结论：紧支撑本身不提供随参数统一的 seminorm，也不许可把 `∑_h` 移到
+时间积分外，更不许可把高度极限移过任何子级数。
+
+### 本批次验证
+
+两个新源模块均成功编译并生成 proof objects。合计 46 个
+contract/axiom-audit 文件在同一次 Lean 调用中核验（只对 import 提前去重，
+正文不变），退出码 0，无 error/warning；130 条公理报告只包含
+`propext`、`Classical.choice`、`Quot.sound`。实现前的两份 red-stage 合约
+分别因缺少联合正则性定理及逐频率 Fubini 定理而失败；实现后的完整类型
+合约不接受抽象可积性输入，且包含零频率、负 shift、模数一的特化。
+
+联合连续性证明的首次 elaboration 遇到复合映射类型推断超时，显式指定
+内层映射后消除；未提高 heartbeat 限额。聚焦 Python 测试为
+`295 passed`（15.04 秒），确定性 coverage 正常退出。coverage 的内部
+`unconditional asymptotic proved` 标签仍不等同于最终 Lean 定理成立。
+本批次无新增项目公理、占位证明或 native evaluation 公理。按照单代理
+约束完成本地自审；这些记录不是外部专家审阅或远端 CI。
+
 ## Remaining formalization boundary
 
 This PR does **not** yet make the analytic theorem unconditional inside Lean.
@@ -311,8 +358,10 @@ yet a frequency-by-frequency time-integrated QCT expression: using finite
 integer support, the original lattice sum has now been interchanged with
 time integration and the complete finite-height moment reassembled as its
 exact diagonal plus integrated Poisson boxes. The nesting order is explicitly
-`(d,e), delta, (j,k), integral_t, h`. The physical time/Fourier-frequency
-interchanges, any required cross-index reorderings and parameter-uniform
+`(d,e), delta, (j,k), integral_t, h`. Each individual Fourier transform now
+commutes with the actual time integral, by joint continuity and compact
+support of the actual kernel. Interchanging the **infinite** frequency series
+with the time integral, any required cross-index reorderings and parameter-uniform
 tail estimates remain to be established. Neither compactness in the logarithmic-extension proof nor the
 Schwartz construction supplies uniform seminorm estimates in the varying
 physical parameters.
@@ -335,6 +384,7 @@ Consequently the accurate status is:
   regularity, actual two-index dyadic partition, absolute integer/dyadic
   reassembly both pointwise and after the physical time integral, finite
   lattice/time interchange, the full finite-height diagonal-plus-integrated
-  dyadic-Poisson moment, and its recombined height limit;
+  dyadic-Poisson moment, its recombined height limit, joint time/space kernel
+  regularity and fixed-frequency physical-time/Fourier interchange;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.

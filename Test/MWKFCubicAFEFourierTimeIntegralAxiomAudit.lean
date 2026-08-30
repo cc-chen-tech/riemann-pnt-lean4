@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.MWKFCubicAFEFourierTimeIntegral
+
+#print axioms PrimeNumberTheorem.MWKFCubic.integrable_cubicAFEProgressionCutoffFourier_joint
+#print axioms PrimeNumberTheorem.MWKFCubic.integral_fourier_cubicAFEProgressionCutoffSummand
