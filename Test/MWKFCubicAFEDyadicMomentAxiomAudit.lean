@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.MWKFCubicAFEDyadicMoment
+
+#print axioms PrimeNumberTheorem.MWKFCubic.summable_shift_integral_cubicAFEDyadicPoissonTerm
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionMomentFinite_eq_dyadicPoisson
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEMollifiedMomentFinite_eq_diagonal_add_dyadicPoisson
+#print axioms PrimeNumberTheorem.MWKFCubic.tendsto_cubicAFEDiagonal_add_dyadicPoisson

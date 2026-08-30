@@ -16,7 +16,7 @@
 重编号为 `m>0`、`delta+m*r>0`、`m=-delta*rbar (mod s)` 的单变量和，
 并证明第二个指标与实数商 `(delta+m*r)/s` 精确一致。所有 Möbius 系数
 与物理权均保留。这不是 `T -> infinity` 的渐近式，
-也没有断言两个拆分部分分别存在高度极限；全局 QCT/Poisson 重组、主项渐近和
+也没有断言两个拆分部分分别存在高度极限；频率逐项的 QCT 重组、主项渐近和
 核心 Möbius 色散等输入仍须继续形式化。
 
 有限高度 Mellin 权现有一个与正整数产品权精确一致的正实变量延拓：
@@ -62,6 +62,23 @@
 对真实物理时间积分后的 progression 级数，同样已证明 dyadic 重组及外层
 box 级数绝对可和：截断独立于 `t`，可逐项提出积分，再使用原积分级数的
 已证可和性。这不等于已证明 `integral_t` 与 Fourier 频率和之间的换序。
+
+每个 box 的原整数级数现已进一步化为一个对所有时间共同有效的有限和：
+索引集合保留原 progression 条件，并满足 `m<=2*2^j`，其外的截断严格为零。
+原完整 AFE 单项的时间可积性也已证明，因此可用有限和积分定理交换
+原格点和与物理时间积分。结合局部 Poisson，已得到真实积分 box 的等式及可积性。
+再保留实际 `floor(T^3)` mollifier 支撑与所有正、负非零 shift，得到
+
+\[
+ I^{(V)}_{T,W}=D^{(V)}_{T,W}+P^{(V)}_{T,W},\qquad
+ \lim_{V\to\infty}\bigl(D^{(V)}_{T,W}+P^{(V)}_{T,W}\bigr)=I_{\lfloor T^3\rfloor,W}(T).
+\]
+
+这里 `I^(V)`、`D^(V)` 分别是原有限高度 moment 与精确对角项，`P^(V)` 的嵌套
+次序是 `sum_d sum_e sum_delta sum_(j,k) integral_t sum_h`，频率和保留在时间积分内。
+Lean 定理使用原实 moment 的复数嵌入。已经证明每个 shift 的积分 box 级数可和，
+以及保持该嵌套次序的外层 shift 级数可和；没有宣称所有指标可任意交换。
+高度极限仅在重组整体之外，仍未证明对角和非对角分别存在高度极限。
 
 ## Machine-checked in this PR
 
@@ -151,6 +168,12 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | joint absolute summability precedes dyadic/integer reordering | `summable_cubicAFEProgression_dyadic_weighted`, `tsum_cubicAFEProgression_eq_dyadic` |
 | actual shifted fiber equals its dyadic Poisson series, with an absolutely summable outer box series | `cubicAFEShiftFiber_eq_dyadicPoisson`, `summable_cubicAFEDyadicPoissonTerm` |
 | exact dyadic reassembly of the literal time-integrated progression, with a summable outer box series | `cubicAFEProgressionIntegral_eq_dyadic`, `summable_cubicAFEProgressionDyadicIntegral` |
+| exact finite set of contributing progression integers, uniformly for physical time | `cubicAFEProgressionDyadicIndices`, `cubicAFEProgressionDyadicCutoff_zero_of_not_mem_indices`, `tsum_cubicAFEDyadicProgression_eq_finsetSum` |
+| actual individual AFE summand is time-integrable; finite-support time/lattice interchange | `integrable_cubicAFECombinedSummandFinite`, `integral_tsum_cubicAFEDyadicProgression` |
+| whole physical Poisson box is time-integrable and equals the integrated original box | `integrable_cubicAFEDyadicPoissonTerm`, `integral_cubicAFEDyadicPoissonTerm_eq` |
+| original integrated progression equals the sum of actual integrated Poisson boxes, with the stated nested summability | `cubicAFEProgressionIntegral_eq_dyadicPoisson`, `summable_integral_cubicAFEDyadicPoissonTerm`, `summable_shift_integral_cubicAFEDyadicPoissonTerm` |
+| literal finite mollifier support and all nonzero signed shifts give the exact finite-height Poisson moment | `cubicAFEDyadicPoissonMomentFinite`, `cubicAFEProgressionMomentFinite_eq_dyadicPoisson`, `cubicAFEMollifiedMomentFinite_eq_diagonal_add_dyadicPoisson` |
+| height limit of the recombined diagonal plus actual integrated Poisson moment only | `tendsto_cubicAFEDiagonal_add_dyadicPoisson` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -231,6 +254,27 @@ its proof-status label is not evidence that the remaining Lean analytic
 inputs have been supplied. This remains targeted local verification, not
 remote CI or independent expert review.
 
+### Physical-time Poisson and full finite-height moment verification
+
+`MWKFCubicAFEDyadicTimeIntegral.lean` and `MWKFCubicAFEDyadicMoment.lean`
+compiled to proof objects. Forty-two contract/audit files were then checked
+in one import-deduplicated Lean invocation. The final exit code was zero,
+with no error or warning diagnostics; all 123 printed axiom reports used
+only the three standard foundations. The red-stage contracts failed on the
+missing finite-support/time-integral and full-moment theorems before their
+implementation. The final tests include admissible and inadmissible integer
+support points, a forbidden second index for a negative shift, the full
+time/lattice interchange type, literal finite mollifier support and all
+signed nonzero shifts, and the height limit of the recombined expression.
+Neither a uniform Fourier majorant nor independent limits of the two pieces
+are accepted as theorem hypotheses.
+
+The focused Python suite passed all 295 tests (14.75 seconds), and the
+deterministic coverage report exited successfully. Its internal proof-status
+label still does not prove the remaining Lean analytic inputs. No project
+axiom, placeholder, native evaluation axiom, or raised heartbeat limit was
+introduced. These are local checks, not remote CI or external peer review.
+
 ## Remaining formalization boundary
 
 This PR does **not** yet make the analytic theorem unconditional inside Lean.
@@ -263,9 +307,13 @@ sums dyadic boxes on the outside and frequencies on the inside. The same
 dyadic/integer reordering is proved for the actual time-integrated progression,
 using the cutoff's time independence and the previously established
 summability of the integrated original series. This is not
-yet the full time-integrated QCT/Poisson decomposition of the moment: the
-physical time/Fourier interchanges and parameter-uniform tail estimates
-remain to be established. Neither compactness in the logarithmic-extension proof nor the
+yet a frequency-by-frequency time-integrated QCT expression: using finite
+integer support, the original lattice sum has now been interchanged with
+time integration and the complete finite-height moment reassembled as its
+exact diagonal plus integrated Poisson boxes. The nesting order is explicitly
+`(d,e), delta, (j,k), integral_t, h`. The physical time/Fourier-frequency
+interchanges, any required cross-index reorderings and parameter-uniform
+tail estimates remain to be established. Neither compactness in the logarithmic-extension proof nor the
 Schwartz construction supplies uniform seminorm estimates in the varying
 physical parameters.
 The height limit remains
@@ -285,8 +333,8 @@ Consequently the accurate status is:
   interchange, diagonal split/reindexing, signed-shift/progression regrouping,
   fixed-`T` recombined AFE integral limits, actual local physical-kernel
   regularity, actual two-index dyadic partition, absolute integer/dyadic
-  reassembly both pointwise and after the physical time integral, and
-  pointwise dyadic Poisson identity for every original positive-index
-  shifted-fiber summand;
+  reassembly both pointwise and after the physical time integral, finite
+  lattice/time interchange, the full finite-height diagonal-plus-integrated
+  dyadic-Poisson moment, and its recombined height limit;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.
