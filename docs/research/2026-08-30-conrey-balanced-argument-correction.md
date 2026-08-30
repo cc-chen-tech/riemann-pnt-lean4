@@ -240,6 +240,47 @@ exit 0），公理依赖仅为 `propext`、`Classical.choice`、`Quot.sound`。
 左边界上的完整复值 `f'/f` 与各边界主部一般不可积，不能对它们错误地
 使用积分线性性。左边界始终积分 `G`，或其连续实部迹 `q`。
 
-这一路线已经过独立数学审查，但上述相位导数、端点 FTC、有限积分重组、
-三边精确 `π` 恒等式及实际 η 矩形特化仍是后续 Lean 义务。已有的全局
-简单零点计数并不假设它们成立。
+这一路线已经过独立数学审查。相位导数、端点 FTC、有限积分重组及三边
+精确 `π` 恒等式现已完成源码级 Lean 核验；正则化函数的构造、实际三边
+积分拆分与内部留数公式的拼接，以及实际 η 矩形特化仍待完成。
+
+## 9. 从连续 logarithm 到实际简单零点的积分下界
+
+`hasDerivAt_continuousLog_of_exp_eq` 仅由 `ell` 连续、邻域内 `exp ell=gamma`
+和 `gamma` 在指定点可微，推出 `ell'=gamma'/gamma`。具体地，在 `t0` 处
+除以非零值 `gamma(t0)`，局部模型为
+`log(gamma(t)/gamma(t0))+ell(t0)`。连续性使 `ell(t)-ell(t0)` 的虚部局部
+落在 `(-π,π)`，所以 `log_exp` 保证此模型确实等于原先选定的分支。
+这里没有要求原分支或原曲线避开主 logarithm 的割线。
+
+`hasDerivAt_im_continuousLog_vertical` 随之给出向上竖线上的相位导数
+`Re(f'/f)`；`continuousLog_phase_increment_eq_integral` 使用有限单侧相位
+极限及连续迹 `q` 的可积性，给出 `B-A=∫q`，不需要完整 logarithm 在
+零点端点收敛。`sum_intervalIntegral_eq_of_finite_complement` 用两两不交的
+完整分量覆盖及有限集合零测度，将这些积分重组为整段积分。
+
+`ConreyBalancedTraceCount` 将以上结果接入实际 η 的全局计数。其显式输入
+除 `g≠0`、`0≤U<T` 外，仍包括：`q` 在 `[U,T]` 连续，且仅在 `(U,T)`
+内 **η 非零的点**满足 `q=Re(η'/η)`。由此构造真实 ζ 简单零点集
+`S⊂(U,T)`，满足
+
+\[
+ \#S\ge\frac1\pi\int_U^Tq(t)\,dt
+   -N_{0,\eta}((U,T])-1.
+\]
+
+该定理不再输入任何分割、logarithm、相位端点或分量数量假设，但也没有
+假装已经构造 `q`、证明半重数轮廓公式或得出真正的 `>2/5`。在 η 零点
+处强行要求 `q=Re(η'/η)` 不是本接口的条件。
+
+另外，`HorizontalArgument` 中的竖边核原函数和
+`threeEdgeArgument_left_boundary_root_eq_pi` 已给出上述三边的精确 `π`
+贡献，保留严格角点排除与不拆左边不可积复值积分的护栏。
+
+初次核验因磁盘不足采用无产物的当前源码加合约模式，七条新定理及两项
+水平积分回归均通过，仅使用三条标准公理。磁盘恢复后已补齐合约对新
+模块的导入与默认 Lake 构建入口，正常独立模块构建成功（8728 jobs，
+exit 0）；实际迹计数合约仅使用 `propext`、`Classical.choice` 和
+`Quot.sound`。构建覆盖四个新合约、两个水平积分回归合约及实际全局
+计数合约。全量 Python 测试同次核验为 546 passed；这不等于完成全库
+Lean release-baseline 构建，也不等于完整 Conrey 定理。
