@@ -120,6 +120,20 @@ class CanonicalSecondaryZeroEnergy:
 
 
 @dataclass(frozen=True)
+class MellinProductPacket:
+    """A product-coordinate packet after global Poisson reassembly.
+
+    It has no individual h label: fixed-h continuous kernels have not
+    been identified with integer product kernels.
+    """
+
+    afe_direction: str
+    mellin_label: str
+    product_partition_label: str
+    pair_kernel: dict[tuple[int, int], Fraction]
+
+
+@dataclass(frozen=True)
 class PhysicalZeroMellinReflectionAdapter:
     product_coefficients: tuple[tuple[int, Fraction], ...]
     packet_contributions: tuple[
@@ -174,6 +188,45 @@ class UnifiedSignedZeroNonzeroOperator:
     packet_labels_retained_before_ttstar: bool
     physical_nonzero_density_derived: bool
     separate_resonant_or_centered_bound_proved: bool
+    coupled_kernel_gate_closed: bool
+
+
+@dataclass(frozen=True)
+class UnifiedSignedDoubleMobiusTypeOperator:
+    raw_mobius_coefficients: tuple[tuple[int, Fraction], ...]
+    type_coefficient_vectors: tuple[
+        tuple[str, tuple[tuple[int, Fraction], ...]], ...
+    ]
+    type_factorization_rows: tuple[
+        tuple[int, str, int, int, int, int], ...
+    ]
+    active_type_names: tuple[str, ...]
+    packet_product_labels: tuple[
+        tuple[str, str, int, int, int, str], ...
+    ]
+    full_type_ttstar_entries: tuple[tuple[str, str, Fraction], ...]
+    resonant_resonant_type_ttstar_entries: tuple[
+        tuple[str, str, Fraction], ...
+    ]
+    resonant_centered_type_ttstar_entries: tuple[
+        tuple[str, str, Fraction], ...
+    ]
+    centered_resonant_type_ttstar_entries: tuple[
+        tuple[str, str, Fraction], ...
+    ]
+    centered_centered_type_ttstar_entries: tuple[
+        tuple[str, str, Fraction], ...
+    ]
+    direct_full_ttstar_energy: Fraction
+    signed_type_ttstar_sum: Fraction
+    four_kernel_component_type_ttstar_sum: Fraction
+    raw_coefficients_reassemble_from_type_vectors: bool
+    every_type_block_keeps_full_unified_kernel: bool
+    a_equals_h_times_delta_retained: bool
+    two_mobius_weights_retained_until_global_ttstar: bool
+    no_type_blockwise_absolute_value_taken: bool
+    physical_nonzero_density_derived: bool
+    USZNTT_bound_proved: bool
     coupled_kernel_gate_closed: bool
 
 
@@ -2928,6 +2981,258 @@ def physical_zero_mellin_reflection_adapter_sides(
     )
 
 
+def physical_mellin_convolution_signed_operator_sides(
+    *,
+    mollifier_cutoff: int,
+    product_cutoff: int,
+    complete_divisor_coefficients: dict[int, Fraction],
+    mellin_weights: dict[int, Fraction],
+    product_packets: tuple[MellinProductPacket, ...],
+    canonical_zero_kernel: dict[tuple[int, int], Fraction],
+    main_term_kernel: dict[tuple[int, int], Fraction],
+    left_density_weights: dict[int, Fraction],
+    right_density_weights: dict[int, Fraction],
+) -> dict[str, object]:
+    """Verify the common-cutoff physical convolution and signed pullback.
+
+    Write C_z(x,d)=1_{d|x} w(d), with d<=N and x<=X.  This routine
+    constructs B=C_z a and both complete/reflected divisor sums; it
+    never assumes that B equals the mollifier vector a.  The product
+    kernel is pulled back as C_z^T K C_z.  The canonical zero kernel
+    and the main-term kernel already live in the original d coordinates.
+
+    The complementary kernel is the explicit pullback minus the main
+    term and canonical zero.  It includes every residual correction;
+    it is NOT asserted to consist solely of a chosen nonzero Poisson
+    frequency family.  A continuous adapter and its ordered-limit proof
+    are mathematical obligations, not facts certified by rational data.
+    """
+
+    N, X = mollifier_cutoff, product_cutoff
+    if not isinstance(N, int) or not isinstance(X, int) or not 1 <= N <= X:
+        raise ValueError("integer cutoffs must satisfy 1 <= N <= X")
+    products = tuple(range(1, X + 1))
+    divisors_support = tuple(range(1, N + 1))
+    if set(complete_divisor_coefficients) != set(products):
+        raise ValueError("complete divisor coefficients must cover every d <= X")
+    if set(mellin_weights) != set(products):
+        raise ValueError("Mellin weights must cover every d <= X")
+    c = {d: Fraction(complete_divisor_coefficients[d]) for d in products}
+    w = {d: Fraction(mellin_weights[d]) for d in products}
+    if any(value == 0 for value in w.values()) or w[1] != 1:
+        raise ValueError("Mellin weights must be nonzero with w(1)=1")
+    if any(
+        w[u * v] != w[u] * w[v]
+        for u in products
+        for v in range(1, X // u + 1)
+    ):
+        raise ValueError("the Mellin model must be completely multiplicative")
+    if not product_packets or any(
+        not packet.afe_direction
+        or not packet.mellin_label
+        or not packet.product_partition_label
+        for packet in product_packets
+    ):
+        raise ValueError("every product packet requires its physical labels")
+    if len({packet.mellin_label for packet in product_packets}) != 1:
+        raise ValueError("one finite adapter uses a common Mellin slice")
+    if any(
+        x not in products or y not in products
+        for packet in product_packets
+        for x, y in packet.pair_kernel
+    ):
+        raise ValueError("a product kernel leaves the common product cutoff")
+    if any(
+        d not in divisors_support or e not in divisors_support
+        for kernel in (canonical_zero_kernel, main_term_kernel)
+        for d, e in kernel
+    ):
+        raise ValueError("zero and main kernels must use mollifier coordinates")
+
+    densities = []
+    for supplied in (left_density_weights, right_density_weights):
+        if set(supplied) != set(divisors_support):
+            raise ValueError("density support must equal the mollifier support")
+        density = {d: Fraction(supplied[d]) for d in divisors_support}
+        if min(density.values()) < 0 or sum(density.values(), Fraction(0)) != 1:
+            raise ValueError("density weights must be nonnegative and sum to one")
+        densities.append(density)
+    p, q = densities
+
+    B, complete, reflected = {}, {}, {}
+    reflected_rows = []
+    for x in products:
+        dx = divisors(x)
+        B[x] = sum((c[d] * w[d] for d in dx if d <= N), Fraction(0))
+        complete[x] = sum((c[d] * w[d] for d in dx), Fraction(0))
+        reflected[x] = sum((c[d] * w[d] for d in dx if d > N), Fraction(0))
+        reflected_rows.extend((x, d, x // d) for d in dx if d > N)
+    kernel = {
+        (x, y): sum(
+            (Fraction(packet.pair_kernel.get((x, y), 0))
+             for packet in product_packets),
+            Fraction(0),
+        )
+        for x in products
+        for y in products
+    }
+
+    def pair(left, right, entries):
+        return sum(
+            (left[i] * value * right[j] for (i, j), value in entries.items()),
+            Fraction(0),
+        )
+
+    reflection_parts = (
+        pair(complete, complete, kernel),
+        -pair(complete, reflected, kernel),
+        -pair(reflected, complete, kernel),
+        pair(reflected, reflected, kernel),
+    )
+    direct = Fraction(0)
+    coordinate_checks = []
+    unequal_diagonal = False
+    for d in divisors_support:
+        for e in divisors_support:
+            g = gcd(d, e)
+            r, s = d // g, e // g
+            for n in range(1, X // d + 1):
+                for m in range(1, X // e + 1):
+                    x, y = d * n, e * m
+                    delta = m * s - n * r
+                    coordinate_checks.append(
+                        y - x == g * delta
+                        and (n * r + delta) % s == 0
+                        and (n * r + delta) // s == m
+                    )
+                    unequal_diagonal |= x == y and d != e
+                    direct += c[d] * c[e] * w[d] * w[e] * kernel[x, y]
+
+    pullback = {
+        (d, e): w[d] * w[e] * sum(
+            (kernel[x, y]
+             for x in range(d, X + 1, d)
+             for y in range(e, X + 1, e)),
+            Fraction(0),
+        )
+        for d in divisors_support
+        for e in divisors_support
+    }
+    canonical = {
+        ij: Fraction(canonical_zero_kernel.get(ij, 0)) for ij in pullback
+    }
+    main = {ij: Fraction(main_term_kernel.get(ij, 0)) for ij in pullback}
+    full = {ij: pullback[ij] - main[ij] for ij in pullback}
+    complement = {ij: full[ij] - canonical[ij] for ij in pullback}
+
+    # L_z = D_{-z} U recovers the original coefficients from B_z.
+    inverse = {
+        (d, x): Fraction(mobius(d // x), 1) / w[d] if d % x == 0 else Fraction(0)
+        for d in divisors_support
+        for x in products
+    }
+    recovered = {
+        d: sum((inverse[d, x] * B[x] for x in products), Fraction(0))
+        for d in divisors_support
+    }
+    transported_zero = {
+        (x, y): sum(
+            (inverse[d, x] * canonical[d, e] * inverse[e, y]
+             for d in divisors_support for e in divisors_support),
+            Fraction(0),
+        )
+        for x in products for y in products
+    }
+    row_mean = {
+        d: sum((q[e] * complement[d, e] for e in divisors_support), Fraction(0))
+        for d in divisors_support
+    }
+    column_mean = {
+        e: sum((p[d] * complement[d, e] for d in divisors_support), Fraction(0))
+        for e in divisors_support
+    }
+    grand = sum((p[d] * row_mean[d] for d in divisors_support), Fraction(0))
+    centered = {
+        (d, e): complement[d, e] - row_mean[d] - column_mean[e] + grand
+        for d, e in complement
+    }
+    resonant = {ij: full[ij] - centered[ij] for ij in full}
+
+    def output(entries):
+        return tuple(
+            sum((c[d] * entries[d, e] for d in divisors_support), Fraction(0))
+            for e in divisors_support
+        )
+
+    def inner(left, right):
+        return sum((u * v for u, v in zip(left, right, strict=True)), Fraction(0))
+
+    full_out, res_out, cent_out = map(output, (full, resonant, centered))
+    tt_parts = (
+        inner(res_out, res_out), inner(res_out, cent_out),
+        inner(cent_out, res_out), inner(cent_out, cent_out),
+    )
+    energy = inner(full_out, full_out)
+    pairing_exact = direct == pair(B, B, kernel) == pair(c, c, pullback)
+    reflection_exact = sum(reflection_parts, Fraction(0)) == direct
+    coordinate_exact = all(coordinate_checks)
+    coefficient_exact = all(B[x] == complete[x] - reflected[x] for x in products)
+    canonical_exact = pair(c, c, canonical) == pair(B, B, transported_zero)
+    if not all((pairing_exact, reflection_exact, coordinate_exact,
+                coefficient_exact, canonical_exact,
+                all(recovered[d] == c[d] for d in divisors_support),
+                sum(tt_parts, Fraction(0)) == energy)):
+        raise ArithmeticError("the common-cutoff physical adapter failed")
+
+    return {
+        "truncated_product_coefficients": tuple(B.items()),
+        "completed_product_coefficients": tuple(complete.items()),
+        "reflected_product_coefficients": tuple(reflected.items()),
+        "original_four_variable_sum": direct,
+        "product_pair_sum": pair(B, B, kernel),
+        "reflection_four_signed_blocks": reflection_parts,
+        "reflection_four_block_sum": sum(reflection_parts, Fraction(0)),
+        "physical_pullback_kernel": pullback,
+        "canonical_zero_transported_kernel": transported_zero,
+        "convolution_first_column_norm_squared": sum(
+            (w[1] * w[1] for _ in products), Fraction(0)
+        ),
+        "canonical_zero_original_coordinates": pair(c, c, canonical),
+        "canonical_zero_transported_coordinates": pair(B, B, transported_zero),
+        "incorrect_untransported_product_gram": pair(B, B, canonical),
+        "signed_residual_value": pair(c, c, full),
+        "unified_residual_kernel": full,
+        "nonzero_and_correction_complement_kernel": complement,
+        "resonant_kernel": resonant,
+        "centered_kernel": centered,
+        "direct_ttstar_energy": energy,
+        "four_signed_ttstar_components": tt_parts,
+        "truncated_equals_completed_minus_reflected": coefficient_exact,
+        "original_lattice_to_product_pairing_exact": pairing_exact and coordinate_exact,
+        "reflection_expansion_exact": reflection_exact,
+        "complete_divisor_support_exhaustive": True,
+        "strict_reflected_cofactor_endpoints": all(
+            d > N and k * N < x and k * N < X for x, d, k in reflected_rows
+        ),
+        "full_afe_direction_pair_present": (
+            {packet.afe_direction for packet in product_packets} == {"main", "dual"}
+        ),
+        "afe_diagonal_includes_unequal_divisors": unequal_diagonal,
+        "global_h_reassembly_before_reflection_required": True,
+        "packetwise_fixed_h_reflection_claimed": False,
+        "signed_kernel_recombination_exact": all(
+            full[ij] == resonant[ij] + centered[ij] for ij in full
+        ),
+        "ttstar_recombination_exact": sum(tt_parts, Fraction(0)) == energy,
+        "product_packet_labels": tuple(
+            (p.afe_direction, p.mellin_label, p.product_partition_label)
+            for p in product_packets
+        ),
+        "analytic_norm_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
 def unified_signed_zero_nonzero_operator_sides(
     *,
     coefficients: dict[int, Fraction],
@@ -3188,6 +3493,279 @@ def unified_signed_zero_nonzero_operator_sides(
         packet_labels_retained_before_ttstar=labels_retained,
         physical_nonzero_density_derived=False,
         separate_resonant_or_centered_bound_proved=False,
+        coupled_kernel_gate_closed=False,
+    )
+
+
+def unified_signed_zero_nonzero_double_mobius_type_operator_sides(
+    *,
+    smooth_coefficients: dict[int, Fraction],
+    canonical_zero_packets: tuple[SecondaryZeroPacket, ...],
+    nonzero_frequency_packets: tuple[SecondaryZeroPacket, ...],
+    left_density_weights: dict[int, Fraction],
+    right_density_weights: dict[int, Fraction],
+    cutoff_u: int,
+    cutoff_v: int,
+) -> UnifiedSignedDoubleMobiusTypeOperator:
+    """Apply both Möbius Type decompositions to the one signed operator.
+
+    ``smooth_coefficients[n]`` is the physical coefficient with its raw
+    Möbius factor removed.  The exact small/I/II identity is applied
+    pointwise and the resulting coefficient vectors are sent through the
+    same kernel
+
+    ``K_full = K_zero + K_nonzero = K_res + K_cent``.
+
+    Only then is one global ``TT*`` formed.  Consequently every ordered
+    Type pair contains the canonical zero packets, the nonzero complement,
+    and both resonant--centered mixed Gram terms.  Packet labels retain the
+    literal product ``a=h*delta`` throughout.  This is a finite signed
+    identity, not an analytic norm estimate.
+    """
+
+    if not smooth_coefficients:
+        raise ValueError("at least one smooth coefficient is required")
+    if min(cutoff_u, cutoff_v) <= 0:
+        raise ValueError("both Type cutoffs must be positive")
+    indices = tuple(sorted(smooth_coefficients))
+    if any(index <= 0 for index in indices):
+        raise ValueError("coefficient indices must be positive")
+    if not canonical_zero_packets:
+        raise ValueError("at least one canonical-zero packet is required")
+
+    all_packets = canonical_zero_packets + nonzero_frequency_packets
+    if any(
+        packet.poisson_frequency_h == 0
+        or packet.additive_shift_delta == 0
+        or not packet.afe_direction
+        or not packet.dyadic_label
+        for packet in all_packets
+    ):
+        raise ValueError("every packet requires nonzero h,delta and labels")
+
+    admitted_pairs = {(left, right) for left in indices for right in indices}
+    if any(
+        pair not in admitted_pairs
+        for packet in all_packets
+        for pair in packet.pair_kernel
+    ):
+        raise ValueError("a packet kernel leaves the coefficient support")
+
+    smooth = {
+        index: Fraction(smooth_coefficients[index]) for index in indices
+    }
+    type_names = ("small", "I", "II")
+    boundary = max(cutoff_u, cutoff_v)
+    multipliers: dict[int, dict[str, int]] = {}
+    factorization_rows: list[tuple[int, str, int, int, int, int]] = []
+    for index in indices:
+        values = {name: 0 for name in type_names}
+        if index <= boundary:
+            values["small"] = mobius(index)
+            factorization_rows.append(
+                (index, "small", 1, 1, index, mobius(index))
+            )
+        else:
+            for first_short in divisors(index):
+                quotient = index // first_short
+                for second_short in divisors(quotient):
+                    residual = quotient // second_short
+                    short_sign = mobius(first_short) * mobius(second_short)
+                    if short_sign == 0:
+                        continue
+                    if first_short <= cutoff_u and second_short <= cutoff_v:
+                        coefficient = -short_sign
+                        values["I"] += coefficient
+                        factorization_rows.append(
+                            (
+                                index,
+                                "I",
+                                first_short,
+                                second_short,
+                                residual,
+                                coefficient,
+                            )
+                        )
+                    if first_short > cutoff_u and second_short > cutoff_v:
+                        coefficient = short_sign
+                        values["II"] += coefficient
+                        factorization_rows.append(
+                            (
+                                index,
+                                "II",
+                                first_short,
+                                second_short,
+                                residual,
+                                coefficient,
+                            )
+                        )
+        if sum(values.values()) != mobius(index):
+            raise ArithmeticError("the exact small/I/II identity failed")
+        multipliers[index] = values
+
+    raw_coefficients = {
+        index: Fraction(mobius(index)) * smooth[index] for index in indices
+    }
+    type_vectors = {
+        name: {
+            index: Fraction(multipliers[index][name]) * smooth[index]
+            for index in indices
+        }
+        for name in type_names
+    }
+    reassembled = {
+        index: sum(
+            (type_vectors[name][index] for name in type_names), Fraction(0)
+        )
+        for index in indices
+    }
+
+    canonical_kernel = {
+        pair: sum(
+            (
+                Fraction(packet.pair_kernel.get(pair, Fraction(0)))
+                for packet in canonical_zero_packets
+            ),
+            Fraction(0),
+        )
+        for pair in admitted_pairs
+    }
+    base = unified_signed_zero_nonzero_operator_sides(
+        coefficients=raw_coefficients,
+        canonical_zero_kernel=canonical_kernel,
+        nonzero_frequency_packets=nonzero_frequency_packets,
+        left_density_weights=left_density_weights,
+        right_density_weights=right_density_weights,
+    )
+
+    def kernel_from_entries(
+        entries: tuple[tuple[int, int, Fraction], ...],
+    ) -> dict[tuple[int, int], Fraction]:
+        return {(left, right): value for left, right, value in entries}
+
+    full_kernel = kernel_from_entries(base.unified_kernel_entries)
+    resonant_kernel = kernel_from_entries(base.resonant_kernel_entries)
+    centered_kernel = kernel_from_entries(base.centered_kernel_entries)
+
+    def output(
+        vector: dict[int, Fraction],
+        kernel: dict[tuple[int, int], Fraction],
+    ) -> dict[int, Fraction]:
+        return {
+            right: sum(
+                (
+                    vector[left] * kernel[(left, right)]
+                    for left in indices
+                ),
+                Fraction(0),
+            )
+            for right in indices
+        }
+
+    def inner(
+        left: dict[int, Fraction], right: dict[int, Fraction]
+    ) -> Fraction:
+        return sum(
+            (left[index] * right[index] for index in indices), Fraction(0)
+        )
+
+    full_outputs = {
+        name: output(type_vectors[name], full_kernel) for name in type_names
+    }
+    resonant_outputs = {
+        name: output(type_vectors[name], resonant_kernel) for name in type_names
+    }
+    centered_outputs = {
+        name: output(type_vectors[name], centered_kernel) for name in type_names
+    }
+
+    def gram_entries(
+        left_outputs: dict[str, dict[int, Fraction]],
+        right_outputs: dict[str, dict[int, Fraction]],
+    ) -> tuple[tuple[str, str, Fraction], ...]:
+        return tuple(
+            (
+                left_name,
+                right_name,
+                inner(left_outputs[left_name], right_outputs[right_name]),
+            )
+            for left_name in type_names
+            for right_name in type_names
+        )
+
+    full_entries = gram_entries(full_outputs, full_outputs)
+    rr_entries = gram_entries(resonant_outputs, resonant_outputs)
+    rc_entries = gram_entries(resonant_outputs, centered_outputs)
+    cr_entries = gram_entries(centered_outputs, resonant_outputs)
+    cc_entries = gram_entries(centered_outputs, centered_outputs)
+    signed_sum = sum((entry[2] for entry in full_entries), Fraction(0))
+    component_sum = sum(
+        (
+            entry[2]
+            for entries in (rr_entries, rc_entries, cr_entries, cc_entries)
+            for entry in entries
+        ),
+        Fraction(0),
+    )
+    coefficients_reassemble = reassembled == raw_coefficients
+    if not coefficients_reassemble:
+        raise ArithmeticError(
+            "the Type vectors do not reconstruct the raw coefficients"
+        )
+    if signed_sum != base.direct_ttstar_energy:
+        raise ArithmeticError(
+            "the signed Type Gram does not reconstruct direct TT*"
+        )
+    if component_sum != base.direct_ttstar_energy:
+        raise ArithmeticError(
+            "the four signed kernel blocks do not reconstruct TT*"
+        )
+    packet_labels = tuple(
+        (
+            family,
+            packet.afe_direction,
+            packet.poisson_frequency_h,
+            packet.additive_shift_delta,
+            packet.poisson_frequency_h * packet.additive_shift_delta,
+            packet.dyadic_label,
+        )
+        for family, packets in (
+            ("canonical-zero", canonical_zero_packets),
+            ("nonzero", nonzero_frequency_packets),
+        )
+        for packet in packets
+    )
+    active_names = tuple(
+        name
+        for name in type_names
+        if any(type_vectors[name][index] != 0 for index in indices)
+    )
+    return UnifiedSignedDoubleMobiusTypeOperator(
+        raw_mobius_coefficients=tuple(raw_coefficients.items()),
+        type_coefficient_vectors=tuple(
+            (name, tuple(type_vectors[name].items())) for name in type_names
+        ),
+        type_factorization_rows=tuple(factorization_rows),
+        active_type_names=active_names,
+        packet_product_labels=packet_labels,
+        full_type_ttstar_entries=full_entries,
+        resonant_resonant_type_ttstar_entries=rr_entries,
+        resonant_centered_type_ttstar_entries=rc_entries,
+        centered_resonant_type_ttstar_entries=cr_entries,
+        centered_centered_type_ttstar_entries=cc_entries,
+        direct_full_ttstar_energy=base.direct_ttstar_energy,
+        signed_type_ttstar_sum=signed_sum,
+        four_kernel_component_type_ttstar_sum=component_sum,
+        raw_coefficients_reassemble_from_type_vectors=coefficients_reassemble,
+        every_type_block_keeps_full_unified_kernel=True,
+        a_equals_h_times_delta_retained=all(
+            product_label == h * delta
+            for _, _, h, delta, product_label, _ in packet_labels
+        ),
+        two_mobius_weights_retained_until_global_ttstar=True,
+        no_type_blockwise_absolute_value_taken=True,
+        physical_nonzero_density_derived=base.physical_nonzero_density_derived,
+        USZNTT_bound_proved=False,
         coupled_kernel_gate_closed=False,
     )
 

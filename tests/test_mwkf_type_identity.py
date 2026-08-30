@@ -1559,6 +1559,153 @@ def test_physical_zero_mellin_adapter_keeps_both_reflection_cross_terms() -> Non
     assert not sides.unified_signed_operator_bound_proved
 
 
+def test_global_45_reflection_adapter_keeps_the_convolution_coordinate_map() -> None:
+    """Catch substituting a product convolution into a mollifier Gram."""
+    helper = getattr(
+        type_identity,
+        "physical_mellin_convolution_signed_operator_sides",
+        None,
+    )
+    assert helper is not None, "the global (4.5)-to-reflection adapter is missing"
+
+    result = helper(
+        mollifier_cutoff=2,
+        product_cutoff=6,
+        complete_divisor_coefficients={
+            1: F(1),
+            2: F(-2),
+            3: F(3),
+            4: F(0),
+            5: F(5),
+            6: F(-6),
+        },
+        mellin_weights={index: F(1) for index in range(1, 7)},
+        product_packets=(
+            type_identity.MellinProductPacket(
+                "main",
+                "z=0",
+                "product-X6",
+                {(1, 2): F(3), (2, 1): F(5), (3, 6): F(-1)},
+            ),
+            type_identity.MellinProductPacket(
+                "dual",
+                "z=0",
+                "product-X6",
+                {(6, 3): F(4), (2, 2): F(2), (1, 6): F(7)},
+            ),
+        ),
+        canonical_zero_kernel={(1, 2): F(3), (2, 1): F(3)},
+        main_term_kernel={(1, 1): F(5), (2, 2): F(7)},
+        left_density_weights={1: F(1, 2), 2: F(1, 2)},
+        right_density_weights={1: F(1, 2), 2: F(1, 2)},
+    )
+
+    assert result["truncated_product_coefficients"] == (
+        (1, F(1)),
+        (2, F(-1)),
+        (3, F(1)),
+        (4, F(-1)),
+        (5, F(1)),
+        (6, F(-1)),
+    )
+    assert result["completed_product_coefficients"] == (
+        (1, F(1)),
+        (2, F(-1)),
+        (3, F(4)),
+        (4, F(-1)),
+        (5, F(6)),
+        (6, F(-4)),
+    )
+    assert result["reflected_product_coefficients"] == (
+        (1, F(0)),
+        (2, F(0)),
+        (3, F(3)),
+        (4, F(0)),
+        (5, F(5)),
+        (6, F(-3)),
+    )
+    assert result["original_four_variable_sum"] == F(-16)
+    assert result["product_pair_sum"] == F(-16)
+    assert result["reflection_four_block_sum"] == F(-16)
+    assert result["physical_pullback_kernel"] == {
+        (1, 1): F(20), (1, 2): F(11), (2, 1): F(11), (2, 2): F(2)
+    }
+    assert result["canonical_zero_original_coordinates"] == F(-12)
+    assert result["canonical_zero_transported_coordinates"] == F(-12)
+    assert result["incorrect_untransported_product_gram"] == F(-6)
+    assert result["signed_residual_value"] == F(-49)
+    assert result["direct_ttstar_energy"] == F(490)
+    assert result["four_signed_ttstar_components"] == (
+        F(557, 2), F(171, 2), F(171, 2), F(81, 2)
+    )
+    assert result["truncated_equals_completed_minus_reflected"]
+    assert result["original_lattice_to_product_pairing_exact"]
+    assert result["reflection_expansion_exact"]
+    assert result["complete_divisor_support_exhaustive"]
+    assert result["strict_reflected_cofactor_endpoints"]
+    assert result["full_afe_direction_pair_present"]
+    assert result["afe_diagonal_includes_unequal_divisors"]
+    assert result["global_h_reassembly_before_reflection_required"]
+    assert not result["packetwise_fixed_h_reflection_claimed"]
+    assert result["signed_kernel_recombination_exact"]
+    assert result["ttstar_recombination_exact"]
+    assert result["convolution_first_column_norm_squared"] == F(6)
+    assert not result["analytic_norm_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+@pytest.mark.parametrize("power", [-1, 1, 2])
+def test_physical_adapter_transports_the_entire_mellin_weight(power: int) -> None:
+    """The inverse coordinate map must undo d^z, not just divisor convolution."""
+    helper = type_identity.physical_mellin_convolution_signed_operator_sides
+    common = {
+        "mollifier_cutoff": 2,
+        "product_cutoff": 4,
+        "complete_divisor_coefficients": {1: F(1), 2: F(-2), 3: F(3), 4: F(0)},
+        "mellin_weights": {d: F(d) ** power for d in range(1, 5)},
+        "product_packets": (
+            type_identity.MellinProductPacket(
+                "main", f"z={power}", "product-X4",
+                {(1, 2): F(3), (2, 4): F(-1), (3, 1): F(2)},
+            ),
+        ),
+        "canonical_zero_kernel": {(1, 2): F(3), (2, 1): F(3)},
+        "main_term_kernel": {(1, 1): F(5)},
+    }
+    uniform = helper(
+        **common,
+        left_density_weights={1: F(1, 2), 2: F(1, 2)},
+        right_density_weights={1: F(1, 2), 2: F(1, 2)},
+    )
+    endpoint = helper(
+        **common,
+        left_density_weights={1: F(1), 2: F(0)},
+        right_density_weights={1: F(0), 2: F(1)},
+    )
+    assert dict(uniform["truncated_product_coefficients"])[2] == 1 - 2 * F(2) ** power
+    assert uniform["canonical_zero_original_coordinates"] == F(-12)
+    assert uniform["canonical_zero_transported_coordinates"] == F(-12)
+    assert uniform["unified_residual_kernel"] == endpoint["unified_residual_kernel"]
+    assert uniform["direct_ttstar_energy"] == endpoint["direct_ttstar_energy"]
+    assert uniform["resonant_kernel"] != endpoint["resonant_kernel"]
+    assert not uniform["coupled_kernel_gate_closed"]
+
+
+def test_physical_adapter_rejects_incomplete_reflection_lattice() -> None:
+    with pytest.raises(ValueError, match="every d <= X"):
+        type_identity.physical_mellin_convolution_signed_operator_sides(
+            mollifier_cutoff=2,
+            product_cutoff=4,
+            complete_divisor_coefficients={1: F(1), 2: F(-2)},
+            mellin_weights={d: F(1) for d in range(1, 5)},
+            product_packets=(),
+            canonical_zero_kernel={},
+            main_term_kernel={},
+            left_density_weights={1: F(1, 2), 2: F(1, 2)},
+            right_density_weights={1: F(1, 2), 2: F(1, 2)},
+        )
+
+
 def test_unified_signed_operator_centers_nonzero_packets_only_once() -> None:
     """Catch dropping either resonant-centered TT* cross term after centering."""
     sides = type_identity.unified_signed_zero_nonzero_operator_sides(
@@ -1615,6 +1762,120 @@ def test_unified_signed_operator_centers_nonzero_packets_only_once() -> None:
     assert sides.packet_labels_retained_before_ttstar
     assert not sides.physical_nonzero_density_derived
     assert not sides.separate_resonant_or_centered_bound_proved
+    assert not sides.coupled_kernel_gate_closed
+
+
+def test_unified_signed_operator_type_split_keeps_all_four_signed_cross_blocks(
+) -> None:
+    """Catch losing h*delta, either Mobius split, or a mixed Gram term."""
+    helper = getattr(
+        type_identity,
+        "unified_signed_zero_nonzero_double_mobius_type_operator_sides",
+        None,
+    )
+    assert helper is not None, "unified signed double-Mobius Type operator is missing"
+
+    sides = helper(
+        smooth_coefficients={6: F(2), 35: F(3)},
+        canonical_zero_packets=(
+            type_identity.SecondaryZeroPacket(
+                "main", 2, 3, "zero-H2-D3", {(6, 35): F(2), (35, 6): F(2)}
+            ),
+        ),
+        nonzero_frequency_packets=(
+            type_identity.SecondaryZeroPacket(
+                "main",
+                1,
+                2,
+                "H1-D2",
+                {(6, 6): F(3), (35, 6): F(-1), (35, 35): F(2)},
+            ),
+            type_identity.SecondaryZeroPacket(
+                "dual",
+                -2,
+                -1,
+                "H2-D1",
+                {(6, 35): F(1), (35, 35): F(3)},
+            ),
+        ),
+        left_density_weights={6: F(1, 2), 35: F(1, 2)},
+        right_density_weights={6: F(1, 2), 35: F(1, 2)},
+        cutoff_u=3,
+        cutoff_v=3,
+    )
+
+    assert sides.raw_mobius_coefficients == ((6, F(2)), (35, F(3)))
+    assert sides.type_coefficient_vectors == (
+        ("small", ((6, F(0)), (35, F(0)))),
+        ("I", ((6, F(2)), (35, F(-3)))),
+        ("II", ((6, F(0)), (35, F(6)))),
+    )
+    assert sides.active_type_names == ("I", "II")
+    assert sides.packet_product_labels == (
+        ("canonical-zero", "main", 2, 3, 6, "zero-H2-D3"),
+        ("nonzero", "main", 1, 2, 2, "H1-D2"),
+        ("nonzero", "dual", -2, -1, 2, "H2-D1"),
+    )
+
+    full = {
+        (left, right): value
+        for left, right, value in sides.full_type_ttstar_entries
+    }
+    rr = {
+        (left, right): value
+        for left, right, value in sides.resonant_resonant_type_ttstar_entries
+    }
+    rc = {
+        (left, right): value
+        for left, right, value in sides.resonant_centered_type_ttstar_entries
+    }
+    cr = {
+        (left, right): value
+        for left, right, value in sides.centered_resonant_type_ttstar_entries
+    }
+    cc = {
+        (left, right): value
+        for left, right, value in sides.centered_centered_type_ttstar_entries
+    }
+    assert {(a, b): full[(a, b)] for a in ("I", "II") for b in ("I", "II")} == {
+        ("I", "I"): F(90),
+        ("I", "II"): F(-252),
+        ("II", "I"): F(-252),
+        ("II", "II"): F(936),
+    }
+    assert {(a, b): rr[(a, b)] for a in ("I", "II") for b in ("I", "II")} == {
+        ("I", "I"): F(50),
+        ("I", "II"): F(-108),
+        ("II", "I"): F(-108),
+        ("II", "II"): F(648),
+    }
+    assert {(a, b): rc[(a, b)] for a in ("I", "II") for b in ("I", "II")} == {
+        ("I", "I"): F(-80),
+        ("I", "II"): F(96),
+        ("II", "I"): F(0),
+        ("II", "II"): F(0),
+    }
+    assert {(a, b): cr[(a, b)] for a in ("I", "II") for b in ("I", "II")} == {
+        ("I", "I"): F(-80),
+        ("I", "II"): F(0),
+        ("II", "I"): F(96),
+        ("II", "II"): F(0),
+    }
+    assert {(a, b): cc[(a, b)] for a in ("I", "II") for b in ("I", "II")} == {
+        ("I", "I"): F(200),
+        ("I", "II"): F(-240),
+        ("II", "I"): F(-240),
+        ("II", "II"): F(288),
+    }
+    assert sides.direct_full_ttstar_energy == F(522)
+    assert sides.signed_type_ttstar_sum == F(522)
+    assert sides.four_kernel_component_type_ttstar_sum == F(522)
+    assert sides.raw_coefficients_reassemble_from_type_vectors
+    assert sides.every_type_block_keeps_full_unified_kernel
+    assert sides.a_equals_h_times_delta_retained
+    assert sides.two_mobius_weights_retained_until_global_ttstar
+    assert sides.no_type_blockwise_absolute_value_taken
+    assert not sides.USZNTT_bound_proved
     assert not sides.coupled_kernel_gate_closed
 
 

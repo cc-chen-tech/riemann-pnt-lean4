@@ -42,6 +42,28 @@ class RouteResult:
 
 
 @dataclass(frozen=True)
+class FinalPublishedCoverageRow:
+    """One published input projected to the final conductor wedge.
+
+    ``formal_local_saving_exponent`` records only the theorem's most
+    optimistic fixed-row saving in the physical ``T`` normalization.  It
+    becomes usable only when the parameter hypotheses, coefficient class,
+    and the full physical adapter are all verified.
+    """
+
+    source: str
+    theorem_scope: str
+    formal_local_saving_exponent: Fraction | None
+    usable_physical_saving_exponent: Fraction
+    theorem_parameter_hypotheses_verified: bool
+    physical_coefficient_class_verified: bool
+    physical_adapter_verified: bool
+    meets_required_saving: bool
+    covers_final_wedge: bool
+    obstruction: str
+
+
+@dataclass(frozen=True)
 class ShiftedPoissonScales:
     v: Fraction
     j: Fraction
@@ -23767,6 +23789,225 @@ def near_primitive_conductor_imbalance_wedge_audit(
         ),
         "pre_cauchy_conductor_type_saving_proved": False,
         "bounded_D_one_power_gate_closed": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def final_coupled_kernel_published_polytope_audit(
+    *,
+    long_active_cofactor_exponent: Fraction,
+    short_active_cofactor_exponent: Fraction,
+    long_primitive_conductor_exponent: Fraction,
+    short_primitive_conductor_exponent: Fraction,
+    maximum_physical_active_scale_gap: Fraction,
+) -> dict[str, object]:
+    """Project every registered published input to the final NPIT wedge.
+
+    The orientation is the one in which the first primitive conductor is
+    longer.  Put ``rho_i=sigma_i+kappa_i``.  The common-frequency mutual
+    character estimate has already spent the imprimitive margins, so the
+    genuinely missing pre-Cauchy saving is
+
+    ``eta=(sigma_long-sigma_short)/2-kappa_long-kappa_short``.
+
+    A row is coverage only when its theorem parameters, its coefficient
+    class, the physical adapter, and the required saving all hold at once.
+    A favourable fixed-modulus exponent with any failed adapter remains a
+    diagnostic local saving and contributes zero usable physical saving.
+    """
+
+    rho_long = F(long_active_cofactor_exponent)
+    rho_short = F(short_active_cofactor_exponent)
+    sigma_long = F(long_primitive_conductor_exponent)
+    sigma_short = F(short_primitive_conductor_exponent)
+    maximum_gap = F(maximum_physical_active_scale_gap)
+    if min(rho_long, rho_short, sigma_long, sigma_short, maximum_gap) < 0:
+        raise ValueError("all final-wedge exponents must be nonnegative")
+    if sigma_long < sigma_short:
+        raise ValueError("the supplied primitive conductors are not oriented")
+    if sigma_long > rho_long or sigma_short > rho_short:
+        raise ValueError("primitive conductors cannot exceed active cofactors")
+    active_gap = rho_long - rho_short
+    if active_gap < 0 or active_gap > maximum_gap:
+        raise ValueError("the oriented active gap is outside the physical range")
+
+    kappa_long = rho_long - sigma_long
+    kappa_short = rho_short - sigma_short
+    threshold = 3 * kappa_long + kappa_short
+    inside_wedge = bool(active_gap > threshold)
+    required = _positive_part(
+        (sigma_long - sigma_short) / 2 - kappa_long - kappa_short
+    )
+
+    def row(
+        *,
+        source: str,
+        scope: str,
+        formal: Fraction | None,
+        parameters: bool,
+        coefficients: bool,
+        adapter: bool,
+        obstruction: str,
+    ) -> FinalPublishedCoverageRow:
+        formal_value = None if formal is None else F(formal)
+        usable = (
+            formal_value
+            if formal_value is not None and parameters and coefficients and adapter
+            else F(0)
+        )
+        meets = bool(usable >= required)
+        covers = bool(
+            inside_wedge
+            and parameters
+            and coefficients
+            and adapter
+            and meets
+        )
+        return FinalPublishedCoverageRow(
+            source=source,
+            theorem_scope=scope,
+            formal_local_saving_exponent=formal_value,
+            usable_physical_saving_exponent=usable,
+            theorem_parameter_hypotheses_verified=bool(parameters),
+            physical_coefficient_class_verified=bool(coefficients),
+            physical_adapter_verified=bool(adapter),
+            meets_required_saving=meets,
+            covers_final_wedge=covers,
+            obstruction=obstruction,
+        )
+
+    rows = (
+        row(
+            source="primitive mutual-character large sieve",
+            scope="two moving primitive-character families at one common frequency",
+            formal=F(0),
+            parameters=True,
+            coefficients=True,
+            adapter=True,
+            obstruction=(
+                "its imprimitive margins are already spent; the positive conductor "
+                "imbalance is exactly the remaining eta"
+            ),
+        ),
+        row(
+            source="FKM/FKMS fixed-prime trace estimates",
+            scope="one fixed prime field and separated Type atom",
+            formal=sigma_long / 8,
+            parameters=False,
+            coefficients=False,
+            adapter=False,
+            obstruction=(
+                "the opposite moving character family and the level-dependent "
+                "h*delta/Type packet are absent"
+            ),
+        ),
+        row(
+            source="Bourgain-Garaev fixed-ring multilinear estimates",
+            scope="one fixed residue ring with a separated inverse-product phase",
+            formal=None,
+            parameters=False,
+            coefficients=False,
+            adapter=False,
+            obstruction=(
+                "the theorem has no signed varying-modulus family and no simultaneous "
+                "physical direct phase"
+            ),
+        ),
+        row(
+            source="MQW/Blomer-Pascadi/Pascadi completed-ratio estimates",
+            scope="fixed-modulus classical Kloosterman bilinear forms",
+            formal=sigma_long / 32,
+            parameters=False,
+            coefficients=False,
+            adapter=False,
+            obstruction=(
+                "literal ratio completion has full residue length and three moving "
+                "levels with level-dependent coefficients"
+            ),
+        ),
+        row(
+            source="Shen varying-modulus inverse-only estimate",
+            scope="one inverse-only numerator averaged over odd moduli",
+            formal=F(1, 8),
+            parameters=False,
+            coefficients=False,
+            adapter=False,
+            obstruction=(
+                "the inverse numerator is fixed before Minkowski; the direct phase "
+                "and moving double-Mobius h*delta packet are absent"
+            ),
+        ),
+        row(
+            source="Mohammadi fixed-field small-box estimate",
+            scope="direct-plus-inverse product phase over one finite field",
+            formal=None,
+            parameters=False,
+            coefficients=False,
+            adapter=False,
+            obstruction=(
+                "there is no varying squarefree-modulus norm or common physical "
+                "coefficient family"
+            ),
+        ),
+        row(
+            source="Yang convolution Bombieri-Vinogradov estimate",
+            scope=(
+                "prime convolution in a fixed residue with well-factorable "
+                "modulus weight"
+            ),
+            formal=F(0),
+            parameters=False,
+            coefficients=False,
+            adapter=False,
+            obstruction=(
+                "outer mu(q) is not a supplied well-factorable sieve weight, the "
+                "residue h*delta moves, and the saving is logarithmic"
+            ),
+        ),
+        row(
+            source="Milicevic-Robinson-Shupe prime-power product moment",
+            scope="complete shifted products of four Kloosterman sums modulo p^n",
+            formal=sigma_long / 2,
+            parameters=False,
+            coefficients=False,
+            adapter=False,
+            obstruction=(
+                "physical Mobius moduli are squarefree; at each prime factor n=1 "
+                "the theorem gives no joint varying-modulus Type adapter"
+            ),
+        ),
+        row(
+            source="Tang short twisted-moment reciprocity",
+            scope="one fixed pair of prime twists over a T^delta time window",
+            formal=F(0),
+            parameters=False,
+            coefficients=False,
+            adapter=False,
+            obstruction=(
+                "the reciprocity identity has no two level-dependent Mobius/Type "
+                "coefficient families and is not a saving estimate for their outer norm"
+            ),
+        ),
+    )
+    covered_sources = tuple(entry.source for entry in rows if entry.covers_final_wedge)
+    return {
+        "long_active_cofactor_exponent": rho_long,
+        "short_active_cofactor_exponent": rho_short,
+        "long_primitive_conductor_exponent": sigma_long,
+        "short_primitive_conductor_exponent": sigma_short,
+        "long_imprimitive_cofactor_exponent": kappa_long,
+        "short_imprimitive_cofactor_exponent": kappa_short,
+        "oriented_wedge_threshold_exponent": threshold,
+        "inside_final_conductor_imbalance_wedge": inside_wedge,
+        "required_pre_cauchy_saving_exponent": required,
+        "maximum_required_saving_exponent": maximum_gap / 2,
+        "published_rows": rows,
+        "covered_sources": covered_sources,
+        "registered_published_inputs_exhausted": True,
+        "new_published_cell_covered": bool(covered_sources),
+        "residual_gate_name": "USZNTT",
+        "residual_retains_a_equals_h_times_delta": True,
+        "residual_retains_both_mobius_weights": True,
         "coupled_kernel_gate_closed": False,
     }
 

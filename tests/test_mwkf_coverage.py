@@ -9557,6 +9557,75 @@ def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
     assert not physical["coupled_kernel_gate_closed"]
 
 
+def test_final_wedge_published_table_rejects_only_local_or_wrong_weight_inputs(
+) -> None:
+    """Catch promoting a local or wrong-coefficient theorem to NPIT coverage."""
+    audit = getattr(
+        coverage_audit,
+        "final_coupled_kernel_published_polytope_audit",
+        None,
+    )
+    assert audit is not None, "final coupled-kernel coverage table is missing"
+
+    result = audit(
+        long_active_cofactor_exponent=F(2),
+        short_active_cofactor_exponent=F(3, 2),
+        long_primitive_conductor_exponent=F(2),
+        short_primitive_conductor_exponent=F(3, 2),
+        maximum_physical_active_scale_gap=F(1, 2),
+    )
+    rows = {row.source: row for row in result["published_rows"]}
+
+    assert result["inside_final_conductor_imbalance_wedge"]
+    assert result["required_pre_cauchy_saving_exponent"] == F(1, 4)
+    assert set(rows) == {
+        "primitive mutual-character large sieve",
+        "FKM/FKMS fixed-prime trace estimates",
+        "Bourgain-Garaev fixed-ring multilinear estimates",
+        "MQW/Blomer-Pascadi/Pascadi completed-ratio estimates",
+        "Shen varying-modulus inverse-only estimate",
+        "Mohammadi fixed-field small-box estimate",
+        "Yang convolution Bombieri-Vinogradov estimate",
+        "Milicevic-Robinson-Shupe prime-power product moment",
+        "Tang short twisted-moment reciprocity",
+    }
+    assert rows["primitive mutual-character large sieve"].physical_adapter_verified
+    assert not rows["primitive mutual-character large sieve"].meets_required_saving
+    assert (
+        rows[
+            "FKM/FKMS fixed-prime trace estimates"
+        ].formal_local_saving_exponent
+        == F(1, 4)
+    )
+    assert rows[
+        "MQW/Blomer-Pascadi/Pascadi completed-ratio estimates"
+    ].formal_local_saving_exponent == F(1, 16)
+    assert (
+        rows[
+            "Shen varying-modulus inverse-only estimate"
+        ].formal_local_saving_exponent
+        == F(1, 8)
+    )
+    assert rows[
+        "Milicevic-Robinson-Shupe prime-power product moment"
+    ].formal_local_saving_exponent == F(1)
+    assert rows[
+        "Yang convolution Bombieri-Vinogradov estimate"
+    ].usable_physical_saving_exponent == 0
+    assert (
+        rows[
+            "Tang short twisted-moment reciprocity"
+        ].usable_physical_saving_exponent
+        == 0
+    )
+    assert all(not row.covers_final_wedge for row in rows.values())
+    assert result["registered_published_inputs_exhausted"]
+    assert result["covered_sources"] == ()
+    assert result["residual_gate_name"] == "USZNTT"
+    assert not result["new_published_cell_covered"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
 def test_outer_modulus_row_energy_cannot_exploit_mobius_signs() -> None:
     """Independent row phases can absorb every prescribed outer sign."""
 
