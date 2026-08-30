@@ -157,8 +157,8 @@ class ProperDivisorChecks(unittest.TestCase):
         from sympy import isprime
         T=10**6
         M=K=1000
-        e,p,r=10000019,100003,100019
-        s,n=100022190611801083,100022190611801131
+        e,p,r=32000011,50021,50101
+        s,n=80195295439123331,80195295439123489
         self.assertTrue(all(isprime(z) for z in (e,p,r,n)))
         self.assertEqual(s,e*p*r)
         self.assertGreaterEqual(min(p,r),8*T//K)
@@ -171,8 +171,8 @@ class ProperDivisorChecks(unittest.TestCase):
         self.assertTrue(F(K,2)<y<2*K)
         self.assertLessEqual(M*K,T)
         self.assertLessEqual(e*e*T,s*s)
-        self.assertLessEqual(e**550,T**687)
-        self.assertLessEqual(T**687,(4*e)**550)
+        self.assertTrue(T**687<=e**550, 'e must lie above the exact E endpoint')
+        self.assertTrue(e**550<2**550*T**687, 'e must lie below the exact 2E endpoint')
 
     def test_small_cofactor_can_retain_a_stationary_frequency(self):
         T,K,freq=64,8,2
@@ -193,4 +193,3 @@ class ProperDivisorChecks(unittest.TestCase):
 
 if __name__=='__main__':
     unittest.main()
-
