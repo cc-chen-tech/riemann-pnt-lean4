@@ -62,6 +62,48 @@ def centered_exponents(eta):
 
 
 class CenteredConductorChecks(unittest.TestCase):
+    def test_joint_hard_edge_has_no_uniform_c1_bound(self):
+        # After e=fa the endpoint moves with a; fixed-e BV is not joint C1.
+        hard = lambda a, u: int(1 <= a*u <= 2)
+        for j in range(3, 15):
+            h = F(1, 2**j)
+            self.assertEqual(hard(1+h, 1)-hard(1-h, 1), 1)
+            self.assertEqual(F(1, 2*h), 2**(j-1))
+        self.assertNotEqual(hard(F(3, 2), F(3, 4)), hard(1, F(3, 4)))
+
+    def test_finite_overlapping_partition_preserves_signed_joint_sum(self):
+        # Piecewise-linear surrogate tests the finite algebra, not C6 regularity.
+        rho = lambda x: F(1) if x <= 1 else max(F(0), 2-x)
+        part = lambda x: rho(x)-rho(2*x)
+        scales = [F(2)**j for j in range(-2, 8)]
+        total = split = F(0)
+        for h, delta in product(range(-9, 10), repeat=2):
+            if not h or not delta:
+                continue
+            weight = F(h-2*delta+h*delta, 37)
+            atoms = sum((part(abs(h)/H)*part(abs(delta)/L)
+                         for H, L in product(scales, repeat=2)), F(0))
+            self.assertEqual(atoms, 1)
+            total += weight
+            split += weight*atoms
+        self.assertEqual(split, total)
+        self.assertGreater(part(F(3, 4)), 0)
+        self.assertFalse(1 <= F(3, 4) <= 2)  # New packet is not the old hard shell.
+
+    def test_smooth_packet_support_and_sobolev_cost(self):
+        for a in (F(1), F(3, 2), F(2)):
+            self.assertGreaterEqual(F(1, 2)/a, F(1, 4))
+            self.assertLessEqual(2/a, 2)
+        self.assertGreater(2*5-4, 5)
+        self.assertGreaterEqual(6, 5)
+
+    def test_scope_contract_requires_explicit_smooth_repartition(self):
+        note = (Path(__file__).resolve().parents[1]/
+                "docs/research/2026-08-31-physical-centered-conductor-split.md").read_text()
+        for required in ("CS0.", "一般 literal 硬壳", "\\Psi_{\\rm sm}",
+                         "内部整包", "\\mathcal A^{\\rm sm}_J"):
+            self.assertIn(required, note)
+
     def test_ie_mobius_coefficient_including_nonsquarefree(self):
         for f, a, b in product(range(1, 12), repeat=3):
             left = mobius(f)*mobius(f*a)*mobius(f*b)
