@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-30 一般单位 Type-II 与完整 e 成本。** [GU1–GU12](2026-08-30-mwkf-general-unit-type-ii.md) 恢复真实 e,q 掩码：q₀=rad(q)、r=eq₀、g=(A,q₀)、A=ga、L=ar，全部 v 系数精确化为 µ(r/g)κ_r(n)κ_a(n)/(ar)。固定 q 的显式算术密度对全部 e 只花调和成本，物理界为 HL·P/R。误差逐 e 没有幂次衰减；平衡顶层完整 e≈E 的成本是 T^{2+ε}E√q₀(UB₀)^{3/2}，覆盖条件为 η+χ/2+3β/2≤1。它包括 q=1、E≈T^{1/2}、B₀≈T^{1/3} 的整个 Type-II 分片，保留并核验过渡边界与频率尾。无精确 determinant 零仍不能排除近共振；长 b/大 e、原 q 外层及完整 signed operator 的目标界仍未证明。这不是完整 twisted moment。
+
 > **2026-08-30 全 v Type-II 重组与短 b 覆盖。** [JT1–JT16](2026-08-30-mwkf-joint-type-ii-density.md) 保留真实 transition boundary，用精确有理坐标变换控制联合 Poisson symbol；在 e=q=1 时，先恢复所有 v|A 再令 n=(A/v)ℓ，系数合并为 µ((A,n))φ((A,n))/A。初等平方自由均值给出显式密度 c(bc)δ_{bc}(n)；其整个 b 范围的物理成本为 HL·P/R，不是原 canonical zero Gram。平衡顶层 K≈P≈T 的误差成本为 T^{2+ε}(UB₀)^{3/2}，故 U,V 为对数幂、b≈B₀≲T^{2/3} 的整个 v 家族达到 T^{3+ε}，其 transition boundary 由 4UB₀<D 排除。长 b、其他 e,q、统一 signed operator 的完整目标界与 twisted moment 仍未证明。
 
 > **2026-08-30 联合 κ/quotient 的 Type-I 覆盖。** [JQ1–JQ18](2026-08-30-mwkf-joint-kappa-type-i.md) 将完整 κ 与真正无符号 Type-I quotient 一起 Poisson，再对其全部非零频率取绝对值；保留所有除数、零 j、远 j、连续密度与显式双频率尾。真实物理成本是 `ρ[D²(1+Z)^(-J)+DZUV/K] T^ε`，整个 e-shell 为 `ρ[S²/E·(1+Z)^(-J)+SZUV/K] T^ε`。平衡顶层 K≈Z≈T、U,V 为固定对数幂时，这个 Type-I 部分达到自身 T^{3+ε} 预算；降低 cutoff 会扩大剩余 Type-II，不会令其消失。完整 coupled-kernel gate、统一 signed operator 的目标界与 twisted moment 仍未证明。
@@ -23,6 +25,7 @@
 >
 > | component | status in this note |
 > |---|---|
+> | General-unit Type-II density and e/b coverage | GU2 keeps primes shared by A and q and the induced mu(e) sign. At fixed q, GU9 bounds the arithmetic density summed over every e by HL*P/R; this is not the canonical zero Gram. GU10 charges the full E factor in the e-shell error, yielding top-core coverage eta+chi/2+3*beta/2<=1 with explicit endpoints. The original q outer sum, remaining long b/e and complete signed operator estimate stay open |
 > | All-v Type-II arithmetic density and short-b coverage | JT7 restores every divisor before absolute values. JT9 evaluates the squarefree mean with unit masks and all large-divisor errors. In the e=q=1 balanced top core, the explicit density is within budget and the complete b≲T^(2/3) Type-II family is O(T^(3+epsilon)), with verified transition boundary and nonstationary tails. Long b, other e,q and the full canonical-zero/nonzero operator estimate remain open |
 > | LCM main quadratic form | proved separately; its normalization is rechecked below |
 > | Exact AFE and shifted-divisor identity | proved after audit in Sections 2--3 |
@@ -28411,6 +28414,49 @@ fraction, so the Bettin--Chandee or Wright estimates are not direct
 adapters for it. Long b, the other e,q families, and the complete
 canonical-zero/nonzero signed operator norm remain unproved.
 No full twisted-moment claim follows from this checkpoint.
+
+### 9.212 General-unit Type-II density survives all e with a harmonic cost
+
+The [general-unit note](2026-08-30-mwkf-general-unit-type-ii.md)
+removes the e=q=1 restriction from the exact divisor adapter.
+It freezes q0=rad(q), r=e*q0, g=gcd(A,q0), A=g*a and L=a*r.
+The full v|L sum with n=(L/v)*ell has coefficient
+mu(r/g)*kappa_r(n)*kappa_a(n)/(a*r), with (bc,r)=1 and
+(a,r*bc)=1 retained. The ordinary rational carrier is
+e(-n*g*k*l/(j*bc*r)); its full symbol remains allocation-independent.
+The factor mu(r/g) includes the e Mobius sign.
+
+GU6 strengthens the squarefree mean by retaining (d,r*bc)=1 in
+the discrepancy divisor sum. The weighted density average GU7a has
+an external 1/r which cancels the r-prime Euler factors. Consequently
+the actual arithmetic density is at most HL*P/(R*e) per e and
+HL*P/R after every effective e, for fixed original q. This does not
+evaluate the original canonical zero Gram or sum the original q axis.
+
+For the error, the identity kappa_r(d*m)=kappa_r(m) requires (d,r)=1.
+The full integer average is bounded by the totient/floor formula GU7b,
+with no uncharged +1, and then GU8 gives the required weighted
+divisor average. Restoring every b,c,g and frequency yields
+rho*sqrt(S*q0)*Z^(3/2)*(U*B0)^(3/2)/K per e. There is no e power
+left: the entire e~E shell must pay an extra E.
+
+At the balanced top this is T^(2+epsilon)*E*sqrt(q0)*(U*B0)^(3/2).
+With eta=log_T(E), chi=log_T(q0), beta=log_T(U*B0), the condition
+eta+chi/2+3*beta/2<=1 reaches the T^3 budget. The explicit condition
+8*E*U*B0<S excludes the transition boundary and K>2 excludes the
+exceptional kappa=e=1 term; transformed noncritical tails remain
+rapid after all polynomial-size outer counts. In particular,
+q=1, E~T^(1/2), B0~T^(1/3) and logarithmic U,V give a new
+complete e-shell Type-II family within budget.
+
+The same note records the exact n-Poisson frequency
+(j*B*h+d*k*l)/(j*d). Unit masks can exclude an exact zero without
+making this frequency large; the near-resonance band remains.
+It also checks Le Boudec's squarefree variance theorem and Mangerel's
+smooth-modulus input. Neither supplies the missing signed physical
+estimate by a direct application. The long b/e discrepancy,
+original q reassembly and complete zero/nonzero signed operator
+bound remain unproved; no full twisted-moment theorem follows.
 
 ## 10. What has and has not been proved
 

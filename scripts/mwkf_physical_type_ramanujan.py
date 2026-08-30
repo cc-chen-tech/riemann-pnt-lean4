@@ -13,6 +13,88 @@ from math import ceil, floor, gcd, lcm, pi
 from scripts.mwkf_mobius_type_identity import c_u, divisors, mobius, split_mobius_identity
 
 
+def _radical(n):
+    return max(d for d in divisors(n) if mobius(d))
+
+
+def _kappa_radical(r, n):
+    return sum(mobius(d)*d for d in divisors(gcd(r, abs(n))))
+
+
+def general_unit_type_ii_packet(A, e, q, B, j, k, l, ns, amplitude):
+    """GU2 finite common-n lifting with all literal IC2 unit masks.
+
+    The supplied symbol must already be independent of the v allocation.
+    Its analytical validity, Poisson tails, and outer C=HL/(Re) are not
+    certified here. Inactive/nonsquarefree parents return zero, not a
+    spurious factorization of their completed modulus.
+    """
+    ns = tuple(ns)
+    if (any(not isinstance(n, int) or n < 1 for n in (A, e, q, B))
+            or any(not isinstance(n, int) or not n for n in (j, k, l, *ns))
+            or len(ns) != len(set(ns))):
+        raise ValueError("positive A,e,q,B and nonzero integer j,k,l, distinct nonzero n required")
+    r, q0, L = _radical(e*q), _radical(q), _radical(A*e*q)
+    g = gcd(A, q0)
+    a = A//g
+    active = bool(mobius(A) and mobius(e) and gcd(e, A*q) == gcd(B, A*e*q) == 1)
+    coefficients, labels, direct, collapsed = {}, [], 0j, 0j
+    for n in ns:
+        if not active:
+            coefficients[n] = F(0)
+            continue
+        phase = F(n*A*k*l, j*B*L)
+        value = amplitude(A, n)*cmath.exp(-2j*pi*float(phase))
+        for v in divisors(L):
+            if n % (L//v) == 0:
+                labels.append((v, n//(L//v), n))
+                direct += F(mobius(A)*mobius(v), B*v*abs(j))*value
+        coefficients[n] = F(mobius(r//g)*_kappa_radical(r, n)*_kappa_radical(a, n),
+                            a*r*B*abs(j))
+        collapsed += coefficients[n]*value
+    return {"a": a, "g": g, "r": r, "L": L, "active": active,
+            "coefficients": coefficients, "lifted_labels": tuple(labels),
+            "direct": direct, "collapsed": collapsed}
+
+
+def radical_kappa_mass(r, M):
+    """GU7 floor-count majorant. In particular, M<r does not add one per divisor."""
+    if (not isinstance(r, int) or r < 1 or not mobius(r)
+            or not isinstance(M, int) or M < 0):
+        raise ValueError("positive squarefree r and integer M>=0 required")
+    ds = divisors(r)
+    return {"absolute_mass": sum(abs(_kappa_radical(r, n)) for n in range(1, M+1)),
+            "gcd_floor_mass": sum(sum(gcd(a, d) == 1 for a in range(1, d+1))*(M//d)
+                                  for d in ds),
+            "divisor_bound": M*len(ds)}
+
+
+def general_unit_type_ii_exponents(r_exp, s, rho, z, k, beta, eta, chi):
+    """GU9/GU10 exponent ledger, not a coverage flag.
+
+    beta is log_T(U*B0), eta is the whole e-shell exponent, chi is
+    log_T(rad(q)). Density still needs the original smooth critical core.
+    The endpoint, nonstationary-tail hypotheses and q outer sum are separate.
+    """
+    r_exp, s, rho, z, k, beta, eta, chi = map(F, (r_exp, s, rho, z, k, beta, eta, chi))
+    if min(r_exp, s, z, k, beta, eta, chi) < 0 or eta > s:
+        raise ValueError("nonnegative scale exponents and eta<=s required")
+    error = rho+(s+chi)/2+F(3, 2)*(z+beta)-k
+    return {"density_all_e": rho+2*s-r_exp,
+            "error_one_e": error, "error_e_shell": error+eta}
+
+
+def type_ii_n_frequency(d, B, j, kl, h):
+    """GU12 rational Fourier frequency, not a test for actual physical support."""
+    if (any(not isinstance(n, int) or n < 1 for n in (d, B))
+            or any(not isinstance(n, int) or n == 0 for n in (j, kl))
+            or not isinstance(h, int)):
+        raise ValueError("positive integer d,B, nonzero integer j,kl, integer h required")
+    determinant = j*B*h+d*kl
+    return {"determinant": determinant, "frequency": F(determinant, j*d),
+            "coprime": gcd(d, B) == 1}
+
+
 def type_ii_smooth_ledger(n, U, V, Q, chi):
     """JT1 finite bulk and positive transition boundary, with literal units.
 
