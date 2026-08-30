@@ -21,6 +21,61 @@ def _kappa_radical(r, n):
     return sum(mobius(d)*d for d in divisors(gcd(r, abs(n))))
 
 
+def slope_b_interval(Y, n, k, j, nu, K2, width):
+    """Integer B in [Y,2Y) with |K2*(nu+n*k/(j*B))|<=width.
+
+    Endpoints are exact rationals. No coprimality condition is inserted;
+    this is a finite sampling identity, not the smooth Poisson estimate.
+    """
+    if (not isinstance(Y, int) or Y < 1
+            or any(not isinstance(a, int) or not a for a in (n, k, j))
+            or not isinstance(nu, int)):
+        raise ValueError("positive integer Y, nonzero integer n,k,j and integer nu required")
+    K2, width = F(K2), F(width)
+    if K2 <= 0 or width < 0:
+        raise ValueError("positive K2 and nonnegative width required")
+    y, tol = F(n*k, j), width/K2
+    if y < 0:
+        y, nu = -y, -nu
+    lower_ratio, upper_ratio = -tol-nu, tol-nu
+    if upper_ratio <= 0:
+        return None
+    lo = max(Y, ceil(y/upper_ratio))
+    hi = min(2*Y-1, floor(y/lower_ratio)) if lower_ratio > 0 else 2*Y-1
+    return (lo, hi) if lo <= hi else None
+
+
+def slope_b_sampling(Y, n, k, j, K2, width):
+    """All finite B/nu aliases with their signed scaled frequencies."""
+    # The zero-frequency slice validates the shared domain before division.
+    slope_b_interval(Y, n, k, j, 0, K2, width)
+    K2, width = F(K2), F(width)
+    phases = (F(n*k, j*Y), F(n*k, j*(2*Y-1)))
+    lo = ceil(-max(phases)-width/K2)
+    hi = floor(-min(phases)+width/K2)
+    intervals, rows = {}, []
+    for nu in range(lo, hi+1):
+        interval = slope_b_interval(Y, n, k, j, nu, K2, width)
+        if interval is not None:
+            intervals[nu] = interval
+            rows.extend((B, nu, K2*(nu+F(n*k, j*B)))
+                        for B in range(interval[0], interval[1]+1))
+    return {"intervals": intervals, "rows": tuple(sorted(rows))}
+
+
+def global_slope_error_exponents(a, beta):
+    """Balanced-top q=1 ledger only; no automatic coverage or kernel claim.
+
+    Kmin=T^a, Kmax=T^(1-a), B~T^beta. The second error explicitly
+    charges the integer +1 in every monotone B sampling interval.
+    """
+    a, beta = F(a), F(beta)
+    if not 0 <= a <= F(1, 2) or beta < 0:
+        raise ValueError("0<=a<=1/2 and beta>=0 required")
+    return {"density": F(3), "interval_error": 1+a+F(3, 2)*beta,
+            "integer_error": 2+a+beta/2, "uncompleted_error": 2+F(3, 2)*beta}
+
+
 def mobius_u_one_ledger(n, Q):
     """Exact U=1 integer identity, retaining d=1 and nonsquarefree quotients."""
     if any(not isinstance(a, int) or a < 1 for a in (n, Q)):

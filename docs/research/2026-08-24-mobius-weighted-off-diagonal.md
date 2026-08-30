@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-30 全局斜率完成覆盖整个短 B 区域。** [GS1–GS9](2026-08-30-mwkf-global-slope-sampling.md) 在 q=1 平衡顶层，从全部 e 重组的 GE7 出发，先完成一条真实光滑短斜率，再对整个 B≈Y 区间采样；相位与 M 无关，故可合法使用平方自由 M 均值。采样成本 Y/Kmax+Kmin 保留整数 +1。K₁=K₂≈T^{1/2} 时，误差是 T^{3/2+ε}Y^{3/2}+T^{5/2+ε}Y^{1/2}，所以整个 Y≤T 的指定光滑 core 达到 T^{3+ε}，包括其非零 determinant 补集；此前未完成斜率时仅覆盖 Y≤T^{2/3}。一般 Kmin=T^a 的条件是 β≤min((4−2a)/3,2−2a)。更长 B、一般 q、原 canonical zero Gram、全部物理尾与完整 signed operator 仍未证明，不构成完整 twisted moment。
+
 > **2026-08-30 全部 e 的 primitive 共振结账。** [GE1–GE12](2026-08-30-mwkf-global-e-primitive-resonance.md) 在 q=1、平衡顶层恢复全部 e/A/b 分片后，令 M=Ae、B=eb、e=(M,B)，将整个 critical core 写成保留 µ(M)µ(B) 的 primitive Fourier 和。精确共振 Δ=jBh+Mkl=0 强制 M|jB，每个 M,j,k,l 仅有除数个 B；包含全部 e 与长 b 的该子项满足 HL·P/R·T^ε=T^{3+ε}。所有新频率尾、非critical 补集及整数端点分别计费。非零 Δ 的 signed 核绝对值成本仍为 T^{5+ε}，尚差 T²；该 primitive 共振不等于 canonical zero Gram，也不覆盖整个 κ 分片。完整 coupled-kernel gate 与 twisted moment 未证明。
 
 > **2026-08-30 一般单位 Type-II 与完整 e 成本。** [GU1–GU12](2026-08-30-mwkf-general-unit-type-ii.md) 恢复真实 e,q 掩码：q₀=rad(q)、r=eq₀、g=(A,q₀)、A=ga、L=ar，全部 v 系数精确化为 µ(r/g)κ_r(n)κ_a(n)/(ar)。固定 q 的显式算术密度对全部 e 只花调和成本，物理界为 HL·P/R。误差逐 e 没有幂次衰减；平衡顶层完整 e≈E 的成本是 T^{2+ε}E√q₀(UB₀)^{3/2}，覆盖条件为 η+χ/2+3β/2≤1。它包括 q=1、E≈T^{1/2}、B₀≈T^{1/3} 的整个 Type-II 分片，保留并核验过渡边界与频率尾。无精确 determinant 零仍不能排除近共振；长 b/大 e、原 q 外层及完整 signed operator 的目标界仍未证明。这不是完整 twisted moment。
@@ -29,6 +31,7 @@
 > |---|---|
 > | General-unit Type-II density and e/b coverage | GU2 keeps primes shared by A and q and the induced mu(e) sign. At fixed q, GU9 bounds the arithmetic density summed over every e by HL*P/R; this is not the canonical zero Gram. GU10 charges the full E factor in the e-shell error, yielding top-core coverage eta+chi/2+3*beta/2<=1 with explicit endpoints. The original q outer sum, remaining long b/e and complete signed operator estimate stay open |
 > | Global-e primitive resonance | For q=1 at the balanced top, GE3 fuses M=Ae and B=eb with e=gcd(M,B). GE8 restores both mu(M) and mu(B). The entire exact primitive determinant-zero subterm, including every e and long b, is O(T^(3+epsilon)); the nonzero signed complement still has only an unsigned T^(5+epsilon) bound. This is not the canonical zero Gram or whole-packet coverage |
+> | Global slope/B sampling | GS3 completes one actual smooth slope before the M squarefree discrepancy bound. Full B/nu sampling costs Y/Kmax+Kmin, including integer endpoints. For q=1 at the balanced top, every specified B~Y<=T core reaches T^(3+epsilon), including its nonzero determinant complement; slope-asymmetric coverage is GS9. Longer B, original q reassembly and the complete signed operator remain open |
 > | All-v Type-II arithmetic density and short-b coverage | JT7 restores every divisor before absolute values. JT9 evaluates the squarefree mean with unit masks and all large-divisor errors. In the e=q=1 balanced top core, the explicit density is within budget and the complete b≲T^(2/3) Type-II family is O(T^(3+epsilon)), with verified transition boundary and nonstationary tails. Long b, other e,q and the full canonical-zero/nonzero operator estimate remain open |
 > | LCM main quadratic form | proved separately; its normalization is rechecked below |
 > | Exact AFE and shifted-divisor identity | proved after audit in Sections 2--3 |
@@ -28495,6 +28498,45 @@ is claimed; original q, other scales, both reflection mixed terms and
 independent physical tails remain. Bettin--Chandee's determinant input
 still requires an adapter retaining the product kl and all outer costs.
 This is a genuine bound for one subterm, not a complete twisted moment.
+
+### 9.214 Smooth-slope completion and joint B sampling cover entire short B cores
+
+The [global slope note](2026-08-30-mwkf-global-slope-sampling.md)
+starts from GE7 at q=1 and the balanced top, with X=R/K~T^2 and
+B~Y. Since e=gcd(M,B) has already been reassembled, there is no
+remaining (M,B)=1 mask. Apply the squarefree M mean with Q=1.
+Its explicit density costs HL*P/R by the subpower mass of delta_1(n).
+
+For the discrepancy, first Poisson-complete the longer smooth slope l.
+The exact new argument is K2*(nu+n*k/(j*B)), independent of M.
+The full JT symbol has uniformly bounded mixed normalized M/l
+derivatives, so the squarefree discrepancy bound retains arbitrary
+decay in this argument. The critical support gives abs(n)~Y, with
+a positive lower bound: it must not be enlarged before sampling.
+
+For each n,k,j, joint sampling over every B in [Y,2Y) and every nu
+costs Y/K2+K1. Each monotone near-frequency interval pays an integer
++1; the far-frequency tail is summed, not dropped. Together with
+sum_{0<abs(n)<=C*Y} sum_{d|n} sqrt(d) << Y^(3/2), this proves GS7:
+HL/(R*sqrt(X))*P*(Y^(3/2)/K2+K1*Y^(1/2))*T^epsilon.
+Density and error use two equivalent representations of the same
+linear mean decomposition; no savings are multiplied.
+
+When K1=K2~T^(1/2), the cost is T^(3/2+epsilon)*Y^(3/2)
++T^(5/2+epsilon)*Y^(1/2). Thus the entire specified B~Y<=T
+smooth core reaches its T^3 budget, including the previously
+uncovered e=1,b~T Type-II terms inside the all-e joint sum. This
+does not bound a fixed-e sub-sum: restricting e=1 would restore
+(M,B)=1 and invalidate the Q=1 mean used here. For Kmin=T^a and Y=T^beta,
+GS9 gives beta<=min((4-2a)/3,2-2a). The new slope-frequency tail,
+original noncritical and ell=0 tails, all integer endpoints and
+squarefree divisor truncations are separately retained and paid.
+
+This is stronger than bounding only GE12's exact resonance: it also
+covers the nonzero determinant complement in these B shells. It is
+not a full coupled-kernel theorem. Longer B, general original q,
+other scales, canonical zero Gram, both reflection mixed terms and
+independent physical AFE tails remain; no full twisted moment is claimed.
 
 ## 10. What has and has not been proved
 
