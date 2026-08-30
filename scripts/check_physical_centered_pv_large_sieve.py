@@ -41,6 +41,20 @@ def character_sum(column, phases, ell, conjugate=False):
 
 
 class CenteredPVLargeSieveChecks(unittest.TestCase):
+    def test_scope_uses_repartitioned_packet_not_literal_hard_shell(self):
+        note = (Path(__file__).resolve().parents[1]/
+                "docs/research/2026-08-31-physical-centered-pv-large-sieve.md").read_text()
+        for required in ("CS0", "一般 literal 硬壳", "\\Psi_{\\rm sm}",
+                         "内部整包", "\\mathcal A^{\\rm sm}_J"):
+            self.assertIn(required, note)
+
+    def test_joint_hard_support_cannot_be_assigned_to_common_u_column(self):
+        hard = lambda a, u: int(1 <= a*u <= 2)
+        self.assertNotEqual(hard(1, F(3, 4)), hard(F(3, 2), F(3, 4)))
+        for j in range(3, 12):
+            h = F(1, 2**j)
+            self.assertEqual(F(hard(1+h, 1)-hard(1-h, 1), 2*h), 2**(j-1))
+
     def test_gauss_times_two_pv_has_exact_ls_weight(self):
         for c, ell in product((1, 2, 3, 5, 7), (3, 5, 7, 15)):
             if gcd(c, ell) > 1:

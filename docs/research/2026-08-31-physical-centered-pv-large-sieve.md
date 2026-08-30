@@ -1,23 +1,36 @@
-# 中心化 FP3：PV 后保留两条共同 Möbius 列
+# 光滑中心化 FP3：PV 后保留两条共同 Möbius 列
 
 白话结论：两个光滑标签用 PV 后，不必把其余两个角色和逐项取
 绝对值。它们仍是对有效导子共同的两条系数列，可以一起用乘法大筛。
-改进低导子端，再接已有高导子端，使同一真实中心化 FP3 子族的
+改进低导子端，再接已有高导子端，使重新分组的真实光滑中心化 FP3 包的
 平衡门槛从 E≥T^(7/4) 降到 E≥T^(4/3)。
 这里没有证明新的 Möbius 符号专属估计；principal 仍未支付，
 所以不声称完整 FP3、14/17 或 2/3 的证明。
 
-只继承冻结 0d468dd0c1b074bc7e879d0318c90c3d5da11f79 的
-[CS1–CS17](2026-08-31-physical-centered-conductor-split.md)。
-不修改该父稿，不把旧二次 resonant projector 当成这里的线性和。
+本修订继承同树范围修正后的
+[CS0–CS17](2026-08-31-physical-centered-conductor-split.md)，而不是
+旧 0d468dd0/dae4a560 所含的一般 literal 硬壳适配声称。
+原 PV/大筛不等式不变；修订的是其物理对象与半范数。
+不把旧二次 resonant projector 当成这里的线性和。
 
-## PL1. 精确对象、共同列和原权均不改变
+## PL1. 明确光滑重分包后的精确对象与共同列
 
-原对象仍是 CS1 的 C，原外权为 2T/(q₀RS)，并保留 O=C+P。
+对象是修订 CS0–CS1 的光滑 C，原外权为 2T/(q₀RS)，并保留 O=C+P。
+具体从 FP1 完整 h,δ≠0 和插入原重叠分解
+\(\sum_H F(|h|/H)=\sum_L F(|\delta|/L)=1\)，再取
+\(\Psi_{\rm sm}=\Psi_{\rm raw}F(|\alpha|)F(|\beta|)\)。
+F 非负光滑、support⊂[1/2,2]，每个整数对只有有限重叠。
+固定外层原参数下的收敛/等式见 CS0；未估计包及外层全局尾保留。
+新单包不等于旧 H/L 硬包：e=fa 后的 1_[H,2H](fa u)
+依赖 a/u，不能留在共同 u 列或免费应用五维 Sobolev。
+一般 literal 硬壳不由 PL9 认证；有独立平坦/冗余证据的旧包另论。
 固定平方自由 q₀，s=eq、r=n、h=eu、δ=ev，e≈E、q≈Q，
 EQ≈S，(e,q₀q)=(n,q₀eq)=(uv,q)=1，e、q 平方自由。
 只处理原内部光滑箱 HL≲RS/T、q₀n,q₀eq≤N/2，
-所有尺度限于固定 T 幂，J≥6，半范数为原 A_J。
+N/2 条件由内部整包的支持保证，不另加 1_(q₀fa cℓ≤N/2)。
+所有尺度限于固定 T 幂，J≥6，新半范数
+\(\mathcal A_J:=\mathcal A^{\rm sm}_J\) 按 CS0b 定义；
+Leibniz 将新增 F 的固定阶成本计入该预算。
 
 先完整展开 (e,n)=1，e=fa、n=fb。CS2 的系数为
 μ(f)μ(a)μ(b)1_(ab,f)=1；不能重新添加 (a,b)=1。
@@ -34,7 +47,7 @@ EQ≈S，(e,q₀q)=(n,q₀eq)=(uv,q)=1，e、q 平方自由。
 ℓ-unit 由角色的零延拓提供，不另塞进系数使它随 ℓ 改变。
 
 原联合权仍按 b/B、a/A、q/Q、u/U、v/V 五变量分离：
-原 Ψ 的四个坐标是 b/B、(EQ/S)(a/A)(q/Q)、
+新 Ψ_sm 的四个坐标是 b/B、(EQ/S)(a/A)(q/Q)、
 (a/A)(v/V)、(a/A)(u/U)。内部 taper 也在此原权内。
 原 smooth 非矩形支持不替换为硬联合截断。两个标签的 BV 费用
 仍由 CS4 的
@@ -43,7 +56,9 @@ EQ≈S，(e,q₀q)=(n,q₀eq)=(uv,q)=1，e、q 平方自由。
                                                                \tag{PL2}
 \]
 支付；五维 Sobolev–Cauchy 需要 s>9/2，J≥6 足够。
-没有新维度或新的导数损失。正负标签分开，u,v=0 排除。
+没有新维度或新的导数损失。联合光滑 F 因子整体分离，
+固定外 cutoff 仅覆盖投影，不加入旧硬边缘。正负标签分开，
+u,v=0 排除；|u/U|、|v/V|∈[1/4,2]，非空时 U,V≥1/2。
 
 ## PL2. PV 之后再对两列作一次共同大筛
 
@@ -170,7 +185,8 @@ R=S=eq、N=8S、T=(8S)^(1/3)≈Y¹⁰，H=L=S/√T。
 u=v=ceil(H/e)≈Y¹¹<q，n 取 (S,2S) 中的素数，则
 所有原 gcd、mollifier 与 h/δ 壳成立。连续 x=3√T/4 时，
 (xn+δ)/(S√T)∈[1/2,2] 对充分大 Y 成立。
-这是原允许域的非空性，不声称任意给定权的积分非零。
+这是原允许域的非空性，按 CS0 的单位分解选择相邻光滑包；
+不声称旧硬包满足 PL9，也不声称任意给定权的积分非零。
 
 ## PL5. 交付边界
 
@@ -183,6 +199,7 @@ principal 仍按 CS17 给 T^(3−η+ε)，η=7/5 时为 T^(8/5+ε)，
 
 English summary: after two smooth-label PV bounds, apply the primitive
 multiplicative large sieve jointly to the remaining two common columns.
-The improved low-conductor estimate combines with the frozen high end
-to give the centered FP3 threshold E≥T^(4/3). The principal is retained;
+The improved low-conductor estimate combines with the high-end proof
+for the explicitly repartitioned smooth FP3 packet, giving E≥T^(4/3).
+The literal hard-shell mapping is not certified. The principal is retained;
 there is no full-family or zero-free conclusion.
