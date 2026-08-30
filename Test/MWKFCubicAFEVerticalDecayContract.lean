@@ -11,6 +11,15 @@ namespace PrimeNumberTheorem.MWKFCubic
 
 #check cubicAFEHorizontalScale
 
+-- The constant must be selected before time, not independently for each t.
+#check (@exists_norm_cubicAFECompletedIntegrand_horizontal_le_uniform :
+  ∀ {X : ℝ}, 0 ≤ X →
+    ∃ K : ℝ, 0 ≤ K ∧ ∀ (t : ℝ) {x V : ℝ},
+      x ∈ [[-X, X]] → 1 ≤ V →
+        ‖cubicAFECompletedIntegrand t
+            ((x : ℂ) + (V : ℂ) * I)‖ ≤
+          K * cubicAFEHorizontalScale t X V ^ 6 * Real.exp (-V ^ 2))
+
 #check (@exists_norm_cubicAFECompletedIntegrand_horizontal_le :
   ∀ (t : ℝ) {X : ℝ}, 0 ≤ X →
     ∃ K : ℝ, 0 ≤ K ∧ ∀ {x V : ℝ},

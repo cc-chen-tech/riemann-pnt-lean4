@@ -47,26 +47,24 @@ theorem exists_norm_completedRiemannZeta₀_le_on_reIcc (a b : ℝ) :
 noncomputable def cubicAFEHorizontalScale (t X V : ℝ) : ℝ :=
   1 + ‖cubicCriticalPoint t‖ + ‖1 - cubicCriticalPoint t‖ + X + |V|
 
-/-- On a fixed horizontal-width box, the completed AFE integrand is bounded
-by a degree-six polynomial times the exact Gaussian `exp (-V^2)`. -/
-theorem exists_norm_cubicAFECompletedIntegrand_horizontal_le
-    (t : ℝ) {X : ℝ} (hX : 0 ≤ X) :
-    ∃ K : ℝ, 0 ≤ K ∧ ∀ {x V : ℝ},
-      x ∈ [[-X, X]] → 1 ≤ V →
-        ‖cubicAFECompletedIntegrand t
-            ((x : ℂ) + (V : ℂ) * I)‖ ≤
-          K * cubicAFEHorizontalScale t X V ^ 6 * Real.exp (-V ^ 2) := by
-  obtain ⟨C, hC, hCZ⟩ := exists_norm_completedRiemannZeta₀_le_on_reIcc
-    (1 / 2 - X) (1 / 2 + X)
+/-- The horizontal-edge bound with its strip constant exposed.  In
+particular, the strip input is independent of the physical time. -/
+theorem norm_cubicAFECompletedIntegrand_horizontal_le_of_strip_bound
+    (t : ℝ) {X C : ℝ} (hX : 0 ≤ X) (hC : 0 ≤ C)
+    (hCZ : ∀ z : ℂ, 1 / 2 - X ≤ z.re → z.re ≤ 1 / 2 + X →
+      ‖completedRiemannZeta₀ z‖ ≤ C)
+    {x V : ℝ} (hx : x ∈ [[-X, X]]) (hV : 1 ≤ V) :
+    ‖cubicAFECompletedIntegrand t ((x : ℂ) + (V : ℂ) * I)‖ ≤
+      (5 * (C + 2) ^ 2 *
+        (‖cubicCriticalPoint t ^ 2‖⁻¹ * ‖(1 - cubicCriticalPoint t) ^ 2‖⁻¹) *
+        Real.exp (X ^ 2)) *
+      cubicAFEHorizontalScale t X V ^ 6 * Real.exp (-V ^ 2) := by
   let s := cubicCriticalPoint t
   let u := 1 - s
   let K : ℝ :=
     5 * (C + 2) ^ 2 * (‖s ^ 2‖⁻¹ * ‖u ^ 2‖⁻¹) * Real.exp (X ^ 2)
-  have hK : 0 ≤ K := by
-    dsimp [K]
-    positivity
-  refine ⟨K, hK, ?_⟩
-  intro x V hx hV
+  change ‖cubicAFECompletedIntegrand t ((x : ℂ) + (V : ℂ) * I)‖ ≤
+    K * cubicAFEHorizontalScale t X V ^ 6 * Real.exp (-V ^ 2)
   let z : ℂ := (x : ℂ) + (V : ℂ) * I
   let Y : ℝ := cubicAFEHorizontalScale t X V
   have hxIcc : -X ≤ x ∧ x ≤ X := by
@@ -230,6 +228,59 @@ theorem exists_norm_cubicAFECompletedIntegrand_horizontal_le
       exact div_le_div_of_nonneg_left (norm_nonneg _) zero_lt_one hzNorm
     _ ≤ K * Y ^ 6 * Real.exp (-V ^ 2) := by simpa using hext
     _ = K * cubicAFEHorizontalScale t X V ^ 6 * Real.exp (-V ^ 2) := rfl
+
+/-- A single horizontal-edge constant works for every physical time `t`.
+The only remaining time dependence is the displayed polynomial scale. -/
+theorem exists_norm_cubicAFECompletedIntegrand_horizontal_le_uniform
+    {X : ℝ} (hX : 0 ≤ X) :
+    ∃ K : ℝ, 0 ≤ K ∧ ∀ (t : ℝ) {x V : ℝ},
+      x ∈ [[-X, X]] → 1 ≤ V →
+        ‖cubicAFECompletedIntegrand t ((x : ℂ) + (V : ℂ) * I)‖ ≤
+          K * cubicAFEHorizontalScale t X V ^ 6 * Real.exp (-V ^ 2) := by
+  obtain ⟨C, hC, hCZ⟩ := exists_norm_completedRiemannZeta₀_le_on_reIcc
+    (1 / 2 - X) (1 / 2 + X)
+  refine ⟨80 * (C + 2) ^ 2 * Real.exp (X ^ 2), by positivity, ?_⟩
+  intro t x V hx hV
+  have hs : (1 / 2 : ℝ) ≤ ‖cubicCriticalPoint t‖ := by
+    simpa [cubicCriticalPoint] using re_le_norm (cubicCriticalPoint t)
+  have hu : (1 / 2 : ℝ) ≤ ‖1 - cubicCriticalPoint t‖ := by
+    convert re_le_norm (1 - cubicCriticalPoint t) using 1
+    norm_num [cubicCriticalPoint]
+  have hsInv : ‖cubicCriticalPoint t ^ 2‖⁻¹ ≤ (4 : ℝ) := by
+    apply inv_le_of_inv_le₀ (by norm_num : (0 : ℝ) < 4)
+    rw [norm_pow]
+    norm_num
+    nlinarith [sq_nonneg (‖cubicCriticalPoint t‖ - 1 / 2)]
+  have huInv : ‖(1 - cubicCriticalPoint t) ^ 2‖⁻¹ ≤ (4 : ℝ) := by
+    apply inv_le_of_inv_le₀ (by norm_num : (0 : ℝ) < 4)
+    rw [norm_pow]
+    norm_num
+    nlinarith [sq_nonneg (‖1 - cubicCriticalPoint t‖ - 1 / 2)]
+  have hcoeff :
+      5 * (C + 2) ^ 2 *
+          (‖cubicCriticalPoint t ^ 2‖⁻¹ * ‖(1 - cubicCriticalPoint t) ^ 2‖⁻¹) *
+          Real.exp (X ^ 2) ≤
+        80 * (C + 2) ^ 2 * Real.exp (X ^ 2) := by
+    calc
+      _ ≤ 5 * (C + 2) ^ 2 * (4 * 4) * Real.exp (X ^ 2) := by gcongr
+      _ = _ := by ring
+  exact (norm_cubicAFECompletedIntegrand_horizontal_le_of_strip_bound
+    t hX hC hCZ hx hV).trans
+      (mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_right hcoeff (by positivity)) (by positivity))
+
+/-- On a fixed horizontal-width box, the completed AFE integrand is bounded
+by a degree-six polynomial times the exact Gaussian `exp (-V^2)`. -/
+theorem exists_norm_cubicAFECompletedIntegrand_horizontal_le
+    (t : ℝ) {X : ℝ} (hX : 0 ≤ X) :
+    ∃ K : ℝ, 0 ≤ K ∧ ∀ {x V : ℝ},
+      x ∈ [[-X, X]] → 1 ≤ V →
+        ‖cubicAFECompletedIntegrand t
+            ((x : ℂ) + (V : ℂ) * I)‖ ≤
+          K * cubicAFEHorizontalScale t X V ^ 6 * Real.exp (-V ^ 2) := by
+  obtain ⟨K, hK, hbound⟩ :=
+    exists_norm_cubicAFECompletedIntegrand_horizontal_le_uniform hX
+  exact ⟨K, hK, hbound t⟩
 
 private theorem tendsto_const_mul_add_pow_six_mul_exp_neg_sq
     {A K : ℝ} (hA : 0 ≤ A) (hK : 0 ≤ K) :

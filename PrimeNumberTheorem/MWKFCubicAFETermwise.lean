@@ -198,6 +198,23 @@ theorem cubicAFEDoubleSumFinite_eq
   rw [tsum_mul_left]
   rw [(hasSum_intervalIntegral_cubicAFENormalizedDirichletTerm t hX V).tsum_eq]
 
+/-- Exact finite-height error, before taking any limit or discarding any
+archimedean normalization. -/
+theorem two_mul_cubicAFEDoubleSumFinite_sub_normSq_eq
+    (t : ℝ) {X V : ℝ} (hX : 1 / 2 < X) (hV : 0 < V) :
+    2 * cubicAFEDoubleSumFinite t X V -
+        (Complex.normSq (riemannZeta (cubicCriticalPoint t)) : ℂ) =
+      -(I * (∫ x : ℝ in -X..X,
+        cubicAFECompletedIntegrand t ((x : ℂ) + (V : ℂ) * I))) /
+        ((Real.pi : ℂ) * cubicAFEGammaProduct t 0) := by
+  rw [cubicAFEDoubleSumFinite_eq t hX V, intervalIntegral.integral_div]
+  have hid := eq_sub_of_add_eq
+    (cubicAFEFiniteVerticalIdentity t (by linarith : 0 < X) hV)
+  simp only [cubicAFEVerticalPoint]
+  rw [hid, completedRiemannZeta_product_eq_gamma_mul_normSq]
+  field_simp [Real.pi_ne_zero, cubicAFEGammaProduct_zero_ne t]
+  ring
+
 theorem tendsto_two_mul_cubicAFEDoubleSumFinite
     (t : ℝ) {X : ℝ} (hX : 1 / 2 < X) :
     Tendsto (fun V : ℝ ↦ 2 * cubicAFEDoubleSumFinite t X V)

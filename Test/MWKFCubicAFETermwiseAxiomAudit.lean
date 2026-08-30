@@ -1,4 +1,6 @@
 import PrimeNumberTheorem.MWKFCubicAFETermwise
 
+#print axioms PrimeNumberTheorem.MWKFCubic.two_mul_cubicAFEDoubleSumFinite_sub_normSq_eq
+
 #print axioms PrimeNumberTheorem.MWKFCubic.hasSum_intervalIntegral_cubicAFENormalizedDirichletTerm
 #print axioms PrimeNumberTheorem.MWKFCubic.tendsto_two_mul_cubicAFEDoubleSumFinite

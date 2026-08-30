@@ -1,5 +1,10 @@
 # Lean status of the cubic MWKF route
 
+当前已将有限高度 AFE 到真实全线 mollified moment 的极限交换写成
+无额外解析假设的 Lean 定理：固定 `T != 0`、`X > 1/2`，完整物理误差
+有可积包络 `F(t) V^6 exp(-V^2)`。这不是 `T -> infinity` 的渐近式；
+QCT/Poisson、主项渐近和核心 Möbius 色散等输入仍须继续形式化。
+
 ## Machine-checked in this PR
 
 The following steps now have kernel-checked Lean proofs with no project axiom,
@@ -27,6 +32,7 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | uniform Mellin-transform bound on every closed vertical strip from endpoint absolute convergence | `exists_norm_mellin_le_on_reIcc` |
 | uniform closed-strip bound for Mathlib's entire completed-zeta numerator | `exists_norm_completedRiemannZeta₀_le_on_reIcc` |
 | explicit degree-six polynomial times Gaussian bound for the physical horizontal AFE edge | `exists_norm_cubicAFECompletedIntegrand_horizontal_le` |
+| exposed strip constant and a single horizontal-edge constant selected before all physical times | `norm_cubicAFECompletedIntegrand_horizontal_le_of_strip_bound`, `exists_norm_cubicAFECompletedIntegrand_horizontal_le_uniform` |
 | vanishing of the horizontal edge and exact infinite-height vertical-line contour limit | `tendsto_cubicAFECompletedIntegrand_horizontalIntegral`, `tendsto_cubicAFECompletedIntegrand_verticalIntegral` |
 | critical-line conjugation, nonvanishing fixed gamma product, and exact conversion from the completed product to `normSq zeta` | `one_sub_cubicCriticalPoint_eq_conj`, `cubicAFEGammaProduct_zero_ne`, `completedRiemannZeta_product_eq_gamma_mul_normSq` |
 | absolute summability of the physical `(m,n)` Dirichlet family for `re z > 1/2` | `summable_norm_cubicAFEDirichletTerm` |
@@ -34,6 +40,7 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | continuity of the full physical AFE scalar and invariance of each Dirichlet-term norm along a vertical line | `continuous_cubicAFEScalar_vertical`, `norm_cubicAFEDirichletTerm_vertical_eq` |
 | exact finite-height interchange of the double Dirichlet series and vertical integral by dominated convergence | `hasSum_intervalIntegral_cubicAFENormalizedDirichletTerm` |
 | kernel-checked finite-height AFE whose normalized double sum converges to `normSq zeta(1/2+it)` | `cubicAFEDoubleSumFinite_eq`, `tendsto_two_mul_cubicAFEDoubleSumFinite` |
+| exact finite-height error with its sign, factor `pi`, and fixed gamma product | `two_mul_cubicAFEDoubleSumFinite_sub_normSq_eq` |
 | exact factorization of each shifted Dirichlet term into its critical-line coefficient and an `(mn)^(-z)` monomial | `cubicAFEDirichletTerm_eq_zero_mul_product` |
 | explicit `1/sqrt(mn)` amplitude and `exp(it(log n-log m))` phase | `cubicAFEDirichletTerm_zero_eq_exp` |
 | finite-height AFE written with a Mellin weight depending on the two indices only through their product | `cubicAFEWeightFinite_eq_arithmetic_mul_productWeight`, `cubicAFEDoubleSumFinite_eq_arithmetic` |
@@ -46,6 +53,10 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | complete finite-height representation as `sum_d sum_e tsum_p` | `cubicAFEMollifiedApproximation_eq_tripleSum` |
 | itemwise full amplitude/phase and phase-free exact diagonal | `cubicAFECombinedSummandFinite_eq_exp`, `cubicAFECombinedSummandFinite_eq_on_diagonal` |
 | finite-height full-line moment and exact compact physical support | `cubicAFEMollifiedMomentFinite`, `cubicAFEMollifiedApproximation_eq_zero_of_not_mem`, `hasCompactSupport_cubicAFEMollifiedApproximation` |
+| joint time/vertical continuity of the normalized integrand and time continuity/integrability of the finite-height mollified AFE | `continuous_cubicAFENormalizedVerticalIntegrand`, `continuous_cubicAFEDoubleSumFinite_time`, `continuous_cubicAFEMollifiedApproximation`, `integrable_cubicAFEMollifiedApproximation` |
+| exact mollified horizontal-edge error with gamma factors, both mollifier factors and physical test weight retained | `cubicAFEMollifiedApproximation_sub_eq` |
+| constructed integrable envelope `F(t) V^6 exp(-V^2)` for every `V >= 1` | `exists_integrable_cubicAFE_error_envelope` |
+| unconditional finite-height AFE limit under the literal full-line mollified integral, at fixed nonzero `T` | `tendsto_cubicAFEMollifiedMomentFinite` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -61,9 +72,9 @@ The left side is now the literal full-line integral, rather than an arbitrary
 function `I`, and its two finite mollifier factors have been expanded and
 interchanged with the integral.  The completed AFE contour has also been taken
 to infinite height using an explicit physical horizontal-edge majorant.  What
-remains is to carry the now-combined AFE--mollifier arithmetic factor through
-the twisted-moment integral (including a uniform integrable majorant for the
-finite-height limit) and QCT decomposition, prove the reciprocal-LCM main-term asymptotic
+remains is to justify the time-integral/arithmetic-series interchanges in the
+combined AFE--mollifier expansion and carry it through the QCT decomposition,
+prove the reciprocal-LCM main-term asymptotic
 and every analytic tail estimate, and especially prove the cubic MRSTT Mobius
 decorrelation theorem.  The final facade therefore keeps
 `hexact`, `hmain`, and `hrem` as theorem hypotheses.  They are local binders,
@@ -71,7 +82,7 @@ not global axioms.
 
 Consequently the accurate status is:
 
-- complete internal paper proof candidate and executable parameter audit;
-- first kernel-checked structural/reassembly layer complete;
+- internal paper proof candidate and executable parameter audit;
+- kernel-checked structural/reassembly and fixed-`T` AFE integral-limit layers complete;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.
