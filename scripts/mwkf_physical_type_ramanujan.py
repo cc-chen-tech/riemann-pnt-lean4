@@ -48,6 +48,64 @@ def cofactor_count_bound(D, r, M):
             "all_c_bound": bound*(1+2*M/D)}
 
 
+def inverse_c_lattice(R, A, e, d, Z, profile):
+    """Finite sample side of inverse-c Poisson for entry support [1,2].
+
+    Z denotes A*k*l. This routine evaluates only the finite sample side;
+    it neither truncates an infinite Fourier sum nor estimates its tail.
+    Poisson equality additionally requires the profile's regularity.
+    """
+    R, A, e, d, Z = map(F, (R, A, e, d, Z))
+    if min(R, A, e, d) <= 0:
+        raise ValueError("positive R,A,e,d required")
+    jacobian = A*e/R
+    samples = tuple((k, k*jacobian)
+                    for k in range(max(1, ceil(1/jacobian)), floor(2/jacobian)+1))
+    value = float(jacobian)*sum(profile(x)*cmath.exp(2j*pi*float((k*Z/d) % 1))
+                                for k, x in samples)
+    return {"jacobian": jacobian, "samples": samples, "value": value}
+
+
+def inverse_c_allocation_ledger(r, s, q):
+    """All signed (e,A,kappa) allocations at r=kappa*A*e, s=e*d.
+
+    The integer-one endpoint is separate. Terms omit zero Mobius weights
+    but never delete a nonzero allocation merely because r is not squarefree.
+    """
+    if min(r, s, q) < 1 or mobius(s) == 0 or gcd(s, q) != 1:
+        raise ValueError("positive r,s,q, squarefree s and (s,q)=1 required")
+    terms = tuple((e, A, r//(A*e), mobius(e)*mobius(A))
+                  for e in divisors(gcd(r, s)) for A in divisors(r//e)
+                  if gcd(A, s) == 1 and mobius(A))
+    bulk = sum(w for e, A, k, w in terms)
+    endpoint = mobius(r)*int(gcd(r, s*q) == 1)
+    return {"terms": terms, "bulk": bulk, "endpoint": endpoint,
+            "residual": bulk-endpoint,
+            "physical_coefficient": -F(mobius(s), s)*(bulk-endpoint)}
+
+
+def nearest_reciprocal_approximation(X, Z, t, sign=1):
+    """Exact reduced +/-1/q approximation to +/-Z*t/X, when Z*t/X<=1/2."""
+    X, Z, t = map(F, (X, Z, t))
+    if X < 2 or Z < 1 or t < 1 or Z*t/X > F(1, 2) or sign not in (-1, 1):
+        raise ValueError("X>=2,Z,t>=1,Z*t/X<=1/2 and sign=+/-1 required")
+    denominator = floor(X/(Z*t)+F(1, 2))
+    return {"alpha": sign*Z*t/X, "denominator": denominator,
+            "approximant": F(sign, denominator)}
+
+
+def small_linear_row_saving(x, z):
+    """Exponent bookkeeping only, for the separately proved row lemma.
+
+    X=T^x,Z=T^z. The z=0 boundary records no fixed-power saving.
+    This is not a certificate for a physical packet or an arbitrary weight.
+    """
+    x, z = map(F, (x, z))
+    if x <= 0 or not 0 <= z < x:
+        raise ValueError("x>0 and 0<=z<x required")
+    return min(x/5, (x-z)/2, z/2)
+
+
 def ramanujan_divisor_coefficient(s, A, m, k, l):
     """mu(s)c_s(inverse(A)*m+k*l)/s^2, with no density approximation."""
     if s < 1 or mobius(s) == 0 or gcd(A, s) != 1:

@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-30 全 c 逆变换与受限线性行。** [有限正指标及 signed 往返](2026-08-30-mwkf-inverse-c-signed-roundtrip.md)证明实际核在完整逆 c Poisson 后只有有限个正指标，且全部 Type/cofactor allocation 连同整数端点恰好重构原双 Poisson 和，不自动产生新 saving。由已发表线性 Möbius 估计推得带 `Q≤X^C` 互素限制的上界 `X^ε(X^{4/5}+√(XZ)+X/√Z)`。平衡非零行省 `T^{1/2}`，但恢复该子 packet 的物理外层只得 `T^{11/2+ε}`，仍不足 `S=T³`；不能与 BBLR 相乘。完整 gate 未证明。
+
 > **2026-08-30 全频率 TT* 的中间单位账本。** [跨模数 Gram 推导](2026-08-30-mwkf-common-ttstar.md) 将完整共同频率的短行能量写成“对角＋非零移位－完整密度项”，保留零频的两个 mixed 项。在 incidence `p₂-p₁=jq` 上共同位移变为 `Dj/(p₁p₂)`，但中间单位掩码及非 incidence 密度项不能省略。诱导坏因子 `√(g,Dj)` 的无权完整短移位平均已由精确除数/floor 恒等式控制为 `≪J√(g,D)g^ε`；这不是实际 Möbius 权的相对占据界，没有新增稠密字符格覆盖或证明完整 gate。
 
 > **2026-08-30 联合共同频率新增覆盖。** [小共同字符族定理](2026-08-30-mwkf-joint-common-frequency.md) 在重组全部共同频率后应用双极点 Weil 界，并保留共同字符族的大小成本。对指定的共同族 \(|E_i|\le T^{\kappa_{E_i}+o(1)}\)，(JF10) 给出 \(\kappa_{E_L}+\kappa_{E_S}+2\eta_{\rm imb}\le\gamma-\delta_0\)、\((g,D)=T^{\delta_0}\) 下的全共同频率及非零补集覆盖。它包括极端 \(g\asymp T\) 上两侧固定阶共同字符，不只上一轮的共同零频低导子族。稠密族未覆盖；删零频和两侧主字符后仍有范数 1 的方向。完整 gate 仍开放，旧 Type-I 删格不恢复。
@@ -103,6 +105,7 @@
 > | Normalized Mellin coefficient transfer | Section 9.200 proves \(\|S_z^{\pm1}\|^2\le D_XH_X=X^{o(1)}\), uniformly for \(\Re z\ge0\), and the stronger constant bound \(\|S_z^{\pm1}\|\le\zeta(5/2)\) on the original line \(\Re z=2\).  The exact inverse, LCM Gram endpoints, and signed packet transfer are retained.  This removes the raw divisor-coordinate power loss, not the occupancy-norm or coupled signed estimate.  An unrestricted full-physical-operator target is separately ruled out by a phase-aligned coefficient witness; the actual Möbius coefficient class is not ruled out |
 > | Direct published Region A--C coverage | proved/classified in Section 8 |
 > | Physical Type–Ramanujan normalization correction | Section 9.205 proves the endpoint-safe one-sided Type identity and the coupled three-variable complete sum. The unaveraged physical cofactor prefactor is `HL`, not the `HL/S` used in the RP/SS model. Those model estimates remain valid, but the physical quantity is `S` times the model and is not covered at target. The concrete coprimality layer transfers exactly through `Q=Aeq`-smooth convolution; the remaining signed saving is unproved |
+> | Full inverse-c signed roundtrip and coprime linear rows | Section 9.206 proves the finite positive dual support and the complete allocation identity, including the integer-one endpoint. Reassembly returns the original double Poisson sum rather than supplying a new saving. A uniform polynomial-size coprimality transfer preserves the published linear Mobius bound up to `X^epsilon`. The balanced row saves `T^(1/2)`, but its absolute physical packet costs `T^(11/2+epsilon)` against target `T^3`; no global coverage or multiplication with BBLR is asserted |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
 > | Residual coupled Region-D estimate at length \(T^3\) | unproved |
 >
@@ -28171,6 +28174,40 @@ ledger, not a completed coupled-kernel bound. All transform tails,
 non-smooth original endpoints, zero-packet/reflection pairings and
 the signed outer saving retain their stated obligations. The separate
 BBLR half-power deficit is not multiplied by this model's saving.
+
+### 9.206 Full inverse-c reassembly and a coprime linear Mobius row estimate
+
+The [inverse-c signed roundtrip note](2026-08-30-mwkf-inverse-c-signed-roundtrip.md)
+uses the actual entry Fourier transform in (PT7), before deleting any
+frequency or fixing a dyadic frequency cutoff. Its inverse-c Poisson
+has Jacobian `Ae/R`, positive phase `e(kappa*A*k*l/d)`, and exactly
+finite support `R/(Ae)<=kappa<=2R/(Ae)`. The endpoint bump becomes
+`1-1_(kappa=e=1)1_(A,q)=1`. This support fact does not annihilate the
+canonical zero Gram, original m=0, c=0, or either generated frequency axis.
+
+For fixed `r=kappa*A*e,s=e*d`, the complete signed allocation is the
+finite identity (IC4). Including the integer-one endpoint and the
+separate r=1 term reconstructs the original double h/delta Poisson
+formula (IC6). Thus this full transform roundtrip gives exact
+pre-Cauchy cancellation, not an additional analytic power saving.
+Cutting the kappa=1 block already breaks the identity at r=2,s=6.
+
+The new analytic corollary (IC7) applies to an actual linear A-row:
+for `X>=4,1<=Z<=X/2,Q<=X^C` and a normalized BV weight,
+the coprime Mobius sum is bounded by
+`X^epsilon (X^(4/5)+sqrt(X*Z)+X/sqrt(Z))`.
+Its input is Basak--Robles--Zaharescu, Theorem 1.4, arXiv:2312.17435v2.
+Exact Q-smooth deconvolution and the Euler product `E_Q(1/2)` handle
+all prime-power smooth divisors and their long tail; no pointwise
+two-Mobius correlation conjecture is invoked.
+
+For the nonzero balanced packet q=1,e=1,kappa=2, the row has X~T^3,
+Z~T and saves T^(1/2). The literal `HL/R` prefactor and remaining
+frequency count nevertheless give `T^(11/2+epsilon)`, not the physical
+target `S T^epsilon=T^(3+epsilon)`. This is weaker globally than the
+earlier BBLR gap and cannot be multiplied into that estimate. The
+joint signed outer dispersion, zero/complement pairings and full
+physical-tail obligations remain open.
 
 ## 10. What has and has not been proved
 

@@ -12,6 +12,10 @@ cofactor 密度平均的外层是 `HL`，不是 `HL/S`。** 因而
 后者是模型的 `S` 倍。这不是原 signed 目标的反例，更不是完整
 twisted-moment 证明；是必须修正的转移账本。
 
+后续 [IC1–IC16](2026-08-30-mwkf-inverse-c-signed-roundtrip.md) 从 (PT7)
+对完整 `c` 和作逆 Poisson，导出有限正指标、精确端点重组及带互素
+限制的线性 Möbius 行上界；它没有解决本节末尾的全局 signed saving。
+
 ## 1. 从原核开始：单侧 Type 恒等式与整数 1 端点
 
 对所有整数 `n,q≥1`，
