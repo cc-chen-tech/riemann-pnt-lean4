@@ -16,6 +16,13 @@ noncomputable def explicitPoissonMode (sigma x N t : ℝ) (k : ℤ) : ℂ :=
   ∫ u in (x - 1)..(N + 1), explicitComplexMellinAmplitude sigma x N u *
     Complex.exp (Complex.I * weightedPoissonPhase t k u)
 
+/-- Nonnegative mass of precisely the distant positive/negative mode pair. -/
+noncomputable def explicitPoissonFarMass (sigma x N t : ℝ) (m : ℕ) : ℝ := by
+  classical
+  exact if 1 ≤ m ∧ t / (x - 1) ≤ Real.pi * m then
+    ‖explicitPoissonMode sigma x N t (m : ℤ)‖ +
+      ‖explicitPoissonMode sigma x N t (-(m : ℤ))‖ else 0
+
 private theorem uniformBound_le_far
     {C₁ C₂ sigma a t g : ℝ} (hs : 0 < sigma) (ha : 1 ≤ a)
     (ht : 0 ≤ t) (hg : 0 < g) (hC₁ : 0 ≤ C₁) (hfar : t ≤ a * g) :
@@ -161,5 +168,29 @@ theorem sum_norm_explicitPoissonMode_pair_le_far
         (x - 1) ^ (-sigma) / Real.pi ^ 2) * 2 :=
       mul_le_mul_of_nonneg_left hsum (by positivity)
     _ = _ := by ring
+
+/-- Absolute far-tail mass is genuinely summable, uniformly in `N`. -/
+theorem summable_tsum_explicitPoissonFarMass_le
+    {C₁ C₂ sigma x N t : ℝ}
+    (hs : 0 < sigma) (hx : 2 ≤ x) (hxN : x ≤ N) (ht : 0 ≤ t)
+    (hC₁0 : 0 ≤ C₁) (hC₂0 : 0 ≤ C₂)
+    (hC₁ : ∀ z : ℝ, |deriv Real.smoothTransition z| ≤ C₁)
+    (hC₂ : ∀ z : ℝ, |deriv (deriv Real.smoothTransition) z| ≤ C₂) :
+    Summable (explicitPoissonFarMass sigma x N t) ∧
+      (∑' m : ℕ, explicitPoissonFarMass sigma x N t m) ≤
+        4 * explicitPoissonFarConstant C₁ C₂ sigma * (x - 1) ^ (-sigma) / Real.pi ^ 2 := by
+  classical
+  have hnonneg : 0 ≤ explicitPoissonFarMass sigma x N t := by
+    intro m
+    unfold explicitPoissonFarMass
+    split_ifs <;> positivity
+  have hbound (S : Finset ℕ) : (∑ m ∈ S, explicitPoissonFarMass sigma x N t m) ≤
+      4 * explicitPoissonFarConstant C₁ C₂ sigma * (x - 1) ^ (-sigma) / Real.pi ^ 2 := by
+    unfold explicitPoissonFarMass
+    rw [← Finset.sum_filter]
+    apply sum_norm_explicitPoissonMode_pair_le_far _ hs hx hxN ht hC₁0 hC₂0 hC₁ hC₂
+    intro m hm
+    exact (Finset.mem_filter.mp hm).2
+  exact ⟨summable_of_sum_le hnonneg hbound, Real.tsum_le_of_sum_le hnonneg hbound⟩
 
 end HardyTheorem.AFE

@@ -2572,6 +2572,8 @@ lean_lib RiemannPNT where
     `Test.AFEExplicitPoissonUniformIntegralContract,
     `HardyTheorem.AFEExplicitPoissonFarTail,
     `Test.AFEExplicitPoissonFarTailContract,
+    `HardyTheorem.AFEExplicitPoissonIdentity,
+    `Test.AFEExplicitPoissonIdentityContract,
     `MathlibAux.IntervalOscillatoryIntegrationByPartsAxiomAudit,
     `Test.IntervalOscillatoryIntegrationByPartsContract,
     `HardyTheorem.SelbergLagDyadicGeometry,

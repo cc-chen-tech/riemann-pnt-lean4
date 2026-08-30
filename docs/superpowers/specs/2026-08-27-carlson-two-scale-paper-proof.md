@@ -982,9 +982,10 @@ Theorem 4.13, specialized to `g(u)=u^(-1/2)` and
 floor-error identity, the absolutely convergent second-Bernoulli Fourier
 series, and first- and second-derivative oscillatory integral bounds.  What
 is not yet present is the transformation which extracts the stationary
-positive Fourier modes as the conjugate square-root Dirichlet polynomial.
-The negative modes and the positive modes outside the stationary range are
-nonstationary; their reciprocal distance-to-endpoint sum is the single
+modes as the conjugate square-root Dirichlet polynomial.  In the mathlib
+Fourier convention used below these are the negative modes `k=-m`, with
+positive dual index `m`.  The positive modes and the negative modes outside
+the stationary range are nonstationary; their reciprocal distance-to-endpoint sum is the single
 `log t` in (8.10).  This is the exact next analytic lemma.  A long cutoff
 followed by independent mean value, or independent summation over moving
 cutoff fibres, does not prove (8.9) and incurs the power losses already
@@ -1558,19 +1559,57 @@ Indeed, put `r=t/(a*g)`, so `0<=r<=1`.  After extracting
 Every displayed reciprocal ratio is at most one for `a>=1,sigma>0`.
 This verifies the stated constant without any asymptotic convention.
 The paired-mode estimate and its sum over every finite far-frequency set
-are now proved in `AFEExplicitPoissonFarTail`; its contract build exits zero
-and both public statements use only the allowed foundational axioms.
+are now proved in `AFEExplicitPoissonFarTail`.  The same file also proves
+that the nonnegative mass of the whole distant tail is summable and that
+its infinite sum satisfies the identical bound.  Summability is part of the
+theorem, not inferred from an isolated `tsum` inequality.  The finite-set
+and infinite-series contracts and their allowed-axiom audits pass.
 
 **Cutoff interface check.** The older `AFEWeightedPoissonCutoff` Poisson
 identity uses `intervalPlateauBump` with width-two transitions.  The uniform
 derivative and tail bounds above instead use `explicitIntervalPlateau` with
 width-one transitions.  These functions are not definitionally equal.
-The Schwartz Poisson formula must also be instantiated for the explicit
-cutoff, and its Fourier transform identified with `explicitPoissonMode`,
-before composing this tail estimate with the existing Poisson pipeline.
-Smoothness and compact support of the explicit plateau are already proved;
-no new analytic theorem is needed for this interface, but it is not yet
-formally connected here.
+The Schwartz Poisson formula must therefore be instantiated for the explicit
+cutoff and its Fourier transform identified with `explicitPoissonMode`,
+before composing this tail estimate with a Poisson pipeline.  This fresh
+instantiation is now proved in `AFEExplicitPoissonIdentity`, including
+smoothness at zero, exact Fourier sign, the Poisson identity, and the exact
+finite primal sum at integer endpoints.  No equality between the two
+different cutoff functions is asserted.
+
+For this interface use exactly
+`f_s(u)=w_(x,N)(u)*exp(-s*log(u))`.  It is smooth away from zero and
+identically zero on a neighborhood of zero when `x>1`, hence globally
+smooth and compactly supported.  Schwartz Poisson summation applies to
+this very function.  With the convention `exp(-2*pi*i*k*u)`, its Fourier
+transform is exactly `explicitPoissonMode` at `s=sigma+i*t`, since
+`exp(-s*log u)=u^(-sigma)*exp(-i*t*log u)` on `u>0`.
+For integer endpoints `m<=n`, there are no extra smoothing summands:
+`w_(m,n)=1` at the integers in `[m,n]` and `w_(m,n)=0` at every other
+integer, including `m-1` and `n+1`.  Thus its primal Poisson sum is exactly
+`sum_(m<=j<=n) j^(-s)`.  This is a fresh instantiation, not an equality
+between the old width-two bump and the explicit width-one cutoff.
+
+For the remaining nonstationary finite band, a support-aware first-derivative
+bound is available on paper.  Suppose `sigma>0`, `a=x-1>0`, `b=N+1`, the
+phase is twice continuously differentiable on `[a,b]`, its derivative is
+monotone, and `|F'|>=g>0` throughout.  Define
+`H(v)=integral_a^v u^(-sigma)*exp(i*F(u)) du`.  The existing first-derivative
+lemma, applied to every `[a,v]`, gives `|H(v)|<=4*a^(-sigma)/g`.
+Since `w(a)=w(b)=0`, integration by parts gives
+`integral_a^b w*H' = -integral_a^b w'*H`.  The two unit transitions give
+`integral_a^b |w'| <= 4*C1`; hence
+
+\[
+ \left|\int_a^b w(u)u^{-\sigma}e^{iF(u)}\,du\right|
+ \leq 16C_1a^{-\sigma}/g.
+\]
+
+This step uses no cancellation of arithmetic coefficients.  Its endpoint
+gaps can be summed with the previously proved shifted harmonic bounds.
+The zero Fourier mode must instead retain its exact Mellin antiderivative
+and be combined with the Euler--Maclaurin main term before the `N` limit;
+the small gap `t/(N+1)` must not be treated as uniform in this argument.
 
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
@@ -1632,16 +1671,11 @@ the generic identity specializes without any additional analytic premise to
 
 This theorem, including the three integrability deductions and four endpoint
 cancellations, passes the axiom audit with only `propext`,
-`Classical.choice`, and `Quot.sound`.  The only remaining gate in this
-Poisson tail is therefore the numerical integration of the four nonnegative
-majorants and the inverse-square frequency summation.
-
-For the Poisson far tail, the next remaining lemma is therefore explicit:
-instantiate `A=w_{x,N}u^{-sigma}`, `F=Psi_k`, use (8.22e') to bound the
-four classes in (8.22e''''), and sum their
-inverse-square-or-better frequency decay.  No unspecified
-second-integration-by-parts principle, continuity premise, or integrability
-premise remains.
+`Classical.choice`, and `Quot.sound`.  The supported L1 integration and
+inverse-square frequency summation are now proved as described above, so
+the distant-tail estimate has no remaining continuity, integrability,
+summability, or cutoff-identification premise.  This statement does not
+cover the finite nonstationary band or the stationary Gamma replacements.
 
 The discrete endpoint bookkeeping is formal.  If `beta>=0`, remove the
 single integer nearest either side of `beta`.  For every `M>=0`, Lean proves
@@ -1672,15 +1706,46 @@ up to the two constant-width transition strips.  Formula (8.19), with
 `z=1-s` and `c=2*pi*m`, identifies the full positive-frequency integral as
 
 \[
-  (2\pi m)^{s-1}e^{i\pi(1-s)/2}\Gamma(1-s).                    \tag{8.24}
+ (2\pi m)^{s-1}e^{i\pi(1-s)/2}\Gamma(1-s).                    \tag{8.24}
 \]
 
-The remaining analytic gate is now quantitative rather than structural:
-sum the nonstationary Fourier modes in (8.22), replace the stationary
-truncated integrals by (8.24), and prove that the two endpoint-distance
-harmonic sums and transition strips contribute
+The coefficient in (8.24) must not be declared a unit phase without a
+correction.  Write
+`P(s)=(2*pi)^(s-1)*exp(i*pi*(1-s)/2)*Gamma(1-s)` and use the standard
+functional-equation coefficient
+`chi(s)=2*(2*pi)^(s-1)*sin(pi*s/2)*Gamma(1-s)`.  Euler's sine identity gives
+the exact relation
+
+\[
+ \chi(s)=(1-e^{i\pi s})P(s).
+\]
+
+On `s=1/2+i*t`, `|chi(s)|=1`, and for `t>=1`, `|P(s)|<=2` and
+`|P(s)-chi(s)|<=2*exp(-pi*t)`.  Multiplying by the dual sum of length `y`
+costs at most `4*exp(-pi*t)*sqrt(y)`, using
+`sum_(m<=y) m^(-1/2)<=2*sqrt(y)`.  For `y<=sqrt(t)` this is absorbed by
+the required `O(t^(-1/4))` remainder.  This prefactor correction is an
+explicit remaining assembly obligation, not an assumed unit-norm identity
+for the raw Gamma coefficient.
+
+For the explicit width-one cutoff, the stationary membership bounds use
+`N+1` and `x-1` in place of `N+2` and `x-2` in (8.23).
+The remaining quantitative gate is to sum the finite nonstationary band
+with its endpoint distances, cancel the zero-mode main term before taking
+the cutoff limit, replace the stationary truncated integrals by (8.24),
+and prove that the endpoint harmonic sums and transition strips contribute
 `O(x^(-sigma) log t)+O(t^(1/2-sigma)y^(sigma-1))`.  No Poisson identity,
 Gamma boundary value, or smoothing existence remains unproved.
+
+**Verification checkpoint (2026-08-30).** One combined `lake build` of
+`Test.TwoUnitTransitionIntegralContract`, `Test.AFEExplicitPlateauIntegralContract`,
+`Test.AFEExplicitMellinSecondL1Contract`, `Test.AFEExplicitPoissonGapMajorantContract`,
+`Test.AFEExplicitPoissonUniformIntegralContract`, `Test.AFEExplicitPoissonFarTailContract`,
+and `Test.AFEExplicitPoissonIdentityContract` exited zero (8725 jobs,
+including cached dependencies).  Their axiom audits list only `propext`,
+`Classical.choice`, and `Quot.sound`.  These tests certify the stated local
+lemmas and cutoff interface, not the complete weak AFE or an improved
+zero-density certificate.
 
 ## 9. Primary sources
 
