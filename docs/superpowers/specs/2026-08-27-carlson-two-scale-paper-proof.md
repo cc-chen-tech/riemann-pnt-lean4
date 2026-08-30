@@ -1519,9 +1519,32 @@ therefore proves the cutoff-uniform bound
 \]
 
 The proof uses the already established zero boundary terms at both ends.
+Both the support-preserving pointwise gap bound and this integrated bound
+are now formal in `AFEExplicitPoissonUniformIntegral`; its exact-statement
+contract and allowed-axiom audit pass (exit code zero).
 This is only a nonstationary-mode estimate: summation over the distant
 frequencies, the intermediate endpoint band, and replacement of the
 stationary integrals by their Gamma values remain separate obligations.
+
+In particular, for an integer `m>=1` with `t/a<=pi*m`, both modes
+`k=m` and `k=-m` have gap `g=pi*m`: the positive mode has
+`|F'|=t/u+2*pi*m`, while the negative mode has
+`F'=2*pi*m-t/u>=pi*m`.  Thus `t/g<=a` and the last bound is at most
+
+\[
+ \frac{1}{(\pi m)^2}\left[
+ \left(2D_2+\frac{6C_1}{\sigma+1}\right)a^{-\sigma}
+ +\left(4\sigma D_1+\sigma+
+       \frac{3\sigma+2}{\sigma+2}+\frac3{\sigma+3}\right)
+       a^{-\sigma-1}\right].
+\]
+
+For `a>=1` this is `C_sigma*a^(-sigma)/(pi*m)^2`.  The elementary bound
+`sum_(m>=1) 1/m^2 <= 2` follows from
+`1/m^2 <= 1/(m-1)-1/m` for `m>=2` and telescoping.  Consequently the
+combined distant tails are bounded by `4*C_sigma*a^(-sigma)/pi^2`,
+uniformly in `N`.  Frequencies failing `t/a<=pi*m` have not been estimated
+by this argument; they remain in the finite endpoint/stationary ledger.
 
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
