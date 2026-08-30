@@ -64,17 +64,21 @@ excluding zeros on `Re s = sigma_0`, nor should equation (37) depend on such
 an exclusion.
 
 The classical Littlewood lemma permits this situation by a limiting
-convention.  Move the left side to `sigma_0-epsilon` through zero-free
-vertical lines and let `epsilon` decrease to zero.  Zeros lying on the target
-left edge acquire weight `epsilon` and disappear in the limit, while the
-left logarithmic integral converges in `L^1`; locally this is the elementary
-integrability of `m log|t-gamma|` after analytic zero factorization.  Zeros
-with real part at least `1/2` retain the fixed gap `R/L`.
+convention.  Move the left side from the right, to
+`sigma_0+epsilon < 1/2`, through zero-free vertical lines and let `epsilon`
+decrease to zero.  Possible zeros on the limiting left edge are excluded
+from every shifted rectangle, while every zero with real part at least
+`1/2` remains inside and retains a gap tending to `R/L`.  Full `L^1`
+convergence is not needed: reverse Fatou applied to
+`C-log|F(sigma_0+epsilon+it)|` gives the one-sided upper semicontinuity of the
+left logarithmic integral required by the zero-count upper bound.
 
-The next contour-core task is therefore an analytic boundary-limit extension
-of the exact Littlewood theorem, not an extra zero-free hypothesis.  Only
-after that extension may the left logarithmic integral be bounded by Jensen
-and the long mollified second moment.
+The general epsilon boundary-limit extension is now implemented in
+`PrimeNumberTheorem/LittlewoodLeftBoundaryLimit.lean`.  Its remaining
+contour-core task is ordinary convergence of the non-left remainder and
+specialization to the actual product.  Only after that specialization may
+the left logarithmic integral be bounded by Jensen and the long mollified
+second moment.
 
 ## Source audit
 
