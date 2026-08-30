@@ -248,17 +248,22 @@ For `alpha=a/L`, `beta=b/L`, define
   (h,k)^{1+\alpha+\beta}.
 \]
 
-Conrey's Lemma 1 gives
+The additive form of Conrey's Lemma 1 needed here is
 
 \[
- \Sigma\sim\frac1{\theta L}
+ \Sigma=\frac1{\theta L}
  \int_0^1(P_1'(x)+a\theta P_1(x))
-          (P_2'(x)+b\theta P_2(x))\,dx.
+          (P_2'(x)+b\theta P_2(x))\,dx+o(1/L).
 \tag{A}
 \]
 
-This is not a bare citation after the present source recovery.  Its proof is
-the gcd/Mobius reindexing from Conrey 1983, Section 6, followed by that
+The remainder must be uniform on the fixed negative-shift bidisc and its
+positive-shift reflection. A relative asymptotic is not enough when the
+displayed integral vanishes; see the 2026-08-30 uniformity audit below.
+
+This identifies the mathematical dependencies, not an already completed
+native proof. The route is the gcd/Mobius reindexing from Conrey 1983,
+Section 6, followed by that
 paper's Lemmas 10 and 11.  Lemma 10 is the contour evaluation of the tapered
 Mobius sum after factoring `1/(zeta(s)F(j,s))`; Lemma 11 is the required
 Euler-product partial sum.  The zero-free line and reciprocal bounds for
@@ -270,8 +275,8 @@ Moving the shifted contour and using the Estermann-type functional equation
 splits the integral into `M_i+R_i+E_i`.  The two `M_i` terms give exactly
 
 \[
-  \frac{\Sigma(b,a,P_1,P_2)
-       -e^{-a-b}\Sigma(-a,-b,P_1,P_2)}{\alpha+\beta},
+  \frac{\Sigma(b/L,a/L,P_1,P_2)
+       -e^{-a-b}\Sigma(-a/L,-b/L,P_1,P_2)}{(a+b)/L},
 \]
 
 which, together with (A), is (G).  The residues `R_i` are rapidly decaying
@@ -329,18 +334,24 @@ Conrey's Lemma 7 bounds the analytic kernel by
  \Delta^{-c-5/2}T^{5/2+\eta+\varepsilon}.
 \]
 
-Combining it with (M8), summing all dyadic boxes, taking
-`Delta=T^(1-delta)` and `eta=epsilon/2`, gives
+Combining it with (M8) requires **independent** small losses in the two
+lemmas, with the arithmetic loss strictly less than `eta` so that the
+infinite dyadic `N` sum converges. The literal same-`epsilon` substitution
+`eta=epsilon/2` from the printed shorthand cannot justify that sum.
+After this correction, taking `Delta=T^(1-delta)` gives the schematic bound
 
 \[
  Z\ll
- \Delta^{-7/2}T^{5/2+o(1)}
+ \Delta^{-7/2}T^{5/2+\varepsilon_*}
  \left(T^{1/2}y^{7/8}+y^{7/4}\right).
 \tag{E}
 \]
 
-For `y=T^theta`, the two powers of `T`, ignoring arbitrarily small positive
-losses, are
+Here `epsilon_*` is a fixed, sufficiently small positive budget (after
+the independent losses have been chosen), not an exponent tending to zero.
+
+For `y=T^theta`, the two base powers of `T`, before the Gaussian and other
+strictly budgeted positive losses, are
 
 \[
  -\frac12+\frac{7\theta}{8},
@@ -353,6 +364,12 @@ Both are negative exactly when
 \[
   \boxed{\theta<\frac47.}
 \]
+
+This is an exponent criterion, not by itself a proved estimate for `Z`.
+The [2026-08-30 uniformity audit](2026-08-30-conrey-long-moment-uniformity-audit.md)
+keeps the full loss `7 delta/2+(1+delta+2 theta) eta+eps_K+eps_M`,
+proves the dyadic envelope converges with independent explicit parameters,
+and retains an `o(T^(-1/4000))` margin at `theta=571/1000`.
 
 The auxiliary assumption `y<=T^(8/13)` in Lemma 8 is weaker because
 `4/7<8/13`.  Thus no endpoint theorem at `theta=4/7` is used: all numerical
