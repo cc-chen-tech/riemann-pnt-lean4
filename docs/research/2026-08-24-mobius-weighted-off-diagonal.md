@@ -28079,6 +28079,32 @@ correction. No new dense residual cell or physical norm saving is claimed.
 The canonical reflection Gram remains the separate (PA18) object, not the
 common Fourier-zero edge of this calculation.
 
+### 9.203 Reciprocal-window transport needs the physical length and integer boundary
+
+The [physical reciprocal-scale audit](2026-08-30-mwkf-reciprocal-physical-scales.md)
+checks the proposed cubic-window bypass of the coupled gate against
+MRSTT Theorem 1.1(i), arXiv:2411.05770v2. The maximal polynomial-phase
+input and continuous sliding transfer are valid. The first quotient
+Poisson factor is `Uhat(mR/(As))`, however, so its length is `M=AS/R`,
+not `A` outside balanced boxes. The corrected c-Poisson Jacobian is
+`M/(rn)`, the critical threshold is `M>=D log^(-K)T`, and the per-mode
+outer coefficient after the weighted Mobius bound is `1/(reR)`.
+With `A<<R` these corrections preserve the critical **smooth-model**
+logarithmic saving and the strictly positive cubic Taylor margin.
+
+The nonzero-c integer count has the exact finite upper bound (RP9).
+Its `+1` endpoints leave the additional normalized outer budget
+`E0 B_* (A0 P+M0)/S^2` up to fixed logarithms. This budget is
+power-smaller if `a>alpha+eta`, but not throughout the polytope;
+`u=alpha=3/5,a=1/5` remains uncovered by this argument even when a
+logarithmic collar places A in the subcritical branch. This is a
+missing proof input, not a lower bound for the physical remainder.
+
+The exact arithmetic-mask transfer, the residual joint divisor average,
+and the identification of all zero packets with `G_chi+J_chi` remain
+separate obligations. No complete twisted-moment claim follows from
+the local reciprocal lemma or its finite regression tests.
+
 ## 10. What has and has not been proved
 
 **Canonical zero-frequency outcome.**  The finite Fourier Gram identity
