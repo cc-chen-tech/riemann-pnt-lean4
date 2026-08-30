@@ -102,6 +102,7 @@
 > | Common-cutoff physical reflection adapter | Section 9.199 and the [physical adapter note](2026-08-30-mwkf-physical-reflection-adapter.md) return (4.5) to the integer lattice before product grouping, retain the full Mellin family \(B_{N,z}=F_z-R_{N,z}\), and prove the common-cutoff tail \(\ll T^3N^{5/2}X^{-3/2}\).  The product kernel is pulled back by \(C_z^TKC_z\) to the original mollifier coordinates before joining the regulated canonical zero Gram and the complete complementary kernel.  A finite counterexample changes \(-12\) to \(-6\) if this coordinate map is omitted.  The full signed operator is defined, but no norm saving or norm-preserving transfer to USZNTT is proved |
 > | Normalized Mellin coefficient transfer | Section 9.200 proves \(\|S_z^{\pm1}\|^2\le D_XH_X=X^{o(1)}\), uniformly for \(\Re z\ge0\), and the stronger constant bound \(\|S_z^{\pm1}\|\le\zeta(5/2)\) on the original line \(\Re z=2\).  The exact inverse, LCM Gram endpoints, and signed packet transfer are retained.  This removes the raw divisor-coordinate power loss, not the occupancy-norm or coupled signed estimate.  An unrestricted full-physical-operator target is separately ruled out by a phase-aligned coefficient witness; the actual Möbius coefficient class is not ruled out |
 > | Direct published Region A--C coverage | proved/classified in Section 8 |
+> | Physical Type–Ramanujan normalization correction | Section 9.205 proves the endpoint-safe one-sided Type identity and the coupled three-variable complete sum. The unaveraged physical cofactor prefactor is `HL`, not the `HL/S` used in the RP/SS model. Those model estimates remain valid, but the physical quantity is `S` times the model and is not covered at target. The concrete coprimality layer transfers exactly through `Q=Aeq`-smooth convolution; the remaining signed saving is unproved |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
 > | Residual coupled Region-D estimate at length \(T^3\) | unproved |
 >
@@ -28123,12 +28124,53 @@ With the physical `M_A=AS/R`, the full subcritical outer sum is
 
 `O(S (log^(-K+C)T + T^(-1/5)))`.
 
+Here the sum has the **defined model prefactor `HL/S`**. The subsequent
+physical adapter in Section 9.205 shows that the literal unaveraged
+physical sum instead has `HL`, so its bound is `S` times the displayed
+model bound. This is not a physical target-coverage theorem.
+
 This removes the former `a>alpha+eta` restriction, including the
 `u=alpha=3/5,a=1/5` subcritical logarithmic collar. The positive bound
 permits arbitrary bounded masks and deletion of the original m=0.
 The complementary c=0 packet is still excluded, not estimated as a
 divisor of zero. No new critical masked MRSTT theorem, full physical
 packet transfer, or canonical-zero/signed-operator saving is asserted.
+
+### 9.205 Endpoint-safe physical Type adapter restores a missing modulus scale
+
+The [physical Type–Ramanujan note](2026-08-30-mwkf-physical-type-ramanujan.md)
+starts with the finite identity
+`mu(n)1_(n,q)=1 = 1_(n=1) - sum_(Ab=n) mu(A)(1-1_(b=1)1_(A,q)=1)`.
+It retains nonsquarefree-parent cancellations, the separate r=1 term,
+and the two original Mobius coefficients. A fixed bump interpolates
+the integer b=1 endpoint exactly with uniform normalized derivatives.
+No quotient-dependent squarefree or q-coprimality mask is concealed
+in a smooth amplitude.
+
+Before any absolute value, simultaneous quotient/h/delta Poisson uses
+the exact complete sum (PT4), equal to `s c_s(m+Akl)`, for the original
+coupled kernel. The result has prefactor `RHL/s^2`; after division by
+R and the squarefree Ramanujan expansion, the prefactor is **HL**.
+The QCT factor `1/(RS)` was already extracted in (5.15). The additional
+`1/S` in the earlier candidate belongs only to its long-cofactor
+density main term and cannot accompany an unaveraged short-cofactor
+divisor sum.
+
+Consequently the RP/SS model estimates are mathematically valid but
+are too weak by this factor to establish the corresponding physical
+target: `M_phys=S U_model`, (PT13). A finite s=3 fixture and a separate
+nonzero-primal-axis Gaussian s=5 fixture detect the missing factor.
+For the concrete smooth core, the remaining mask is exactly
+`mu(d)1_(d,Aeq)=1`; its smooth-divisor convolution (PT8) transfers to
+the MRSTT model. Integer endpoints and the long smooth-divisor tail
+are controlled in (PT10)--(PT12), but their resulting physical bound
+is `S^2 T^(-1/20000)`, not the required S.
+
+This supplies an exact arithmetic adapter and corrects the coverage
+ledger, not a completed coupled-kernel bound. All transform tails,
+non-smooth original endpoints, zero-packet/reflection pairings and
+the signed outer saving retain their stated obligations. The separate
+BBLR half-power deficit is not multiplied by this model's saving.
 
 ## 10. What has and has not been proved
 

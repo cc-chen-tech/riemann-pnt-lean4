@@ -8,6 +8,15 @@ Poisson 的长度改成 `M=AS/R`。这样可以修复**临界平滑模型**的�
 整个亚临界有界支持模型；临界算术层及零项接口仍在。这不是完整
 twisted-moment 证明。
 
+**后续归一化更正。** [PT5–PT13](2026-08-30-mwkf-physical-type-ramanujan.md)
+进一步从原 master 推导出：这里在 (RP8) 后使用的 `HL/S` 是模型
+归一化，未平均的字面物理 cofactor 和实际带 `HL`。因此即使临界
+模型已得 `O(S log^{-L}T)`，相应物理界仍是 `O(S² log^{-L}T)`，未到
+target `S`。自然长度 `M=AS/R`、(RP3) 的 Jacobian、MRSTT 引理及
+模型内的全部总账仍然有效；不能再把模型估计视作已经修复物理尺度
+的完整上界。PT1–PT9 也补出了具体 smooth-core 互素层的精确转移，
+但它不消除这个 `S` 损失。
+
 **范围。** 本文独立核对了
 [候选推导的固定版本](https://github.com/cc-chen-tech/riemann-pnt-lean4/blob/7cc472d45f934f7465a8543273a3bb866ef8da5a/docs/research/2026-08-25-mwkf-alternative-routes-spike.md#L21820)
 中 cubic reciprocal-window 路线。未修改其分支；以下结论不依赖该版本
