@@ -194,8 +194,9 @@ private theorem differentiableAt_GammaReal {s : ℂ}
       ((Complex.differentiableAt_Gamma (s / 2) hsGamma).comp s (by fun_prop))
 
 /-- Exact logarithmic derivative of Conrey's completed archimedean factor on
-the right half-plane. -/
-theorem logDeriv_conreyH_eq {s : ℂ} (hs : 1 < s.re) :
+its full positive-real-part regular domain. -/
+theorem logDeriv_conreyH_eq_of_re_pos_of_ne_one
+    {s : ℂ} (hspos : 0 < s.re) (hsone : s ≠ 1) :
     deriv conreyH s / conreyH s =
       1 / s + 1 / (s - 1) - Complex.log Real.pi / 2 +
         Complex.digamma (s / 2) / 2 := by
@@ -205,11 +206,7 @@ theorem logDeriv_conreyH_eq {s : ℂ} (hs : 1 < s.re) :
     simp at this
     linarith
   have hs1 : s - 1 ≠ 0 := by
-    rw [sub_ne_zero]
-    intro h
-    have := congrArg Complex.re h
-    simp at this
-    linarith
+    exact sub_ne_zero.mpr hsone
   have hsGamma : ∀ n : ℕ, s / 2 ≠ -(n : ℂ) := by
     intro n h
     have hre := congrArg Complex.re h
@@ -217,7 +214,7 @@ theorem logDeriv_conreyH_eq {s : ℂ} (hs : 1 < s.re) :
     have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
     linarith
   have hGamma : Complex.Gammaℝ s ≠ 0 :=
-    Complex.Gammaℝ_ne_zero_of_re_pos (by linarith)
+    Complex.Gammaℝ_ne_zero_of_re_pos hspos
   have hlinear : logDeriv (fun z : ℂ => z - 1) s = 1 / (s - 1) := by
     simp [logDeriv_apply]
   have hpoly :
@@ -240,6 +237,18 @@ theorem logDeriv_conreyH_eq {s : ℂ} (hs : 1 < s.re) :
     Complex.Gammaℝ z) s = _
   rw [houter, hpoly, logDeriv_GammaReal hsGamma]
   ring
+
+/-- Backwards-compatible right-half-plane wrapper for the exact logarithmic
+derivative formula. -/
+theorem logDeriv_conreyH_eq {s : ℂ} (hs : 1 < s.re) :
+    deriv conreyH s / conreyH s =
+      1 / s + 1 / (s - 1) - Complex.log Real.pi / 2 +
+        Complex.digamma (s / 2) / 2 := by
+  apply logDeriv_conreyH_eq_of_re_pos_of_ne_one (by linarith)
+  intro hsone
+  have hre := congrArg Complex.re hsone
+  simp at hre
+  linarith
 
 /-- The logarithmic derivative `H'/H` tends to positive infinity uniformly
 in the imaginary part on right half-planes. -/

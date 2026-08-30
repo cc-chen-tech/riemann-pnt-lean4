@@ -1826,3 +1826,49 @@ equation (37), with a concrete product and no abstract boundary nonvanishing
 hypothesis.  It does **not** close the two horizontal weighted phase/Jensen
 terms, admissible endpoint selection, or the long mollified mean square.
 Those remain the next gates before any genuine two-fifths claim.
+
+### 23.5 Verified checkpoint: actual-product Jensen mass and admissible heights
+
+The paper-first disk design in
+`2026-08-28-conrey-horizontal-jensen-math.md` is now implemented for the
+actual product, without a conditional growth predicate:
+
+- `exists_norm_conreyExplicitMollifiedV1_le_conreyHorizontalJensenOuterClosedBall`
+  proves the outer-disk bound
+
+  \[
+  |V_1(s)B(s)|\le C\,Y\,(U+2\log L+10)^6(L+2)^2;
+  \]
+
+- `exists_conreyHorizontalJensenInnerZeroMass_le` combines this sphere bound,
+  the center lower bound `1/6`, circle-average monotonicity, Jensen's formula,
+  and divisor locality to prove the exact multiplicity bound
+
+  \[
+  N_D(r)\le
+  {\log\{C Y (U+2\log L+10)^6(L+2)^2\}+\log 6
+   \over \log(\mathcal R/r)};
+  \]
+
+- `card_conreyHorizontalJensenInnerZeroSupport_le_mass` bounds the number of
+  distinct inner-disk zeros by this multiplicity mass; and
+- `exists_conreyHorizontalJensenAdmissibleHeight` selects
+  `t in [U,U+1]`, quantitatively separated from every inner-disk zero height,
+  so the actual product is nonzero on the complete segment
+  `[sigma0, 2 log L] + it`.
+
+The finite height set is computed from the divisor on the inner disk (which,
+by divisor locality, is the outer divisor restricted to that disk).  It does
+not include uncontrolled zeros in the outer annulus.
+
+The follow-up buffered-factor, Borel--Caratheodory, and horizontal-integral
+modules now go further: at one factor-support-selected height they bound the
+actual weighted logarithmic derivative by
+
+\[
+ 1{,}100{,}000{,}000{,}000\,L^7=o(e^L/L).
+\]
+
+Thus the selected-height horizontal Jensen term is closed.  The far-right
+argument variation in equation (37), equations (38)--(41), and the long
+mollified second moment remain open; strict `> 2/5` is not proved.

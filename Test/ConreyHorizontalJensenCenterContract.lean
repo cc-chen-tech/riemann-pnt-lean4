@@ -1,0 +1,9 @@
+import HardyTheorem.ConreyHorizontalJensenCenter
+
+namespace HardyTheorem
+
+#check one_sixth_le_norm_conreyExplicitRightVerticalProduct
+
+#print axioms one_sixth_le_norm_conreyExplicitRightVerticalProduct
+
+end HardyTheorem
