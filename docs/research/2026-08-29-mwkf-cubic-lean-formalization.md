@@ -101,6 +101,12 @@ Lean 定理使用原实 moment 的复数嵌入。已经证明每个 shift 的积
 遍历整数，而当前已证分解以非负指标起步。新增有限下尺度补全给出了准确的
 连续边界修正及其格点消失性质；移除补全截断的积分极限仍须证明。
 
+实际正实产品 Mellin 权现已另行完成无限高度收敛及跨越零点的换线。
+对 `-1/2<a<0<b`，严格得到 `V_b(t,P)=1+V_a(t,P)`，而不是把两个
+不同积分线的权直接相等。由此取得零端点界 `|V_b|<=1+C_(t,a)*P^(-a)`。
+这里证明的是固定 `t`、固定产品 `P>0` 的实际权；尚未交换完整物理
+双重积分、所有 shift、下尺度深度与高度极限，也未获得随 T 一致的误差。
+
 ## Machine-checked in this PR
 
 The following steps now have kernel-checked Lean proofs with no project axiom,
@@ -781,6 +787,104 @@ cutoff 的 C∞、紧支撑及正指标域支撑条件均从实际函数证明�
 参数一致尾项及 cubic Möbius 核心估计。这不是独立代理审阅、远端 CI 或
 外部同行专家确认。
 
+## 实际产品权的无限高度与零端点换线
+
+有限高度右线估计 `|V^(V)_b(t,P)|<=C_(t,b)*P^(-b)` 不能单独支配
+`P->0` 的连续零模。新证明直接处理 gamma-only scalar，未从已完成的
+completed-zeta AFE 极限推断每个实产品权的极限。
+
+### Gamma 竖条界与实际 scalar 的绝对可积性
+
+`MathlibAux/GammaVerticalStripBound.lean` 从实际 Euler 积分证明
+`|Gamma(z)|<=Gamma(Re z)`（`Re z>0`），再由两端 Mellin 支配取得正闭
+竖条上的 Gamma 和 GammaR 一致上界。这里不假设 Stirling 公式或谱估计。
+
+`MWKFCubicAFEScalarDecay.lean` 对原来的三个 pole-cancelling 因子逐一估计，
+得到精确的高斯多项式 majorant
+
+\[
+ H_X(y)=(1+|X|+|y|)^6e^{-y^2},\qquad
+ |G_t(X+iy)|\le125e^{X^2}H_X(y).
+\]
+
+对 `X>-1/2` 且 `X!=0`，证明实际 `cubicAFEScalar` 连续、被
+`A_(t,X)*H_X` 支配且绝对可积。范围包括后续所需的负实部直线；常数
+依赖固定 `t,X`。Gamma 分母不会被隐藏为 T 一致常数。
+
+### 保留积分线的完整权与高度极限
+
+`MWKFCubicAFEWeightLimit.lean` 定义
+
+\[
+ V_X(t,P)=\frac1{2\pi}\int_{\mathbb R}
+   \operatorname{scalar}_t(X+iy)e^{-(X+iy)\log P}\,dy,
+ \qquad
+ C_{t,X}=\frac1{2\pi}\int_{\mathbb R}|\operatorname{scalar}_t(X+iy)|\,dy.
+\]
+
+对 `P>0`、`X>-1/2`、`X!=0`，这个积分绝对收敛，原有限高度实产品权
+确实趋于它；有限高度的 envelope 至多为 `C_(t,X)`，包括反向区间 `V<0`。
+因此有限高度和完整高度的右线权都有与高度无关的 `C_(t,X)*P^(-X)` 上界。
+这仍是固定时间的界，不是关于 T 的统一主项或余项。
+
+### 有限矩形、两条水平边与留数一
+
+`MWKFCubicAFEWeightContour.lean` 对实际分子
+`G_t(z)*GammaProduct_t(z)/GammaProduct_t(0)*exp(-z*log P)` 证明
+`Re z>-1/2` 上全纯、在零点值为1。使用真实 divided difference 构造正则部，
+在 `z!=0` 处严格拆成 `remainder+1/z`。当
+`-1/2<x0<0<x1`、`y0<0<y1` 时，边界矩形积分严格为 `2*pi*i`；
+没有越过 Gamma 极点，也未把分子误称为整个复平面上的整函数。
+
+`MWKFCubicAFEWeightShift.lean` 以正闭竖条 Gamma 界及高斯衰减同时处理
+顶部和底部，得到两条水平积分趋零。分别使用左右竖线的绝对收敛，再取
+有限矩形公式的极限，证明
+
+\[
+ V_b(t,P)=1+V_a(t,P),\qquad
+ |V_b(t,P)|\le1+C_{t,a}P^{-a}
+ \quad(P>0,\ -1/2<a<0<b).
+\]
+
+所有 `i`、`2*pi` 和留数的正号均由 Lean 等式核对。取 `a=-1/4` 得到
+零端点界 `1+C_(t,-1/4)*P^(1/4)`；这是实际权的界，而非接口假设。
+
+### 这一步尚未推出什么
+
+上述换线处理 gamma-only 产品权；它不是共同 Mellin 的
+“对角 + 全部零 Poisson mode”公式，后者的 zeta 因子、shift 和、三角函数
+修正及端点极限仍须逐项证明。新界也不自动允许把 `J->infinity` 或
+`V->infinity` 移入整个双重积分或任一无限模式子级数，更不包含核心
+cubic Möbius 的 `o(T)` 消去。最终 `hexact/hmain/hrem` 假设保持不变。
+下一步的未截断物理核可积性必须保留 `delta!=0`：零 shift 时两个正指标
+可以同时趋零，平方根幅度具有 `1/x` 型端点。此前允许 `delta=0` 的
+紧支撑回归盒不能用来推断未截断核的全半轴可积性。
+
+### 本批核验与自审
+
+五个新源模块逐一编译通过，共600行定义与证明。五组新增合约均先确认
+缺失目标声明时失败，再接入实际证明。最终核验扩展到全部108个 MWKF
+contract/axiom-audit 文件，退出码0；缺失的旧 reciprocal-amplitude 对象
+补编译后纳入本次核验，未删减该组测试。只提前去重 imports，Lean 检查
+所有正文，输出保留完整公理报告及诊断。
+
+306条公理报告仅含 `propext`、`Classical.choice`、`Quot.sound`，没有
+error/warning。具体回归包括 `|Gamma(1+it)|<=1`、正负竖线的绝对可积性、
+负竖线有限高度极限、留数一矩形、`a=-1/4,b=3/4` 的换线等式和精确
+四分之一次幂界。最后一项曾捕获默认化简未处理 `-(-1/4)` 的类型不匹配，
+用显式负号等式修正后重跑全部108个文件；目标不等式及假设未改动。
+
+聚焦 pytest 为 `295 passed`（14.49秒），deterministic coverage 退出码0。
+coverage 的 `unconditional asymptotic proved`／`residual_top_level_gates=0`
+仍是内部脚本账本，不是最终渐近式的 Lean 证明。
+新文件无项目公理、sorry、admit、native_decide，未提高 heartbeat 限额。
+`git diff --check` 与 staged diff 检查通过；继续使用隔离临时 proof-object
+目录，未启动全量 Lean 冷构建。
+
+单代理自审核对实际 Euler 积分、三个 pole-cancelling 因子、Gamma 正实部
+区域、固定时间常数、完整实产品指数、矩形方向、两条水平边、`2*pi*i`
+归一化和正留数。没有将本次检查称为独立代理、外部同行审阅或远端 CI。
+
 ## Remaining formalization boundary
 
 This PR does **not** yet make the analytic theorem unconditional inside Lean.
@@ -847,6 +951,13 @@ The entire finite-height moment is unchanged by any finite completion depth;
 even height-dependent finite depths preserve the recombined height limit.
 Separate completed-mode summation across shifts, the lower-endpoint limit,
 and the required Mellin/height limit exchanges remain unproved.
+For each fixed physical time and positive real product, the gamma-only
+Mellin weight now has its independent, absolutely convergent height limit
+on every nonzero line X>-1/2. Its actual residue-one contour shift from a
+positive line to a negative line has also been proved, including both
+horizontal-edge limits; this gives the small-product bound
+`1+C_(t,a)*P^(-a)`. This is not yet a dominated convergence theorem for
+the complete physical zero-mode integral or either infinite mode series.
 Neither compactness in the logarithmic-extension proof nor the
 Schwartz construction supplies uniform seminorm estimates in the varying
 physical parameters.
@@ -881,6 +992,9 @@ Consequently the accurate status is:
   cutoffs, finite support of added continuous boxes, physical correction
   integrability and its exact zero/nonzero pairing, separate completed dyadic
   mode reassembly, and the full paired completed moment with its recombined
-  height limit;
+  height limit, positive-strip Gamma bounds, absolute scalar vertical
+  convergence, the independent real-product weight height limit, its
+  residue-one finite rectangle, both horizontal-edge limits and its
+  actual small-product contour-shift bound;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.

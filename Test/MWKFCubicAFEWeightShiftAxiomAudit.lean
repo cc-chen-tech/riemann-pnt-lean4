@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.MWKFCubicAFEWeightShift
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms exists_norm_cubicAFEWeightMellinKernel_horizontal_le
+#print axioms tendsto_cubicAFEWeightMellinKernel_horizontalIntegral
+#print axioms cubicAFERealProductWeightVertical_eq_one_add
+#print axioms norm_cubicAFERealProductWeightVertical_le_one_add

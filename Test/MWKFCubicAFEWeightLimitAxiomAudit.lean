@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.MWKFCubicAFEWeightLimit
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms norm_cubicAFERealProductMellinIntegrand
+#print axioms integrable_cubicAFERealProductMellinIntegrand
+#print axioms tendsto_cubicAFERealProductWeightFinite
+#print axioms norm_cubicAFERealProductWeightVertical_le
+#print axioms cubicAFEWeightEnvelope_le_normMass
+#print axioms norm_cubicAFERealProductWeightFinite_le_normMass
