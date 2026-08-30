@@ -1545,6 +1545,32 @@ For `a>=1` this is `C_sigma*a^(-sigma)/(pi*m)^2`.  The elementary bound
 combined distant tails are bounded by `4*C_sigma*a^(-sigma)/pi^2`,
 uniformly in `N`.  Frequencies failing `t/a<=pi*m` have not been estimated
 by this argument; they remain in the finite endpoint/stationary ledger.
+For a simpler explicit constant, the same argument permits
+
+\[
+ C_\sigma=4C_2+4C_1^2+8\sigma C_1+6C_1+4\sigma+5.
+\]
+
+Indeed, put `r=t/(a*g)`, so `0<=r<=1`.  After extracting
+`a^(-sigma)/g^2`, the bracket is
+`2D2+(8*sigma*C1+sigma)/a+6*C1*r/(sigma+1)`
+`+(3*sigma+2)*r/(a*(sigma+2))+3*r^2/(a*(sigma+3))`.
+Every displayed reciprocal ratio is at most one for `a>=1,sigma>0`.
+This verifies the stated constant without any asymptotic convention.
+The paired-mode estimate and its sum over every finite far-frequency set
+are now proved in `AFEExplicitPoissonFarTail`; its contract build exits zero
+and both public statements use only the allowed foundational axioms.
+
+**Cutoff interface check.** The older `AFEWeightedPoissonCutoff` Poisson
+identity uses `intervalPlateauBump` with width-two transitions.  The uniform
+derivative and tail bounds above instead use `explicitIntervalPlateau` with
+width-one transitions.  These functions are not definitionally equal.
+The Schwartz Poisson formula must also be instantiated for the explicit
+cutoff, and its Fourier transform identified with `explicitPoissonMode`,
+before composing this tail estimate with the existing Poisson pipeline.
+Smoothness and compact support of the explicit plateau are already proved;
+no new analytic theorem is needed for this interface, but it is not yet
+formally connected here.
 
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
