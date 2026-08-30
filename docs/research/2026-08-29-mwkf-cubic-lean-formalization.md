@@ -94,6 +94,13 @@ Lean 定理使用原实 moment 的复数嵌入。已经证明每个 shift 的积
 `(diagonal + zeroMode) + nonzeroMode`。这里的零模尚未求出渐近主项；
 这一收敛证明也没有提供 `o(T)` 的 Möbius 消去或各部分的独立高度极限。
 
+最新已证明实际对角项的有限高度 Mellin 公式，其算术核精确为
+`lcm(d,e)^(-1) * (r*s)^(-z) * zeta(1+2z)`，其中 `r=d/gcd(d,e)`、
+`s=e/gcd(d,e)`，两个交换步骤均有实际
+可和支配。零模尚不能直接套用原论文的无边界公式：原论文的 dyadic 尺度
+遍历整数，而当前已证分解以非负指标起步。新增有限下尺度补全给出了准确的
+连续边界修正及其格点消失性质；移除补全截断的积分极限仍须证明。
+
 ## Machine-checked in this PR
 
 The following steps now have kernel-checked Lean proofs with no project axiom,
@@ -209,6 +216,9 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | all integer shifts have summable physical norm integrals | `summable_integral_norm_cubicAFEBoundaryPhysicalKernel` |
 | separate zero/nonzero aggregation over all nonzero shifts and dyadic boxes | `summable_shift_cubicAFEZeroModeBoxFinite`, `summable_shift_cubicAFENonzeroModeBoxFinite`, `tsum_shift_cubicAFEFrequencyBoxFinite_eq_zero_add_nonzero` |
 | full finite-height diagonal/zero/nonzero identity and recombined height limit | `cubicAFEMollifiedMomentFinite_eq_diagonal_zero_nonzero`, `tendsto_cubicAFEDiagonal_zero_nonzero` |
+| exact reciprocal-LCM diagonal Mellin monomial and zeta series | `cubicAFEDiagonal_sqrt_normalization`, `cubicAFEDiagonalMellinMonomial_eq`, `hasSum_cubicAFEDiagonalMellinMonomial` |
+| actual finite-height diagonal Mellin integral, with both interchanges proved | `hasSum_intervalIntegral_cubicAFEDiagonalMellin`, `cubicAFEDiagonalMomentFinite_eq_mellin` |
+| finite lower-scale completion, exact integer invariance and physical boundary correction | `hasSum_cubicAFEDyadicCompletionWeight`, `eventually_cubicAFEDyadicCompletionWeight_eq_one`, `cubicAFEDyadicCompletionCorrection_eq_zero_on_progression`, `cubicAFEDyadicCompletionKernel_eq_boundary_add_correction` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -568,6 +578,83 @@ admit、native_decide 或提高 heartbeat 限额；未运行无关的全量 Lean
 负 shift/负高度和 `s=1`，以及不把固定参数收敛解释为渐近消去。
 本批仍是单代理本地核验，不是外部同行审阅。
 
+## 对角 Mellin 公式与双向尺度接口
+
+令 `q=gcd(d,e)`、`r=d/q`、`s=e/q`。新模块
+`MWKFCubicAFEDiagonalMellinKernel.lean` 先从有限 gcd/LCM 等式证明
+
+\[
+ \sqrt{rs}\sqrt{de}=[d,e],\qquad
+ \frac{((k+1)^2rs)^{-z}}{\sqrt{(k+1)^2rs}\sqrt{de}}
+ =\frac{(rs)^{-z}}{[d,e]}(k+1)^{-1-2z}.
+\]
+
+对 `Re z>0`，正尺度级数绝对收敛并精确产生 `zeta(1+2z)`；没有把
+零尺度或额外 Euler 因子带入归一化。`d=6,e=10,k=0,z=0` 的回归结果
+为 `1/30`，另有模数1、首个正尺度为1的回归。
+
+`MWKFCubicAFEDiagonalMellinIntegral.lean` 定义实际
+`S_t(z)=cubicAFEScalar t z`，它已包含 `G_t(z)g_t(z)/z`，并证明
+
+\[
+ D^{(V)}_{T,W}=
+ \sum_{d,e\le\lfloor T^3\rfloor}\int_t
+ 2a_N(d)a_N(e)W(t/T)\frac1{2\pi}
+ \int_{-V}^{V} S_t(X+iv)
+ \frac{(rs)^{-X-iv}}{[d,e]}\zeta(1+2X+2iv)\,dv\,dt.
+\]
+
+此处沿用完整 mollifier 有限支撑，`T!=0`、`X>1/2`，任意实有限高度 V。
+竖直积分与正尺度级数的交换使用实际 monomial 范数在竖线上的不变性，
+以及 scalar 的连续性；物理时间积分与对角尺度和的交换使用原 AFE
+可和范数族的对角注入子族和实际紧支撑时间 envelope。二者都不是接口假设。
+本式不是留数计算，也没有把 V 极限移入某个独立拆分部分。
+
+### 必须区分的两种零模
+
+原研究文档 `2026-08-24-mobius-weighted-off-diagonal.md` 的 (3.1) 使用
+`j in Z` 的双向 dyadic partition，(4.5a) 因而使用完整正实域。当前 Lean
+partition 的 `j,k in N` 在连续变量上的总权却是 `beta(x) beta(y)`。
+两种 partition 在正整数样本上一致，**不意味着两个零模积分可直接等同**。
+因此本次没有把论文 (4.5d) 当作当前零模的已证公式，也未将这一接口差异
+描述成论文自身的代数错误。
+
+`MWKFCubicAFEDyadicCompletion.lean` 为这项转换定义
+
+\[
+ B_J(x,y)=\beta(2^Jx)\beta(2^Jy),\qquad
+ \sum_{j,k\ge0}\phi_j(2^Jx)\phi_k(2^Jy)=B_J(x,y).
+\]
+
+这是把尺度下限降到 `2^(-J)` 的精确有限补全。已证明：
+
+- `B_0=beta(x) beta(y)`；
+- `x,y>=1` 时每个 J 都有 `B_J=1`；
+- 对固定正实 x,y，J 足够大后 `B_J=1`；
+- 实际物理修正 `(B_J-B_0)K_phys` 在每个 admissible progression 整数点为0；
+- `B_J K_phys=B_0 K_phys+(B_J-B_0)K_phys` 是精确物理核等式。
+
+在 `x=1/4,y=5/4` 上，`B_0=0` 而 `B_2=1` 的 Lean 回归明确说明连续
+权确实发生改变。补全不改原格点和，但其零模与非零模部分需要配对处理。
+尚未证明补全后的 Poisson 子级数极限、该修正的积分大小或 `J→∞` 与
+`V→∞`、Mellin 换线之间的交换。逐点最终等于1不等于积分支配。
+
+### 本批核验
+
+三个新源模块已逐一编译，三组 red-stage 合约先在缺失声明处失败。
+76个合约/公理审计文件同次核验通过，退出码0。仅将 imports 提前去重；
+Lean 实际检查全部正文，输出过滤器保留全部公理报告及诊断，避免冗长
+`#check` 类型打印遮蔽结果。完整取得204条公理报告，全部仅依赖
+`propext`、`Classical.choice`、`Quot.sound`，无 error/warning。
+聚焦测试 `295 passed`（14.51秒）；确定性 coverage 退出码0。coverage
+的 `unconditional asymptotic proved` 标签仍不是最终三个解析输入的 Lean
+证明。`git diff --check`、占位符和最终 `hexact/hmain/hrem` 状态扫描完成。
+没有新增项目公理、sorry、admit、native_decide，也未提高 heartbeat 限额。
+使用独立临时 proof-object 目录，未启动无关全量 Lean 冷构建。
+自审检查了原2因子、`1/(2pi)`、`1/lcm`、`1+2z`、负有限高度、实际
+对角注入子族，以及“正整数权相同不推出连续零模相同”的接口边界。
+这仍是单代理本地核验，不是外部专家审阅或远端 CI。
+
 ## Remaining formalization boundary
 
 This PR does **not** yet make the analytic theorem unconditional inside Lean.
@@ -620,7 +707,13 @@ separately in the proved nested order, and the entire finite-height moment
 is now `(diagonal + zeroMode) + nonzeroMode`. Arbitrary reordering of all
 individual Fourier coefficients is not asserted. Any additional reorderings
 needed for common Mellin/QCT evaluation and parameter-uniform tail estimates
-remain to be established. Neither compactness in the logarithmic-extension proof nor the
+remain to be established. The actual diagonal now has its finite-height
+reciprocal-LCM/zeta Mellin formula, with both scale/integral interchanges
+proved. The paper's bilateral dyadic zero mode still differs from the
+current nonnegative-scale zero mode. Finite lower-scale completion and its
+exact lattice-invisible physical correction are now formalized, but the
+required integral limits and zero/nonzero correction pairing are not.
+Neither compactness in the logarithmic-extension proof nor the
 Schwartz construction supplies uniform seminorm estimates in the varying
 physical parameters.
 The height limit remains
@@ -649,6 +742,8 @@ Consequently the accurate status is:
   inner-frequency convergence, per-box zero/nonzero split and all-real
   lower-boundary-weight reassembly, actual real-product power decay,
   integrated absolute dyadic/shift convergence, separate zero/nonzero
-  aggregation and full finite-height diagonal/zero/nonzero decomposition;
+  aggregation, full finite-height diagonal/zero/nonzero decomposition,
+  exact diagonal reciprocal-LCM Mellin formula and finite lower-scale
+  completion with its explicit physical correction;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.

@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.MWKFCubicAFEDiagonalMellinIntegral
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms cubicAFECombinedSummandFinite_diagonalRay_eq_mellin
+#print axioms hasSum_intervalIntegral_cubicAFEDiagonalMellin
+#print axioms cubicAFEDiagonalMomentFinite_eq_mellin
