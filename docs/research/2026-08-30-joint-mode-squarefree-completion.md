@@ -227,6 +227,11 @@ Jacobian 的 \((t^2b)^{-1}\) 伴随模式数的同等扩张；不能只保留前
 Type 支撑、频率重组、平方自由完成的离散版本、原变量尾和零分母见证。
 检查不替代连续 Poisson、谱估计或最终零点证明。
 
+后续[共同核有理点消去](2026-08-30-joint-kernel-rational-flatness.md)把
+\(j=0\) 的结论扩展到小分母有理相位及其深邻域；在统一光滑核类中，
+该部分可以保留全部平方因子和全部余因子。自然振荡尺度上的过渡区仍有
+可达到平凡大小的核，不能省掉其中的真实算术抵消。
+
 ### English scope summary
 
 Joint mode summation removes the full smooth-tensor zero mode, but the true
