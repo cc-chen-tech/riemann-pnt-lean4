@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.MWKFCubicSmoothIntegral
+
+#print axioms PrimeNumberTheorem.MWKFCubic.contDiff_intervalIntegral_joint
+#print axioms PrimeNumberTheorem.MWKFCubic.contDiff_integral_joint_compactSupport

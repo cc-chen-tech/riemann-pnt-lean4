@@ -80,6 +80,14 @@ Lean 定理使用原实 moment 的复数嵌入。已经证明每个 shift 的积
 以及保持该嵌套次序的外层 shift 级数可和；没有宣称所有指标可任意交换。
 高度极限仅在重组整体之外，仍未证明对角和非对角分别存在高度极限。
 
+最新一批已进一步证明实际核的联合 C∞ 性质，进而证明时间积分后的实际核
+仍是 Schwartz。对这个核应用 Poisson，再连接原有限格点积分恒等式，
+已将每个实际 box 的频率和移到时间积分外。新的完整有限高度表达式
+`cubicAFEFrequencyMomentFinite` 保留次序
+`sum_d sum_e sum_delta sum_(j,k) sum_h integral_t`；其与旧完整表达式相等，
+且重组整体的高度极限也已连接回真实 moment。没有据此交换跨 box 的频率和，
+也没有取得随 T 一致的 Fourier 尾项估计。
+
 ## Machine-checked in this PR
 
 The following steps now have kernel-checked Lean proofs with no project axiom,
@@ -178,6 +186,12 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | actual physical kernel jointly continuous on its exact positive-index region | `continuousOn_cubicAFEProgressionPhysicalSummand_joint` |
 | global joint continuity and joint compact support of the actual cutoff kernel | `continuous_cubicAFEProgressionCutoffSummand_joint`, `hasCompactSupport_cubicAFEProgressionCutoffSummand_joint` |
 | actual product-space integrability and time/Fourier interchange at each real frequency | `integrable_cubicAFEProgressionCutoffFourier_joint`, `integral_fourier_cubicAFEProgressionCutoffSummand` |
+| smoothness preserved by finite-interval integration and jointly compactly supported full-line integration | `contDiff_intervalIntegral_joint`, `contDiff_integral_joint_compactSupport` |
+| actual scalar/Mellin/physical kernel jointly C-infinity, without abstract regularity hypotheses | `contDiff_cubicAFEScalar_joint`, `contDiff_cubicAFELogProductWeightFinite_joint`, `contDiffOn_cubicAFEProgressionPhysicalSummand_joint`, `contDiff_cubicAFEProgressionCutoffSummand_joint` |
+| literal time-integrated kernel is smooth, compactly supported and Schwartz | `contDiff_integral_cubicAFEProgressionCutoffSummand`, `hasCompactSupport_integral_cubicAFEProgressionCutoffSummand`, `cubicAFEIntegratedProgressionSchwartz` |
+| integrated actual progression Poisson, and frequency sum outside time integral in each actual box | `cubicAFEIntegratedProgression_poisson`, `integral_cubicAFEDyadicPoissonTerm_eq_frequencySum` |
+| complete finite-height moment with frequency-before-time nesting and recombined height limit | `cubicAFEMollifiedMomentFinite_eq_diagonal_add_frequency`, `tendsto_cubicAFEDiagonal_add_frequency` |
+| summability of whole frequency boxes and the outer signed-shift series in the stated nesting | `summable_cubicAFEFrequencyBoxFinite`, `summable_shift_cubicAFEFrequencyBoxFinite` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -322,6 +336,59 @@ contract/axiom-audit 文件在同一次 Lean 调用中核验（只对 import 提
 本批次无新增项目公理、占位证明或 native evaluation 公理。按照单代理
 约束完成本地自审；这些记录不是外部专家审阅或远端 CI。
 
+## 联合光滑核、每箱频率换序与完整有限高度重组
+
+`MWKFCubicSmoothIntegral.lean` 先证明一个实际需要的解析工具：联合 C∞
+函数在固定有限区间积分后仍为 C∞。证明对有限阶作归纳，每阶偏 Fréchet
+导数在参数闭球与积分区间的紧积上有界，因此可合法积分号下求导。
+完整实线的紧支撑情形由实际支撑投影产生积分区间。没有输入预设的
+derivative majorant，也不要求积分上下限正向排列。
+
+`MWKFCubicAFEJointSmooth.lean` 将其用于真实有限高度 Mellin 权：
+Gamma 因子的倒数全纯性与非零性先给出真实 scalar 的联合光滑性。
+完整物理核在正指标区域光滑，cutoff 的闭支撑条件给出全局联合光滑性。
+再用上述工具和已证联合紧支撑，得到
+`x ↦ ∫ t, cubicAFEProgressionCutoffSummand ... t x` 的 C∞ 性质。
+这个函数在原空间 cutoff 支撑外恒零，所以本身就是 Schwartz；
+`cubicAFEIntegratedProgressionSchwartz` 的求值与该实际积分定义相同。
+
+`MWKFCubicAFEIntegratedPoisson.lean` 对该积分后的核应用精确缩放 Poisson。
+通过实际 progression 与双向格点的重编号、原整数 box 的共同有限支撑，
+以及前批逐频率 Fubini，证明
+
+\[
+\int_t \frac1s\sum_{h\in\mathbb Z}
+ \widehat{K_t}(h/s)e(-h\delta\bar r/s)\,dt
+=\frac1s\sum_{h\in\mathbb Z}
+ \left(\int_t\widehat{K_t}(h/s)\,dt\right)e(-h\delta\bar r/s).
+\]
+
+这是每个实际 dyadic box 的等式，非抽象统一支配假设。
+`MWKFCubicAFEFrequencyMoment.lean` 将其逐 box 接回完整有限高度 moment，
+保留实际 mollifier 支撑、全部正负非零 shift、两侧 dyadic 指标和完整相位。
+新的频率表达式在原嵌套下的 box 级数与外层 shift 级数可和。
+重组整体在高度趋于无穷时仍返回真实 moment。
+
+仍然没有声称跨 box/shift 的全部 Fourier 项联合绝对可和，没有把高度极限
+移入任一子级数，没有证明随 T 一致的 seminorm 或尾项节省。它解除的是
+每箱的时间/频率次序限制，不是最终 cubic 渐近式所需的色散估计。
+
+### 本批次验证
+
+四个新源模块均编译成功并生成 proof objects；54 个合约/公理审计文件
+在同一次 import 去重的 Lean 调用中核验通过（退出码 0，无 error/warning）。
+148 条公理报告仅含三个标准基础公理。实现前四组 red-stage 合约均在缺失
+新定理处失败。最终测试包括乘积参数、反向有限区间、实际积分核的定义相等、
+负 shift 与非互素模数、完整 (1/s) 和逆剩余相位、频率在时间积分之外的
+完整字面表达式，以及仅对重组整体作高度极限。
+
+首轮完整测试发现负整数 `-6` 从整数转复数与复数常量间需要显式 cast
+化简；修正特化测试后重新跑完全部 54 文件。未修改数学假设以迎合测试。
+聚焦 Python 测试为 `295 passed`（14.68 秒），确定性 coverage 退出码 0。
+仍须将 coverage 的内部 `unconditional asymptotic proved` 标签与尚未闭合
+的最终 Lean 定理严格区分。无新增项目公理、sorry、admit 或 native evaluation
+公理，未提高 heartbeat 限额。本批为单代理本地核验，不是外部专家审阅或远端 CI。
+
 ## Remaining formalization boundary
 
 This PR does **not** yet make the analytic theorem unconditional inside Lean.
@@ -353,15 +420,17 @@ the dyadic/integer reordering. The resulting pointwise Poisson expression
 sums dyadic boxes on the outside and frequencies on the inside. The same
 dyadic/integer reordering is proved for the actual time-integrated progression,
 using the cutoff's time independence and the previously established
-summability of the integrated original series. This is not
-yet a frequency-by-frequency time-integrated QCT expression: using finite
-integer support, the original lattice sum has now been interchanged with
+summability of the integrated original series. Using finite
+integer support, the original lattice sum has also been interchanged with
 time integration and the complete finite-height moment reassembled as its
 exact diagonal plus integrated Poisson boxes. The nesting order is explicitly
-`(d,e), delta, (j,k), integral_t, h`. Each individual Fourier transform now
-commutes with the actual time integral, by joint continuity and compact
-support of the actual kernel. Interchanging the **infinite** frequency series
-with the time integral, any required cross-index reorderings and parameter-uniform
+`(d,e), delta, (j,k), integral_t, h` in that earlier representation. Joint
+smoothness and compact support now also prove that the literal time-integrated
+kernel is Schwartz. Poisson applied to this kernel and the original finite
+lattice/time interchange prove the actual per-box infinite-frequency/time
+interchange. The complete finite-height moment is now also expressed in order
+`(d,e), delta, (j,k), h, integral_t`, with its recombined height limit proved.
+Any required cross-box or cross-shift reorderings and parameter-uniform
 tail estimates remain to be established. Neither compactness in the logarithmic-extension proof nor the
 Schwartz construction supplies uniform seminorm estimates in the varying
 physical parameters.
@@ -385,6 +454,8 @@ Consequently the accurate status is:
   reassembly both pointwise and after the physical time integral, finite
   lattice/time interchange, the full finite-height diagonal-plus-integrated
   dyadic-Poisson moment, its recombined height limit, joint time/space kernel
-  regularity and fixed-frequency physical-time/Fourier interchange;
+  regularity, joint smoothness, integrated actual Schwartz kernel, actual
+  per-box infinite-frequency/time interchange, and the full finite-height
+  frequency-before-time moment with its recombined height limit;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.

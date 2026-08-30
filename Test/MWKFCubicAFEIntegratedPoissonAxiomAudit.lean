@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.MWKFCubicAFEIntegratedPoisson
+
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEIntegratedProgression_poisson
+#print axioms PrimeNumberTheorem.MWKFCubic.integral_cubicAFEDyadicPoissonTerm_eq_frequencySum
