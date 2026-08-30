@@ -109,7 +109,9 @@ Lean 定理使用原实 moment 的复数嵌入。已经证明每个 shift 的积
 随后已证明实际完整产品权的加权 L1 性质，并通过保留 Jacobian 的变量
 代换接回真实物理核。对固定时间和固定非零 shift，完成权乘上无限高度
 物理核的空间积分现在确实趋于未截断域积分；不是仅有逐点趋于1。
-尚未证明空间积分与高度极限交换，也未跨时间或全部 shift 聚合该结论。
+最新进一步证明固定完成深度时，实际空间积分与高度极限可以交换，
+支配对全部实高度一致；之后可按有序极限去掉空间完成截断。仍未跨
+时间或全部 shift 聚合该结论，也未证明任意深度/高度联合极限。
 
 ## Machine-checked in this PR
 
@@ -970,6 +972,106 @@ Poisson 的 `1/s` 因子和物理时间积分尚在外层。本条结论是固�
 本批只在固定时间／固定 shift 层面去截断；没有把点态高度极限误作积分
 高度极限，也未把固定参数 L1 性质当作全局 o(T)。
 
+## 固定深度的真实空间积分高度极限
+
+本批进一步闭合了上一批尚缺的一个积分交换：对固定物理时间、固定
+completion 深度，原始有限高度物理核的空间积分趋于无限高度物理核
+的空间积分。然后可以使用上一批非零 shift 端点定理去掉空间截断。
+这是两个有序极限，不是任意深度随高度变化时的联合极限。
+
+### 对所有实高度一致的真实支配
+
+新增 `MWKFCubicAFECompletedPower.lean`。记
+
+\[
+ \epsilon_J=\frac1{2\,2^J},\qquad p=-X-\frac12<-1,\qquad
+ H_{X,J}(x)=\mathbf1_{(\epsilon_J,\infty)}(x)x^p.
+\]
+
+真实完成权满足 `0<=B_J<=1`，且 `x<=epsilon_J` 或 `y<=epsilon_J`
+时精确为零，包括等号。由此 Lean 证明
+
+\[
+ B_J(x,y)(xy)^p\le \epsilon_J^p H_{X,J}(x),
+ \qquad H_{X,J}\in L^1(\mathbb R).
+\]
+
+对 `x,y` 的量化覆盖全部实数；在非零支撑上才使用正数实幂的乘法
+和负指数单调性。此处没有把 `epsilon_J^p` 丢入关于 J 一致的常数。
+
+新增 `MWKFCubicAFECompletedHeight.lean`。定义固定时间的实际质量
+
+\[
+ C_{W,T,X,d,e}(t)=
+ \left\|2a_T(d)a_T(e)\right\|
+ \frac{\operatorname{NormMass}(t,X)}{\sqrt{de}}
+ |W(t/T)|,
+\]
+
+其中 `a_T` 为原 mollifier 系数，`NormMass` 为已证明收敛的真实完整
+标量垂线范数积分，保留其 `1/(2*pi)` 因子。证明使用
+`cubicAFEWeightEnvelope_le_normMass`，故质量不含高度 V。对于原始
+有限高度完整物理核 `K_V(t,x)`，每个实 V（包括反向区间 V<0）都有
+
+\[
+ \|B_J(x,y_\delta(x))K_V(t,x)\|
+ \le C_{W,T,X,d,e}(t)\epsilon_J^p H_{X,J}(x).
+\]
+
+原 Möbius 系数、因子2、两个平方根、W 和完整对数相位都没有被替换。
+支配在固定 J,t,T 下成立；不保证 J 或 T 一致，不可直接对所有 shift
+求和，也没有给出 o(T) 估计。
+
+### 两个精确积分极限
+
+先证明有限高度实际核在全实线可测。其复对数参数权为整函数，复合
+实 log、实产品以及原物理系数即可；没有在非物理域假装全局光滑。
+实际 B_J 在非正指标处为零，从而完成后的单点高度极限覆盖全部 x。
+用上述可积支配得到
+
+\[
+ \lim_{V\to\infty}\int_{\mathbb R}B_JK_V\,dx
+ =\int_{\mathbb R}B_JK_\infty\,dx.
+\]
+
+声明为 `tendsto_cubicAFECompletedPhysicalIntegral_height`，要求
+`X>1/2`，但固定 J 下无需 `delta!=0`；零 shift 的实际空间积分极限
+也在合约中检查。证明直接对高度 filter 应用 dominated convergence，
+不只对一个整数高度序列断言收敛。
+
+其次，`cubicAFECompletionWeight_zero_outside_domain` 证明 B_J 在
+真实两正指标域 D 之外精确为零。因此全实线完成积分等于其 D 上
+的积分。结合上一批实际无限高度端点可积性，得到
+
+\[
+ \lim_{J\to\infty}\int_{\mathbb R}B_JK_\infty\,dx
+ =\int_D K_\infty\,dx\qquad(d,e>0,\ \delta\ne0).
+\]
+
+声明为 `tendsto_cubicAFECompletedPhysicalIntegral_wholeLine`。
+这里不能删除非零 shift 条件，也不能把负 shift 的 D 换成 `(0,infty)`。
+回归明确检查 `d=e=1,delta=-1` 时的 `D=(1,infty)`，以及退化分母
+时完成权的正确消失。时间积分、shift 系列、QCT 变换及任意 J(V)
+路径均不在这两个积分极限定理的结论中。
+
+### 本批核验与自审
+
+两个新源模块共283行定义与证明，编译退出码0。两组 red-stage 合约先
+确认目标声明缺失；随后检查真实支配、等号端点、J=0 与原权一致、
+反向高度、零 shift 的空间积分极限、负 shift 的真实积分域和退化分母。
+全套导入还捕获并修正了新回归中相邻 `]` 的记号冲突，没有删除测试。
+
+最终118个 MWKF contract／axiom-audit 文件同次核验退出码0，所有正文
+均由 Lean 检查，只提前去重 imports。329条完整公理报告仅含
+`propext`、`Classical.choice`、`Quot.sound`，无 error/warning。
+聚焦 pytest：`295 passed`（14.45秒）；deterministic coverage 正常退出。
+其内部 `unconditional asymptotic proved` 标签仍不是最终 Lean 定理。
+
+本地单代理自审检查了原物理系数与相位、可测性、实际 L1 支配、零
+shift 条件的使用范围以及极限次序。没有新增项目公理、sorry、admit、
+native_decide 或提高 heartbeat 限额；没有外部同行核验或远端 CI
+成功的声称。固定参数支配仍不能代替时间/shift 聚合及全局 o(T)。
+
 ## Remaining formalization boundary
 
 This PR does **not** yet make the analytic theorem unconditional inside Lean.
@@ -1046,10 +1148,16 @@ horizontal-edge limits; this gives the small-product bound
 pullback now also prove actual physical spatial integrability on the whole
 two-positive-index domain for fixed time and nonzero shift. Dominated
 convergence removes the actual lower-scale completion from that domain
-integral of the infinite-height kernel. This is not an interchange of the
-spatial integral with the finite-height limit, nor a dominated convergence
-theorem for the complete time-integrated/shift-summed zero mode or either
-infinite mode series.
+integral of the infinite-height kernel. At each fixed completion depth the
+actual finite-height kernel now also has a full-line integrable majorant
+uniform in every real height V. This proves the spatial-integral/height
+limit exchange at fixed depth and fixed time. The completion vanishes
+outside the physical domain, so the resulting full-line completed integral
+then converges, for a fixed nonzero shift, to the uncut domain integral.
+The explicit depth factor is retained; these ordered limits do not give
+arbitrary joint depth/height limits, or a dominated convergence theorem
+for the complete time-integrated/shift-summed zero mode or either infinite
+mode series.
 Neither compactness in the logarithmic-extension proof nor the
 Schwartz construction supplies uniform seminorm estimates in the varying
 physical parameters.
@@ -1090,6 +1198,9 @@ Consequently the accurate status is:
   actual small-product contour-shift bound, full product-half-line weighted
   L1 integrability, nonzero-shift quadratic-product Jacobian pullback,
   literal physical-kernel pointwise height limit and spatial integrability,
-  and its fixed-time, fixed-nonzero-shift completion integral limit;
+  its fixed-time, fixed-nonzero-shift completion integral limit, actual
+  fixed-depth power domination uniform over every real height, the completed
+  full-spatial-integral height limit, and its ordered full-line completion
+  limit to the physical domain integral;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.
