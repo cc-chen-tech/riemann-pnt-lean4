@@ -1,5 +1,13 @@
 # Lean status of the cubic MWKF route
 
+本次语义审计修正了一个实质错误：`85c165d9` 中的 `CubicTestWeight.smooth` 使用
+`ContDiff ℝ ⊤`，而当前 Mathlib 的这个外层 `⊤` 是 `ω`（实解析），
+不是 `∞`（任意阶光滑）。实解析且紧支撑于 `[1,2]` 的全实线函数
+只能是零函数，所以旧版本的核检查不能说明命题覆盖了所需的非零测试权。
+现在定义使用 `ContDiff ℝ ∞`，并增加“从任意 C∞ 权构造”的类型回归和
+`W(3/2)=1` 的显式非零紧支撑 bump 实例。依赖链必须在此定义下重编译；
+不能把旧对象文件通过当作本次验证。
+
 当前已将有限高度 AFE 到真实全线 mollified moment 的极限交换、
 物理时间积分与完整算术级数的换序，以及有限高度对角/非对角拆分，
 写成无额外解析假设的 Lean 定理。对角部分有严格的 gcd 射线双射重编号；
@@ -11,6 +19,11 @@
 也没有断言两个拆分部分分别存在高度极限；QCT/Poisson、主项渐近和
 核心 Möbius 色散等输入仍须继续形式化。
 
+有限高度 Mellin 权现有一个与正整数产品权精确一致的正实变量延拓：
+先证明对复对数变量的全纯性，再限制到正实变量，得到 C∞ 正则性。
+积分号下求导的支配界由紧集上的连续性构造，没有额外的支配假设。
+这只证明固定参数的正则性，没有提供对 `T,V` 一致的导数或 Fourier 尾项界。
+
 ## Machine-checked in this PR
 
 The following steps now have kernel-checked Lean proofs with no project axiom,
@@ -18,6 +31,7 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 
 | analytic step | Lean theorem |
 |---|---|
+| correct C-infinity test-weight class, with nonzero compact bump regression | `CubicTestWeight.smooth`; `MWKFCubicActualMomentContract.lean` |
 | `d=q r`, `e=q s`, `(r,s)=1` gcd extraction | `gcd_extraction`, `gcd_scaled_eq_iff_coprime` |
 | exact diagonal ray `m e=n d` iff `m=l(d/q)`, `n=l(e/q)` | `diagonal_eq_iff_exists_scale` |
 | shifted/complementary-divisor equation | `shifted_eq_complementary_divisor` |
@@ -82,6 +96,8 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | bijection between each shift fiber and its admissible single-variable progression | `cubicAFEShiftFiber_first_injective`, `cubicAFEProgressionEquiv`, `tsum_cubicAFEShiftFiber_eq_progression` |
 | summability and exact reindexing of the actual integrated progression expression | `summable_integral_cubicAFE_progression`, `cubicAFEShiftedMomentFinite_eq_progression` |
 | actual finite-height moment equals diagonal plus progression expression, and the recombined height limit | `cubicAFEMollifiedMomentFinite_eq_diagonal_add_progression`, `tendsto_cubicAFEDiagonal_add_progression` |
+| entire logarithmic extension of the actual finite-height Mellin product weight, with constructed compact domination | `differentiable_cubicAFELogProductWeightFinite` |
+| exact positive-integer restriction and smoothness on positive real products, for every finite height orientation | `cubicAFERealProductWeightFinite_natCast`, `contDiffOn_cubicAFERealProductWeightFinite` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -89,6 +105,20 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 
 The axiom-audit modules report only Lean/Mathlib's standard foundational
 axioms (`propext`, `Classical.choice`, and `Quot.sound`).
+
+### C-infinity correction verification
+
+The constructor regression and the explicit nonzero bump both failed against
+the old `C^omega` field and passed after the correction. Fourteen source
+modules were compiled in dependency order, including the entire affected
+AFE/progression chain, the new real-product weight, and the final facade.
+Twenty-eight contract/audit files were then checked in one Lean invocation
+(their imports hoisted and deduplicated to avoid repeatedly loading Mathlib).
+The final exit code was zero; all 72 printed axiom reports contained only the
+three standard foundations above. The nonzero bump theorem is audited too.
+No local physical smoothness hypothesis, project axiom, or enlarged heartbeat
+limit was inserted to obtain these results. This is a targeted verification,
+not a full cold build of unrelated project modules.
 
 ## Remaining formalization boundary
 
@@ -106,8 +136,11 @@ finite height.  Each shift fiber has now been reindexed as a single positive
 integer variable in the explicit inverse residue class, with the exact
 positivity cutoff and real quotient identity.  The full physical kernel and
 logarithmic phase are retained.  This is not yet an application of Poisson
-summation: a smooth real-variable physical-kernel extension, the dyadic
-partition, and all hypotheses of that transform still need to be supplied.
+summation: the actual Mellin product factor has a smooth real-variable
+extension, but its composition with the full progression kernel, integration
+in physical time, dyadic partition, and all transform hypotheses still need
+to be supplied. Compactness in the logarithmic-extension proof does not give
+uniform seminorm estimates in the varying physical parameters.
 The height limit remains
 outside the recombined expression; separate limits and moving this limit
 through either infinite subseries have not been proved.  What remains is to

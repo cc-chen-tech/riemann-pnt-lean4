@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.MWKFCubicAFEPhysicalWeight
+
+#print axioms PrimeNumberTheorem.MWKFCubic.differentiable_cubicAFELogProductWeightFinite
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFERealProductWeightFinite_natCast
+#print axioms PrimeNumberTheorem.MWKFCubic.contDiffOn_cubicAFERealProductWeightFinite

@@ -3,6 +3,7 @@ import Mathlib.MeasureTheory.Function.LocallyIntegrable
 import Mathlib.Topology.Algebra.ConstMulAction
 
 open Complex MeasureTheory Set
+open scoped ContDiff
 
 namespace PrimeNumberTheorem
 namespace MWKFCubic
@@ -18,7 +19,8 @@ records smoothness and support in `[1,2]`.
 /-- A real smooth test weight supported in `[1,2]`. -/
 structure CubicTestWeight where
   toFun : ℝ → ℝ
-  smooth : ContDiff ℝ ⊤ toFun
+  -- In current Mathlib, the outer top is analytic (omega), not C-infinity.
+  smooth : ContDiff ℝ ∞ toFun
   support_subset : Function.support toFun ⊆ Icc (1 : ℝ) 2
 
 instance : CoeFun CubicTestWeight (fun _ ↦ ℝ → ℝ) :=
