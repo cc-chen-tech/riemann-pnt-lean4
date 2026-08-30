@@ -27682,27 +27682,21 @@ def separated_ratio_fiber_large_sieve_polytope_audit(
     required_linear_gain_exponent: Fraction,
     level_independent_long_coefficients_verified: bool,
     bounded_projective_q_factor_verified: bool,
+    normalized_occupancy_lower_exponent: Fraction | None = None,
 ) -> dict[str, object]:
-    """Record the Bombieri--Davenport coverage of separated fibers.
+    """Audit relative large-sieve coverage with its actual denominator.
 
-    For ``P=T^sigma_L``, ``Q=T^sigma_S`` and coefficients
-    ``C_q(p)=beta_q alpha_p``, character Parseval turns the centered
-    ratio-fiber energy into nonprincipal character sums in ``alpha_p``.
-    The multiplicative large sieve bounds their dyadic ``q``-average by
+    The absolute bound is (P + Q^2) ||beta||_infinity^2 ||alpha||_2^2.
+    Separability does not imply an occupancy exponent sigma_L + sigma_S:
+    beta may select a single modulus.  The optional lower exponent must
+    be established separately for the actual occupancy divided by
+    ||beta||_infinity^2 ||alpha||_2^2.  A new projective decomposition also
+    needs its atom-majorant comparison included in this certificate.
 
-    ``(P + Q^2) sum_p |alpha_p|^2``.
-
-    The occupancy majorant has exponent ``sigma_L + sigma_S`` in the
-    physical range ``P >= Q``.  Hence the energy saving is
-
-    ``sigma_L + sigma_S - max(sigma_L, 2 sigma_S)``.
-
-    This audit covers only a genuinely level-independent long
-    coefficient (up to a bounded-projective scalar q-factor).  It does
-    not promote the literal q-dependent physical coefficient to that
-    class.
+    This helper checks an exponent implication; it neither proves the
+    supplied normalization nor closes physical WRFE.  Missing occupancy
+    normalization refuses relative coverage.
     """
-
     sigma_long = F(long_prime_exponent)
     sigma_short = F(short_prime_exponent)
     linear_gain = F(required_linear_gain_exponent)
@@ -27711,20 +27705,33 @@ def separated_ratio_fiber_large_sieve_polytope_audit(
     if sigma_long < sigma_short:
         raise ValueError("the oriented long-prime exponent must be largest")
 
-    occupancy_exponent = sigma_long + sigma_short
+    formal_dense_occupancy_exponent = sigma_long + sigma_short
+    occupancy_exponent = (
+        None
+        if normalized_occupancy_lower_exponent is None
+        else F(normalized_occupancy_lower_exponent)
+    )
     large_sieve_exponent = max(sigma_long, 2 * sigma_short)
-    energy_saving = max(F(0), occupancy_exponent - large_sieve_exponent)
+    energy_saving = (
+        F(0)
+        if occupancy_exponent is None
+        else max(F(0), occupancy_exponent - large_sieve_exponent)
+    )
     required_energy_saving = 2 * linear_gain
-    ledger_covers = bool(energy_saving >= required_energy_saving)
+    ledger_covers = bool(
+        occupancy_exponent is not None
+        and energy_saving >= required_energy_saving
+    )
     hypotheses_verified = bool(
         level_independent_long_coefficients_verified
         and bounded_projective_q_factor_verified
     )
-    separated_covered = bool(ledger_covers and hypotheses_verified)
     return {
         "long_prime_exponent": sigma_long,
         "short_prime_exponent": sigma_short,
         "occupancy_energy_exponent": occupancy_exponent,
+        "formal_dense_occupancy_energy_exponent": formal_dense_occupancy_exponent,
+        "occupancy_normalization_supplied": occupancy_exponent is not None,
         "large_sieve_energy_exponent": large_sieve_exponent,
         "large_sieve_energy_saving_exponent": energy_saving,
         "required_linear_gain_exponent": linear_gain,
@@ -27735,8 +27742,10 @@ def separated_ratio_fiber_large_sieve_polytope_audit(
         "bounded_projective_q_factor_verified": bool(
             bounded_projective_q_factor_verified
         ),
-        "power_ledger_would_cover_if_separated": ledger_covers,
-        "separated_coefficient_cell_covered": separated_covered,
+        "normalized_power_ledger_covers": ledger_covers,
+        "separated_coefficient_cell_covered": bool(
+            ledger_covers and hypotheses_verified
+        ),
         "multiplication_by_D_is_a_residue_permutation": True,
         "nonprincipal_characters_at_prime_q_are_primitive": True,
         "physical_level_dependent_WRFE_proved": False,

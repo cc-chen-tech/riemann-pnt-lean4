@@ -8994,7 +8994,7 @@ def test_prime_cross_residue_global_packet_norm_reassembles_before_cauchy() -> N
     assert "This closes the **global packet adapter**, not the analytic gate" in text
 
 
-def test_separated_ratio_fiber_coefficients_are_covered_by_large_sieve() -> None:
+def test_normalized_separated_ratio_fiber_coefficients_are_covered() -> None:
     audit = getattr(
         coverage_audit,
         "separated_ratio_fiber_large_sieve_polytope_audit",
@@ -9007,6 +9007,7 @@ def test_separated_ratio_fiber_coefficients_are_covered_by_large_sieve() -> None
         required_linear_gain_exponent=F(1, 4),
         level_independent_long_coefficients_verified=True,
         bounded_projective_q_factor_verified=True,
+        normalized_occupancy_lower_exponent=F(7, 2),
     )
     assert extreme["occupancy_energy_exponent"] == F(7, 2)
     assert extreme["large_sieve_energy_exponent"] == F(3)
@@ -9017,24 +9018,16 @@ def test_separated_ratio_fiber_coefficients_are_covered_by_large_sieve() -> None
     assert extreme["nonprincipal_characters_at_prime_q_are_primitive"]
     assert not extreme["physical_level_dependent_WRFE_proved"]
     assert not extreme["PCDI_SREM_proved"]
-    text = OFFDIAGONAL_NOTE.read_text()
-    assert (
-        "### 9.184 The ordinary large sieve closes exactly the separated "
-        "coefficient class"
-    ) in text
-    assert r"\eta_{\rm LS}^{(2)}=\sigma_L-\sigma_S" in text
-    assert "multiplicative large-sieve theorem" in text
-    assert r"1-\frac1{\varphi(q)}" in text
-
     nonseparated = audit(
         long_prime_exponent=F(2),
         short_prime_exponent=F(3, 2),
         required_linear_gain_exponent=F(1, 4),
         level_independent_long_coefficients_verified=False,
         bounded_projective_q_factor_verified=True,
+        normalized_occupancy_lower_exponent=F(7, 2),
     )
     assert not nonseparated["separated_coefficient_cell_covered"]
-    assert nonseparated["power_ledger_would_cover_if_separated"]
+    assert nonseparated["normalized_power_ledger_covers"]
 
 
 def test_arbitrary_level_dependent_ratio_fibers_saturate_occupancy() -> None:

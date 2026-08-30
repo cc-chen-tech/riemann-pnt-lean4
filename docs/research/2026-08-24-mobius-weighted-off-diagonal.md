@@ -74,7 +74,7 @@
 > | Adapter-free weighted-profile Gram | Section 9.181 allows each outer row \(i=(p,D,\ldots)\) to carry an arbitrary level-dependent unit-grid profile \(A_i(u,v)\).  If \(c_i=p\overline D\), \(L_{ij}(c)=\sum_uA_i(u,cu)\overline{A_j(u,cu)}\), and \(M_{ij}=\sum_{u,v}A_i(u,v)\overline{A_j(u,v)}\), then the exact Gram entry is \(\mathbf1_{c_i=c_j}L_{ij}(c_i)-(L_{ij}(c_i)+L_{ij}(c_j))/\varphi(q)+M_{ij}/\varphi(q)^2\).  Summing these entries is exactly the direct centered-profile energy, so this algebraic identity needs no scalar projective adapter.  The generic weighted line-Gram bound (WPLG) remains unproved, but Section 9.183 shows that the literal physical cross-residue packet has the more specialized scalar form and therefore needs only (WRFE), not WPLG |
 > | Fixed-packet cross-residue \(TT^*\) adapter | Section 9.182 returns to the literal cross-residue form (9.1145).  After fixing \((\omega,g,D,q)\), its short unit-grid profile is common to every long prime \(p\); all \(p\)-dependence is a scalar coefficient and the centered graph slope \(p\overline D\).  The whole long-prime sum is therefore one exact inner product with \(H_{q,D}(u,v)=\sum_pC_{q,D}(p)K_{q,p\overline D}(u,v)\), whose norm is the signed ratio-fiber energy (9.1216).  Thus the long-prime sum really does precede the fixed-packet Cauchy step, with no scalar projective adapter.  This section proves the local adapter; Section 9.183 proves its global packet normalization, while the resulting (WRFE) analytic estimate remains open |
 > | Global packet-norm reassembly | Section 9.183 proves the missing direct-sum normalization.  The shared \(a=h\delta\) convolution and all signed Type blocks remain inside each physical row; only the already registered Hilbert coordinates \((g,D,q,\ldots)\) are direct-summed.  For projective weights \(\rho_\omega\), one weighted Hilbert-space Cauchy inequality gives \(|\mathscr S|^2\leq(\sum_\omega|\rho_\omega|\mathfrak E_{{\rm short},\omega})(\sum_\omega|\rho_\omega|\mathfrak E_{{\rm fib},\omega})\).  The first factor is a subenergy of the packet-exhaustive Section 9.144 row norm; the second is exactly the signed ratio-fiber energy.  Consequently (WRFE) now rigorously implies (PCDI-SREM), with no repeated Type-I or row-energy saving.  This proves the global adapter and replaces the former packet ambiguity by one analytic leaf; (WRFE) itself remains unproved |
-> | Separated ratio-fiber large-sieve coverage | Section 9.184 applies character Parseval and the Bombieri--Davenport multiplicative large sieve to the coefficient class \(C_q(p)=\beta_q\alpha_p\), and more generally to a subpolynomial-projective sum of such atoms.  The occupancy energy exponent is \(\sigma_L+\sigma_S\), whereas the large-sieve exponent is \(\max\{\sigma_L,2\sigma_S\}\).  On the physical wedge this saves exactly \(\sigma_L-\sigma_S\geq2\eta_{\rm cross}\), including equality at the extreme face; hence every genuinely level-independent long-coefficient atom satisfies (WRFE).  But the literal coefficient contains \(V_p(D\overline q_p)\) and is level-dependent.  A one-residue-class finite witness has ratio-fiber energy \((\varphi(q)-1)n^2\), a fixed proportion of the occupancy bound \(\varphi(q)n^2\), so no arbitrary level-dependent large sieve can prove (WRFE).  The remaining gate must exploit the first physical incidence and its retained Möbius/\(h\delta\) structure |
+> | Separated ratio-fiber large-sieve coverage | Section 9.184 corrects a normalization error: separability alone does not imply relative (WRFE) saving. The absolute bound is valid, but the actual denominator contains \(V_\beta=\sum_q\varphi(q)n_q^{\max}|\beta_q|^2\). A single separated atom concentrated on one modulus has energy/occupancy ratio \(1-1/\varphi(q)\). A fixed nonzero smooth weight on the full short-prime interval has the necessary spread by PNT and is covered; arbitrary separated weights require an independently proved lower bound on normalized occupancy; a further projective split also needs its atom-majorant comparison. Neither this normalization nor the literal moving-level separation is established for the physical row; the coupled gate remains open |
 > | Centered short-shift Type master | Section 9.185 opens the ratio-fiber equality itself.  For fixed \((\omega,\lambda,q,D)\), write \(p_2-p_1=rq\).  Then \(|r|\ll P/Q\leq T^{1/2}\) and the exact fiber energy is \(\varphi(q)\mathcal C(0)+\{\varphi(q)\sum_{r\ne0}\mathcal C(r)-|\sum_pC(p)|^2\}\).  The braces are the centered nonzero-shift remainder; the negative rank-one term cannot be discarded.  Substituting the exact residual \(C=C^{\rm I}+C^{\rm II}\) produces all four ordered Type blocks in both the shift correlations and the rank-one subtraction before any absolute value.  At the extreme face (WRFE) is exactly the assertion that this centered \(|r|\leq T^{1/2}\) two-Möbius remainder is of diagonal size.  The finite master and Type reassembly are proved; its analytic bound is not |
 > | Triple-centered short-shift determinant | Section 9.186 substitutes the literal first physical incidence into the ratio-fiber energy before expanding any density term.  The exact result is a product of three centered kernels, \(\Delta_q(p_1-p_2)\Delta_{p_1}(qm_1+Dn_1)\Delta_{p_2}(qm_2+Dn_2)\), so all eight incidence/density terms remain in one finite master.  On the fully incident outer shift \(p_2=p_1+rq\), quotient elimination produces one common determinant \(t\): \(n_2s_1-n_1s_2=qt\) and \(m_1s_2+rs_1s_2-m_2s_1=Dt\).  Its \(t=0\) rows have the exact coprime-ray parameterization \(s_1=gu,s_2=gv,n_1=uk,n_2=vk,m_1=u\ell,m_2=v(\ell+rg)\).  This parameterizes only the fully incident summand: the other seven density terms have no canonical \(t\), so a separate positive \(t=0\) extraction would again be invalid.  The finite identity and ray parameterization are proved; the globally reassembled resonant ledger and the \(t\ne0\) analytic bound remain unproved |
 > | Eight-term route boundary | Section 9.187 expands the triple-centered kernel with exact signs and records a determinant histogram only for the all-incidence term.  A two-row fixture has total fiber energy \(7225/768\), while its all-incidence contribution is \(16\), split as determinant weights \(4,8,4\) at \(t=-1,0,1\); the other seven density terms sum to \(-5063/768\).  Thus the cancellation needed by WRFE already occurs inside the positive energy identity, and the isolated \(t=0\) mass is not a positive secondary term.  This separates two valid routes: prove WRFE by an internal eight-term reassembly, or return before Cauchy and prove a new direct AFE/reflection/diagonal implication.  The explicit diagonal cannot be used to prove WRFE after Cauchy.  Neither route's analytic estimate is proved |
@@ -26109,137 +26109,203 @@ bound, retained \(h\delta\), and signed Type reassembly.  With those
 proved inputs it marks the global adapter and the implication (9.1232)
 proved, while leaving (WRFE) and every downstream analytic gate false.
 
-### 9.184 The ordinary large sieve closes exactly the separated coefficient class
+### 9.184 The ordinary large sieve needs a normalized occupancy denominator
 
-The global adapter makes it possible to state precisely what an
-ordinary modulus average can and cannot prove.  Fix \(D\), let \(q\) be
-prime, and first suppose that the long coefficient is independent of
-\(q\):
+**Correction (2026-08-30).** The earlier version incorrectly promoted
+separability alone to relative (WRFE) coverage. The absolute
+Bombieri--Davenport bound is valid, but its denominator also depends on
+the modulus weights. A single separated atom can saturate occupancy.
+The following replaces that overstrong coverage statement.
+
+Fix an ambient finite set \(\mathcal A\) of long primes in \((P,2P]\),
+a set \(\mathcal Q\) of short primes in \((Q,2Q]\), with \(P>2Q\),
+and \(D\) coprime to every \(q\in\mathcal Q\). Write
 
 \[
- C_q(p)=\beta_q\alpha_p,
- \qquad p\asymp P,quad q\asymp Q.
+ C_q(p)=\beta_q\alpha_p,\qquad
+ A_2=\sum_{p\in\mathcal A}|\alpha_p|^2,\qquad
+ B_\infty^2=\max_{q\in\mathcal Q}|\beta_q|^2.
  \tag{9.1233}
 \]
 
-Multiplication by \(\overline D\) permutes \(U(q)\).  Multiplicative
-character Parseval therefore gives the exact variance identity
+Empty families and zero vectors have zero energy and are handled
+separately. The ambient support is fixed before choosing \(\alpha\):
+zero coefficients do not change its occupancy counts. Multiplication
+by \(\overline D\) permutes \(U(q)\), giving
 
 \[
- \boxed{
  \begin{aligned}
- &\varphi(q)\sum_{c\in U(q)}
- \left|\sum_{p\overline D=c}\alpha_p\right|^2
- -\left|\sum_p\alpha_p\right|^2\\
- &\qquad=\sum_{\substack{\chi\bmod q\\\chi\ne\chi_0}}
- \left|\sum_p\alpha_p\chi(p)\right|^2.
- \end{aligned}}
+ \mathfrak E_q(\alpha)
+ &=(q-1)\sum_{c\in U(q)}
+   \left|\sum_{p\overline D=c}\alpha_p\right|^2
+   -\left|\sum_p\alpha_p\right|^2\\
+ &=\sum_{\chi\bmod q,\ \chi\ne\chi_0}
+     \left|\sum_p\alpha_p\chi(p)\right|^2.
+ \end{aligned}
  \tag{9.1234}
 \]
 
-Every nonprincipal character modulo a prime is primitive.  The
-Bombieri--Davenport multiplicative large sieve consequently gives
+All these nonprincipal characters are primitive. Put
+\(L=\lceil P\rceil\), \(Q_*=\lfloor2Q\rfloor\), and
+\(\Lambda_{\rm LS}=L+Q_*^2-1\). The
+[multiplicative large-sieve theorem](https://kskedlaya.org/ant/chap-largesieve2.html#theorem-16-2)
+implies the exact absolute estimate
 
 \[
- \boxed{
- \sum_{q\asymp Q\atop q\ {\mathrm{prime}}}
- |\beta_q|^2\mathfrak E_{q,D}(\alpha)
- \ll (P+Q^2)T^\varepsilon\sum_{p\asymp P}|\alpha_p|^2,}
+ \mathfrak E_{\rm fib}
+ :=\sum_{q\in\mathcal Q}|\beta_q|^2\mathfrak E_q(\alpha)
+ \le \Lambda_{\rm LS}B_\infty^2A_2.
  \tag{9.1235}
 \]
 
-uniformly for \(|\beta_q|\leq T^\varepsilon\); see the
-[multiplicative large-sieve theorem](https://kskedlaya.org/ant/chap-largesieve2.html#theorem-16-2).
-A subpolynomial-projective sum of separated atoms has the same bound by
-Minkowski in the character \(L^2\)-space, with the square of its
-projective \(\ell^1\)-norm absorbed into \(T^\varepsilon\).
-
-Write \(P=T^{\sigma_L}\), \(Q=T^{\sigma_S}\), with
-\(\sigma_L\geq\sigma_S\).  The occupancy majorant in (9.1231), summed
-over \(q\asymp Q\), has exponent
+Define \(n_q^{\max}\) using the fixed ambient prime set, as in
+(9.1149). The actual denominator is
 
 \[
- E_{\rm occ}=\sigma_L+\sigma_S,
+ V_\beta:=\sum_{q\in\mathcal Q}(q-1)n_q^{\max}|\beta_q|^2,\qquad
+ \boxed{\mathfrak E_{\rm occ}=A_2V_\beta.}
  \tag{9.1236}
 \]
 
-apart from the common coefficient energy.  The right side of (9.1235)
-has exponent
+It cannot be assigned exponent \(P Q A_2\) merely from an upper bound
+on \(\beta\). Combining occupancy Cauchy with (9.1235), for
+\(A_2V_\beta>0\),
 
 \[
- E_{\rm LS}=\max\{\sigma_L,2\sigma_S\}.
+ \boxed{\frac{\mathfrak E_{\rm fib}}{\mathfrak E_{\rm occ}}
+ \le\min\left\{1,\frac{\Lambda_{\rm LS}B_\infty^2}{V_\beta}\right\}.}
  \tag{9.1237}
 \]
 
-Thus the available energy saving is
+Consequently, if a separate proof supplies
+\(V_\beta/B_\infty^2\ge T^{\nu-o(1)}\), the available energy-saving
+exponent is
 
 \[
- \boxed{
  \eta_{\rm LS}^{(2)}
- =\sigma_L+\sigma_S-max\{\sigma_L,2\sigma_S\}.}
+ =[\nu-\max\{\sigma_L,2\sigma_S\}]_+,\qquad
+ P=T^{\sigma_L},\quad Q=T^{\sigma_S}.
  \tag{9.1238}
 \]
 
-On the physical conductor-imbalance wedge,
-\(3/2\leq\sigma_S<\sigma_L\leq2\), so \(Q^2\geq P\) and
+This is a sufficient certification by the ordinary large sieve, not
+a necessary condition for a particular \(\alpha\) to have additional
+cancellation. To recover the earlier dense-modulus calculation one
+must actually establish \(\nu=\sigma_L+\sigma_S\). Only then does
+\(Q^2\ge P\) give
 
 \[
- \boxed{
  \eta_{\rm LS}^{(2)}=\sigma_L-\sigma_S
- \geq2\eta_{\rm imb}\geq2\eta_{\rm cross}.}
+ \ge2\eta_{\rm imb}\ge2\eta_{\rm cross}.
  \tag{9.1239}
 \]
 
-At the extreme face this is \(1/2=2(1/4)\), exactly the required
-energy saving.  Consequently (9.1235) proves (WRFE) on every residual
-cell whose long coefficient has a packet-exhaustive
-subpolynomial-projective separation of the form (9.1233).  This is a
-genuine published-coverage row for the entire exponent polytope, but
-with a decisive coefficient-class hypothesis.
-
-That hypothesis is not presently verified for the physical row.  Its
-literal scalar in (9.1226) contains
+An explicit spread statistic is \(R_\beta=\|\beta\|_2^2/B_\infty^2\).
+Pigeonhole on the fixed ambient set gives
+\((q-1)n_q^{\max}\ge\#\mathcal A\), and hence
 
 \[
- (P_{>B,p}V_{\omega,g,D;p}^{(0)})(D\overline q_p),
- \tag{9.1240}
+ V_\beta\ge\#\mathcal A\,\|\beta\|_2^2,\qquad
+ \frac{\mathfrak E_{\rm fib}}{\mathfrak E_{\rm occ}}
+ \le\min\left\{1,
+   \frac{\Lambda_{\rm LS}}{\#\mathcal A\,R_\beta}\right\}.
+ \tag{LS-spread}
 \]
 
-whose evaluation point moves with \(q\).  Treating (9.1240) as an
-arbitrary \(q\)-dependent coefficient cannot work.  Indeed, for each
-prime \(q\), choose \(n\) long primes in one unit residue class and
-give them equal weight.  Then all coefficients occupy one ratio fiber,
-and (9.1216) gives
+For all long primes in the dyadic interval,
+\(\#\mathcal A=P^{1-o(1)}\). If \(R_\beta\ge T^{b-o(1)}\),
+the sufficient saving is
+\([\sigma_L+b-\max\{\sigma_L,2\sigma_S\}]_+\).
+At \(P=T^2,Q=T^{3/2}\), the required half-power energy gain needs
+\(b\ge3/2\) in this sufficient bound. Boundedness of \(\beta\) alone
+permits \(R_\beta=1\).
+
+There is a genuinely proved, nonempty separated subclass. Let
+\(\beta_q=\xi_q w(q/Q)\), where \(|\xi_q|=1\) and
+\(w\in C_c^\infty((1,2))\) is fixed and nonzero; include every short
+prime not dividing \(D\). If \(1\le|D|\le T^C\) and
+\(Q=T^{\sigma_S}\) with fixed \(\sigma_S>0\), at most
+\(C/\sigma_S+O(1)\) primes in this interval divide \(D\).
+Prime-number-theorem partial summation yields
 
 \[
- \boxed{
- \mathfrak E_{q,D}=(\varphi(q)-1)n^2,
- \qquad
- \mathfrak E_{q,D}^{\rm occ}=\varphi(q)n^2,
- \qquad
- \frac{\mathfrak E_{q,D}}
-      {\mathfrak E_{q,D}^{\rm occ}}
- =1-\frac1{\varphi(q)}.}
+ \sum_{q\in\mathcal Q}|\beta_q|^2
+ \sim\frac{Q}{\log Q}\int_1^2|w(u)|^2du,\qquad
+ R_\beta\gg_w Q/\log Q.
+ \tag{LS-smooth-spread}
+\]
+
+With the full ambient long-prime interval, (LS-spread) therefore
+proves (9.1239) for arbitrary long coefficients \(\alpha_p\), including
+their Möbius signs. A fixed power factor \(q^{-v}\), \(v\in\mathbb R\),
+has the same conclusion: absorb \(u^{-v}\) in \(w(u)\) and cancel the
+common \(Q^{-v}\). This proves a spread condition for this specified
+subclass, rather than merely assuming it. It does not prove that the
+literal physical row has such a separated representation. Further
+arithmetic restrictions on the short-prime support require their own
+spread verification and are not silently covered.
+
+Here is an asymptotic counterexample entirely within the separated
+class. Select one short prime \(q_0\); let \(\mathcal S\) be a largest
+unit residue class of the ambient long primes modulo \(q_0\); set
+\(\alpha=\mathbf1_{\mathcal S}\), \(\beta=\mathbf1_{\{q_0\}}\).
+With \(n=\#\mathcal S=n_{q_0}^{\max}\),
+
+\[
+ \mathfrak E_{\rm fib}=(q_0-2)n^2,\qquad
+ \mathfrak E_{\rm occ}=(q_0-1)n^2,\qquad
+ \frac{\mathfrak E_{\rm fib}}{\mathfrak E_{\rm occ}}
+ =1-\frac1{\varphi(q_0)}.
  \tag{9.1241}
 \]
 
-Thus the negative rank-one term in (9.1216) does not give a power
-saving for arbitrary level-dependent rows.  Formula (9.1241) is only a
-coefficient-class obstruction: it does not show that the literal
-physical transforms (9.1240) saturate.  It proves that the remaining
-argument must use their first centered incidence
-\(p\mid qm+Dn\), together with the retained Type/Möbius and
-\(a=h\delta\) structure.  A stronger large sieve uniform in arbitrary
-\(C_q(p)\) cannot close (WRFE).
+There is no uniform power saving for all separated atoms. This does
+not use an unproved prime progression asymptotic: the prime number
+theorem and pigeonhole give \(n\gg P/(Q\log P)\), while
+\(n\le P/q_0+1\). At the extreme face \(n=T^{1/2+o(1)}\), so even
+the expected occupancy exponent per modulus is present. A finite check
+at \(T=64,P=4096,Q=512,q_0=521\) has 464 ambient long primes,
+\(n=3\), energies \(4671,4680\), and ratio \(519/520\).
 
-The helper `separated_ratio_fiber_large_sieve_polytope_audit` records
-(9.1236)--(9.1239), the level-independence and projective-factor
-hypotheses, and the exact required energy saving.  It marks the
-separated coefficient class covered but never promotes the literal
-level-dependent physical row.  The helper
-`level_dependent_ratio_fiber_saturation_audit` verifies (9.1241) on
-arbitrary supplied same-fiber prime supports and leaves (WRFE),
-(PCDI-SREM), and the coupled-kernel gate false.
+A further projective decomposition also needs care. If
+\(C=\sum_j\rho_j C^{(j)}\), with each atom satisfying a relative bound
+\(E_{\rm fib}(C^{(j)})\le s E_{\rm occ}(C^{(j)})\), then
+
+\[
+ E_{\rm fib}(C)
+ \le s\left(\sum_j|\rho_j|\right)
+        \sum_j|\rho_j|E_{\rm occ}(C^{(j)}).
+ \tag{LS-atom-comparison}
+\]
+
+To divide this by the actual \(E_{\rm occ}(C)\), the atom majorant
+needs its own comparison. Small projective \(\ell^1\)-norm alone
+does not provide it: weights \(\mathbf1_{\mathcal Q}\) and
+\(\mathbf1_{\mathcal Q\setminus\{q_0\}}\), with coefficients \(1,-1\),
+reassemble to the single-modulus counterexample. If instead these
+atoms are precisely the already registered \(\omega\)-coordinates of
+(WRFE), its denominator is already the weighted atom sum; that existing
+ledger must be used without changing coordinates again.
+
+The literal physical coefficient additionally contains
+
+\[
+ (P_{>B,p}V_{\omega,g,D;p}^{(0)})(D\overline q_p).
+ \tag{9.1240}
+\]
+
+Neither a suitable level-independent separation nor the required
+normalized modulus spread/atom comparison has been proved for it.
+This correction removes false coverage; it does not negate the
+absolute large sieve or the finite physical adapter. The \(h\delta\)
+convolution and both Möbius/Type rows remain in the coupled master.
+
+The exponent helper separated_ratio_fiber_large_sieve_polytope_audit
+now requires an explicit, separately established normalized occupancy
+lower exponent. Missing input refuses coverage. This checks a
+conditional exponent implication, not the supplied analytic
+normalization. (WRFE), (PCDI-SREM), and the coupled-kernel gate remain
+unproved.
 
 ### 9.185 WRFE is a centered short-shift two-Type master
 
@@ -26369,8 +26435,9 @@ The factor is nonnegative in powers because
 
 This is the diagonal-scale formulation of the missing estimate: a
 signed average of shifts \(|r|\leq T^{1/2}\), with all four Type blocks
-and the rank-one subtraction reassembled.  The separated coefficient
-class is covered by Section 9.184.  For the literal moving evaluation
+and the rank-one subtraction reassembled.  Section 9.184 supplies relative coverage only with its additional
+normalized occupancy and, if needed, atom-majorant comparison; mere
+separability is insufficient.  For the literal moving evaluation
 (9.1240), no published two-Möbius shifted-correlation theorem audited
 here proves (CSSM).  Harper's general-sequence BDH expansion
 ([equation (2.3)](https://arxiv.org/abs/2412.19644)) is for one fixed
@@ -27244,7 +27311,9 @@ This does not show that the physical tensor is large.  The vectors in
 not arbitrary vectors; their signed sum may avoid the full-rank
 saturation.  What (9.1290)--(9.1291) proves is that one cannot first
 separate the mutual phase into a subpolynomial projective family and
-then invoke the ordinary large sieve from Section 9.184.
+then invoke the absolute large sieve from Section 9.184, retaining
+its normalized occupancy and atom-comparison requirements before
+claiming relative coverage.
 
 The exact character-domain version of the remaining gate is therefore
 
@@ -28137,17 +28206,18 @@ sufficient leaf for (PCDI-SREM), with energy saving
 \(2\eta_{\rm cross}\).  The adapter is proved; (WRFE) itself remains
 unproved, so the coupled-kernel gate is still open.
 
-Section 9.184 gives the first published analytic coverage of the new
-fiber-energy leaf.  Character Parseval plus the multiplicative large
-sieve bounds every level-independent separated atom by \(P+Q^2\).
-Across the physical polytope this saves exactly
-\(\sigma_L-\sigma_S\), at least the required
-\(2\eta_{\rm cross}\), so separated atoms satisfy (WRFE).  The actual
-coefficient (9.1240) is not known to have such a separation.  Moreover,
-the same-fiber witness (9.1241) saturates the occupancy bound up to a
-constant for arbitrary level-dependent coefficients.  Therefore the
-unproved remainder is now specifically the physical moving-evaluation
-part of WRFE, not the separated large-sieve sector.
+Section 9.184 retains the valid absolute large-sieve bound but corrects
+its former relative-coverage claim. The actual occupancy is
+\(A_2V_\beta\), not automatically \(PQA_2\). Even a single separated
+atom may select one modulus and saturate occupancy. A relative (WRFE)
+saving therefore needs the independently verified normalization in
+(9.1237)--(9.1239), including an atom-majorant comparison if a physical
+packet is decomposed again. A fixed nonzero smooth short-prime weight satisfies the needed spread by PNT,
+so that specified separated subclass is covered. Neither the general
+normalization hypotheses nor the physical
+moving-evaluation separation in (9.1240) are proved. The earlier claim
+that the entire separated coefficient class was already covered is
+withdrawn; the full coupled gate remains open.
 
 Section 9.185 rewrites that moving-evaluation remainder as the exact
 centered short-shift master (9.1243).  The shifts satisfy
