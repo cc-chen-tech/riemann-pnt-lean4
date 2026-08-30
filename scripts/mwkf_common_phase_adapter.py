@@ -1,16 +1,17 @@
 """Finite common-frequency adapter; no analytic gate is asserted.
 
-The values lie in Q[z]/(z**g - 1), before evaluation at exp(2*pi*i/g).
-Input type_weights already contains its Mobius or exact Type coefficient.
-The common outer scalar mu(g*p) is not included.
+The rational profiles lie in Q[z]/(z**g - 1); joint kernels and Gram
+checks use numerical complex evaluation. Input type_weights already
+contains its Mobius or exact Type coefficient. The profile's common
+outer scalar mu(g*p) is not included; fiber weights are supplied explicitly.
 """
 
 from cmath import exp
 from dataclasses import dataclass
 from fractions import Fraction as F
-from math import gcd, isqrt, pi
+from math import gcd, isqrt, pi, prod, sqrt
 
-from scripts.mwkf_mobius_type_identity import mobius
+from scripts.mwkf_mobius_type_identity import divisors as integer_divisors, mobius
 
 
 @dataclass(frozen=True)
@@ -19,6 +20,151 @@ class JointCommonFrequencyKernel:
     full: tuple[tuple[complex, ...], ...]
     zero: tuple[tuple[complex, ...], ...]
     nonzero: tuple[tuple[complex, ...], ...]
+
+
+@dataclass(frozen=True)
+class CommonFrequencyGram:
+    units: tuple[int, ...]
+    shift_difference: int
+    full: tuple[tuple[complex, ...], ...]
+    full_zero: tuple[tuple[complex, ...], ...]
+    zero_full: tuple[tuple[complex, ...], ...]
+    zero_zero: tuple[tuple[complex, ...], ...]
+    nonzero: tuple[tuple[complex, ...], ...]
+
+
+def common_frequency_gram_kernel(
+    *, common_modulus: int, left_shift: int, right_shift: int,
+    left_phase: int, right_phase: int,
+) -> CommonFrequencyGram:
+    """Eliminate the shared intermediate unit, not the whole residue ring.
+
+    Endpoint phases are the coefficients of 1/z (already scaled by
+    inverse active squares). The same intermediate unit phase on the
+    two edges cancels. Return all four terms of (J1-J10)(J2-J20)*.
+    Evaluation is numerical; the finite identity is proved in CT1--CT4.
+    """
+    g = common_modulus
+    if g < 2 or mobius(g) == 0:
+        raise ValueError("common modulus must be squarefree and at least two")
+    if gcd(left_phase, g) != 1 or gcd(right_phase, g) != 1:
+        raise ValueError("both inverse-phase residues must be units")
+    units = tuple(z for z in range(g) if gcd(z, g) == 1)
+    a, b = left_shift % g, right_shift % g
+    matrices = {name: [] for name in
+                ("full", "full_zero", "zero_full", "zero_zero", "nonzero")}
+    for z in units:
+        rows = {name: [] for name in matrices}
+        for v in units:
+            exponent = (left_phase * pow(z, -1, g)
+                        - right_phase * pow(v, -1, g)) % g
+            phase = exp(2j * pi * exponent / g)
+            left_unit = int(gcd(z - a, g) == 1)
+            right_unit = int(gcd(v - b, g) == 1)
+            full = int((z - v - a + b) % g == 0) * left_unit
+            fz, zf, zz = left_unit / g, right_unit / g, len(units) / g**2
+            values = (full, fz, zf, zz, full - fz - zf + zz)
+            for name, value in zip(matrices, values):
+                rows[name].append(phase * value)
+        for name in matrices:
+            matrices[name].append(tuple(rows[name]))
+    return CommonFrequencyGram(units, (a - b) % g,
+                               **{name: tuple(value) for name, value in matrices.items()})
+
+
+def centered_common_fiber_energy(
+    *, common_modulus: int, short_prime: int, determinant: int,
+    profiles: dict[int, tuple[complex, ...]], phases: dict[int, int],
+    weights: dict[int, complex], part: str,
+) -> dict[str, object]:
+    """Finite CT5--CT8: sum long levels before centering/squaring.
+
+    Each input row is already evaluated at D/q modulo its long prime,
+    and retains its own Type/h-delta coefficients. No analytic norm
+    transfer from arbitrary rows to physical occupation is asserted.
+    Empty supports return zero. All sums use exactly the supplied support.
+    """
+    g, q, d = common_modulus, short_prime, determinant
+    if g < 2 or mobius(g) == 0:
+        raise ValueError("common modulus must be squarefree and at least two")
+    if q < 2 or any(q % k == 0 for k in range(2, isqrt(q) + 1)):
+        raise ValueError("short modulus must be prime")
+    if gcd(q, g) != 1 or gcd(d, q) != 1:
+        raise ValueError("short modulus must be coprime to common modulus and determinant")
+    if part not in ("full", "zero", "nonzero"):
+        raise ValueError("part must be full, zero, or nonzero")
+    if profiles.keys() != phases.keys() or profiles.keys() != weights.keys():
+        raise ValueError("profile, phase and weight supports must agree")
+    units = tuple(z for z in range(g) if gcd(z, g) == 1)
+    size = len(units)
+    shifts, residues, kernels = {}, {}, {}
+    output = [[0j] * size for _ in range(q - 1)]
+    for p, row in profiles.items():
+        if p < 2 or any(p % k == 0 for k in range(2, isqrt(p) + 1)):
+            raise ValueError("long moduli must be primes")
+        if gcd(p, g*q*d) != 1 or len(row) != size:
+            raise ValueError("invalid long modulus or common profile length")
+        shifts[p] = d * pow(p*q, -1, g) % g
+        residues[p] = -d * pow(p, -1, q) % q
+        kernels[p] = getattr(joint_common_frequency_kernel(
+            common_modulus=g, left_phase=phases[p], right_phase=1,
+            shift=shifts[p]), part)
+        for w in range(size):
+            output[residues[p]-1][w] += weights[p] * sum(
+                row[z] * kernels[p][z][w] for z in range(size))
+    means = [sum(row[w] for row in output) / (q-1) for w in range(size)]
+    direct = sum(abs(row[w]-means[w])**2 for row in output for w in range(size))
+    diagonal, offdiagonal, density = 0j, 0j, 0j
+    nonzero_shifts = set()
+    for p1, row1 in profiles.items():
+        for p2, row2 in profiles.items():
+            gram = common_frequency_gram_kernel(
+                common_modulus=g, left_shift=shifts[p1], right_shift=shifts[p2],
+                left_phase=phases[p1], right_phase=phases[p2])
+            matrix = getattr(gram, "zero_zero" if part == "zero" else part)
+            value = weights[p1] * complex(weights[p2]).conjugate() * sum(
+                row1[z] * complex(row2[v]).conjugate() * matrix[z][v]
+                for z in range(size) for v in range(size))
+            density += value / (q-1)
+            if p1 == p2:
+                diagonal += value
+            elif (p2-p1) % q == 0:
+                offdiagonal += value
+                nonzero_shifts.add((p2-p1)//q)
+    return {
+        "direct_energy": direct,
+        "expanded_energy": diagonal + offdiagonal - density,
+        "diagonal": diagonal, "incident_offdiagonal": offdiagonal,
+        "density": density.real, "nonzero_shifts": tuple(sorted(nonzero_shifts)),
+        "physical_saving_proved": False,
+    }
+
+
+def induced_shift_gcd_histogram(
+    *, common_modulus: int, determinant: int, shift_cutoff: int,
+) -> dict[str, object]:
+    """Exact integer divisor-floor counts for gcd(g,D*j), 1 <= j <= J.
+
+    Counts are exact; the accompanying square-root Euler bound is only
+    a floating-point evaluation of the analytically proved CT10 bound.
+    This does not remove the length-J cost or normalize physical weights.
+    """
+    g, jmax = common_modulus, shift_cutoff
+    if g < 1 or mobius(g) == 0 or jmax < 0:
+        raise ValueError("squarefree positive modulus and nonnegative cutoff required")
+    d0 = gcd(g, determinant)
+    g0 = g // d0
+    divisors = integer_divisors(g0)
+    counts = {}
+    for divisor in divisors:
+        count = sum(mobius(e) * (jmax // (divisor*e))
+                    for e in divisors if (g0//divisor) % e == 0)
+        if count:
+            counts[d0*divisor] = count
+    primes = [k for k in divisors if k > 1 and
+              not any(k % d == 0 for d in range(2, isqrt(k)+1))]
+    bound = jmax * sqrt(d0) * prod(1 + (sqrt(p)-1)/p for p in primes)
+    return {"counts": counts, "euler_upper_bound": bound}
 
 
 def joint_common_frequency_kernel(

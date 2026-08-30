@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-30 全频率 TT* 的中间单位账本。** [跨模数 Gram 推导](2026-08-30-mwkf-common-ttstar.md) 将完整共同频率的短行能量写成“对角＋非零移位－完整密度项”，保留零频的两个 mixed 项。在 incidence `p₂-p₁=jq` 上共同位移变为 `Dj/(p₁p₂)`，但中间单位掩码及非 incidence 密度项不能省略。诱导坏因子 `√(g,Dj)` 的无权完整短移位平均已由精确除数/floor 恒等式控制为 `≪J√(g,D)g^ε`；这不是实际 Möbius 权的相对占据界，没有新增稠密字符格覆盖或证明完整 gate。
+
 > **2026-08-30 联合共同频率新增覆盖。** [小共同字符族定理](2026-08-30-mwkf-joint-common-frequency.md) 在重组全部共同频率后应用双极点 Weil 界，并保留共同字符族的大小成本。对指定的共同族 \(|E_i|\le T^{\kappa_{E_i}+o(1)}\)，(JF10) 给出 \(\kappa_{E_L}+\kappa_{E_S}+2\eta_{\rm imb}\le\gamma-\delta_0\)、\((g,D)=T^{\delta_0}\) 下的全共同频率及非零补集覆盖。它包括极端 \(g\asymp T\) 上两侧固定阶共同字符，不只上一轮的共同零频低导子族。稠密族未覆盖；删零频和两侧主字符后仍有范数 1 的方向。完整 gate 仍开放，旧 Type-I 删格不恢复。
 
 > **2026-08-30 物理 adapter 修正（优先于下列历史状态行）。** [共同相位与最小范数 lift 修正](2026-08-30-mwkf-common-phase-adapter.md)证明：共同 Fourier 零频仍含共同 g 的逆比率相位，不能直接替换为单层 F_p G_p。原 short-Type-I companion 覆盖/PCDI-SREM 删格暂不适用于实际行；未另证前须恢复全部格子及完整 eta_imb 目标。最小 graph-span lift 精确修复短侧 norm，||b_min||²=||R||²/phi(q)，而非未投影 tensor 的 norm。完整 U/V 与抽象 scalar Cauchy 保留。新式 (CG23) 覆盖共同零频的低共同导子子空间；在极端素数 g~T 的情形，包括任一侧共同字符 principal 的部分。两侧共同非主与其他共同频率仍需估计，耦合解析 gate 仍开放。
@@ -28041,6 +28043,41 @@ Thus a generic centered-common-operator saving is false. This is not a
 counterexample for the physical Selberg vector. The two Möbius weights,
 the nine Type blocks, and \(a=h\delta\) remain in (JF12)--(JF13), and the
 remaining dense-family, moving-active-modulus signed estimate is unproved.
+
+### 9.202 Full common-frequency TT* retains intermediate units
+
+The [joint TT* note](2026-08-30-mwkf-common-ttstar.md) extends the
+short-shift energy of Section 9.185 to the full common-frequency kernel,
+with the common inverse phase restored. Composing two edges through the
+same short row cancels that row's phase, but leaves its unit-domain mask.
+Formula (CT3) gives all four full/zero Gram terms, including the two mixed
+terms and the factor `φ(g)/g²` in the zero--zero term. In particular, the
+composition is not simply a partial shift with the new determinant.
+
+The finite centered short-row energy (CT8) equals the long-prime diagonal
+plus its incident nonzero shifts minus the complete density term. Only
+the incident offdiagonal has `p₂-p₁=jq`; on it (CT9) replaces the common
+shift by `Dj/(p₁p₂)` and both active residues by the corresponding mutual
+long-prime residues. The density term has no such integer `j` in general.
+The long-prime diagonal must remain separate because its mutual active
+inverse is undefined.
+
+The new bad gcd has the exact distribution (CT11). Its square-root sum
+over the full unweighted interval `1≤j≤J` is at most
+`J√(g,D) ∏_{ℓ|g/(g,D)}(1+(√ℓ-1)/ℓ)`, hence `≪ε J√(g,D)g^ε`.
+This removes an artificial worst-case gcd penalty from an **unweighted**
+shift ledger; it neither removes the factor `J` nor proves a corresponding
+bound relative to the moving physical coefficient energy. The intermediate
+unit mask still admits the same mixed Weil entry bound, while the dense
+Gram operator can have norm exactly one, (CT12)--(CT13).
+
+The note checks published spectral inputs against this actual coefficient
+class. Some composite-level large sieves do permit level-dependent
+sequences; that permission does not construct the Kloosterman/spectral
+adapter for (CT8), with its prime-quotient support, unit mask and density
+correction. No new dense residual cell or physical norm saving is claimed.
+The canonical reflection Gram remains the separate (PA18) object, not the
+common Fourier-zero edge of this calculation.
 
 ## 10. What has and has not been proved
 
