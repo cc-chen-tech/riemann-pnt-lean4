@@ -1,5 +1,16 @@
 # Publishing Readiness
 
+## Carlson half-range checkpoint (2026-08-30)
+
+本分支的[联合检查点](docs/research/2026-08-30-carlson-half-range-checkpoint.md)
+给出无解析前提的实际闭阈值计数界
+`N_ge(2/3,T) << T^(8/9-1/400)(log T)^6`。零点排除接线仍要求从实际种子零点
+推出的 forcing 下界；本检查点不提供该输入，也不证明无条件 `Re rho<=14/17`。
+复用入口、开闭阈值、固定指数、范围化验收和 PR 边界以该检查点为准。
+下述全仓发布门禁不因分支联合检查通过而自动完成。
+
+## Repository overview
+
 This repository is a buildable Lean 4 formalization that proves the ordinary
 Prime Number Theorem and classical de la Vallee Poussin-form remainders for
 Chebyshev `psi` and prime counting `pi-Li`, Hardy's theorem, the all-height

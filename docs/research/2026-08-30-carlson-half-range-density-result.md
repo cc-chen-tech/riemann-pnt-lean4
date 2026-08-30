@@ -11,6 +11,8 @@
 这不是新的最佳零密度指数，也不声称数学上的首创性：成果是指定 Carlson
 检测器路线的可核查改进及无条件形式化，而不是引用 Ingham 替换该路线。
 最终联合回归、公理审计及 forcing 接线已验收；证据和严格的声明边界见本文末尾。
+对外复用请先读[冻结指数的联合检查点](2026-08-30-carlson-half-range-checkpoint.md)：
+它明确区分无条件密度入口、实际种子 forcing 前提和历史验收记录。
 
 ## 1. 原框架反推与精确 no-go
 
@@ -78,7 +80,9 @@
 \]
 
 两尺度权是两个线性 Selberg 权的精确线性组合，组合常数在 `V→∞` 时有界。
-设 `F=zeta M-1`、`G=1-F^2`、`H=(s-1)^2G`。`H` 在正实部半平面解析，
+设 `F=zeta M-1`、`G=1-F^2`，取 `(s-1)^2G` 在 `s=1` 处的解析延拓为 `H`。
+Lean 用 pole-unit 定义正则化检测器；乘积等式在 `s≠0,1` 使用。
+`H` 在正实部半平面解析，
 每个 ζ 零点都是 `H` 的零点，且 ζ 重数不超过检测器重数。
 
 核心以下卷积系数严格消失，不是假设 Möbius 平方根消去。临界线一侧用
@@ -213,6 +217,9 @@ Conrey/DI 的 taper 范围不能直接当作尖截断权或 `T^3` MWKF/QCT 的�
 
 新增 forcing 接线只去掉 density-certificate 前提；实际 forcing lower count
 仍是明确前提。没有因此证明 `Re rho<=14/17` 或 `Re rho<=2/3`。
+发布检查点将 `>14/17` 接线也收紧为实际种子 `rho` 的前提（固定 `lambda=1`）；
+不再把无种子依赖的全称 `beta,lambda` 下界当作真正的待证输入。
+确切量词、开闭阈值区别及复用入口见[检查点](2026-08-30-carlson-half-range-checkpoint.md)。
 
 ## 5. 可追溯入口与验收
 
@@ -229,7 +236,7 @@ Conrey/DI 的 taper 范围不能直接当作尖截断权或 `T^3` MWKF/QCT 的�
 [Guth–Maynard, New large value estimates](https://arxiv.org/abs/2405.20552)。
 本次最终证明不依赖尚未在 Lean 中实现的 `theta<4/7` 谱输入。
 
-### 最终验收（2026-08-30）
+### 原成果验收（2026-08-30，提交 64417646）
 
 - 联合构建本分支全部 152 个相关 Test 模块及其依赖：退出码 `0`，`9055 jobs`。
   补登记了此前未列入 Lake roots 的 19 个既有契约，没有排除失败项。
@@ -245,4 +252,6 @@ Conrey/DI 的 taper 范围不能直接当作尖截断权或 `T^3` MWKF/QCT 的�
 [机器可读验收记录](2026-08-30-carlson-half-range-verification.json)。
 本次通过的是全部分支相关契约及其依赖，不声称运行了整个仓库的默认 `lake build`
 或全部其他路线的公理脚本。所有修改仅保存在隔离分支
-`codex/carlson-two-thirds-improvement-20260826`，没有合并、推送或修改其他活动 worktree。
+`codex/carlson-two-thirds-improvement-20260826`；此处记录的是发布前的历史状态。
+后续实际种子接口修正、刷新验收和 PR 状态以[检查点](2026-08-30-carlson-half-range-checkpoint.md)
+为准；没有因此改变密度指数或补出 MWKF/QCT forcing 下界。
