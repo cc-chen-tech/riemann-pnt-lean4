@@ -1,17 +1,60 @@
-# 真实 FP3 中心化线性和：完整 Möbius 容斥与高低导子分割
+# 真实 FP3 光滑中心化包：完整 Möbius 容斥与高低导子分割
 
 白话结论：先保留 e、n 两个 Möbius 系数并完整展开互素条件，再把
 e 侧的新整数与两个标签合成一个三因子产品。高有效导子用共同列
 乘法大筛，低有效导子对两个光滑标签分别用 Pólya–Vinogradov。
-所得中心化部分在平衡内部 E≥T^(7/4) 满足局部 T^(1+ε) 预算。
+所得重新光滑分包的中心化部分在平衡内部 E≥T^(7/4) 满足局部 T^(1+ε) 预算。
 但原 principal 仍保留，当前单独绝对上界在 E<T² 不足；
 所以这不是完整 FP3 的更低 E 覆盖，更不是 14/17 或 2/3 零点排除。
 
-本篇只继承冻结 933bb6087d399d006c6963489b7e2cda22e2ba24 的
+本篇沿用冻结 933bb6087d399d006c6963489b7e2cda22e2ba24 的
 [产品稿 P1–P10](2026-08-31-physical-product-label-l2.md) 所用真实 FP3
-原式及内部光滑条件。原定义仍是 MWKF-PHYS-v1；不改任何冻结父分支。
+算术层，但不继承其一般硬 h/δ 壳。原定义仍是 MWKF-PHYS-v1；
+本次范围修订不修改该冻结父分支。
 这里不使用 canonical a/b/e 扩展，也不使用旧 §9.144 的二次共振
 projector 作为线性上界；两者不是同一对象。
+
+## CS0. 范围修订：从 FP1 精确重新光滑分包
+
+旧版本 0d468dd0 对一般 literal 硬壳的物理适配不再认证：
+H≤|h|≤2H 经 e=fa 后给出 1_[H,2H](fa u)，这是 a/u 联合跳跃，
+不能把它留在共同的 u 系数中，也不能直接对其使用 CS4 的五维
+Sobolev 预算。这里修正物理对象；CS5–CS17 的 PV/大筛算术不等式
+不变。若另有证据证明硬域冗余、权在硬边缘平坦，才可单独适配旧包。
+
+从[冻结 FP1](https://github.com/cc-chen-tech/riemann-pnt-lean4/blob/7cf2e7d43c4365e38e2aa708d1a250694b698bec/docs/research/2026-08-30-mwkf-frozen-physical-atom.md)
+的完整 h,δ≠0 和出发，不从 (6.0) 的硬壳出发。使用原非负
+C_c^∞ 函数 F，support⊂[1/2,2]，精确插入
+\[
+ 1=\sum_{H\in2^{\mathbb Z}}F(|h|/H),\qquad
+ 1=\sum_{L\in2^{\mathbb Z}}F(|\delta|/L).
+                                                               \tag{CS0a}
+\]
+每个整数对只有有限重叠，有限标签截断下恒等式逐项成立。
+固定 q₀,R,S,K_z,M_z 时 r,s 有限，原 AFE 紧支撑使 δ 有限；
+h 是紧支撑光滑 x 核的 Fourier 系数和，反复分部积分给这一层
+绝对收敛，故可完整插入 CS0a。此论证不提供外层 AFE 的一致尾界。
+
+设 Ψ_raw 是 FP1 缩放后尚未加 h/δ 硬边缘的原核，定义
+\[
+ \Psi_{\rm sm}(x,y,\alpha,\beta)
+ =\Psi_{\rm raw}(x,y,\alpha,\beta)F(|\alpha|)F(|\beta|),
+ \qquad
+ \mathcal A^{\rm sm}_J=\max_{|\nu|\le J}
+                         \|\partial^\nu\Psi_{\rm sm}\|_\infty,\quad J\ge6.
+                                                               \tag{CS0b}
+\]
+原 r/s 光滑权若不在 raw 中则含入一次；原 mollifier 因子另保留。
+Leibniz 给新半范数≪_{J,F}原 raw 半范数；下文为简洁以
+\(\mathcal A_J:=\mathcal A^{\rm sm}_J\) 表示，不对旧硬包求导。
+只选取内部整包，其支持保证 q₀n,q₀eq≤N/2，使原 mollifier
+硬截断冗余；不另插入 1_(q₀fa q≤N/2) 这样的联合硬截断。
+HL≲RS/T 及其他原实际核参数仍必须满足。
+
+新包的所有 u,v≠0 求和，不附加旧 H≤|eu|≤2H、L≤|ev|≤2L。
+e∈[E,2E) 时其支持为 |u/U|、|v/V|∈[1/4,2]。
+CS0a 保证完整光滑包之和恢复原和，而非保证任一新包等于旧硬包；
+只估计选中的内部包后，其余包、重叠权、principal 和全局尾仍保留。
 
 ## CS1. 在同一原式内同时定义 centered 与 principal
 
@@ -21,14 +64,14 @@ projector 作为线性上界；两者不是同一对象。
  \quad EQ\asymp S,\qquad u,v\ne0,
 \]
 其中 e,q 平方自由，(e,q₀q)=(n,q₀eq)=(uv,q)=1。
-所有原 mollifier 支持和光滑壳保留。记
+按 CS0 保留原 mollifier 支持及新重叠光滑包。记
 \[
  W(n,e,q,u,v)=p_N(q_0n)p_N(q_0eq)
-       \Psi(n/R,eq/S,ev/L,eu/H).
+       \Psi_{\rm sm}(n/R,eq/S,ev/L,eu/H).
 \]
 采用包含整数1的半开 dyadic 约定；q=1 按唯一剩余类解释。
 内部 HL≲RS/T，尺度在固定 T 幂范围内，q₀n,q₀eq≤N/2。
-J≥6 的原半范数记为 \(\mathcal A_J\)。定义
+J≥6 的新半范数采用 CS0b 的简记 \(\mathcal A_J\)。定义
 \[
  \begin{split}
  \mathcal C&={2T\over q_0RS}\sum
@@ -71,12 +114,13 @@ J≥6 的原半范数记为 \(\mathcal A_J\)。定义
 \]
 实际权为
 \[
- \Psi(fb/R,fa q/S,fa v/L,fa u/H).
+ \Psi_{\rm sm}(fb/R,fa q/S,fa v/L,fa u/H).
 \]
 必须用五变量 \(b/B,a/A,q/Q,u/U,v/V\) 分离，不能直接照搬四变量
 分离。第二至第四坐标分别为
 \((EQ/S)(a/A)(q/Q),(a/A)(v/V),(a/A)(u/U)\)。
-在固定紧盒上所有缩放和导数一致有界。内部 p_N(q₀fa q) 也纳入
+联合光滑因子包含 F(|(a/A)(u/U)|)F(|(a/A)(v/V)|)，
+没有联合硬壳。在固定紧盒上所有缩放和导数一致有界。内部 p_N(q₀fa q) 也纳入
 光滑权，p_N(q₀fb) 可留在 b 的单变量系数。
 
 若 Fourier 指标为 ν∈Z⁵，Abel–PV 所需的精确预算是
@@ -87,8 +131,14 @@ J≥6 的原半范数记为 \(\mathcal A_J\)。定义
 用 Sobolev–Parseval 与 Cauchy，其平方余因子是
 \(\sum_\nu(1+|\nu_u|)^2(1+|\nu_v|)^2(1+|\nu|^2)^{-s}\)，
 在 s>9/2 收敛；J≥6 足够。延拓 cutoff 的固定常数计入预算。
-原连续积分支持不另作硬切割。a,b 的一维整数壳保留，u,v 的正负
-壳以及零标签排除分别处理；空域为0，非空时 A,B,U,V≥1/2。
+原连续积分支持不另作硬切割。a,b 的一维整数壳保留；固定光滑
+外 cutoff 等于1于上述联合支持的各坐标投影，不改变原权。
+u,v 正负支持以及零标签排除分别处理；空域为0，非空时
+A,B,U,V≥1/2（n≤2R、e<2E、1≤|u|≤2U、1≤|v|≤2V）。
+为使 CS8 的字面外包常数明确，分离后的各原子仍乘独立范围
+1_(0<|u|≤2U)、1_(0<|v|≤2V)。它们包含原联合支持且不依赖 a；
+两个端点仅增加 O(1) 的 BV 费用，不改变 CS4 的 Fourier 权。
+这不是重新加入 1_[H,2H](fa u)；a,b 既有一维壳不变。
 
 ## CS3. 按真正的 primitive conductor 分解
 
@@ -218,7 +268,7 @@ f 幂分别为 −2、−3/2、−3/2、−1；末项原有 log(2min(E,R))，
  +\sqrt Q\left(R\sqrt{HL/E}+{HL\over E}\sqrt R\right)
  +Q^{3/2}\sqrt{RHL/E}\right\}.}                           \tag{CS15}
 \]
-这估计 CS1 的整个中心化 FP3 线性和，允许所有平方自由 q、全部
+这估计 CS0–CS1 新光滑包的整个中心化 FP3 线性和，允许所有平方自由 q、全部
 primitive/imprimitive 角色与所有 f，不是固定导子模型。
 有限高度使用显式 divisor/BV/log 预算，不免费把 T^ε 设为1。
 
@@ -236,8 +286,9 @@ primitive/imprimitive 角色与所有 f，不是固定导子模型。
 \]
 第一项在此区间主导，故 η≥7/4 足以给
 \(|\mathcal C|\ll\mathcal A_J T^{1+\epsilon}\)；
-例如 η=19/10 时为 T^(9/10+ε)。原产品稿在该参数的总绝对
-界为 T^(11/10+ε)，但**不能据此称原 O 也变成 T^(9/10)**：
+例如 η=19/10 时为 T^(9/10+ε)。将产品稿的固定 e 证明用于
+本光滑权给总绝对界 T^(11/10+ε)；这不是两个不同硬/光滑包的
+逐项比较，而且**不能据此称原 O 也变成 T^(9/10)**：
 \[
  |\mathcal P|\ll_\epsilon{\mathcal A_J T^{1+\epsilon}\over q_0RS}
                            {RHL\over E},
@@ -252,7 +303,8 @@ Ramanujan 声称不自动成为单个 FP3 子层的界。
 Kz=Mz=√T，H=L=S/√T。取 u=v=⌈H/e⌉≈Y⁶<q，及素数
 n∈(S,2S)，则所有单位条件、h/δ 原壳、mollifier 内部支持成立。
 连续 x=3√T/4 时 (xn+δ)/s∈[√T/2,2√T]（充分大 Y）。
-只需相邻有限 dyadic 子盒，不声称任意给定 F/W 的积分必非零。
+按 CS0a 选取包含该整数点的相邻有限光滑包，不沿用硬子盒为定理对象，
+不声称任意给定 F/W 的积分必非零。
 
 CS15 未覆盖其他 canonical 分配、原 q₀ 聚合、非内部物理箱和尾项，
 也未证明一般 e-Möbius 方差。全部未估计补集和 cross 项保留。
@@ -262,5 +314,6 @@ principal，而不是继续要求同等强度的非零谱估计。
 English summary: inclusion-exclusion separates the two Mobius variables
 before estimates. A primitive-conductor split combines a joint product
 large sieve at high conductors with two smooth-label PV bounds at low
-conductors. The centered FP3 scalar has balanced threshold E≥T^(7/4);
-the original principal is retained and prevents a full-family conclusion.
+conductors. The repartitioned smooth centered FP3 packet has balanced
+threshold E≥T^(7/4); the literal hard-shell mapping is not certified.
+The original principal is retained and prevents a full-family conclusion.
