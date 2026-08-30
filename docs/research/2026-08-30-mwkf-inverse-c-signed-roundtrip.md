@@ -283,3 +283,7 @@ allocation、互素与非 squarefree 端点以及 (IC15)–(IC16) 的幂次
 zero Gram、非零频补集和两个 mixed 项使用同一个物理归一化。
 本节没有估计那个联合范数、完整频率尾或新的次主项；完整
 twisted moment 与 coupled-kernel gate 均未证明。
+
+后续 [JG1–JG15](2026-08-30-mwkf-joint-unit-density-gram.md) 已对完整
+`κ` 区块实行一次联合 Gram，给出 LCM 单位密度平方和、共振及别名
+上界。在部分中间 `κ` 区块优于这里的逐行界，但仍不足物理目标。

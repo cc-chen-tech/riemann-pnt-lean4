@@ -8,7 +8,7 @@ parent: its nonsquarefree allocations must cancel in the full identity.
 
 import cmath
 from fractions import Fraction as F
-from math import ceil, floor, gcd, pi
+from math import ceil, floor, gcd, lcm, pi
 
 from scripts.mwkf_mobius_type_identity import divisors, mobius
 
@@ -104,6 +104,96 @@ def small_linear_row_saving(x, z):
     if x <= 0 or not 0 <= z < x:
         raise ValueError("x>0 and 0<=z<x required")
     return min(x/5, (x-z)/2, z/2)
+
+
+def _unit_density(n):
+    return sum((F(mobius(d), d) for d in divisors(n)), F(0))
+
+
+def unit_density_squares(moduli, coefficients):
+    """Finite phi(lcm)/lcm Gram, not the canonical AFE zero Gram.
+
+    Rational real inputs remain exact; complex inputs use floating point.
+    Repeated and nonsquarefree positive moduli are allowed.
+    """
+    if len(moduli) != len(coefficients) or any(d < 1 for d in moduli):
+        raise ValueError("matching coefficients and positive moduli required")
+    rows = list(zip(moduli, coefficients))
+    quadratic = sum((_unit_density(lcm(a, b))*x*y.conjugate()
+                     for a, x in rows for b, y in rows), F(0))
+    squares = {}
+    for r in sorted({r for d in moduli for r in divisors(d)}):
+        if mobius(r):
+            value = sum((_unit_density(d)*c for d, c in rows if d % r == 0), F(0))
+            squares[r] = value*value.conjugate()/(r*_unit_density(r))
+    return {"quadratic": quadratic, "squares": squares,
+            "square_sum": sum(squares.values(), F(0))}
+
+
+def unit_interval_ledger(Q, left, right, alpha):
+    """Exact finite unit/divisor sums versus continuous interval density.
+
+    The interval is (left,right]. The alias is signed, not a positive
+    remainder. A BV discrepancy bound retains both endpoint jumps.
+    """
+    if Q < 1 or not 0 <= left < right:
+        raise ValueError("Q>=1 and 0<=left<right required")
+    alpha = F(alpha)
+
+    def phase(x):
+        return cmath.exp(2j*pi*float(alpha*x))
+
+    direct = sum(phase(n) for n in range(floor(left)+1, floor(right)+1) if gcd(n, Q) == 1)
+    expanded = sum(mobius(v)*sum(phase(v*n)
+                   for n in range(floor(F(left)/v)+1, floor(F(right)/v)+1)) for v in divisors(Q))
+    integral = (phase(right)-phase(left))/(2j*pi*float(alpha)) if alpha else right-left
+    density = float(_unit_density(Q))*integral
+    bound = sum(mobius(v)**2 for v in divisors(Q))*(2+2*pi*abs(float(alpha))*(right-left))
+    return {"direct": direct, "divisor_sum": expanded, "density": density,
+            "alias": direct-density, "variation_bound": bound}
+
+
+def collapse_triple_rows(records):
+    """Pointwise signed grouping of (d,kappa,k,l,coefficient), before norms.
+
+    Apply at each physical A or u if coefficients depend on that variable.
+    Zero product axes are excluded from this nonzero-frequency interface.
+    """
+    result = {}
+    for d, kappa, k, l, coefficient in records:
+        if d < 1 or kappa < 1 or k*l == 0:
+            raise ValueError("d,kappa>=1 and nonzero k*l required")
+        key = (d, kappa*k*l)
+        result[key] = result.get(key, 0)+coefficient
+    return result
+
+
+def ratio_collision_count(M, D):
+    """Primitive-ray count of n1*d2=n2*d1 in [M,2M) x [D,2D)."""
+    if not isinstance(M, int) or not isinstance(D, int) or min(M, D) < 1:
+        raise ValueError("positive integer M,D required")
+
+    def dilations(a, b, length):
+        lower = max((length+a-1)//a, (length+b-1)//b)
+        upper = min((2*length-1)//a, (2*length-1)//b)
+        return max(0, upper-lower+1)
+
+    return sum(dilations(a, b, M)*dilations(a, b, D)
+               for a in range(1, 2*min(M, D)) for b in range(1, 2*min(M, D)) if gcd(a, b) == 1)
+
+
+def joint_gram_cost_exponents(x, d, m, prefactor):
+    """Power ledger after one Cauchy; not a norm theorem or coverage gate.
+
+    Inputs are exponents of X,D,M and the *physical* scalar prefactor.
+    M contains the full kappa block, not just the two other dual factors.
+    """
+    x, d, m, prefactor = map(F, (x, d, m, prefactor))
+    if min(x, d, m) < 0:
+        raise ValueError("X,D,M exponents must be nonnegative")
+    return {"resonant": prefactor+x+(m-d)/2,
+            "density": prefactor+x/2+(max(x, 2*d)+m-d)/2,
+            "aliases": prefactor+x/2+m+max(F(0), x+m-d)/2}
 
 
 def ramanujan_divisor_coefficient(s, A, m, k, l):

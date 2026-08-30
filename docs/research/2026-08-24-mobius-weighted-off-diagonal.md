@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-30 全 κ 联合单位 Gram。** [LCM 密度平方和与别名](2026-08-30-mwkf-joint-unit-density-gram.md)把整个 `κ,k,l` 乘积区块先重组为 `n=κkl`，再作一次 Cauchy。单位完成产生精确的连续 LCM 密度平方和及非零别名；连续密度零模与零 determinant 项均不等同于原 canonical zero Gram。完整 κ 成本下，联合界在 `1/2<log_T K<4/3` 改善上一轮 IC7 的逐行界；例如 `K≈T` 时由 `T^{28/5+ε}` 到 `T^{11/2+ε}`。零 determinant 项在 `K≥T²` 达到自身预算，但不能据此删去非共振项或宣称区块覆盖。完整 coupled-kernel gate 仍未证明。
+
 > **2026-08-30 全 c 逆变换与受限线性行。** [有限正指标及 signed 往返](2026-08-30-mwkf-inverse-c-signed-roundtrip.md)证明实际核在完整逆 c Poisson 后只有有限个正指标，且全部 Type/cofactor allocation 连同整数端点恰好重构原双 Poisson 和，不自动产生新 saving。由已发表线性 Möbius 估计推得带 `Q≤X^C` 互素限制的上界 `X^ε(X^{4/5}+√(XZ)+X/√Z)`。平衡非零行省 `T^{1/2}`，但恢复该子 packet 的物理外层只得 `T^{11/2+ε}`，仍不足 `S=T³`；不能与 BBLR 相乘。完整 gate 未证明。
 
 > **2026-08-30 全频率 TT* 的中间单位账本。** [跨模数 Gram 推导](2026-08-30-mwkf-common-ttstar.md) 将完整共同频率的短行能量写成“对角＋非零移位－完整密度项”，保留零频的两个 mixed 项。在 incidence `p₂-p₁=jq` 上共同位移变为 `Dj/(p₁p₂)`，但中间单位掩码及非 incidence 密度项不能省略。诱导坏因子 `√(g,Dj)` 的无权完整短移位平均已由精确除数/floor 恒等式控制为 `≪J√(g,D)g^ε`；这不是实际 Möbius 权的相对占据界，没有新增稠密字符格覆盖或证明完整 gate。
@@ -106,6 +108,7 @@
 > | Direct published Region A--C coverage | proved/classified in Section 8 |
 > | Physical Type–Ramanujan normalization correction | Section 9.205 proves the endpoint-safe one-sided Type identity and the coupled three-variable complete sum. The unaveraged physical cofactor prefactor is `HL`, not the `HL/S` used in the RP/SS model. Those model estimates remain valid, but the physical quantity is `S` times the model and is not covered at target. The concrete coprimality layer transfers exactly through `Q=Aeq`-smooth convolution; the remaining signed saving is unproved |
 > | Full inverse-c signed roundtrip and coprime linear rows | Section 9.206 proves the finite positive dual support and the complete allocation identity, including the integer-one endpoint. Reassembly returns the original double Poisson sum rather than supplying a new saving. A uniform polynomial-size coprimality transfer preserves the published linear Mobius bound up to `X^epsilon`. The balanced row saves `T^(1/2)`, but its absolute physical packet costs `T^(11/2+epsilon)` against target `T^3`; no global coverage or multiplication with BBLR is asserted |
+> | Whole-kappa joint unit-density Gram | Section 9.207 reassembles n=kappa*k*l before one Cauchy and proves the phi(lcm)/lcm divisor-square identity. The continuous density and its zero-determinant part are positive, but the latter is not a lower bound for the former. Their bounds are `(X+D^2)M/D` and `XM/D`; all nonzero unit aliases cost `M^2(1+XM/D)`, with M=K*P. This improves IC7's whole-block bound in an intermediate K interval, not the final BBLR deficit or the coupled gate |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
 > | Residual coupled Region-D estimate at length \(T^3\) | unproved |
 >
@@ -28208,6 +28211,39 @@ target `S T^epsilon=T^(3+epsilon)`. This is weaker globally than the
 earlier BBLR gap and cannot be multiplied into that estimate. The
 joint signed outer dispersion, zero/complement pairings and full
 physical-tail obligations remain open.
+
+### 9.207 Whole-kappa joint Gram with LCM unit density and signed aliases
+
+The [joint unit-density Gram note](2026-08-30-mwkf-joint-unit-density-gram.md)
+starts from the actual IC2 bulk and combines the entire kappa block
+with both short dual factors before squaring: `n=kappa*k*l`,
+`M=K*P`, `X=R/(eK)`, `D=S/e`. The resulting amplitudes retain their
+dependence on `(d,n,u)` and their uniform derivative bounds. Only then
+is the A-Mobius coefficient paid by one Cauchy; the Gram retains
+`mu(d1)mu(d2)`, every unit condition, and the signed product coefficients.
+
+Completion in A gives `E=E0+Ealias`. The continuous density has the
+exact positive kernel `phi(lcm(ed1,ed2))/lcm(ed1,ed2)` and the divisor
+square decomposition (JG9)--(JG11). It is neither the original
+canonical zero Gram nor the full discrete Gram. The nonzero unit
+aliases obey `|Ealias|<<T^epsilon M^2(1+XM/D)`, by Euler discrepancy
+with all endpoints retained. They are signed and cannot be discarded.
+
+Primitive-ratio counting gives `Eres<<T^epsilon XM/D` for zero
+integer determinant. Two integrations by parts and a Schur bound at
+the reduced-fraction spacing prove `E0<<T^epsilon (X+D^2)M/D`,
+including index-dependent smooth amplitudes. A uniformly smooth
+two-frequency example has `E0=0<Eres`, so the resonant bound does not
+imply a lower bound or standalone physical packet coverage.
+
+On the balanced e=1 face with K=T^nu, the three physical Cauchy
+costs are respectively `T^(4-nu/2)`, `T^(11/2)`, and `T^(5+nu/2)`.
+The resonant contribution meets its T^3 budget for nu>=2, but neither
+the near-resonant density nor the aliases are thereby estimated at
+target. The combined bound improves IC7's whole-kappa row bound for
+1/2<nu<4/3 (28/5 to 11/2 at nu=1); the globally stronger BBLR route
+is not improved. The short-interval inputs in the accompanying table
+do not supply the missing fixed-power, coupled signed estimate.
 
 ## 10. What has and has not been proved
 
