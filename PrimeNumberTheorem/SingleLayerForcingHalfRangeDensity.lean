@@ -41,22 +41,25 @@ theorem singleLayerForcing_halfRange_contradiction
     (by norm_num : (0 : ℝ) ≤ 8 / 9 - 1 / 400)
     (Classical.choice exists_carlson_halfRange_densityCertificate) hlow hgap
 
-/-- The original `SingleLayerForcingBeta14Over17` lower-count interface,
-now using the unconditional improved density certificate. -/
+/-- Exclude seeds strictly beyond `14/17` if their actual existence supplies
+the lower count. Only scale `lam=1` is needed. The constants and eventual
+threshold may depend on the seed. No seed-forcing supplier is proved here.
+This replaces the former, unnecessarily strong seed-independent `∀ beta lam`
+premise; the unconditional density certificate is still supplied internally. -/
 theorem no_nontrivial_zero_re_gt_14_over_17_of_forcing_halfRange
-    (hforcing : ∀ β lam : ℝ, (14 / 17 : ℝ) < β → β < 1 → 0 < lam →
-      ∃ c k : ℝ, 0 < c ∧ 0 < k ∧ ∀ᶠ X in atTop,
-        c * X ^ (2 * lam * (β - 2 / 3) - lam * (1 - β) * (8 / 9)) *
+    (hforcing : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → (14 / 17 : ℝ) < ρ.re →
+      ∃ c k : ℝ, 0 < c ∧ 0 ≤ k ∧ ∀ᶠ X in atTop,
+        c * X ^ (2 * (ρ.re - 2 / 3) - (1 - ρ.re) * (8 / 9)) *
             (Real.log X) ^ (-k) ≤
-          (ZeroDensity.zeroDensityCount (2 / 3) (X ^ (lam * (1 - β))) : ℝ)) :
+          (ZeroDensity.zeroDensityCount (2 / 3) (X ^ (1 - ρ.re)) : ℝ)) :
     ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → ρ.re ≤ (14 / 17 : ℝ) := by
   intro ρ hρ
   by_contra hnot
   have hβ : (14 / 17 : ℝ) < ρ.re := lt_of_not_ge hnot
-  obtain ⟨c, k, hc, hk, hlow⟩ := hforcing ρ.re 1 hβ hρ.2.2 (by norm_num)
+  obtain ⟨c, k, hc, hk, hlow⟩ := hforcing ρ hρ hβ
   apply singleLayerForcing_halfRange_contradiction (lam := 1) (eta := 0) hβ.le hρ.2.2
-    (by norm_num) hc hk.le (by norm_num)
-  simpa only [add_zero] using hlow
+    (by norm_num) hc hk (by norm_num)
+  simpa only [add_zero, mul_one, one_mul] using hlow
 
 /-- If the forcing supplier works for actual seeds at the old endpoint,
 the positive density margin also excludes equality there. The seed-forcing

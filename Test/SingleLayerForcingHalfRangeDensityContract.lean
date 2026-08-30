@@ -19,11 +19,12 @@ example {β lam c k eta : ℝ}
         (ZeroDensity.zeroDensityCount (2 / 3) (X ^ (lam * (1 - β))) : ℝ)) : False :=
   singleLayerForcing_halfRange_contradiction hβ hβ1 hlam hc hk heta hlow
 
-example (hforcing : ∀ β lam : ℝ, (14 / 17 : ℝ) < β → β < 1 → 0 < lam →
-    ∃ c k : ℝ, 0 < c ∧ 0 < k ∧ ∀ᶠ X in atTop,
-      c * X ^ (2 * lam * (β - 2 / 3) - lam * (1 - β) * (8 / 9)) *
+-- A supplier for actual seeds must suffice; an unconditional family in β is not required.
+example (hforcing : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → (14 / 17 : ℝ) < ρ.re →
+    ∃ c k : ℝ, 0 < c ∧ 0 ≤ k ∧ ∀ᶠ X in atTop,
+      c * X ^ (2 * (ρ.re - 2 / 3) - (1 - ρ.re) * (8 / 9)) *
           (Real.log X) ^ (-k) ≤
-        (ZeroDensity.zeroDensityCount (2 / 3) (X ^ (lam * (1 - β))) : ℝ)) :
+        (ZeroDensity.zeroDensityCount (2 / 3) (X ^ (1 - ρ.re)) : ℝ)) :
     ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → ρ.re ≤ (14 / 17 : ℝ) :=
   no_nontrivial_zero_re_gt_14_over_17_of_forcing_halfRange hforcing
 
