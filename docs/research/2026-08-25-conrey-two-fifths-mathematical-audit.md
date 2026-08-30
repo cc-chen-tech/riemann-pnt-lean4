@@ -1187,7 +1187,8 @@ the displayed inequality in Section 3 for
 `F=V_1B`, the remaining equation-(37) work is now exactly:
 
 1. bound the bottom and top weighted phase integrals;
-2. bound the far-right argument variation and right-edge `log|F|` term;
+2. bound the far-right argument variation (the moving-right-edge `log|F|`
+   integral is now closed in Section 23.4);
 3. pass from a boundary-zero-free sequence of heights to every `T` with a
    controlled endpoint error;
 4. only then combine (37-exact), (37-gap), and the already proved
@@ -1692,3 +1693,136 @@ This checkpoint closes the reusable pointwise height estimates only.  It
 does **not** yet prove (a-height), (a-int), the low-range reciprocal bound,
 or the global absolute-log integral.  Consequently equation (37)'s global
 right vertical remains open until the second layer is green.
+
+### 23.2 Verified checkpoint: explicit high-part nonvanishing
+
+The explicit specialization is now proved through the pointwise high-part
+nonvanishing step:
+
+- `conreyExplicitDegreeOneHeightMain_eq` identifies the concrete main term
+
+  \[
+  a_L(t)={49\over100}+{51\over100L}\log {t\over2\pi};
+  \]
+
+- `one_third_le_conreyExplicitDegreeOneHeightMain_re` and
+  `conreyExplicitDegreeOneHeightMain_re_le_one` prove
+  `1/3 <= a_L(t) <= 1` on `1 <= t <= exp L`, for `L >= exp 2`;
+- `one_sub_conreyExplicitDegreeOneHeightMain_re_eq` proves the exact
+  compensation identity
+
+  \[
+  1-a_L(t)={51\over100L}\log {2\pi e^L\over t};
+  \]
+
+- after combining the proved `V1` and mollifier errors,
+  `norm_conreyExplicitRightVerticalProduct_sub_heightMain_le` proves
+
+  \[
+  \|V_1(2\log L+it)B(2\log L+it)-a_L(t)\|\le {79\over L}
+  \]
+
+  on `2 log L <= t <= exp L` for `L >= 600`; and
+- `conreyExplicitRightVerticalProduct_ne_zero` derives nonvanishing directly
+  from this error and `a_L(t) >= 1/3`, without assuming a boundary
+  nonvanishing predicate.
+
+This closes the explicit high-part pointwise and nonvanishing layer.  It does
+**not** yet prove the absolute-log Lipschitz bound, its high-part integral,
+the low-part reciprocal bound, or the final global right-vertical integral.
+Equation (37)'s right vertical therefore remains open at this checkpoint.
+
+### 23.3 Verified checkpoint: high-part logarithmic compensation
+
+The next high-part step is now proved without replacing the moving main term
+by a constant:
+
+- `abs_log_sub_log_le_six_mul_abs_sub` proves the elementary positive-line
+  Lipschitz estimate needed to pass from the product error to logarithms;
+- `abs_log_le_three_mul_one_sub` controls the logarithm of the real main term
+  by its exact distance from one;
+- `abs_log_norm_conreyExplicitRightVerticalProduct_le` combines these facts
+  with Section 23.2 to prove
+
+  \[
+  \left|\log\left\|V_1(2\log L+it)B(2\log L+it)\right\|\right|
+  \le {500\over L}+{2\over L}\log {2\pi e^L\over t}
+  \]
+
+  throughout `2 log L <= t <= exp L`, for `L >= 600`; and
+- `integral_log_conrey_height_compensation_one_exp_le` proves the elementary
+  global compensation estimate
+
+  \[
+  \int_1^{e^L}\log {2\pi e^L\over t}\,dt\le 3e^L.
+  \]
+
+- `continuous_conreyExplicitRightVerticalProduct` derives continuity along
+  the moving vertical line from the analytic `V1` factor and the entire finite
+  mollifier; and
+- `integral_abs_log_norm_conreyExplicitRightVerticalProduct_high_le` combines
+  continuity, direct nonvanishing, the pointwise logarithmic bound, and the
+  compensation integral to prove
+
+  \[
+  \int_{2\log L}^{e^L}
+  \left|\log\left\|V_1(2\log L+it)B(2\log L+it)\right\|\right|dt
+  \le {506e^L\over L}.
+  \]
+
+This closes the complete high range and formally recovers the factor `1/L`
+without a constant-height substitution.  The low-part reciprocal bound and
+the final global interval split are still open.  Hence equation (37)'s right
+vertical, the horizontal Jensen terms, and the genuine two-fifths theorem
+remain unproved at this checkpoint.
+
+### 23.4 Verified checkpoint: complete global right-edge logarithmic integral
+
+The short low range and the final interval split are now proved in
+`ConreyExplicitRightVerticalLow.lean`:
+
+- `log_le_div_hundred_of_ge_forty_thousand` gives the explicit elementary
+  scale `log L <= L/100` for `L >= 40000`;
+- `norm_logDeriv_conreyH_movingRight_low_le` applies the coarse digamma bound
+  on `1 <= t <= 2 log L` and proves
+
+  \[
+  \left\|{H'\over H}(2\log L+it)\right\|\le 6+\log L;
+  \]
+
+- `norm_conreyExplicitV1_sub_const_low_le` consequently proves
+
+  \[
+  \left\|V_1(2\log L+it)-{49\over100}\right\|\le {1\over50};
+  \]
+
+- `conreyExplicitRightVerticalProduct_low_norm_bounds` combines this with the
+  finite-mollifier tail to obtain the direct, assumption-free bounds
+
+  \[
+  {2\over5}\le\|V_1(2\log L+it)B(2\log L+it)\|\le {3\over5};
+  \]
+
+- hence `abs_log_norm_conreyExplicitRightVerticalProduct_low_le_two` and
+  `integral_abs_log_norm_conreyExplicitRightVerticalProduct_low_le` prove
+
+  \[
+  \int_1^{2\log L}|\log\|V_1B\||\,dt\le4\log L;
+  \]
+
+- finally `integral_abs_log_norm_conreyExplicitRightVerticalProduct_global_le`
+  joins this estimate to Section 23.3 and proves
+
+  \[
+  \int_1^{e^L}
+  \left|\log\left\|V_1(2\log L+it)B(2\log L+it)\right\|\right|dt
+  \le {507e^L\over L}
+  \]
+
+  for `L >= 40000`.
+
+This closes the moving-right-edge logarithmic-integral item needed in
+equation (37), with a concrete product and no abstract boundary nonvanishing
+hypothesis.  It does **not** close the two horizontal weighted phase/Jensen
+terms, admissible endpoint selection, or the long mollified mean square.
+Those remain the next gates before any genuine two-fifths claim.
