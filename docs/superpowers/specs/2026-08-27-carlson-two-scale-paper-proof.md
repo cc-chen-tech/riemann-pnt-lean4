@@ -1460,6 +1460,32 @@ remaining part of this far-tail estimate is the interval integration of the
 resulting rpow monomials and the finite/infinite frequency summation; the
 passage from endpoint gap to denominator powers is no longer an open premise.
 
+**Uniformity checkpoint (2026-08-30).** The pointwise gap majorant is now
+formal, and the positive-interval rpow antiderivative and its endpoint upper
+bounds are formal too.  These facts do not yet imply a uniform far-tail
+estimate: integrating the coarse `u^(-1/2)` term over the full support gives
+`O(sqrt(N))`.  That bound is valid but unsuitable for the cutoff limit.
+The next integration step must retain the support of `w'` and `w''`.
+Writing `a=x-1`, `D1=2*C1`, and `D2=2*C2+2*C1^2`, for `p>=0` the required
+transition estimate is
+
+\[
+ \int_a^{N+1}|w^{(j)}(u)|u^{-p}\,du\leq 2D_j a^{-p},\qquad j=1,2.
+\]
+
+It follows by splitting at `x,N`: the middle integral is zero and each
+outer interval has length one.  For `sigma>0` this gives the uniform target
+
+\[
+ \int_a^{N+1}|A''(u)|\,du
+ \leq 2D_2a^{-\sigma}+(4\sigma D_1+\sigma)a^{-\sigma-1}.
+\]
+
+This support-aware estimate, rather than the integrated coarse pointwise
+bound, is the next formal leaf.  Modes near the endpoint frequency continue
+to use the first-derivative harmonic bound; only the distant frequency tail
+uses the second-derivative estimate.
+
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
 
