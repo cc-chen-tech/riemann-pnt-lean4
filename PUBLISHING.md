@@ -55,7 +55,7 @@ genuine strict `> 2/5` simple-zero theorem remains open.
   [zeta23-selberg-bridge.md](docs/research/zeta23-selberg-bridge.md)); the
   inventory also includes the two unproved `FiniteSpectrumGap` target forms
 - Route-interface `def ... : Prop` declarations: 6
-- Reusable Prop predicates: 197
+- Reusable Prop predicates: 198
 - Unclassified Prop declarations: 0
 
 ## Required Gates Before Public Mathematical Claims
