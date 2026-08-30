@@ -15,8 +15,8 @@ Möbius 有限和等于真实 Euler 因子被积函数的 Perron 积分，且该
 实际无零矩形并证明精确留数恒等式。第 13 节已证明保留模数依赖的
 Euler 因子统一界及上下水平路径的实际积分界。第 14 节进一步证明不依赖
 模数的实际右尾界，并将整线 Perron 恒等式接到定量有限竖线截断。
-左边界的统一常数方案见第 15 节，尚待形式化；移位导数误差、完整移线
-拼接和 Volterra 转移仍未闭合，完整内层渐近尚未完成。
+第 15–16 节的左边界统一估计及实际可积性现已原生证明。移位导数误差、
+完整移线拼接和 Volterra 转移仍未闭合，完整内层渐近尚未完成。
 
 Source for comparison: [Conrey 1983, Lemma 10, printed pp. 54–56](https://aimath.org/~kaur/publications/3.pdf).
 The full contour and residue pages were visually checked. The following
@@ -389,10 +389,10 @@ implemented in Section 11. Section 12 additionally proves the high-rectangle
 zero-free assembly and exact actual residue. Section 13 proves the uniform
 finite Euler bound (F) and both degree-one horizontal connector bounds (HC).
 Section 14 proves the actual right-tail bounds (RT) and finite-line Perron
-truncation (PT), uniformly in the modulus. Native implementations of the
-finite Volterra profile transfer, shifted derivative/Cauchy error bounds,
-the left-edge bound in Section 15, and the full shifted-contour assembly
-into (GV) remain necessary. The eventual specialization of the geometric
+truncation (PT), uniformly in the modulus. Section 16 now proves the actual
+left-edge bound designed in Section 15. Native implementations of finite
+Volterra transfer, shifted derivative/Cauchy error bounds and the full
+shifted-contour assembly into (GV) remain necessary. The eventual specialization of the geometric
 parameters in Sections 12–14 is presently a paper calculation.
 The previous arithmetic outer average and the actual
 Gaussian/Estermann/DI mean-square chain also remain unfinished.
@@ -711,9 +711,10 @@ the remaining inequalities hold for sufficiently large `H`. Thus each
 connector costs `O(B_m K^(-7/4) log K)` for `S1`. For the normalized
 linear profile `G=S1/H`, substituting `K=H^4` gives
 `O(B_m H^(-8) log H)`. These asymptotic parameter specializations are
-paper calculations, not additional Lean endpoints. The left edge,
-right tails and their assembly, shifted derivative error, finite
-Volterra identity and (GV) remain unfinished.
+paper calculations, not additional Lean endpoints. Sections 14 and 16 now
+prove the right tails/truncation and left edge respectively. Their full
+contour assembly, shifted derivative error, finite Volterra identity and
+(GV) remain unfinished.
 
 Verification of the Euler/horizontal step:
 
@@ -802,8 +803,8 @@ At `u=2/H`, `|alpha|<=1/H`, `1<=X<=exp H`, `H>=1`, one has
 `m`, `X`, and the shift. This parameter specialization is a paper
 calculation; the native target is the exact finite-parameter inequality.
 
-The left-edge estimate, shifted derivative/Cauchy error, finite Volterra
-transfer and (GV) are still needed. Right-line truncation is not the
+Section 16 now supplies the left-edge estimate. Shifted derivative/Cauchy
+error, full contour assembly, finite Volterra transfer and (GV) are still needed. Right-line truncation is not the
 full shifted contour estimate or the actual long mollified mean square.
 
 Native endpoints in `HardyTheorem.ConreyCoprimeMobiusPerronTail`:
@@ -844,9 +845,9 @@ Final verification of the right-tail step:
 This is targeted Lean verification, not a whole-repository Lean baseline
 or a GitHub CI result. Neither (GV) nor the actual long moment is proved.
 
-## 15. 下一步左边界：统一常数的纸面闭合方案
+## 15. 左边界：形式化前的统一常数纸面方案
 
-本节是下一步的数学设计，尚非 Lean 端点。关键是先在固定紧区域控制
+本节保留形式化前的数学设计；第 16 节记录其原生证明与验证。关键是先在固定紧区域控制
 实际 pole-unit 的倒数，再在高处使用 (Z)；不能在左边使用右侧的绝对
 收敛级数界，也不能在每个高度重新选择一个不可控的紧致常数。
 
@@ -914,6 +915,135 @@ unnormalized edge. At `b=kappa/(16ell)`, it implies the required
 `O(B_m H^(-1) ell X^(-b))` after division by `H`, while preserving
 the more precise logarithm in the finite-parameter target.
 
-The remaining work is to formalize the fixed compact bound, both
-integrable majorants, the actual left-edge continuity and their finite
-integral assembly. This section does not close that native gap or (GV).
+Section 16 now formalizes the fixed compact bound, both integrable
+majorants, actual left-edge continuity and finite integral assembly.
+This closes the left-edge gap, not (GV).
+
+## 16. 实际左边界端点：实现与核验
+
+本节完成第 15 节方案的原生证明与字面契约验证：原始 Euler 表达式满足
+(LE-plan)，其可积性也在证明内推出，不由调用方提供解析函数或积分估计。
+
+`ConreyCoprimeMobiusLeftMajorant` chooses the constants in this order:
+`kappa0` from (HA), `c,T` from (Z), `M=max(T+2,3)`, the fixed compact
+core and its pole-unit bound `C_U>=1`, then `kappa=min(kappa0,c)`.
+The bound `kappa0<=1/4` makes the extra minimum with `1/4` redundant.
+Only afterwards are `K,m,delta,alpha,X,b` introduced. Its two coefficients
+are
+
+\[
+ C_{\rm low}=4C_UC_0,\qquad D_{\rm high}=2C_0(1+4/c).
+\]
+
+The module proves continuity of the literal integrand on `[-K,K]`
+using actual (HA) analyticity and pointwise Euler correspondence.
+The strict shift condition rules out `z=alpha-b+it=0` on the entire
+edge, and `Re(1+z)>0` rules out the other exceptional value. Thus the
+totalized raw zeta value at its pole is never used as a reciprocal limit.
+
+`MathlibAux.LogPowerMajorants` integrates a continuous, not necessarily
+even, complex function with bounds `A/(b+|t|)` on `[-M,M]` and
+`D |t|^(-3/2)` on the two remaining pieces. Reflection gives the
+negative-side estimate without requiring symmetry. Exact real primitives
+give
+
+\[
+ \left|\int_{-K}^K f(t)\,dt\right|
+ \le 2A\log(1+M/b)+4D,\qquad 1\le M\le K.
+\]
+
+The finite high-piece calculation drops only the nonnegative endpoint
+term and uses `M^(-1/2)<=1`. No analyticity or zero-free statement is
+extended beyond height `K`.
+
+`ConreyCoprimeMobiusLeftBound` combines these actual majorants and
+sets
+
+\[
+ C_{\rm final}=2C_{\rm low}(1+\log M)+4D_{\rm high}>0.
+\]
+
+Since `log(1+M/b)<=log M+log(1+1/b)`, this gives the exact proposed
+bound and actual interval integrability. The literal contract retains
+the original zeta, finite prime product, complex shift, squared kernel,
+interval and modulus-dependent majorant. It covers every `X>0`, zero
+shift, `m=0/1` (empty prime products), and `K=M`. The `delta=0` slice
+has no positive-width instances; the theorem itself is nonvacuous, for
+example by taking `alpha=0`, `delta=1/16` and sufficiently small `b>0`.
+Neither `1/(2*pi)` nor the linear-profile factor `1/H` is included.
+
+本轮局部交付范围冻结为上述实际左边界估计及可积性；完整 `>2/5` 不是
+它的验收前提。下面的字面契约固定了输入、原始函数与输出，不以新增
+分析假设替换目标。验收命令也固定为：
+
+```sh
+nice -n10 lake build Test.ConreyCoprimeMobiusLeftBoundContract \
+  Test.LogPowerMajorantsContract \
+  Test.ConreyCoprimeMobiusPerronTailContract \
+  Test.ConreyCoprimeMobiusHorizontalBoundContract \
+  Test.ConreyCoprimeMobiusHighRectangleContract \
+  Test.ConreyCoprimeEulerBoundContract
+uv run --no-project --with pytest --with mpmath --with numpy --with python-flint python -m pytest -q
+python3 scripts/check-targets-consistent.py
+python3 scripts/check-chain-gaps.py
+git diff --check
+```
+
+提交前的上述定向验收已成功退出，Lean 共 8740 jobs；最终字面契约通过，
+实际 majorant 和实际积分端点仅依赖 `propext`、`Classical.choice`、
+`Quot.sound`。两个字面契约的初次 RED 都仅因预期定理尚不存在而失败，
+原有依赖已先构建。Python 全量回归 546 passed，目标清单、依赖链和
+diff 检查通过。25 个本地模块的导入闭包无 Zeta23，外部根仅 Mathlib；
+三个新证明模块及两个契约均已登记为 Lake roots。
+
+独立数学、源码和文档审查无待修项。实现中的类型/证明语法问题均未
+改变冻结的声明；最后模块保留两处无害的 `unnecessarySeqFocus` 风格
+提示，不宣称零警告。慢构建期间采样确认瓶颈在依赖加载，未并发启动
+重复验收；一份已确认含错误 `positivity` 目标的本任务构建被主动取消，
+其余构建均等待了真实退出结果。
+
+最终源 SHA 与该 SHA 的新验收结果记录在 PR 交接中；旧测试结果或干净
+公理报告不能单独作为放行依据。本任务只发布 PR，由「合并PR」作为
+唯一合并负责人。第 17 节及更后的均方研究不扩大本轮交付范围。
+这里只声称局部左边界及所列定向回归通过，不声称全库 Lean baseline、
+GitHub CI、完整内层渐近或完整 Conrey 定理已完成。
+
+## 17. 下一步移位留数误差：保留小移位因子的纸面目标
+
+本节仅是独立审查过的下一步数学方案，尚未形式化。不能直接把二次
+余项放在半径 `delta` 的圆上作粗糙 Cauchy 微分：那样会丢失所需的
+`|alpha|` 因子。应先精确微分 `W(z)=zU(z)E_m(z)`。
+
+Choose fixed `r>0` and uniform bounds for `U,U'` on `|z|<=r`, together
+with `|U(z)-1|<=C_U'|z|`. For all `m`, `0<delta<=1/16`,
+`|alpha|<=min(delta,r)` and `X>0`, the proposed next endpoint is
+
+\[
+ \left| (\log X)W_m(\alpha)+W_m'(\alpha)
+       -(1+\alpha\log X)E_m(\alpha)\right|
+ \le C B_m(\delta)|\alpha|
+       \left(1+\delta^{-1}+|\log X|\,|\alpha|\right),
+ \tag{RE-plan}
+\]
+
+with `C,r` chosen before all varying parameters. The circle centered
+at `alpha` of radius `delta` satisfies `Re z>=-2delta>-1`, so (F) and
+the actual Euler-factor analyticity give `|E_m'(alpha)|<=C0 B_m/delta`
+by Cauchy's estimate. Only `E_m`, not `U`, needs to be analytic on this
+possibly larger circle. Use the exact identities
+
+\[
+ W_m'-E_m=(U-1)E_m+\alpha U'E_m+\alpha U E_m',\qquad
+ W_m-\alpha E_m=\alpha(U-1)E_m
+\]
+
+evaluated at `alpha` to obtain (RE-plan). Absolute `log X` covers
+positive cutoffs below one as well. At `alpha=0` the error is exactly
+zero, consistently with the existing actual derivative value.
+
+For the application choose `H` sufficiently large that `ell=log H>=16`
+and `1/H<=min(1/ell,r)`. With `delta=1/ell`, `|alpha|<=1/H` and
+`1<=X<=exp H`, the bracket is at most `ell+2<=3ell`. The resulting
+residue error is at most `3C B_m ell/H`, before the additional `1/H`
+for the linear profile. This still leaves the finite contour assembly,
+Volterra transfer, outer arithmetic and actual long mean-value estimate.
