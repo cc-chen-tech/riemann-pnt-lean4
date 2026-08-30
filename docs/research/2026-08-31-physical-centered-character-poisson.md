@@ -6,8 +6,11 @@
 这不是把旧硬壳免费平滑化，也不是旧 CS7 单个硬包的 5/4 定理。
 单包 principal、其他 gcd 分配、非内部包及全局余项不在本定理内。
 
-父版本固定为 dae4a5607153e54d3f59581a5cb7affdfcfef7cd 的
+父版本采用范围修正后 36d62a54497af2545ca1998251ad0b46177a5b19 的
 [PL1–PL11](2026-08-31-physical-centered-pv-large-sieve.md)。
+CS0/PL1 现同样明确重插原 F，不再认证一般 literal 硬壳。
+本篇 DP1–DP4 独立给出新包定义，仅复用精确角色恒等式及经典大筛，
+不以旧 0d468dd0/dae4a560 的硬包物理适配作为前提。
 原式来自
 [冻结物理索引 FP1–FP4](https://github.com/cc-chen-tech/riemann-pnt-lean4/blob/7cf2e7d43c4365e38e2aa708d1a250694b698bec/docs/research/2026-08-30-mwkf-frozen-physical-atom.md)，
 其定义源为 49cfacd70c60372757280177c7b63fd4f7760817。
