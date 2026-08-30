@@ -279,6 +279,10 @@ near-primitive 尺度覆盖，不需要把旧 \(\mathscr B_{\rm MC}\) 当作
 Type-frequency gcd 又是第三种标签；它不
 缩短原 \(h\delta\) 支撑。本篇没有把这三者混淆或删除。
 
+后续的[真正 gcd 交叠重组](2026-08-30-genuine-gcd-overlap-smooth-mode-removal.md)
+在同一光滑模型内处理了一部分 gcd 区域；混合大筛区域的大交叠
+层仍未控制，不把此处的对接义务整体标记为完成。
+
 尤其还要证明：所有待估 AFE/reflection 原子均有 (C1) 的共同系数
 与统一半范数；随两侧导子变化的权能以登记成本处理；g、D、真正
 gcd 和全部外标量的总范数满足 (C18) 所用预算。若任一项产生额外
