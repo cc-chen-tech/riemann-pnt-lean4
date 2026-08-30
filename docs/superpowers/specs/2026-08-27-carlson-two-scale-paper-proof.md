@@ -462,10 +462,15 @@ route, not a claim that the saving is uniform in the mollifier length.
 ## 8. Lean translation boundary
 
 当前验证边界（2026-08-30）：弱单位相位 AFE、半长 mollifier 的真实全线高斯乘积矩，
-以及 `sigma=2/3` 的真实区间内线矩均已无条件形式化并通过各自契约与基础公理审计。
-尚未完成左侧辅助区间上的统一内线矩、Littlewood 零点计数、改进 density certificate
-及 forcing 接线，不能宣布零密度改进的 Lean 验收完成。下文保留按研究顺序记录的旧阶段
-检查点；关于最新弱 AFE 与内线矩状态，以后面的 post-AFE integration 段落为准。
+以及整个 `1/2 <= x <= 2/3` 条带上一致的真实区间内线矩均已无条件形式化并通过契约与
+基础公理审计。实际取整长度、两个显式端点常数、Gaussian 覆盖数和幂次合成都已接入。
+左辅助区间内的任意内嵌高度子区间也已证明真实可积性及 `V^(8/9-1/400)(1+log V)^6`
+上界；常数与高度阈值位于辅助线和子区间的量词之前。
+实际无零左边界也已通过有限零点支集选择，并得到其所有内嵌高度子区间的对数积分界，
+不再保留“存在好直线”或临界矩前提。
+尚未完成 Littlewood 零点计数、改进 density certificate 及 forcing 接线，不能宣布
+零密度改进的 Lean 验收完成。下文保留按研究顺序记录的旧阶段检查点；最新状态以本段
+及后面的 post-AFE integration 段落为准。
 
 The finite two-scale mollifier/detector, identity (2.1), cancellation (4.1),
 the explicit fixed-right estimate `5/36`, fixed-circle growth,
@@ -2119,14 +2124,18 @@ for `s=x+iy`,
   =4(3x-2)(2x-3)+24y^2\ge0\quad(1/2\le x\le2/3).
 \]
 
-Thus a precise next formal lemma is the actual ordinary-error interval
-moment bound uniformly for `x in [a0,b0]`, with the same integer lengths
-and Gaussian cover normalization above.  It follows on paper from the
-already-proved closed-strip Hilbert interpolation and this factor bound;
-the current specialized `x=2/3` adapter must be extended before applying
-Littlewood.  This alternative is not yet a formal density certificate.
+The actual ordinary-error interval moment bound is now formal uniformly
+on the larger closed strip `1/2 <= x <= 2/3`, with the same integer
+lengths and Gaussian cover normalization above.  `CarlsonGaussianLeftStrip`
+proves both genuine Gaussian integrability and the factor-25 comparison;
+`CarlsonHalfRangeLeftStrip` supplies the unconditional critical input.
+`CarlsonTwoScaleRectangle` now selects a nonvanishing vertical boundary
+inside `(a0,b0)` by avoiding the real parts of the actual finite zero
+support.  The remaining zero-count step must still apply the four-edge
+Littlewood identity with multiplicities.  An energy estimate or a selected
+left edge alone is not a formal density certificate.
 
-Here is a fully normalized scalar budget for that next lemma.  Set
+Here is the fully normalized, now formalized scalar budget.  Set
 `Y0=floor(V^(2/5))`, `Y1=floor(V^(9/20))`, `P=V^(19/20)`, and
 `L=1+log V`.  For sufficiently large `V`,
 
@@ -2165,11 +2174,88 @@ interval moment is at most
 Here the factor `25` removes the pole regularizer, and
 `0<=lambda(x)<=1` bounds both constant powers uniformly and the logarithm
 power by six.  This is even smaller than the reserved `V^q(x)*L^6`
-bound above.  Every comparison in this paragraph is scalar; the outstanding
-formal work is its composition with the generic closed-strip and contour
-theorems, not a new spectral or cancellation estimate.
+bound above.  `CarlsonHalfRangeParameters` proves the actual floor and
+multiplier conditions at one common eventual threshold;
+`CarlsonHalfRangeEndpointBudget` proves the displayed endpoint constants;
+`CarlsonHalfRangeInteriorPower` composes those bounds with the actual
+closed-strip moment and retains the final `floor+1` covering window.
+Its theorem has quantifiers `exists K>0, eventually V, forall x`.
 
-**Combined verification checkpoint (2026-08-30).** One combined build of
+No epsilon reserve is needed in this assembled energy bound.  If
+`q0(x)=1-(12/5)lambda(x)`, then the worst line in the fixed auxiliary
+interval satisfies
+
+\[
+ q_0(a_0)=\frac{38753}{43750},\qquad
+ \left(\frac89-\frac1{400}\right)-q_0(a_0)
+ =\frac{1909}{3150000}>0.
+\]
+
+`CarlsonHalfRangeAuxiliaryWindow` formally verifies this exact slack,
+the Littlewood-weight lower bound `1/20000`, and genuine interval
+integrability and the target energy bound for every
+`2V <= u <= v <= 5V/2`.  Its constant and threshold also precede `u,v`.
+Restricting to a subinterval uses nonnegativity of the error energy and
+ordinary Lebesgue integral monotonicity, not a totalized integral at a
+nonintegrable function.  The remaining work is the contour/zero-count
+assembly, not another spectral or cancellation estimate.
+
+The left-logarithmic-edge adapter is now formal as well.
+`CarlsonHalfRangeLeftEdge` first proves `log|1-F^2| <= |F|^2`, including
+the pointwise zero-value convention, but proves logarithmic integrability
+only on a genuinely nonvanishing closed boundary.  Its final theorem
+actually selects such a line on the entire height interval `[2V,5V/2]`:
+
+\[
+ \exists K>0\;\forall V\text{ sufficiently large}\;
+ \exists x\in(a_0,b_0)\;\forall\,2V\le u\le v\le5V/2,
+ \qquad \int_u^v\log|G(x+it)|\,dt
+ \le K V^{8/9-1/400}(1+\log V)^6.
+\]
+
+The theorem also supplies genuine interval integrability, nonvanishing
+on the entire height interval, and `2/3-x>=1/20000`.  The finite support is
+proved equal to the detector's actual rectangle-zero set using the already
+proved finite analytic order.  The chosen regularized detector is converted
+back to `G=1-F^2` through its exact `(s-1)^2` factor on the left strip.
+No boundary-selection or moment premise remains in this selected-line
+statement.
+
+For the next formal contour step the normalizations are fixed as follows.
+On `Re(s)=4`, the proved error bound `|F| <= (10/3)Y0^(-3)` and
+`|F|<=1/3` give
+
+\[
+ -\log|1-F^2|\le\frac98|F|^2\le\frac{25}{2}Y_0^{-6}.
+\]
+
+Thus any subinterval of `[2V,5V/2]` has right-logarithmic-edge contribution
+at most `400 V^(-7/5)`, using the same floor lower bound; there is no
+height-sized constant loss.  The right argument variation is at most `pi`
+because `Re(1-F^2)>=8/9`.  These elementary contour adapters still need
+formal composition with the already proved good-horizontal-line estimates.
+For a zero-count shell `[U,9U/8]`, use `V=10U/21`; if `U>=21`,
+`[U-1,9U/8+1]` lies in `[2V,5V/2]`.  The next quantitative formal target is
+the corresponding multiplicity-weighted shell count bounded by
+`A U^(8/9-1/400)(1+log U)^6`, followed by geometric summation.
+The existing `ZeroDensity.zeroDensityCount` uses `Re(rho)>sigma`; if a
+closed-threshold convention is desired, zeros on `Re(rho)=2/3` must also
+be included in the target finite set.  Their Littlewood weight has the
+same positive lower bound, so they must not be discarded by convention.
+
+**Left-strip/selected-edge verification checkpoint (2026-08-30).** All
+eight new source modules and their contracts are registered in Lake.
+One combined build of thirty-eight contracts exits zero (8901 jobs,
+including cached dependencies).  The ninety-seven axiom-audit entries
+extracted from those exact build traces contain only `propext`,
+`Classical.choice`, and `Quot.sound`.  Read-only mathematical/code review
+of all eight new modules found no Critical or Important issue; its stale
+documentation finding is corrected above.  No new source contains
+`sorry`, `admit`, an `axiom` declaration, or `unsafe`.  This checkpoint
+certifies the uniform energy and selected-left-edge conclusions, not the
+uncompleted density certificate or forcing chain.
+
+**Earlier post-AFE verification checkpoint (2026-08-30).** One combined build of
 thirty contracts covering the four new modules, the preceding
 Poisson/Gamma components, the old conditional/full-line product bridges,
 the critical-to-interior adapter, Carlson minimax, and the half-range
