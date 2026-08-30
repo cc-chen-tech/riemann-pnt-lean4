@@ -49,6 +49,23 @@ def exp2pi(z):
     return cmath.exp(2j * math.pi * z)
 
 
+def convolution_weight(q, kappa, n):
+    """h_{Q,kappa}; prime-power exponents do not change the local value."""
+    return math.prod(
+        F(1) if q % p == 0 else (F(1, p + 1) if kappa else F(0))
+        for p in primes(n)
+    )
+
+
+def ramanujan(s, n):
+    return sum(d * mobius(s // d) for d in divisors(s) if n % d == 0)
+
+
+def kloosterman(s, a, b):
+    return sum(exp2pi(F(a * z + b * pow(z, -1, s), s))
+               for z in range(s) if math.gcd(z, s) == 1)
+
+
 def gaussian_poisson(a, r, n, kl, sign=-1, jacobian=True):
     """Schwartz regression kernel phi(y)=exp(-pi*y*y)*e(y/3).
 
@@ -203,6 +220,106 @@ class CubicCombChecks(unittest.TestCase):
         self.assertEqual(nonzero_pairs, 0)
         self.assertEqual(axes, 201)
         self.assertGreater(axes, 4 * kmax * lmax)
+
+    def test_coprime_density_convolution(self):
+        for n in range(1, 121):
+            for q in (1, 2, 6, 35):
+                for kappa in (0, 1):
+                    actual = sum(mobius(n // r) * convolution_weight(q, kappa, r)
+                                 for r in divisors(n))
+                    expected = mobius(n) * (g(n) if kappa else 1)
+                    if math.gcd(n, q) != 1:
+                        expected = 0
+                    self.assertEqual(actual, expected)
+
+    def test_density_convolution_not_restricted_to_q_smooth(self):
+        self.assertEqual(convolution_weight(6, 0, 25), 0)
+        self.assertEqual(convolution_weight(6, 1, 25), F(1, 6))
+        self.assertEqual(convolution_weight(6, 1, 12), 1)
+
+    def test_euler_convolution_mass_at_one(self):
+        prime_list = [p for p in range(2, 101) if primes(p) == [p]]
+        for q in (1, 2, 6, 35, 60):
+            euler_zero = math.prod(F(p, p - 1) for p in primes(q))
+            for kappa in (0, 1):
+                partial_product = math.prod(
+                    1 + convolution_weight(q, kappa, p) / (p - 1)
+                    for p in prime_list
+                )
+                if kappa == 0:
+                    self.assertEqual(partial_product, euler_zero)
+                else:
+                    zeta_two_product = math.prod(F(p * p, p * p - 1)
+                                                 for p in prime_list)
+                    exact_product = zeta_two_product * math.prod(
+                        F(p + 1, p) for p in primes(q)
+                    )
+                    self.assertEqual(partial_product, exact_product)
+                    self.assertLess(partial_product, 2 * euler_zero)
+
+    def test_rankin_convolution_tail(self):
+        for q in (1, 6, 35):
+            for kappa in (0, 1):
+                for cutoff in (2, 7, 31):
+                    tail = sum(float(convolution_weight(q, kappa, r)) / r
+                               for r in range(cutoff + 1, 201))
+                    half_moment = sum(float(convolution_weight(q, kappa, r))
+                                      / math.sqrt(r) for r in range(1, 201))
+                    self.assertLessEqual(tail, half_moment / math.sqrt(cutoff))
+        self.assertEqual(F(499, 1000) * F(1, 2000), F(499, 2000000))
+
+    def test_large_convolution_integer_endpoints(self):
+        for d in (F(7, 3), F(10), F(37, 2)):
+            for r in range(1, math.floor(2 * d) + 1):
+                count = sum(d < r * n < 2 * d
+                            for n in range(1, math.ceil(2 * d) + 1))
+                self.assertLessEqual(count, d / r + 1)
+                self.assertLessEqual(d / r + 1, 3 * d / r)
+
+    def test_ramanujan_cofactor_weight_preserves_both_denominators(self):
+        for s in range(1, 81):
+            for n in range(-3, 13):
+                left = F(mobius(s) * ramanujan(s, n), s * s)
+                right = sum(
+                    F(mobius(d), d) * F(mobius(s // d) ** 2, (s // d) ** 2)
+                    for d in divisors(s)
+                    if n % d == 0 and math.gcd(d, s // d) == 1
+                )
+                self.assertEqual(left, right)
+
+    def test_extra_modulus_inverse_mutant_rejected(self):
+        # s=S=5, n=1: the exact coefficient is 1/25, not 1/125.
+        s, n = 5, 1
+        left = F(mobius(s) * ramanujan(s, n), s * s)
+        cofactor = sum(
+            F(mobius(d), d) * F(mobius(s // d) ** 2, (s // d) ** 2)
+            for d in divisors(s)
+            if n % d == 0 and math.gcd(d, s // d) == 1
+        )
+        self.assertEqual(left, F(1, 25))
+        self.assertEqual(left, cofactor)
+        self.assertNotEqual(left, cofactor / s)
+
+    def test_discrete_double_completion_with_modulus_weight(self):
+        # DFT normalization replaces the continuous HL lengths with the
+        # actual Fourier coefficients, retaining the same two s factors.
+        for s in (3, 5, 6, 7):
+            a = 1
+            u = [F((2 * h + 1) % 5, 5) for h in range(s)]
+            v = [F((h * h + 2) % 7, 7) for h in range(s)]
+            uf = [sum(u[h] * exp2pi(F(-k * h, s)) for h in range(s))
+                  for k in range(s)]
+            vf = [sum(v[h] * exp2pi(F(-ell * h, s)) for h in range(s))
+                  for ell in range(s)]
+            original = F(mobius(s), s) * sum(
+                u[h] * v[d] * kloosterman(s, a, -h * d)
+                for h in range(s) for d in range(s)
+            )
+            completed = F(mobius(s), s * s) * sum(
+                uf[k] * vf[ell] * ramanujan(s, a + k * ell)
+                for k in range(s) for ell in range(s)
+            )
+            self.assertLess(abs(original - completed), 2e-12)
 
 
 if __name__ == "__main__":
