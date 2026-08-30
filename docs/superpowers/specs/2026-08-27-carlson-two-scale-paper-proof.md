@@ -468,8 +468,10 @@ route, not a claim that the saving is uniform in the mollifier length.
 上界；常数与高度阈值位于辅助线和子区间的量词之前。
 实际无零左边界也已通过有限零点支集选择，并得到其所有内嵌高度子区间的对数积分界，
 不再保留“存在好直线”或临界矩前提。
-尚未完成 Littlewood 零点计数、改进 density certificate 及 forcing 接线，不能宣布
-零密度改进的 Lean 验收完成。下文保留按研究顺序记录的旧阶段检查点；最新状态以本段
+右边负对数预算、净辐角界、实际检测器支集的 Littlewood 恒等式、包含闭阈值等号的
+有限 ζ 零点族重数比较，以及正则化后的完整竖边预算也已形式化。
+尚未完成水平边的统一幂对数预算、完整高度壳计数、全局求和、改进 density certificate
+及 forcing 接线，不能宣布零密度改进的 Lean 验收完成。下文保留按研究顺序记录的旧阶段检查点；最新状态以本段
 及后面的 post-AFE integration 段落为准。
 
 The finite two-scale mollifier/detector, identity (2.1), cancellation (4.1),
@@ -2231,9 +2233,12 @@ On `Re(s)=4`, the proved error bound `|F| <= (10/3)Y0^(-3)` and
 
 Thus any subinterval of `[2V,5V/2]` has right-logarithmic-edge contribution
 at most `400 V^(-7/5)`, using the same floor lower bound; there is no
-height-sized constant loss.  The right argument variation is at most `pi`
-because `Re(1-F^2)>=8/9`.  These elementary contour adapters still need
-formal composition with the already proved good-horizontal-line estimates.
+height-sized constant loss.  The absolute value of the right **net** argument
+integral is at most `pi` because `Re(1-F^2)>=8/9`; this is not a bound for
+the integral of the absolute logarithmic derivative.  Both statements are
+now formal in `CarlsonTwoScaleRightLog` and `CarlsonTwoScaleRightArgument`.
+They still need formal composition with the already proved
+good-horizontal-line estimates.
 For a zero-count shell `[U,9U/8]`, use `V=10U/21`; if `U>=21`,
 `[U-1,9U/8+1]` lies in `[2V,5V/2]`.  The next quantitative formal target is
 the corresponding multiplicity-weighted shell count bounded by
@@ -2242,6 +2247,107 @@ The existing `ZeroDensity.zeroDensityCount` uses `Re(rho)>sigma`; if a
 closed-threshold convention is desired, zeros on `Re(rho)=2/3` must also
 be included in the target finite set.  Their Littlewood weight has the
 same positive lower bound, so they must not be discarded by convention.
+
+The regularized contour-to-family comparison is now formal.  Write
+`H(s)=(s-1)^2 G(s)`, and let `S` be any finite family of actual nontrivial
+zeta zeros with `sigma<=Re(rho)` inside the closed rectangle.  For
+`0<x<=sigma`, `1<=x1`, and genuinely nonvanishing four edges,
+`CarlsonTwoScaleLittlewood` proves
+
+\[
+ 2\pi(\sigma-x)\sum_{\rho\in S}m_\zeta(\rho)
+ \le B_{\rm bottom}(H)-B_{\rm top}(H)+\mathcal V_H,
+\]
+
+where, for the fixed right edge `x1=4`,
+
+\[
+ \mathcal V_H=(4-x)\int_u^v\Re\frac{H'}H(4+it)\,dt
+       +\int_u^v\log|H(x+it)|\,dt
+       -\int_u^v\log|H(4+it)|\,dt.
+\]
+
+The finite detector divisor support is constructed, not assumed;
+regularization preserves multiplicity away from `0,1`, and the detector
+multiplicity dominates the zeta multiplicity.  Every additional detector
+zero has a nonnegative weight.  In particular `sigma<=Re(rho)` really is
+closed, and no zero on the target line is omitted.  The generic preceding
+modules `LittlewoodRectangleLogNorm` and `LittlewoodRectangleZeroCount`
+prove the corner cancellation and supply all four edge integrabilities
+from their actual analytic/nonvanishing hypotheses.
+
+`CarlsonTwoScaleRegularizedEdges` now accounts for the regularizer before
+bounding the vertical edges.  On a nonvanishing segment away from `0,1`,
+
+\[
+ \log|H|=2\log|s-1|+\log|G|,\qquad
+ H'/H=2/(s-1)+G'/G.
+\]
+
+Both identities are proved with genuine integrability; the logarithmic
+derivative identity uses equality on a neighborhood, not merely at one
+point.  If `1/2<x<1` and `u<=v`, then
+`|x-1+it|<=|3+it|` yields
+
+\[
+ \int_u^v\log|H(x+it)|-\int_u^v\log|H(4+it)|
+ \le \int_u^v\log|G(x+it)|-\int_u^v\log|G(4+it)|.
+\]
+
+The right net argument integral of `H` has absolute value at most `3*pi`:
+at most `2*pi` comes from the two linear factors and at most `pi` from
+`G`.  The two reused old `CarlsonLittlewood` lemmas concern only this
+linear factor and its logarithmic norm; no zero-density result is used.
+
+Consequently `CarlsonHalfRangeVerticalBudget` supplies one actual left
+line in `(a0,b0)`, the weight `2/3-x>=1/20000`, nonvanishing of both
+vertical edges, and the bound, uniformly for every `2V<=u<=v<=5V/2`,
+
+\[
+ \mathcal V_H\le (K_{\rm left}+400+12\pi)
+             V^{8/9-1/400}(1+\log V)^6.
+\]
+
+Indeed `(4-x)<=4`, while `V^(-7/5)<=1<=W` for
+`W=V^(8/9-1/400)(1+log V)^6` and `V>1`.  The constant and height
+threshold precede the selected line and **all** inner height intervals.
+There is no boundary-selection or mean-square gate in this vertical
+budget theorem.  It is not yet a complete rectangle bound.
+
+The next formal obligation is precise: for `V=10U/21` and the same
+integer cutoffs, choose nonvanishing horizontal heights
+`u in [U-1,U]`, `v in [9U/8,9U/8+1]` and prove, uniformly for
+`x in (a0,b0)`,
+
+\[
+ |B_{\rm bottom}(H)|+|B_{\rm top}(H)|
+ \le C(1+\log U)^2.
+\]
+
+The existing horizontal-selection theorem gives explicit majorants:
+`L=O(1+log U)`, radial separation bounded below by a fixed multiple of
+`1/(L+1)`, and a logarithmic variation bounded by
+`O(1+log U)+O(L log(L+1))`.  On its fixed radius interval
+`121/32<=r<=122/32`, `r-15/4>=1/32`; thus the stated squared-log budget
+follows on paper.  It still needs Lean normalization for both moving
+height windows and integration against `w-x`.  After this, instantiate
+the full closed-threshold shell zero set, use the positive weight, sum
+geometric shells, and only then construct and connect the density
+certificate.
+
+**Vertical-budget/Littlewood verification checkpoint (2026-08-30).** All
+seven new source modules and seven contracts are registered in Lake.  One
+combined build of forty-five contracts exits zero (8919 jobs, including
+cached dependencies).  The 114 axiom-audit entries extracted from those
+exact build traces contain only `propext`, `Classical.choice`, and
+`Quot.sound`.  All seven new contracts disable automatic implicit
+variables; the vertical-budget contract explicitly names
+`PrimeNumberTheorem.halfRangeTargetExponent`.  Read-only review of the
+seven new modules found no Critical or Important issue.  Source scans
+found no `sorry`, `admit`, `axiom` declaration, or `unsafe`.  This
+checkpoint certifies the actual finite-family comparison and complete
+vertical boundary budget, not the uncompleted horizontal normalization,
+global density certificate, or forcing chain.
 
 **Left-strip/selected-edge verification checkpoint (2026-08-30).** All
 eight new source modules and their contracts are registered in Lake.
