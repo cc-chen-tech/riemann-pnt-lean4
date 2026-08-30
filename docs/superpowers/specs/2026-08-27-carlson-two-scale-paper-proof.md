@@ -1935,6 +1935,16 @@ absolutely summable.  Thus
 `sum_(k in Z) I_k=I_0+sum_(m>=1)(I_m+I_(-m))` follows without an
 additional analytic decay hypothesis.  This is at fixed finite `N`;
 it does not exchange the cutoff limit with an infinite series.
+The absolute-convergence conclusion and this exact signed-index identity
+are now formal in `AFEExplicitPoissonAbsoluteSum`.  Its contract build
+exits zero (8720 jobs including cached dependencies), with only the three
+allowed base axioms; no summability premise is supplied by the caller.
+The fifteen-contract regression spanning the inner errors, cutoffs,
+absolute convergence, and all preceding Gamma/Poisson components also
+exits zero (8762 jobs).  All audited theorems use only `propext`,
+`Classical.choice`, and `Quot.sound`.  The new modules contain no `sorry`
+or mathematical axioms; this does not certify the still-unassembled
+weak AFE or the improved zero-density theorem.
 
 On the critical line a fully explicit target for this reassembly is
 available.  Write
@@ -1966,7 +1976,7 @@ by `K^(-1/2)`.  Use `H_(K-2)<=H_M<=1+log M` and `1+log M>=1`.
 The upper-cutoff coefficient is exactly the inner coefficient plus the
 single zero-mode `N^(-1/2)` error.  This explicit target is not yet a
 Lean theorem; its remaining obligations are the finite partitions,
-absolute-convergence reindexing, and primal finite-sum identity.
+the combined norm budget, and the primal finite-sum identity.
 
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions

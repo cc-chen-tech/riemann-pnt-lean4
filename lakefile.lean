@@ -2588,6 +2588,8 @@ lean_lib RiemannPNT where
     `Test.AFEExplicitPoissonInnerSumContract,
     `HardyTheorem.AFEExplicitPoissonFrequencyCutoff,
     `Test.AFEExplicitPoissonFrequencyCutoffContract,
+    `HardyTheorem.AFEExplicitPoissonAbsoluteSum,
+    `Test.AFEExplicitPoissonAbsoluteSumContract,
     `HardyTheorem.AFEExplicitPoissonFiniteBand,
     `Test.AFEExplicitPoissonFiniteBandContract,
     `HardyTheorem.AFEExplicitPoissonZeroMode,
