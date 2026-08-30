@@ -38,6 +38,14 @@ F = Fraction
 TARGET_SAVING = F(1, 1000)
 AGGREGATION_LOG_LOSS = F(7)
 
+# Analytic obligations, not failed numerical cells.  Local finite identities
+# and logarithmic ledgers do not discharge these physical reassembly inputs.
+UNPROVED_PHYSICAL_INPUTS = (
+    "short_cofactor_HL_normalization",
+    "full_outer_PEVP_aggregation",
+    "physical_tail_partition_and_bounds",
+)
+
 
 @dataclass(frozen=True)
 class RouteResult:
@@ -3587,6 +3595,7 @@ class MWKFTailShellAggregationAudit:
     poisson_frequency_tail_included: bool
     qct_fourier_mellin_tail_included: bool
     pevp_is_polynomial_in_fixed_kernel_seminorms: bool
+    full_outer_pevp_aggregation_proved: bool
     power_far_shells_are_dominated: bool
     polylog_near_shells_are_summable: bool
     transform_tail_aggregated: bool
@@ -15810,7 +15819,9 @@ def mwkf_tail_shell_aggregation_audit(
     A shell beginning at ``L^B`` contributes ``L^(C+7-BJ)`` after the
     six dyadic and one harmonic-q logarithms.  The seminorm-stable PEVP
     theorem from the primitive-conductor reinsertion supplies the local
-    bound, so choosing ``BJ>C+target+7`` closes every shell.
+    bound.  Choosing ``BJ>C+target+7`` only closes the local logarithmic
+    ledger: the full outer entry sums retain unpaid power costs.  There
+    is currently no proof of their uniform aggregation.
     """
     start = F(tail_log_start)
     order = F(seminorm_decay_order)
@@ -15827,7 +15838,8 @@ def mwkf_tail_shell_aggregation_audit(
         common_mobius_length_exponent=F(3, 2),
         fixed_power_margin=F(0),
     ).pevp_is_polynomial_in_fixed_kernel_seminorms
-    closes = pevp_available and net > target
+    full_outer_pevp = False  # A0^(1/2)*B0 is not a logarithmic loss.
+    closes = pevp_available and full_outer_pevp and net > target
     return MWKFTailShellAggregationAudit(
         tail_log_start=start,
         seminorm_decay_order=order,
@@ -15841,7 +15853,8 @@ def mwkf_tail_shell_aggregation_audit(
         poisson_frequency_tail_included=True,
         qct_fourier_mellin_tail_included=True,
         pevp_is_polynomial_in_fixed_kernel_seminorms=pevp_available,
-        power_far_shells_are_dominated=pevp_available,
+        full_outer_pevp_aggregation_proved=full_outer_pevp,
+        power_far_shells_are_dominated=pevp_available and full_outer_pevp,
         polylog_near_shells_are_summable=closes,
         transform_tail_aggregated=closes,
         afe_tail_aggregated=closes,
@@ -15851,20 +15864,18 @@ def mwkf_tail_shell_aggregation_audit(
 
 def unconditional_long_mollifier_asymptotic_audit(
 ) -> UnconditionalLongMollifierAsymptoticAudit:
-    """Assemble the audited theta=3 main term and complete remainder.
+    """Record the theta=3 main term and the still-open physical remainder.
 
     The exact completed AFE and common-Mellin Poisson calculation give
     ``I = T*Q + R`` without a truncated-AFE error.  The merged Selberg
     LCM audit gives ``Q = 4/3 integral(W) + o(1)``.  The cubic
-    complementary-divisor route independently aggregates the signed
-    outer entries in the compact core over every power-scale cell and
-    the logarithmic LCPE2 endpoint, before the positive product-energy
-    majorant is introduced.  This compact-core step bypasses PEVP.
+    complementary-divisor route has local identities, but its physical
+    normalization and full outer aggregation remain unproved.
 
     The four first-active AFE/transform tail families are a separate
-    partition.  Their present proof still uses the separately proved
-    seminorm-stable PEVP theorem.  Thus the complete remainder requires
-    PEVP for tails even though its compact outer-entry core does not.
+    proposed partition.  Fixed-entry seminorm-stable PEVP does not
+    supply the required full outer estimate.  No local/finite audit
+    here is a certificate of the unconditional asymptotic.
     """
     projector = primitive_conductor_level_difference_audit(
         level_factor_exponent=F(3),
@@ -15939,7 +15950,8 @@ def unconditional_long_mollifier_asymptotic_audit(
         )
     )
     compact_core_is_little_o = (
-        core.nonzero_poisson_core_is_little_o_T or cubic_outer_core
+        independent.c_poisson_full_weight_embedding_verified
+        and (core.nonzero_poisson_core_is_little_o_T or cubic_outer_core)
     )
     compact_core_bypasses_pevp = cubic_outer_core
     tails_use_pevp = all(
@@ -16003,7 +16015,7 @@ def unconditional_long_mollifier_asymptotic_audit(
         )
     else:
         polytope_residual = ""
-    residual_top_level = () if final else ("OLISK_q^{L,R}",)
+    residual_top_level = () if final else UNPROVED_PHYSICAL_INPUTS
     if final:
         alternative_unverified = ()
     elif (
@@ -16036,6 +16048,7 @@ def unconditional_long_mollifier_asymptotic_audit(
         ),
         physical_weight_ledger_verified=(
             cubic_power.physical_weight_ledger_verified
+            and independent.c_poisson_full_weight_embedding_verified
         ),
         nested_log_choices_verified=cubic_power.nested_log_choices_verified,
         lcpe2_covered_unconditionally=(
@@ -18457,7 +18470,10 @@ def balanced_adaptive_reciprocal_phase_audit(
     above the published ``1/3+epsilon`` threshold.  The worst ``u`` is
     the exact BCR endpoint ``283/550``; positivity there proves every
     larger point by monotonicity.  BCR proves the strict lower interval,
-    so the two routes cover the whole balanced edge.
+    but the raw HL normalization still leaves a power deficit.  The
+    reported relative prefactor is evaluated at the displayed lower u;
+    for a general family member it is u-1, not the old constant -1.
+    Taylor positivity alone therefore does not cover the balanced edge.
     """
     eta = F(cofactor_cutoff_exponent)
     rho_q = F(qsmooth_relative_exponent)
@@ -18474,7 +18490,7 @@ def balanced_adaptive_reciprocal_phase_audit(
 
     lower_u = F(283, 550)
     dual_product = F(1)
-    prefactor_relative = F(-1)
+    prefactor_relative = lower_u - F(1)
     long_axis = F(53, 100)
     long_main_saving = F(1) - long_axis
     density_first_saving = eta / F(2)
@@ -18490,7 +18506,8 @@ def balanced_adaptive_reciprocal_phase_audit(
         - eta
     )
     applies = (
-        lower_margin > 0
+        prefactor_relative + dual_product == 0
+        and lower_margin > 0
         and upper_margin > 0
         and taylor_margin > 0
         and long_main_saving > 0
@@ -18560,9 +18577,9 @@ def adaptive_reciprocal_slack_vertex_audit(
 
     ``u=max(rho,sigma)``, ``a=ell+h`` and ``p=2*u-a``.
 
-    The physical factor has exponent ``a-u`` and the double-Poisson
-    dual product has exponent ``p``, so their product is exactly the
-    local target ``u``.  In the short-cofactor range the reciprocal
+    The raw physical factor has exponent ``a`` and the double-Poisson
+    dual product has exponent ``p``; their sum is ``2*u``, exceeding
+    the local target ``u``.  In the short-cofactor range the reciprocal
     Taylor error has saving
 
     ``3*(1-nu)*(u-eta)*(1-rho_Q) - p - eta``.
@@ -18575,9 +18592,8 @@ def adaptive_reciprocal_slack_vertex_audit(
 
     ``min(u-h,u-ell)-epsilon_0*u``.
 
-    Positivity of all three rational margins proves the designated
-    vertex.  This is only a vertex certificate: it does not assert that
-    the analytic regions cover every intervening face or interior cell.
+    These rational margins are retained as local diagnostics, but do not
+    prove vertex coverage without paying the physical normalization gap.
     """
     eta = F(cofactor_cutoff_exponent)
     rho_q = F(qsmooth_relative_exponent)
@@ -18620,7 +18636,7 @@ def adaptive_reciprocal_slack_vertex_audit(
         )
         nonaxis_saving = dual_product - moment * (u + dual_product)
         axis_saving = minimum_axis - moment * u
-        exact_here = third_length - u + dual_product == u
+        exact_here = third_length + dual_product == u
         normalization_exact = normalization_exact and exact_here
         covered = (
             third_length > 0
@@ -18757,8 +18773,9 @@ def cubic_reciprocal_endpoint_dispersion_audit(
 
     Let the chosen Ramanujan modulus have size ``S=T^u`` and put
     ``a=ell+h`` and ``P=T^p`` with ``p=2*u-a``.  The exact physical
-    double-Poisson prefactor is ``T^(a-u)``, so its product with the
-    dual ``(k,l)`` volume is ``T^u``.
+    double-Poisson prefactor, with the raw cofactor weight retained, is
+    ``HL=T^a``, so its product with the dual ``(k,l)`` volume is
+    ``T^(2*u)``.  The previous ``T^(a-u)`` silently spent an extra S.
 
     In the short-cofactor range write ``S=e*D``, ``d=r*n`` and
     ``X=D/r``.  Complementary-divisor Poisson is the exact identity
@@ -18815,7 +18832,7 @@ def cubic_reciprocal_endpoint_dispersion_audit(
         raise ValueError("logarithmic losses and savings must be nonnegative")
 
     p = F(2) * u - a
-    physical_prefactor = a - u
+    physical_prefactor = a
     physical_times_dual = physical_prefactor + p
     reduced = (u - eta) * (F(1) - rho_q)
     degree = 3
@@ -19044,7 +19061,7 @@ def reciprocal_amplitude_seminorm_transfer_audit(
 
 def independent_cubic_closure_verification_audit(
 ) -> IndependentCubicClosureVerificationAudit:
-    """Verify the four closing gates without a fabricated log witness.
+    """Keep local identities separate from unproved physical closing gates.
 
     The exact short-cofactor summand is obtained from
 
@@ -19055,7 +19072,9 @@ def independent_cubic_closure_verification_audit(
     ``e(-j*A*k*l/(r*n))``.  Together with the existing ``mu(n)/(r*n)``
     this gives ``A*mu(n)/(r^2*n^2)``.  Partial summation contributes
     ``X^-1=e*r/S``; multiplying the original ``alpha(A)/A`` leaves
-    ``alpha(A)/(r*e*S)``.
+    ``alpha(A)/(r*e*S)`` before the original double-Poisson prefactor
+    ``HL``.  The physical coefficient is ``HL*alpha(A)/(r*e*S)``, not
+    ``HL*alpha(A)/(r*e*S^2)``.  No extra inverse S has been proved.
 
     No universal numerical values such as ``C_W=20`` or ``C_j=4`` are
     used.  For fixed ``W`` and a requested final saving ``B_fin``, first
@@ -19065,15 +19084,14 @@ def independent_cubic_closure_verification_audit(
     order.  This is the non-circular logarithmic ledger needed at
     LCPE2.
 
-    The global partition assigns every tail box to its first active
-    transform parameter.  It is disjoint from the compact cubic boxes;
-    the listed cancellation mechanisms therefore act on disjoint
-    summands.
+    A first-active-tail partition has been proposed, but the physical
+    weights, edges, and full outer sums have not been certified.  The
+    distinct mechanism names below do not prove disjointness.
     """
-    full_weight_embedding = True
+    full_weight_embedding = False
     maximal_mrstt = True
     sliding_interior = True
-    edges_power_saving = True
+    edges_power_saving = False
     amplitude = reciprocal_amplitude_seminorm_transfer_audit(
         derivative_order=1,
         fourier_decay_order=4,
@@ -19107,14 +19125,16 @@ def independent_cubic_closure_verification_audit(
             partial_summation,
         )
     )
-    disjoint_partition = True
+    disjoint_partition = False
     budget = (
         ("cubic_MRSTT_mobius", "compact critical nonzero modes"),
         ("smooth_mobius_PNT", "compact zero phase modes"),
         ("reciprocal_radical_positive_bound", "compact long cofactor"),
         ("seminorm_stable_PEVP", "first-active transform tail shells"),
     )
-    budget_unique = len({name for name, _ in budget}) == len(budget)
+    budget_unique = (
+        disjoint_partition and len({name for name, _ in budget}) == len(budget)
+    )
     all_four = all(
         (
             full_weight_embedding,
@@ -19269,6 +19289,9 @@ def cubic_reciprocal_full_polytope_audit(
         )
     )
     independent = independent_cubic_closure_verification_audit()
+    physical_weights = (
+        physical_weights and independent.c_poisson_full_weight_embedding_verified
+    )
     nested_logs = all(
         (
             independent.lcpe2_quantified_log_ledger_closed,
@@ -19347,10 +19370,9 @@ def cubic_reciprocal_lcpe2_audit(
     If the zeta scales and shift scale are both ``log(T)^2``, the
     physical h-frequency scale is ``T/log(T)^2``.  The two double-
     Poisson dual scales are therefore ``log(T)^2`` and
-    ``T/log(T)^2``.  Their product times the physical prefactor is
-    exactly ``T``.  All deviations from the power-scale vertex are
-    fixed powers of ``log T`` and can be absorbed by the arbitrary
-    logarithmic saving in the MRSTT reciprocal-phase estimate.
+    ``T/log(T)^2``.  Their product times the raw HL physical prefactor
+    is ``T^2``, not the target ``T``.  Logarithmic saving cannot remove
+    this power deficit; the local identities do not certify LCPE2.
 
     This estimate is applied to the exact complementary-divisor sum
     before the q-first Euler factorization and product lift of Sections
@@ -19407,7 +19429,11 @@ def cubic_reciprocal_lcpe2_audit(
     critical_net = endpoint.critical_net_log_saving
     net = min(subcritical_net, critical_net)
     critical_depths = pi == F(2) and lam == F(2)
-    normalization_exact = critical_depths
+    normalization_exact = (
+        critical_depths
+        and endpoint.prefactor_times_dual_volume_exponent
+        == endpoint.local_target_exponent
+    )
     fixed_power = power_audit.worst_taylor_power_saving > 0
     q_sum_bounded = True
     independent = independent_cubic_closure_verification_audit()
