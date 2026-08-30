@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.MWKFCubicAFESeparatedMoment
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms cubicAFEFrequencyMomentFinite_eq_zero_add_nonzero
+#print axioms cubicAFEMollifiedMomentFinite_eq_diagonal_zero_nonzero
+#print axioms tendsto_cubicAFEDiagonal_zero_nonzero

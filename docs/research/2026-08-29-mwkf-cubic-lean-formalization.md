@@ -88,6 +88,12 @@ Lean 定理使用原实 moment 的复数嵌入。已经证明每个 shift 的积
 且重组整体的高度极限也已连接回真实 moment。没有据此交换跨 box 的频率和，
 也没有取得随 T 一致的 Fourier 尾项估计。
 
+现已进一步证明实际连续 AFE 权的幂衰减、双边界物理核在时间/空间上的可积性，
+以及所有整数 shift 的积分范数可和。由此可以合法地在无限 dyadic 箱和全部
+非零 shift 上分别聚合零模与非零模，完整有限高度 moment 已写成
+`(diagonal + zeroMode) + nonzeroMode`。这里的零模尚未求出渐近主项；
+这一收敛证明也没有提供 `o(T)` 的 Möbius 消去或各部分的独立高度极限。
+
 ## Machine-checked in this PR
 
 The following steps now have kernel-checked Lean proofs with no project axiom,
@@ -196,6 +202,13 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | exact zero/nonzero frequency split of each box and any finite box family | `cubicAFEFrequencyBoxFinite_eq_zero_add_nonzero`, `sum_cubicAFEFrequencyBoxFinite_eq_zero_add_nonzero` |
 | zero frequency equals the full physical double integral, not the zero-shift summand | `cubicAFEFrequencyCoefficient_zero`, `cubicAFEZeroModeBoxFinite_eq_physicalIntegral`, `cubicAFEZeroModeBoxFinite_eq_integratedKernel` |
 | exact all-real dyadic lower-boundary mass and pointwise absolute kernel reassembly | `hasSum_cubicAFEDyadicWindow_allReal`, `hasSum_cubicAFEProgressionDyadicCutoff_allReal`, `hasSum_cubicAFEProgressionDyadicKernel_allReal`, `hasSum_norm_cubicAFEProgressionDyadicKernel_allReal` |
+| actual positive-real Mellin decay and full physical envelope | `norm_cubicAFERealProductWeightFinite_le_envelope`, `norm_cubicAFEProgressionPhysicalSummand_le_envelope` |
+| joint integrability of the actual two-boundary kernel | `integrable_cubicAFEBoundaryPhysicalKernel` |
+| integrated absolute dyadic convergence and infinite zero-mode reassembly | `summable_integral_norm_cubicAFEProgressionDyadicKernel`, `hasSum_cubicAFEZeroModeBoxFinite` |
+| exact translation-uniform lattice power bound | `summable_cubicAFELatticePower`, `tsum_cubicAFELatticePower_le` |
+| all integer shifts have summable physical norm integrals | `summable_integral_norm_cubicAFEBoundaryPhysicalKernel` |
+| separate zero/nonzero aggregation over all nonzero shifts and dyadic boxes | `summable_shift_cubicAFEZeroModeBoxFinite`, `summable_shift_cubicAFENonzeroModeBoxFinite`, `tsum_shift_cubicAFEFrequencyBoxFinite_eq_zero_add_nonzero` |
+| full finite-height diagonal/zero/nonzero identity and recombined height limit | `cubicAFEMollifiedMomentFinite_eq_diagonal_zero_nonzero`, `tendsto_cubicAFEDiagonal_zero_nonzero` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -429,7 +442,7 @@ Mellin 权和 `W(t/T)`。`h=0` 不等于 `delta=0`。Fubini 将它与空间积�
 对真实核的复值和及范数和都已证明对应 HasSum。因此零模的连续积分必须
 保留两侧 beta 因子，不能误用整数格点上的质量1结论将它们删除。
 
-下一步尚需证明实际积分后的支配，例如在固定 d,e,T,X,V 且 X>1/2 下
+在该检查点，下一步是证明实际积分后的支配，例如在固定 d,e,T,X,V 且 X>1/2 下
 对所有非零 shift 的非负积分
 
 \[
@@ -438,7 +451,7 @@ Mellin 权和 `W(t/T)`。`h=0` 不等于 `delta=0`。Fubini 将它与空间积�
  \lVert K^{\rm phys}_{d,e,\delta}(t,x)\rVert\,dx\,dt<\infty.
 \]
 
-本批次没有把这条积分支配当作已证输入：逐点范数级数可和不自动说明
+该检查点没有把这条积分支配当作已证输入：逐点范数级数可和不自动说明
 积分后的级数可和，也不自动许可跨无限多个 box 将零模和非零模分别求和。
 即使固定参数收敛完成，最终主项渐近与 T-一致尾项/色散估计仍须另证。
 
@@ -458,6 +471,102 @@ Mellin 权和 `W(t/T)`。`h=0` 不等于 `delta=0`。Fubini 将它与空间积�
 `unconditional asymptotic proved` 标签仍不能替代最后三个解析输入的 Lean
 证明。无新增项目公理、占位证明或 native evaluation 公理。本批为单代理
 本地核验，不是远端 CI 或外部专家审阅。
+
+## 实际积分支配与全部 dyadic/shift 的零模聚合
+
+上述积分支配现在已在 Lean 中证明，不再是待供给的假设。
+令 `a=X+1/2>1`，`P=x*y`，`y=(delta+r*x)/s`，以及
+
+\[
+ E_{X,V}(t)=\left|\frac1{2\pi}\right|
+ \left|\int_{-V}^{V}|\mathrm{scalar}(t,X+iv)|\,dv\right|.
+\]
+
+`MWKFCubicAFEPhysicalDecay.lean` 从原有限竖直积分直接证明
+
+\[
+ |V^{(V)}_{t,X}(P)|\le E_{X,V}(t)P^{-X}\quad(P>0),\qquad
+ |K^{\rm phys}_{d,e,\delta}(t,x)|\le C_{d,e,T,X,V}(t)P^{-a},
+\]
+
+其中 `C(t)` 是两侧实际 mollifier 系数的乘积范数、原因子2、
+`(sqrt(d*e))^(-1)`、`E(t)` 和 `|W(t/T)|` 的乘积；完整对数相位的范数为1。
+`C` 的时间可积性由实际连续性与 W 的紧支撑证明。允许任意有限实高度 V，
+包括负 V；没有添加正高度假设，也没有预设抽象 majorant。
+
+定义 `G_X(x)=1_(x>1/2) x^(-a)`，已证明 G 可积。
+令 `F_delta(t,x)=beta(x) beta(y) K_phys(t,x)`。在固定 shift 下，
+
+\[
+ |F_\delta(t,x)|\le C(t)(1/2)^{-a}G_X(x).
+\]
+
+`MWKFCubicAFEZeroModeReassembly.lean` 先从真实 cutoff 核的有限和极限
+证明 F 可测，再利用上述可积乘积支配证明联合可积性。随后对实际范数级数
+应用支配收敛，得到
+
+\[
+ \sum_{j,k}\int_{\mathbb R^2}|\chi_{j,k}(x)K^{\rm phys}(t,x)|\,d(t,x)<\infty,
+ \qquad
+ \sum_{j,k}Z_{j,k}=s^{-1}\int_t\int_x F_\delta(t,x)\,dx\,dt.
+\]
+
+这一步已许可固定 shift 的无限零模/非零模拆分，不再只是有限箱拆分。
+
+### 平移一致的格点界与外层 shift
+
+`MWKFCubicAFELatticeDecay.lean` 对任意实平移 b、任意实 `s>=1` 证明
+
+\[
+ \sum_{\delta\in\mathbb Z}\beta((\delta+b)/s)((\delta+b)/s)^{-a}
+ \le (1/(2s))^{-a}\sum_{n\in\mathbb Z}|n|^{-a}<\infty.
+\]
+
+右侧零项按 Lean 实幂约定为0（此处负指数不为0）。证明使用精确整数切点
+`m=floor(s/2-b)`：`delta<=m` 时 beta 为0；`n=delta-m>=1` 时
+`(delta+b)/s>=n/(2s)>0`。整数平移是显式双射，因此上界与 b 无关。
+模数因子没有被隐去；这不是对参数一致的省幂估计。
+
+`MWKFCubicAFEShiftReassembly.lean` 将它用于 `b=r*x`，证明
+
+\[
+ \sum_{\delta\in\mathbb Z}\int_t\int_x
+ \beta(x)\beta((\delta+rx)/s)|K^{\rm phys}_{d,e,\delta}(t,x)|\,dx\,dt<\infty.
+\]
+
+代码先证明乘积空间积分范数的级数可和；各 shift 的已证联合可积性通过
+Fubini 给出这里的迭代积分。原始已证 frequency-box 总和减去现在已证的
+零模总和，给出非零模总和可和。因此可以在全部非零 shift 上拆成两条
+独立可和的嵌套级数，保留 `1/s`、正负频率、全部 gcd 层及物理权。
+没有声称所有 `(delta,j,k,h)` 的 Fourier 系数范数可以任意联合求和。
+
+### 接回完整有限高度 moment
+
+`MWKFCubicAFESeparatedMoment.lean` 使用实际 `floor(T^3)` 支撑，将上面的
+全部箱/shift 结果逐对 `(d,e)` 聚合，证明
+
+\[
+ I^{(V)}_{T,W}=(D^{(V)}_{T,W}+Z^{(V)}_{T,W})+E^{(V)}_{T,W},\qquad
+ \lim_{V\to\infty}((D^{(V)}+Z^{(V)})+E^{(V)})=I_{\lfloor T^3\rfloor,W}(T).
+\]
+
+这里 Z、E 分别是全部零模和非零模；只证明重组整体的高度极限。
+尚未计算 `D+Z` 的共同 Mellin 主项，尚未给出 E 的 `o(T)` 界，
+也没有把各部分的独立高度极限或 T-一致尾项作为已证结论。
+
+### 本批验证与自审
+
+五组回归合约均先在目标声明缺失处失败。五个实际源模块已逐一编译生成
+proof objects。70 个合约/公理审计文件同次核验通过，退出码0；仅将 imports
+提前去重，正文原样检查。为避免长日志截断，另外单独复跑35个公理审计文件，
+完整取得190条报告，均仅含 `propext`、`Classical.choice`、`Quot.sound`。
+聚焦测试 `295 passed`（14.57秒），确定性 coverage 退出码0。后者的
+`unconditional asymptotic proved` 和 `residual_top_level_gates=0` 仍只是内部
+脚本标签，不能替代最终 Lean 定理的三个缺失输入。没有新增项目公理、sorry、
+admit、native_decide 或提高 heartbeat 限额；未运行无关的全量 Lean 冷构建。
+自审重点是积分次序、实连续指标的两侧 beta 边界、`s>=1` 的真实 gcd 来源、
+负 shift/负高度和 `s=1`，以及不把固定参数收敛解释为渐近消去。
+本批仍是单代理本地核验，不是外部同行审阅。
 
 ## Remaining formalization boundary
 
@@ -504,11 +613,14 @@ The actual inner frequency series is now absolutely summable; each box has
 an exact zero/nonzero split and the zero term is identified with its full
 physical double integral. Finite box families can be split as well. The
 all-real dyadic mass is the product of the two explicit lower-boundary
-weights, with pointwise absolute kernel reassembly proved. Integrated
-zero-mode summability across infinitely many boxes and shifts is still a
-separate obligation; it has not been inferred from pointwise convergence.
-Any required cross-box or cross-shift reorderings and parameter-uniform
-tail estimates remain to be established. Neither compactness in the logarithmic-extension proof nor the
+weights. Actual real-product decay and a translation-uniform lattice bound
+now prove integrated absolute convergence over all dyadic boxes and all
+integer shifts. The zero and nonzero modes can consequently be aggregated
+separately in the proved nested order, and the entire finite-height moment
+is now `(diagonal + zeroMode) + nonzeroMode`. Arbitrary reordering of all
+individual Fourier coefficients is not asserted. Any additional reorderings
+needed for common Mellin/QCT evaluation and parameter-uniform tail estimates
+remain to be established. Neither compactness in the logarithmic-extension proof nor the
 Schwartz construction supplies uniform seminorm estimates in the varying
 physical parameters.
 The height limit remains
@@ -535,6 +647,8 @@ Consequently the accurate status is:
   per-box infinite-frequency/time interchange, and the full finite-height
   frequency-before-time moment with its recombined height limit, absolute
   inner-frequency convergence, per-box zero/nonzero split and all-real
-  lower-boundary-weight reassembly;
+  lower-boundary-weight reassembly, actual real-product power decay,
+  integrated absolute dyadic/shift convergence, separate zero/nonzero
+  aggregation and full finite-height diagonal/zero/nonzero decomposition;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.

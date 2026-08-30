@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.MWKFCubicAFEPhysicalDecay
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms cubicAFEWeightEnvelope_nonneg
+#print axioms norm_cubicAFERealProductWeightFinite_le_envelope
+#print axioms cubicAFEPhysicalTimeEnvelope_nonneg
+#print axioms integrable_cubicAFEPhysicalTimeEnvelope
+#print axioms norm_cubicAFEProgressionPhysicalSummand_le_envelope
+#print axioms cubicAFEHalfLinePower_nonneg
+#print axioms integrable_cubicAFEHalfLinePower
+#print axioms cubicAFEDyadicLowerWeight_mul_rpow_le

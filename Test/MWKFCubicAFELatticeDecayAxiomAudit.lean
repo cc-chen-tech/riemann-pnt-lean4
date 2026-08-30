@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.MWKFCubicAFELatticeDecay
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms cubicAFELatticePower_nonneg
+#print axioms summable_cubicAFELatticePower
+#print axioms tsum_cubicAFELatticePower_le
