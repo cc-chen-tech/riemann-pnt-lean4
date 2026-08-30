@@ -156,6 +156,18 @@ class ReciprocalPrincipalChecks(unittest.TestCase):
             expected = mobius(n)**2 if gcd(n, D0) == 1 else 0
             self.assertEqual(expanded, expected)
 
+    def test_square_unit_overlap_c4_D2_negative_regression(self):
+        c, D0 = 4, 2
+        wrong = sum(mobius(u)*mobius(v)
+                    for u in divisors(c) if c % (u*u) == 0
+                    for v in divisors(D0) if c % (u*u*v) == 0)
+        repaired = sum(mobius(u)*mobius(v)
+                       for u in divisors(c) if c % (u*u) == 0 and gcd(u, D0) == 1
+                       for v in divisors(D0) if c % (u*u*v) == 0)
+        self.assertEqual(wrong, -1)
+        self.assertEqual(repaired, 0)
+        self.assertNotEqual(wrong, repaired)
+
     def test_divisor_costs_with_improved_sqrt_fl(self):
         # Powers of f,l,j from the four raw mean terms in RP14.
         raw = ((1, 1, 2), (1, F(1, 2), F(3, 2)),
