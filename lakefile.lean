@@ -2549,6 +2549,8 @@ lean_lib RiemannPNT where
     `Test.TwoUnitTransitionIntegralContract,
     `MathlibAux.OscillatoryPhaseQuotient,
     `HardyTheorem.AFEExplicitPlateauCutoff,
+    `HardyTheorem.AFEExplicitPlateauIntegral,
+    `Test.AFEExplicitPlateauIntegralContract,
     `HardyTheorem.AFEExplicitMellinAmplitude,
     `HardyTheorem.AFEExplicitMellinAmplitudeBounds,
     `Test.AFEExplicitMellinAmplitudeBoundsContract,
