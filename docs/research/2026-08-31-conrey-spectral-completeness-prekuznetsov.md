@@ -546,14 +546,16 @@ rho^E_ca(n,s_r)=2pi^(s_r)n^(ir)phi_can(s_r)/Gamma(s_r)。
 保证。定义精确核
 
 \[
- \mathcal D_{2it}(x)=\frac{2it}{\sinh(\pi t)}
+ \mathcal D_{2it}(x)=-\frac{2it}{\sinh(\pi t)}
                     \int_{\gamma_\uparrow}K_{2it}(xv)\frac{dv}{v},
  \qquad
  \mathcal H(r,t)=\frac{\cosh(\pi r)}{D(t,r)}.
  \tag{actual-pre-Kuznetsov-kernels}
 \]
 
-乘4sqrt(mn)(m/n)^(it)t/sinh(pi t)，将几何和移到左侧，得到
+乘4sqrt(mn)(m/n)^(it)t/sinh(pi t) 后，几何 Gram 的
+-2i 半圆积分项准确变成 +4sqrt(mn) D_(2it)/c^2。
+这里 D 定义前的负号不可省略；否则下式几何项应取相反号。得到
 
 \[
 \begin{split}
@@ -571,6 +573,60 @@ rho^E_ca(n,s_r)=2pi^(s_r)n^(ir)phi_can(s_r)/Gamma(s_r)。
  \tag{actual-fixed-parameter-pre-Kuznetsov}
 \]
 
+### 8.3 原刊两处归一化差异：不按印刷结果反改实际积分
+
+这里的 K 是标准 Macdonald 函数，Re z>0 时
+K_(2it)(z)=integral_0^infty exp(-z cosh u)cos(2tu)du；
+这也正是 DI82 p.260 使用的定义。因此前篇极坐标中的径向
+积分给出2K，而不是2pi K。逐页核对原刊可见：
+
+- p.250 Lemma 4.2 的非对角系数为 -2i/c^2；
+- p.252 Lemma 4.5 的谱前因子为
+  (n/m)^(it)sinh(pi t)/(4sqrt(mn)t)，分母没有额外 pi；
+- p.253 (4.7) 第一式的 D 为 -2it/sinh(pi t) 乘上述半圆积分；
+- 但 p.253 (4.8) 将几何系数印成4pi sqrt(mn)/c^2。
+
+前三式相乘只能得到本篇8.2的4sqrt(mn)/c^2，对角项与谱侧
+保持不变；这不是整体缩放能够解释的差异。独立的 Gamma
+归一化检查是 s=1、r=0 时单个 Fourier 模的配对系数
+pi/(2sqrt(m))，其平方为 pi^2/(4m)，同样支持8.1。
+这里的 r=0 只是标量积分检查，不假定实际存在该谱参数。
+同页 Lemma 4.6 的另一种配对不能用来修改4.5。
+
+此外，(4.7) 第二式印刷的 J 积分系数为 t/sinh(2pi t)，
+与其第一式也不一致。为直接检查，记
+A_t(x)=integral_(gamma_up) K_(2it)(xv)dv/v。标准连接关系由
+K_nu(z)=pi(I_(-nu)(z)-I_nu(z))/(2sin(pi nu)) 和
+I_nu(plus/minus ix)=exp(plus/minus pi i nu/2)J_nu(x) 得到
+
+\[
+ K_{2it}(ix)-K_{2it}(-ix)
+  =-\frac{\pi i}{2\cosh(\pi t)}
+       \bigl(J_{2it}(x)+J_{-2it}(x)\bigr),
+ \qquad
+ A_t'(x)=-\frac{\pi i}{2x\cosh(\pi t)}
+       \bigl(J_{2it}(x)+J_{-2it}(x)\bigr).
+\]
+
+第一条的 t=0 按阶参数的可去极限取值。第二条由沿半圆对
+K(xv) 关于 x 求导，再对 v 积分得两端点差。固定阶 K 的
+闭右半平面大参数估计给 A_t(x)=O_t(x^(-1/2))，故在无穷
+处为零；J 的相应估计也保证下面尾积分绝对收敛。于是
+
+\[
+ \mathcal D_{2it}(x)=\frac{2\pi t}{\sinh(2\pi t)}
+       \int_x^\infty\bigl(J_{2it}(v)+J_{-2it}(v)\bigr)\frac{dv}{v}.
+ \tag{actual-D-J-normalization}
+\]
+
+因此原刊第二式是第一式的1/(2pi)。特别地
+D_0(x)=2integral_x^infty J_0(v)dv/v，可直接检验该常数。
+本篇8.2仅依赖半圆定义和实际 Gram，不把原刊第二式或
+(4.8) 的印刷系数当作证明输入。上述核恒等式也不代替任意
+测试函数的反演定理或无穷谱换序。
+
+### 8.4 适用范围
+
 纯同尖点0/1的等式也可由 Fricke 酉变换和全部谱通道的重编号
 取得。这里未把尚未逐项展开的跨尖点几何模数和冒充本式；
 跨尖点的谱 Gram 已由8.1单独明确给出。
@@ -587,8 +643,11 @@ rho^E_ca(n,s_r)=2pi^(s_r)n^(ir)phi_can(s_r)/Gamma(s_r)。
   实际留数及原刊引用的 L2 谱分解/Parseval。本篇给出自己的满射论证，
   不把该引用当成已经原生证明的事实。
 - [DI82 第4节](https://gdz.sub.uni-goettingen.de/download/pdf/PPN356556735_0070/LOG_0023.pdf)，
-  pp.252--253 的 Lemma 4.5、(4.7)、(4.8)：对应本篇实际
-  Poincare 谱 Gram、dv/v 半圆核与固定 t 预 Kuznetsov。
+  pp.250、252--253 的 Lemmas 4.2、4.5、(4.7)、(4.8)：对应
+  本篇实际 Poincare 谱 Gram、dv/v 半圆核与固定 t 预 Kuznetsov；
+  不照搬两处不一致的印刷常数，详见8.3。
+- [DI82 第5节](https://gdz.sub.uni-goettingen.de/download/pdf/PPN356556735_0070/LOG_0024.pdf)，
+  p.260 的 Macdonald 积分表示：排除另用 pi 缩放 K 的解释。
 
 本篇已证明的对象是完整 L2 正交分解、常数残余项的准确留数、
 全尖点不完全 Eisenstein 展开、真正尖点特征基及实际谱等式。
@@ -612,5 +671,6 @@ incomplete Eisenstein series identify the continuous-plus-constant
 space, and a compact resolvent on the actual zero-horocycle-average
 space supplies a complete cuspidal eigenbasis. Polarized Parseval
 then gives the actual Poincare spectral Gram and fixed-parameter
-pre-Kuznetsov identity. General test-kernel inversion, amplified
+pre-Kuznetsov identity, with two printed normalization discrepancies
+audited directly against the scalar integrals. General test-kernel inversion, amplified
 exceptional spectrum and native Conrey >2/5 remain separate work.
