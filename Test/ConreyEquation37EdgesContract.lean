@@ -1,0 +1,11 @@
+import HardyTheorem.ConreyEquation37Edges
+
+open HardyTheorem
+
+#check conreyHorizontalRightEdge_add_three_lt_exp
+#check conreyEquation37HorizontalTerm
+#check conreyEquation37BoundaryRemainder
+#check exists_conreyEquation37SelectedHeights_boundaryRemainder_le
+
+#print axioms conreyHorizontalRightEdge_add_three_lt_exp
+#print axioms exists_conreyEquation37SelectedHeights_boundaryRemainder_le
