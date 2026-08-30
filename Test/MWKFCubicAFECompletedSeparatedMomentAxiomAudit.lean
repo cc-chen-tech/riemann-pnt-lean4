@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.MWKFCubicAFECompletedSeparatedMoment
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms summable_shift_cubicAFECompletedZeroModeBox
+#print axioms summable_shift_cubicAFECompletedNonzeroModeBox
+#print axioms cubicAFECompletedMomentFinite_eq_zero_add_nonzero
+#print axioms cubicAFEMollifiedMomentFinite_eq_diagonal_completed_zero_nonzero
+#print axioms tendsto_cubicAFECompletedZeroModeMoment_height
+#print axioms tendsto_cubicAFEDiagonal_completedNonzero_height

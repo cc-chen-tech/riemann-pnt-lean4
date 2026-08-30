@@ -8,6 +8,10 @@
 `W(3/2)=1` 的显式非零紧支撑 bump 实例。依赖链必须在此定义下重编译；
 不能把旧对象文件通过当作本次验证。
 
+下文前部按证明依赖顺序记录各批进展；早期段落中的限制在后续批次
+可能已解除。当前整体边界以末尾 `Remaining formalization boundary`
+为准，不能把历史检查点或 Python coverage 标签当作最终定理。
+
 当前已将有限高度 AFE 到真实全线 mollified moment 的极限交换、
 物理时间积分与完整算术级数的换序，以及有限高度对角/非对角拆分，
 写成无额外解析假设的 Lean 定理。对角部分有严格的 gcd 射线双射重编号；
@@ -113,8 +117,10 @@ Lean 定理使用原实 moment 的复数嵌入。已经证明每个 shift 的积
 支配对全部实高度一致；之后可在固定时间按有序极限去掉空间完成截断。
 现已进一步把固定完成深度的高度极限穿过完整物理时间/空间双重积分，
 并接回固定 shift 的原全部 dyadic 零模之和。现已在每个固定非零
-shift 上证明完整时间积分后的深度去截断；全部 shift 的极限聚合及
-任意深度/高度联合极限仍未证明。
+shift 上证明完整时间积分后的深度去截断。现又证明固定完成深度时，
+高度极限穿过全部非零 shift 和整个 mollifier 外层和；零/非零完成模
+可以分别聚合。全部 shift 的深度去截断及任意深度/高度联合极限
+仍未证明。
 
 ## Machine-checked in this PR
 
@@ -1265,6 +1271,121 @@ focused pytest：295 passed（45.73s）；deterministic coverage 退出码0。
 极限允许 delta=0 与全域可积性要求 delta!=0。这是单代理本地
 自审和 Lean 内核核验，不是外部同行审阅或远端 CI 成功记录。
 
+## 固定完成深度的全 shift 高度极限与完整 moment 分离
+
+本批把逐 shift 的高度极限推进到完整非零 shift 和，再接回全部
+实际 mollifier 支撑。整个过程固定完成深度 J，未交换 J 与 shift 和。
+
+### 保留深度损失的平移一致格点估计
+
+`MWKFCubicAFECompletedLattice.lean` 使用原端点
+`epsilon_J=1/(2*2^J)`，以及已定义的
+
+\[
+ H_{X,J}(x)=\mathbf1_{x>\epsilon_J}x^{-X-1/2},\qquad
+ c_{J,s}=\frac{\epsilon_J}{1+\epsilon_Js}.
+\]
+
+对每个实 s>0、实 b 和 X>1/2，证明
+
+\[
+ \sum_{\delta\in\mathbb Z}H_{X,J}\!\left(\frac{\delta+b}{s}\right)
+ \le C_{X,J,s}:=c_{J,s}^{-X-1/2}
+   \sum_{n\in\mathbb Z}|n|^{-X-1/2}.
+\]
+
+右侧 n=0 项采用 Lean 实幂定义，为零；等价于只对 n!=0 求和。
+源码通过 `n=delta-floor(epsilon_J*s-b)` 精确整数重编号，在 n>=1
+时保留下界 `(delta+b)/s>=c_(J,s)*n`，在其余范围指示函数为零。
+与原非负尺度格点引理不同，这里只要求 s>0，不要求 s>=1。
+证明可和性与总和界，而非仅每项有界；常数与 b 无关，但明确依赖
+J、s。没有将该常数用于 J→infty 或 T→infty 的统一估计。
+
+### 原物理核的可和积分支配
+
+`MWKFCubicAFECompletedShift.lean` 定义实际非负支配
+
+\[
+ G_\delta(t,x)=M_{W,T,X,d,e}(t)H_{X,J}(x)
+     H_{X,J}\!\left(\frac{\delta+rx}{s}\right),
+ \quad r=d/(d,e),\ s=e/(d,e),
+\]
+
+其中 M 是已证明可积的原 `cubicAFEPhysicalHeightMass`，含原 Möbius
+系数、因子2、平方根归一化、真实右线范数质量及 `|W(t/T)|`。
+原完成权的两个正端点截断与上界1给出 `|K_(J,V)|<=G_delta`，对
+所有实 V 一致。无限高度核也继承同一界，完整对数相位没有被改变。
+
+每个 G_delta 在真实时间/空间乘积上可积；格点总和界进一步给出
+
+\[
+ \sum_\delta G_\delta(t,x)
+ \le C_{X,J,s}M_{W,T,X,d,e}(t)H_{X,J}(x).
+\]
+
+右侧真正可积。证明左侧的强可测性后，使用级数版 dominated
+convergence，得到 `Summable(delta ↦ integral_(t,x) G_delta)`。
+这同时控制所有 shift，不依赖把逐 shift 的常数视作统一常数。
+
+两端 L1 已证，Fubini 将实际双重积分写成乘积空间积分。由上界
+`|integral_t integral_x K_(J,V)|<=integral_(t,x) G_delta` 和逐 shift
+高度极限，Tannery 定理给出
+
+\[
+ \lim_{V\to\infty}\sum_{\delta\ne0}\int_t\!\int_x K_{J,V}
+ =\sum_{\delta\ne0}\int_t\!\int_x K_{J,\infty}.
+\]
+
+原每个完整 dyadic 零模和先由已证 HasSum 识别为 `(1/s)` 乘以原
+双重积分，因此得到原全 shift、全 dyadic 零模和的高度极限。
+没有将逐 dyadic box 的极限移入无限和，也没有任意交换所有 Fourier
+系数的求和顺序。固定深度的范数积分可和性覆盖全部整数 shift，
+包括零；moment 使用原非零 shift 子类型。
+
+### 接回全部 mollifier 支撑
+
+`MWKFCubicAFECompletedSeparatedMoment.lean` 首先证明完成零模的
+shift 级数可和，再由原完成模式对减去零模证明完成非零模也可和。
+据此合法分离两者的 shift 和，定义带 J 的实际零模/非零模 moment，
+其外层仍为原 `cubicMollifierSupport T` 的完整 d,e 有限和。已证
+
+\[
+ I_V=(D_V+Z_{J,V})+E_{J,V},\qquad
+ Z_{J,V}\longrightarrow Z_{J,\infty},\qquad
+ D_V+E_{J,V}\longrightarrow I-Z_{J,\infty}.
+\]
+
+这里 I 是原 zeta/Möbius moment 的复数嵌入；Z_(J,infinity) 是全外层、
+全非零 shift 的实际完成核积分，精确保留每对 d,e 的 `(1/s)`。
+最后一个极限来自原 moment 的已证高度极限减去独立零模极限，
+不是对角项或非零模各自的独立高度极限，更不是 T 渐近式。
+
+### 本批验证与自审
+
+三个新源模块共455行定义与证明，均已独立编译。三组 red-stage
+合约均分别确认五个目标声明缺失。第一组原端点回归还发现普通
+`simp` 没有完成有理数比较，已以 `norm_num` 显式核验该比较；未改
+端点定义或期望值。最终同次核验全部132个 MWKF contract/axiom-audit
+文件，仅合并去重 imports，检查全部正文；退出码0，无 error/warning。
+375条完整公理报告仅含 `propext`、`Classical.choice`、`Quot.sound`。
+
+新增回归覆盖 J=1 的严格端点1/4、模数1/3、任意实平移、全整数
+shift 范数积分可和性、负的非零时间伸缩、原全非零 shift 积分极限、
+非平凡 Poisson 因子1/3、完整 mollifier 支撑的零模 moment 极限，
+以及减去零模后精确的“对角+完成非零模”极限。
+focused pytest：295 passed（14.61s）；deterministic coverage 退出码0。
+其 `unconditional asymptotic proved`／`residual_top_level_gates=0`
+仍是内部脚本标签，未成为最终 Lean 定理的证明证书。
+
+本地自审核对了正端点、floor 重编号、模数条件、支配对高度一致但
+对深度不一致、实际 G_delta 的可积性、积分后支配级数可和、Fubini
+的两端 L1、Tannery 的完整 shift 索引、逐对 d,e 的 Poisson 因子及
+完成模式分离的求和次序。未删除下边界权、未交换逐 box 的高度
+极限、未将完成非零模换成原非零模、未添加新的解析假设。
+`git diff --check` 与占位符扫描通过，无新项目公理、`sorry`、
+`admit`、`native_decide` 或 heartbeat/diagnostics 上调。这是单代理
+本地自审及内核核验，不是外部同行认证或远端 CI 成功记录。
+
 ## Remaining formalization boundary
 
 This PR does **not** yet make the analytic theorem unconditional inside Lean.
@@ -1329,9 +1450,17 @@ equals the added zero modes. Both completed dyadic mode series are summable
 at each fixed shift, and the paired completed shift series is summable.
 The entire finite-height moment is unchanged by any finite completion depth;
 even height-dependent finite depths preserve the recombined height limit.
-Separate completed-mode summation across shifts, the lower-endpoint limit
-at the complete time-integrated/shift-summed level, and the required
-Mellin/height limit exchanges remain unproved.
+Separate completed-mode summation across shifts is now proved at fixed
+completion depth by a translation-uniform positive-endpoint lattice bound.
+The resulting integrated majorant is summable across all shifts uniformly
+in height. Tannery proves the independent all-shift zero-mode height limit;
+finite mollifier sums give the full completed zero-mode moment limit. The
+full finite-height moment consequently separates into diagonal, completed
+zero mode and completed nonzero mode with all series justified. Subtracting
+the independent zero-mode limit gives the height limit of diagonal plus
+completed nonzero mode. The lower-endpoint limit at the complete
+time-integrated/shift-summed level and the required common Mellin evaluation
+remain unproved.
 For each fixed physical time and positive real product, the gamma-only
 Mellin weight now has its independent, absolutely convergent height limit
 on every nonzero line X>-1/2. Its actual residue-one contour shift from a
@@ -1355,21 +1484,23 @@ kernels and permits the height limit through the full time/space double
 integral at fixed depth and shift. The original infinite dyadic zero-mode
 sum is identified with that integral at every finite height, so its height
 limit is now proved with the exact Poisson factor 1/s. This does not move
-the height limit through individual boxes. Nor does it supply the
-complete shift-summed zero-mode limit. A new depth-independent two-endpoint
+the height limit through individual boxes. The separate lattice/Tannery
+argument supplies the all-shift height limit at fixed depth. A new depth-independent two-endpoint
 product majorant, pulled back with the exact quadratic Jacobian, now also
 proves full time/space absolute integrability of the uncut physical kernel
 at each nonzero shift. The actual completed kernels are bounded by its
 norm uniformly in depth. Dominated convergence and Fubini thus prove the
 time-integrated depth limit after the height limit at fixed nonzero shift.
-Arbitrary joint depth/height limits and the complete shift-summed limit
-remain unproved.
+Arbitrary joint depth/height limits and the depth-removal limit of the
+complete shift-summed kernel remain unproved. The fixed-depth all-shift
+height limit, in contrast, is supplied by the new lattice/Tannery argument.
 Neither compactness in the logarithmic-extension proof nor the
 Schwartz construction supplies uniform seminorm estimates in the varying
 physical parameters.
-The height limit remains
-outside the recombined expression; separate limits and moving this limit
-through either infinite subseries have not been proved.  What remains is to
+The completed zero-mode height limit is now independent and includes both
+the full shift series and the finite mollifier sums. The remaining height
+limit of diagonal plus completed nonzero mode is obtained by subtraction;
+separate limits for those two terms are not asserted. What remains is to
 carry the actual expression through the QCT/Poisson decomposition with all
 needed convergence arguments, prove the reciprocal-LCM main-term asymptotic
 and every analytic tail estimate, and especially prove the cubic MRSTT Mobius
@@ -1414,6 +1545,10 @@ Consequently the accurate status is:
   limit at fixed shift and completion depth with Poisson factor 1/s,
   depth-independent two-endpoint majorization, its exact-Jacobian pullback,
   actual uncut physical time/space L1 integrability and the full physical
-  double-integral depth limit at fixed nonzero shift;
+  double-integral depth limit at fixed nonzero shift, explicit fixed-depth
+  translated lattice bounds, all-shift integrated domination uniform in
+  height, original completed zero-mode all-shift height limit, separate
+  completed-mode shift summability, full completed zero-mode moment height
+  limit and the corresponding diagonal-plus-nonzero-mode height limit;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.

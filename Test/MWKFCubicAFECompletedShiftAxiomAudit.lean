@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.MWKFCubicAFECompletedShift
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms cubicAFECompletedShiftMajorant_nonneg
+#print axioms integrable_cubicAFECompletedShiftMajorant
+#print axioms summable_integral_cubicAFECompletedShiftMajorant
+#print axioms norm_integral_cubicAFECompletedKernel_le_shiftMajorant
+#print axioms summable_integral_norm_cubicAFECompletedKernelVertical
+#print axioms tendsto_cubicAFECompletedShiftIntegral_height
+#print axioms tendsto_cubicAFECompletedZeroMode_allShift_height
