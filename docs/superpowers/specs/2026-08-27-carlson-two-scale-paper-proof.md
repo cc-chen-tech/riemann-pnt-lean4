@@ -1726,6 +1726,20 @@ at `z=1-s`.  This statement concerns the hard core only.  The left
 smoothing transition still needs its first-derivative gap estimate before
 summing over `m`; bounding each transition just by its absolute length
 would lose a factor comparable to the number of stationary modes.
+For the formal conditional-limit identification, write the positive whole
+Gamma value as `integral_0^1 f + B`, where `B` is the canonical limit of
+`integral_1^n f`.  The two already proved convergence statements and
+uniqueness of limits give this equality.  Interval additivity then gives
+exactly
+`whole - integral_x^N f = (B - integral_1^N f) + integral_0^x f`.
+All finite-interval integrals here are genuine integrals since
+`Re(z-1)=-sigma>-1`.  Only after these identities are established is the
+norm bounded; no absolute integrability on the infinite ray is asserted.
+Both the canonical-value and explicit-Gamma versions are now formal in
+`OscillatoryGammaCoreReplacement`; their contract build exits zero (8708
+jobs including cached dependencies), with only `propext`,
+`Classical.choice`, and `Quot.sound` in the axiom audit.  No cutoff limit
+or phase-sign hypothesis is supplied by the caller.
 
 For clarity, the square-root endpoint band can be chosen with a fixed,
 explicit width.  Let `K=floor(sqrt(t/(2*pi)))>=6`, take `x=K+1`, and
