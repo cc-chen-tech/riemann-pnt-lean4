@@ -2,23 +2,22 @@
 
 ## 1. Status and question
 
-> **Current proof status: unconditional asymptotic proved.**  The exact
-> completed AFE, common-Mellin zero mode, \(4/3\) reciprocal-LCM main
-> term, fixed-entry PEVP and every analytic tail are retained.  The new
-> cubic complementary-divisor route acts before the positive
-> product-energy majorant: its uniform margin
-> \(3938033/12500000\) covers every power-scale face and interior cell,
-> while the same estimate with its full logarithmic ledger covers
-> \((\mathrm{LCPE}_2)\).  Section 4.109zjaced000h reassembles these
-> disjoint pieces and proves
-> \[
-> I_{\lfloor T^3\rfloor,W}(T)
-> =\frac43T\int_1^2W(u)\,du+o_W(T).
-> \]
-> Earlier sections documenting OSLSP, the quadratic-window transition
-> gates and the centered product-energy condition are retained as route
-> history; their positive majorants are stronger than the signed cubic
-> estimate and are no longer hypotheses of the final theorem.
+> **Current proof status: analytic remainder gate open (2026-08-30 correction).**
+> The previous “unconditional asymptotic proved” claim is withdrawn.
+> With the raw short-cofactor weight in (4.845dc_14xq_35w31n29a2),
+> (4.845dc_14xq_35w31n29a1) has prefactor \(HL\), not \(HL/S\).
+> The extra inverse \(S\) used by the old physical ledger is not supplied.
+> Fixed-entry PEVP also does not pay the full outer \(A,B\) power costs.
+> Consequently all downstream claims of a closed physical polytope,
+> LCPE2 coverage, aggregated tails or the full asymptotic in this historical
+> route log are **withdrawn**, not current theorems. Their displayed
+> finite/local identities may be used only with their stated hypotheses.
+> Old zero-residual reports and literal `True` flags are not proof evidence.
+>
+> Local identities and accurately scoped conditional interfaces may be
+> independently reviewed and merged without first proving \(2/3\),
+> \(14/17\), RH or the complete long-mollifier asymptotic. See
+> [the current correction ledger](2026-08-30-mwkf-physical-closure-correction.md).
 
 Source correction: Kiral--Young Proposition 2.6 gives
 
@@ -33,12 +32,12 @@ factor combines with the normalized outer Poisson factor \(A^{-1}\)
 to give \(A^{-1/2}\) in amplitude.  This makes the fixed-entry PEVP
 normalization direct.  In the historical spectral route the actual
 outer \(A,B\) sums still required OLISK/MMKLS and its hard-face
-\(T^{1/2}\) saving; Sections 4.109zjaced000f--4.109zjaced000h now close
-those sums by the different signed cubic route.
+\(T^{1/2}\) saving; the claimed closure in Sections
+4.109zjaced000f--4.109zjaced000h is withdrawn by the correction above.
 
 This document starts from the exact symmetric completion in
 `2026-08-24-mwkf-global-coupled-coefficient-first.md` and records both
-the failed candidate routes and the final signed cubic route.
+the failed candidate routes and the incomplete signed cubic route.
 
 The three routes audited here are:
 
@@ -55,8 +54,8 @@ reduce it to a weighted primitive-conductor large sieve, and Sections
 compatibility.  Sections 4.109zle--4.109zlf prove the scalar
 polylogarithmic full-level large sieve (4.845dc_12), and Section
 4.109zfgb reinserts it to prove fixed-entry PEVP.  The later cubic
-complementary-divisor route aggregates OLISK without using its stronger
-positive spectral majorant.
+complementary-divisor route attempts to aggregate OLISK without its stronger
+positive spectral majorant; its physical normalization remains unproved.
 
 ## 2. The exact logarithmic target
 
@@ -21973,7 +21972,7 @@ piece is embedded in the full outer sum as
 \[
  \boxed{
  \mathcal O^{\mathrm{short}}_{q,\Box}
- =\frac{HL}{S}
+ =HL
  \sum_{A\asymp A_0}\frac{\alpha_q(A)}A
  \sum_{k,l}\sum_{e\leq T^\eta}
  \mu^2(e)\mathbf 1_{(e,A)=1}
@@ -21983,6 +21982,13 @@ piece is embedded in the full outer sum as
  \mathcal C_{A,e,r,k,l}.}
 \tag{4.845dc_14xq_35w31n29a1}
 \]
+
+**Correction (2026-08-30):** the previous \(HL/S\) here was inconsistent
+with the raw \(\mu(n)/(rn e^2)\) weight below. Double Poisson gives
+\(HL\,\mu(s)c_s(m+Akl)/s^2\); the divisor substitution supplies no
+additional inverse \(S\). The subsequent physical exponent and global
+closure claims that used the old prefactor are withdrawn. The local
+\(c\)-Poisson Jacobian and partial-summation identity are unchanged.
 
 Here \(\alpha_q(A)\) is the signed divisor-allocation coefficient from
 the exact MMKLS regrouping; it is not replaced by its absolute value.
@@ -22353,7 +22359,12 @@ six dyadic sums and harmonic \(q\)-sum give
 
 The existing shell audit separately gives \(o_W(T)\) for the AFE
 product tail, time-nonstationary tail, Poisson-frequency tail and QCT
-Fourier--Mellin tail.  The archimedean correction is
+Fourier--Mellin tail.  Its present proof is the seminorm-stable PEVP
+argument of Section 4.109zg: the compact core bypasses PEVP, but the
+tail shells still use seminorm-stable PEVP.  In particular, the final
+asymptotic presently depends on PEVP for these four disjoint tail
+families; the cubic route has removed PEVP only from the compact
+outer-entry aggregation.  The archimedean correction is
 \(O_{A,W}(T^{-A})\) for every fixed \(A\).  To make disjointness
 literal, order the transform parameters once and assign every
 noncompact tuple to the shell of its first active tail parameter.

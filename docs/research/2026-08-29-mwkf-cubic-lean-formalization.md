@@ -1469,6 +1469,15 @@ Fréchet 可微，导数为 `D`，而非只要求两个偏导存在。证明
 没有提高 heartbeat、添加项目公理或使用 `native_decide`。
 非分离回归确实调用一般核定理，不能由旧分离权引理冒充通过。
 
+随后把父分支同步到 `b520431e`（包含此前未同步的尾项 PEVP 依赖说明
+`7cc472d4`）。实际同步差异只有五个研究/脚本/测试文件，没有任何
+Lean 改动；上述 Lean 验证对应的源码保持不变。同步后的完整 Python
+测试使用缓存中的 `pytest`、`python-flint`、`mpmath`，554 项通过，
+耗时 51.04 秒，零失败、零跳过。确定性 coverage 报告退出码 0，
+但正确状态是 `analytic remainder gate open`、
+`residual_top_level_gates=3`、`remainder_o_T=False`。三个是未证
+顶层输入类别，不是对全参数盒数的计数，更不是新的解析证明。
+
 ## Remaining formalization boundary
 
 The unconditional asymptotic is **not established**, either by this Lean PR
