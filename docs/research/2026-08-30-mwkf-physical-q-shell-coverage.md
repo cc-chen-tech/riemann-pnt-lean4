@@ -253,3 +253,7 @@ off-diagonal 的成本。随后只可对已覆盖的对数多个 dyadic 块相�
 Gram、非零频补集、两个 reflection mixed 项和独立物理尾的
 signed operator。**完整 coupled-kernel gate 与 twisted moment
 的无条件目标均未证明。**
+
+后续 [GB1–GB9](2026-08-30-mwkf-global-b-boundary.md) 恢复整个 B
+家族后，把新增 h 和压缩为真实 quotient 端点。该反向 Type
+重组没有新增幂次 saving，不扩大 PQ12 的覆盖范围。

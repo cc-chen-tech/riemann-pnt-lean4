@@ -21,6 +21,43 @@ def _kappa_radical(r, n):
     return sum(mobius(d)*d for d in divisors(gcd(r, abs(n))))
 
 
+def primitive_product_coefficient(M, q, r):
+    """Full divisor sum over B*h=r; never a statement for one B shell."""
+    if any(not isinstance(a, int) or a < 1 for a in (M, q, r)):
+        raise ValueError("positive integer M,q,r required")
+    return mobius(r) if M % r == 0 and gcd(r, q) == 1 else 0
+
+
+def primitive_product_packet(M, q, product_bound, weight):
+    """Finite signed B/h regrouping with 0<abs(B*h)<=product_bound.
+
+    The weight depends on the product, not its B/h factorization.
+    Excludes M=q=1: h=0 is then an additional original unit term.
+    No analytic kernel replacement or power saving is certified here.
+    """
+    if any(not isinstance(a, int) or a < 1 for a in (M, q, product_bound)):
+        raise ValueError("positive integer M,q,product_bound required")
+    if M*q == 1:
+        raise ValueError("h=0 unit term must be handled separately when M=q=1")
+    direct = sum(mobius(B)*(weight(B*h)+weight(-B*h))
+                 for B in range(1, product_bound+1) if gcd(B, q) == 1
+                 for h in range(1, product_bound//B+1) if gcd(h, M*q) == 1)
+    collapsed = sum(mobius(r)*(weight(r)+weight(-r))
+                    for r in divisors(M) if r <= product_bound and gcd(r, q) == 1)
+    return {"direct": direct, "collapsed": collapsed}
+
+
+def unsplit_all_e_coefficient(M, s, q):
+    """IC2 before splitting mu(d): sum_e mu(A)*mu(e)^2*mu(d)/(e*d).
+
+    Here M=Ae, s=ed. This s is the physical modulus, not the later
+    Type factor B=eb. Original kappa=e=1 corrections are not included.
+    """
+    if any(not isinstance(a, int) or a < 1 for a in (M, s, q)):
+        raise ValueError("positive integer M,s,q required")
+    return F(mobius(M)*mobius(s), s) if gcd(s, q) == 1 else F(0)
+
+
 def all_scale_critical_parameters(R, S, K, P, M, B, v, n, j, kl):
     """Exact all-scale normal coordinates; F=(R/S)*J, not generally J.
 

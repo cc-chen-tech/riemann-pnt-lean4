@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-30 全 B 重组与端点回返，不新增覆盖。** [GB1–GB9](2026-08-30-mwkf-global-b-boundary.md) 证明全部 B/h 的单位 Möbius 除数和等于 µ(r)1_{r|M,(r,q)=1}。移除 χ 的 bare 全和因此快速衰减，但实际 quotient 端点不能随之删除。用精确 JT symbol 和 χ 在整数处的平坦性，整个实际 B/h 家族压缩为负号的 h=−1 项，完整误差为 CPFS log(2S)Z^{1−N}T^ε。剩余核保留 µ(M)µ(B) 与 (B,q)=1，可把 B 光滑截在原模数尺度 S。直接从 IC2 的 M=Ae、s=ed 双射也能核对：这本质上撤销了一次 Type 分解，unsigned 顶层成本仍是 T⁵，目标仍是 T³。不得把同一 h 平均再当成独立 saving；本轮没有证明新幂次节省、全 B 覆盖、canonical 零模求值或完整 gate。
+
 > **2026-08-30 物理范围更正与内部 q 壳子域覆盖。** [PQ1–PQ13](2026-08-30-mwkf-physical-q-shell-coverage.md) 明确更正：旧 GQ 例子的 q=T^χ、χ>0 与 R=S=T³ 不满足原 N=T³ 的 qR,qS≲N，不能算非空物理箱。一般尺度转移保留 F=(R/S)J、B 采样的 R/S 因子及共振成本 CP(R/S)=ρS。取 q≈Q=T^γ、R=S=N/(8Q)，原 mollifier 在整片支持内光滑；误差目标是 S≈T^{3−γ}，不是 T³。PQ12 给指定 κ/B 子族的覆盖，原 2T/(qS) 外因子与 Σ_{q≈Q}µ²(q)/q≲1 将整个 q 壳内这部分的贡献控制为 T^{1+ε}，包括 (γ,ν,u,β)=(1/5,1,0,6/5) 的 B>T 区域。不是整个 q 壳的全部 off-diagonal；覆盖外实例如 (1/5,1,1/2,4/5) 当前仍只到 T^{11/10+ε}。完整 signed operator、canonical zero Gram、reflection mixed 项及全部物理边界仍未控制。
 
 > **2026-08-30 一般 q 的全 e 局部光滑核覆盖（物理范围已更正）。** [GQ1–GQ10](2026-08-30-mwkf-all-e-general-q-coverage.md) 对多项式大小的固定 q 恢复全部 e；令 q₀=rad(q)、g=(M,q₀)、v=q₀/g、L=Mv，原单位条件精确化为 M,B 平方自由及 (B,q₀)=1。全 n Fourier 的 Jv 与原 1/v、µ(v) 符号消去，primitive 表示只增加 (B,q₀)=(h,q₀)=1 两个限制；在指定 R=S=T³ 光滑核中整个精确共振为 T^{3+ε}。活跃 g 层的平方自由均值和联合斜率/B 采样给 GP6 乘 √q₀ 的误差，没有独立 e-shell 数量成本。局部例子 (ν,a,χ,β)=(1,1/2,1/5,4/5) 与 (1,0,1/2,7/6) 的 χ>0，故不在原 N=T³ 参数多面体内；不得再称为原问题的实际覆盖。真正内部 q 壳子域转移见 PQ。完整 twisted moment 未证明。
@@ -35,6 +37,7 @@
 >
 > | component | status in this note |
 > |---|---|
+> | Global B regrouping and quotient-boundary return | GB1--GB9 restore every B partition before the unit Mobius divisor identity. The bare sum collapses to r dividing M and is rapidly small; the actual smooth quotient cutoff instead leaves a negative h=-1 primitive term. Its complete endpoint/Fourier error is CPFS*log(2S)*Z^(1-N)*T^epsilon, with literal M=1/h=0 and other physical boundaries excluded. The remaining B unit mask and both Mobius weights survive. Direct all-e fusion of IC2 confirms this is a reverse Type identity, not a new saving; the top unsigned cost remains T^5 against T^3 |
 > | All-scale transfer and physical interior q-shell subregions | PQ1--PQ9 retain F=(R/S)J, the sampling cost Y/Kmax+(R/S)Kmin and primitive resonance CP(R/S)=rho*S. PQ10--PQ13 take q~Q, R=S=N/(8Q), keep the original mollifier strictly inside its cutoff, and pay the target S=T^(3-gamma). The original 2T/(qS) weight gives O(T^(1+epsilon)) for the specified covered kappa/B subfamilies summed over the whole q shell, with no extra Q count. This is not all off-diagonal terms of that shell; a remaining physical witness still costs T^(11/10+epsilon). Full zero-Gram/reflection operator and independent boundary estimates remain open |
 > | General-q all-e local smooth-core coverage, scope corrected | GQ retains all unit masks and gives GP6 times sqrt(rad(q)), with no independent e-shell cost. Its positive-power-q examples at R=S=T^3 violate qR,qS<=O(N) for N=T^3 and are only standalone smooth-core scale examples, not original nonempty boxes. The local formulas remain valid; PQ supplies the actual interior q-shell transfer with a smaller S budget. Neither result closes the full signed operator |
 > | Variable-kappa all-e coverage | GP2 retains the exact compact scale ratios, j~J=P/K and n~BJ. GP8 covers beta<=2*nu/3 OR both beta<=2*(1+nu-a)/3 and beta<=2*(nu-a), for fixed 0<nu<=1 at q=1, R=S=T^3, P~T. This includes new K<T and some B>T cores, not fixed-e sub-sums. GP9 retains the Fourier Jacobian J; joint divisor counting bounds the entire j-family exact primitive resonance by T^(3+epsilon). K~1, other q/scales, uncovered B, canonical zero Gram and the complete signed operator remain open |
@@ -28672,6 +28675,48 @@ This does not cover every kappa/B region of a q shell, the original
 mollifier boundary, other scales, the canonical zero Gram, both
 reflection mixed terms or independent physical tails. The complete
 coupled-kernel gate and twisted moment remain unproved.
+
+### 9.218 Global B cancellation and the surviving quotient endpoint
+
+The [global B boundary note](2026-08-30-mwkf-global-b-boundary.md)
+restores all intermediate B partitions, then proves the finite identity
+
+\[
+ \sum_{B\mid r\atop(B,q)=1,\ (r/B,Mq)=1}\mu(B)
+ =\mu(r)\mathbf1_{r\mid M}\mathbf1_{(r,q)=1}.
+\]
+
+With the quotient cutoff chi removed, the exact JT symbol is independent
+of B. The full primitive B/h family therefore collapses to signed
+divisors r of M. Under the PQ fixed-power K/alpha margin these lie far
+from the critical frequency, giving a rapidly small bare sum. This
+requires the complete B family, not a single B shell or fixed-e atom.
+
+The actual chi(S*x/B) cannot simply be deleted. GB5 returns to the
+exact oscillatory integral and preserves its abs(j)*K prefactor.
+Flatness of chi at every integer permits replacing chi(S*x/B) by
+chi(-h), with all B/h tails costing at most
+CPFS*log(2S)*Z^(1-N)*T^epsilon. The whole actual critical core is
+thus the negative h=-1 primitive term with the bare symbol, plus the
+explicit errors. The h/Mq unit condition is automatic at h=-1;
+gcd(B,q)=1 is not. A smooth cutoff restricts its B to [S/4,4S] at
+the same error cost. Actual integer M>1 is assumed so h=0 is absent;
+the literal M=q=1 case must not be silently included.
+
+GB8--GB9 give an independent finite check directly from unsplit IC2:
+M=Ae, s=ed, e=gcd(M,s), and the coefficient is mu(M)*mu(s)/s with
+gcd(s,q)=1. Here s is the original physical modulus, not the earlier
+Type factor B=eb. Consequently this is a reverse Type regrouping,
+not an additional cancellation estimate. The top absolute-value
+budget stays T^5 against the normalized target T^3. A fixed-determinant
+Bettin--Chandee application, with all k and determinant counts paid,
+does not improve that budget; its explicit main term is not discarded.
+
+This clarifies the real signed kernel to estimate and prevents spending
+the same artificial h average twice. It supplies no new parameter
+coverage. The PQ subregions retain their stated scope; the complete
+coupled-kernel gate, canonical zero Gram, reflection mixed terms and
+independent physical tails remain open.
 
 ## 10. What has and has not been proved
 
