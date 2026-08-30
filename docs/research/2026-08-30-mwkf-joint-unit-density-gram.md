@@ -11,6 +11,12 @@
 为零也不是删除所有其他 Poisson 频率的理由。完整 AFE、reflection
 及 mixed 项仍沿用 [PA 账本](2026-08-30-mwkf-physical-reflection-adapter.md)。
 
+**后续更强的实际核估计。** [SK1–SK19](2026-08-30-mwkf-smooth-kappa-resonance.md)
+在 Cauchy 之前利用 κ 无 Möbius 权且实际核在 κ 方向光滑的事实。
+它在平衡顶层 K≈T 将本节的 T^{11/2+ε} 改为 T^{5+ε}，并使固定
+K=T^ν、ν>1 的顶层分片快速衰减。这不适用于本节任意有界
+W_{κ,k,l}，也不否定下列 Gram 恒等式；不能将两种节省相乘。
+
 ## 1. 从实际 IC2 到一次联合 Cauchy
 
 从 [IC2](2026-08-30-mwkf-inverse-c-signed-roundtrip.md) 出发，固定

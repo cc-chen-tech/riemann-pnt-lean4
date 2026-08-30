@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-30 先求完整光滑 κ 和。** [非共振覆盖与双 Möbius 整数带](2026-08-30-mwkf-smooth-kappa-resonance.md) 使用实际 IC2 中 κ 无 Möbius 权且核光滑的结构，在 Cauchy 之前完成 κ-Poisson。保留所有整数端点与单位掩码后，非零 j 的真实物理界为 `ρ(D²/K+D) T^ε`，全部 e≈E 的成本为 `ρ(S²/(EK)+S) T^ε`。平衡顶层 e=1、K≈T 的界由 JG 的 `T^{11/2+ε}` 改为 `T^{5+ε}`，固定 K=T^ν、ν>1 的顶层非共振分片快速衰减。剩余窄带保留双 Möbius 及全部九个 Type sector；仍差 T²，未证明完整 coupled-kernel gate，也不与 IC/JG/BBLR 的 saving 相乘。
+
 > **2026-08-30 全 κ 联合单位 Gram。** [LCM 密度平方和与别名](2026-08-30-mwkf-joint-unit-density-gram.md)把整个 `κ,k,l` 乘积区块先重组为 `n=κkl`，再作一次 Cauchy。单位完成产生精确的连续 LCM 密度平方和及非零别名；连续密度零模与零 determinant 项均不等同于原 canonical zero Gram。完整 κ 成本下，联合界在 `1/2<log_T K<4/3` 改善上一轮 IC7 的逐行界；例如 `K≈T` 时由 `T^{28/5+ε}` 到 `T^{11/2+ε}`。零 determinant 项在 `K≥T²` 达到自身预算，但不能据此删去非共振项或宣称区块覆盖。完整 coupled-kernel gate 仍未证明。
 
 > **2026-08-30 全 c 逆变换与受限线性行。** [有限正指标及 signed 往返](2026-08-30-mwkf-inverse-c-signed-roundtrip.md)证明实际核在完整逆 c Poisson 后只有有限个正指标，且全部 Type/cofactor allocation 连同整数端点恰好重构原双 Poisson 和，不自动产生新 saving。由已发表线性 Möbius 估计推得带 `Q≤X^C` 互素限制的上界 `X^ε(X^{4/5}+√(XZ)+X/√Z)`。平衡非零行省 `T^{1/2}`，但恢复该子 packet 的物理外层只得 `T^{11/2+ε}`，仍不足 `S=T³`；不能与 BBLR 相乘。完整 gate 未证明。
@@ -109,6 +111,7 @@
 > | Physical Type–Ramanujan normalization correction | Section 9.205 proves the endpoint-safe one-sided Type identity and the coupled three-variable complete sum. The unaveraged physical cofactor prefactor is `HL`, not the `HL/S` used in the RP/SS model. Those model estimates remain valid, but the physical quantity is `S` times the model and is not covered at target. The concrete coprimality layer transfers exactly through `Q=Aeq`-smooth convolution; the remaining signed saving is unproved |
 > | Full inverse-c signed roundtrip and coprime linear rows | Section 9.206 proves the finite positive dual support and the complete allocation identity, including the integer-one endpoint. Reassembly returns the original double Poisson sum rather than supplying a new saving. A uniform polynomial-size coprimality transfer preserves the published linear Mobius bound up to `X^epsilon`. The balanced row saves `T^(1/2)`, but its absolute physical packet costs `T^(11/2+epsilon)` against target `T^3`; no global coverage or multiplication with BBLR is asserted |
 > | Whole-kappa joint unit-density Gram | Section 9.207 reassembles n=kappa*k*l before one Cauchy and proves the phi(lcm)/lcm divisor-square identity. The continuous density and its zero-determinant part are positive, but the latter is not a lower bound for the former. Their bounds are `(X+D^2)M/D` and `XM/D`; all nonzero unit aliases cost `M^2(1+XM/D)`, with M=K*P. This improves IC7's whole-block bound in an intermediate K interval, not the final BBLR deficit or the coupled gate |
+> | Smooth unsigned kappa before Cauchy | Section 9.208 uses the actual kappa smoothness, not arbitrary triple coefficients. Complete kappa Poisson gives rapid decay when K is sufficiently larger than Z=RP/S and both grow as fixed powers. For nonzero j, exact shifted-product/divisor counting gives `rho(D^2/K+D)` with the integer boundary retained; the e-shell cost is `rho(S^2/(EK)+S)`. The balanced K~T bound improves to T^5, but target is T^3. The narrow band carries the exact nine ordered Mobius Type sectors, not a proved signed saving |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
 > | Residual coupled Region-D estimate at length \(T^3\) | unproved |
 >
@@ -28244,6 +28247,40 @@ target. The combined bound improves IC7's whole-kappa row bound for
 1/2<nu<4/3 (28/5 to 11/2 at nu=1); the globally stronger BBLR route
 is not improved. The short-interval inputs in the accompanying table
 do not supply the missing fixed-power, coupled signed estimate.
+
+### 9.208 Smooth kappa completion and the remaining signed resonance band
+
+The [smooth-kappa resonance note](2026-08-30-mwkf-smooth-kappa-resonance.md)
+returns to the literal IC2 kernel instead of treating kappa*k*l as an
+arbitrary coefficient. Its normalized kappa derivatives are uniform
+because K*A*e/R=A/X is bounded. Complete kappa Poisson, before any
+Cauchy, has the exact Jacobian K and argument K*(j-A*k*l/d). The
+kappa=e=1 endpoint is completed and then corrected explicitly, not
+deleted from a smooth Poisson sum.
+
+With Z=R*P/S and Y=Z/K, the j=0 term costs
+`rho*D^2*(1+Z)^(-B)`. If 8Y<=1/2, all other j are nonstationary and
+cost `rho*D^2*K^(-B)`. Thus on the balanced top-frequency face Z~T,
+every fixed K=T^nu with nu>1 is rapidly small, within the actual smooth
+core. Lower dual frequencies, either zero axis, and nonsmooth original
+endpoints are not silently included in this conclusion.
+
+For j!=0, retain r=j*d-A*k*l and sum the complete signed kappa block
+first. The exact finite divisor bijection (SK11) excludes A*k*l+r=0,
+retains both closed endpoints, and preserves all arithmetic masks.
+Schwartz annuli control the whole infinite j sum, including far tails.
+The resulting bound is `rho*(D^2/K+D)*T^epsilon`; after all e~E it is
+`rho*(S^2/(E*K)+S)*T^epsilon`. The second summand is a genuine integer
+boundary cost. No old model normalization HL/S has been used.
+
+At e=1,K~T the bound is T^(5+epsilon), improving JG's T^(11/2+epsilon)
+for the same physical smooth block. Its still-unbounded signed core is
+A~T^2,d~T^3,k*l~T,j~1,r~T^2. Equations (SK17)--(SK19) keep the exact
+two-Mobius coefficients, independent cutoffs, all nine ordered Type
+sectors, and the original coupled Fourier kernel. Known short-interval
+results match the D^(2/3) window geometrically, not the missing T^2
+joint saving. This is new local coverage, not the full coupled gate
+or an improvement to the globally stronger BBLR endpoint.
 
 ## 10. What has and has not been proved
 

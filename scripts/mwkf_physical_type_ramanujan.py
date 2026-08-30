@@ -10,7 +10,102 @@ import cmath
 from fractions import Fraction as F
 from math import ceil, floor, gcd, lcm, pi
 
-from scripts.mwkf_mobius_type_identity import divisors, mobius
+from scripts.mwkf_mobius_type_identity import divisors, mobius, split_mobius_identity
+
+
+def smooth_kappa_packet(K, alpha, profile, profile_hat, radius):
+    """Finite [1,2]-supported kappa sum and a centered Poisson truncation.
+
+    The caller supplies a Fourier pair and must bound the omitted tail.
+    This function neither checks smoothness nor asserts an analytic identity.
+    The physical general-support statement is SK6 in the research note.
+    """
+    K, alpha, radius = map(F, (K, alpha, radius))
+    if K <= 0 or radius < 1:
+        raise ValueError("K>0 and dual radius>=1 required")
+    samples = tuple((k, F(k)/K) for k in range(ceil(K), floor(2*K)+1))
+    direct = sum(profile(x)*cmath.exp(2j*pi*float(alpha*k)) for k, x in samples)
+    terms = {j: K*profile_hat(K*(j-alpha))
+             for j in range(ceil(alpha-radius), floor(alpha+radius)+1)}
+    return {"samples": samples, "direct": direct, "dual_terms": terms,
+            "dual_truncated": sum(terms.values()), "zero": terms.get(0, 0),
+            "nonzero": sum(value for j, value in terms.items() if j)}
+
+
+def kappa_resonance_band(As, ds, ks, ls, width, *, e=1, q=1):
+    """SK11 divisor enumeration, retaining literal IC2 coprimality masks.
+
+    Rows are (A,d,k,l,j,residual), j!=0, residual=j*d-A*k*l. Integer
+    endpoints and signed k,l remain; n+residual=0 is never factored.
+    All parent rows remain, including zero Mobius weights.
+    """
+    As, ds, ks, ls = map(tuple, (As, ds, ks, ls))
+    width = F(width)
+    if (width < 0 or any(not isinstance(n, int) or n < 1 for n in (*As, *ds, e, q))
+            or any(not isinstance(n, int) or n == 0 for n in (*ks, *ls))
+            or any(len(set(values)) != len(values) for values in (As, ds, ks, ls))):
+        raise ValueError("distinct integer axes, positive A,d,e,q, nonzero k,l and width>=0 required")
+    dset = set(ds)
+    rows = []
+    for A in As:
+        if gcd(e, A*q) != 1:
+            continue
+        for k in ks:
+            for l in ls:
+                n = A*k*l
+                for r in range(-floor(width), floor(width)+1):
+                    if n+r == 0:
+                        continue
+                    for d in divisors(abs(n+r)):
+                        if d in dset and gcd(d, A*e*q) == 1:
+                            rows.append((A, d, k, l, (n+r)//d, r))
+    return tuple(sorted(rows))
+
+
+def kappa_resonance_type_totals(rows, weight, cutoffs_a, cutoffs_d):
+    """All nine signed SK18 sectors, with the SK17 physical 1/d weight.
+
+    The supplied weight is evaluated on the unchanged full incidence row;
+    it may retain labels via a closure. No norm or centering is asserted.
+    """
+    if any(not isinstance(n, int) or n < 1 for n in (*cutoffs_a, *cutoffs_d)):
+        raise ValueError("positive integer Type cutoffs required")
+    ua, va = cutoffs_a
+    ud, vd = cutoffs_d
+
+    def sectors(n, u, v):
+        if n <= u:
+            return (mobius(n), 0, 0)
+        _, first, second = split_mobius_identity(n, cutoff_u=u, cutoff_v=v)
+        return (0, -first, -second)
+
+    names = ("small", "I", "II")
+    totals = {f"{a}/{d}": F(0) for a in names for d in names}
+    direct = F(0)
+    for row in rows:
+        A, d, k, l, j, r = row
+        if min(A, d) < 1 or not k*l*j or j*d-A*k*l != r:
+            raise ValueError("literal nonzero-j resonance row required")
+        value = weight(row)*F(1, d)
+        direct += mobius(A)*mobius(d)*value
+        for name_a, wa in zip(names, sectors(A, ua, va)):
+            for name_d, wd in zip(names, sectors(d, ud, vd)):
+                totals[f"{name_a}/{name_d}"] += wa*wd*value
+    return {"direct": direct, "sectors": totals}
+
+
+def smooth_kappa_scales(R, S, H, L, K, e, K1, K2):
+    """Exact SK1/SK13 scale ledger, not a certificate of kernel hypotheses."""
+    R, S, H, L, K, e, K1, K2 = map(F, (R, S, H, L, K, e, K1, K2))
+    if min(R, S, H, L, K, e, K1, K2) < 1:
+        raise ValueError("all scales>=1 required")
+    X, D, P = R/(e*K), S/e, K1*K2
+    if min(X, D) < 1:
+        raise ValueError("X=R/(eK)>=1,D=S/e>=1 required")
+    C, rho = H*L/(R*e), H*L*P/S**2
+    return {"X": X, "D": D, "P": P, "C": C, "rho": rho,
+            "Z": R*P/S, "Y": X*P/D, "Delta": D/K,
+            "nonzero_bound_scale": rho*(D**2/K+D), "zero_bound_scale": rho*D**2}
 
 
 def restricted_type_ledger(n, q):
