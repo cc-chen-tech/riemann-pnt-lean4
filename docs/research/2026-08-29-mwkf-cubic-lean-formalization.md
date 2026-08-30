@@ -37,8 +37,11 @@
 
 取 `s=e/gcd(d,e)`、`a=-delta*rbar` 后，得到确切的
 `s^(-1)*Khat(h/s)*e(-h*delta*rbar/s)`；没有排除 `s=1`，也没有要求
-`gcd(delta,s)=1`。这不是实际 moment 的全局 Poisson 分解：仍须把正整数
-progression 级数重编号到这个双向格点和，并构造、聚合实际 dyadic 截断。
+`gcd(delta,s)=1`。现在已把原正整数 shift-fiber 级数严格连接到该双向格点和：
+显式整数坐标及其逆映射覆盖每个非零项；截断支撑条件证明所有非正指标项为零，
+没有靠 `toNat` 舍去有贡献的项。因此局部公式的左端已是原 AFE 求和项乘上
+真实截断。它仍不是实际 moment 的全局 Poisson 分解：实际 dyadic 截断的构造、
+聚合以及物理时间积分的换序还须完成。
 
 ## Machine-checked in this PR
 
@@ -119,6 +122,9 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | a smooth cutoff with closed support inside that region makes the actual kernel globally smooth, compactly supported, and Schwartz | `contDiff_cubicAFEProgressionCutoffSummand`, `hasCompactSupport_cubicAFEProgressionCutoffSummand`, `cubicAFEProgressionSchwartz` |
 | the cutoff kernel still agrees with the full discrete summand at every admissible integer | `cubicAFEProgressionCutoffSummand_eq_discrete` |
 | fixed-cutoff Poisson formula with exact scaling factor and inverse-residue negative phase | `cubicAFEProgressionCutoff_poisson`, `cubicAFEProgressionCutoff_poisson_inverseResidue` |
+| explicit integer lattice and inverse, including negative coordinates, non-unit shifts and modulus one | `cubicAFEProgressionLattice_injective`, `cubicAFEProgressionLattice_index`, `cubicAFEProgressionLattice_toNat_mem` |
+| forbidden-domain terms vanish; exact positive-progression to bilateral-lattice reindexing without a postulated bijection | `cubicAFEProgressionCutoffSummand_eq_zero_of_not_domain`, `tsum_cubicAFEProgressionCutoff_eq_lattice` |
+| end-to-end local Poisson formula starting from the original complete shifted-fiber summand | `cubicAFEShiftFiberCutoff_poisson` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -155,6 +161,26 @@ Typed contracts retain both the `1/s` factor and negative inverse-residue
 phase. The new cutoff does not supply any hypothesis asserting smoothness,
 summability, or a spectral bound for the physical kernel itself.
 
+### Original-series to lattice verification
+
+`MWKFCubicAFEProgressionPoisson.lean` compiled successfully to a proof object.
+Thirty-four contract/audit files were checked in one import-deduplicated
+Lean invocation, with final exit code zero and no error or warning diagnostics.
+All 92 printed axiom reports used only the three standard foundations.
+The new contracts test exact lattice coordinates and their inverses, negative
+coordinates representing positive terms, non-unit shifts, modulus one, and
+both forbidden-index cases. The full typed local formula starts with the
+original AFE summand, not an unrelated real-variable function. Explicit
+Euclidean-algorithm proofs check the chosen Bezout representatives: for
+`(r,s)=(1,1)` Mathlib uses `gcdA=1`, although the residue class is also zero
+modulo one. Ordinary `decide` was insufficient to unfold this recursive
+algorithm; no `native_decide` was used.
+
+The focused Python suite passed all 295 tests (14.87 seconds); the deterministic
+coverage report exited successfully. Its `residual_top_level_gates=0` and
+`unconditional asymptotic proved` labels remain internal executable-audit
+claims, not a proof of the final Lean facade's analytic hypotheses.
+
 ## Remaining formalization boundary
 
 This PR does **not** yet make the analytic theorem unconditional inside Lean.
@@ -175,11 +201,14 @@ kernel and its local smoothness have now been proved. For every C-infinity
 cutoff with closed support inside the positive-index region, the actual
 cutoff kernel is Schwartz; its fixed-parameter Poisson formula includes the
 exact Jacobian and the negative inverse-residue phase. The cutoff class has
-an explicit nonzero bump regression. This is not yet the full Poisson
-decomposition of the moment: the positive progression series still needs
-to be identified with the bilateral residue lattice sum, the actual dyadic
-cutoffs constructed and summed, and the physical time-integral interchanges
-justified. Neither compactness in the logarithmic-extension proof nor the
+an explicit nonzero bump regression. The positive progression series has
+also been identified with the bilateral residue lattice sum: the integer
+index map is injective and its range contains every nonzero lattice term.
+This yields the fixed-cutoff Poisson formula for the original shifted-fiber
+summand itself. This is not yet the full Poisson decomposition of the moment:
+the actual dyadic cutoffs must be constructed and summed, and the physical
+time-integral interchanges justified. Neither compactness in the
+logarithmic-extension proof nor the
 Schwartz construction supplies uniform seminorm estimates in the varying
 physical parameters.
 The height limit remains
@@ -198,6 +227,7 @@ Consequently the accurate status is:
 - kernel-checked structural/reassembly, finite-height series/integral
   interchange, diagonal split/reindexing, signed-shift/progression regrouping,
   fixed-`T` recombined AFE integral limits, actual local physical-kernel
-  regularity and the fixed-cutoff Poisson identity;
+  regularity and the fixed-cutoff Poisson identity for the original
+  positive-index shifted-fiber summand;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.
