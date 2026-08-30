@@ -655,6 +655,132 @@ Lean 实际检查全部正文，输出过滤器保留全部公理报告及诊断
 对角注入子族，以及“正整数权相同不推出连续零模相同”的接口边界。
 这仍是单代理本地核验，不是外部专家审阅或远端 CI。
 
+## 有限下尺度的真实 Poisson 配对与完整 moment
+
+本批进一步闭合了上一节的**有限深度**尺度接口：新增下尺度的真实核、
+Poisson 零／非零配对、修正积分和 dyadic 聚合均已写成 Lean 证明。
+这不包含下端点去截断或共同 Mellin 换线，也不证明最终 `hmain/hrem`。
+
+### 实际 cutoff 与全部变量范围
+
+`MWKFCubicAFECompletedCutoff.lean` 构造
+
+\[
+ \chi_{J;j,k}(x)=\phi_j(2^Jx)\phi_k(2^Jy_\delta(x)),\qquad
+ y_\delta(x)=\frac{\delta+rx}{s},\quad J,j,k\in\mathbb N.
+\]
+
+保留 `d,e>0`、`r=d/gcd(d,e)`、`s=e/gcd(d,e)`、任意整数 `delta`。
+不附加 `delta>0`、`gcd(delta,s)=1` 或 `s>1`。
+cutoff 的 C∞、紧支撑及正指标域支撑条件均从实际函数证明，闭支撑满足
+
+\[
+ \frac{2^j}{2\cdot2^J}\le x\le\frac{2\cdot2^j}{2^J},\qquad
+ \frac{2^k}{2\cdot2^J}\le y_\delta(x)\le\frac{2\cdot2^k}{2^J}.
+\]
+
+原箱精确嵌入为 `chi_(J;J+j,J+k)=chi_(0;j,k)`。若 `j<J` 或 `k<J`，
+新箱在每个 admissible 正整数 progression 点上为零，端点等号也包括在内。
+但是其连续核不必为零；合约使用 `d=e=1,delta=0,J=2,j=k=0,x=1/4`
+核对新 cutoff 为1、旧 cutoff 为0，防止把格点消失误写成物理积分消失。
+
+### 每箱频率配对与有限边界范围
+
+`MWKFCubicAFECompletedPoisson.lean` 定义完整实际频率系数
+
+\[
+ F_{J;j,k}(h)=\left(\int_{\mathbb R}
+   \widehat{\chi_{J;j,k}K_t}(h/s)\,dt\right)
+   e(-h\delta\bar r/s).
+\]
+
+这里 `K_t` 是已有完整物理核，包含原2因子、Möbius 系数、平方根幅度、
+`t*log(1+delta/(x*r))`、有限高度 Mellin 权和 `W(t/T)`。对任意实 `V`、
+`X>1/2`、`T≠0`，频率级数的绝对可和性来自实际 integrated Schwartz 核。
+先证明可和性，再抽取 `h=0`，得到
+
+\[
+ Z_{J;j,k}=s^{-1}\int_t\int_x\chi_{J;j,k}(x)K_t(x),\qquad
+ E_{J;j,k}=s^{-1}\sum_{h\ne0}F_{J;j,k}(h).
+\]
+
+每个新增下尺度箱满足精确等式 `Z_(J;j,k)+E_(J;j,k)=0`；未宣称两者各自为零。
+
+`MWKFCubicAFECompletedBoundary.lean` 证明新增非零连续箱实际上有限。
+令
+
+\[
+ B=|\delta|+r+s+1,\qquad 2^{J+1}B<2^L,
+ \qquad F_{J,L}=\{(j,k)\in[0,L)^2:j<J\text{ 或 }k<J\}.
+\]
+
+每个新增非零 cutoff 的两个真实指标均至多为 `B`，所以它的两个尺度
+指标都严格小于 `L`。此处 `L` 的存在由 `2^L→∞` 证明，范围外的 cutoff
+在**所有实数点**上严格为零。该界依赖 `J,d,e,delta`，不是一致尾项估计。
+
+### 修正积分与分别可和的 dyadic 模式
+
+`MWKFCubicAFECompletedReassembly.lean` 将原修正核精确写成有限和：
+
+\[
+ (B_J(x,y_\delta(x))-B_0(x,y_\delta(x)))K_t(x)
+   =\sum_{(j,k)\in F_{J,L}}\chi_{J;j,k}(x)K_t(x).
+\]
+
+每项实际联合核连续、紧支撑，故修正联合核可积；有限和积分及 Fubini
+随后给出 `C_J=s^(-1)*integral_t integral_x correction=sum_F Z_J`。
+原尺度的已证可和性加上有限边界修正，进一步给出两个独立 HasSum：
+
+\[
+ \sum_{j,k\ge0}Z_{J;j,k}=\sum_{j,k\ge0}Z_{0;j,k}+C_J,\qquad
+ \sum_{j,k\ge0}E_{J;j,k}=\sum_{j,k\ge0}E_{0;j,k}-C_J.
+\]
+
+两式中的无限 dyadic 系列都已证明可和，没有依靠 Lean 对不可和 `tsum`
+的默认值。这里的有限修正消去是 Poisson 恒等式，不是 Möbius 幂节省估计。
+
+### 回到原始有限高度 moment
+
+`MWKFCubicAFECompletedMoment.lean` 还证明 completed 物理核联合可积、
+全部 completed 零模之和等于其 literal `B_J*K` 双重积分，并对完整的
+`floor(T^3)` mollifier 支撑重组：
+
+\[
+ I^{(V)}_{T,W}=D^{(V)}_{T,W}
+   +\sum_{d,e}\sum_{\delta\ne0}
+       \left(\sum_{j,k}Z_{J;j,k}+\sum_{j,k}E_{J;j,k}\right).
+\]
+
+外层 shift 系列只在括号中的零／非零模式先配对后求和，其可和性已经证明。
+本批没有单独把 completed 零模或非零模移到整个 shift 和之外。
+任意函数 `J : real -> nat` 都可以作为有限高度 `V` 时的深度：
+上式每个 `V` 都精确成立，所以**重组后**的 `V→∞` 极限仍为原始真实积分。
+这不推出任何单独的 `J→∞` 或 `V→∞` 零模／非零模极限，不允许把
+`B_J` 直接替换成1，也未消除共同 Mellin 的端点正则化义务。
+
+### 本批核验与自审
+
+五个新源模块逐一编译通过并生成 proof objects，共755行实际定义和证明。
+五组 red-stage 合约先在缺失目标声明处失败；最终86个合约／公理审计文件
+同次核验退出码0。仅将 imports 提前去重，Lean 检查全部正文；输出过滤器
+完整保留公理报告和诊断。取得236条公理报告，均仅依赖 `propext`、
+`Classical.choice`、`Quot.sound`，没有 error/warning。
+合约覆盖完整真实修正积分、字面物理零模、深度随高度变化的重组极限、
+负 shift、不互素 shift／modulus、下尺度上端点、`J=0` 空边界及非零连续箱。
+
+聚焦 pytest：`295 passed`（14.66秒）；deterministic coverage 正常退出。
+其 `unconditional asymptotic proved`／`residual_top_level_gates=0` 仍是内部
+参数账本，不能替代最终 `hexact/hmain/hrem` 的 Lean 证明。
+没有新增项目公理、sorry、admit、native_decide，也没有提高 heartbeat 限额。
+使用独立临时 olean 目录，未启动无关的全量 Lean 冷构建。
+
+单代理自审逐项核对：`1/s` 与负 inverse-residue phase、完整对数相位、
+下尺度边界等号、原箱加J的精确重编号、新增盒的有限支撑、联合可积性、
+有限和积分、两种模式各自的 dyadic 可和性，以及外层 shift 必须先配对的
+括号位置。全目标的主要未完成项没有改变：端点／Mellin 极限、主项渐近、
+参数一致尾项及 cubic Möbius 核心估计。这不是独立代理审阅、远端 CI 或
+外部同行专家确认。
+
 ## Remaining formalization boundary
 
 This PR does **not** yet make the analytic theorem unconditional inside Lean.
@@ -710,9 +836,17 @@ needed for common Mellin/QCT evaluation and parameter-uniform tail estimates
 remain to be established. The actual diagonal now has its finite-height
 reciprocal-LCM/zeta Mellin formula, with both scale/integral interchanges
 proved. The paper's bilateral dyadic zero mode still differs from the
-current nonnegative-scale zero mode. Finite lower-scale completion and its
-exact lattice-invisible physical correction are now formalized, but the
-required integral limits and zero/nonzero correction pairing are not.
+current nonnegative-scale zero mode. Actual cutoffs at every finite lower-scale
+completion depth, their exact lattice-invisible physical correction, and the
+zero/nonzero correction pairing are now formalized. The added continuous
+boxes have proved finite support with an explicit geometric bound. The actual
+correction is a finite sum of jointly integrable kernels, and its double integral
+equals the added zero modes. Both completed dyadic mode series are summable
+at each fixed shift, and the paired completed shift series is summable.
+The entire finite-height moment is unchanged by any finite completion depth;
+even height-dependent finite depths preserve the recombined height limit.
+Separate completed-mode summation across shifts, the lower-endpoint limit,
+and the required Mellin/height limit exchanges remain unproved.
 Neither compactness in the logarithmic-extension proof nor the
 Schwartz construction supplies uniform seminorm estimates in the varying
 physical parameters.
@@ -743,7 +877,10 @@ Consequently the accurate status is:
   lower-boundary-weight reassembly, actual real-product power decay,
   integrated absolute dyadic/shift convergence, separate zero/nonzero
   aggregation, full finite-height diagonal/zero/nonzero decomposition,
-  exact diagonal reciprocal-LCM Mellin formula and finite lower-scale
-  completion with its explicit physical correction;
+  exact diagonal reciprocal-LCM Mellin formula, actual finite lower-scale
+  cutoffs, finite support of added continuous boxes, physical correction
+  integrability and its exact zero/nonzero pairing, separate completed dyadic
+  mode reassembly, and the full paired completed moment with its recombined
+  height limit;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.
