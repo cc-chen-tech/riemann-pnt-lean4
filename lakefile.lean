@@ -2586,6 +2586,8 @@ lean_lib RiemannPNT where
     `Test.OscillatoryGammaCoreReplacementContract,
     `HardyTheorem.AFECriticalGammaPrefactor,
     `Test.AFECriticalGammaPrefactorContract,
+    `HardyTheorem.AFECriticalGammaFrequency,
+    `Test.AFECriticalGammaFrequencyContract,
     `MathlibAux.IntervalOscillatoryIntegrationByPartsAxiomAudit,
     `Test.IntervalOscillatoryIntegrationByPartsContract,
     `HardyTheorem.SelbergLagDyadicGeometry,

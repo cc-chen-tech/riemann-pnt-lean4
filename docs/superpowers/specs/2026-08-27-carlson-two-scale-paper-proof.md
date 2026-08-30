@@ -1764,6 +1764,29 @@ infinite Poisson sum, nor a separate convergence theorem for the normalized
 zero mode, is necessary.  This simplification does not dispense with the
 uniform smoothing and nearest-endpoint estimates in `R(t)`.
 
+The next restricted-cutoff estimate has an explicit uniform constant.
+Let `x-1<=ell<=r<=N+1`, `ell>0`, `sigma>0`, and assume that `F` is twice
+continuously differentiable near `[ell,r]`, its derivative is monotone,
+and `|F'|>=g>0` there.  Then the same fixed width-one cutoff satisfies
+
+\[
+ \left|\int_\ell^r w_{x,N}(u)u^{-\sigma}e^{iF(u)}\,du\right|
+ \leq\frac{4(1+4C_1)\ell^{-\sigma}}g.
+\]
+
+Indeed the weighted primitive `H(v)=integral_ell^v u^(-sigma)*exp(iF(u))`
+has norm at most `4*ell^(-sigma)/g` on every initial subinterval by the
+already proved first-derivative theorem.  Integration by parts against
+`w` leaves `w(r)H(r)-integral_ell^r w'H`; the lower boundary is zero
+because `H(ell)=0`.  The right boundary costs at most one primitive
+bound, and the derivative integral costs at most `4*C1` copies because
+its absolute mass on a subinterval is bounded by the full transition
+mass.  This proves the displayed inequality without requiring `w(r)=0`.
+If `w(r)=0`, the constant improves to `16*C1`, recovering the full-support
+bound already formalized.  For the lower smoothing transition use
+`ell=x-1`, `r=x`, and `g=t/x-2*pi*m`; the denominator then agrees exactly
+with the lower Gamma-tail harmonic gap.
+
 For clarity, the square-root endpoint band can be chosen with a fixed,
 explicit width.  Let `K=floor(sqrt(t/(2*pi)))>=6`, take `x=K+1`, and
 eventually `N>=2K`.  Then
@@ -1974,7 +1997,15 @@ using `sum_(1<=m<=K) m^(-1/2)<=2*sqrt(K)` therefore gives
 
 These are purely multiplicative and finite-sum deductions from the exact
 Gamma norm identity; no phase regularity or additional moment estimate
-is needed.
+is needed.  The positive-frequency norm bound and the finite-sum statement,
+with `exists U` preceding `forall K`, are now formal in
+`AFECriticalGammaFrequency`.  Its standalone contract build exits zero
+(8706 jobs including cached dependencies).  A combined regression of the
+Gamma core, prefactor, frequency, lower tail, zero mode, finite band, far
+tail, and Poisson identity contracts also exits zero (8748 jobs); every
+audited theorem uses only `propext`, `Classical.choice`, and `Quot.sound`.
+This closes the common-phase obligation, not the remaining restricted
+smoothing, nearest-endpoint, or complete weak-AFE assembly obligations.
 
 For the explicit width-one cutoff, the stationary membership bounds use
 `N+1` and `x-1` in place of `N+2` and `x-2` in (8.23).
