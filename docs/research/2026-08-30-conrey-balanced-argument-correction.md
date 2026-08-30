@@ -479,7 +479,7 @@ exit 0），均仅依赖三条标准公理。实际有限轮廓的拼接已在�
  I=\int_U^T\log|F(\sigma_0+it)|\,dt.
 \]
 
-下一条待实现的实际零点特化应给出
+据此得到的实际零点特化目标如下（现已在第 17 节实现）：
 
 \[
  2\pi d\,N_{\rm full}(F;\,1/2\le\Re\rho\le A,\ U<\Im\rho\le T)
@@ -530,9 +530,66 @@ exit 0），均仅依赖三条标准公理。实际有限轮廓的拼接已在�
 时以可积的 `|log|F|²|` 加常数控制。还须用非平凡性与连续性证明
 均方积分严格为正，才能对右端 logarithm 取极限；上面的 `C` 取正数。
 
-这只是精确的下一步数学施工边界，不是已完成的实际 Littlewood 特化。
-同样，`E_eta` 的定量主项、同一高度上的无权 η argument 控制、长
+上述数学设计中的实际 Littlewood 特化现已由第 17 节完成；它没有
+同时给出 `E_eta` 的定量主项、同一高度上的无权 η argument 控制、长
 `theta=571/1000<4/7` mollifier 均方渐近式及 DI 输入仍需真实证明。
 已有 `C_explicit<exp(18/25)` 的数值证书并不提供上述均方估计。最终
 须再用规范零点数的单调性与 Riemann–von Mangoldt 渐近式将结论传给
 每个充分大的外部高度 X，才得到真正的 `>2/5`。
+
+## 17. 实际产品的 Littlewood 上界及规范计数组合
+
+`ConreyMollifiedRectangleZeros` 直接对实际 `F=V1*B` 在正高度紧矩形上
+取 divisor 支集，构造全部闭矩形零点 `K`。`sigma0>0`、`U>0` 保证
+矩形避开 `s=1`，每个点处的产品解析阶均由 `g≠0`、`Y≥2`、`P(1)=1`
+证明为有限值。先证明有限 ENat 阶，再转自然数，没有将无限阶截为零。
+
+仅在整条底边 F 非零的条件下，过滤 `Re ρ≥1/2` 后的完整重数和就
+精确等于 `conreyMollifiedV1BoundedFullZeroCountBetween`。零点表层允许
+`sigma0=1/2`、上边界零点和空／退化矩形；其 `(U,T]` 约定与既有计数
+完全一致。该合约独立构建通过（8787 jobs，exit 0）。
+
+`LittlewoodFiniteZeroTable` 从有限零点表构造一个正间隔 `d0`，使
+`x_n=x0+d0/(n+1)` 始终处于 `x0<x_n<critical`，避开所有零点实部，且
+趋于 `x0`。左边界根不妨碍构造，而所有 `Re ρ≥critical` 的零点始终
+保留。连续范数在紧矩形上的上界再经 `log r≤r` 给出所需对数上界；
+没有在零点处使用 logarithm 的连续性。它将无零逼近序列和对数上界
+从调用方假设中消去，接入已证的左边界极限定理。合约独立构建通过
+（8711 jobs，exit 0）。
+
+`ConreyMollifiedLittlewood` 随后在
+`g≠0`、`Y≥2`、`P(1)=1`、`0<sigma0<1/2<A`、`0<U<T` 以及大矩形
+上下、右三边实际 F 非零的条件下，证明
+
+\[
+ 2\pi(1/2-\sigma_0)N_{\rm full}(F;\,1/2\le\Re\rho\le A,\ U<\Im\rho\le T)
+ \le \int_U^T\log|F(\sigma_0+it)|\,dt+\mathrm{Rem}.
+\]
+
+该结论没有输入零点表、解析阶、无零竖线序列、统一对数上界或左边界
+非零性。余项是既有 `littlewoodRectangleNonleftRemainder` 全部原项，
+包括右边的对数模长积分及 argument 积分，没有删项或更换边界。
+
+大矩形的三边 F 非零经 `η=H V1` 推出小矩形三边 η 非零。由第 15 节
+已证规范计数，进一步得到
+
+\[
+ N_{\rm simple}(T)\ge\frac{E_\eta(A;U,T)}\pi
+ -\frac{\int_U^T\log|F(\sigma_0+it)|\,dt+\mathrm{Rem}}
+        {\pi(1/2-\sigma_0)}-1.
+\]
+
+两条实际端点合约独立构建通过（8816 jobs，exit 0）。本节四条新定理
+均仅依赖 `propext`、`Classical.choice`、`Quot.sound`。独立只读审查未
+发现边界、完整重数、逼近序列或系数方向问题。最终端点的 119 个本地
+模块 import 闭包没有 Zeta23，外部 import 根仅 Mathlib。
+
+三个新合约与既有规范计数、有限轮廓回归的最终组合构建也通过
+（8820 jobs，exit 0）；全量 Python 回归 546 passed。这里的 Lean
+构建是定向验证，不声称重新完成全库 release-baseline 构建。
+
+**下一步真实缺口已前移：**现有显式参数高度选择器与完整余项界仍须
+在同一组 `L,Y,R,U,T` 上接入本定理；左侧 logarithm 的 Jensen 连接
+须允许有限零点；`E_eta` 的定量主项、长 mollifier 均方渐近式及 DI
+输入、所有大高度的传递仍未完成。本节是实际有限轮廓／Littlewood
+计数链的闭合，不是完整 Conrey `>2/5`。
