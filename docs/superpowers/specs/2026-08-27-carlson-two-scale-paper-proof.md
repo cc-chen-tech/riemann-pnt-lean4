@@ -461,6 +461,12 @@ route, not a claim that the saving is uniform in the mollifier length.
 
 ## 8. Lean translation boundary
 
+当前验证边界（2026-08-30）：弱单位相位 AFE、半长 mollifier 的真实全线高斯乘积矩，
+以及 `sigma=2/3` 的真实区间内线矩均已无条件形式化并通过各自契约与基础公理审计。
+尚未完成左侧辅助区间上的统一内线矩、Littlewood 零点计数、改进 density certificate
+及 forcing 接线，不能宣布零密度改进的 Lean 验收完成。下文保留按研究顺序记录的旧阶段
+检查点；关于最新弱 AFE 与内线矩状态，以后面的 post-AFE integration 段落为准。
+
 The finite two-scale mollifier/detector, identity (2.1), cancellation (4.1),
 the explicit fixed-right estimate `5/36`, fixed-circle growth,
 unconditional Jensen local zero-mass bound, local divisor factorization,
@@ -2004,8 +2010,13 @@ Consequently `R=2*C_fin+1` and `T0=72*pi` suffice for the existing eventual
 unit-phase logarithmic AFE target, after identifying its canonical main and
 dual finite sums.  That target quantifies an eventual threshold; a separate
 bounded-height compactness argument is unnecessary.  These scalar/canonical
-normalizations remain to be formalized; the weak AFE, improved density
-certificate, and forcing integration are not yet certified.
+normalizations are now formal in `AFEExplicitPoissonHeightScale` and
+`AFECriticalUnitPhaseLogProof`.  The latter proves the actual weak AFE without
+an AFE premise, including the fixed threshold `72*pi`.  Its contract build
+exits zero (8789 jobs including cached dependencies); both printed axiom
+audits contain only `propext`, `Classical.choice`, and `Quot.sound`.  This
+closes the weak-AFE obligation, not the improved density certificate or
+forcing integration.
 
 The combined twenty-one-contract regression for these six new modules and
 the preceding Gamma/Poisson components exits zero (8774 jobs including cached
@@ -2014,6 +2025,164 @@ axioms.  An independent read-only review checked the interval partitions,
 pole signs, constants, derivative-bound existence, and whole-expression
 cutoff limit; it found no substantive issue.  This verification checkpoint
 does not certify the pending weak AFE or the zero-density improvement.
+
+**Post-AFE integration normalization.** The full-line product estimate to
+be instantiated downstream is, with `Delta=16*V^(19/20)`,
+
+\[
+ \int_{\mathbb R}e^{-(t-w)^2/\Delta^2}
+   |\zeta(\tfrac12+it)M_X(\tfrac12+it)|^2\,dt
+ \le C V^{19/20}(1+\log V)^6,
+ \quad 2V\le w\le3V,\quad 2\le X\le V^{9/20}.
+\]
+
+The constant `C` is independent of `V,w,X` for all sufficiently large `V`.
+The already-proved conditional full-line estimate has Gaussian mass
+`sqrt(pi/(1/Delta^2))=16*sqrt(pi)*V^(19/20)` and bracket
+`256*G*(1+log(4V))^6+4*R^2`, followed by an additive tail bound `1`.
+For `V>=1`, use `1+log(4V)<=(1+log4)*(1+log V)` and
+`V^(19/20)*(1+log V)^6>=1`.  Thus
+`C=48*sqrt(pi)*(256*G*(1+log4)^6+4*R^2)+1` suffices.
+There is no phase measurability assumption: the energy comparison has
+already eliminated the existential phase before integration.
+This precise unconditional statement is now formal in
+`CarlsonHalfRangeUnconditional`.  Its contract build exits zero (8846 jobs
+including cached dependencies), and its printed axiom audit lists only
+`propext`, `Classical.choice`, and `Quot.sound`.
+
+The finite Gaussian cover requires a separate geometric check.  Its actual
+centres are `U+(j+1/2)*Delta`, with
+`0<=j<=floor((W-U)/Delta)`, so for `U<=W` they belong to
+`[U,W+Delta/2]`, not necessarily `[U,W]`.  To stay in the proved centre
+range `[2V,3V]`, use the target interval `[2V,5V/2]`.  Once `Delta<=V`,
+all its centres belong to `[2V,3V]`.  The condition holds eventually because
+`V^(1/20)>=16` and `V^(1/20)*V^(19/20)=V`.  Applying the existing finite
+cover/interpolation theorem with the same product bound at both integer
+lengths `2<=Y0<Y1<=V^(9/20)` therefore gives its explicit interior bound
+without any remaining product-moment premise.  This is an interval of
+fixed ratio `5/4`.  To leave room for the zero-free horizontal sides, use
+zero-count shells `[U,9U/8]` and take `V=10U/21`.  For `U>=21`,
+`[U-1,9U/8+1]` is contained in `[2V,5V/2]=[20U/21,25U/21]`:
+the lower margin is `U/21>=1`, and the upper margin is
+`11U/168>=1`.  Thus both horizontal selections fit inside the already
+estimated interval.  Summing these `9/8`-ratio shells instead of dyadic
+shells changes only the geometric-sum constant, not the power exponent.
+The exact `x=2/3` interval-moment statement, including the proved centre
+range and the eventual width condition, is now formal in
+`CarlsonHalfRangeInterior`.  Its contract build exits zero (8848 jobs
+including cached dependencies); all three printed axiom audits contain
+only the allowed base axioms.  The statement retains the exact
+length-dependent endpoint expression rather than asserting a power saving
+for arbitrary lengths.
+
+This interior bound at the exact line `2/3` is not alone a zero-count
+estimate: zeros on that line have zero Littlewood weight there.  The final
+contour must still use the left-shifted zero-free line specified in
+Section 6 (or an explicitly budgeted fixed auxiliary interval).  No density
+or forcing conclusion is inferred solely from the critical product moment.
+
+For the first `delta=1/400` target, a fixed auxiliary interval is also
+available and avoids logarithm-dependent line selection.  Put
+
+\[
+ a_0=\frac23-\frac1{10000},\qquad
+ b_0=\frac23-\frac1{20000},\qquad
+ \lambda(x)=\frac{x-1/2}{4-1/2}.
+\]
+
+With the specified lengths `Y0=floor(V^(2/5))`, `Y1=floor(V^(9/20))`,
+the same interpolation proof for `x in [a0,b0]`, retaining the original
+`epsilon=1/2000` reserve, has exponent
+
+\[
+ q(x)=(1-\lambda(x))(1+1/2000)
+          +\lambda(x)(1-12/5)
+ \le q(a_0)=\frac{1861}{2100}+\frac{4801}{70000000}.
+\]
+
+Indeed the slope of `q` is `-4801/7000`.  The target still has positive
+slack
+
+\[
+ \left(\frac89-\frac1{400}\right)-q(a_0)
+   =\frac{81791}{630000000}>0.
+\]
+
+Choosing `x0 in (a0,b0)` away from the finitely many detector-zero real
+parts gives every zero with real part at least `2/3` a Littlewood weight
+at least `1/20000`.  This changes only a constant in the zero-count step.
+The pole-removal factor remains bounded by `5` throughout this interval:
+for `s=x+iy`,
+
+\[
+ 25|s-1|^2-|s+1|^2
+  =4(3x-2)(2x-3)+24y^2\ge0\quad(1/2\le x\le2/3).
+\]
+
+Thus a precise next formal lemma is the actual ordinary-error interval
+moment bound uniformly for `x in [a0,b0]`, with the same integer lengths
+and Gaussian cover normalization above.  It follows on paper from the
+already-proved closed-strip Hilbert interpolation and this factor bound;
+the current specialized `x=2/3` adapter must be extended before applying
+Littlewood.  This alternative is not yet a formal density certificate.
+
+Here is a fully normalized scalar budget for that next lemma.  Set
+`Y0=floor(V^(2/5))`, `Y1=floor(V^(9/20))`, `P=V^(19/20)`, and
+`L=1+log V`.  For sufficiently large `V`,
+
+\[
+ \tfrac12 V^{2/5}\le Y_0<Y_1\le V^{9/20},\quad
+ \log(Y_1/Y_0)\ge\tfrac1{40}\log V,\quad
+ \frac{\log Y_1}{\log(Y_1/Y_0)}\le18,\quad
+ \frac{\log Y_0}{\log(Y_1/Y_0)}\le16.
+\]
+
+The floor lower bound follows from `floor z>=z/2` for `z>=2`.
+The ratio is at least `V^(1/20)/2`, so its logarithm is at least
+`(log V)/40` once `V^(1/40)>=2`.  Strict separation of the two integer
+lengths follows eventually from `V^(1/20)>2`.
+Using the exact endpoint definitions and `Delta=16P>=1`, valid constants
+in the two pole-free squared-norm bounds are
+
+\[
+ C_{\rm L}=2320e^{1/4}(C+16\sqrt\pi),\qquad
+ C_{\rm R}=\frac{102400}{9}\sqrt\pi\,e^{16},
+\]
+
+with bounds `C_L*P*L^6` and `C_R*V^(-29/20)`, respectively.
+The former uses `18^2+16^2=580`; the latter uses
+`Y0^(-3)<=8V^(-6/5)` and the exact Gaussian mass `16sqrt(pi)P`.
+The cover cardinal is at most `3V/(2Delta)` once `Delta<=V`.
+Therefore, uniformly for `x in [a0,b0]`, the required ordinary-error
+interval moment is at most
+
+\[
+ K V^{\,1-(12/5)\lambda(x)}L^6,
+ \qquad
+ K=\frac{75}{32}e^{1/4}\max(1,C_{\rm L})\max(1,C_{\rm R}).
+\]
+
+Here the factor `25` removes the pole regularizer, and
+`0<=lambda(x)<=1` bounds both constant powers uniformly and the logarithm
+power by six.  This is even smaller than the reserved `V^q(x)*L^6`
+bound above.  Every comparison in this paragraph is scalar; the outstanding
+formal work is its composition with the generic closed-strip and contour
+theorems, not a new spectral or cancellation estimate.
+
+**Combined verification checkpoint (2026-08-30).** One combined build of
+thirty contracts covering the four new modules, the preceding
+Poisson/Gamma components, the old conditional/full-line product bridges,
+the critical-to-interior adapter, Carlson minimax, and the half-range
+exponent ledger exits zero (8879 jobs including cached dependencies).
+All eighty axiom-audit entries extracted from these thirty build traces
+contain only `propext`, `Classical.choice`, and `Quot.sound`.
+Two existing contracts were missing from the Lake root list
+and are now registered, so this run actually checks both the half-range
+exponent ledger and the critical-to-interior bridge.  Read-only review
+found no substantive issue in the weak-AFE, product, or interior assembly;
+its documentation clarification about the specified power lengths is
+incorporated above.  These checks certify the stated intermediate theorems,
+not an improved zero-density certificate or a completed forcing chain.
 
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
