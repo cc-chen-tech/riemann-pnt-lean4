@@ -93,6 +93,7 @@
 > | Outer row-energy no-go | Section 9.135 gives an exact saturation witness: for arbitrary outer signs \(\varepsilon_i\) and row amplitudes \(a_i\), taking \(C_i=\varepsilon_i a_i\), \(U_i=1\) makes \(\sum_i\varepsilon_i\langle C_i,U_i\rangle=\sum_i a_i\).  Thus separate fixed-row energies cannot exploit \(\mu(s)\); the next theorem must retain a common cross-\(s\) Type/AFE constraint before rowwise phase freedom |
 > | Power-enlarged tail for the \(O(T^{1+\varepsilon})\) target | proved in Section 6.3 |
 > | Common-cutoff physical reflection adapter | Section 9.199 and the [physical adapter note](2026-08-30-mwkf-physical-reflection-adapter.md) return (4.5) to the integer lattice before product grouping, retain the full Mellin family \(B_{N,z}=F_z-R_{N,z}\), and prove the common-cutoff tail \(\ll T^3N^{5/2}X^{-3/2}\).  The product kernel is pulled back by \(C_z^TKC_z\) to the original mollifier coordinates before joining the regulated canonical zero Gram and the complete complementary kernel.  A finite counterexample changes \(-12\) to \(-6\) if this coordinate map is omitted.  The full signed operator is defined, but no norm saving or norm-preserving transfer to USZNTT is proved |
+> | Normalized Mellin coefficient transfer | Section 9.200 proves \(\|S_z^{\pm1}\|^2\le D_XH_X=X^{o(1)}\), uniformly for \(\Re z\ge0\), and the stronger constant bound \(\|S_z^{\pm1}\|\le\zeta(5/2)\) on the original line \(\Re z=2\).  The exact inverse, LCM Gram endpoints, and signed packet transfer are retained.  This removes the raw divisor-coordinate power loss, not the occupancy-norm or coupled signed estimate.  An unrestricted full-physical-operator target is separately ruled out by a phase-aligned coefficient witness; the actual Möbius coefficient class is not ruled out |
 > | Direct published Region A--C coverage | proved/classified in Section 8 |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
 > | Residual coupled Region-D estimate at length \(T^3\) | unproved |
@@ -27805,10 +27806,89 @@ components retained.  Nonzero Mellin models and incomplete-divisor
 rejection are tested.  The helper deliberately gives globally
 reassembled product packets no fictitious individual \(h\) label.
 
-This closes the global identity adapter.  It does not prove an efficient
-packetwise norm comparison with the earlier core polytope: already
-\(\|C_ze_1\|_2^2=X\).  The physical signed estimate, (USZNTT),
-and the coupled-kernel gate remain unproved.
+This closes the global identity adapter.  The unweighted map has
+\(\|C_ze_1\|_2^2=X\), but this is not a physical-norm obstruction:
+Section 9.200 proves the correctly normalized coefficient comparison.
+That result does not yet identify the earlier packetwise occupancy
+norm.  The physical signed estimate, (USZNTT), and the coupled-kernel
+gate remain unproved.
+
+### 9.200 Normalized Mellin transfer is subpolynomial, but a generic full-operator bound is false
+
+白话进展：原除数矩阵的一列有 \(X\) 个单位项，不代表物理转移一定
+损失 \(X\)。恢复 AFE 的 \(x^{-1/2-z}\) 后，卷积与 Möbius 逆都有
+初等的亚幂次范数界；原 Mellin 直线上甚至只有常数成本。
+但这个坐标问题解决后，不能把剩余目标改成任意系数的全算子范数界：
+聚相系数给出反例。真正仍需攻击的是实际双 Möbius/Type 系数类。
+
+The [adapter note, Sections 7--9](2026-08-30-mwkf-physical-reflection-adapter.md)
+gives complete proofs, not just finite fixtures.  With
+\(c_d=a_N(d)/\sqrt d\), \(b_z(x)=x^{-1/2-z}B_{N,z}(x)\), and zero extension
+\(E_N\), the exact physical map and inverse are
+
+\[
+ b_z=S_{z,X}E_Nc,\qquad
+ S_{z,X}v(x)=\sum_{d\mid x}v(d)(x/d)^{-1/2-z},\qquad
+ S_{z,X}^{-1}v(x)=\sum_{d\mid x}\mu(x/d)v(d)(x/d)^{-1/2-z}.
+\tag{9.1319}
+\]
+
+Divisor Cauchy followed by the elementary divisor bound proves, uniformly
+in \(\Im z\) for \(\Re z\ge0\),
+
+\[
+ \|S_{z,X}^{\pm1}\|^2\le
+ \left(\max_{n\le X}\tau(n)\right)\sum_{n\le X}{1\over n}
+ =:\mathcal B_X\ll_\eta X^\eta.
+\tag{9.1320}
+\]
+
+On \(\Re z=2\), the finite dilation expansion improves this to
+\(\|S_{z,X}^{\pm1}\|\le\zeta(5/2)\), independent of \(X\).
+The exact weighted Gram is (PA28), with
+\(H_{\lfloor X/[d,e]\rfloor}/[d,e]\) at \(z=0\), including the empty
+sum and exact endpoint.  The ordinary Euclidean Gram has the additional
+\(\sqrt{de}\) factors.  In normalized coordinates, (PA29) transports
+the full residual, regulated canonical Gram, and complement through the
+same inverse map.  Its bilinear Mellin version uses transposes, not
+conjugated Mellin parameters.
+
+The transfer is applied to the signed sum before any norm; (PA30)
+retains every cross block.  On a fixed polynomial cutoff, finitely many
+two-sided transfers and a \(TT^*\) square cost only \(T^\varepsilon\).
+This solves the divisor-coefficient normalization, not the comparison
+with the old WRFE/GDTM/USZNTT occupancy energy, the varying-\(z\) signed
+integral, or the remaining factor \(T^{-2\eta_{\rm imb}}\).
+The fixed-\(h\) reflection prohibition and \(a=h\delta\) ledger remain.
+
+There is also a concrete restriction on any replacement gate.
+Totient diagonalization proves
+\(\|((d,e)/\sqrt{de})_{d,e\le N}\|\le\mathcal B_N\), and hence the
+log-weighted LCM main matrix in \(c\) coordinates satisfies
+\(\|L_c\|\ll_{\varepsilon,W}T^{1+\varepsilon}\) for \(N\le T^3\).
+For fixed nonnegative nonzero \(W\), however, a phase-aligned unit vector
+supported on \(N/2<d\le N\) gives a full physical moment
+\(\gg_W N\log T\); (PA33)--(PA35) prove this by a length-one interval
+pigeonhole argument.  Thus at \(N=\lfloor T^3\rfloor\),
+
+\[
+ \|\mathfrak H_T-L_c\|_{2\to2}\gg_W T^3\log T.
+\tag{9.1321}
+\]
+
+This rules out an unrestricted \(T^{1+\varepsilon}\) full-residual
+operator theorem.  It does not rule out a bound on the actual tapered
+Möbius vector, the earlier structured coefficient class, or an estimate
+for a centered component together with its retained resonant ledger.
+Both real and complex coefficient versions of the no-go are covered
+in the adapter note.
+
+The rational certificates in
+`scripts/mwkf_normalized_mellin_transfer.py` separately test
+the inverse, weighted norms, exact LCM cutoff, negative signed cross
+Gram, and totient squares.  Tests are finite evidence for the formulas,
+not a proof of the complex analytic gate.  No Lean theorem or
+unconditional full twisted-moment bound is claimed.
 
 ## 10. What has and has not been proved
 
@@ -27838,7 +27918,10 @@ proved; its \(T^2\) norm saving, determinant-nonzero spectral estimate,
 and the coupled-kernel gate remain unproved.  The physical operator is
 now (PA18)--(PA20), including all complementary corrections; a
 norm-preserving transfer to the earlier core-energy targets is not
-established by the finite identity.
+established by the finite identity.  Section 9.200 now proves the
+correctly normalized divisor-coefficient map and inverse have at most
+subpolynomial norm cost (constant on \(\Re z=2\)); the remaining
+occupancy comparison and signed saving are still unproved.
 
 **Final published coverage and unified Type gate.**  Section 9.197 puts
 the registered published estimates into one final-wedge table and adds
@@ -27853,8 +27936,11 @@ relative \(T^{-2\eta_{\rm imb}}\) energy saving on the residual wedge,
 at most \(T^{-1/2}\) at the extreme face.  No published input in the
 table proves that target.  Section 9.199 additionally requires the exact
 norm comparison between the physical pullback and the registered
-occupancy energy; the coordinate map is not an isometry.  Neither
-(USZNTT) nor the coupled-kernel gate is closed.
+occupancy energy.  Section 9.200 supplies the coefficient-convolution
+portion without a power loss, but not that entire comparison.  It also
+rules out replacing the structured gate by a full-physical-operator
+bound for arbitrary coefficients.  Neither (USZNTT) nor the
+coupled-kernel gate is closed.
 
 **New bounded-determinant boundary.**  Sections 9.161--9.165 prove the
 complete active-principal character projection within the required
