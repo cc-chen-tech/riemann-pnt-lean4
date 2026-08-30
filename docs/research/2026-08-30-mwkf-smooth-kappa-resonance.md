@@ -12,6 +12,11 @@
 `W_{κ,k,l}` 的估计。没有把新 saving 乘到 IC/JG/BBLR 上，也没有
 删去 canonical zero Gram、两个 reflection mixed 项或频率轴。
 
+后续 [TI1–TI14](2026-08-30-mwkf-type-i-density-aliases.md) 对实际
+d-Type-I 无符号 quotient 完成连续密度与全部互素别名，保留精确
+小端点。平衡 UV=T^β 时所得 T^{4+β+ε} 仅估计这个 Type-I 部分；
+不能替代本节整个分片的 T^{5+ε}，也没有解决 Type-II 或完整 gate。
+
 ## 1. 实际无符号 κ 与准确尺度
 
 从 [IC2](2026-08-30-mwkf-inverse-c-signed-roundtrip.md) 出发，固定

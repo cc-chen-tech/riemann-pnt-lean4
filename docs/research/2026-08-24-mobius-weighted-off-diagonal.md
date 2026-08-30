@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-30 真实 Type-I 的连续密度与互素别名。** [TI1–TI14](2026-08-30-mwkf-type-i-density-aliases.md) 仅分解实际 µ(d)，保留 µ(A) 与耦合核。完成无符号 quotient 的精确端点是 `Σ_{b≤V,(b,Q)=1}µ(b)g(b)`；支撑 d>V 时消失，不需 d>UV。连续密度无驻点，但完整互素别名仍须保留。所得 Type-I 物理界为 `T^ε ρ[D²(1+Z)^(-J)+D(1+Z)UV]`；平衡 K≈T、UV=T^β 时是 `T^{4+β+ε}`，不是整个分片的改善。另证明一片不平衡短 Type-I 区域快速衰减，并明确排除 Srivastav 新定理在平衡原 A 行上的直接应用。大除数驻相别名、Type-II、共同 signed operator 与完整 twisted moment 仍未解决。
+
 > **2026-08-30 先求完整光滑 κ 和。** [非共振覆盖与双 Möbius 整数带](2026-08-30-mwkf-smooth-kappa-resonance.md) 使用实际 IC2 中 κ 无 Möbius 权且核光滑的结构，在 Cauchy 之前完成 κ-Poisson。保留所有整数端点与单位掩码后，非零 j 的真实物理界为 `ρ(D²/K+D) T^ε`，全部 e≈E 的成本为 `ρ(S²/(EK)+S) T^ε`。平衡顶层 e=1、K≈T 的界由 JG 的 `T^{11/2+ε}` 改为 `T^{5+ε}`，固定 K=T^ν、ν>1 的顶层非共振分片快速衰减。剩余窄带保留双 Möbius 及全部九个 Type sector；仍差 T²，未证明完整 coupled-kernel gate，也不与 IC/JG/BBLR 的 saving 相乘。
 
 > **2026-08-30 全 κ 联合单位 Gram。** [LCM 密度平方和与别名](2026-08-30-mwkf-joint-unit-density-gram.md)把整个 `κ,k,l` 乘积区块先重组为 `n=κkl`，再作一次 Cauchy。单位完成产生精确的连续 LCM 密度平方和及非零别名；连续密度零模与零 determinant 项均不等同于原 canonical zero Gram。完整 κ 成本下，联合界在 `1/2<log_T K<4/3` 改善上一轮 IC7 的逐行界；例如 `K≈T` 时由 `T^{28/5+ε}` 到 `T^{11/2+ε}`。零 determinant 项在 `K≥T²` 达到自身预算，但不能据此删去非共振项或宣称区块覆盖。完整 coupled-kernel gate 仍未证明。
@@ -112,6 +114,7 @@
 > | Full inverse-c signed roundtrip and coprime linear rows | Section 9.206 proves the finite positive dual support and the complete allocation identity, including the integer-one endpoint. Reassembly returns the original double Poisson sum rather than supplying a new saving. A uniform polynomial-size coprimality transfer preserves the published linear Mobius bound up to `X^epsilon`. The balanced row saves `T^(1/2)`, but its absolute physical packet costs `T^(11/2+epsilon)` against target `T^3`; no global coverage or multiplication with BBLR is asserted |
 > | Whole-kappa joint unit-density Gram | Section 9.207 reassembles n=kappa*k*l before one Cauchy and proves the phi(lcm)/lcm divisor-square identity. The continuous density and its zero-determinant part are positive, but the latter is not a lower bound for the former. Their bounds are `(X+D^2)M/D` and `XM/D`; all nonzero unit aliases cost `M^2(1+XM/D)`, with M=K*P. This improves IC7's whole-block bound in an intermediate K interval, not the final BBLR deficit or the coupled gate |
 > | Smooth unsigned kappa before Cauchy | Section 9.208 uses the actual kappa smoothness, not arbitrary triple coefficients. Complete kappa Poisson gives rapid decay when K is sufficiently larger than Z=RP/S and both grow as fixed powers. For nonzero j, exact shifted-product/divisor counting gives `rho(D^2/K+D)` with the integer boundary retained; the e-shell cost is `rho(S^2/(EK)+S)`. The balanced K~T bound improves to T^5, but target is T^3. The narrow band carries the exact nine ordered Mobius Type sectors, not a proved signed saving |
+> | Actual Type-I density and unit aliases | Section 9.209 completes only the unsigned Type-I quotient, retaining its exact endpoint. The continuous density is rapidly small; all divisor aliases remain. Its physical bound is `rho[D^2(1+Z)^(-J)+D(1+Z)UV]`, with rapid decay in the specified unbalanced short-Type-I polytope. The balanced T^(4+beta) cost applies only to this Type-I part; stationary large-divisor aliases and Type-II still require joint signed estimates |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
 > | Residual coupled Region-D estimate at length \(T^3\) | unproved |
 >
@@ -28281,6 +28284,44 @@ sectors, and the original coupled Fourier kernel. Known short-interval
 results match the D^(2/3) window geometrically, not the missing T^2
 joint saving. This is new local coverage, not the full coupled gate
 or an improvement to the globally stronger BBLR endpoint.
+
+### 9.209 Actual Type-I density, its endpoint, and stationary unit aliases
+
+The [Type-I density note](2026-08-30-mwkf-type-i-density-aliases.md)
+opens only the actual mu(d) in the smooth IC2/SK4 block. Completing its
+unsigned quotient gives the exact endpoint
+`sum_{b<=V,(b,Q)=1} mu(b)g(b)`, not an unrecorded cutoff error. Support
+entirely above V suffices to remove it; D>UV is unnecessary. The quotient
+retains nonsquarefree integers, and mu(A) and the original coupled kernel
+remain unchanged before estimates.
+
+For B=b*c, coprimality completion yields the exact Poisson coefficient
+`mu(v)/(B*v)` for every v|Q. The continuous term is
+`-phi(Q)/Q*M_U(Q)*M_V(Q)*Psi_hat_z(0)`. Its reciprocal phase has no
+stationary point on the actual smooth d support, hence rapid decay;
+it is not identically zero and is not the canonical zero Gram. The full
+nonzero-alias discrepancy is at most `T^epsilon*(1+Z)/D` per B. Paying
+all c,b and the complete physical outer scale gives
+`rho[D^2(1+Z)^(-J)+D(1+Z)UV]`; summing every e~E gives
+`rho[S^2/E*(1+Z)^(-J)+S(1+Z)UV]`. Nonzero endpoint terms are additional.
+
+When Z grows as a fixed power and UV*Q*Z/D is a fixed negative power,
+all aliases are nonstationary too. TI10--TI12 give this sufficient
+unbalanced Type-I polytope and TI11 an explicit Fourier truncation tail.
+The balanced residual has no interior in this polytope. At K~T, e=1,
+UV=T^beta, the bound T^(4+beta+epsilon) is for this Type-I part only;
+it cannot replace the whole SK bound T^(5+epsilon).
+
+Remaining stationary aliases satisfy ell*z<0 and
+`1<=-z*B*v/(ell*D)<=4`, forcing B*v>=D/abs(z). At e=q=1, A=v*a0
+fuses mu(A)*mu(v) into mu(a0), retaining mu(v)^2 and (a0,v)=1. The
+resulting short-ratio/long-common-factor sum is not bounded here.
+The note also checks that no rational approximation allowed by
+Srivastav's arXiv:2505.07803v2 Theorem 1 covers the original balanced
+e=1 top-face A row with 0<=log_T K<=1. This does not exclude other
+transformed rows or other e-shells.
+Type-II, all unresolved physical endpoints and tails, and the full
+signed operator of PA remain open; no full twisted-moment claim follows.
 
 ## 10. What has and has not been proved
 

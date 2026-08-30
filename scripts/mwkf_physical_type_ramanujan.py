@@ -10,7 +10,84 @@ import cmath
 from fractions import Fraction as F
 from math import ceil, floor, gcd, lcm, pi
 
-from scripts.mwkf_mobius_type_identity import divisors, mobius, split_mobius_identity
+from scripts.mwkf_mobius_type_identity import c_u, divisors, mobius, split_mobius_identity
+
+
+def type_i_quotient_ledger(n, U, V, Q):
+    """Finite TI2 completion, with its small endpoint and literal unit mask.
+
+    Atoms are (c,b,m,-mu(c)*mu(b)). No squarefree mask is placed on m.
+    """
+    if any(not isinstance(a, int) or a < 1 for a in (n, U, V, Q)):
+        raise ValueError("positive integer n,U,V,Q required")
+    unit = gcd(n, Q) == 1
+    direct = -sum(c_u(a, U)*mobius(n//a) for a in divisors(n)
+                  if unit and a > U and n//a <= V)
+    atoms = tuple((c, b, n//(b*c), -mobius(c)*mobius(b))
+                  for c in divisors(n) if unit and c <= U and mobius(c)
+                  for b in divisors(n//c) if b <= V and mobius(b))
+    return {"direct": direct, "atoms": atoms,
+            "completed": sum(row[3] for row in atoms),
+            "endpoint": mobius(n) if unit and n <= V else 0}
+
+
+def type_i_unit_completion(B, Q, D, profile, profile_hat, cutoff):
+    """TI3 unit-quotient Poisson ledger for a [1,2]-supported profile.
+
+    The caller supplies a Fourier pair and must control the omitted tail.
+    The profile represents Psi_z, including the reciprocal phase. This
+    routine checks neither smoothness nor the physical kernel hypotheses.
+    It restricts m to units; the physical caller additionally needs (B,Q)=1.
+    """
+    D = F(D)
+    if (any(not isinstance(a, int) or a < 1 for a in (B, Q, cutoff)) or D <= 0):
+        raise ValueError("positive integer B,Q,cutoff and positive D required")
+
+    def samples(step):
+        return range(ceil(D/step), floor(2*D/step)+1)
+
+    direct = sum(profile(B*m/D)/D for m in samples(B) if gcd(m, Q) == 1)
+    divisor_sum = sum(mobius(v)*sum(profile(B*v*n/D)/D for n in samples(B*v))
+                      for v in divisors(Q) if mobius(v))
+    dual = sum(F(mobius(v), B*v)*sum(profile_hat(ell*D/(B*v))
+               for ell in range(-cutoff, cutoff+1)) for v in divisors(Q) if mobius(v))
+    density = _unit_density(Q)/B*profile_hat(0)
+    return {"direct": direct, "divisor_sum": divisor_sum,
+            "dual_truncated": dual, "density": density, "aliases": dual-density}
+
+
+def type_i_stationary_aliases(B, Q, D, z):
+    """Exact TI13 candidate saddles (v,ell,x^2), including support endpoints.
+
+    A candidate need not contribute: the actual amplitude can vanish there.
+    No positivity or lower bound for the signed alias sum is asserted.
+    """
+    D, z = map(F, (D, z))
+    if any(not isinstance(a, int) or a < 1 for a in (B, Q)) or D <= 0 or not z:
+        raise ValueError("positive integer B,Q, positive D and nonzero z required")
+    rows = []
+    for v in divisors(Q):
+        if not mobius(v):
+            continue
+        lower, upper = sorted((-z*B*v/D, -z*B*v/(4*D)))
+        for ell in range(ceil(lower), floor(upper)+1):
+            if ell*z < 0:
+                rows.append((v, ell, -z*B*v/(ell*D)))
+    return tuple(sorted(rows))
+
+
+def type_i_density_cost(scales, U, V):
+    """TI7 physical scale ledger, not a bound without its kernel hypotheses.
+
+    density_scale still multiplies (1+Z)^(-J); both costs allow T^epsilon.
+    The small endpoint must vanish or be separately included.
+    """
+    if any(not isinstance(a, int) or a < 1 for a in (U, V)):
+        raise ValueError("positive integer U,V required")
+    D, Z, rho = (F(scales[key]) for key in ("D", "Z", "rho"))
+    if D <= 0 or Z < 0 or rho < 0:
+        raise ValueError("positive D and nonnegative Z,rho required")
+    return {"density_scale": rho*D**2, "alias_scale": rho*D*(1+Z)*U*V}
 
 
 def smooth_kappa_packet(K, alpha, profile, profile_hat, radius):
