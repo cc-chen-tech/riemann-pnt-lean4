@@ -1,5 +1,31 @@
 # Carlson Two-Thirds Improvement Implementation Plan
 
+## Approved-route continuation (2026-08-30)
+
+The user goal requires an explicit positive saving, not the stronger DI value.
+The later approved half-range route in the paper proof supersedes Tasks 7--8
+as the route for this acceptance: `a=2/5,b=9/20,R=4,delta=1/400,B=6`.
+The stronger DI constructor remains a separate uncompleted extension.
+No analytic gate was dropped: the half-range critical input has been proved
+from the actual weak AFE and finite mean-square estimates.
+
+- [x] Actual AFE, Gaussian moments, fixed auxiliary strip and left-edge selection.
+- [x] Actual Littlewood family count, regularization and full vertical budget.
+- [x] Uniform horizontal log-square budget and closed-shell multiplicity count.
+- [x] Closed-threshold cumulative count, exact recurrence and geometric summation.
+- [x] Unconditional global `IsBigO` and populated density certificate.
+- [x] Density-certificate-free forcing connector and explicit extra-loss margin.
+- [x] All branch-related contracts, transitive axiom audit, placeholder scan and final review.
+
+Final evidence: 152 Lean contracts / 9055 jobs exit zero; 465 standard-only
+axiom reports; 547 Python tests pass; inventory, chain, placeholder and diff
+checks exit zero. See `docs/research/2026-08-30-carlson-half-range-verification.json`.
+
+The acceptance build covers every Test module changed on this Carlson branch
+and their entire dependency closure. An unrelated default-root defect recorded
+below is not evidence against this theorem, and its repair is not part of this
+mathematical task. Final evidence will state the exact build scope.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Formalize Carlson's mollifier-length no-go, the endpoint-saving optimization, the explicit two-scale `5/64` exponent ledger, and a single-layer forcing theorem with separate forcing and density exponents, while isolating the still-unformalized Conrey--Deshouillers--Iwaniec normalization and L2 interpolation input.

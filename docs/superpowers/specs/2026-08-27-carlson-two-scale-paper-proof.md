@@ -1,5 +1,10 @@
 # A two-scale Carlson proof at `sigma = 2/3`
 
+最新正式结论为半长路线 `N_ge(2/3,T) << T^(8/9-1/400)(log T)^6`，
+见 [最终结果与候选路线账本](../../research/2026-08-30-carlson-half-range-density-result.md)。
+下文首先保留较强的 Conrey/DI 纸面方案；其 `467/576` 指数**尚未无条件
+形式化**，不能与本次已经形式化的 `8/9-1/400` 混淆。
+
 ## 1. Statement and method class
 
 Let `N(sigma,T)` count nontrivial zeros of the Riemann zeta function with
@@ -470,8 +475,13 @@ route, not a claim that the saving is uniform in the mollifier length.
 不再保留“存在好直线”或临界矩前提。
 右边负对数预算、净辐角界、实际检测器支集的 Littlewood 恒等式、包含闭阈值等号的
 有限 ζ 零点族重数比较，以及正则化后的完整竖边预算也已形式化。
-尚未完成水平边的统一幂对数预算、完整高度壳计数、全局求和、改进 density certificate
-及 forcing 接线，不能宣布零密度改进的 Lean 验收完成。下文保留按研究顺序记录的旧阶段检查点；最新状态以本段
+水平边的统一平方对数预算、完整闭高度壳计数、保留实部等号的累计计数与几何求和，
+以及无条件 `ZeroDensityEventualMajorant (2/3) (8/9-1/400) 6` 现已全部构建通过。
+实际全局密度结论不再有 analytic gate。forcing 接线与最终联合回归亦已完成：
+152 个相关契约构建退出零（9055 jobs），465 条公理报告仅含基础公理，547 项 Python
+测试通过；见上方最终结果及机器可读证据。实际 forcing 下界仍是明确前提；
+更强 `467/576` 的 Conrey/DI 路线不属于本次已形式化结论。
+下文保留按研究顺序记录的旧阶段检查点；最新状态以本段
 及后面的 post-AFE integration 段落为准。
 
 The finite two-scale mollifier/detector, identity (2.1), cancellation (4.1),
@@ -2237,12 +2247,12 @@ height-sized constant loss.  The absolute value of the right **net** argument
 integral is at most `pi` because `Re(1-F^2)>=8/9`; this is not a bound for
 the integral of the absolute logarithmic derivative.  Both statements are
 now formal in `CarlsonTwoScaleRightLog` and `CarlsonTwoScaleRightArgument`.
-They still need formal composition with the already proved
-good-horizontal-line estimates.
+They are now formally composed with the proved good-horizontal-line estimates.
 For a zero-count shell `[U,9U/8]`, use `V=10U/21`; if `U>=21`,
-`[U-1,9U/8+1]` lies in `[2V,5V/2]`.  The next quantitative formal target is
-the corresponding multiplicity-weighted shell count bounded by
-`A U^(8/9-1/400)(1+log U)^6`, followed by geometric summation.
+`[U-1,9U/8+1]` lies in `[2V,5V/2]`.  The corresponding multiplicity-weighted
+shell count bounded by `A U^(8/9-1/400)(1+log U)^6` and its geometric
+summation are now proved in `CarlsonHalfRangeShellCount`, `CarlsonClosedCount`,
+`CarlsonGeometricSummation`, and `CarlsonHalfRangeDensity`.
 The existing `ZeroDensity.zeroDensityCount` uses `Re(rho)>sigma`; if a
 closed-threshold convention is desired, zeros on `Re(rho)=2/3` must also
 be included in the target finite set.  Their Littlewood weight has the
@@ -2314,7 +2324,7 @@ threshold precede the selected line and **all** inner height intervals.
 There is no boundary-selection or mean-square gate in this vertical
 budget theorem.  It is not yet a complete rectangle bound.
 
-The next formal obligation is precise: for `V=10U/21` and the same
+The horizontal normalization is now formal: for `V=10U/21` and the same
 integer cutoffs, choose nonvanishing horizontal heights
 `u in [U-1,U]`, `v in [9U/8,9U/8+1]` and prove, uniformly for
 `x in (a0,b0)`,
@@ -2329,13 +2339,71 @@ The existing horizontal-selection theorem gives explicit majorants:
 `1/(L+1)`, and a logarithmic variation bounded by
 `O(1+log U)+O(L log(L+1))`.  On its fixed radius interval
 `121/32<=r<=122/32`, `r-15/4>=1/32`; thus the stated squared-log budget
-follows on paper.  It still needs Lean normalization for both moving
-height windows and integration against `w-x`.  After this, instantiate
-the full closed-threshold shell zero set, use the positive weight, sum
-geometric shells, and only then construct and connect the density
-certificate.
+follows. `CarlsonTwoScaleHorizontalBudget` and `CarlsonHalfRangeHorizontalEdges`
+now normalize both moving height windows and integrate against `w-x`.
+The full closed-threshold shell zero set, positive weight, geometric
+summation, and unconditional density certificate have also been assembled.
 
-**Vertical-budget/Littlewood verification checkpoint (2026-08-30).** All
+For the horizontal normalization the fixed constants can be retained
+explicitly.  Put
+
+\[
+ d=\log((31/8)/(123/32)),\quad k=33/d,\quad
+ c_v=33+131k+128k^2,\quad c_h=4(c_v+1)7744+4k(k+1).
+\]
+
+For `U>=6`, `1<=C1,C2<=U`, `1<=Y1<=U`, `0<=S`, and
+`S+14<=4U`, write `L=1+log(4(U+5/4)U)`.  The exact two-scale
+zero-mass and variation majorants are definitionally the same elementary
+expressions as the previously proved Carlson majorants with `X=Y1`;
+`Y0` does not enter these expressions.  The existing algebraic estimates
+give `0<=Z<=kL` and `Vmaj<=c_v L^2`.  Hence, for the selected radius,
+
+\[
+ 4\max(V_{\rm maj},1)\frac{r+15/4}{(r-15/4)^2}
+       +\frac Z{1/(4(Z+1))}
+ \le c_h L^2\le16c_h(1+\log U)^2.
+\]
+
+The last step uses `4(U+5/4)U<=U^4` and `L<=4(1+log U)`.
+The constants from the horizontal-selection theorem are fixed before
+`U`, so `C1,C2<=U` costs only an eventual height threshold.  This deduction
+uses no density theorem or new cancellation estimate.  Integration
+against `w-x` on `[x,4]`, with `0<x<1`, costs at most `16` on each
+horizontal side, which preserves the squared-log order.
+
+**闭壳到全局计数的精确求和。** 令 `F(T)` 为 `0<Im rho<=T`、
+`Re rho>=2/3` 的实际 ζ 零点重数和，`r=9/8`、`q=8/9-1/400>0`，
+`W(T)=T^q(1+log T)^6`。闭壳定理应用于有限集合
+`{rho : U<Im rho<=rU, Re rho>=2/3}`，结合精确不交分解给出
+`F(rU)<=F(U)+C W(U)`，对所有充分大的 `U` 成立。取固定 `a>=1`
+超过该阈值，并置 `D=F(a)+C/(r^q-1)+1`。因为
+`D+C<=D r^q`、`W(rU)>=r^q W(U)`、`W(a)>=1`，归纳得到
+`F(a r^n)<=D W(a r^n)`；这也显式吸收了有限初始高度区间。
+对任意 `T>=a`，选 `a r^n<=T<a r^(n+1)<=rT`，由单调性，
+
+\[
+ F(T)\le D W(rT)
+ \le D r^q(1+\log r)^6 W(T).
+\]
+
+最后 `T>=e` 时 `(1+log T)^6<=64(log T)^6`，所以累计计数保持
+同一个 `q` 和对数次数 `6`。没有增加分析假设，也没有丢弃实部等号
+或高度端点。旧的严格实部计数由此闭阈值计数控制，可直接构造现有
+`ZeroDensityEventualMajorant (2/3) q 6`，而不是假定该证书存在。
+
+**Final half-range verification checkpoint (2026-08-30).** The actual closed-threshold
+global theorem and its strict-threshold certificate have been constructed without
+analytic premises. The density certificate is supplied directly in the new
+`SingleLayerForcingHalfRangeDensity` connector; only the forcing lower-count
+input remains conditional. All 152 branch-related contracts build together with
+exit code zero (9055 jobs). Their 465 axiom reports contain only the three
+standard axioms, with all key declarations present. All 547 Python tests pass.
+Target inventory, chain bookkeeping, placeholder scans and whitespace checks
+also exit zero. This completes the explicit `delta=1/400,B=6` goal, not the
+stronger unformalized DI target or an unconditional zero-free theorem.
+
+**Earlier vertical-budget/Littlewood verification checkpoint (2026-08-30).** All
 seven new source modules and seven contracts are registered in Lake.  One
 combined build of forty-five contracts exits zero (8919 jobs, including
 cached dependencies).  The 114 axiom-audit entries extracted from those
