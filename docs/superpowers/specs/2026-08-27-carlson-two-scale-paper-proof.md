@@ -1787,6 +1787,13 @@ bound already formalized.  For the lower smoothing transition use
 `ell=x-1`, `r=x`, and `g=t/x-2*pi*m`; the denominator then agrees exactly
 with the lower Gamma-tail harmonic gap.
 
+The restricted-cutoff inequality and the underlying primitive transfer
+are now formal in `AFEExplicitPoissonRestrictedCutoff`.  The contract
+build exits zero (8720 jobs including cached dependencies), with only
+the three allowed base axioms.  In particular the conclusion does not
+assume an oscillatory primitive bound: the first-derivative theorem
+supplies it from the phase smoothness, monotonicity, and gap hypotheses.
+
 For clarity, the square-root endpoint band can be chosen with a fixed,
 explicit width.  Let `K=floor(sqrt(t/(2*pi)))>=6`, take `x=K+1`, and
 eventually `N>=2K`.  Then
@@ -1808,20 +1815,99 @@ satisfies `F''>=pi/2`.  The second-derivative primitive bound is
 amplitude `w*u^(-sigma)`, with `sigma>0`, costs at most
 `(4*C1+2)*K^(-sigma)`: the differentiated cutoff contributes
 `4*C1*K^(-sigma)`, the power derivative at most `K^(-sigma)`, and the
-right boundary at most `K^(-sigma)`.  On `[2K,N+1]`,
+right boundary at most `K^(-sigma)`.
+
+The amplitude variation bound and the resulting restricted curvature
+estimate `12*(4*C1+2)*a^(-sigma)/sqrt(r)` are now formal in
+`AFEExplicitPoissonSecondDerivative`, for either fixed sign of the second
+derivative.  The contract build exits zero (8721 jobs including cached
+dependencies), with only the three allowed base axioms.  Neither a
+primitive bound nor an amplitude-variation estimate is assumed by the
+public curvature theorem.  For the right-hand interval the phase satisfies
 
 \[
- F'\geq2\pi(K-1)-\pi(K+1)^2/K
+F'\geq2\pi(K-1)-\pi(K+1)^2/K
        =\pi(K-4-1/K)\geq\pi K/4.
 \]
 
-First-derivative primitive transfer thus bounds this part by
+For a simpler formal whole-mode bound, it suffices to retain the weaker
+gap `F'>=pi` on this second interval.  Indeed `K>=6` implies
+`(K+1)^2<=K*(2*K-3)`, so `t/u<=pi*(2*K-3)` there whenever
+`t<=2*pi*(K+1)^2`; for `m>=K-1`, subtracting this from `2*pi*m`
+leaves at least `pi`.  The restricted first-derivative bound is therefore
+at most `4*(1+4*C1)*(2*K)^(-sigma)/pi`, which is bounded by
+`4*(1+4*C1)*K^(-sigma)/pi`.  Combining with the curvature bound on
+`[K,2*K]` proves, for every `m>=K-1` (in particular all five endpoint
+indices), `N>=2*K`, and `2*pi*K^2<=t<=2*pi*(K+1)^2`,
+
+\[
+ |I_{-m}|\leq
+ \left(\frac{12(4C_1+2)}{\sqrt{\pi/2}}
+       +\frac{4(1+4C_1)}{\pi}\right)K^{-\sigma}.
+\]
+
+This deliberately discards a harmless extra `1/K` from the right segment;
+it changes only the absolute constant for the finite endpoint band, not
+the power or logarithm in the weak AFE.  It must not be summed over all
+`m>=K-1`; the infinite remainder still uses the inverse-square far-tail
+estimate.
+
+Using the sharper gap `pi*K/4` and the vanishing cutoff at `N+1`,
+first-derivative primitive transfer instead bounds this part by
 `64*C1*(2K)^(-sigma)/(pi*K)`, uniformly in `N`.  Each of these five
 full smoothed integrals is therefore `O(K^(-sigma))`.  On the critical
 line, the full Gamma terms for `m=K-1,K` also have this size, by the
 prefactor correction below; retaining them in the desired dual sum costs
 no more than this error.  This is a second-derivative argument, not an
 absolute length estimate over the whole support interval.
+
+The displayed whole-mode bound is now formal in
+`AFEExplicitPoissonEndpointMode`; its contract build exits zero (8722 jobs
+including cached dependencies), with only the three allowed base axioms.
+It derives both curvature and first-derivative gaps from the height cell,
+rather than assuming those estimates as inputs.
+The eleven-contract combined regression, including all three new cutoff
+modules and the preceding Gamma/Poisson contracts, exits zero (8754 jobs).
+All newly exported analytic lemmas have explicit axiom audits containing
+only `propext`, `Classical.choice`, and `Quot.sound`; the new sources have
+no `sorry` or mathematical axioms.  The complete weak AFE and improved
+density certificate are still not asserted by this checkpoint.
+
+The next inner-stationary assembly has a precise summable target.  Assume
+`0<sigma<1`, put `x=K+1`, `beta_x=t/(2*pi*(K+1))`, take `1<=m<=K-2`, and
+take the integer upper cutoff `N>=K+1` sufficiently large that
+`2*pi*m*N>=2*t`.  Splitting the
+smoothed mode at `x` and `N`, using the restricted first-derivative bound
+on `[K,K+1]`, the exact Gamma core replacement on `[K+1,N]`, and absolute
+length only on the single right transition `[N,N+1]`, gives
+
+\[
+ |I_{-m}-G_m|
+ \leq\frac{3+8C_1}{\pi}\,
+       \frac{K^{-\sigma}}{\beta_x-m}
+       +\left(1+\frac4{\pi m}\right)N^{-\sigma}.
+\]
+
+The two lower-end contributions before collecting constants are
+`2*(1+4*C1)*K^(-sigma)/(pi*(beta_x-m))` and
+`(K+1)^(-sigma)/(pi*(beta_x-m))`; the latter is at most the same
+expression with `K^(-sigma)`.  Since
+`beta_x>=K-1+1/(K+1)`, summing the displayed bound over `1<=m<=K-2`
+costs at most
+
+\[
+ \frac{3+8C_1}{\pi}K^{-\sigma}H_{K-2}
+ +\left(K-2+\frac4\pi H_{K-2}\right)N^{-\sigma}.
+\]
+
+This is the next lemma to assemble formally; the separate component
+estimates do not yet constitute its Lean proof.  In the final finite
+frequency split one may choose `M=ceil(t/(pi*K))`.  For integer `K>=6`
+in the height cell, `2*K<=M<=2*K+5`.  All `m>M` then satisfy the existing
+far-tail condition, and all remaining finite nonstationary sums have
+length at most `M`.  This keeps their logarithm `O(1+log(K+1))` and all
+upper-transition errors inside a fixed-in-height multiple of
+`N^(-sigma)`, before the single primal cutoff limit is taken.
 
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
