@@ -12,8 +12,9 @@ Möbius 有限和等于真实 Euler 因子被积函数的 Perron 积分，且该
 
 再下一步已原生证明 (R0) 与 (RC)：统一于互素参数的解析正规化、二次局部
 误差及实际圆周留数，包括零移位。第 12 节进一步构造任意大高度下的
-实际无零矩形并证明精确留数恒等式。整线尾积分拼接、移位导数误差和
-路径大小估计仍未闭合，完整内层渐近尚未完成。
+实际无零矩形并证明精确留数恒等式。第 13 节已证明保留模数依赖的
+Euler 因子统一界及上下水平路径的实际积分界。左边界、整线尾积分拼接、
+移位导数误差和 Volterra 转移仍未闭合，完整内层渐近尚未完成。
 
 Source for comparison: [Conrey 1983, Lemma 10, printed pp. 54–56](https://aimath.org/~kaur/publications/3.pdf).
 The full contour and residue pages were visually checked. The following
@@ -383,11 +384,13 @@ no equality with the raw totalized reciprocal at `z=0` is claimed.
 
 The rectangle derivative formula and actual local-rectangle residue are
 implemented in Section 11. Section 12 additionally proves the high-rectangle
-zero-free assembly and exact actual residue. Native implementations of the
-finite Volterra profile transfer, shifted derivative/Cauchy error bounds,
-the path norm estimates and full-line tail assembly, and their combination
-into (GV) remain necessary. The eventual specialization of the geometric
-parameters in Section 12 is presently a paper calculation.
+zero-free assembly and exact actual residue. Section 13 proves the uniform
+finite Euler bound (F) and both degree-one horizontal connector bounds (HC).
+Native implementations of the finite Volterra profile transfer, shifted
+derivative/Cauchy error bounds, the left-edge bound and full-line tail
+assembly, and their combination into (GV) remain necessary. The eventual
+specialization of the geometric parameters in Sections 12–13 is presently
+a paper calculation.
 The previous arithmetic outer average and the actual
 Gaussian/Estermann/DI mean-square chain also remain unfinished.
 
@@ -622,3 +625,112 @@ Verification of the high-rectangle step:
 This is targeted Lean verification, not a fresh full-repository baseline
 or a GitHub CI result. (GV), the outer arithmetic mean, the actual long
 mean square/DI chain, and the final strict two-fifths conclusion remain open.
+
+## 13. 有限 Euler 因子的统一界与实际水平路径误差
+
+这一步不再只证明被积函数解析：上下两条水平边的连续性、可积性和
+定量积分界均已原生证明。模数因子 `B_m` 完整保留；统一常数仅吸收
+绝对收敛的平方修正。这里仅处理已选定的一次对数 Perron 核 `1/w^2`。
+
+For `0<=delta<=1/16`, write
+
+\[
+ C_0=\sum_{n\ge1}n^{-7/4},\qquad
+ B_m(\delta)=\prod_{p\mid m}(1+p^{-(1-2\delta)}).
+\]
+
+The series defining `C0` is actually summable and `C0>=1`. For each
+prime put `r=p^{-(1-2delta)}` and `q=p^{-7/4}`. Then
+`0<=r<1`, `q<1`, and `r^2<=q`. If `Re z>=-2delta`, the reverse
+triangle inequality gives
+
+\[
+ |1-p^{-(1+z)}|^{-1}
+ \le(1-r)^{-1}\le(1+r)(1-q)^{-1}.
+\]
+
+The finite product of `(1-q)^(-1)` is the convergent sum of `n^(-7/4)`
+over integers supported on primes dividing `m`. This is at most `C0`,
+so multiplication proves the actual uniform bound from (F):
+
+\[
+ \lVert E_m(z)\rVert\le C_0 B_m(\delta),\qquad \Re z\ge-2\delta.
+\]
+
+`HardyTheorem.norm_conreyCoprimeEulerInverse_le` proves this in
+`ConreyCoprimeEulerBound`. The proof supplies `Summable`/`HasSum` before using
+the infinite sum, rather than relying on a totalized divergent `tsum`.
+
+Choose `c,T` from (Z), before all subsequent parameters. Assume
+
+\[
+ \begin{gathered}
+ X\ge1,\quad b,u\ge0,\quad K\ge T+1,\quad |y|=K,\\
+ b+|\alpha|\le2\delta,\quad
+ b+|\alpha|\le c/\log(K+1),\quad u+|\alpha|\le1.
+ \end{gathered}
+\]
+
+For `-b<=x<=u` set `w=x+iy` and `tau=Im(alpha)+y`. Since
+`|alpha|<=1`, we have `T<=|tau|<=K+1`. The direction of the width
+comparison is important: `c/log(K+1)<=c/log|tau|`. Thus (Z) gives
+actual zeta nonvanishing and
+
+\[
+ |\zeta(1+\alpha+w)^{-1}|
+ \le Z_K:=(1+\log(K+1)/c)\exp(\log(K+1)/4).
+\]
+
+The Euler factors are analytic because `Re(alpha+w)>=-2delta>-1`;
+the zeta pole is excluded by `|tau|>=T>=2`; and `|w|>=K>0`.
+These facts prove continuity and interval integrability of the actual
+integrand, without taking either as an assumption. Also `|X^w|<=X^u`.
+The interval norm inequality now proves
+
+\[
+ \boxed{\left\lVert\int_{-b}^{u}
+ \frac{X^{x+iy}}{(x+iy)^2\zeta(1+\alpha+x+iy)F_m(1+\alpha+x+iy)}\,dx
+ \right\rVert
+ \le\frac{(b+u)X^u C_0 B_m(\delta)Z_K}{K^2}.}
+ \tag{HC}
+\]
+
+`HardyTheorem.exists_conrey_coprime_mobius_horizontal_bound` proves
+both this inequality and integrability. The same endpoint covers `y=K`
+and `y=-K`, including zero shift, `X=1` and degenerate intervals. It
+estimates each connector itself: no `1/(2pi)`, profile `1/H`, or sum
+of the two edges is silently included. Reversing an edge changes its
+sign but not this norm bound.
+
+At the Section 2 parameters, `1<=X<=exp H` implies `X^u<=exp 2`.
+The high-rectangle width from Section 12 is at most `c/log(K+1)`;
+the remaining inequalities hold for sufficiently large `H`. Thus each
+connector costs `O(B_m K^(-7/4) log K)` for `S1`. For the normalized
+linear profile `G=S1/H`, substituting `K=H^4` gives
+`O(B_m H^(-8) log H)`. These asymptotic parameter specializations are
+paper calculations, not additional Lean endpoints. The left edge,
+right tails and their assembly, shifted derivative error, finite
+Volterra identity and (GV) remain unfinished.
+
+Verification of the Euler/horizontal step:
+
+- Both literal contracts first failed only on the intended missing theorem
+  names. They retain the actual Euler product, shifts, interval length,
+  full modulus majorant and squared-kernel normalization.
+- `nice -n10 lake build Test.ConreyCoprimeEulerBoundContract
+  Test.ConreyCoprimeMobiusHorizontalBoundContract
+  Test.ConreyCoprimeMobiusHighRectangleContract
+  Test.ConreyCoprimeMobiusPerronContract
+  Test.ConreyReciprocalZetaStripContract`: exit 0, 8735 jobs.
+- The three printed new endpoints use only `propext`, `Classical.choice`
+  and `Quot.sound`. Both production modules and contracts are Lake roots.
+  Python regression: 546 passed, exit 0. Target inventory, chain-gap and
+  whitespace checks passed.
+- The horizontal endpoint has twelve local modules in its import closure,
+  no Zeta23 imports, and only Mathlib as an external root.
+- Independent read-only source and mathematical review found no issue
+  in convergence of `C0`, retained modulus dependence, shifted heights,
+  integrability, normalization or degenerate cases.
+
+This remains targeted verification, not a whole-repository Lean baseline,
+GitHub CI pass, proof of (GV), actual long moment, or the final `>2/5` result.
