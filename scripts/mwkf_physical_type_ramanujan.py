@@ -13,6 +13,116 @@ from math import ceil, floor, gcd, lcm, pi
 from scripts.mwkf_mobius_type_identity import c_u, divisors, mobius, split_mobius_identity
 
 
+def type_ii_smooth_ledger(n, U, V, Q, chi):
+    """JT1 finite bulk and positive transition boundary, with literal units.
+
+    Caller supplies chi=0 on t<=1 and chi=1 on t>=2. No smoothness is
+    certified here. The quotient m is not restricted to squarefree numbers.
+    """
+    if any(not isinstance(a, int) or a < 1 for a in (n, U, V, Q)):
+        raise ValueError("positive integer n,U,V,Q required")
+    unit = gcd(n, Q) == 1
+    direct = -sum(c_u(a, U)*mobius(n//a) for a in divisors(n)
+                  if unit and a > U and n//a > V)
+    atoms = tuple((c, b, n//(b*c), -mobius(c)*mobius(b)*chi(F(n, b*U)))
+                  for c in divisors(n) if unit and c <= U and mobius(c)
+                  for b in divisors(n//c) if b > V and mobius(b))
+    boundary = sum(mobius(a)*mobius(n//a)*(1-chi(F(a, U)))
+                   for a in divisors(n) if unit and U < a < 2*U and n//a > V)
+    return {"direct": direct, "bulk_atoms": atoms,
+            "bulk": sum(row[3] for row in atoms), "boundary": boundary}
+
+
+def joint_type_ii_normal_coordinates(t, x, eta, sigma):
+    """Exact rational normal form; no numerical stationary-phase approximation."""
+    t, x, eta, sigma = map(F, (t, x, eta, sigma))
+    if x <= 0 or eta <= 0:
+        raise ValueError("positive x,eta required")
+    y = 1/x-eta
+    w = t+sigma/(eta*(eta+y))
+    return {"y": y, "w": w, "jacobian": (eta+y)**(-2),
+            "phase": -sigma/eta+y*w, "x_recovered": 1/(eta+y),
+            "t_recovered": w-sigma/(eta*(eta+y))}
+
+
+def joint_type_ii_divisor_packet(A, B, j, k, l, ns, amplitude):
+    """JT7 finite all-v reassembly for e=q=1, with a COMMON n cutoff.
+
+    amplitude(A,n) must already have the proved allocation-independent
+    physical symbol. This does not certify that hypothesis, analytic tails,
+    or a norm bound. A rectangular ell cutoff or leftover v-shell cannot
+    replace the lifted labels. The physical outer factor C*mu(b)*mu(c)
+    and the other indices are left to the caller.
+    """
+    ns = tuple(ns)
+    if (any(not isinstance(a, int) or a < 1 for a in (A, B))
+            or any(not isinstance(a, int) or a == 0 for a in (j, k, l, *ns))
+            or len(ns) != len(set(ns))):
+        raise ValueError("positive A,B, nonzero integer j,k,l and distinct nonzero n required")
+    active = gcd(A, B) == 1 and mobius(A) != 0
+    labels, divisor_sum, coefficients = [], 0j, {}
+    for n in ns:
+        value = amplitude(A, n)*cmath.exp(-2j*pi*float(F(n*k*l, j*B))) if active else 0j
+        for v in divisors(A) if active else ():
+            a0 = A//v
+            if n % a0 == 0:
+                labels.append((v, n//a0, n))
+                divisor_sum += F(mobius(A)*mobius(v), B*v*abs(j))*value
+        g = gcd(A, abs(n))
+        phi_g = sum(gcd(a, g) == 1 for a in range(1, g+1))
+        coefficients[n] = F(mobius(g)*phi_g, A*B*abs(j)) if active else F(0)
+    collapsed = sum(coefficients[n]*amplitude(A, n)*cmath.exp(-2j*pi*float(F(n*k*l, j*B)))
+                    for n in ns) if active else 0j
+    return {"divisor_sum": divisor_sum, "collapsed_sum": collapsed,
+            "coefficients": coefficients, "lifted_labels": tuple(labels)}
+
+
+def type_ii_density_factor(B, n):
+    """Rational factor zeta(2)*c(B)*delta_B(n), for nonzero n.
+
+    Prime powers in B or n are not counted repeatedly. No asymptotic or
+    positivity of the full complex physical density is asserted.
+    """
+    if not isinstance(B, int) or B < 1 or not isinstance(n, int) or not n:
+        raise ValueError("positive integer B and nonzero integer n required")
+    result = F(1)
+    for p in divisors(B*abs(n)):
+        if p > 1 and len(divisors(p)) == 2:
+            result *= F(p if B % p == 0 else 1, p+1)
+    return result
+
+
+def type_ii_squarefree_mean_ledger(X, B, n, profile):
+    """JT9 finite equality only; profile is supported on [1,2].
+
+    density_factor omits zeta(2)^(-1) and the integral profile(x)/x dx.
+    The analytic discrepancy bound is proved in the note, not by this code.
+    """
+    X = F(X)
+    if X <= 0:
+        raise ValueError("positive X required")
+    factor = type_ii_density_factor(B, n)
+    direct = sum(F(mobius(A)**2, A)*sum(mobius(d)*d for d in divisors(gcd(A, abs(n))))
+                 *profile(A/X) for A in range(max(1, ceil(X)), floor(2*X)+1)
+                 if gcd(A, B) == 1)
+    expanded = sum(mobius(d)*sum(F(mobius(u)**2, u)*profile(d*u/X)
+                    for u in range(max(1, ceil(X/d)), floor(2*X/d)+1) if gcd(u, d*B) == 1)
+                   for d in divisors(abs(n)) if mobius(d) and gcd(d, B) == 1)
+    return {"direct": direct, "divisor_expansion": expanded, "density_factor": factor}
+
+
+def type_ii_linear_row_exponents(p, nu, omega, u, cutoff_exp=0):
+    """JT16 e=q=1 row cost, not a coverage certificate or all-e estimate."""
+    p, nu, omega, u, cutoff_exp = map(F, (p, nu, omega, u, cutoff_exp))
+    a = 3-nu-omega
+    if not (a > p > 0 and 0 <= nu <= p and min(omega, u, cutoff_exp) >= 0):
+        raise ValueError("a=3-nu-omega>p>0, 0<=nu<=p and nonnegative lengths required")
+    delta = min(a/5, (a-p)/2, p/2)
+    baseline = 2+2*p+u+cutoff_exp-nu
+    return {"row_length": a, "saving": delta, "baseline": baseline,
+            "cost": baseline-delta, "stationary_b_min": 3-p-omega-cutoff_exp}
+
+
 def joint_type_i_unit_packet(K, D, B, Q, z0, amplitude, dual_hat, j_cutoff, ell_cutoff):
     """JQ3/JQ5 finite samples and a rectangular double-Poisson truncation.
 

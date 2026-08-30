@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-30 全 v Type-II 重组与短 b 覆盖。** [JT1–JT16](2026-08-30-mwkf-joint-type-ii-density.md) 保留真实 transition boundary，用精确有理坐标变换控制联合 Poisson symbol；在 e=q=1 时，先恢复所有 v|A 再令 n=(A/v)ℓ，系数合并为 µ((A,n))φ((A,n))/A。初等平方自由均值给出显式密度 c(bc)δ_{bc}(n)；其整个 b 范围的物理成本为 HL·P/R，不是原 canonical zero Gram。平衡顶层 K≈P≈T 的误差成本为 T^{2+ε}(UB₀)^{3/2}，故 U,V 为对数幂、b≈B₀≲T^{2/3} 的整个 v 家族达到 T^{3+ε}，其 transition boundary 由 4UB₀<D 排除。长 b、其他 e,q、统一 signed operator 的完整目标界与 twisted moment 仍未证明。
+
 > **2026-08-30 联合 κ/quotient 的 Type-I 覆盖。** [JQ1–JQ18](2026-08-30-mwkf-joint-kappa-type-i.md) 将完整 κ 与真正无符号 Type-I quotient 一起 Poisson，再对其全部非零频率取绝对值；保留所有除数、零 j、远 j、连续密度与显式双频率尾。真实物理成本是 `ρ[D²(1+Z)^(-J)+DZUV/K] T^ε`，整个 e-shell 为 `ρ[S²/E·(1+Z)^(-J)+SZUV/K] T^ε`。平衡顶层 K≈Z≈T、U,V 为固定对数幂时，这个 Type-I 部分达到自身 T^{3+ε} 预算；降低 cutoff 会扩大剩余 Type-II，不会令其消失。完整 coupled-kernel gate、统一 signed operator 的目标界与 twisted moment 仍未证明。
 
 > **2026-08-30 真实 Type-I 的连续密度与互素别名。** [TI1–TI14](2026-08-30-mwkf-type-i-density-aliases.md) 仅分解实际 µ(d)，保留 µ(A) 与耦合核。完成无符号 quotient 的精确端点是 `Σ_{b≤V,(b,Q)=1}µ(b)g(b)`；支撑 d>V 时消失，不需 d>UV。连续密度无驻点，但完整互素别名仍须保留。所得 Type-I 物理界为 `T^ε ρ[D²(1+Z)^(-J)+D(1+Z)UV]`；平衡 K≈T、UV=T^β 时是 `T^{4+β+ε}`，不是整个分片的改善。另证明一片不平衡短 Type-I 区域快速衰减，并明确排除 Srivastav 新定理在平衡原 A 行上的直接应用。大除数驻相别名、Type-II、共同 signed operator 与完整 twisted moment 仍未解决。
@@ -21,6 +23,7 @@
 >
 > | component | status in this note |
 > |---|---|
+> | All-v Type-II arithmetic density and short-b coverage | JT7 restores every divisor before absolute values. JT9 evaluates the squarefree mean with unit masks and all large-divisor errors. In the e=q=1 balanced top core, the explicit density is within budget and the complete b≲T^(2/3) Type-II family is O(T^(3+epsilon)), with verified transition boundary and nonstationary tails. Long b, other e,q and the full canonical-zero/nonzero operator estimate remain open |
 > | LCM main quadratic form | proved separately; its normalization is rechecked below |
 > | Exact AFE and shifted-divisor identity | proved after audit in Sections 2--3 |
 > | Poisson zero/nonzero-mode identity | proved after the corrections in Section 4 |
@@ -28360,6 +28363,54 @@ the d-small part and the quotient endpoint vanish. The complete
 Type-II coefficients have not been estimated, and their long b count
 cannot be charged as UV. This is a real Type-I budget result, not a
 replacement proof for the full coupled-kernel gate or twisted moment.
+
+### 9.211 All-divisor Type-II reassembly yields a controllable arithmetic mean
+
+The [joint Type-II note](2026-08-30-mwkf-joint-type-ii-density.md)
+starts from the sharp cm>U,b>V sector. JT1 smooths only cm/U and keeps
+the exact positive transition boundary on U<a<2U; the physical outer
+minus sign is accounted for separately. The unsigned quotient is not
+restricted to squarefree integers.
+
+The rational change of variables JT3 transforms the double-Poisson
+phase into a constant plus y*w. JT4 therefore gives an exact symbol
+with uniform normalized parameter derivatives, not just an asymptotic
+stationary-phase leading term. The carrier is
+e(-ell*A*k*l/(j*b*c*v)). JT6 pays every noncritical frequency, including
+zero j; the quotient zero frequency remains the separate JQ density.
+
+For e=q=1, restore all v|A and put n=(A/v)*ell. At fixed A,n the full
+symbol, not merely its leading value, is independent of v. The signed
+divisor coefficient becomes mu(g)*phi(g)/A, g=gcd(A,abs(n)), with A
+squarefree and (A,bc)=1. A common finite n cutoff must be lifted to
+each v; an independent ell rectangle or surviving v-shell cannot be
+used in this exact identity.
+
+JT9 evaluates the resulting A mean as c(bc)*delta_bc(n) times the
+actual weighted integral plus an explicit squarefree discrepancy.
+Here c(B)=zeta(2)^(-1)*prod_{p|B}p/(p+1), and delta_B(n) is the
+product of 1/(p+1) over primes dividing n but not B. The proof keeps
+all d|n, including X<d<2X and d>2X. A convergent Euler product at
+any fixed positive exponent bounds the whole nonzero-n density by
+T^epsilon uniformly for polynomial-size B. Thus the physical density
+cost is C*P=HL*P/R, within S=T^3 on the balanced p<=1 core. This
+density is not identified with the original canonical zero Gram.
+
+At K~P~Z~T and b~B0, the complete discrepancy costs
+T^(2+epsilon)*(U*B0)^(3/2), with every b,c,v and frequency counted.
+For logarithmic U,V and B0<=T^(2/3), it is within T^(3+epsilon).
+The inequality 4*U*B0<D excludes the transition boundary and K>2
+excludes the kappa=e=1 correction; the other transformed tails are
+rapid. JT14 is consequently actual new coverage of this entire
+e=q=1 Type-II b family, not merely of a single divisor row.
+
+JT16 separately verifies a restricted linear-Mobius input on a
+low-frequency v-shell; its top-face cost is insufficient. The
+ordinary linear carrier is not a modular-inverse Kloosterman
+fraction, so the Bettin--Chandee or Wright estimates are not direct
+adapters for it. Long b, the other e,q families, and the complete
+canonical-zero/nonzero signed operator norm remain unproved.
+No full twisted-moment claim follows from this checkpoint.
 
 ## 10. What has and has not been proved
 
