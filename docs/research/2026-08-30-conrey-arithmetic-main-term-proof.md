@@ -12,6 +12,13 @@ and [Conrey 1989, Lemma 1, printed pp. 12–13](https://aimath.org/~kaur/publica
 The relevant complete pages were visually checked. The outer convolution
 argument below replaces the contour argument of the older Lemma 11.
 
+Subsequent update: the [inner Möbius contour proof](2026-08-30-conrey-inner-mobius-contour-proof.md)
+reconstructs the needed zero-order input from zero-free-region, Perron,
+and Cauchy estimates instead of leaving Lemma 10 as a paper black box.
+It also gives an exact Volterra reduction to the existing degree-one
+Perron kernel. The native inner-sum theorem itself is still unfinished;
+the new native analytic endpoint is the actual reciprocal-zeta strip bound.
+
 ## 1. Parameters and the smaller source-compatible neighborhood
 
 Set `L=log T`, `theta=571/1000`, `y=T^theta`, `H=log y=theta L`,
