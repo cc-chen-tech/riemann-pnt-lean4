@@ -1741,6 +1741,29 @@ jobs including cached dependencies), with only `propext`,
 `Classical.choice`, and `Quot.sound` in the axiom audit.  No cutoff limit
 or phase-sign hypothesis is supplied by the caller.
 
+The final upper-cutoff passage need not prove convergence of each smoothed
+Fourier mode.  Keep `t` fixed and first apply Poisson summation at each
+finite integer `N`.  Subtract `N^(1-s)/(1-s)` on that finite identity,
+replace the finitely many inner stationary cores by the Gamma values,
+and bound every other term using the estimates uniform in `N`.  After
+the remaining smoothing and nearest-endpoint bounds are supplied, this
+gives a bound of the form
+
+\[
+ \left|\left(\sum_{n\leq N}n^{-s}-\frac{N^{1-s}}{1-s}\right)
+       -D_K(s)-P(s)D_K(1-s)\right|
+ \leq R(t)+C(t)N^{-\sigma}.
+\]
+
+Here `K`, the finite frequency split, and `C(t)` are fixed before sending
+`N` to infinity.  Euler--Maclaurin identifies the limit of the single
+parenthesized primal expression as `zeta(s)` for `sigma>0`, while
+`C(t)*N^(-sigma)` tends to zero.  Continuity of the norm preserves the
+inequality.  Thus no termwise exchange of the upper-cutoff limit with the
+infinite Poisson sum, nor a separate convergence theorem for the normalized
+zero mode, is necessary.  This simplification does not dispense with the
+uniform smoothing and nearest-endpoint estimates in `R(t)`.
+
 For clarity, the square-root endpoint band can be chosen with a fixed,
 explicit width.  Let `K=floor(sqrt(t/(2*pi)))>=6`, take `x=K+1`, and
 eventually `N>=2K`.  Then
@@ -1919,8 +1942,39 @@ Consequently replacing `P(s)` by `U` in the dual sum changes the error by
 at most `2*sqrt(y)*exp(-2*pi*t)`.  No regularity of `U(t)` is required by
 the downstream energy inequality.  This proves the required normalization
 on paper without identifying `U` with `chi(s)`, and does not assert that
-the raw Gamma coefficient is itself a unit phase.  Its Lean proof remains
-an explicit obligation of the weak-AFE assembly.
+the raw Gamma coefficient is itself a unit phase.  The squared-norm
+identity, nonvanishing, the uniform bound `|P|<=1`, and the existence of
+this exponentially close unit phase are now formal in
+`AFECriticalGammaPrefactor`.  Its contract build exits zero (8698 jobs
+including cached dependencies), with only the three allowed base axioms.
+
+The same phase must be used for every frequency, not chosen separately
+after summation.  For every real `m>0`, multiplicativity of principal
+powers of positive real numbers gives exactly
+
+\[
+ G_m:=(2\pi m)^{s-1}e^{i\pi(1-s)/2}\Gamma(1-s)
+      =P(s)m^{s-1}.
+\]
+
+On the critical line `|m^(s-1)|=m^(-1/2)`, so `|G_m|<=m^(-1/2)` and the
+single `U(t)` above satisfies, simultaneously for all `m>0`,
+
+\[
+ |G_m-U(t)m^{s-1}|\leq e^{-2\pi t}m^{-1/2}.
+\]
+
+For every integer `K>=0`, subtracting the finite sums, taking norms, and
+using `sum_(1<=m<=K) m^(-1/2)<=2*sqrt(K)` therefore gives
+
+\[
+ \left|\sum_{m=1}^K G_m-U(t)\sum_{m=1}^K m^{s-1}\right|
+ \leq 2\sqrt K\,e^{-2\pi t}.
+\]
+
+These are purely multiplicative and finite-sum deductions from the exact
+Gamma norm identity; no phase regularity or additional moment estimate
+is needed.
 
 For the explicit width-one cutoff, the stationary membership bounds use
 `N+1` and `x-1` in place of `N+2` and `x-2` in (8.23).
