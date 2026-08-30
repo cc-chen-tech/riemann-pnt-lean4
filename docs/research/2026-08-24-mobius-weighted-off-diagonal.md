@@ -1,5 +1,8 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-30 物理 adapter 修正（优先于下列历史状态行）。** [共同相位与最小范数 lift 修正](2026-08-30-mwkf-common-phase-adapter.md)证明：共同 Fourier 零频仍含共同 g 的逆比率相位，不能直接替换为单层 F_p G_p。原 short-Type-I companion 覆盖/PCDI-SREM 删格暂不适用于实际行；未另证前须恢复全部格子及完整 eta_imb 目标。最小 graph-span lift 精确修复短侧 norm，||b_min||²=||R||²/phi(q)，而非未投影 tensor 的 norm。完整 U/V 与抽象 scalar Cauchy 保留。新式 (CG23) 覆盖共同零频的低共同导子子空间；在极端素数 g~T 的情形，包括任一侧共同字符 principal 的部分。两侧共同非主与其他共同频率仍需估计，耦合解析 gate 仍开放。
+
+
 > **Current proof status.**
 >
 > | component | status in this note |
@@ -24536,6 +24539,11 @@ congruences are exact.  It marks no analytic gate closed.
 
 ### 9.173 Ratio-convolution expansion removes both cross inverses
 
+**Physical correction.** The identities below hold for a supplied single-level
+separated ratio convolution. They do not identify the literal common-zero
+profile (9.1139) without the common multiplier. Equation (CG4) in [共同相位与最小范数 lift 修正](2026-08-30-mwkf-common-phase-adapter.md)
+restores e_g(A n/m + B m/n); use that formula for the physical packet.
+
 The profiles in (9.1145) still have the exact ratio-convolution
 structure of (9.920).  On one separated physical atom, choose finite
 unit lifts
@@ -25267,6 +25275,14 @@ remain false.
 
 ### 9.177 Type I opens one PV variable but retains the companion prime factor
 
+**Coverage correction.** This section is a phase-free active-prime model
+calculation. The literal multiplier restored in (CG3)--(CG13) of [共同相位与最小范数 lift 修正](2026-08-30-mwkf-common-phase-adapter.md)
+introduces a common character of conductor f|g, so the Type character has
+conductor ell*f, not generally ell. The old companion cells and PCDI-SREM
+selector below are NOT proved physical coverage. Restore all such cells
+and do not subtract eta_I,S unless an additional phase/conductor certificate
+is established. The audit helper now refuses this deletion by default.
+
 The four top-face blocks in (9.1176) do not have equal difficulty, but
 the Type-I identity must be inserted with the complete coefficient from
 (9.1038).  Orient the prime conductors so that the long conductor has
@@ -25457,6 +25473,11 @@ and sends all other Type-I cells and every Type-II cell to
 (PCDI-SREM).  All three leave the coupled-kernel flag false.
 
 ### 9.178 The companion fourth moment is diagonally sharp
+
+**Physical boundary.** The finite character-moment identities remain valid.
+The eta_I,S and eta_cross ledger below refers only to the phase-free model
+of Section 9.177; it is not a certified reduction of the physical imbalance
+after the common-phase correction. See [共同相位与最小范数 lift 修正](2026-08-30-mwkf-common-phase-adapter.md).
 
 The remaining \(p\)-factor cannot be opened as a second oscillating
 Möbius variable.  It is the prime-bearing coordinate of (9.889), and
@@ -25954,6 +25975,15 @@ false.  Section 9.183 supplies the separate global transfer.
 
 ### 9.183 The global packet norm reduces PCDI-SREM to WRFE
 
+**Norm and selector correction.** Use the actual centered short profile R,
+including the common phase, and the canonical lift
+b_min(u,v)=R(-u/v)/phi(q), not the unprojected F tensor G. Its norm is
+exactly ||R||²/phi(q), as proved in (CG15)--(CG17) of [共同相位与最小范数 lift 修正](2026-08-30-mwkf-common-phase-adapter.md).
+The finite Cauchy formulas below then hold with this lift and the fully
+weighted long coefficient. The previous Type-I selector is unverified:
+for the physical implication use all restored cells and eta_imb, not a
+gain already reduced by the phase-free eta_I,S.
+
 Return to the exact residual packet after the companion subpolytope of
 Section 9.177 has been removed.  For one projective atom \(\omega\),
 let \(\lambda\) collect only the already registered Hilbert coordinates
@@ -26035,10 +26065,10 @@ Cauchy inequality, rather than atomwise absolute values, gives
 \]
 
 This costs precisely the proved projective \(\ell^1\)-norm
-\(\sum_\omega|\rho_\omega|\ll T^\varepsilon\).  Orthogonal projection
-to the common zero frequency and then to the high-order primitive
-sector is a contraction; zero extension and additive/multiplicative
-Parseval show that
+\(\sum_\omega|\rho_\omega|\ll T^\varepsilon\).  For the corrected canonical lift, ||b_min||²=||R||²/phi(q).
+Orthogonal projection to a normalized common Fourier frequency and
+then to the high-order primitive sector is a contraction. These facts
+(not a subenergy claim for the unprojected F tensor G) give
 
 \[
  \sum_\omega|\rho_\omega|
@@ -26080,8 +26110,8 @@ the correctly normalized analytic leaf is
  \tag{WRFE}
 \]
 
-The Type-I gain \(\eta_{\rm I,S}\) has already been absorbed into the
-definition of the residual coefficients, so (WRFE) asks only for
+In the historical phase-free model, the Type-I gain \(\eta_{\rm I,S}\)
+was absorbed into the residual coefficients, so its (WRFE) asked only for
 \(2\eta_{\rm cross}\) in the squared energy.  Combining (9.1229)--
 (9.1231) with (9.1208) gives the proved logical implication
 
@@ -26091,7 +26121,10 @@ definition of the residual coefficients, so (WRFE) asks only for
  \tag{9.1232}
 \]
 
-This closes the **global packet adapter**, not the analytic gate.
+The canonical lift above repairs the **global packet adapter**, not the
+analytic gate. Its physical application must restore the unverified
+Type-I cells and use the full imbalance gain; the old PCDI-SREM selector
+is only a phase-free model until separately certified.
 Estimate (WRFE) remains unproved, and therefore so do (PCDI-SREM),
 (NPIT), bounded \(D\), and the coupled-kernel gate.  The gain is that
 there is no longer an ambiguity about projective separation or an
@@ -27179,6 +27212,13 @@ the raw and uniform-completed masters, and leaves every analytic flag
 false.
 
 ### 9.193 Triple character inversion retains the mutual phase
+
+**Physical correction.** The formulas below invert the phase-free model.
+For the literal common Fourier row, insert the additional eta_1,eta_2
+sums and their Gauss/mixed-Kloosterman coefficients from (CG7)--(CG14) in
+[共同相位与最小范数 lift 修正](2026-08-30-mwkf-common-phase-adapter.md). Each Type/label character is chi_p*conjugate(eta), with
+primitive conductor p*cond(eta) and all remaining unit masks. Ordinary
+active-prime character bounds alone do not cover this enlarged tensor.
 
 The completion in Section 9.190 can be inverted without expanding its
 eight terms separately.  For a prime \(p\) and units \(q,m,D,n\), finite

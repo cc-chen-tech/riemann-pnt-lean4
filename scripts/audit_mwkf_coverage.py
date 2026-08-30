@@ -28184,8 +28184,16 @@ def prime_incidence_short_type_I_pv_polytope_audit(
     short_companion_factor_exponent: Fraction,
     physical_maximum_primitive_conductor_exponent: Fraction,
     packet_exhaustive_residual_bv_adapter_verified: bool,
+    common_phase_free_model_verified: bool = False,
 ) -> dict[str, object]:
-    """Record the short-side Type-I Pólya--Vinogradov gain.
+    """Record a phase-free model gain, never automatic physical coverage.
+
+    The physical common-frequency row contains an inverse-ratio
+    multiplier modulo g.  Unless its removal AND preservation of the
+    active-only conductor/unit masks have been proved separately, the
+    old model gain cannot delete a physical companion cell.  This
+    helper does not prove the optional certificate.
+
 
     After the exact Type-I expansion, dyadic short factors of total
     exponent at most ``beta+chi`` are summed trivially.  The quotient
@@ -28242,7 +28250,9 @@ def prime_incidence_short_type_I_pv_polytope_audit(
     type_I_fourth_raw = 4 * smooth_group + companion_fourth
     type_I_fourth = min(generic_fourth, type_I_fourth_raw)
     fourth_gain = _positive_part(generic_fourth - type_I_fourth)
-    usable_bilinear_gain = fourth_gain / 4
+    formal_bilinear_gain = fourth_gain / 4
+    phase_free = bool(common_phase_free_model_verified)
+    usable_bilinear_gain = formal_bilinear_gain if phase_free else F(0)
     required_imbalance_gain = _positive_part(
         (sigma_long - sigma_short) / 2 - kappa_long - kappa_short
     )
@@ -28250,7 +28260,10 @@ def prime_incidence_short_type_I_pv_polytope_audit(
         required_imbalance_gain - usable_bilinear_gain
     )
     adapter = bool(packet_exhaustive_residual_bv_adapter_verified)
-    covered = bool(adapter and usable_bilinear_gain >= required_imbalance_gain)
+    covered = bool(
+        adapter and phase_free
+        and usable_bilinear_gain >= required_imbalance_gain
+    )
     maximum_uniform_companion = _positive_part(
         4
         - sigma_long
@@ -28274,13 +28287,18 @@ def prime_incidence_short_type_I_pv_polytope_audit(
         "raw_type_I_short_fourth_moment_exponent": type_I_fourth_raw,
         "type_I_short_fourth_moment_exponent": type_I_fourth,
         "short_type_I_fourth_moment_gain_exponent": fourth_gain,
+        "formal_phase_free_bilinear_gain_exponent": formal_bilinear_gain,
+        "common_phase_free_model_verified": phase_free,
         "usable_bilinear_gain_exponent": usable_bilinear_gain,
         "required_conductor_imbalance_gain_exponent": required_imbalance_gain,
         "remaining_companion_dispersion_gain_exponent": (
             remaining_companion_dispersion_gain
         ),
         "gain_margin_exponent": usable_bilinear_gain - required_imbalance_gain,
-        "maximum_uniformly_covered_companion_exponent": maximum_uniform_companion,
+        "formal_phase_free_maximum_companion_exponent": maximum_uniform_companion,
+        "maximum_uniformly_covered_companion_exponent": (
+            maximum_uniform_companion if phase_free and adapter else None
+        ),
         "packet_exhaustive_residual_bv_adapter_verified": adapter,
         "covered_type_I_short_companion_subpolytope": covered,
         "type_I_cell_retained_in_PCDI_SREM": not covered,

@@ -8670,6 +8670,7 @@ def test_prime_incidence_type_I_factorization_and_short_side_pv_gain() -> None:
         short_companion_factor_exponent=F(1, 2),
         physical_maximum_primitive_conductor_exponent=F(2),
         packet_exhaustive_residual_bv_adapter_verified=True,
+        common_phase_free_model_verified=True,
     )
     assert result["short_type_I_smooth_group_exponent"] == F(7, 4)
     assert result["short_companion_fourth_moment_exponent"] == F(4)
@@ -8689,7 +8690,7 @@ def test_prime_incidence_type_I_factorization_and_short_side_pv_gain() -> None:
     assert not result["coupled_kernel_gate_closed"]
 
 
-def test_prime_incidence_short_type_I_pv_gain_covers_the_oriented_wedge() -> None:
+def test_phase_free_type_I_model_gain_covers_the_oriented_wedge() -> None:
     audit = getattr(
         coverage_audit,
         "prime_incidence_short_type_I_pv_polytope_audit",
@@ -8707,6 +8708,7 @@ def test_prime_incidence_short_type_I_pv_gain_covers_the_oriented_wedge() -> Non
         short_companion_factor_exponent=F(1, 5),
         physical_maximum_primitive_conductor_exponent=F(2),
         packet_exhaustive_residual_bv_adapter_verified=True,
+        common_phase_free_model_verified=True,
     )
     assert result["usable_bilinear_gain_exponent"] == F(1, 10)
     assert result["required_conductor_imbalance_gain_exponent"] == F(1, 20)
@@ -8725,6 +8727,7 @@ def test_prime_incidence_short_type_I_pv_gain_covers_the_oriented_wedge() -> Non
         short_companion_factor_exponent=F(3, 4),
         physical_maximum_primitive_conductor_exponent=F(2),
         packet_exhaustive_residual_bv_adapter_verified=True,
+        common_phase_free_model_verified=True,
     )
     assert outside["usable_bilinear_gain_exponent"] == F(1, 8)
     assert not outside["covered_type_I_short_companion_subpolytope"]
