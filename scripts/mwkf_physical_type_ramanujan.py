@@ -13,6 +13,60 @@ from math import ceil, floor, gcd, lcm, pi
 from scripts.mwkf_mobius_type_identity import c_u, divisors, mobius, split_mobius_identity
 
 
+def joint_type_i_unit_packet(K, D, B, Q, z0, amplitude, dual_hat, j_cutoff, ell_cutoff):
+    """JQ3/JQ5 finite samples and a rectangular double-Poisson truncation.
+
+    amplitude(t,x) includes 1/x and is supported in [.5,3] x [1,2].
+    dual_hat(j,xi) supplies the Fourier transform of H_j in JQ4. The
+    caller must supply a correct Fourier pair and control both tails;
+    this routine proves no smoothness, derivative bounds, or analytic gate.
+    Only m is restricted to units here; the physical caller needs (B,Q)=1.
+    """
+    K, D, z0 = map(F, (K, D, z0))
+    if K < 1 or D <= 0 or any(not isinstance(a, int) or a < 1
+                              for a in (B, Q, j_cutoff, ell_cutoff)):
+        raise ValueError("K>=1, D>0 and positive integer B,Q,cutoffs required")
+    kappas = range(ceil(K/2), floor(3*K)+1)
+
+    def sample(kappa, m):
+        t, x = kappa/K, B*m/D
+        return amplitude(t, x)*cmath.exp(2j*pi*float(z0*t/x))/D
+
+    direct = sum(sample(kappa, m) for kappa in kappas
+                 for m in range(ceil(D/B), floor(2*D/B)+1) if gcd(m, Q) == 1)
+    divisor_sum = sum(mobius(v)*sum(sample(kappa, v*n) for kappa in kappas
+                      for n in range(ceil(D/(B*v)), floor(2*D/(B*v))+1))
+                      for v in divisors(Q) if mobius(v))
+    zero, aliases = 0j, 0j
+    for v in divisors(Q):
+        if not mobius(v):
+            continue
+        coefficient, M = K*F(mobius(v), B*v), D/(B*v)
+        for j in range(-j_cutoff, j_cutoff+1):
+            zero += coefficient*dual_hat(j, 0)
+            aliases += coefficient*sum(dual_hat(j, ell*M)
+                        for ell in range(-ell_cutoff, ell_cutoff+1) if ell)
+    return {"direct": direct, "divisor_sum": divisor_sum,
+            "dual_truncated": zero+aliases, "zero_ell": zero, "nonzero_ell": aliases}
+
+
+def joint_type_i_cost_exponents(s, rho, z, k, beta, eta=0):
+    """JQ15--JQ18 exponent ledger, never a coverage certificate.
+
+    All inputs are exponents, including rho. The density still needs its
+    (1+Z)^(-J) factor. Actual smoothness, K/Z range, and both endpoints
+    must be checked separately. An e-shell contains T^eta integers.
+    """
+    s, rho, z, k, beta, eta = map(F, (s, rho, z, k, beta, eta))
+    if min(s, z, k, beta, eta) < 0 or eta > s:
+        raise ValueError("nonnegative scale/cutoff exponents and eta<=s required")
+    stationary, joint = rho+s+z/2+beta, rho+s+z+beta-k
+    return {"density_shell": rho+2*s-eta,
+            "stationary_one_e": stationary-eta, "joint_one_e": joint-eta,
+            "stationary_shell": stationary, "joint_shell": joint,
+            "best_alias_shell": min(stationary, joint)}
+
+
 def type_i_quotient_ledger(n, U, V, Q):
     """Finite TI2 completion, with its small endpoint and literal unit mask.
 

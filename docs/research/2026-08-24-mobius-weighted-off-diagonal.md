@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-30 联合 κ/quotient 的 Type-I 覆盖。** [JQ1–JQ18](2026-08-30-mwkf-joint-kappa-type-i.md) 将完整 κ 与真正无符号 Type-I quotient 一起 Poisson，再对其全部非零频率取绝对值；保留所有除数、零 j、远 j、连续密度与显式双频率尾。真实物理成本是 `ρ[D²(1+Z)^(-J)+DZUV/K] T^ε`，整个 e-shell 为 `ρ[S²/E·(1+Z)^(-J)+SZUV/K] T^ε`。平衡顶层 K≈Z≈T、U,V 为固定对数幂时，这个 Type-I 部分达到自身 T^{3+ε} 预算；降低 cutoff 会扩大剩余 Type-II，不会令其消失。完整 coupled-kernel gate、统一 signed operator 的目标界与 twisted moment 仍未证明。
+
 > **2026-08-30 真实 Type-I 的连续密度与互素别名。** [TI1–TI14](2026-08-30-mwkf-type-i-density-aliases.md) 仅分解实际 µ(d)，保留 µ(A) 与耦合核。完成无符号 quotient 的精确端点是 `Σ_{b≤V,(b,Q)=1}µ(b)g(b)`；支撑 d>V 时消失，不需 d>UV。连续密度无驻点，但完整互素别名仍须保留。所得 Type-I 物理界为 `T^ε ρ[D²(1+Z)^(-J)+D(1+Z)UV]`；平衡 K≈T、UV=T^β 时是 `T^{4+β+ε}`，不是整个分片的改善。另证明一片不平衡短 Type-I 区域快速衰减，并明确排除 Srivastav 新定理在平衡原 A 行上的直接应用。大除数驻相别名、Type-II、共同 signed operator 与完整 twisted moment 仍未解决。
 
 > **2026-08-30 先求完整光滑 κ 和。** [非共振覆盖与双 Möbius 整数带](2026-08-30-mwkf-smooth-kappa-resonance.md) 使用实际 IC2 中 κ 无 Möbius 权且核光滑的结构，在 Cauchy 之前完成 κ-Poisson。保留所有整数端点与单位掩码后，非零 j 的真实物理界为 `ρ(D²/K+D) T^ε`，全部 e≈E 的成本为 `ρ(S²/(EK)+S) T^ε`。平衡顶层 e=1、K≈T 的界由 JG 的 `T^{11/2+ε}` 改为 `T^{5+ε}`，固定 K=T^ν、ν>1 的顶层非共振分片快速衰减。剩余窄带保留双 Möbius 及全部九个 Type sector；仍差 T²，未证明完整 coupled-kernel gate，也不与 IC/JG/BBLR 的 saving 相乘。
@@ -115,6 +117,7 @@
 > | Whole-kappa joint unit-density Gram | Section 9.207 reassembles n=kappa*k*l before one Cauchy and proves the phi(lcm)/lcm divisor-square identity. The continuous density and its zero-determinant part are positive, but the latter is not a lower bound for the former. Their bounds are `(X+D^2)M/D` and `XM/D`; all nonzero unit aliases cost `M^2(1+XM/D)`, with M=K*P. This improves IC7's whole-block bound in an intermediate K interval, not the final BBLR deficit or the coupled gate |
 > | Smooth unsigned kappa before Cauchy | Section 9.208 uses the actual kappa smoothness, not arbitrary triple coefficients. Complete kappa Poisson gives rapid decay when K is sufficiently larger than Z=RP/S and both grow as fixed powers. For nonzero j, exact shifted-product/divisor counting gives `rho(D^2/K+D)` with the integer boundary retained; the e-shell cost is `rho(S^2/(EK)+S)`. The balanced K~T bound improves to T^5, but target is T^3. The narrow band carries the exact nine ordered Mobius Type sectors, not a proved signed saving |
 > | Actual Type-I density and unit aliases | Section 9.209 completes only the unsigned Type-I quotient, retaining its exact endpoint. The continuous density is rapidly small; all divisor aliases remain. Its physical bound is `rho[D^2(1+Z)^(-J)+D(1+Z)UV]`, with rapid decay in the specified unbalanced short-Type-I polytope. The balanced T^(4+beta) cost applies only to this Type-I part; stationary large-divisor aliases and Type-II still require joint signed estimates |
+> | Joint kappa and unsigned Type-I quotient | Section 9.210 proves a joint double-Poisson alias bound Z/D, with Jacobian K/(Bv), every j and every nonzero quotient frequency. Its physical Type-I cost is rho*D*Z*UV/K, and the full e-shell cost rho*S*Z*UV/K. At K~Z~T and logarithmic U,V this Type-I part meets T^(3+epsilon). Type-II, the smaller-K residual, and the complete physical operator remain unbounded at the required target |
 > | Standalone cofactor primitive product spectrum, all gcd strata and smooth archimedean weights | proved in Sections 9.85--9.88 |
 > | Residual coupled Region-D estimate at length \(T^3\) | unproved |
 >
@@ -28322,6 +28325,41 @@ e=1 top-face A row with 0<=log_T K<=1. This does not exclude other
 transformed rows or other e-shells.
 Type-II, all unresolved physical endpoints and tails, and the full
 signed operator of PA remain open; no full twisted-moment claim follows.
+
+### 9.210 Joint kappa/quotient completion reaches a Type-I budget
+
+The [joint Type-I note](2026-08-30-mwkf-joint-kappa-type-i.md) does not
+take absolute values over kappa first. Its actual two-variable amplitude
+includes 1/x, and the double-Poisson Jacobian is K/(B*v). The quotient
+zero frequency reassembles the exact TI continuous density, while every
+integer kappa frequency and every nonzero quotient frequency remain in
+the complement. No canonical zero Gram or reflection term is deleted.
+
+Writing H_j(x) as the t-Fourier transform evaluated at j*K-z0/x gives
+`norm_L1(H_j^(r)) << T^epsilon*Lambda^(r-1)`, Lambda=abs(z0)~Z, by the
+monotone change of variable with derivative of size Lambda. Nonzero
+quotient-frequency sampling costs Lambda/M for every M>0, without a
+spurious integer +1. There are O(Lambda/K) nonzero near j. The remaining
+zero j and infinite far j are bounded with their full Fourier tails.
+For 1<=K<=C0*Lambda this gives the complete joint alias bound Z/D.
+JQ14 specifies errors for a finite rectangle in the two frequency axes.
+
+After c<=U,b<=V and the remaining physical outer scale C*X*P, the cost
+is `rho[D^2(1+Z)^(-J)+D*Z*UV/K]`; after every e~E it is
+`rho[S^2/E*(1+Z)^(-J)+S*Z*UV/K]`. A complementary single-kappa
+stationary-phase argument gives rho*D*sqrt(Z)*UV. These are bounds on
+the same sum and can be minimized, not multiplied. Both exact endpoint
+corrections remain unless their vanishing is verified.
+
+For R=S=T^3, HL~T^5, P=T^p, K=T^nu, UV=T^beta, with fixed p>0,
+the Type-I e-shell reaches its S budget when
+`min(3*p/2+beta,2*p+beta-nu)<=1`. The example p=nu=3/4,beta=1/4
+is new coverage beyond the single-kappa estimate. At p=nu=1 and fixed
+logarithmic U,V, this Type-I part is O(T^(3+epsilon)); D>=K makes both
+the d-small part and the quotient endpoint vanish. The complete
+Type-II coefficients have not been estimated, and their long b count
+cannot be charged as UV. This is a real Type-I budget result, not a
+replacement proof for the full coupled-kernel gate or twisted moment.
 
 ## 10. What has and has not been proved
 
