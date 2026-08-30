@@ -3,7 +3,9 @@
 当前已将有限高度 AFE 到真实全线 mollified moment 的极限交换、
 物理时间积分与完整算术级数的换序，以及有限高度对角/非对角拆分，
 写成无额外解析假设的 Lean 定理。对角部分有严格的 gcd 射线双射重编号；
-所有 Möbius 系数与物理权均保留。这不是 `T -> infinity` 的渐近式，
+非对角部分已按所有正、负非零整数 shift 重组，完整相位为
+`t*log(1+delta/(m*r))`，没有线性化或截断。所有 Möbius 系数与物理权
+均保留。这不是 `T -> infinity` 的渐近式，
 也没有断言两个拆分部分分别存在高度极限；QCT/Poisson、主项渐近和
 核心 Möbius 色散等输入仍须继续形式化。
 
@@ -68,6 +70,11 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | bijective diagonal series reindexing, explicit index product, and phase-free full integrand | `tsum_cubicAFEDiagonal_eq_ray`, `cubicAFEPositiveIndexProduct_diagonalRay`, `cubicAFECombinedSummandFinite_diagonalRay` |
 | summability of both integrated subseries and exact split of the actual finite-height moment | `summable_integral_cubicAFE_diagonal_and_offDiagonal`, `cubicAFEMollifiedMomentFinite_eq_diagonal_add_offDiagonal` |
 | integrated diagonal ray formula and height limit for the recombined diagonal/off-diagonal expression only | `cubicAFEDiagonalMomentFinite_eq_ray`, `tendsto_cubicAFEDiagonal_add_offDiagonal` |
+| signed reduced shift `delta=n*s-m*r`, raw shift equal to `q*delta`, and exact zero-fiber criterion | `cubicAFEReducedShift`, `gcd_mul_cubicAFEReducedShift`, `cubicAFEReducedShift_zero_iff` |
+| complete logarithmic phase and positivity of its argument, including negative shifts | `cubicAFECombinedLogPhase_eq_reducedShift`, `cubicAFEReducedShift_logArgument_pos` |
+| complete physical integrand in reduced-shift coordinates | `cubicAFECombinedSummandFinite_eq_reducedShift` |
+| disjoint-union equivalence and summable regrouping over all nonzero signed shifts | `cubicAFEShiftEquiv`, `hasSum_cubicAFE_shiftFibers`, `hasSum_integral_cubicAFE_shiftFibers` |
+| actual integrated off-diagonal equals the full shifted-divisor expression; recombined height limit | `cubicAFEOffDiagonalMomentFinite_eq_shifted`, `cubicAFEMollifiedMomentFinite_eq_diagonal_add_shifted`, `tendsto_cubicAFEDiagonal_add_shifted` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -85,7 +92,11 @@ interchanged with the integral.  The completed AFE contour has also been taken
 to infinite height using an explicit physical horizontal-edge majorant.  At
 each finite height the time-integral/arithmetic-series interchange is proved,
 and the integrated expression is split into two summable diagonal/off-diagonal
-subseries.  The diagonal ray is reindexed bijectively.  The height limit remains
+subseries.  The diagonal ray is reindexed bijectively.  The off-diagonal is
+regrouped over every nonzero signed shift using a disjoint-union equivalence;
+the shift fibers and the resulting outer shift series are summable at each
+finite height.  The full physical kernel and logarithmic phase are retained.
+The height limit remains
 outside the recombined expression; separate limits and moving this limit
 through either infinite subseries have not been proved.  What remains is to
 carry the actual expression through the QCT/Poisson decomposition with all
@@ -99,7 +110,7 @@ Consequently the accurate status is:
 
 - internal paper proof candidate and executable parameter audit;
 - kernel-checked structural/reassembly, finite-height series/integral
-  interchange, diagonal split/reindexing, and fixed-`T` recombined AFE
+  interchange, diagonal split/reindexing, signed-shift regrouping, and fixed-`T` recombined AFE
   integral-limit layers complete;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.
