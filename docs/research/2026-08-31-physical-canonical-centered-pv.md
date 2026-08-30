@@ -12,10 +12,12 @@ e≈T^(13/10)、abe≈T^(3/2)、a,b≈T^(1/10) 时，中心化线性和
 原定义为 MWKF-PHYS-v1，定义源
 49cfacd70c60372757280177c7b63fd4f7760817。唯一原式映射采用
 [CA1–CA6，冻结 a24e1dca](https://github.com/cc-chen-tech/riemann-pnt-lean4/blob/a24e1dca631dcaab04fc023d641ae3463cacff77/docs/research/2026-08-31-physical-canonical-gcd-adapter.md)。
-解析输入为本树父版本
-dae4a5607153e54d3f59581a5cb7affdfcfef7cd 的
+解析输入固定为完成 smooth 范围修订的
+f42bd65f071e01d1913aa3516ffee0e608104158 的
 [PL1–PL9](2026-08-31-physical-centered-pv-large-sieve.md) 和其
 [CS2–CS11](2026-08-31-physical-centered-conductor-split.md)。
+修订后的 CS0 与本篇均从 FP1 重新插入同一原 F 分割；不引用
+旧一般硬壳的未付费共同列适配。原始 CP 推导提交为4cd1d0a1。
 不引用未冻结的双标签 Poisson，也不使用旧二次 resonant projector。
 
 固定平方自由 q₀，在原光滑内部箱 HL≲RS/T 上工作。要求整个
