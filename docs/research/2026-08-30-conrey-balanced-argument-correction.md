@@ -693,14 +693,14 @@ exit 0。四条新定理仅依赖 `propext`、`Classical.choice`、`Quot.sound`�
 Python 全量回归 546 passed；新端点 160 个本地模块的 import 闭包
 无 Zeta23，外部根仅 Mathlib。这里只声称定向 Lean 验证。
 
-**仍未证明：**上式中的实际 `M` 的长 mollifier 均方渐近式／DI 输入，
-以及 `E_eta` 的定量主项与最终严格 `>2/5` 的渐近推导。已证的是实际
-有限高度的均方计数不等式，不是对实际均方值的估计。
+**本节检查点的边界：**上式尚未估计实际 `M`，也未估计 `E_eta`。
+`E_eta` 的有限高度定量下界现已在第 21 节完成；实际长 mollifier
+均方渐近式／DI 输入与最终严格 `>2/5` 的渐近推导仍未证明。
 
 ## 20. 任意既定非零水平高度的无权 V₁ 变幅
 
-本节的无权 V₁ 水平端点已经实现并通过 Lean 检查，完整 η 三边组合
-仍未实现。为估计 `η=H V₁` 的三边变幅，
+本节的无权 V₁ 水平端点已经实现并通过 Lean 检查；后续完整 η 三边
+组合见第 21 节。为估计 `η=H V₁` 的三边变幅，
 可只在辅助估计中取 `Y=2`。由于 `P(0)=0,P(1)=1`，两项有限
 Dirichlet 和给出 `B₂≡1`，从而既有实际产品的 Jensen／Borel 正则
 因子接口可用于 V₁。**主均方 M 中的长 Y 绝不替换为 2。**
@@ -748,9 +748,9 @@ H 因子可直接沿原三边估计，无须另换临界线：已有右边界定
 原选高阈值取大即可；对任意给定的非零水平高度成立的结论可直接
 用于原 `U,T`，不必重新选择高度。独立数学审查确认此收束方向。
 
-下一步的有限高度目标可写得更具体。记 `w=A-1/2`，
+该检查点提出的有限高度目标如下，现已由第 21 节证明。记 `w=A-1/2`，
 `K_H(b)=C_H(1+log(heightBase(L,b)+2))`，两个窗口基点为
-`b₋=A+1`、`b₊=X-1`。在同一组选高上，待证明的组合不等式为
+`b₋=A+1`、`b₊=X-1`。在同一组选高上，组合不等式为
 
 \[
  E_\eta(A;U,T)\ge
@@ -761,8 +761,8 @@ H 因子可直接沿原三边估计，无须另换临界线：已有右边界定
 
 这里最后的 `π` 是辅助 `Y=2` 的整条右边 V₁ argument 界；
 `8(T-U)` 是 H 的右边积分误差；两个水平 V₁ 项的常数相加。
-尚须实际证明局部 `logDeriv η=logDeriv H+logDeriv V₁`，逐项可积性、
-积分方向和对原选高的应用，不能将此显示公式当成已证端点。
+这要求实际证明局部 `logDeriv η=logDeriv H+logDeriv V₁`、逐项可积性、
+积分方向和对原选高的应用；第 21 节的实现不将这些作为输入假设。
 
 ### 实现与验证
 
@@ -788,5 +788,174 @@ import 闭包无 Zeta23，外部根仅 Mathlib。独立只读数学及代码审�
 验证，不声称 GitHub CI 或全库 Lean baseline 通过。
 
 这里闭合的是原有非零高度可直接使用的 V₁ 水平变幅估计。
-完整 η 主项、上述同组选高三边组合、长 mollifier 均方渐近式／DI
-和最终严格 `>2/5` 推导仍待证明。
+后续三边组合与剩余数学边界如下。
+
+## 21. 完整 η 三边下界与实际均方计数已连接
+
+现在已对真实函数、原选高证明第 20 节的完整有限高度下界，且将它
+代入实际简单零点计数。计数右端不再包含未估计的 η argument，
+也未改动实际均方中的长 mollifier。
+
+`ConreyEtaArgumentFactors` 先在 `Re s>0,s≠1,V₁(s)≠0` 的邻域内
+证明真实分解对应的对数导数恒等式。H 的解析性、非零性及 V₁ 的
+解析性给出实／虚投影各自的可积性，再使用积分加法。右 H 项满足
+
+\[
+ \left|\int_U^T\Re\frac{H'}H(A+it)\,dt
+ -\frac12\int_U^T\log\frac{t}{2\pi}\,dt\right|\le8(T-U).
+\]
+
+水平 H 项用原两个窗口的外圆盘界；辅助 `Y=2` 只用于得到右 V₁
+非零与整段 argument 的 `π` 界。`ConreyEtaArgumentMain` 从原长
+产品的上下边非零推出 V₁ 非零，按 bottom + right − top 组合各项。
+令第 20 节显示右端为 `E_low=conreyEtaThreeEdgeLowerMain L U T`，
+则已证 `E_low≤E_eta`。统一阈值独立于 `Y,L,sigma0,U,T`，没有
+重新选择高度，也没有对左边界强加非零条件。
+
+`ConreySelectedEtaMainCount` 将两个已证存在阈值取大，只调用一次
+实际高度选择器。对 `2≤Y≤X,0<R≤6/5`、充分大的 `L`，定理返回
+原窗口内同一 `U<T`、产品的三条非左无零边、实际 `M>0`，以及
+
+\[
+ N_{\rm simple}(X)\ge\frac{E_{\rm low}(L,U,T)}\pi
+ -\frac{(T-U)\log(M/(T-U))+2B(L)}{2\pi(R/L)}-1.
+\]
+
+这里的 `M` 仍是同一实际 `V₁B` 在 shifted 左边 `[U,T]` 上的
+平方模积分。所有长度、系数、完整余项与外部计数上限 `X=e^L`
+均保留。新结论不是一个额外假设，也不是把均方替换为数值证书。
+
+### 验证
+
+两组精确合约均先观察到目标定理不存在的失败，再完成实现。组合
+命令 `nice -n 10 lake build Test.ConreySelectedEtaMainCountContract
+Test.ConreyEtaArgumentMainContract Test.ConreyHorizontalArgumentContract
+Test.ConreySelectedMeanSquareContract Test.ConreySelectedHeightCountContract`
+通过：8866 jobs，exit 0。四条新合约端点仅依赖 `propext`、
+`Classical.choice`、`Quot.sound`。Python 全量回归 546 passed；
+目标清单与四条依赖链检查通过。最新端点 165 个本地模块的 import
+闭包无 Zeta23，外部根仅 Mathlib；新生产模块和合约均列入 Lake roots。
+独立只读数学及代码审查未发现实际函数、选高、可积性、方向或
+系数问题。这里只声称定向 Lean 验证，不声称全库 baseline 或 CI。
+
+### 下一步的纯数学归一化（尚未形式化）
+
+固定 `R=6/5`，不让 R 随 L 趋零。由 heightBase 的实际定义，
+
+\[
+ K_H(b_-)=10(1+\log(2A+13)),\qquad
+ K_H(b_+)=10(1+\log(X+A+11)).
+\]
+
+水平 H 总误差为 `O(L log L)`。用精确原函数
+`Phi(t)=t log(t/(2π))-t`，两个选高窗口一致地给出
+`(Phi(T)-Phi(U))/(XL)→1`；`8(T-U)/(XL)→0`，多项式误差
+`L^7/(XL)→0`，故 `2E_low/(XL)→1`。
+
+记 `delta=(T-U)/X→1`。上述已证有限计数式除以 `XL/(2π)` 后，
+右端精确成为
+
+\[
+ \frac{2E_{\rm low}}{XL}
+ -\frac{\delta}{R}\log\frac{M}{\delta X}
+ -\frac{2B(L)}{RX}-\frac{2\pi}{XL}.
+\]
+
+因此所需余项条件是 `B=o(X)`，而非 `B=o(X/L)`；现有
+`507X/L+2.2·10^12 L^7+(A-sigma0)π` 满足前者。若后续真实证明
+对每个固定 `epsilon>0` 最终有 `M≤(C+epsilon)X`、`C>0`，则先
+保留 `delta log((C+epsilon)/delta)`，再取极限与 epsilon 趋零，
+得到归一化下界 `1-log C/R`。最后仍须连接同一规范的带重数
+Riemann–von Mangoldt 计数，并用 `X=e^L` 覆盖全部充分大高度。
+
+这些是下一阶段的数学推导，**尚无本节对应的 Lean 渐近定理**。
+长 mollifier 实际均方估计／DI 输入、V₁ 与微分多项式 V 的均方
+比较以及最终严格 `>2/5` 结论仍开放。
+
+## 22. 先做数学：同一长 mollifier 的 V₁ → V 均方转移
+
+本节是待形式化的数学归约，**不声称已证明任何长 mollifier 均方**。
+再次核对 [Conrey 1989，第 8 页定理 2](https://aimath.org/~kaur/publications/24.pdf)
+的扫描原页：其结论是固定参数、`theta<4/7`、从 2 到外部高度的
+实际微分多项式均方渐近式。不能用数值双重积分代替这个解析定理，
+也不能默默使用随高度变化的参数一致性。
+
+### 精确差与 shifted 线上的 H
+
+对当前显式系数，`V=ζ+(51/(50L))ζ′`，故有精确恒等式
+
+\[
+ (V_1-V)B=\frac{51}{50L}\left(\frac{H'}H-\frac L2\right)\zeta B.
+\]
+
+差中已无 ζ′，因此控制它只需要 `Q=1` 的 ζB 均方，不额外需要
+`Q(z)=z`。但是当前已证 H 主项界要求 `Re s>1`，不能直接用在
+`sigma0=1/2-R/L`。先用实际 Gamma 递推得到
+
+\[
+ \frac{H(s+2)}{H(s)}=\frac{(s+2)(s+1)}{2\pi(s-1)},\qquad
+ D_H(s)=D_H(s+2)-\frac1{s+2}-\frac1{s+1}+\frac1{s-1}.
+\]
+
+其中 `D_H=H′/H`。对 `0<sigma0≤1/2,t≥3`，移位后
+`2<Re(s+2)≤5/2≤t`，三个倒数的范数各不超过 `1/t`。原右边界
+误差 8 因而给出 shifted 线误差 `≤8+3/t≤9`（可安全取 10）。
+所有相关点均有正虚部，分母非零；形式化时须对邻域恒等式求导，
+不能从单点比值直接推导导数。已有 `Complex.Gammaℝ_add_two`
+可作递推输入。这一移位不改变 t 或原 mollifier。
+
+### 固定幂切分，避免未证明的参数一致性
+
+固定 `theta=571/1000`，任取固定 `a∈(7theta/4,1)`，设 `Z=X^a`。
+若采用整数截断版均方，重标度
+
+\[
+ L_Z=aL,\quad R_Z=aR,\quad\theta_Z=\theta/a<4/7,
+ \quad\lfloor Z^{\theta_Z}\rfloor=\lfloor X^\theta\rfloor=Y
+\]
+
+保持 sigma0、P、Y 及**整个 B**完全相同。每个 a 都先固定。
+在低段 `[U,Z]⊂[2,Z]` 上，精确差的系数由上一段 H 界一致有界；
+若 `Q=1` 固定参数均方已经证明，差的平方积分即为 `O_a(Z)=o(X)`。
+在高段 `[Z,X]` 上，该系数至多
+`(51/50)((1-a)/2+O(1/L))`。全 `[2,X]` 的同一个 Q=1 均方
+`O(X)` 给出
+
+\[
+ \limsup_{L\to\infty}\frac1X\int_U^X|(V_1-V)B|^2dt
+ \le C_1(1-a)^2,
+\]
+
+其中 `C1` 可与 a 无关，因为高段用的是外部 X 处的同一个均方。
+先令 L 趋无穷，再让固定 a 趋 1，得到差平方积分 `o(X)`。
+目标 Q 的均方给出 `∫|VB|²=O(X)` 后，Cauchy 估计
+`2 sqrt(∫|VB|² ∫|(V1−V)B|²)+∫|(V1−V)B|²` 完成实际均方比较。
+原选高 T≤X 通过非负积分单调性处理，不重新选高。
+
+### 整数截断不是自动的参数连续性
+
+代码的 P 自变量是 `log(Y/n)/log Y`，原文实数长度 `y=X^theta`
+给出 `log(y/n)/log y`，即使都只求和到 `Y=floor y`，系数仍不完全
+相等。不能用 `log Y/log X→theta` 暗自引入变参数均方定理。
+
+对 `Y≥2`，两个自变量均在 `[0,1]`，且差的绝对值不超过
+`1/(Y log Y)`。若 `C_P=max_[0,1]|P′|`，在相同 shifted 线上，
+每项 Dirichlet 权重的模正好是 `n^(-1/2)`，因此
+
+\[
+ \sup_t|B_Y(\sigma_0+it)-B_y(\sigma_0+it)|
+ \le\frac{C_P}{Y\log Y}\sum_{n\le Y}n^{-1/2}
+ \le\frac{2C_P}{\sqrt Y\log Y}.
+\]
+
+若再证明固定 R、相应 Q 的经典未 mollify 均方 `∫_2^X|V|²≪XL`，
+这给出取整差的平方积分 `≪XL/(Y(log Y)^2)≪_theta X/(YL)=o(X)`；
+第二步使用固定 `theta>0`。再结合待证实数截断均方的
+`∫|VB_y|²=O(X)` 用 Cauchy 转移，不能只靠未 mollify 均方。
+也可从头证明整数截断版本，避免这层转换；两者都必须真正实现。
+
+独立数学审查已核对第 21 节归一化及本节 H 移位、固定幂切分与
+floor 系数补正。固定 a 重标度也保持实数 y 不变，不涉及变参数极限。
+**剩余输入清单：**Q=1 和目标 Q 的实际长均方定理及 DI 链、整数
+截断适配（或原生整数版本）、上述 H/均方转移的形式化、规范 RVM
+归一化与最终比例连接。这里没有新建一个假装完成这些输入的 Prop。
