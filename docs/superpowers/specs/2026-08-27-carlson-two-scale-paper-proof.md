@@ -1607,9 +1607,40 @@ Since `w(a)=w(b)=0`, integration by parts gives
 
 This step uses no cancellation of arithmetic coefficients.  Its endpoint
 gaps can be summed with the previously proved shifted harmonic bounds.
+The first-derivative estimate is now formal in
+`AFEExplicitPoissonFirstDerivative`, including construction and
+differentiability of the primitive, its pointwise bound, both zero cutoff
+boundary terms, and the transition L1 bound.  The exact contract builds
+successfully and its axiom audit contains only the allowed three axioms.
 The zero Fourier mode must instead retain its exact Mellin antiderivative
 and be combined with the Euler--Maclaurin main term before the `N` limit;
 the small gap `t/(N+1)` must not be treated as uniform in this argument.
+
+For the actual Poisson phase, `F'=-t/u-2*pi*k` is increasing on the positive
+axis when `t>=0`.  Hence positive indices `k=m>=1` have gap `2*pi*m`,
+and the first-derivative bound gives
+
+\[
+ \sum_{m=1}^{M}|I_m|
+ \leq \frac{8C_1a^{-\sigma}}{\pi}(1+\log M).
+\]
+
+For the negative modes put `beta=t/(2*pi*a)` and
+`m_j=floor(beta)+1+j`, `1<=j<=M`.  Their gap is
+`2*pi*(m_j-beta)>0`, so the shifted harmonic bound gives
+
+\[
+ \sum_{j=1}^{M}|I_{-m_j}|
+ \leq \frac{8C_1a^{-\sigma}}{\pi}(1+\log M).
+\]
+
+The nearest integer `floor(beta)+1` is deliberately omitted from this
+formula.  It remains in the endpoint/stationary error ledger.  If `N>=t`,
+then for every positive integer `m` its stationary point
+`t/(2*pi*m)` lies below `N+1`; thus no negative mode has a stationary
+point beyond the right support endpoint.  This simplification is legitimate
+in the eventual upper-cutoff limit but is not assumed in the two displayed
+finite-sum estimates, which hold for every `N>=x`.
 
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
