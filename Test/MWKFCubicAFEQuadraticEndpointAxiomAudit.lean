@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.MWKFCubicAFEQuadraticEndpoint
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms integrableOn_cubicAFERealProductWeightVertical_quadratic

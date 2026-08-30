@@ -99,13 +99,17 @@ Lean 定理使用原实 moment 的复数嵌入。已经证明每个 shift 的积
 `s=e/gcd(d,e)`，两个交换步骤均有实际
 可和支配。零模尚不能直接套用原论文的无边界公式：原论文的 dyadic 尺度
 遍历整数，而当前已证分解以非负指标起步。新增有限下尺度补全给出了准确的
-连续边界修正及其格点消失性质；移除补全截断的积分极限仍须证明。
+连续边界修正及其格点消失性质；全时间／shift 层面的去截断极限仍须证明。
 
 实际正实产品 Mellin 权现已另行完成无限高度收敛及跨越零点的换线。
 对 `-1/2<a<0<b`，严格得到 `V_b(t,P)=1+V_a(t,P)`，而不是把两个
 不同积分线的权直接相等。由此取得零端点界 `|V_b|<=1+C_(t,a)*P^(-a)`。
 这里证明的是固定 `t`、固定产品 `P>0` 的实际权；尚未交换完整物理
 双重积分、所有 shift、下尺度深度与高度极限，也未获得随 T 一致的误差。
+随后已证明实际完整产品权的加权 L1 性质，并通过保留 Jacobian 的变量
+代换接回真实物理核。对固定时间和固定非零 shift，完成权乘上无限高度
+物理核的空间积分现在确实趋于未截断域积分；不是仅有逐点趋于1。
+尚未证明空间积分与高度极限交换，也未跨时间或全部 shift 聚合该结论。
 
 ## Machine-checked in this PR
 
@@ -885,6 +889,87 @@ coverage 的 `unconditional asymptotic proved`／`residual_top_level_gates=0`
 区域、固定时间常数、完整实产品指数、矩形方向、两条水平边、`2*pi*i`
 归一化和正留数。没有将本次检查称为独立代理、外部同行审阅或远端 CI。
 
+## 固定时间、非零 shift 的真实物理域去截断
+
+### 从点态界到完整产品半轴的 L1
+
+`MWKFCubicAFEWeightEndpoint.lean` 先证明实际无限高度权对产品变量强可测。
+对 `0<P<=1`，用已证换线得到统一端点界
+`|V_X(t,P)|<=1+C_(t,-1/4)`（`X>0`）。对 `P>1` 使用右线界
+`C_(t,X)*P^(-X)`。当 `X>1/2` 时，由两段实际可积幂函数证明
+
+\[
+ \int_0^\infty |P^{-1/2}V_X(t,P)|\,dP<\infty.
+\]
+
+这条命题包含零端点和无穷端，没有把端点截掉，也没有把条件收敛当成 L1。
+实数幂先在 R 中计算再嵌入 C，避免把实数指数错误解释成复数幂实例。
+
+### 二次产品的真实 Jacobian
+
+`MWKFCubicAFEQuadraticEndpoint.lean` 处理 `r,s>0`、`delta!=0` 的两个符号，取
+
+\[
+ D_\delta=\{x>0:\delta+rx>0\},\quad
+ P_\delta(x)=x(\delta+rx)/s,\quad
+ P'_\delta(x)=(\delta+2rx)/s\ge |\delta|/s>0.
+\]
+
+证明此域上的可微性、单射性及正产品像，再应用带绝对 Jacobian 的换元
+可积性定理。以确切的逆 Jacobian 上界 `s/|delta|` 除去导数，得到
+`P_delta(x)^(-1/2)*V_X(t,P_delta(x))` 在整个 `D_delta` 上绝对可积。
+负 shift 没有被替换为从零开始的积分；没有声称 `1/|delta|` 本身可对
+所有 shift 求和，也不把它隐藏为参数一致常数。
+
+### 接回原 Möbius、平方根及完整相位
+
+`MWKFCubicAFEPhysicalEndpoint.lean` 定义 `cubicAFEProgressionPhysicalSummandVertical`，
+只将原实际物理核中的有限高度产品权替换成已证的 `V_X`。保留两侧真实
+Möbius mollifier 系数、因子2、`1/sqrt(d*e)`、`1/sqrt(P_delta(x))`、
+`exp(i*t*log(1+delta/(x*r)))` 和 `W(t/T)`。
+
+对正产品域的每个点，原物理核的 `V->infinity` 极限精确等于此新核。
+再提取 `r=d/gcd(d,e)`、`s=e/gcd(d,e)`，以二次产品 L1 定理及完整相位模长1
+证明固定时间、固定非零 shift 的真实新核在 `D_delta` 上绝对可积。
+δ=0 仍允许在正产品点上取高度极限，但不进入未截断域积分的可积性定理。
+
+记此真实无限高度核为 `K_infinity`，原实际补全权为
+`B_J(x,y)=beta(2^J*x)*beta(2^J*y)`。从实际定义证明
+`0<=B_J<=1`、可测性及正指标处最终等于1；用已证可积的 `|K_infinity|`
+作支配，严格得到
+
+\[
+ \lim_{J\to\infty}\int_{D_\delta}
+ B_J(x,(\delta+rx)/s)K_\infty(t,x)\,dx
+ =\int_{D_\delta}K_\infty(t,x)\,dx.
+\]
+
+Poisson 的 `1/s` 因子和物理时间积分尚在外层。本条结论是固定时间、
+固定非零 shift 的域积分，不是整个零模主项的求值；亦未证明先取
+有限高度核的空间积分再令 `V->infinity` 与此新核的积分相同。
+跨时间、跨 shift、独立模式的高度极限、共同 Mellin 主项和 T 一致余项
+仍须继续证明，不能由本局部去截断推出最终渐近式。
+
+### 本批核验与自审
+
+三个新增源模块编译通过，共312行定义与证明。三组 red-stage 合约在目标
+声明缺失时先失败；最终全部114个 MWKF 合约／公理审计文件同次核验退出码0。
+314条完整公理报告仅含 `propext`、`Classical.choice`、`Quot.sound`，
+没有 error/warning。回归包括零端点统一界、整条产品正半轴的范数可积性、
+负 shift 的真实积分域、真实物理核的范数可积性、其完成积分极限，以及
+允许零 shift 的单点高度极限。后一个条件没有被用于未截断域的可积性。
+
+聚焦 pytest：`295 passed`（14.26秒）；deterministic coverage 正常退出。
+内部 coverage 标签不代表这些新证明已经消除了最终 `hexact/hmain/hrem`。
+`git diff --check`、staged diff 和新源文件占位符扫描通过；没有新增项目
+公理、sorry、admit、native_decide，也没有提高 heartbeat 限额。
+仍采用隔离 proof-object 目录及单代理顺序验证，未启动全量 Lean 冷构建。
+
+自审明确保留了 `delta!=0`、两个正指标域、绝对 Jacobian、其下界
+`|delta|/s`、原物理核全部系数和相位、实际完成权、以及实际可积支配。
+本批只在固定时间／固定 shift 层面去截断；没有把点态高度极限误作积分
+高度极限，也未把固定参数 L1 性质当作全局 o(T)。
+
 ## Remaining formalization boundary
 
 This PR does **not** yet make the analytic theorem unconditional inside Lean.
@@ -949,15 +1034,22 @@ equals the added zero modes. Both completed dyadic mode series are summable
 at each fixed shift, and the paired completed shift series is summable.
 The entire finite-height moment is unchanged by any finite completion depth;
 even height-dependent finite depths preserve the recombined height limit.
-Separate completed-mode summation across shifts, the lower-endpoint limit,
-and the required Mellin/height limit exchanges remain unproved.
+Separate completed-mode summation across shifts, the lower-endpoint limit
+at the complete time-integrated/shift-summed level, and the required
+Mellin/height limit exchanges remain unproved.
 For each fixed physical time and positive real product, the gamma-only
 Mellin weight now has its independent, absolutely convergent height limit
 on every nonzero line X>-1/2. Its actual residue-one contour shift from a
 positive line to a negative line has also been proved, including both
 horizontal-edge limits; this gives the small-product bound
-`1+C_(t,a)*P^(-a)`. This is not yet a dominated convergence theorem for
-the complete physical zero-mode integral or either infinite mode series.
+`1+C_(t,a)*P^(-a)`. Weighted product L1 integrability and a Jacobian-preserving
+pullback now also prove actual physical spatial integrability on the whole
+two-positive-index domain for fixed time and nonzero shift. Dominated
+convergence removes the actual lower-scale completion from that domain
+integral of the infinite-height kernel. This is not an interchange of the
+spatial integral with the finite-height limit, nor a dominated convergence
+theorem for the complete time-integrated/shift-summed zero mode or either
+infinite mode series.
 Neither compactness in the logarithmic-extension proof nor the
 Schwartz construction supplies uniform seminorm estimates in the varying
 physical parameters.
@@ -995,6 +1087,9 @@ Consequently the accurate status is:
   height limit, positive-strip Gamma bounds, absolute scalar vertical
   convergence, the independent real-product weight height limit, its
   residue-one finite rectangle, both horizontal-edge limits and its
-  actual small-product contour-shift bound;
+  actual small-product contour-shift bound, full product-half-line weighted
+  L1 integrability, nonzero-shift quadratic-product Jacobian pullback,
+  literal physical-kernel pointwise height limit and spatial integrability,
+  and its fixed-time, fixed-nonzero-shift completion integral limit;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.
