@@ -391,7 +391,7 @@ Lean release-baseline 构建，也不等于完整 Conrey 定理。
 独立只读审查未发现重要问题；包含三个新合约、实际迹/全局计数和边界
 根回归的定向构建成功（8735 jobs，exit 0），新端点仅依赖三条标准公理。
 
-**下一条真实缺口：**把同一 η 矩形的完整重数转入实际 `V1*B` 的完整
+**本节完成时的下一条缺口（现已在第 14–15 节接通）：**把同一 η 矩形的完整重数转入实际 `V1*B` 的完整
 重数上界。已有 `η=H V1` 的解析阶等式及 `V1` 到 `V1*B` 的点态重数
 单调性可以复用；已有半带 **半重数** 比较不能直接代替此完整重数预算。
 若矩形跨过 `Re s=1`，阶等式应使用 `Re s>0, s≠1` 的版本，而非仅适用
@@ -407,3 +407,132 @@ explicit nonvanishing on the other three edges. It constructs all eta zeros,
 the regularized trace and genuine zeta simple-zero witnesses, with loss twice
 the full rectangle multiplicity. Quantitative estimates and the genuine
 Conrey proportion theorem remain open.
+
+## 14. 同一区间的完整 mollified 重数预算
+
+`ConreyMollifiedFullCount` 现已证明从 η 矩形零点到实际 `V1*B` 的完整
+重数比较。参数 `g,g0,g1,L,Y,sigma0,P` 及上下高度在整个证明中保持不变。
+若 `K` 中每一点满足 `1/2≤Re ρ≤A`、`U<Im ρ≤T`、`η(ρ)=0`，则
+
+\[
+ \sum_{\rho\in K}\operatorname{ord}_\rho\eta
+ \le N_{\rm full}(V_1B;\,1/2\le\Re\rho\le A,\ U<\Im\rho\le T)
+ \le N_{\rm full}(V_1B;\,\Re\rho\ge1/2,\ U<\Im\rho\le T).
+\]
+
+输入要求 `g≠0`、`Y≥2`、`P(1)=1` 和第一条不等式中的 `U≥0`。根的
+正高度推出 `ρ≠1`，所以使用 `Re ρ>0, ρ≠1` 的 η/V₁ 解析阶等式，
+再取自然数阶；随后逐点使用乘积重数单调性和有限集合包含。没有将
+整个闭矩形错误地假设为避开 `s=1`，也没有限制 `A<1`。
+
+两个新计数定义都直接对实际产品零点的自然数解析阶求和，临界线根
+**不除以二**，且下端点过滤始终是 `U<Im ρ`。产品允许新增边界根；
+增加完整重数只使最终下界更弱。半带扩张使用实际零点 membership，
+无需把原矩形右边界放在某个人为规范截断以内。
+
+两项精确合约先因目标定理缺失失败，再通过独立正常构建（8786 jobs，
+exit 0），均仅依赖三条标准公理。实际有限轮廓的拼接已在第 15 节从
+整条底边 η 非零推出 `K` 的严格下高度，没有仅用下左角的非零性。
+
+## 15. 直接连接实际规范简单零点数
+
+`ConreyMollifiedContourCount` 将第 13–14 节连接为
+
+\[
+ N_{\rm simple}(T)\ge \frac{E_\eta(A;U,T)}\pi
+ -2N_{\rm full}(V_1B;\,1/2\le\Re\rho\le A,\ U<\Im\rho\le T)-1.
+\]
+
+左侧直接是 `positiveCriticalLineSimpleZeroCount T`，不是任意定义的
+占位计数。将第 13 节构造的 `S` 通过 `t↦1/2+it` 单射嵌入规范集合，
+逐项传递 ζ 为零、正高度、临界线条件和自然数解析阶恰为 1。
+整条底边 η 非零排除 `Im ρ=U`，使 η 的闭矩形根恰好进入 `(U,T]`
+产品预算。三边方向仍为下加右减上，且所有 η 与 mollifier 参数固定。
+
+有界版和半带版都已实现；后者仅利用完整重数随区域扩张单调增加，
+得到较弱但仍有效的下界。两者均显式保留 `g≠0`、`Y≥2`、`P(1)=1`、
+`A>1/2`、`0≤U<T` 及整个上下、右三边 η 非零条件。
+
+四个定向合约的组合构建成功（8811 jobs，exit 0），新端点仅依赖
+`propext`、`Classical.choice`、`Quot.sound`。独立只读审查未发现实际计数
+嵌入、完整重数方向或端点遗漏。Python 回归 546 passed。新端点的
+111 个本地模块 import 闭包无 Zeta23，外部 import 根仅 Mathlib。
+
+## 16. 下一步数学接口：同一有界矩形的 Littlewood 预算
+
+定量主线优先使用第 15 节的**有界版**。已有
+`exists_conreyEquation37SelectedHeights_boundaryRemainder_le` 的右边界为
+`A=2 log L`，而半带定义采用另一个存在性定理选出的规范远右边界；
+不能把两者等同，也不能把前者的定量误差直接搬到后者。
+
+以下调用定量选择器时，产品特指 `conreyHorizontalJensenProduct Y R L`：
+`g=49/100`、`g0=0`、`g1=51/50`、`P=conreyExplicitP`。其条件为
+`2≤Y≤exp L`、`0<R≤6/5`、`L≥40000`，并保留选择器给出的固定常数
+`Creg,Cmass≥1` 及阈值 `Creg,Cmass≤exp L`。选择器本身还允许 `R=0`，
+但下面除以 `d` 的步骤要求 `R>0`。这些条件保证 `sigma0=1/2-R/L>0`。
+
+记外部尺度 `X=exp L`，在选取 `U∈[A+1,A+2]` 和 `T∈[X-1,X]` 期间固定
+上述全部产品参数，尤其不把 `L` 改成 `log T`。令
+
+\[
+ F=V_1B,\quad d=1/2-\sigma_0=R/L,\quad
+ I=\int_U^T\log|F(\sigma_0+it)|\,dt.
+\]
+
+下一条待实现的实际零点特化应给出
+
+\[
+ 2\pi d\,N_{\rm full}(F;\,1/2\le\Re\rho\le A,\ U<\Im\rho\le T)
+ \le I+\mathrm{Rem}.
+\]
+
+具体构造不是再输入一个“合适的零点表”假设：从整个
+`[sigma0,A]×[U,T]` 的紧 divisor 构造全部实际产品零点，并证明过滤
+`Re ρ≥1/2` 后的完整自然数阶和正是第 14 节有界计数。上下、右边的
+产品非零性排除这些边界的根；左边界允许零点。可从有限零点实部集
+选出 `sigma0+epsilon_n<1/2` 的零自由竖线并令其趋于 `sigma0`，使用
+已证 `littlewoodRectangle_mass_le_logNormEdges_of_leftBoundaryZeros`。
+产品非零也能推出同位置 η 非零，但须明确使用 `η=H V1` 的非零因子。
+
+完整余项保持原定义
+
+\[
+ \mathrm{Rem}=-\int_U^T\log|F(A+it)|\,dt
+ +H(U)-H(T)+(A-\sigma_0)\int_U^T\Re(F'/F)(A+it)\,dt,
+\]
+
+其中 `H(t)=∫_{sigma0}^A (sigma-sigma0) Im(F'/F)(sigma+it) dsigma`。
+在上述显式产品及参数范围内，同一高度选择器已提供
+
+\[
+ |\mathrm{Rem}|\le 507X/L+2.2\cdot10^{12}L^7+(A-\sigma_0)\pi.
+\]
+
+此数值余项界不宣称适用于一般 `g,g0,g1,P`。只给出右边的 argument
+界不能省去右边的对数模长积分。
+将待证 Littlewood 特化代入已证计数后，精确归一化应为
+
+\[
+ N_{\rm simple}(T)\ge E_\eta/\pi
+ -\frac{I+\mathrm{Rem}}{\pi d}-1.
+\]
+
+若再证明 `2I≤(T-U) log C`，第二项即为
+`((T-U) log C+2 Rem)/(2 pi d)`。按 `X L/(2 pi)` 归一化，余项代价为
+`2 Rem/(R X)`；上述界足以使该代价趋零，**不需要**要求整个余项
+为 `o(X/L)`。若均方只得到 `∫_0^X |F|²≤CX`，Jensen 应先保留
+`(T-U) log(CX/(T-U))`，再证明 `(T-U)/X→1`，不能提前删除长度差。
+
+还须注意现有 `ConreyLittlewoodMeanSquare` 要求左边整段非零，而
+实际左边允许有限零点。可利用已证对数模长可积性，对 `|F|²+epsilon`
+作正值 Jensen，再以控制收敛令 `epsilon↓0`；不能直接删掉现有定理的
+非零假设。收敛只要求几乎处处：先去掉有限零点集；当 `0<epsilon≤1`
+时以可积的 `|log|F|²|` 加常数控制。还须用非平凡性与连续性证明
+均方积分严格为正，才能对右端 logarithm 取极限；上面的 `C` 取正数。
+
+这只是精确的下一步数学施工边界，不是已完成的实际 Littlewood 特化。
+同样，`E_eta` 的定量主项、同一高度上的无权 η argument 控制、长
+`theta=571/1000<4/7` mollifier 均方渐近式及 DI 输入仍需真实证明。
+已有 `C_explicit<exp(18/25)` 的数值证书并不提供上述均方估计。最终
+须再用规范零点数的单调性与 Riemann–von Mangoldt 渐近式将结论传给
+每个充分大的外部高度 X，才得到真正的 `>2/5`。
