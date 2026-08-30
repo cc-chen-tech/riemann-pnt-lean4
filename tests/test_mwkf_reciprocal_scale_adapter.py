@@ -109,3 +109,58 @@ def test_scaled_poisson_gaussian_checks_the_phase_and_jacobian(j_sign):
     # A single nonsymmetric mode detects the sign that the real total cannot.
     assert cmath.exp(2j*math.pi*float(out["phase_numerator"])/n) == pytest.approx(
         cmath.exp(-2j*math.pi*j_sign*10/n), abs=2e-15)
+
+
+def product_ledger(*args, **kwargs):
+    function = getattr(adapter(), "complementary_product_ledger", None)
+    assert callable(function), "joint nonzero-product divisor reindexing missing"
+    return function(*args, **kwargs)
+
+
+def test_product_reindexing_keeps_the_exact_zero_width_divisor_mass():
+    out = product_ledger(5, 1, 0, 30)
+    assert out["terms"] == ((30, 5, 6), (30, 6, 5), (30, 10, 3))
+    assert out["signed_sum"] == out["positive_sum"] == F(7, 15)
+    assert out["divisor_mass"] == 8
+    assert out["divisor_majorant"] == F(8, 5)
+
+
+@pytest.mark.parametrize("omit_m0", [False, True])
+@pytest.mark.parametrize("D,r,M,Z", [(5, 1, 3, 30), (7, 2, 4, -21),
+                                       (F(9, 2), 3, F(7, 2), 0),
+                                       (3, 2, 0, 10)])
+def test_product_reindexing_preserves_two_mobius_weights_and_complex_masks(D, r, M, Z, omit_m0):
+    from scripts.mwkf_mobius_type_identity import mobius
+
+    def weight(n, c):
+        return (mobius(n) * mobius(abs(c)+1) * (1j)**(n+2*c)
+                * int(math.gcd(n, 5) == 1))
+
+    out = product_ledger(D, r, M, Z, weight=weight, exclude_zero_m=omit_m0)
+    pairs = [(n, c) for n in range(1, 20) for c in range(-40, 41)
+             if D <= r*n <= 2*D and c != 0 and abs(r*n*c-Z) <= M
+             and (not omit_m0 or r*n*c != Z)]
+    direct = sum((weight(n, c)*F(1, r*n) for n, c in pairs), 0j)
+    assert set(out["terms"]) == {(n*c, n, c) for n, c in pairs}
+    assert out["signed_sum"] == pytest.approx(direct, abs=1e-14)
+    assert abs(out["signed_sum"]) <= float(out["positive_sum"]) + 1e-14
+    assert out["positive_sum"] <= out["divisor_majorant"]
+
+
+def test_product_zero_is_excluded_before_applying_tau():
+    out = product_ledger(2, 1, 0, 0)
+    assert out["terms"] == ()
+    assert out["divisor_mass"] == out["positive_sum"] == out["signed_sum"] == 0
+
+
+def test_removing_m_zero_does_not_remove_an_entire_nearby_product_interval():
+    out = product_ledger(2, 1, 1, 6, exclude_zero_m=True)
+    assert all(t != 6 for t, _, _ in out["terms"])
+    assert out["terms"] == ()  # 5 and 7 have no divisors in [2,4].
+    assert out["divisor_mass"] == 4  # Their full divisor masses remain a valid bound.
+
+
+@pytest.mark.parametrize("values", [(0, 1, 1, 2), (5, 0, 1, 2), (5, 1, -1, 2)])
+def test_product_ledger_rejects_invalid_finite_ranges(values):
+    with pytest.raises(ValueError):
+        product_ledger(*values)

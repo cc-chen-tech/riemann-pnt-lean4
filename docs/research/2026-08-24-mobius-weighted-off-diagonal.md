@@ -28105,6 +28105,31 @@ and the identification of all zero packets with `G_chi+J_chi` remain
 separate obligations. No complete twisted-moment claim follows from
 the local reciprocal lemma or its finite regression tests.
 
+### 9.204 Shiu's divisor bound removes the subcritical integer-count residual
+
+The [subcritical Shiu argument](2026-08-30-mwkf-subcritical-shiu.md)
+replaces the separate-c boundary estimate of Section 9.203 by the exact
+finite product reindexing `t=nc!=0`. Complex weights, both Mobius
+coefficients and literal arithmetic masks remain unchanged in that
+identity. Only then is the positive divisor majorant applied.
+
+On the bounded-support model, effective width `M>=T^(1/4)` and
+`r<=T^(3/1000)` leave an interval of length at least `T^(247/1000)`.
+Its product height is at most `T^10`; Shiu's q=1 theorem with fixed
+epsilon `1/100` therefore applies uniformly, including interval
+endpoints after harmless enlargement. Near zero, the ordinary divisor
+summatory bound suffices. Small widths instead give a power saving.
+With the physical `M_A=AS/R`, the full subcritical outer sum is
+
+`O(S (log^(-K+C)T + T^(-1/5)))`.
+
+This removes the former `a>alpha+eta` restriction, including the
+`u=alpha=3/5,a=1/5` subcritical logarithmic collar. The positive bound
+permits arbitrary bounded masks and deletion of the original m=0.
+The complementary c=0 packet is still excluded, not estimated as a
+divisor of zero. No new critical masked MRSTT theorem, full physical
+packet transfer, or canonical-zero/signed-operator saving is asserted.
+
 ## 10. What has and has not been proved
 
 **Canonical zero-frequency outcome.**  The finite Fourier Gram identity

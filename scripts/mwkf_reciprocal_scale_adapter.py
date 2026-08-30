@@ -5,7 +5,7 @@ analytic estimate. See the RP note for the separate theorem hypotheses.
 """
 
 from fractions import Fraction as F
-from math import ceil, floor
+from math import ceil, floor, isqrt
 
 
 def reciprocal_scales(R, S, A, e, r, j, kl):
@@ -73,3 +73,44 @@ def cubic_window_margin(u, a):
     eta, rho, nu = F(1, 1000), F(1, 1000), F(17, 50)
     x = (u-eta) * (1-rho)
     return 4*(1-nu)*x - (2*u-a) - eta
+
+
+def complementary_product_ledger(D, r, M, Z, *, weight=None, exclude_zero_m=False):
+    """Reindex the finite nonzero-c packet by t=n*c before any bound.
+
+    weight(n,c) may be any complex coefficient; it is not conjugated or
+    replaced by its absolute value in signed_sum. The positive sum and
+    divisor majorant bound signed_sum only when |weight| <= 1. No bound
+    on the external weight is silently assumed by this arithmetic helper.
+
+    All endpoints are inclusive. This finite audit routine is not meant
+    to enumerate analytic-scale intervals: runtime grows with their width
+    and the square root of their product height.
+    """
+    D, r, M, Z = map(F, (D, r, M, Z))
+    if D <= 0 or r <= 0 or M < 0:
+        raise ValueError("D and r must be positive; M must be nonnegative")
+    terms, mass = [], 0
+    signed, positive = F(0), F(0)
+    for t in range(ceil((Z-M)/r), floor((Z+M)/r)+1):
+        if t == 0 or (exclude_zero_m and r*t == Z):
+            continue
+        divisors = set()
+        for d in range(1, isqrt(abs(t))+1):
+            if t % d == 0:
+                divisors.update((d, abs(t)//d))
+        mass += len(divisors)
+        for n in sorted(divisors):
+            if D <= r*n <= 2*D:
+                c = t // n
+                terms.append((t, n, c))
+                coefficient = 1 if weight is None else weight(n, c)
+                positive += 1/(r*n)
+                signed += coefficient/(r*n)
+    return {
+        "terms": tuple(terms),
+        "signed_sum": signed,
+        "positive_sum": positive,
+        "divisor_mass": mass,
+        "divisor_majorant": F(mass)/D,
+    }

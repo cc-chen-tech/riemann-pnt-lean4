@@ -3,8 +3,10 @@
 白话结论：MRSTT 的短区间定理确实能控制这里的平滑倒数相位，并非
 “几乎所有窗口”就不能用于全区间。但是在不平衡箱中，必须先把第二次
 Poisson 的长度改成 `M=AS/R`。这样可以修复**临界平滑模型**的总账。
-亚临界模型还有真实的整数计数边界；它在部分箱中可吸收，但并未在
-整个多面体上消失。这不是完整 twisted-moment 证明。
+亚临界模型还有真实的整数计数边界；本检查点的逐 `c` 计数只覆盖部分
+箱。后续 [Shiu 乘积重组](2026-08-30-mwkf-subcritical-shiu.md) 已补齐
+整个亚临界有界支持模型；临界算术层及零项接口仍在。这不是完整
+twisted-moment 证明。
 
 **范围。** 本文独立核对了
 [候选推导的固定版本](https://github.com/cc-chen-tech/riemann-pnt-lean4/blob/7cc472d45f934f7465a8543273a3bb866ef8da5a/docs/research/2026-08-25-mwkf-alternative-routes-spike.md#L21820)
@@ -263,7 +265,7 @@ outer 相对目标 `S` 的边界预算至多
 亚临界区间。它是**这个证明账本**的残余证据，不是实际余项的下界。
 加大对数 cutoff 不能吸收一个正的固定幂。
 
-## 6. 与 signed operator 的真实接口
+## 6. 与 signed operator 的真实接口（后续 Shiu 更新见第 2 项）
 
 现在可接受的结论是：
 
@@ -281,15 +283,18 @@ outer 相对目标 `S` 的边界预算至多
    `A,e,r,k,l` 的 outer 常数；也不能同时依赖 squarefree 支持又把
    对应 quotient 当无权整数。若用无约束 Type 重组，则要证明这些
    层确已重组，并允许其产生的全部 allocation 支持。
-2. 对 (RP11) 未覆盖的箱，证明新的**联合加权除数平均**，或保留符号
-   与完整 packet 重组得到更弱而足够的估计。逐个 reciprocal 模式的
-   MRSTT 对数消去不能代替这项离散边界工作。
+2. (RP11) 未覆盖箱的整数边界工作，现已由后续
+   [Shiu 重组 (SS2)–(SS8)](2026-08-30-mwkf-subcritical-shiu.md) 在
+   整个亚临界有界支持模型中完成，不再是这个模型的未证门槛。
+   它仍不自动证明原始 packet 的支持/尾项接口，也不把临界 MRSTT
+   消去推广到任意掩码。
 3. 将 `c=0`、Fourier 零轴、另一 AFE 方向与 reflected 交叉项接回
    [完整物理 adapter](2026-08-30-mwkf-physical-reflection-adapter.md)
    的 `R=H-L=Gχ+Jχ`。本文没有提供新的 canonical zero Gram 识别或
    稠密共同字符补集的加权范数 saving。
 
 因此不采信候选稿的“完整无条件渐近式已证明”状态；也不把两个
-must-fix 解释为路线不可能。当前新增的可用输入是修正后的临界引理、
-有限边界公式和其明确覆盖区。配套脚本只验证这些坐标与计数；没有
+must-fix 解释为路线不可能。可用输入是修正后的临界引理、有限边界
+公式，以及后续 Shiu 更新的全部亚临界模型覆盖。配套脚本只验证
+这些坐标与计数；没有
 Lean 化解析定理，没有关闭 `MWKF_ck(3)`。
