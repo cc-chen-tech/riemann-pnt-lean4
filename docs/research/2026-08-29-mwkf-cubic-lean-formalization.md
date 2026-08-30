@@ -192,6 +192,10 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | integrated actual progression Poisson, and frequency sum outside time integral in each actual box | `cubicAFEIntegratedProgression_poisson`, `integral_cubicAFEDyadicPoissonTerm_eq_frequencySum` |
 | complete finite-height moment with frequency-before-time nesting and recombined height limit | `cubicAFEMollifiedMomentFinite_eq_diagonal_add_frequency`, `tendsto_cubicAFEDiagonal_add_frequency` |
 | summability of whole frequency boxes and the outer signed-shift series in the stated nesting | `summable_cubicAFEFrequencyBoxFinite`, `summable_shift_cubicAFEFrequencyBoxFinite` |
+| absolute convergence of each actual integrated Fourier coefficient series, including the full unit-modulus phase | `summable_norm_cubicAFEFrequencyCoefficient`, `summable_cubicAFEFrequencyCoefficient` |
+| exact zero/nonzero frequency split of each box and any finite box family | `cubicAFEFrequencyBoxFinite_eq_zero_add_nonzero`, `sum_cubicAFEFrequencyBoxFinite_eq_zero_add_nonzero` |
+| zero frequency equals the full physical double integral, not the zero-shift summand | `cubicAFEFrequencyCoefficient_zero`, `cubicAFEZeroModeBoxFinite_eq_physicalIntegral`, `cubicAFEZeroModeBoxFinite_eq_integratedKernel` |
+| exact all-real dyadic lower-boundary mass and pointwise absolute kernel reassembly | `hasSum_cubicAFEDyadicWindow_allReal`, `hasSum_cubicAFEProgressionDyadicCutoff_allReal`, `hasSum_cubicAFEProgressionDyadicKernel_allReal`, `hasSum_norm_cubicAFEProgressionDyadicKernel_allReal` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -389,6 +393,72 @@ Gamma 因子的倒数全纯性与非零性先给出真实 scalar 的联合光滑
 的最终 Lean 定理严格区分。无新增项目公理、sorry、admit 或 native evaluation
 公理，未提高 heartbeat 限额。本批为单代理本地核验，不是外部专家审阅或远端 CI。
 
+## 绝对频率可和、零模拆分与连续下边界权
+
+`MWKFCubicAFEFrequencySummability.lean` 使用实际积分后 Schwartz 核，
+证明其 Fourier 变换经非零缩放后的整数采样可和。完整逆剩余相位的范数
+精确为 1，因此实际频率系数的范数级数也可和；这不是仅有完整 box 的
+外层可和性。所有结论仍是固定物理参数的结论。
+
+`MWKFCubicAFEZeroMode.lean` 在上述绝对收敛成立后，严格拆成
+`zeroModeBox + nonzeroModeBox`，后者包含所有正负非零频率。零模为
+
+\[
+ Z_{j,k}=s^{-1}\int_t\int_x
+ \chi_{j,k}(x)K^{\rm phys}_{d,e,\delta}(t,x)\,dx\,dt.
+\]
+
+它保留 `t log(1+delta/(xr))`、两侧 Möbius 系数、平方根幅度、有限高度
+Mellin 权和 `W(t/T)`。`h=0` 不等于 `delta=0`。Fubini 将它与空间积分
+在外的实际积分核等式连接；任意有限 box 集合也可合法分别求和。
+
+`MWKFCubicAFEDyadicBoundary.lean` 进一步将以前只在整数大小指标上证明的
+质量1分解推广为全实轴上的精确公式。令
+
+\[
+ \beta(x)=1-H(2-2x),\qquad H=\operatorname{smoothTransition}.
+\]
+
+已证明 `0≤beta≤1`、`x≤1/2` 时为0、`x≥1` 时为1，以及对每个实数 x
+
+\[
+ \sum_{j\ge0}\phi_j(x)=\beta(x),\qquad
+ \sum_{j,k\ge0}\chi_{j,k}(x)=\beta(x)\beta((\delta+rx)/s).
+\]
+
+对真实核的复值和及范数和都已证明对应 HasSum。因此零模的连续积分必须
+保留两侧 beta 因子，不能误用整数格点上的质量1结论将它们删除。
+
+下一步尚需证明实际积分后的支配，例如在固定 d,e,T,X,V 且 X>1/2 下
+对所有非零 shift 的非负积分
+
+\[
+ \sum_{\delta\ne0}\int_t\int_x
+ \beta(x)\beta((\delta+rx)/s)
+ \lVert K^{\rm phys}_{d,e,\delta}(t,x)\rVert\,dx\,dt<\infty.
+\]
+
+本批次没有把这条积分支配当作已证输入：逐点范数级数可和不自动说明
+积分后的级数可和，也不自动许可跨无限多个 box 将零模和非零模分别求和。
+即使固定参数收敛完成，最终主项渐近与 T-一致尾项/色散估计仍须另证。
+
+### 本批次验证
+
+三个新源模块均编译成功并生成 proof objects。60 个合约/公理审计文件
+同次核验通过（仅 imports 提前去重），退出码 0，无 error/warning；
+167 条公理报告只含标准三个基础公理。三组 red-stage 合约均先在目标定理
+缺失处失败。回归包括负 dilation、负 shift、模数一、非互素 shift/modulus、
+完整零模物理积分、下边界 `x=1/4,1/2,1,-3`，以及第一指标为4但第二指标
+为1/4时总 dyadic 质量为0的实例。
+
+零频率补集使用显式 subtype 等价重编号，未靠未经验证的类型转换。
+乘积级数首次 elaboration 的诊断显示窗口定义被展开211692次；显式指定
+两个求和函数后消除超时，未提高 heartbeat 限额，临时诊断已删除并复编译。
+聚焦测试为 `295 passed`（14.90秒）；确定性 coverage 正常退出。其内部
+`unconditional asymptotic proved` 标签仍不能替代最后三个解析输入的 Lean
+证明。无新增项目公理、占位证明或 native evaluation 公理。本批为单代理
+本地核验，不是远端 CI 或外部专家审阅。
+
 ## Remaining formalization boundary
 
 This PR does **not** yet make the analytic theorem unconditional inside Lean.
@@ -430,6 +500,13 @@ kernel is Schwartz. Poisson applied to this kernel and the original finite
 lattice/time interchange prove the actual per-box infinite-frequency/time
 interchange. The complete finite-height moment is now also expressed in order
 `(d,e), delta, (j,k), h, integral_t`, with its recombined height limit proved.
+The actual inner frequency series is now absolutely summable; each box has
+an exact zero/nonzero split and the zero term is identified with its full
+physical double integral. Finite box families can be split as well. The
+all-real dyadic mass is the product of the two explicit lower-boundary
+weights, with pointwise absolute kernel reassembly proved. Integrated
+zero-mode summability across infinitely many boxes and shifts is still a
+separate obligation; it has not been inferred from pointwise convergence.
 Any required cross-box or cross-shift reorderings and parameter-uniform
 tail estimates remain to be established. Neither compactness in the logarithmic-extension proof nor the
 Schwartz construction supplies uniform seminorm estimates in the varying
@@ -456,6 +533,8 @@ Consequently the accurate status is:
   dyadic-Poisson moment, its recombined height limit, joint time/space kernel
   regularity, joint smoothness, integrated actual Schwartz kernel, actual
   per-box infinite-frequency/time interchange, and the full finite-height
-  frequency-before-time moment with its recombined height limit;
+  frequency-before-time moment with its recombined height limit, absolute
+  inner-frequency convergence, per-box zero/nonzero split and all-real
+  lower-boundary-weight reassembly;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.
