@@ -110,8 +110,10 @@ Lean 定理使用原实 moment 的复数嵌入。已经证明每个 shift 的积
 代换接回真实物理核。对固定时间和固定非零 shift，完成权乘上无限高度
 物理核的空间积分现在确实趋于未截断域积分；不是仅有逐点趋于1。
 最新进一步证明固定完成深度时，实际空间积分与高度极限可以交换，
-支配对全部实高度一致；之后可按有序极限去掉空间完成截断。仍未跨
-时间或全部 shift 聚合该结论，也未证明任意深度/高度联合极限。
+支配对全部实高度一致；之后可在固定时间按有序极限去掉空间完成截断。
+现已进一步把固定完成深度的高度极限穿过完整物理时间/空间双重积分，
+并接回固定 shift 的原全部 dyadic 零模之和。仍未证明积分后的深度
+去截断、全部 shift 的极限聚合或任意深度/高度联合极限。
 
 ## Machine-checked in this PR
 
@@ -1072,6 +1074,101 @@ shift 条件的使用范围以及极限次序。没有新增项目公理、sorry
 native_decide 或提高 heartbeat 限额；没有外部同行核验或远端 CI
 成功的声称。固定参数支配仍不能代替时间/shift 聚合及全局 o(T)。
 
+## 物理时间/空间双重积分与原零模之和的高度极限
+
+这一批将固定完成深度的高度收敛提升到完整物理时间积分，并直接
+接回原 completed zero mode 的全部 dyadic 箱和。固定 shift 不再只
+有逐时间结论；但尚未对所有 shift 求和，也未把完成深度送往无穷。
+
+### 紧时间区间上一致的实际 scalar 支配
+
+新增 `MWKFCubicAFEScalarTime.lean`。先证明原未移位 Gamma 乘积的
+倒数是时间的连续函数。对任意紧集 K 及 `-1/2<X`、`X!=0`，在
+K 上取其真实范数上界，结合已证的 Gamma 竖条界，得到
+
+\[
+ \exists C_{K,X}\ge0\quad\forall t\in K\quad\forall y\in\mathbb R,
+ |\operatorname{scalar}_t(X+iy)|
+ \le C_{K,X}(1+|X|+|y|)^6e^{-y^2}.
+\]
+
+常数存在性不是新假设；它来自实际倒 Gamma 乘积的紧集界。证明同时
+覆盖左右两侧积分线，零线仍被排除。在每个时间点的紧邻域上应用
+dominated convergence，证明完整 `NormMass(t,X)` 连续。因此，对
+`T!=0`，上一批实际 `C_(W,T,X,d,e)(t)` 在整条时间实线上可积，因为
+它含有紧支撑的 `|W(t/T)|`。这里不声称 `C_(K,X)` 对增长的 T 一致。
+负积分线 `X=-1/4` 和负非零时间伸缩都有合约回归。
+
+### 可积双重支配与真正的 Fubini
+
+新增 `MWKFCubicAFECompletedTime.lean`。原完成物理核沿用已有定义
+`cubicAFECompletedBoundaryPhysicalKernel`，不是另定义一个有限高度
+替代物。无限高度版本仍为原完成权乘上已证的实际无限高度物理核。
+
+以 `p=-X-1/2` 记上一批的空间幂，实际乘积支配为
+
+\[
+ G(t,x)=C_{W,T,X,d,e}(t)\epsilon_J^p H_{X,J}(x).
+\]
+
+时间因子与空间因子分别可积，故 G 在 `R x R` 上可积，且与 V 无关。
+原有限高度核的联合可测性直接由复对数权、产品变量、sqrt、相位和 W
+证明。为了控制 Lean 展开开销，把实产品权的可测复合拆成独立引理；
+没有修改数学假设或提高 heartbeat 限额。
+
+有限高度完成核、无限高度完成核均有实际绝对可积性证明。后者的联合
+强可测性由前者的点态高度极限得到，范数界通过保序极限继承。因此
+本批没有依赖不可积函数的 totalized integral。对整个乘积空间应用
+dominated convergence，再对两端使用已核验可积性的 Fubini，得到
+
+\[
+ \lim_{V\to\infty}\int_{\mathbb R}\!\int_{\mathbb R}
+   B_J(x,y_\delta(x))K_V(t,x)\,dx\,dt
+ =\int_{\mathbb R}\!\int_{\mathbb R}
+   B_J(x,y_\delta(x))K_\infty(t,x)\,dx\,dt.
+\]
+
+声明 `tendsto_cubicAFECompletedPhysicalDoubleIntegral_height` 要求
+`T!=0`、`X>1/2`，在固定 J 下允许零 shift。所有原 Möbius 系数、
+时间权及相位都保留在 K 中。
+
+### 接回原 completed zero mode
+
+使用前序已证的真实 `hasSum_cubicAFECompletedZeroModeBox_physical`，
+每个有限 V 时把原无限 dyadic 零模之和精确识别为带 `1/s` 的上述
+双重积分。由此证明
+
+\[
+ \lim_{V\to\infty}\sum_{j,k\ge0} Z^{(V,J)}_{d,e,\delta;j,k}
+ =\frac1s\int_{\mathbb R}\!\int_{\mathbb R}B_JK_\infty\,dx\,dt,
+ \qquad s=e/\gcd(d,e).
+\]
+
+Lean 声明为 `tendsto_cubicAFECompletedZeroMode_height`，保留 `d,e>0`。
+它取的是原全部 dyadic 和的极限；没有假定 V 极限可逐箱移入无限和。
+回归特取 `d=2,e=3,delta=-5`，检查明确的复因子 `3^(-1)`。
+
+该极限仍固定 J 和 delta。去掉完成深度、对所有 shift 聚合、与对角
+共同 Mellin 换线、参数一致的尾项及最终 `hmain/hrem` 均不由本条推出。
+
+### 本批核验与证明边界
+
+两个新源模块共292行定义与证明，Lean 编译退出码0。ScalarTime 与
+CompletedTime 的 red-stage 合约分别确认五个、六个目标声明缺失后
+才实现。最终全部122个 MWKF contract／axiom-audit 文件同次核验
+通过，342条完整公理报告仅含 `propext`、`Classical.choice`、
+`Quot.sound`，无 error/warning。全部正文被检查，没有只检查导入。
+
+聚焦 pytest：`295 passed`（14.45秒）；deterministic coverage 正常退出。
+它的 `unconditional asymptotic proved` 仍只是内部账本，不是最后
+`hexact/hmain/hrem` 的 Lean 证明。源文件、staged diff 和 proof-status
+扫描不含新项目公理、sorry、admit、native_decide 或 heartbeat 上调；
+诊断开关已移除。保持单代理隔离编译，不运行无关全量 Lean 冷构建。
+
+自审区分了紧时间集统一性与 T 渐近统一性、固定 J 与 J→∞、原 dyadic
+和的整体极限与逐箱极限、单 shift 与全 shift 聚合。此为本地自审及
+内核核验，不是独立代理审阅、外部同行认证或远端 CI 成功记录。
+
 ## Remaining formalization boundary
 
 This PR does **not** yet make the analytic theorem unconditional inside Lean.
@@ -1154,10 +1251,17 @@ uniform in every real height V. This proves the spatial-integral/height
 limit exchange at fixed depth and fixed time. The completion vanishes
 outside the physical domain, so the resulting full-line completed integral
 then converges, for a fixed nonzero shift, to the uncut domain integral.
-The explicit depth factor is retained; these ordered limits do not give
-arbitrary joint depth/height limits, or a dominated convergence theorem
-for the complete time-integrated/shift-summed zero mode or either infinite
-mode series.
+The explicit depth factor is retained. Compact-time Gaussian domination
+now also proves continuity of the complete norm mass on either side of
+X=0, and its physical time-weighted integrability. The resulting actual
+product majorant proves absolute integrability of both completed physical
+kernels and permits the height limit through the full time/space double
+integral at fixed depth and shift. The original infinite dyadic zero-mode
+sum is identified with that integral at every finite height, so its height
+limit is now proved with the exact Poisson factor 1/s. This does not move
+the height limit through individual boxes. Nor does it supply the
+time-integrated depth limit, arbitrary joint depth/height limits, or
+the complete shift-summed zero-mode limit.
 Neither compactness in the logarithmic-extension proof nor the
 Schwartz construction supplies uniform seminorm estimates in the varying
 physical parameters.
@@ -1201,6 +1305,10 @@ Consequently the accurate status is:
   its fixed-time, fixed-nonzero-shift completion integral limit, actual
   fixed-depth power domination uniform over every real height, the completed
   full-spatial-integral height limit, and its ordered full-line completion
-  limit to the physical domain integral;
+  limit to the physical domain integral, compact-time scalar Gaussian
+  domination, complete norm-mass time continuity and weighted integrability,
+  actual completed physical product-space integrability, full time/space
+  double-integral height limit, and the original all-dyadic zero-mode height
+  limit at fixed shift and completion depth with Poisson factor 1/s;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.
