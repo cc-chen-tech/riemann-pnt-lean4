@@ -21290,6 +21290,16 @@ nonzero-second-dual analytic and coupled-kernel flags false.
 
 ### 9.147 Second Poisson closes the full Ramanujan principal ledger
 
+**2026-08-31 proof repair.** The original top-face calculation below did
+not by itself cover general \(wc\ll M\), the infinite \(K\)-partition,
+or the full nonstationary \(k\)-sum. The
+[principal-tail supplement, PT1--PT8](2026-08-31-physical-principal-tail-repair.md)
+supplies those analytic steps with the original AFE weight. In particular,
+(9.983) is used only after the ordered tail truncation and in the
+near-stationary range; it is not an absolute all-\(K\) bound. The finite
+audit at the end checks the top face only and no longer certifies the
+global conclusion. This repair does not prove the centered gate.
+
 Section 9.146 treated the direct sampled row.  The analytic obligation is
 the joint row \(\mathcal P^{\rm all}+\mathcal M^{\rm prop}\), not its two
 summands separately.  Equation (9.710a) and the reverse-Poisson lattice
@@ -21298,7 +21308,10 @@ whole principal contribution.
 
 Reassemble all \(h\)- and \(\delta\)-dyadic blocks before taking an
 absolute value.  In (9.69), write \(s=uwc\), \(\delta=w\delta _1\), and
-retain the \(K,M\)-partitions.  Restoring the smooth factors suppressed in
+retain the \(K,M\)-partitions. Throughout, \(q,r,s\) are squarefree,
+as inherited from the original mollifier; in particular \(u,w,c\) are
+pairwise coprime and squarefree even though \(\mu(c)\) is not displayed.
+Restoring the smooth factors suppressed in
 (9.69), the joint Ramanujan principal ledger is exactly
 
 \[
@@ -21398,8 +21411,9 @@ For \(k>0\), make the changes
  \tag{9.981}
 \]
 
-The critical phase is zero.  The two-dimensional stationary-phase
-formula, together with (2.5), is uniform in every retained packet and
+The critical phase is zero. After PT3--PT6 of the supplement truncate
+the tails, restrict here to \(K\asymp MR/S\). The stationary-phase
+formula, together with (2.5), is uniform in this retained range and
 gives
 
 \[
@@ -21413,8 +21427,9 @@ gives
  \tag{9.982}
 \]
 
-on \(A\asymp T\); outside this range repeated nonstationary integration
-by parts gives an arbitrary power saving.  Negative \(k\) is likewise
+on \(A\asymp T\); outside this range nonstationary integration
+by parts retains a summable frequency weight, as in PT14--PT18 of the
+supplement. Negative \(k\) is likewise
 nonstationary because \(t>0\).  Notice that (9.982) has no residual
 Kloosterman phase: the rational phase and the archimedean saddle cancel
 at the critical point.  The surviving frequencies satisfy
@@ -21435,7 +21450,8 @@ gives
  \tag{9.983}
 \]
 
-This is exactly the missing fixed-power saving.  Let
+For comparison, the following is the original **top-face** calculation.
+Let
 \(R=T^\rho\), \(S=T^\sigma\), \(M=T^m\), \(K=T^\kappa\), and split
 \(w=T^\omega\), \(c=T^{m-\omega}\).  The principal top-face support
 (9.71) gives \(u=T^{\sigma-m+o(1)}\), while (5.7) gives
@@ -21454,17 +21470,32 @@ and summing \(r,u,w,c,n\) yields
  \tag{9.984}
 \]
 
-Here \(W=T^\omega\le M\); the \(n\)-length is \(M/(wc)\), and all
-factorization and coprimality sums cost only \(T^\varepsilon\).  The
-worst endpoint is \(c=1\), where (9.984) reaches, but does not exceed,
-the target.  Summing the logarithmically many packets and
-\(q^{-1}\)-weights therefore proves unconditionally
+For general \(w\asymp W,c\asymp C\), do not impose \(WC\asymp M\):
+there are \(O(RSM/(WC))\) rows, including \(M/(WC)\) choices of \(n\).
+The exact coefficient after the stationary square root is
+\(2/(qu\varphi(s))\). PT19--PT21 therefore give the uniform bound
+\(T^{1+\varepsilon}RM/(qSKC)\ll T^{1+\varepsilon}/(qC)\)
+whenever \(K\asymp MR/S\), for every nonempty \(WC\ll\min(M,S)\).
+The endpoint \(C=1\) reaches the target.
+
+Before summing these finitely many retained packets, PT3 restores the
+whole large-\(M\) signed sum to the rational lattice \(y=j/(uc)\ge1/N\).
+For \(K<T^{-8}\), the empty lattice instead gives the nonzero-frequency
+compensation \(-\varphi(u)\widehat\Psi(0)\), not zero; PT4 pays its
+geometric tail by integration by parts. PT5 pays both the lattice and
+continuous-zero terms for \(K>T^8\). PT6 pays the full off-ratio
+\(k\)-sum, including dual length \(T/(cK)<1\).
+Only after these steps are the remaining \(K,M\) families logarithmic.
+Summing their \(q^{-1}\) weights and the geometric \(C^{-1}\) sum proves
 
 \[
  \mathcal J_{\rm Ram}^{(2),\ne0}
  \ll_{\varepsilon,W}T^{1+\varepsilon}.
 \]
 
+The following further implication still requires the separate,
+same-object centered-resonant input of Section 9.144; neither the
+principal-tail supplement nor its finite checks supply that input.
 Combining (9.973), (9.980), and the centered resonant bound of Section
 9.144 shows that the only remaining analytic obligation in this route is
 the **nonzero reduced-determinant** part of \(\mathcal C^\circ\).  In
@@ -21479,17 +21510,19 @@ strictly weaker sufficient gate
  \ll_{\varepsilon,W}T^{1+\varepsilon}.
 \]
 
-The implication is proved; its nonzero-determinant hypothesis is not.
-Thus Section 9.147 closes every principal/Ramanujan row without using
-Möbius cancellation, but it does not close the full coupled-kernel gate
-or the twisted moment.
+The nonzero-determinant hypothesis is not proved. The principal result
+here closes the **global** diagonal-plus-Ramanujan ledger without using
+Möbius cancellation; it cannot be assigned to an individual FP3,
+canonical, or fixed-\(H,L\) principal row. It does not close the full
+coupled-kernel gate or the twisted moment.
 
 The finite helper
-`ramanujan_principal_second_poisson_closure_audit` checks (9.979), the
-full \(w,c\) exponent polytope in (9.984), and every structural flag used
-to promote the joint principal bound.  It records the centered resonant
-input separately and keeps the nonzero-determinant and full-gate flags
-false.
+`ramanujan_principal_second_poisson_closure_audit` checks (9.979) and the
+top-face \(w,c\) exponent polytope in (9.984), conditional on the stated
+inputs. It does not check all \(W,C\) or infinite tails, and its global
+principal/determinant/gate certification flags are false. The companion
+`scripts/check_physical_principal_tails.py` supplies finite normalization
+and endpoint regressions, not a replacement for the analytic supplement.
 
 ### 9.148 A diagonal-subtracted modulus moment is the next exact gate
 

@@ -6950,8 +6950,8 @@ def test_second_principal_poisson_balanced_dual_length_is_half_power() -> None:
     assert "doesnotboundthenonzerosecond-dualmaster" in "".join(text.split())
 
 
-def test_second_poisson_closes_the_joint_ramanujan_principal_polytope() -> None:
-    """The proper-divisor row must be included before claiming closure."""
+def test_second_poisson_top_face_audit_does_not_certify_infinite_principal_tails() -> None:
+    """Passing top-face inputs cannot verify all W,C or infinite K tails."""
 
     audit = getattr(
         coverage_audit,
@@ -6977,7 +6977,8 @@ def test_second_poisson_closes_the_joint_ramanujan_principal_polytope() -> None:
     assert result["all_squarefree_origin_divisor_sums_exact"]
     assert result["u_one_deleted_origin_reassembles_afe_diagonal"]
     assert result["joint_principal_zero_dual_mode_vanishes"]
-    assert result["all_w_c_splits_within_target"]
+    assert not result["all_w_c_splits_within_target"]
+    assert result["top_face_w_c_splits_within_target"]
     rows = result["split_rows"]
     assert tuple(row["principal_bound_exponent"] for row in rows) == (
         F(1, 2),
@@ -6989,9 +6990,10 @@ def test_second_poisson_closes_the_joint_ramanujan_principal_polytope() -> None:
         F(1, 4),
         F(0),
     )
-    assert result["joint_ramanujan_principal_bound_proved"]
+    assert result["conditional_top_face_bound"]
+    assert not result["joint_ramanujan_principal_bound_proved"]
     assert result["diagonal_plus_joint_principal_is_nonzero_second_dual_master"]
-    assert result["only_centered_nonzero_determinant_gate_remains"]
+    assert not result["only_centered_nonzero_determinant_gate_remains"]
     assert not result["nonzero_determinant_dispersion_proved"]
     assert not result["coupled_kernel_gate_closed"]
 

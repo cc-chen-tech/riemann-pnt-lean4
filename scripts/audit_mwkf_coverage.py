@@ -19618,7 +19618,7 @@ def ramanujan_principal_second_poisson_closure_audit(
     centered_resonant_projector_bound_verified: bool,
     original_afe_packet_map_verified: bool,
 ) -> dict[str, object]:
-    """Audit the full Ramanujan-principal second-Poisson polytope.
+    """Audit only the finite top-face Ramanujan-principal polytope.
 
     On the top principal face write ``s=u*w*c``, with ``u=S/M`` and
     ``w*c=M``.  Poisson in the coprime variable ``delta1`` has dual
@@ -19631,7 +19631,11 @@ def ramanujan_principal_second_poisson_closure_audit(
     The last equality is the physical balance ``K*S=M*R``.  Thus every
     split is within the ``T`` target, including the worst endpoint
     ``c=1``.  The zero dual mode and deleted origin are kept as separate
-    exact hypotheses; no determinant estimate is inferred.
+    exact hypotheses; no determinant estimate is inferred.  Even when
+    all supplied booleans hold, this routine does not check general
+    WC<M, infinite K, or frequency-uniform integration by parts.  The
+    analytic repair is PT1--PT8 in the 2026-08-31 principal-tail note;
+    it is not certified by this finite program.
     """
 
     rho = F(r_exponent)
@@ -19773,7 +19777,8 @@ def ramanujan_principal_second_poisson_closure_audit(
             diagonal_reassembly
         ),
         "joint_principal_zero_dual_mode_vanishes": zero_mode,
-        "all_w_c_splits_within_target": numerical_coverage,
+        "top_face_w_c_splits_within_target": numerical_coverage,
+        "all_w_c_splits_within_target": False,
         "nonzero_stationary_phase_bound_verified": bool(
             nonzero_stationary_phase_bound_verified
         ),
@@ -19783,14 +19788,16 @@ def ramanujan_principal_second_poisson_closure_audit(
         "proper_divisor_joint_reassembly_verified": bool(
             proper_divisor_joint_reassembly_verified
         ),
-        "joint_ramanujan_principal_bound_proved": analytic_hypotheses,
+        "conditional_top_face_bound": analytic_hypotheses,
+        "joint_ramanujan_principal_bound_proved": False,
         "diagonal_plus_joint_principal_is_nonzero_second_dual_master": (
             diagonal_reassembly and zero_mode
         ),
         "centered_resonant_projector_bound_verified": bool(
             centered_resonant_projector_bound_verified
         ),
-        "only_centered_nonzero_determinant_gate_remains": only_determinant,
+        "conditional_top_face_plus_resonant_inputs": only_determinant,
+        "only_centered_nonzero_determinant_gate_remains": False,
         "nonzero_determinant_dispersion_proved": False,
         "coupled_kernel_gate_closed": False,
     }
