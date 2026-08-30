@@ -284,6 +284,10 @@
 下一步需要估计这个真实核，或者与其他原始 packet 联合抵消，而不是
 再把同一段几何/Poisson 节省计算一次。
 
+后续[互素 Euler 结构与零点响应](2026-08-30-primitive-euler-zero-response.md)
+进一步保留奇偶伸缩分量，计算了该真实 profile 的非零共轭零点局部留数，
+并量化 Mellin 高度密度。该计算不提供全和下界或所缺的算术上界。
+
 有限核算见 `scripts/check_physical_quotient_transition.py`；它检查频率
 支撑、所有余因子与平方自由重组、有限二维完成及 packet 的同余/gcd/
 归一化。连续 Poisson、uniform Schwartz 估计和算术目标仍由数学论证区分。
