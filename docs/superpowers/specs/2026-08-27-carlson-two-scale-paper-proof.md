@@ -1703,6 +1703,65 @@ For `c=2*pi*m`, this keeps precisely the harmonic endpoint denominator
 needed when summing modes below the stationary endpoint.  It is not a
 bound for the nearest stationary modes, which remain in the separate
 second-derivative endpoint band.
+The compact lower-cutoff bound and its extension to zero are now formal in
+`OscillatoryGammaLowerTail`.  The exact contract builds successfully (8700
+jobs including cached dependencies), with only the three allowed base
+axioms.  The proof in fact only needs `sigma<1`; positive `sigma` is needed
+later for the upper tail, not for this lower-tail lemma.
+
+Combining (8.22-lower) with the already formal right-tail estimate gives
+the following next Gamma-replacement lemma.  For `0<sigma<1`, `c>0`,
+`0<x<t/c`, integer `N>=1`, and `c*N>=2t`, put `s=sigma+i*t`.  Then
+
+\[
+ \left|\int_x^N u^{-s}e^{icu}\,du
+ -c^{s-1}e^{i\pi(1-s)/2}\Gamma(1-s)\right|
+ \leq\frac{2x^{1-\sigma}}{t-cx}+\frac{8N^{-\sigma}}c.
+\]
+
+Indeed the full conditional Gamma integral minus the displayed core is
+the integrable lower tail on `[0,x]` plus the conditional upper tail on
+`[N,infinity)`.  The latter is bounded by the existing upper-tail theorem
+at `z=1-s`.  This statement concerns the hard core only.  The left
+smoothing transition still needs its first-derivative gap estimate before
+summing over `m`; bounding each transition just by its absolute length
+would lose a factor comparable to the number of stationary modes.
+
+For clarity, the square-root endpoint band can be chosen with a fixed,
+explicit width.  Let `K=floor(sqrt(t/(2*pi)))>=6`, take `x=K+1`, and
+eventually `N>=2K`.  Then
+
+\[
+ K-1+\frac1{K+1}\leq\frac{t}{2\pi(K+1)}<K+1,
+ \qquad K\leq\frac{t}{2\pi K}<K+2+\frac1K.
+\]
+
+Keep the five indices `m=K-1,...,K+3` in the endpoint band.  In particular
+`K-1` cannot be thrown into a unit-gap lower-tail bound: at the bottom of
+the height cell its distance is only `1/(K+1)`.  Modes `m<=K-2` have a
+unit lower-tail gap, and all `m>=K+4` are in the shifted nonstationary
+sum, apart from harmless overcounting of nonnegative terms.
+
+For every endpoint-band mode, on `[K,2K]` the phase `F=2*pi*m*u-t*log u`
+satisfies `F''>=pi/2`.  The second-derivative primitive bound is
+`12/sqrt(pi/2)`, uniform over every subinterval.  Transferring it to the
+amplitude `w*u^(-sigma)`, with `sigma>0`, costs at most
+`(4*C1+2)*K^(-sigma)`: the differentiated cutoff contributes
+`4*C1*K^(-sigma)`, the power derivative at most `K^(-sigma)`, and the
+right boundary at most `K^(-sigma)`.  On `[2K,N+1]`,
+
+\[
+ F'\geq2\pi(K-1)-\pi(K+1)^2/K
+       =\pi(K-4-1/K)\geq\pi K/4.
+\]
+
+First-derivative primitive transfer thus bounds this part by
+`64*C1*(2K)^(-sigma)/(pi*K)`, uniformly in `N`.  Each of these five
+full smoothed integrals is therefore `O(K^(-sigma))`.  On the critical
+line, the full Gamma terms for `m=K-1,K` also have this size, by the
+prefactor correction below; retaining them in the desired dual sum costs
+no more than this error.  This is a second-derivative argument, not an
+absolute length estimate over the whole support interval.
 
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
@@ -1782,8 +1841,9 @@ single integer nearest either side of `beta`.  For every `M>=0`, Lean proves
 \]
 
 and composes both with `H_M<=1+log M`.  The omitted nearest integer is to be
-kept in the expanded stationary/endpoint band and estimated by length; it
-is not absorbed into (8.22f).  Thus the finite nonstationary band contributes
+kept in the expanded stationary/endpoint band and treated by the
+second-derivative argument above, not by absolute length over the whole
+support interval.  It is not absorbed into (8.22f).  Thus the finite nonstationary band contributes
 only the intended endpoint logarithm once (8.22d)--(8.22e) are summed.
 
 Thus only negative modes `k=-m<0` can be stationary, at
@@ -1821,12 +1881,40 @@ the required `O(t^(-1/4))` remainder.  This prefactor correction is an
 explicit remaining assembly obligation, not an assumed unit-norm identity
 for the raw Gamma coefficient.
 
+For the weaker formal target `zeta_critical_unitPhase_logAfe_target`, an
+equally exact normalization avoids identifying this unit phase with the
+theta-function multiplier.  Reflection and complex conjugation of Gamma
+give, at `s=1/2+i*t`,
+
+\[
+ |\Gamma(1-s)|^2=\frac{\pi}{\cosh(\pi t)},\qquad
+ |P(s)|^2=\frac{1}{1+e^{-2\pi t}}.
+\]
+
+Here the power factor has squared norm `(2*pi)^(-1)` and the exponential
+factor has squared norm `exp(pi*t)`, so the signs and normalization agree
+with (8.24).  In particular `P(s)!=0`.  Put `U=P(s)/|P(s)|`; then `|U|=1`
+and, writing `e=exp(-2*pi*t)`,
+
+\[
+ |P(s)-U|=1-|P(s)|
+ =\frac{e}{(1+e)(1+|P(s)|)}\leq e.
+\]
+
+Consequently replacing `P(s)` by `U` in the dual sum changes the error by
+at most `2*sqrt(y)*exp(-2*pi*t)`.  No regularity of `U(t)` is required by
+the downstream energy inequality.  This proves the required normalization
+on paper without identifying `U` with `chi(s)`, and does not assert that
+the raw Gamma coefficient is itself a unit phase.  Its Lean proof remains
+an explicit obligation of the weak-AFE assembly.
+
 For the explicit width-one cutoff, the stationary membership bounds use
 `N+1` and `x-1` in place of `N+2` and `x-2` in (8.23).
-The remaining quantitative gate is to sum the finite nonstationary band
-with its endpoint distances, cancel the zero-mode main term before taking
-the cutoff limit, replace the stationary truncated integrals by (8.24),
-and prove that the endpoint harmonic sums and transition strips contribute
+Finite nonstationary endpoint-distance sums and the zero-mode uniform
+norm bound are now formal.  The remaining quantitative assembly is to
+cancel that zero-mode main term before taking the cutoff limit, replace
+the stationary truncated integrals by (8.24), and apply the endpoint-band
+and smoothing-transition bounds so that their total contribution is
 `O(x^(-sigma) log t)+O(t^(1/2-sigma)y^(sigma-1))`.  No Poisson identity,
 Gamma boundary value, or smoothing existence remains unproved.
 
@@ -1839,6 +1927,19 @@ including cached dependencies).  Their axiom audits list only `propext`,
 `Classical.choice`, and `Quot.sound`.  These tests certify the stated local
 lemmas and cutoff interface, not the complete weak AFE or an improved
 zero-density certificate.
+
+**Further verification checkpoint (2026-08-30).** The combined build of
+`Test.AFEExplicitPoissonZeroModeContract`,
+`Test.OscillatoryGammaLowerTailContract`,
+`Test.AFEExplicitPoissonFiniteBandContract`,
+`Test.AFEExplicitPoissonFarTailContract`, and
+`Test.AFEExplicitPoissonIdentityContract` exits zero (8729 jobs, including
+cached dependencies).  All displayed theorem audits contain only
+`propext`, `Classical.choice`, and `Quot.sound`.  The remaining work is the
+stationary Gamma replacement, the restricted smoothing/nearest-endpoint
+bounds, the combined upper-cutoff limit, and the exact unit-phase
+normalization.  No improved density certificate or forcing integration is
+claimed by this checkpoint.
 
 ## 9. Primary sources
 
