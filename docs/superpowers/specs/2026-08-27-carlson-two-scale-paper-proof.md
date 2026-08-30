@@ -1974,9 +1974,46 @@ The inner error contributes `(3+8*C1)*H_(K-2)/pi` and the two finite
 nonstationary bands together contribute `16*C1*H_M/pi`, all multiplied
 by `K^(-1/2)`.  Use `H_(K-2)<=H_M<=1+log M` and `1+log M>=1`.
 The upper-cutoff coefficient is exactly the inner coefficient plus the
-single zero-mode `N^(-1/2)` error.  This explicit target is not yet a
-Lean theorem; its remaining obligations are the finite partitions,
-the combined norm budget, and the primal finite-sum identity.
+single zero-mode `N^(-1/2)` error.  This explicit target is now the Lean theorem
+`norm_dirichlet_sum_sub_pole_sub_dualGamma_le` in
+`AFEExplicitPoissonFiniteBudget`.  Its contract build exits zero (8753 jobs
+including cached dependencies); the axiom audit reports only `propext`,
+`Classical.choice`, and `Quot.sound`.  It assumes no component norm bounds,
+Poisson identity, or summability gate.  The new supporting modules prove the
+natural-number primal identity, the actual finite signed tail, the five-mode
+endpoint count, the shifted harmonic band, the zero-mode square-root bound,
+and the two retained Gamma terms.
+
+The upper-cutoff limit is now also formal:
+`norm_riemannZeta_sub_primal_sub_dualGamma_le` in
+`AFEExplicitPoissonCutoffLimit` replaces the whole parenthesized primal
+expression by `zeta(s)`, with the same `C_fin*K^(-1/2)*(1+log M)` bound.
+Its contract build exits zero (8754 jobs) with only the three allowed base
+axioms.  For fixed `t,K`, the existing first zeta approximation adds at most
+`C*N^(-1/2)` once `N>=2*t`; the finite-cutoff coefficient plus this fixed
+`C` vanishes against `N^(-1/2)`.  This is a limit of a scalar bound for the
+whole expression, not an exchange with the infinite Poisson sum.
+
+The next normalization has a concrete elementary budget.  In the height
+cell with `K>=6`, use `pi<4` and `(K+1)^2<=2*K^2` to get `t<=16*K^2`,
+so `K^(-1/2)<=2*t^(-1/4)`.  Also `M<=2*K+5<=3*K<=K^2<=t`, hence
+`1+log M<=1+log t`.  The already-proved common-unit-phase Gamma estimate
+adds `2*sqrt(K)*exp(-2*pi*t)`.  Since `K<=t`, `t>=1`, and
+`exp(2*pi*t)>=2*t`, this is at most `t^(-1/2)<=t^(-1/4)`.
+Consequently `R=2*C_fin+1` and `T0=72*pi` suffice for the existing eventual
+unit-phase logarithmic AFE target, after identifying its canonical main and
+dual finite sums.  That target quantifies an eventual threshold; a separate
+bounded-height compactness argument is unnecessary.  These scalar/canonical
+normalizations remain to be formalized; the weak AFE, improved density
+certificate, and forcing integration are not yet certified.
+
+The combined twenty-one-contract regression for these six new modules and
+the preceding Gamma/Poisson components exits zero (8774 jobs including cached
+dependencies).  All printed axiom audits contain only the three allowed base
+axioms.  An independent read-only review checked the interval partitions,
+pole signs, constants, derivative-bound existence, and whole-expression
+cutoff limit; it found no substantive issue.  This verification checkpoint
+does not certify the pending weak AFE or the zero-density improvement.
 
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
