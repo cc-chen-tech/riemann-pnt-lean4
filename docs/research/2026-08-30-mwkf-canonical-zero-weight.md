@@ -4,6 +4,8 @@
 
 本文沿用 [physical adapter](2026-08-30-mwkf-physical-reflection-adapter.md) 的 (PA9)，只求值该特定 canonical 零核，不把它等同于所有 resonant 项。所有结论均保留配对的非零频补集；改变延拓时必须同时按 (PA8) 修改补集。
 
+后续 [SF12–SF18](2026-08-30-mwkf-shifted-frequency-adapter.md) 进一步求值配对的零差整条格点频率带：完整权为 W(t/T)(λ(t)+2γ+O_A(t^{-A}))，其中非零格点频率精确补偿 κχ。λ(t) 不抵消，正部长 Möbius 均方仍未控制。
+
 ## 1. 精确公共权与原点的二重极点
 
 固定 \(N\ge2,T\ge2\)、实值 \(W\in C_c^\infty([1,2])\)。令 \(s_t=1/2+it\)，并使用原 AFE 的全部因子

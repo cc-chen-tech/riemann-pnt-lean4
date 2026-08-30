@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-30 全部物理双频率与零差整带。** [SF1–SF19](2026-08-30-mwkf-shifted-frequency-adapter.md) 从 (4.5) 的原 hδ 相位推出全部双 completion 频率，保留 r−s 的符号、|r−s|=1、原 h=0/δ=0 两轴和精确 Jacobian。重组后标签是 zeta 整数差 j 与格点恢复频率 k，PA18 的补集由实际频率显式给出。|j|,|k|≤⌈T⁴⌉ 的全局尾为 O(T^{9−2a})，a 可任意大。零差整带的真实权为 W(t/T)(λ(t)+2γ+O_A(t^{-A}))：k≠0 补偿延拓常数 κχ，但不消掉 λ(t) 级长 Möbius Gram。统一 signed operator、共同截断 reflection 及两个 mixed 项保留；没有新覆盖、T² saving 或完整 twisted-moment 证明。
+
 > **2026-08-30 全 B 重组与端点回返，不新增覆盖。** [GB1–GB9](2026-08-30-mwkf-global-b-boundary.md) 证明全部 B/h 的单位 Möbius 除数和等于 µ(r)1_{r|M,(r,q)=1}。移除 χ 的 bare 全和因此快速衰减，但实际 quotient 端点不能随之删除。用精确 JT symbol 和 χ 在整数处的平坦性，整个实际 B/h 家族压缩为负号的 h=−1 项，完整误差为 CPFS log(2S)Z^{1−N}T^ε。剩余核保留 µ(M)µ(B) 与 (B,q)=1，可把 B 光滑截在原模数尺度 S。直接从 IC2 的 M=Ae、s=ed 双射也能核对：这本质上撤销了一次 Type 分解，unsigned 顶层成本仍是 T⁵，目标仍是 T³。不得把同一 h 平均再当成独立 saving；本轮没有证明新幂次节省、全 B 覆盖、canonical 零模求值或完整 gate。
 
 > **2026-08-30 物理范围更正与内部 q 壳子域覆盖。** [PQ1–PQ13](2026-08-30-mwkf-physical-q-shell-coverage.md) 明确更正：旧 GQ 例子的 q=T^χ、χ>0 与 R=S=T³ 不满足原 N=T³ 的 qR,qS≲N，不能算非空物理箱。一般尺度转移保留 F=(R/S)J、B 采样的 R/S 因子及共振成本 CP(R/S)=ρS。取 q≈Q=T^γ、R=S=N/(8Q)，原 mollifier 在整片支持内光滑；误差目标是 S≈T^{3−γ}，不是 T³。PQ12 给指定 κ/B 子族的覆盖，原 2T/(qS) 外因子与 Σ_{q≈Q}µ²(q)/q≲1 将整个 q 壳内这部分的贡献控制为 T^{1+ε}，包括 (γ,ν,u,β)=(1/5,1,0,6/5) 的 B>T 区域。不是整个 q 壳的全部 off-diagonal；覆盖外实例如 (1/5,1,1/2,4/5) 当前仍只到 T^{11/10+ε}。完整 signed operator、canonical zero Gram、reflection mixed 项及全部物理边界仍未控制。
@@ -28718,6 +28720,43 @@ coverage. The PQ subregions retain their stated scope; the complete
 coupled-kernel gate, canonical zero Gram, reflection mixed terms and
 independent physical tails remain open.
 
+### 9.219 Full physical double frequencies and the equal-zeta strip
+
+The [shifted-frequency adapter](2026-08-30-mwkf-shifted-frequency-adapter.md)
+derives the entire short-modulus completion from the original h*delta
+phase, not a supplied complement matrix. For signed b=r-s and m=abs(b),
+the complete Gauss coefficient is m*e(-s*nu*omega/b). Its phase cancels
+the constant phase in the exact Fourier inversion, whose Jacobian is
+s*m. The integer relabelling j=-sgn(b)*nu, k=sgn(b)*omega turns the
+result into the original zeta-variable difference and lattice frequency.
+The m=1 case still retains every integer frequency. Both original
+deleted axes and their intersection are kept; the original AFE diagonal
+is m1*s=n*r, not the equal-zeta strip m1=n.
+
+SF8--SF11 give the actual archimedean coefficients and a common rectangular
+frequency cutoff. Its Selberg quadratic-form tail is at most
+N*T^(2a+2)*Y^(1-a); for N<=T^3 and Y=ceil(T^4) this is T^(9-2a),
+with arbitrary fixed a>=2. This is a globally recombined physical tail,
+not a fixed-h packet estimate or a solution of every earlier transform gate.
+
+The complete j=0 strip, including all k!=0 frequencies, has weight
+
+\[
+ W(t/T)\,2\sum_{n\ge1}V_t(n^2)/n
+ =W(t/T)(\lambda(t)+2\gamma+O_A(t^{-A})).
+\]
+
+SF14--SF15 retain every moving gamma residue in this evaluation. The
+nonzero-k strip replaces the extension-dependent kappa_chi by 2*gamma;
+it does not cancel the logarithmic Gram. Its positive long-Mobius
+mean-square bound is still open. The full original-coordinate operator
+is R=G_chi+J_chi=K_eq+K_ne-L, with explicit frequency formula SF16 for
+J_chi. K_ne has no automatic zero row/column sums and is not identified
+with a determinant-nonzero TT* kernel. Reflection still acts only after
+integer-lattice regrouping, with one common product cutoff and both mixed
+terms. No additional parameter coverage, T^2 saving or full twisted-moment
+theorem follows.
+
 ## 10. What has and has not been proved
 
 **Canonical zero-frequency outcome.**  The finite Fourier Gram identity
@@ -28750,6 +28789,13 @@ established by the finite identity.  Section 9.200 now proves the
 correctly normalized divisor-coefficient map and inverse have at most
 subpolynomial norm cost (constant on \(\Re z=2\)); the remaining
 occupancy comparison and signed saving are still unproved.
+
+Section 9.219 now makes the complete physical frequency complement
+explicit and evaluates the full equal-zeta strip, including its nonzero
+lattice frequencies. The extension constant cancels, but the logarithmic
+long-Mobius Gram survives. Its global cutoff tail is bounded; its analytic
+quadratic-form bound, the signed unequal-zeta contribution and their
+combined coupled-kernel saving remain unproved.
 
 **Final published coverage and unified Type gate.**  Section 9.197 puts
 the registered published estimates into one final-wedge table and adds
