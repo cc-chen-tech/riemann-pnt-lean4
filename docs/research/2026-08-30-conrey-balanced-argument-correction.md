@@ -959,3 +959,70 @@ floor 系数补正。固定 a 重标度也保持实数 y 不变，不涉及变�
 **剩余输入清单：**Q=1 和目标 Q 的实际长均方定理及 DI 链、整数
 截断适配（或原生整数版本）、上述 H/均方转移的形式化、规范 RVM
 归一化与最终比例连接。这里没有新建一个假装完成这些输入的 Prop。
+
+## 23. 同一实际长产品的有限高度均方转移已实现
+
+第 22 节中的 shifted H 估计、精确 V₁−V 差和有限高度积分转移现已
+完成 Lean 证明。长均方渐近式、取整适配及最终极限仍不由此自动得到。
+
+`ConreyShiftedH` 复用已有的正实部 H 对数导数公式及 digamma 递推，
+得到第 22 节的准确两步移位式。这里使用的是已经证明的导数公式，
+没有从单点函数值相等推断导数。对 `0<sigma≤1/2,t≥3`，同高度的
+右半平面界加三个倒数项给出复范数误差 `≤10`。H 的相关极点与
+分母均被条件排除，而 ζ、V₁ 或 B 可以有零点。
+
+`ConreyV1Approximation` 定义实际 `V=ζ+(51/(50L))ζ′`，并证明
+同一任意有限 Y、同一 sigma/P 下的精确差及点态范数界。记
+
+\[
+ C=10+\tfrac12|\log(2\pi)|,\qquad
+ D_a=\tfrac{51}{50}\left(\tfrac{1-a}{2}+\tfrac CL\right).
+\]
+
+当 `L>0,a≤1,3≤t,exp(aL)≤t≤exp L` 时，真实产品满足
+`|(V₁−V)B|≤D_a|ζB|`。证明保留 `log(t/(2π))`，利用
+`aL≤log t≤L`，没有将 `log t` 直接换成 L。低段取 `a=0` 即可；
+这只改变用于估计的下高度，不改变函数、L、sigma 或长 Y。
+
+`ConreyV1MeanSquareTransfer` 随后直接对真实产品建立连续性和
+各项区间可积性。设
+`3≤U≤Z=exp(aL)≤T≤exp L`，所有积分均在同一 `sigma+it` 上，令
+
+\[
+ \mathcal E=D_0^2\int_U^Z|\zeta B|^2dt
+             +D_a^2\int_Z^T|\zeta B|^2dt.
+\]
+
+在证明内首先得到 `∫_U^T|(V₁−V)B|²≤E`，再对每个 `epsilon>0`
+应用 Young 不等式并积分，证明最终公开端点
+
+\[
+ \boxed{\int_U^T|V_1B|^2dt
+ \le (1+\epsilon)\int_U^T|VB|^2dt
+       +(1+\epsilon^{-1})\mathcal E.}
+\]
+
+这是实际有限积分之间的定理，不要求调用方提供均方界、误差界、
+正则因子、零点表或可积性。P 只给出有限 Dirichlet 系数，故无需
+此阶段假设其光滑性；Y 可为任意自然数。`U=Z`、`Z=T` 的退化
+分段也保留。最终定理的精确合约展开 V、C、D 的字面公式，防止
+微分系数、区间、Young 因子或函数在封装中被换掉。
+
+两组新合约均先因缺少目标定理失败；随后独立构建通过 8789 jobs，
+exit 0。H 两个端点和实际均方转移端点的直接公理审计仅标准三条。
+独立只读源代码审查确认实际函数、相同参数、零点许可、退化区间、
+可积性、积分拼接和完整系数，无待修问题。目标清单与依赖链检查
+通过；该转移端点 91 个本地模块的 import 闭包无 Zeta23，外部根
+仅 Mathlib。新生产模块和合约均加入默认 Lake roots。
+
+最终组合构建 `nice -n 10 lake build Test.ConreyV1MeanSquareTransferContract
+Test.ConreyShiftedHContract Test.ConreySelectedEtaMainCountContract
+Test.ConreyEtaArgumentMainContract Test.ConreySelectedMeanSquareContract`
+通过 8869 jobs，exit 0；四条新公开端点仅依赖 `propext`、
+`Classical.choice`、`Quot.sound`。Python 全量回归 546 passed（13.75s）。
+本次仅定向 Lean 验证，不声称全库 baseline 或 GitHub CI 通过。
+
+**仍需完成：**实际 Q=1 和目标 Q 的长均方估计／DI 链、整数截断
+适配及其所需未 mollify 均方、固定 a 后取 L→∞ 再 a→1 的转移、
+RVM 归一化与严格 `>2/5`。本节没有把这些改写成一个新的假设后
+宣布 Conrey 定理已证。
