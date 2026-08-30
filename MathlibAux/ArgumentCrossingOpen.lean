@@ -193,4 +193,33 @@ theorem exists_finset_argumentCrossings_of_disjoint_components
     obtain ⟨i, _, hti⟩ := Finset.mem_biUnion.mp ht
     exact ⟨⟨i, ((hspec i).2 t hti).1⟩, ((hspec i).2 t hti).2⟩
 
+/-- The balanced component phase increment is independent of the chosen
+continuous logarithm. The same deck shift occurs at both endpoints. -/
+theorem continuousLog_phase_increment_eq
+    {ell₁ ell₂ : ℝ → ℂ} {a b A₁ B₁ A₂ B₂ : ℝ}
+    (hab : a < b) (h₁ : ContinuousOn ell₁ (Ioo a b))
+    (h₂ : ContinuousOn ell₂ (Ioo a b))
+    (hexp : ∀ t ∈ Ioo a b, Complex.exp (ell₁ t) = Complex.exp (ell₂ t))
+    (hA₁ : Tendsto (fun t => (ell₁ t).im) (nhdsWithin a (Ioi a)) (nhds A₁))
+    (hB₁ : Tendsto (fun t => (ell₁ t).im) (nhdsWithin b (Iio b)) (nhds B₁))
+    (hA₂ : Tendsto (fun t => (ell₂ t).im) (nhdsWithin a (Ioi a)) (nhds A₂))
+    (hB₂ : Tendsto (fun t => (ell₂ t).im) (nhdsWithin b (Iio b)) (nhds B₂)) :
+    B₁ - A₁ = B₂ - A₂ := by
+  have hmid : (a + b) / 2 ∈ Ioo a b := by constructor <;> linarith
+  obtain ⟨k, hk⟩ := exists_int_continuousLogs_eq_add_two_pi_I h₁ h₂ hexp hmid
+  let C : ℝ := ((k : ℂ) * (2 * Real.pi * I)).im
+  have hA' : Tendsto (fun t => (ell₁ t).im) (nhdsWithin a (Ioi a))
+      (nhds (A₂ + C)) := by
+    apply (hA₂.add_const C).congr'
+    filter_upwards [Ioo_mem_nhdsGT hab] with t ht
+    simpa only [Complex.add_im] using (congrArg Complex.im (hk t ht)).symm
+  have hB' : Tendsto (fun t => (ell₁ t).im) (nhdsWithin b (Iio b))
+      (nhds (B₂ + C)) := by
+    apply (hB₂.add_const C).congr'
+    filter_upwards [Ioo_mem_nhdsLT hab] with t ht
+    simpa only [Complex.add_im] using (congrArg Complex.im (hk t ht)).symm
+  have hA := tendsto_nhds_unique hA₁ hA'
+  have hB := tendsto_nhds_unique hB₁ hB'
+  linarith
+
 end MathlibAux
