@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.MWKFCubicAFEDyadicCutoff
+
+#print axioms PrimeNumberTheorem.MWKFCubic.contDiff_cubicAFEDyadicWindow
+#print axioms PrimeNumberTheorem.MWKFCubic.tsupport_cubicAFEDyadicWindow_subset
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEDyadicWindow_nonneg
+#print axioms PrimeNumberTheorem.MWKFCubic.sum_cubicAFEDyadicWindow_range
+#print axioms PrimeNumberTheorem.MWKFCubic.hasSum_cubicAFEDyadicWindow
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionDyadicCutoff
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionDyadicCutoff_eq_discrete
+#print axioms PrimeNumberTheorem.MWKFCubic.hasSum_cubicAFEProgressionDyadicCutoff

@@ -40,8 +40,28 @@
 `gcd(delta,s)=1`。现在已把原正整数 shift-fiber 级数严格连接到该双向格点和：
 显式整数坐标及其逆映射覆盖每个非零项；截断支撑条件证明所有非正指标项为零，
 没有靠 `toNat` 舍去有贡献的项。因此局部公式的左端已是原 AFE 求和项乘上
-真实截断。它仍不是实际 moment 的全局 Poisson 分解：实际 dyadic 截断的构造、
-聚合以及物理时间积分的换序还须完成。
+真实截断。
+
+现在还已构造两个真实正指标的 dyadic 分解。记 `H=Real.smoothTransition`，取
+
+\[
+\phi_j(x)=H(2-x/2^j)-H(2-2x/2^j),\qquad j\ge0.
+\]
+
+已证明 `phi_j` 为 C∞、非负、至多为 1，闭支撑包含于
+`[2^j/2,2*2^j]`；有限尺度和保留下边界项 `H(2-2x)`，当 `x>=1` 时
+全尺度和严格为 1。实际截断为
+`chi_(j,k)(x)=phi_j(x)*phi_k((delta+x*r)/s)`，其闭支撑位于两个指标均正的区域内，
+不是从任意 cutoff 接口假设存在。原整数 progression 上的双尺度总权为 1。
+此 partition 并非在每个正实点上都等于 1：小于 1 的连续指标区间仍有下边界权，
+后续 Fourier 零模计算必须保留它。`x=1/4` 的有限尺度和为零的回归专门检查这一点。
+先由此证明整数指标与 dyadic 指标的联合绝对可和性，再交换这两个求和，得到
+每个原 shifted fiber 的点态 dyadic Poisson 表达。它保留完整物理核及相位，
+次序明确为 `sum_(j,k) (1/s)*sum_h ...`；没有交换跨 box 的频率和，
+也没有声称由此得到参数一致的 Fourier 尾项估计。
+对真实物理时间积分后的 progression 级数，同样已证明 dyadic 重组及外层
+box 级数绝对可和：截断独立于 `t`，可逐项提出积分，再使用原积分级数的
+已证可和性。这不等于已证明 `integral_t` 与 Fourier 频率和之间的换序。
 
 ## Machine-checked in this PR
 
@@ -125,6 +145,12 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | explicit integer lattice and inverse, including negative coordinates, non-unit shifts and modulus one | `cubicAFEProgressionLattice_injective`, `cubicAFEProgressionLattice_index`, `cubicAFEProgressionLattice_toNat_mem` |
 | forbidden-domain terms vanish; exact positive-progression to bilateral-lattice reindexing without a postulated bijection | `cubicAFEProgressionCutoffSummand_eq_zero_of_not_domain`, `tsum_cubicAFEProgressionCutoff_eq_lattice` |
 | end-to-end local Poisson formula starting from the original complete shifted-fiber summand | `cubicAFEShiftFiberCutoff_poisson` |
+| explicit nonnegative smooth dyadic windows, precise support scales and finite telescoping with lower boundary retained | `cubicAFEDyadicWindow`, `tsupport_cubicAFEDyadicWindow_subset`, `sum_cubicAFEDyadicWindow_range` |
+| actual one- and two-index dyadic partitions sum to one at positive integer-sized inputs | `hasSum_cubicAFEDyadicWindow`, `hasSum_cubicAFEDyadicWindow_product`, `hasSum_cubicAFEProgressionDyadicCutoff` |
+| constructed progression cutoff and exact second-index scales/restriction, including negative shifts | `cubicAFEProgressionDyadicCutoff`, `cubicAFEProgressionDyadicCutoff_eq_discrete`, `cubicAFEProgressionDyadicCutoff_scales` |
+| joint absolute summability precedes dyadic/integer reordering | `summable_cubicAFEProgression_dyadic_weighted`, `tsum_cubicAFEProgression_eq_dyadic` |
+| actual shifted fiber equals its dyadic Poisson series, with an absolutely summable outer box series | `cubicAFEShiftFiber_eq_dyadicPoisson`, `summable_cubicAFEDyadicPoissonTerm` |
+| exact dyadic reassembly of the literal time-integrated progression, with a summable outer box series | `cubicAFEProgressionIntegral_eq_dyadic`, `summable_cubicAFEProgressionDyadicIntegral` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -181,6 +207,30 @@ coverage report exited successfully. Its `residual_top_level_gates=0` and
 `unconditional asymptotic proved` labels remain internal executable-audit
 claims, not a proof of the final Lean facade's analytic hypotheses.
 
+### Actual dyadic construction and reassembly verification
+
+Both `MWKFCubicAFEDyadicCutoff.lean` and `MWKFCubicAFEDyadicReassembly.lean`
+compiled to proof objects. Thirty-eight contract/audit files were checked in
+one import-deduplicated Lean invocation, with final exit code zero and no
+error or warning diagnostics. All 110 printed axiom reports used only the
+three standard foundations. The red-stage checks failed on the absent
+construction/reassembly theorems before their implementation; the subsequent
+full run checked the literal window values, both support endpoints, negative
+and zero inputs, the retained lower-boundary term, and a negative-shift
+fixture with exact second index `n(4)=2` for `(d,e,delta)=(6,10,-2)`.
+Typed contracts expose the joint summability conclusion, full Poisson phase,
+the nesting order of the box/frequency sums, and the actual time-integrated
+dyadic identity without postulated partition or interchange hypotheses.
+
+The product-series proof initially caused excessive definitional unfolding
+while inferring the functions in `HasSum.mul`. Explicitly specifying the
+two index functions resolved it. No heartbeat limit was increased; temporary
+diagnostics were removed. The focused Python suite passed all 295 tests
+(16.19 seconds), and deterministic coverage exited successfully. As above,
+its proof-status label is not evidence that the remaining Lean analytic
+inputs have been supplied. This remains targeted local verification, not
+remote CI or independent expert review.
+
 ## Remaining formalization boundary
 
 This PR does **not** yet make the analytic theorem unconditional inside Lean.
@@ -205,10 +255,17 @@ an explicit nonzero bump regression. The positive progression series has
 also been identified with the bilateral residue lattice sum: the integer
 index map is injective and its range contains every nonzero lattice term.
 This yields the fixed-cutoff Poisson formula for the original shifted-fiber
-summand itself. This is not yet the full Poisson decomposition of the moment:
-the actual dyadic cutoffs must be constructed and summed, and the physical
-time-integral interchanges justified. Neither compactness in the
-logarithmic-extension proof nor the
+summand itself. The dyadic cutoffs on both actual positive indices have now
+also been constructed and summed. Their nonnegative mass-one property proves
+joint absolute convergence with the original progression index, permitting
+the dyadic/integer reordering. The resulting pointwise Poisson expression
+sums dyadic boxes on the outside and frequencies on the inside. The same
+dyadic/integer reordering is proved for the actual time-integrated progression,
+using the cutoff's time independence and the previously established
+summability of the integrated original series. This is not
+yet the full time-integrated QCT/Poisson decomposition of the moment: the
+physical time/Fourier interchanges and parameter-uniform tail estimates
+remain to be established. Neither compactness in the logarithmic-extension proof nor the
 Schwartz construction supplies uniform seminorm estimates in the varying
 physical parameters.
 The height limit remains
@@ -227,7 +284,9 @@ Consequently the accurate status is:
 - kernel-checked structural/reassembly, finite-height series/integral
   interchange, diagonal split/reindexing, signed-shift/progression regrouping,
   fixed-`T` recombined AFE integral limits, actual local physical-kernel
-  regularity and the fixed-cutoff Poisson identity for the original
-  positive-index shifted-fiber summand;
+  regularity, actual two-index dyadic partition, absolute integer/dyadic
+  reassembly both pointwise and after the physical time integral, and
+  pointwise dyadic Poisson identity for every original positive-index
+  shifted-fiber summand;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.
