@@ -106,7 +106,7 @@
 \tag{PA9}
 \]
 
-因子 2 已包含两个相同 AFE 方向，不能再乘一次 2。这里的“canonical”只能指**固定了此延拓与此 completion 后**的零核，不能指延拓无关的次主常数。恢复离散 completion 时，删除的 \(h=0\)、\(\delta=0\) 轴与其他非零对偶频率都必须进入补集。由 (2.5)，\(\Omega_\chi\) 至多多一个 \(\log(2T)\) 因子；若需要正性，仍须另外验证该权的正性。
+因子 2 已包含两个相同 AFE 方向，不能再乘一次 2。这里的“canonical”只能指**固定了此延拓与此 completion 后**的零核，不能指延拓无关的次主常数。恢复离散 completion 时，删除的 \(h=0\)、\(\delta=0\) 轴与其他非零对偶频率都必须进入补集。由 (2.5)，\(\Omega_\chi\) 至多多一个 \(\log(2T)\) 因子。[canonical 零权求值](2026-08-30-mwkf-canonical-zero-weight.md) 的 (ZW12) 进一步给出 \(\Omega_\chi=W(t/T)(\lambda(t)+\kappa_\chi+O_A(t^{-A}))\)，保留了深移线的全部移动 gamma 留数。当 \(W\ge0\)、\(T\) 足够大时，该权非负；补回 mollifier 对角后 Gram 正半定。因此 Selberg 系数的零核负部为 \(O(T\log T\log(2N))\)，但正部的长 Möbius 均方上界及配对非零频补集仍未控制。
 
 ## 4. 完整 Mellin reflection 与共同乘积截断
 
