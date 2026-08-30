@@ -436,7 +436,9 @@ theorem summable_digammaGaussTerm {z : ℂ} (hz : 0 < z.re) :
   convert hnorm.symm using 1
   all_goals norm_num
 
-private theorem tsum_one_div_nat_add_sq_le {N : ℕ} (hN : 0 < N) :
+/-- The reciprocal-square tail used when splitting Gauss' digamma series at
+a positive natural cutoff. -/
+theorem tsum_one_div_nat_add_sq_le {N : ℕ} (hN : 0 < N) :
     (∑' n : ℕ, 1 / (N + n + 1 : ℝ) ^ 2) ≤ 1 / (N : ℝ) := by
   let f : ℕ → ℝ := fun n => 1 / (N + n : ℝ)
   let g : ℕ → ℝ := fun n => f n - f (n + 1)

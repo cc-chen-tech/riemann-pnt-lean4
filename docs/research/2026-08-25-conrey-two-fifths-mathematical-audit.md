@@ -1076,7 +1076,857 @@ each of the finitely many terms with `n>=2` satisfies
 uniformly in `Im s`.  A finite sum gives a constant `A_B` for which
 `|B(s)-1|<1`, hence `B(s)!=0`, whenever `Re s>=A_B`.  Taking
 `A=max(A_V,A_B)` excludes zeros of both `V_1` and `V_1B` beyond the same
-vertical line.  The bounded divisor counts from Section 17 can then be frozen
-at this `A`, yielding the actual unbounded right-half-strip counts and the
-global half-weighted equation-(35) inequality.  This argument remains wholly
-independent of Zeta23 and of the later long-mollifier mean-square estimate.
+vertical line.  This argument remains wholly independent of Zeta23 and of the
+later long-mollifier mean-square estimate.
+
+## 19. Stabilized global equation (35)
+
+The uniform right edge is now used to close the exact count interface rather
+than merely recorded as an asymptotic fact.  Fix Conrey's hypotheses
+`g!=0`, `Y>=2`, and `P(1)=1`, and choose one common edge `A_35` satisfying
+
+\[
+ V_1(s)\ne0,\qquad V_1(s)B(s,P)\ne0
+ \quad\text{whenever }\operatorname{Re}s\ge A_{35}.
+\]
+
+Define the two half-strip zero finsets by evaluating the compact-rectangle
+divisors from Section 17 at `A=A_35`.  The far-right theorem removes the
+apparently retained upper bound and gives the exact membership statements
+
+\[
+\begin{aligned}
+ s\in Z_{V_1}(T)
+ &\Longleftrightarrow
+ \tfrac12\le\operatorname{Re}s,\quad
+ 0<\operatorname{Im}s\le T,\quad V_1(s)=0,\\
+ s\in Z_{V_1B}(T)
+ &\Longleftrightarrow
+ \tfrac12\le\operatorname{Re}s,\quad
+ 0<\operatorname{Im}s\le T,\quad V_1(s)B(s,P)=0.
+\end{aligned}
+\]
+
+Thus these are finite representations of the actual unbounded half-strip
+zero families, not counts whose mathematical statement still depends on an
+auxiliary right boundary.  Using the union of the two finsets to identify the
+critical-line boundary and the actual analytic orders as multiplicities, the
+finite-rectangle inequality from Section 17 specializes to
+
+\[
+ N^*_{V_1}(T)\le N^*_{V_1B}(T),
+ \tag{35-global}
+\]
+
+with weight `1/2` exactly at `Re s=1/2`.  This completes equation (35) at the
+level needed by Conrey's subsequent Littlewood argument.  Equations
+(37)--(40), the argument partition in (41), and the long mollified mean square
+remain separate gates and are not consequences of (35-global) alone.
+
+## 20. Exact Littlewood rectangle core and the `R/L` count factor
+
+The finite-rectangle part of equation (37) has now been derived before any
+asymptotic boundary estimate.  For an analytic function `F` whose zeros in
+the ordered rectangle
+
+\[
+ [\sigma_0,A]\times[t_0,T]
+\]
+
+are the finite family `Z`, with analytic multiplicities `m(rho)`, the proved
+identity is
+
+\[
+\begin{aligned}
+ 2\pi\sum_{\rho\in Z}(\operatorname{Re}\rho-\sigma_0)m(\rho)
+ &=\int_{t_0}^{T}\log|F(\sigma_0+it)|\,dt
+   -\int_{t_0}^{T}\log|F(A+it)|\,dt\\
+ &\quad+\int_{\sigma_0}^{A}(\sigma-\sigma_0)
+       \operatorname{Im}{F'\over F}(\sigma+it_0)\,d\sigma\\
+ &\quad-\int_{\sigma_0}^{A}(\sigma-\sigma_0)
+       \operatorname{Im}{F'\over F}(\sigma+iT)\,d\sigma\\
+ &\quad+(A-\sigma_0)\int_{t_0}^{T}
+       \operatorname{Re}{F'\over F}(A+it)\,dt.
+\end{aligned}
+\tag{37-exact}
+\]
+
+The proof first applies the weighted argument principle to
+`(s-sigma_0)F'(s)/F(s)`, then integrates by parts on all four sides.  The
+eight corner `log|F|` terms cancel exactly.  This sign audit is important:
+the left vertical logarithmic integral is positive and the right vertical
+one is negative; the bottom horizontal phase is positive and the top one is
+negative.
+
+For any `sigma_c >= sigma_0`, Lean also proves the independent finite-sum
+inequality
+
+\[
+ (\sigma_c-\sigma_0)
+ \sum_{\substack{\rho\in Z\\\operatorname{Re}\rho\ge\sigma_c}}m(\rho)
+ \le
+ \sum_{\rho\in Z}(\operatorname{Re}\rho-\sigma_0)m(\rho).
+\tag{37-gap}
+\]
+
+With Conrey's choices `sigma_c=1/2` and
+`sigma_0=1/2-R/L`, the factor on the left is exactly `R/L`.  Hence the
+later `L/R` in the zero-count bound is now accounted for without an
+asymptotic convention.  Jensen's inequality from Section 12 supplies the
+separate factor `1/2` when the left-edge `log|F|` integral is bounded by a
+second moment.
+
+The implementation is in `PrimeNumberTheorem/LittlewoodRectangle.lean`,
+with the public contract
+`Test/ConreyLittlewoodRectangleContract.lean`.  It also repairs the two
+stale rectangle-membership conversions that had prevented this existing
+argument-principle chain from building.
+
+This does **not** yet assert Conrey's `O(T/L)` boundary estimate.  To obtain
+the displayed inequality in Section 3 for
+`F=V_1B`, the remaining equation-(37) work is now exactly:
+
+1. bound the bottom and top weighted phase integrals;
+2. bound the far-right argument variation (the moving-right-edge `log|F|`
+   integral is now closed in Section 23.4);
+3. pass from a boundary-zero-free sequence of heights to every `T` with a
+   controlled endpoint error;
+4. only then combine (37-exact), (37-gap), and the already proved
+   mean-square/Jensen bridge.
+
+The qualitative far-right zero exclusion in item 2 is already available:
+`HardyTheorem/ConreyFarRight.lean` proves that the actual degree-one `V_1`,
+the normalized finite mollifier `B`, and `V_1 B` are nonzero on one common
+right half-plane, uniformly in height.  What is still missing for (37) is
+quantitative decay as the right edge tends to `+infinity` and a uniform
+bound for the two horizontal phase integrals at admissible heights.  Thus the
+next proof should extend the existing far-right module; it should not replace
+the actual product by an abstract zero-free surrogate.
+
+The cited model for those quantitative estimates is Conrey 1983, Section 4.
+Jensen's formula bounds each horizontal argument variation by `O(L)`, while
+the normalized `V` factor and the mollifier must both be `1 + O(L^{-1})` on
+the moving right edge.  The right vertical logarithmic integral is then
+`O(U/L)`, and after the Littlewood gap is divided by `R/L` this becomes the
+required `O(U)` remainder.  For the present global interval one takes `U` of
+size `T`.
+
+There is a constant-scale issue in the printed source which must not be
+copied literally into the formal statement.  The paper prints
+`sigma_1 = log L` and, on the next page,
+
+\[
+  2^{-\sigma_1}\ll L^{-1}.
+\]
+
+With the standard natural logarithm these two assertions are incompatible:
+`2^{-log L}=L^{-log 2}`, which is not `O(L^{-1})`.  The argument is repaired
+without changing its admissible region by taking, for example,
+
+\[
+  \sigma_1=2\log L,
+\]
+
+or more sharply any
+`sigma_1 >= (log L + log C)/log 2` when the preceding tail estimate is
+`C * 2^{-sigma_1}`.  This still has `sigma_1 = O(log L)` and so remains in
+the range `0 <= sigma <= A log L` used by the approximation lemmas, after
+enlarging the fixed constant `A`.  It now gives the required `O(L^{-1})`
+right-edge error exactly.  The same corrected edge also makes a finite
+Dirichlet mollifier tail with coefficients bounded by one `O(L^{-1})`:
+
+\[
+ \sum_{n=2}^{y}|b(n)|n^{-\sigma}
+ \le 2^{-\sigma}+\int_2^\infty x^{-\sigma}\,dx
+ =2^{-\sigma}\left(1+\frac2{\sigma-1}\right)
+ \qquad(\sigma>1).
+\]
+
+Thus `sigma = 2 log L` gives the claimed rate for all sufficiently large
+`L`.  For the repository's Conrey coefficients the corresponding theorem
+must expose the bound for the chosen fixed polynomial `P`; the current
+general interface assumes only `P(1)=1`, which is enough for nonvanishing but
+not for a uniform quantitative tail estimate as `Y` varies.
+
+Reproducing this corrected argument for the repository's exact degree-one
+`V_1 B` requires an explicit normalized approximation theorem on
+`Re s = sigma_1` and the corresponding Jensen horizontal-edge theorem; the
+existing qualitative nonvanishing theorem alone cannot supply either rate.
+
+For the degree-one definition already in the repository, the normalization
+is also explicit.  Uniformly for `t` in a fixed proportional interval such
+as `[T, 2T]` and `sigma = c log L`, the standard right-half-plane series and
+Stirling estimates give
+
+\[
+ \zeta(s)=1+O(2^{-\sigma}),\qquad
+ \zeta'(s)=O(2^{-\sigma}),\qquad
+ \frac1L\frac{H'(s)}{H(s)}=\frac12+O(L^{-1}).
+\]
+
+Consequently
+
+\[
+ V_1(s)=\kappa+O(L^{-1})+O(2^{-\sigma}),\qquad
+ \kappa=g+\frac{g_1}{2}+i g_0.
+\]
+
+The quantitative theorem should therefore assume the nonvanishing of this
+explicit main constant and prove
+`kappa^(-1) V_1(s) = 1 + O(L^(-1))` on the corrected moving edge.  The
+qualitative far-right theorem currently assumes only `g != 0`; that is the
+right hypothesis for eventual zero exclusion, but it does not identify this
+uniform asymptotic main term.  This distinction must be preserved when the
+next Lean interface is introduced.
+
+The horizontal Jensen step already has two reusable, function-agnostic
+components in the repository.  `PrimeNumberTheorem/AnalyticJensen.lean`
+turns a circle-average growth bound and a nonzero center lower bound into an
+inner-disk zero-multiplicity bound.  `MathlibAux/HorizontalArgument.lean`
+proves that one divisor point contributes at most `pi` to the horizontal
+logarithmic-derivative integral.  Thus the new function-specific work is
+precisely:
+
+1. an analytic moving Jensen disk for the regularized actual product;
+2. a polynomial circle-growth bound for `V_1 B`;
+3. the lower bound at the corrected far-right center supplied by the
+   normalized approximation above; and
+4. admissible endpoint heights avoiding the `V_1 B` divisor.
+
+After these are proved, the existing Jensen and horizontal-argument lemmas
+convert them into the two horizontal terms of (37-exact).  No new abstract
+argument-principle surrogate is needed.
+
+Equations (38)--(40), the equation-(41) critical-line partition, and the
+long mollified mean square remain separate.  No `O`-term or published
+spectral estimate is represented by an axiom in this slice.
+
+## 21. Quantitative moving-right estimate for the explicit mollifier
+
+The source of the right-edge estimate omitted in Conrey 1989, equation
+(37), is Conrey 1983, Section 4.  On page 59 that paper chooses
+`sigma_1 = log L`; on page 60 it then uses
+
+\[
+  A2^{-\sigma_1}<L^{-1}.
+\]
+
+These two displays are incompatible when `log` is the natural logarithm.
+The correction `sigma_1=2 log L` is sufficient and remains inside the
+paper's allowed strip `0<sigma<A log L`.  The following calculation gives a
+complete quantitative theorem for the repository's explicit mollifier,
+without using a spectral estimate.
+
+For
+
+\[
+  P(x)={84x+15x^3+x^5\over100}
+\]
+
+one has `0 <= P(x) <= 1` on `[0,1]`: all coefficients are nonnegative, and
+`x^3 <= x`, `x^5 <= x` there.  Assume throughout this calculation that the
+integer cutoff satisfies `Y>=2` and that `sigma_0<=1/2`.  If
+`1 <= n <= Y`, then
+
+\[
+  x_{n,Y}={\log(Y/n)\over\log Y}\in[0,1].
+\]
+
+Consequently, every nonconstant coefficient in Conrey's equation-(33)
+mollifier satisfies
+
+\[
+ \left|\mu(n)P(x_{n,Y})n^{\sigma_0-1/2}\right|\le1.
+\]
+
+Writing `sigma=Re s>1` and using the exact constant coefficient `b(1)=1`
+therefore gives, uniformly in `Im s` and over the admissible cutoffs
+`Y>=2`,
+
+\[
+\begin{aligned}
+ |B(s,P)-1|
+ &\le \sum_{2\le n\le Y}n^{-\sigma}\\
+ &\le 2^{-\sigma}+\int_2^\infty x^{-\sigma}\,dx\\
+ &=2^{-\sigma}\left(1+{2\over\sigma-1}\right).
+\end{aligned}
+\tag{B-right}
+\]
+
+Now let `L>=e` and take `sigma=2 log L`.  Then `sigma>=2`, so the
+parenthetical factor in (B-right) is at most `3`.  Moreover
+`log 2>1/2`, hence
+
+\[
+  2^{-2\log L}
+   =\exp(-2\log2\log L)
+   \le \exp(-\log L)=L^{-1}.
+\]
+
+Thus the corrected moving edge has the explicit bound
+
+\[
+ \boxed{\quad
+  \left|B(2\log L+it,P)-1\right|\le {3\over L}
+  \quad(L\ge e,\ Y\ge2,\ \sigma_0\le1/2).\quad}
+\tag{B-moving}
+\]
+
+This is the first genuinely quantitative part of the missing equation-(37)
+boundary estimate.  In particular, `L>3` makes the mollifier nonzero on the
+whole moving right edge.  If `L>=6`, then its norm lies between
+`1-3/L` and `1+3/L`; the elementary bounds
+`log(1+u)<=u` and `-log(1-u)<=u/(1-u)` give
+
+\[
+  \left|\log|B(2\log L+it,P)|\right|\le {6\over L}.
+\tag{B-log}
+\]
+
+Therefore the mollifier alone contributes at most `6U/L` to a right
+vertical logarithmic integral of height `U`.  The corresponding normalized
+estimate for `V_1` is still a separate obligation: it needs quantitative
+Dirichlet-series estimates for `zeta` and `zeta'`, and a uniform Stirling
+estimate for `H'/H` when `t` is in a proportional interval.  No product
+estimate is claimed until that second factor is proved.
+
+The bounds (B-right) and (B-moving) are implemented in
+`HardyTheorem/ConreyMollifierRightEdge.lean`, with public contract
+`Test/ConreyMollifierRightEdgeContract.lean`.  The generic theorem keeps
+both necessary hypotheses separate: `P(1)=1` supplies the exact constant
+term, while `|P(x)|<=1` on `[0,1]` controls the nonconstant coefficients.
+The logarithmic corollary (B-log), the `V_1` estimate, and their product
+integral have not yet been promoted to public Lean theorems.
+
+## 22. Local mathematics of the full `V_1 B` moving-right normalization
+
+The missing `V_1` estimate does not require importing a new black-box
+Stirling theorem.  It follows quantitatively from the Gauss series for the
+digamma function already proved in `PrimeNumberTheorem/DigammaBounds.lean`.
+This section records the complete constant ledger before formalization.
+
+Put
+
+\[
+ L=\log T,\qquad \sigma=2\log L,\qquad
+ s=\sigma+it,\qquad z={s\over2},
+ \qquad T\le t\le2T,
+\]
+
+and take `T` large enough that `L>=e^2`.  In particular `sigma>=4`, while
+`sigma<=T<=t`.  Let `N=ceil(|z|)`.  Then
+
+\[
+ {t\over2}\le |z|\le t,\qquad
+ |z|\le N<|z|+1,
+\]
+
+so `N>0`.  Gauss' series is
+
+\[
+ \psi(z)=-\gamma-z^{-1}
+   +\sum_{n\ge0}\left({1\over n+1}-{1\over z+n+1}\right).
+\]
+
+Split it after `N` terms.  For the finite reciprocal part, the imaginary
+coordinate alone gives
+
+\[
+ \sum_{n<N}{1\over|z+n+1|}
+ \le {N\over |\operatorname{Im}z|}
+ ={2N\over t}\le3.
+\]
+
+The already-proved quadratic majorant for the remaining Gauss terms gives
+
+\[
+ \left\|\sum_{n\ge N}
+   \left({1\over n+1}-{1\over z+n+1}\right)\right\|
+ \le |z|\sum_{m>N}{1\over m^2}
+ \le {|z|\over N}\le1.
+\]
+
+Also `|z^(-1)|<=1` and `0<gamma<1`.  Hence, with `H_N` denoting the
+`N`-th harmonic number,
+
+\[
+ \|\psi(z)-H_N\|\le6.                                      \tag{D1}
+\]
+
+The elementary harmonic bounds
+
+\[
+ \log(N+1)\le H_N\le1+\log N
+\]
+
+and
+
+\[
+ {T\over2}\le N+1,\qquad N\le3T
+\]
+
+give `|H_N-L|<=3`.  Combining this with (D1),
+
+\[
+ \boxed{\ \|\psi(s/2)-L\|\le9.\ }                         \tag{D2}
+\]
+
+The exact logarithmic derivative identity
+
+\[
+ {H'(s)\over H(s)}={1\over s}+{1\over s-1}
+   -{\log\pi\over2}+{\psi(s/2)\over2}
+\]
+
+then yields, using the imaginary coordinate to bound both rational terms,
+
+\[
+ \boxed{\ \left\|{H'(s)\over H(s)}-{L\over2}\right\|
+   \le8.\ }                                                \tag{H-right}
+\]
+
+The zeta factor needs the same sharp lower-endpoint p-series estimate as the
+mollifier, now for the infinite Dirichlet series:
+
+\[
+ \|\zeta(s)-1\|
+ \le\sum_{n\ge2}n^{-\sigma}
+ \le2^{-\sigma}\left(1+{2\over\sigma-1}\right)
+ \le {3\over L}.                                          \tag{Z-right}
+\]
+
+Since `sigma>=4`, Cauchy's estimate on the unit disk in `Re w>=3` and the
+existing `zeta(2)<=5/3` bound give
+
+\[
+ \|\zeta'(s)\|\le\zeta(2)\le{5\over3},
+ \qquad \|\zeta(s)\|\le1+{3\over L}\le4.                 \tag{Z'-right}
+\]
+
+Now define the genuine main constant
+
+\[
+ \kappa=g+{g_1\over2}+ig_0.
+\]
+
+The exact algebraic decomposition is
+
+\[
+ V_1(s)-\kappa
+ =\kappa(\zeta(s)-1)+{g_1\over L}\zeta'(s)
+   +{g_1\over L}\left({H'(s)\over H(s)}-{L\over2}\right)
+      \zeta(s).                                            \tag{V-decomp}
+\]
+
+Therefore (H-right), (Z-right), and (Z'-right) prove
+
+\[
+ \boxed{\ \|V_1(s)-\kappa\|
+   \le {3|\kappa|+34|g_1|\over L}.\ }                     \tag{V-right}
+\]
+
+If `kappa!=0`, the normalized factor satisfies
+
+\[
+ \|\kappa^{-1}V_1(s)-1\|
+ \le {C_V\over L},\qquad
+ C_V=3+34{|g_1|\over|\kappa|}.                            \tag{V-normalized}
+\]
+
+Together with (B-moving), the actual normalized product obeys
+
+\[
+ \left\|\kappa^{-1}V_1(s)B(s,P)-1\right\|
+ \le {C_F\over L},\qquad C_F=4C_V+3
+ =15+136{|g_1|\over|\kappa|}.                             \tag{VB-right}
+\]
+
+For `L>=2 C_F` this distance is at most `1/2`.  Thus the product is nonzero
+on the whole moving right edge and
+
+\[
+ \left|\log\left|\kappa^{-1}V_1(s)B(s,P)\right|\right|
+ \le {2C_F\over L}.                                       \tag{VB-log}
+\]
+
+Integrating over a vertical interval of length `U` gives `2 C_F U/L`.
+This closes the quantitative right-vertical term on a proportional block
+`T<=t<=2T`, once the displayed finite/infinite p-series and Gauss-series
+bounds have been checked in Lean.
+
+It does **not** by itself close the global right vertical in Conrey 1989,
+equation (37).  The source check matters here: equation (37) integrates over
+`1<=t<=T`, whereas Conrey 1983, Section 4 works on `T<=t<=T+U`.  On the full
+interval one cannot replace `H'/H` pointwise by `L/2` with `O(1)` error.
+The height variation has to be retained and integrated, as in the next
+section.  This corrects the stronger provisional interpretation of the
+local estimate.
+
+## 23. Global right-vertical compensation for the explicit degree-one choice
+
+For the explicit certificate
+
+\[
+ Q(y)=1-{51\over50}y,
+\]
+
+the polynomial before the change of variables in equations (25)--(27) is
+
+\[
+ Q_1(x)=Q(1/2-x)={49\over100}+{51\over50}x.
+\]
+
+Thus the repository's exact degree-one parameters are
+
+\[
+ g={49\over100},\qquad g_0=0,\qquad g_1={51\over50},
+ \qquad \kappa=g+{g_1\over2}=1.                           \tag{explicit-V1}
+\]
+
+This identity is the missing bridge between the explicit mean-square
+polynomial and `conreyDegreeOneV1`; it must be used instead of leaving
+`g,g_0,g_1` arbitrary in the final equation-(37) specialization.
+
+Keep `L=log T` and the corrected edge `sigma=2 log L`.  For the high part
+`sigma<=t<=T`, the Gauss-series argument of Section 22, now with `t` as its
+own scale, gives
+
+\[
+ \left\|{H'(\sigma+it)\over H(\sigma+it)}
+  -{1\over2}\log {t\over2\pi}\right\|\le C_H              \tag{H-height}
+\]
+
+for one absolute constant `C_H`.  Define the height-dependent real main
+term
+
+\[
+ a_L(t)={49\over100}+{51\over100L}\log {t\over2\pi}.
+\]
+
+For `2<=t<=T` and all sufficiently large `L`,
+
+\[
+ {1\over5}\le a_L(t)\le1,
+ \qquad
+ 1-a_L(t)={51\over100L}\log {2\pi T\over t}.               \tag{a-height}
+\]
+
+Consequently
+
+\[
+ |\log a_L(t)|
+ \le {3\over L}\log {2\pi T\over t},
+\]
+
+and elementary integration gives
+
+\[
+ \int_2^T |\log a_L(t)|\,dt\ll {T\over L}.                \tag{a-int}
+\]
+
+The zeta and mollifier tails are uniformly `O(1/L)`, and (H-height) shows
+that `V_1(s)=a_L(t)+O(1/L)` on the high part.  Since (a-height) keeps the
+main term uniformly away from zero, the logarithm is Lipschitz there and
+
+\[
+ \int_\sigma^T
+ \left|\log|V_1(\sigma+it)B(\sigma+it,P)|\right|dt
+ \ll {T\over L}.                                          \tag{VB-high-int}
+\]
+
+On the short low part `2<=t<=sigma`, the existing coarse bound
+`|digamma(z)|<<1+log(|z|+1)` gives
+
+\[
+ V_1(\sigma+it)=g+O\!\left({\log\sigma\over L}\right),
+\]
+
+uniformly.  Because `g=49/100`, this is bounded away from zero for large
+`L`; both its norm and reciprocal norm are bounded by absolute constants.
+Its logarithmic integral therefore has size
+
+\[
+ O(\sigma)=O(\log L)=o(T/L).                               \tag{VB-low-int}
+\]
+
+Combining (VB-high-int), (VB-low-int), and the already proved mollifier
+bound supplies the genuine global right-vertical `O(T/L)` input required
+by equation (37).  Unlike the local normalization, this argument does not
+discard the `log(t/T)` variation; its integral is exactly what recovers the
+missing factor `1/L`.
+
+The formalization should therefore proceed in two layers.  First prove the
+reusable local Gauss/zeta estimates and `V_1` decomposition.  Then specialize
+to (explicit-V1) and prove the global logarithmic integral.  Only after the
+second layer is green may the right-vertical item in Section 20 be marked
+closed.  The horizontal Jensen terms and admissible endpoint heights remain
+separate gates.
+
+### 23.1 Verified checkpoint: the reusable height layer
+
+The first layer is now proved in Lean with no new project axioms:
+
+- `norm_riemannZeta_sub_one_le_rightTail` proves the infinite Dirichlet tail
+
+  \[
+  \|\zeta(s)-1\|\le 2^{-\Re s}
+    \left(1+{2\over \Re s-1}\right),
+  \]
+
+  and `norm_riemannZeta_movingRight_sub_one_le` specializes it to `3/L`;
+- `norm_digamma_halfLine_sub_log_le_nine` proves the Gauss-series height
+  estimate with constant `9` by splitting at `ceil ||z||`;
+- `norm_logDeriv_conreyH_sub_half_log_t_div_two_pi_le` proves (H-height)
+  with the explicit constant `C_H=8`;
+- `conreyDegreeOneV1_sub_heightMain_eq` proves the exact height-dependent
+  decomposition, and
+  `norm_conreyDegreeOneV1_sub_heightMain_movingRight_le` proves
+
+  \[
+  \|V_1(s)-A_L(t)\|
+  \le {3\|A_L(t)\|+34|g_1|\over L}
+  \]
+
+  on `Re s=2 log L`, `L>=exp 2`, `2<=t`, and `Re s<=t`.
+
+This checkpoint closes the reusable pointwise height estimates only.  It
+does **not** yet prove (a-height), (a-int), the low-range reciprocal bound,
+or the global absolute-log integral.  Consequently equation (37)'s global
+right vertical remains open until the second layer is green.
+
+### 23.2 Verified checkpoint: explicit high-part nonvanishing
+
+The explicit specialization is now proved through the pointwise high-part
+nonvanishing step:
+
+- `conreyExplicitDegreeOneHeightMain_eq` identifies the concrete main term
+
+  \[
+  a_L(t)={49\over100}+{51\over100L}\log {t\over2\pi};
+  \]
+
+- `one_third_le_conreyExplicitDegreeOneHeightMain_re` and
+  `conreyExplicitDegreeOneHeightMain_re_le_one` prove
+  `1/3 <= a_L(t) <= 1` on `1 <= t <= exp L`, for `L >= exp 2`;
+- `one_sub_conreyExplicitDegreeOneHeightMain_re_eq` proves the exact
+  compensation identity
+
+  \[
+  1-a_L(t)={51\over100L}\log {2\pi e^L\over t};
+  \]
+
+- after combining the proved `V1` and mollifier errors,
+  `norm_conreyExplicitRightVerticalProduct_sub_heightMain_le` proves
+
+  \[
+  \|V_1(2\log L+it)B(2\log L+it)-a_L(t)\|\le {79\over L}
+  \]
+
+  on `2 log L <= t <= exp L` for `L >= 600`; and
+- `conreyExplicitRightVerticalProduct_ne_zero` derives nonvanishing directly
+  from this error and `a_L(t) >= 1/3`, without assuming a boundary
+  nonvanishing predicate.
+
+This closes the explicit high-part pointwise and nonvanishing layer.  It does
+**not** yet prove the absolute-log Lipschitz bound, its high-part integral,
+the low-part reciprocal bound, or the final global right-vertical integral.
+Equation (37)'s right vertical therefore remains open at this checkpoint.
+
+### 23.3 Verified checkpoint: high-part logarithmic compensation
+
+The next high-part step is now proved without replacing the moving main term
+by a constant:
+
+- `abs_log_sub_log_le_six_mul_abs_sub` proves the elementary positive-line
+  Lipschitz estimate needed to pass from the product error to logarithms;
+- `abs_log_le_three_mul_one_sub` controls the logarithm of the real main term
+  by its exact distance from one;
+- `abs_log_norm_conreyExplicitRightVerticalProduct_le` combines these facts
+  with Section 23.2 to prove
+
+  \[
+  \left|\log\left\|V_1(2\log L+it)B(2\log L+it)\right\|\right|
+  \le {500\over L}+{2\over L}\log {2\pi e^L\over t}
+  \]
+
+  throughout `2 log L <= t <= exp L`, for `L >= 600`; and
+- `integral_log_conrey_height_compensation_one_exp_le` proves the elementary
+  global compensation estimate
+
+  \[
+  \int_1^{e^L}\log {2\pi e^L\over t}\,dt\le 3e^L.
+  \]
+
+- `continuous_conreyExplicitRightVerticalProduct` derives continuity along
+  the moving vertical line from the analytic `V1` factor and the entire finite
+  mollifier; and
+- `integral_abs_log_norm_conreyExplicitRightVerticalProduct_high_le` combines
+  continuity, direct nonvanishing, the pointwise logarithmic bound, and the
+  compensation integral to prove
+
+  \[
+  \int_{2\log L}^{e^L}
+  \left|\log\left\|V_1(2\log L+it)B(2\log L+it)\right\|\right|dt
+  \le {506e^L\over L}.
+  \]
+
+This closes the complete high range and formally recovers the factor `1/L`
+without a constant-height substitution.  The low-part reciprocal bound and
+the final global interval split are still open.  Hence equation (37)'s right
+vertical, the horizontal Jensen terms, and the genuine two-fifths theorem
+remain unproved at this checkpoint.
+
+### 23.4 Verified checkpoint: complete global right-edge logarithmic integral
+
+The short low range and the final interval split are now proved in
+`ConreyExplicitRightVerticalLow.lean`:
+
+- `log_le_div_hundred_of_ge_forty_thousand` gives the explicit elementary
+  scale `log L <= L/100` for `L >= 40000`;
+- `norm_logDeriv_conreyH_movingRight_low_le` applies the coarse digamma bound
+  on `1 <= t <= 2 log L` and proves
+
+  \[
+  \left\|{H'\over H}(2\log L+it)\right\|\le 6+\log L;
+  \]
+
+- `norm_conreyExplicitV1_sub_const_low_le` consequently proves
+
+  \[
+  \left\|V_1(2\log L+it)-{49\over100}\right\|\le {1\over50};
+  \]
+
+- `conreyExplicitRightVerticalProduct_low_norm_bounds` combines this with the
+  finite-mollifier tail to obtain the direct, assumption-free bounds
+
+  \[
+  {2\over5}\le\|V_1(2\log L+it)B(2\log L+it)\|\le {3\over5};
+  \]
+
+- hence `abs_log_norm_conreyExplicitRightVerticalProduct_low_le_two` and
+  `integral_abs_log_norm_conreyExplicitRightVerticalProduct_low_le` prove
+
+  \[
+  \int_1^{2\log L}|\log\|V_1B\||\,dt\le4\log L;
+  \]
+
+- finally `integral_abs_log_norm_conreyExplicitRightVerticalProduct_global_le`
+  joins this estimate to Section 23.3 and proves
+
+  \[
+  \int_1^{e^L}
+  \left|\log\left\|V_1(2\log L+it)B(2\log L+it)\right\|\right|dt
+  \le {507e^L\over L}
+  \]
+
+  for `L >= 40000`.
+
+This closes the moving-right-edge logarithmic-integral item needed in
+equation (37), with a concrete product and no abstract boundary nonvanishing
+hypothesis.  It does **not** close the two horizontal weighted phase/Jensen
+terms, admissible endpoint selection, or the long mollified mean square.
+Those remain the next gates before any genuine two-fifths claim.
+
+### 23.5 Verified checkpoint: actual-product Jensen mass and admissible heights
+
+The paper-first disk design in
+`2026-08-28-conrey-horizontal-jensen-math.md` is now implemented for the
+actual product, without a conditional growth predicate:
+
+- `exists_norm_conreyExplicitMollifiedV1_le_conreyHorizontalJensenOuterClosedBall`
+  proves the outer-disk bound
+
+  \[
+  |V_1(s)B(s)|\le C\,Y\,(U+2\log L+10)^6(L+2)^2;
+  \]
+
+- `exists_conreyHorizontalJensenInnerZeroMass_le` combines this sphere bound,
+  the center lower bound `1/6`, circle-average monotonicity, Jensen's formula,
+  and divisor locality to prove the exact multiplicity bound
+
+  \[
+  N_D(r)\le
+  {\log\{C Y (U+2\log L+10)^6(L+2)^2\}+\log 6
+   \over \log(\mathcal R/r)};
+  \]
+
+- `card_conreyHorizontalJensenInnerZeroSupport_le_mass` bounds the number of
+  distinct inner-disk zeros by this multiplicity mass; and
+- `exists_conreyHorizontalJensenAdmissibleHeight` selects
+  `t in [U,U+1]`, quantitatively separated from every inner-disk zero height,
+  so the actual product is nonzero on the complete segment
+  `[sigma0, 2 log L] + it`.
+
+The finite height set is computed from the divisor on the inner disk (which,
+by divisor locality, is the outer divisor restricted to that disk).  It does
+not include uncontrolled zeros in the outer annulus.
+
+The follow-up buffered-factor, Borel--Caratheodory, and horizontal-integral
+modules now go further: at one factor-support-selected height they bound the
+actual weighted logarithmic derivative by
+
+\[
+ 1{,}100{,}000{,}000{,}000\,L^7=o(e^L/L).
+\]
+
+Thus the selected-height horizontal Jensen term is closed.  The subsequent
+right-half-plane argument module also proves `Re F >= 3/10` on the whole
+moving edge and bounds the far-right argument variation by `pi`.
+
+The two horizontal selectors have now been applied simultaneously in
+`HardyTheorem/ConreyEquation37Edges.lean`: one height lies in
+`[2 log L+1,2 log L+2]`, the other in `[exp L-1,exp L]`, and the complete
+non-left boundary remainder is at most
+
+\[
+ {507e^L\over L}+2.2\cdot10^{12}L^7+
+ \bigl(2\log L-(1/2-R/L)\bigr)\pi.
+\]
+
+This assembly exposed one boundary convention that the preceding ledger had
+not stated.  The current exact Lean Littlewood theorem requires all rectangle
+zeros to be strictly interior.  The selected heights and the positive-real-
+part right edge exclude bottom, top, and right boundary zeros, but the actual
+product need not be nonzero on `Re s=sigma_0`.  The boundary is now handled
+by shifting it from the right through zero-free lines.  Target zeros with
+`Re rho>=1/2` remain in every shifted rectangle, and reverse Fatou gives the
+needed one-sided bound for the limiting left logarithmic integral; full
+`L^1` convergence is unnecessary.  The general epsilon theorem is formalized
+in `PrimeNumberTheorem/LittlewoodLeftBoundaryLimit.lean`.  Ordinary
+convergence of its shifted non-left remainder and specialization to the
+actual product remain the next contour-core tasks.
+
+After that, the transfer from selected endpoints to every height,
+equations (38)--(41), and the long mollified second moment remain open;
+strict `> 2/5` is not proved.
+
+## 27. Exact left-boundary tail limit
+
+The ordinary convergence checkpoint is now combined with the reverse-Fatou
+left-boundary inequality by applying the latter to every tail of the chosen
+zero-free-line sequence.  If
+
+\[
+ A_n=2\pi(c-x_n)M_{\ge c},\qquad
+ R_n=R_{\mathrm{nonleft}}(x_n),
+\]
+
+then `A_n -> A_0` and `R_n -> R_0`.  Applying reverse Fatou to the tail
+`x_{N+k}` with error `epsilon/3` forces its selected index beyond the common
+convergence threshold and yields
+
+\[
+ A_0\le I(x_0)+R_0+\epsilon.
+\]
+
+Letting `epsilon` tend to zero proves the exact limiting inequality with both
+the coefficient and the non-left remainder evaluated at `x_0`.  This is
+formalized in `PrimeNumberTheorem/LittlewoodTailLimit.lean`; it uses no
+zero-free hypothesis on the limiting left side and no false two-sided `L^1`
+convergence statement.
+
+For Conrey, `x_0=1/2-R/L` and `c=1/2`, so the coefficient is exactly `R/L`.
+The remaining equation-(37) specialization must still construct the finite
+divisor and a right-shifted sequence of zero-free vertical lines for the
+actual product `V_1B` at the two selected horizontal heights.  Equations
+(38)--(41) and the long `theta<4/7` mollified mean square remain downstream.

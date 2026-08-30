@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **共同上游已冻结，不新增覆盖。** [MWKF-PHYS-v1 / FP1–FP7](2026-08-30-mwkf-frozen-physical-atom.md) 锁定 `49cfacd7` 的原式定义、完整外权、非空 gcd 子族和 SF/PA 共同能量账本。真实 gcd 层的 µ(e) 不等于容斥正交叠项的 µ²(e)；固定约化模数与 Type 频率不消除 (e,n) 掩码，也不固定完成后的列 ξ=−euvk。三条研究线复用同一上游，但完整 paired adapter、跨对象范数转移和实际目标界仍开放。本轮新增覆盖 0、净幂次节省 0。
+
 > **2026-08-30 短区间输入的真实转移，不新增覆盖。** [SR1–SR12](2026-08-30-mwkf-short-row-transfer.md) 将经典 Möbius 短区间定理统一推广到多项式大小 q 的单位掩码，支付全部 q-smooth 除数与整数 +1，再作用于 GB7 的真实窗口 S/Z。内部物理 q 壳在 γ<3/5 时得到 CPX exp[−c(log T/log log T)^{1/3}]，恢复原外层为 T^{4−γ−ν} 乘同一衰减。平衡顶层仍是 normalized T^{5−o(1)}、物理 T^{3−o(1)}：缺失的固定 T² 没有减少。下列完整 adapter 的统一算子界仍未证明。
 
 > **2026-08-30 全部物理双频率与零差整带。** [SF1–SF19](2026-08-30-mwkf-shifted-frequency-adapter.md) 从 (4.5) 的原 hδ 相位推出全部双 completion 频率，保留 r−s 的符号、|r−s|=1、原 h=0/δ=0 两轴和精确 Jacobian。重组后标签是 zeta 整数差 j 与格点恢复频率 k，PA18 的补集由实际频率显式给出。|j|,|k|≤⌈T⁴⌉ 的全局尾为 O(T^{9−2a})，a 可任意大。零差整带的真实权为 W(t/T)(λ(t)+2γ+O_A(t^{-A}))：k≠0 补偿延拓常数 κχ，但不消掉 λ(t) 级长 Möbius Gram。统一 signed operator、共同截断 reflection 及两个 mixed 项保留；没有新覆盖、T² saving 或完整 twisted-moment 证明。

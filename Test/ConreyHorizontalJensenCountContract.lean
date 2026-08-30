@@ -1,0 +1,17 @@
+import HardyTheorem.ConreyHorizontalJensenCount
+
+namespace HardyTheorem
+
+#check conreyHorizontalJensenProduct
+#check conreyHorizontalJensenInnerZeroMass
+#check conreyHorizontalJensenInnerZeroSupport
+#check conreyHorizontalJensenInnerZeroHeights
+#check exists_conreyHorizontalJensenInnerZeroMass_le
+#check card_conreyHorizontalJensenInnerZeroSupport_le_mass
+#check exists_conreyHorizontalJensenAdmissibleHeight
+
+#print axioms exists_conreyHorizontalJensenInnerZeroMass_le
+#print axioms card_conreyHorizontalJensenInnerZeroSupport_le_mass
+#print axioms exists_conreyHorizontalJensenAdmissibleHeight
+
+end HardyTheorem

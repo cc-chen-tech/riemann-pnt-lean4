@@ -172,7 +172,8 @@ theorem exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_eq_resid
         (fun z => g2 z + ∑ p ∈ P, (z - p)⁻¹ * residue2 p)
           a c (-W) W := by
       apply MathlibAux.boundaryRectIntegral_congr_of_eqOn_boundary
-      simpa [K] using hboundary_eq
+      intro z hzK hzBoundary
+      exact hboundary_eq z (by simpa [K] using hzK) hzBoundary
     _ = (2 * Real.pi * I) * ∑ p ∈ P, residue2 p :=
       MathlibAux.boundaryRectIntegral_eq_finite_simple_pole_residue_sum_of_differentiableOn
         P residue2 hg2 hP_mem

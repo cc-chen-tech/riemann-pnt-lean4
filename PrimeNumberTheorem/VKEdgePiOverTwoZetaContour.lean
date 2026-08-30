@@ -116,11 +116,12 @@ theorem exists_weightedExplicitFormula_boundaryRectIntegral_eq_residue_sum
       poles residue hg hH hpolesInterior
   have hboundaryNotPole :
       ∀ z ∈ K,
-        ¬((-1 : ℝ) < z.re ∧ z.re < u + 2 ∧
+        ¬ ((-1 : ℝ) < z.re ∧ z.re < u + 2 ∧
           -T < z.im ∧ z.im < T) →
         z ∉ poles := by
     intro z hzK hzBoundary hzPole
-    exact hzBoundary (hpolesInterior z hzPole)
+    apply hzBoundary
+    exact hpolesInterior z hzPole
   have hcontour :
       MathlibAux.boundaryRectIntegral
           (fun z : ℂ =>
@@ -311,11 +312,12 @@ theorem exists_regularizedLogDeriv_boundaryRectIntegral_eq_zero_sum
       poles residueD hG hW hpolesInterior
   have hboundaryNotPole :
       ∀ z ∈ K,
-        ¬((-1 : ℝ) < z.re ∧ z.re < u + 2 ∧
+        ¬ ((-1 : ℝ) < z.re ∧ z.re < u + 2 ∧
           -T < z.im ∧ z.im < T) →
         z ∉ poles := by
     intro z hzK hzBoundary hzPole
-    exact hzBoundary (hpolesInterior z hzPole)
+    apply hzBoundary
+    exact hpolesInterior z hzPole
   have hcontour :
       MathlibAux.boundaryRectIntegral
           (fun z : ℂ =>
