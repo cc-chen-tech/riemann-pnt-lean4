@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-30 完整 κ 对偶频率族与新覆盖。** [GP1–GP13](2026-08-30-mwkf-variable-kappa-coverage.md) 将 all-e 光滑 core 扩展到固定 K≈T^ν、0<ν≤1，保留 J=P/K≈T^{1−ν}、n≈BJ 及精确归一化中的 X/M、P/(kl)。q=1、R=S=T³、P≈T 时，平方自由误差指数为 3−ν+3β/2；先完成较长光滑斜率后，两项指数为 2+a−ν+3β/2 与 3+a−ν+β/2。择优得到 GP8 的实际覆盖，包括 (ν,a,β)=(9/10,1/2,4/5) 和 (4/5,0,6/5)，后者有 B>T。全 n 完成保留 Jacobian J，完整 j 家族的精确 primitive 共振由联合除数计数达到 T^{3+ε}，不是把 j 当成固定个数。所有变换尾与整数端点分别计费。K≈1、一般 q、覆盖外 B、canonical zero Gram、两个 reflection mixed 项与独立 AFE 尾仍未关闭；完整 twisted moment 未证明。
+
 > **2026-08-30 全局斜率完成覆盖整个短 B 区域。** [GS1–GS9](2026-08-30-mwkf-global-slope-sampling.md) 在 q=1 平衡顶层，从全部 e 重组的 GE7 出发，先完成一条真实光滑短斜率，再对整个 B≈Y 区间采样；相位与 M 无关，故可合法使用平方自由 M 均值。采样成本 Y/Kmax+Kmin 保留整数 +1。K₁=K₂≈T^{1/2} 时，误差是 T^{3/2+ε}Y^{3/2}+T^{5/2+ε}Y^{1/2}，所以整个 Y≤T 的指定光滑 core 达到 T^{3+ε}，包括其非零 determinant 补集；此前未完成斜率时仅覆盖 Y≤T^{2/3}。一般 Kmin=T^a 的条件是 β≤min((4−2a)/3,2−2a)。更长 B、一般 q、原 canonical zero Gram、全部物理尾与完整 signed operator 仍未证明，不构成完整 twisted moment。
 
 > **2026-08-30 全部 e 的 primitive 共振结账。** [GE1–GE12](2026-08-30-mwkf-global-e-primitive-resonance.md) 在 q=1、平衡顶层恢复全部 e/A/b 分片后，令 M=Ae、B=eb、e=(M,B)，将整个 critical core 写成保留 µ(M)µ(B) 的 primitive Fourier 和。精确共振 Δ=jBh+Mkl=0 强制 M|jB，每个 M,j,k,l 仅有除数个 B；包含全部 e 与长 b 的该子项满足 HL·P/R·T^ε=T^{3+ε}。所有新频率尾、非critical 补集及整数端点分别计费。非零 Δ 的 signed 核绝对值成本仍为 T^{5+ε}，尚差 T²；该 primitive 共振不等于 canonical zero Gram，也不覆盖整个 κ 分片。完整 coupled-kernel gate 与 twisted moment 未证明。
@@ -29,6 +31,7 @@
 >
 > | component | status in this note |
 > |---|---|
+> | Variable-kappa all-e coverage | GP2 retains the exact compact scale ratios, j~J=P/K and n~BJ. GP8 covers beta<=2*nu/3 OR both beta<=2*(1+nu-a)/3 and beta<=2*(nu-a), for fixed 0<nu<=1 at q=1, R=S=T^3, P~T. This includes new K<T and some B>T cores, not fixed-e sub-sums. GP9 retains the Fourier Jacobian J; joint divisor counting bounds the entire j-family exact primitive resonance by T^(3+epsilon). K~1, other q/scales, uncovered B, canonical zero Gram and the complete signed operator remain open |
 > | General-unit Type-II density and e/b coverage | GU2 keeps primes shared by A and q and the induced mu(e) sign. At fixed q, GU9 bounds the arithmetic density summed over every e by HL*P/R; this is not the canonical zero Gram. GU10 charges the full E factor in the e-shell error, yielding top-core coverage eta+chi/2+3*beta/2<=1 with explicit endpoints. The original q outer sum, remaining long b/e and complete signed operator estimate stay open |
 > | Global-e primitive resonance | For q=1 at the balanced top, GE3 fuses M=Ae and B=eb with e=gcd(M,B). GE8 restores both mu(M) and mu(B). The entire exact primitive determinant-zero subterm, including every e and long b, is O(T^(3+epsilon)); the nonzero signed complement still has only an unsigned T^(5+epsilon) bound. This is not the canonical zero Gram or whole-packet coverage |
 > | Global slope/B sampling | GS3 completes one actual smooth slope before the M squarefree discrepancy bound. Full B/nu sampling costs Y/Kmax+Kmin, including integer endpoints. For q=1 at the balanced top, every specified B~Y<=T core reaches T^(3+epsilon), including its nonzero determinant complement; slope-asymmetric coverage is GS9. Longer B, original q reassembly and the complete signed operator remain open |
@@ -28537,6 +28540,53 @@ covers the nonzero determinant complement in these B shells. It is
 not a full coupled-kernel theorem. Longer B, general original q,
 other scales, canonical zero Gram, both reflection mixed terms and
 independent physical AFE tails remain; no full twisted moment is claimed.
+
+### 9.215 Full variable-kappa frequency cost, coverage and joint resonance
+
+The [variable-kappa note](2026-08-30-mwkf-variable-kappa-coverage.md)
+extends GE/GS on the q=1, R=S=T^3, HL~T^5, P~T face to
+K~T^nu for each fixed 0<nu<=1. Now X=R/K and J=P/K;
+the critical support gives abs(j)~J and abs(n)~BJ. Exact parameters
+are eta=(j/J)*(X/M)*(P/(kl)) and
+sigma=(n/(BJ))*(X/M)^2*(P/(kl)); the compact ratios cannot be dropped.
+The full JT symbol is smooth in n/(BJ), not uniformly in n/B.
+
+All e allocations are restored before the M squarefree mean, so
+there is no (M,B)=1 restriction. The arithmetic density costs CP,
+C=HL/R. Smooth l completion retains argument Kmax*(omega+nk/(jB)),
+independent of M. Since abs(n/j)~Y, the entire B sampling cost
+Y/Kmax+Kmin is independent of J, including its integer +1. The
+divisor mass, however, is (JY)^(3/2), not Y^(3/2). Thus GP6 gives
+CP*X^(-1/2)*J^(3/2)*(Y^(3/2)/Kmax+Kmin*Y^(1/2))*T^epsilon.
+The uncompleted error is CP*X^(-1/2)*J^(3/2)*Y^(3/2)*T^epsilon.
+These are two bounds for the same discrepancy; take their minimum,
+not the product of savings.
+
+For Kmin=T^a and Y=T^beta, the respective exponents are
+2+a-nu+3*beta/2, 3+a-nu+beta/2, and 3-nu+3*beta/2.
+GP8 therefore supplies actual all-e smooth-core coverage whenever
+beta<=2*nu/3 OR both beta<=2*(1+nu-a)/3 and beta<=2*(nu-a).
+Examples include (nu,a,beta)=(9/10,1/2,4/5) and (4/5,0,6/5).
+The latter has B>T. Restricting e alone would invalidate this Q=1
+mean; K~1 is not included in the fixed-positive-nu assertion.
+
+The primitive n Fourier transform now has a Jacobian J. GP10
+therefore carries J/abs(j), not just 1/abs(j). Nevertheless exact
+Delta=jBh+Mkl=0 is within budget for the entire j family: with
+d=gcd(abs(j),M), j=d*j1 and B=(M/d)*r, one has d|M,
+abs(j1)|abs(kl), r|abs(kl/j1). The joint number is at most
+tau(M)*tau(abs(kl))^2 under the critical sign convention. GP12
+then bounds all its B/e and j by CP*T^epsilon=T^(3+epsilon).
+This uses joint divisibility, not a missing frequency cardinality.
+
+GP13 supplies the corresponding literal finite nonzero primitive
+kernel; every Fourier, noncritical and ell=0 tail and integer
+endpoint is separately charged. This resonance is not identified
+with the arithmetic density or original canonical zero Gram.
+Neither zero row/column sums nor a full operator-norm estimate is
+proved. General q, K~1, other physical scales, uncovered B, both
+reflection mixed terms and independent AFE tails remain open.
+This is another genuine region/subterm bound, not the complete gate.
 
 ## 10. What has and has not been proved
 

@@ -21,6 +21,66 @@ def _kappa_radical(r, n):
     return sum(mobius(d)*d for d in divisors(gcd(r, abs(n))))
 
 
+def variable_kappa_parameters(R, K, P, M, B, n, j, kl):
+    """GP exact rational parameters at R=S, for positive integer scales.
+
+    The compact ratios X/M and P/(kl) remain literal. This function
+    neither selects the physical critical support nor bounds its symbol.
+    """
+    if (any(not isinstance(a, int) or a < 1 for a in (R, K, P, M, B))
+            or any(not isinstance(a, int) or not a for a in (n, j, kl))):
+        raise ValueError("positive integer R,K,P,M,B and nonzero integer n,j,kl required")
+    X, J, z0 = F(R, K), F(P, K), F(K*M*kl, R)
+    return {"X": X, "J": J, "n_scale": B*J, "z0": z0,
+            "eta": j*K/z0, "sigma": F(n*R, B*M)/z0}
+
+
+def variable_kappa_error_exponents(nu, a, beta):
+    """GP q=1 all-e error ledger: K=T^nu, P=T, B~T^beta.
+
+    Includes the full J=T^(1-nu) frequency family. Taking the smaller
+    error uses two estimates of ONE discrepancy; savings do not multiply.
+    K~1, fixed-e sub-sums and the complete analytic gate are not certified.
+    """
+    nu, a, beta = map(F, (nu, a, beta))
+    if not 0 < nu <= 1 or not 0 <= a <= F(1, 2) or beta < 0:
+        raise ValueError("0<nu<=1, 0<=a<=1/2 and beta>=0 required")
+    uncompleted = 3-nu+F(3, 2)*beta
+    interval = 2+a-nu+F(3, 2)*beta
+    integer = 3+a-nu+beta/2
+    return {"density": F(3), "uncompleted_error": uncompleted,
+            "interval_error": interval, "integer_error": integer,
+            "best_error": min(uncompleted, max(interval, integer))}
+
+
+def primitive_resonant_j_family(M, kl, Jlo, Jhi, Bmax):
+    """Joint divisor parameterization with Jlo<=|j|<Jhi and sign(j)=sign(kl).
+
+    Rows are (j,B,h,d,j1,r,mu(M)*mu(B)). All B<=Bmax are included,
+    without an M,B coprimality mask. The bound counts the whole j family
+    via divisors, not the length of a j interval; the physical symbol,
+    J/|j| weight, Fourier tails and original canonical zero Gram are separate.
+    """
+    if (not isinstance(M, int) or M < 1 or not mobius(M)
+            or not isinstance(kl, int) or not kl
+            or any(not isinstance(a, int) for a in (Jlo, Jhi, Bmax))
+            or not 0 < Jlo < Jhi or Bmax < 0):
+        raise ValueError("squarefree M>=1, integer kl!=0, 0<Jlo<Jhi and Bmax>=0 required")
+    ds, ts = divisors(M), divisors(abs(kl))
+    rows = []
+    for d in ds:
+        M1 = M//d
+        for t in ts:
+            if gcd(t, M1) != 1 or not Jlo <= d*t < Jhi:
+                continue
+            j1 = t if kl > 0 else -t
+            for r in divisors(abs(kl//j1)):
+                B, h = M1*r, -kl//(j1*r)
+                if B <= Bmax and mobius(B) and gcd(h, M) == 1:
+                    rows.append((d*j1, B, h, d, j1, r, mobius(M)*mobius(B)))
+    return {"rows": tuple(sorted(rows)), "divisor_bound": len(ds)*len(ts)**2}
+
+
 def slope_b_interval(Y, n, k, j, nu, K2, width):
     """Integer B in [Y,2Y) with |K2*(nu+n*k/(j*B))|<=width.
 
