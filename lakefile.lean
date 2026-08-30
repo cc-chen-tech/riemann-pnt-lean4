@@ -2792,6 +2792,7 @@ lean_lib RiemannPNT where
     `Test.ConreyLittlewoodRectangleContract,
     `Test.LittlewoodLeftBoundaryLimitContract,
     `Test.LittlewoodRemainderContinuityContract,
+    `Test.LittlewoodTailLimitContract,
     `Test.ConreySimpleZeroCountContract,
     `Test.ConreyTwoFifthsBridgeContract,
     `Zeta23
