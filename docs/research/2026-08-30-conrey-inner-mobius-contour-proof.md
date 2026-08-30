@@ -8,7 +8,11 @@
 
 后续推进已原生证明下文 (P1)：任意复移位和正实数截断下，实际互素
 Möbius 有限和等于真实 Euler 因子被积函数的 Perron 积分，且该积分
-绝对可积。这补齐移线的起点，不代表留数、路径误差或完整渐近已经形式化。
+绝对可积。这一步补齐移线的起点，不代表完整移线或渐近已经形式化。
+
+再下一步已原生证明 (R0) 与 (RC)：统一于互素参数的解析正规化、二次局部
+误差及实际圆周留数，包括零移位。矩形移线、移位导数误差和全部路径估计
+尚未拼接，完整内层渐近仍未完成。
 
 Source for comparison: [Conrey 1983, Lemma 10, printed pp. 54–56](https://aimath.org/~kaur/publications/3.pdf).
 The full contour and residue pages were visually checked. The following
@@ -179,6 +183,45 @@ is zero beyond `X` and equals `log(X/n)` below it. At `X=n` it is zero;
 for `0<X<1` the finite sum is empty, and at `X=1` it is also zero.
 The `dt/(2*pi)` normalization follows from `dw=i dt` on the upward line.
 
+For the exact local residue, use the already constructed analytic pole unit
+`Q(s)`, with `Q(1)=1` and `Q(s)=(s-1)zeta(s)` away from `0,1`.
+Define actual functions
+
+\[
+ U(z)=Q(1+z)^{-1},\qquad E_d(z)=F_d(1+z)^{-1},\qquad
+ W_d(z)=zU(z)E_d(z).
+\]
+
+Analyticity at zero and `U(0)=1` select `r>0`, `r<=1/4` and `C>0`
+such that `U` is analytic and `|U(z)-1|<=C|z|` on `|z|<=r`.
+The radius and constant are selected **before d**. Every finite Euler
+factor is nonzero when `Re(1+z)>0`, since `|p^(-1-z)|<1`.
+Hence every `W_d` is analytic on that same closed disk and
+
+\[
+ W_d(0)=0,\qquad W_d'(0)=E_d(0),\qquad
+ |W_d(z)-zE_d(z)|\le C|z|^2|E_d(z)|.
+\tag{R0}
+\]
+
+For `X>0`, `|alpha|<rho` and `|alpha|+rho<=r`, Cauchy's derivative
+formula for `f(w)=X^w W_d(alpha+w)` gives
+
+\[
+ \oint_{|w|=\rho}
+ \frac{X^w}{w^2\zeta(1+\alpha+w)F_d(1+\alpha+w)}\,dw
+ =2\pi i\{\log X\,W_d(\alpha)+W_d'(\alpha)\}.
+\tag{RC}
+\]
+
+The circle integrand is integrable by continuity on the circle.
+Its equality with the regularized kernel holds at every boundary point:
+`|alpha|<rho` excludes `alpha+w=0`, and the disk lies in `Re(1+z)>0`.
+One must not identify the raw totalized Lean reciprocal at `z=0`
+with this analytic extension. At `alpha=0`, (RC) correctly reduces
+to `2*pi*i*E_d(0)`. It does not yet replace the exact residue by
+the shifted approximate main term or justify the rectangular contour transfer.
+
 Write `P(v)=sum_(j=1)^J p_j v^j`. Absolute convergence on `Re w=u`
 and the log-power Perron kernel give the actual identity
 
@@ -331,9 +374,14 @@ full-line integrability theorem is added to `SelbergPerronLSeries` and
 derived from actual summability, not assumed. The native endpoint
 expands the actual finite coprime Möbius sum, not an abstract series.
 
+`HardyTheorem.ConreyCoprimeMobiusResidue` now proves (R0) and (RC),
+with the common radius and quadratic-error constant chosen before `d`.
+The actual Euler integrand is identified on every circle boundary point;
+no equality with the raw totalized reciprocal at `z=0` is claimed.
+
 Native implementations of the finite Volterra profile transfer,
-local residue/Cauchy calculation, the other path integrability estimates
-and contour transfers, and their assembly into (GV) remain necessary.
+shifted derivative/Cauchy error bounds, the other path integrability estimates
+and rectangular contour transfers, and their assembly into (GV) remain necessary.
 The previous arithmetic outer average and the actual
 Gaussian/Estermann/DI mean-square chain also remain unfinished.
 
@@ -381,3 +429,24 @@ claim that the complete inner sum or Conrey mean value has been formalized.
 
 Only targeted Lean verification is claimed, not a fresh whole-repository
 baseline or a proof of the complete inner asymptotic or Conrey theorem.
+
+## 10. Verification: actual regularization and circle residue
+
+- The fully expanded new contract first failed only on the missing
+  `exists_conrey_coprime_mobius_local_residue` endpoint.
+- `nice -n10 lake build Test.ConreyCoprimeMobiusResidueContract
+  Test.ConreyCoprimeMobiusPerronContract
+  Test.ConreyReciprocalZetaStripContract
+  Test.ConreyArithmeticEulerFactorContract`: exit 0, 8722 jobs.
+- The endpoint and the actual Euler-reciprocal correspondence use only
+  `propext`, `Classical.choice`, and `Quot.sound`. The module's six-local-module
+  import closure contains no Zeta23; its only external root is Mathlib.
+  Both new module and contract are Lake roots.
+- Python regression: 546 passed (13.43s). Target inventory and chain-gap
+  checks passed; the diff whitespace check was clean.
+- Independent read-only review verified the uniform quantifiers, the
+  actual pole unit, retained `|E_d|` error factor, circle boundary
+  correspondence, integrability, normalization, and zero-shift case.
+
+These checks do not prove the rectangular contour transfer, the shifted
+derivative error, or the full inner/outer/long-moment asymptotics.
