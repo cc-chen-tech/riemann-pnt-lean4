@@ -11,6 +11,28 @@ These lemmas contain only the logarithmic arithmetic--geometric mean step.
 They do not state or assume the long mollified mean-square theorem.
 -/
 
+/-- The logarithmic/mean-square bridge with zeros permitted on a null set.
+Log integrability is explicit; no continuity of the logarithm at zeros is
+asserted. The actual second moment is also proved strictly positive. -/
+theorem complex_log_interval_integral_bounds_of_ae_ne_zero
+    {F : ℝ → ℂ} {a b : ℝ} (hab : a < b)
+    (hF : ContinuousOn F (Icc a b))
+    (hlog : IntervalIntegrable (fun t => Real.log ‖F t‖) volume a b)
+    (hF0 : ∀ᵐ t ∂volume.restrict (Ioc a b), F t ≠ 0) :
+    0 < (∫ t in a..b, ‖F t‖ ^ 2) ∧
+      2 * (∫ t in a..b, Real.log ‖F t‖) ≤
+        (b - a) * Real.log ((∫ t in a..b, ‖F t‖ ^ 2) / (b - a)) := by
+  have hsq : IntervalIntegrable (fun t => ‖F t‖ ^ 2) volume a b :=
+    (hF.norm.pow 2).intervalIntegrable_of_Icc hab.le
+  have hlogsq : IntervalIntegrable (fun t => Real.log (‖F t‖ ^ 2)) volume a b := by
+    simpa only [Real.log_pow, Nat.cast_ofNat] using hlog.const_mul 2
+  have hpos : ∀ᵐ t ∂volume.restrict (Ioc a b), 0 < ‖F t‖ ^ 2 := by
+    filter_upwards [hF0] with t ht
+    exact pow_pos (norm_pos_iff.mpr ht) _
+  have h := MathlibAux.integral_pos_and_log_le_length_mul_log_mean_of_ae_pos
+    hab hsq hlogsq hpos
+  simpa only [Real.log_pow, Nat.cast_ofNat, intervalIntegral.integral_const_mul] using h
+
 /-- A nonvanishing complex boundary function's logarithmic integral is
 controlled, with exact normalization, by its second moment. -/
 theorem complex_log_interval_integral_le_log_mean_normSq
