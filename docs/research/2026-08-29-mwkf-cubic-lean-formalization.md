@@ -4,8 +4,10 @@
 物理时间积分与完整算术级数的换序，以及有限高度对角/非对角拆分，
 写成无额外解析假设的 Lean 定理。对角部分有严格的 gcd 射线双射重编号；
 非对角部分已按所有正、负非零整数 shift 重组，完整相位为
-`t*log(1+delta/(m*r))`，没有线性化或截断。所有 Möbius 系数与物理权
-均保留。这不是 `T -> infinity` 的渐近式，
+`t*log(1+delta/(m*r))`，没有线性化或截断。每个 shift fiber 又已严格
+重编号为 `m>0`、`delta+m*r>0`、`m=-delta*rbar (mod s)` 的单变量和，
+并证明第二个指标与实数商 `(delta+m*r)/s` 精确一致。所有 Möbius 系数
+与物理权均保留。这不是 `T -> infinity` 的渐近式，
 也没有断言两个拆分部分分别存在高度极限；QCT/Poisson、主项渐近和
 核心 Möbius 色散等输入仍须继续形式化。
 
@@ -75,6 +77,11 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | complete physical integrand in reduced-shift coordinates | `cubicAFECombinedSummandFinite_eq_reducedShift` |
 | disjoint-union equivalence and summable regrouping over all nonzero signed shifts | `cubicAFEShiftEquiv`, `hasSum_cubicAFE_shiftFibers`, `hasSum_integral_cubicAFE_shiftFibers` |
 | actual integrated off-diagonal equals the full shifted-divisor expression; recombined height limit | `cubicAFEOffDiagonalMomentFinite_eq_shifted`, `cubicAFEMollifiedMomentFinite_eq_diagonal_add_shifted`, `tendsto_cubicAFEDiagonal_add_shifted` |
+| positive single-variable progression, with positive numerator and exact divisibility; explicit inverse residue `m=-delta*rbar (mod s)` | `cubicAFEProgression`, `cubicAFEProgression_mem_iff_modEq`, `cubicAFEProgression_mem_iff_residue` |
+| exact reconstruction of both positive indices and equality with the real quotient | `cubicAFEProgressionPair_succ`, `cubicAFEProgressionPair_mem`, `cubicAFEProgressionPair_second_cast` |
+| bijection between each shift fiber and its admissible single-variable progression | `cubicAFEShiftFiber_first_injective`, `cubicAFEProgressionEquiv`, `tsum_cubicAFEShiftFiber_eq_progression` |
+| summability and exact reindexing of the actual integrated progression expression | `summable_integral_cubicAFE_progression`, `cubicAFEShiftedMomentFinite_eq_progression` |
+| actual finite-height moment equals diagonal plus progression expression, and the recombined height limit | `cubicAFEMollifiedMomentFinite_eq_diagonal_add_progression`, `tendsto_cubicAFEDiagonal_add_progression` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -95,7 +102,12 @@ and the integrated expression is split into two summable diagonal/off-diagonal
 subseries.  The diagonal ray is reindexed bijectively.  The off-diagonal is
 regrouped over every nonzero signed shift using a disjoint-union equivalence;
 the shift fibers and the resulting outer shift series are summable at each
-finite height.  The full physical kernel and logarithmic phase are retained.
+finite height.  Each shift fiber has now been reindexed as a single positive
+integer variable in the explicit inverse residue class, with the exact
+positivity cutoff and real quotient identity.  The full physical kernel and
+logarithmic phase are retained.  This is not yet an application of Poisson
+summation: a smooth real-variable physical-kernel extension, the dyadic
+partition, and all hypotheses of that transform still need to be supplied.
 The height limit remains
 outside the recombined expression; separate limits and moving this limit
 through either infinite subseries have not been proved.  What remains is to
@@ -110,7 +122,8 @@ Consequently the accurate status is:
 
 - internal paper proof candidate and executable parameter audit;
 - kernel-checked structural/reassembly, finite-height series/integral
-  interchange, diagonal split/reindexing, signed-shift regrouping, and fixed-`T` recombined AFE
+  interchange, diagonal split/reindexing, signed-shift/progression regrouping,
+  and fixed-`T` recombined AFE
   integral-limit layers complete;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.
