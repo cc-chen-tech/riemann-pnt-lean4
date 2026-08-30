@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-30 全部 e 的 primitive 共振结账。** [GE1–GE12](2026-08-30-mwkf-global-e-primitive-resonance.md) 在 q=1、平衡顶层恢复全部 e/A/b 分片后，令 M=Ae、B=eb、e=(M,B)，将整个 critical core 写成保留 µ(M)µ(B) 的 primitive Fourier 和。精确共振 Δ=jBh+Mkl=0 强制 M|jB，每个 M,j,k,l 仅有除数个 B；包含全部 e 与长 b 的该子项满足 HL·P/R·T^ε=T^{3+ε}。所有新频率尾、非critical 补集及整数端点分别计费。非零 Δ 的 signed 核绝对值成本仍为 T^{5+ε}，尚差 T²；该 primitive 共振不等于 canonical zero Gram，也不覆盖整个 κ 分片。完整 coupled-kernel gate 与 twisted moment 未证明。
+
 > **2026-08-30 一般单位 Type-II 与完整 e 成本。** [GU1–GU12](2026-08-30-mwkf-general-unit-type-ii.md) 恢复真实 e,q 掩码：q₀=rad(q)、r=eq₀、g=(A,q₀)、A=ga、L=ar，全部 v 系数精确化为 µ(r/g)κ_r(n)κ_a(n)/(ar)。固定 q 的显式算术密度对全部 e 只花调和成本，物理界为 HL·P/R。误差逐 e 没有幂次衰减；平衡顶层完整 e≈E 的成本是 T^{2+ε}E√q₀(UB₀)^{3/2}，覆盖条件为 η+χ/2+3β/2≤1。它包括 q=1、E≈T^{1/2}、B₀≈T^{1/3} 的整个 Type-II 分片，保留并核验过渡边界与频率尾。无精确 determinant 零仍不能排除近共振；长 b/大 e、原 q 外层及完整 signed operator 的目标界仍未证明。这不是完整 twisted moment。
 
 > **2026-08-30 全 v Type-II 重组与短 b 覆盖。** [JT1–JT16](2026-08-30-mwkf-joint-type-ii-density.md) 保留真实 transition boundary，用精确有理坐标变换控制联合 Poisson symbol；在 e=q=1 时，先恢复所有 v|A 再令 n=(A/v)ℓ，系数合并为 µ((A,n))φ((A,n))/A。初等平方自由均值给出显式密度 c(bc)δ_{bc}(n)；其整个 b 范围的物理成本为 HL·P/R，不是原 canonical zero Gram。平衡顶层 K≈P≈T 的误差成本为 T^{2+ε}(UB₀)^{3/2}，故 U,V 为对数幂、b≈B₀≲T^{2/3} 的整个 v 家族达到 T^{3+ε}，其 transition boundary 由 4UB₀<D 排除。长 b、其他 e,q、统一 signed operator 的完整目标界与 twisted moment 仍未证明。
@@ -26,6 +28,7 @@
 > | component | status in this note |
 > |---|---|
 > | General-unit Type-II density and e/b coverage | GU2 keeps primes shared by A and q and the induced mu(e) sign. At fixed q, GU9 bounds the arithmetic density summed over every e by HL*P/R; this is not the canonical zero Gram. GU10 charges the full E factor in the e-shell error, yielding top-core coverage eta+chi/2+3*beta/2<=1 with explicit endpoints. The original q outer sum, remaining long b/e and complete signed operator estimate stay open |
+> | Global-e primitive resonance | For q=1 at the balanced top, GE3 fuses M=Ae and B=eb with e=gcd(M,B). GE8 restores both mu(M) and mu(B). The entire exact primitive determinant-zero subterm, including every e and long b, is O(T^(3+epsilon)); the nonzero signed complement still has only an unsigned T^(5+epsilon) bound. This is not the canonical zero Gram or whole-packet coverage |
 > | All-v Type-II arithmetic density and short-b coverage | JT7 restores every divisor before absolute values. JT9 evaluates the squarefree mean with unit masks and all large-divisor errors. In the e=q=1 balanced top core, the explicit density is within budget and the complete b≲T^(2/3) Type-II family is O(T^(3+epsilon)), with verified transition boundary and nonstationary tails. Long b, other e,q and the full canonical-zero/nonzero operator estimate remain open |
 > | LCM main quadratic form | proved separately; its normalization is rechecked below |
 > | Exact AFE and shifted-divisor identity | proved after audit in Sections 2--3 |
@@ -28457,6 +28460,41 @@ smooth-modulus input. Neither supplies the missing signed physical
 estimate by a direct application. The long b/e discrepancy,
 original q reassembly and complete zero/nonzero signed operator
 bound remain unproved; no full twisted-moment theorem follows.
+
+### 9.213 Global e fusion pays the entire primitive exact-resonance subterm
+
+The [primitive resonance note](2026-08-30-mwkf-global-e-primitive-resonance.md)
+works at q=1 and the balanced top K~P~Z~T. Set U=1 and recombine
+the Type-I/II b ranges. The identity mu(d)=1_{d=1}-sum_{bm=d,m>1}mu(b)
+has an exact smooth integer realization chi(m), without a transition
+boundary. The actual d~S/e support excludes d=1, and K>2 excludes
+the separate kappa=e=1 correction.
+
+After restoring all artificial e/A/b partitions, M=Ae and B=eb are
+squarefree with e=gcd(M,B) uniquely. Shared M,B primes must stay.
+The full physical symbol depends only on M,B,n,j,k,l; all v|M give
+HL/R*mu(B)*kappa_M(n)/(M*B*abs(j)). Primitive Ramanujan completion
+in n yields GE9, a single signed sum with mu(M)*mu(B) and frequency
+B*h/M+k*l/j, where (h,M)=1. This h is not the original AFE h label.
+
+GE10 pays the full shifted-lattice Fourier tail, including its integer
++1, before using a finite frequency window. Noncritical and ell=0
+tails are separately rapid with all polynomial outer costs paid.
+For Delta=j*B*h+M*k*l=0, M divides j*B. Writing d=gcd(abs(j),M),
+M=d*M1 and j=d*j1 gives B=M1*r and j1*r*h=-k*l. There are at most
+tau(abs(k*l)) possible positive r per M,j,k,l. Consequently the entire
+exact-resonant subterm, including every e and long b, costs at most
+HL*P/R*T^epsilon=T^(3+epsilon), without any Mobius cancellation claim.
+
+The remaining finite signed matrix retains both Mobius coefficients.
+Its nonzero determinant absolute-value bound is still HL*P*(R/K)/R
+=T^(5+epsilon): no full T^2 saving has been proved. The new primitive
+resonance is not identified with GU9's arithmetic mean or the original
+canonical zero Gram. No zero-row/column-sum or full operator-norm bound
+is claimed; original q, other scales, both reflection mixed terms and
+independent physical tails remain. Bettin--Chandee's determinant input
+still requires an adapter retaining the product kl and all outer costs.
+This is a genuine bound for one subterm, not a complete twisted moment.
 
 ## 10. What has and has not been proved
 

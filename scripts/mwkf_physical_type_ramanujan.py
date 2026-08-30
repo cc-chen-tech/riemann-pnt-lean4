@@ -21,6 +21,79 @@ def _kappa_radical(r, n):
     return sum(mobius(d)*d for d in divisors(gcd(r, abs(n))))
 
 
+def mobius_u_one_ledger(n, Q):
+    """Exact U=1 integer identity, retaining d=1 and nonsquarefree quotients."""
+    if any(not isinstance(a, int) or a < 1 for a in (n, Q)):
+        raise ValueError("positive integers n,Q required")
+    atoms = tuple((b, n//b, -mobius(b)) for b in divisors(n)
+                  if b < n and mobius(b) and gcd(n, Q) == 1)
+    return {"atoms": atoms, "bulk": sum(a[2] for a in atoms),
+            "endpoint": int(n == 1)}
+
+
+def global_e_primitive_packet(M, B, j, k, l, ns, amplitude):
+    """Finite q=1 all-e/v fusion with a COMMON n cutoff, excluding HL/R.
+
+    The exact physical symbol must already depend only on M,B,n,j,k,l.
+    This does not check that hypothesis, Fourier tails, or analytic norms.
+    Non-squarefree M or B are inactive. Shared M,B primes are NOT removed.
+    """
+    ns = tuple(ns)
+    if (any(not isinstance(a, int) or a < 1 for a in (M, B))
+            or any(not isinstance(a, int) or not a for a in (j, k, l, *ns))
+            or len(ns) != len(set(ns))):
+        raise ValueError("positive M,B; nonzero integer j,k,l; distinct nonzero n required")
+    active = bool(mobius(M) and mobius(B))
+    e = gcd(M, B)
+    A, b = M//e, B//e
+    direct, fused, coefficients = 0j, 0j, {}
+    for n in ns:
+        coefficients[n] = F(mobius(B)*_kappa_radical(M, n), M*B*abs(j)) if active else F(0)
+        if active:
+            value = amplitude(M, B, n)*cmath.exp(-2j*pi*float(F(n*k*l, j*B)))
+            for v in divisors(M):
+                if n % (M//v) == 0:
+                    direct += F(mobius(A)*mobius(b)*mobius(v), B*v*abs(j))*value
+            fused += coefficients[n]*value
+    return {"allocation": (e, A, b) if active else None,
+            "coefficients": coefficients, "direct": direct, "fused": fused}
+
+
+def primitive_resonant_rows(M, j, kl, Bmax):
+    """Exact Delta=0 divisor family, not the original canonical zero Gram.
+
+    Rows are (B,h,e,r,mu(M)*mu(B)); only a finite B ceiling is imposed.
+    An actual physical support or symbol must be supplied separately.
+    """
+    if (not isinstance(M, int) or M < 1 or not mobius(M)
+            or any(not isinstance(a, int) or not a for a in (j, kl))
+            or not isinstance(Bmax, int) or Bmax < 0):
+        raise ValueError("positive squarefree M, nonzero integer j,kl, integer Bmax>=0 required")
+    d = gcd(abs(j), M)
+    M1, j1 = M//d, j//d
+    rows = []
+    if kl % j1 == 0:
+        for r in divisors(abs(kl//j1)):
+            B, h = M1*r, -kl//(j1*r)
+            if B <= Bmax and mobius(B) and gcd(h, M) == 1:
+                rows.append((B, h, gcd(M, B), r, mobius(d)*mobius(r)))
+    return {"d": d, "M1": M1, "j1": j1, "rows": tuple(sorted(rows)),
+            "divisor_bound": len(divisors(abs(kl)))}
+
+
+def primitive_band_rows(M, B, j, kl, H):
+    """Finite exact frequency window; H=0 retains only primitive resonances."""
+    if (any(not isinstance(a, int) or a < 1 for a in (M, B))
+            or any(not isinstance(a, int) or not a for a in (j, kl))):
+        raise ValueError("positive integers M,B and nonzero integer j,kl required")
+    H = F(H)
+    if H < 0:
+        raise ValueError("nonnegative rational H required")
+    lower, upper = F(M, B)*(-H-F(kl, j)), F(M, B)*(H-F(kl, j))
+    return tuple((h, j*B*h+M*kl, F(B*h, M)+F(kl, j))
+                 for h in range(ceil(lower), floor(upper)+1) if gcd(h, M) == 1)
+
+
 def general_unit_type_ii_packet(A, e, q, B, j, k, l, ns, amplitude):
     """GU2 finite common-n lifting with all literal IC2 unit masks.
 
