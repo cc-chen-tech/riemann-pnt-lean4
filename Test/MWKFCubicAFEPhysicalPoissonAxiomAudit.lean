@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.MWKFCubicAFEPhysicalPoisson
+
+#print axioms PrimeNumberTheorem.MWKFCubic.contDiff_cubicAFEProgressionCutoffSummand
+#print axioms PrimeNumberTheorem.MWKFCubic.hasCompactSupport_cubicAFEProgressionCutoffSummand
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionSchwartz
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionCutoffSummand_eq_discrete
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionCutoff_poisson
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionCutoff_poisson_inverseResidue

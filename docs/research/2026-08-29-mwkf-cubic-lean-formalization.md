@@ -16,13 +16,29 @@
 重编号为 `m>0`、`delta+m*r>0`、`m=-delta*rbar (mod s)` 的单变量和，
 并证明第二个指标与实数商 `(delta+m*r)/s` 精确一致。所有 Möbius 系数
 与物理权均保留。这不是 `T -> infinity` 的渐近式，
-也没有断言两个拆分部分分别存在高度极限；QCT/Poisson、主项渐近和
+也没有断言两个拆分部分分别存在高度极限；全局 QCT/Poisson 重组、主项渐近和
 核心 Möbius 色散等输入仍须继续形式化。
 
 有限高度 Mellin 权现有一个与正整数产品权精确一致的正实变量延拓：
 先证明对复对数变量的全纯性，再限制到正实变量，得到 C∞ 正则性。
 积分号下求导的支配界由紧集上的连续性构造，没有额外的支配假设。
 这只证明固定参数的正则性，没有提供对 `T,V` 一致的导数或 Fourier 尾项界。
+
+在此基础上，已构造真实 progression 物理核，保留两侧 Möbius 系数、
+因子 `2`、两个平方根幅度、完整对数相位、Mellin 权及 `W(t/T)`。
+它在 `x>0`、`delta+x*r>0` 的精确区域内光滑，并在 admissible progression
+的整数点上等于原 AFE 求和项。对闭支撑包含在该区域内的 C∞ 截断 `chi`，
+截断后的真实核 `K` 是 Schwartz 函数，已证明固定参数的公式
+
+\[
+\sum_{n\in\mathbb Z}K(a+sn)
+=s^{-1}\sum_{h\in\mathbb Z}\widehat K(h/s)e(ha/s),\qquad s>0.
+\]
+
+取 `s=e/gcd(d,e)`、`a=-delta*rbar` 后，得到确切的
+`s^(-1)*Khat(h/s)*e(-h*delta*rbar/s)`；没有排除 `s=1`，也没有要求
+`gcd(delta,s)=1`。这不是实际 moment 的全局 Poisson 分解：仍须把正整数
+progression 级数重编号到这个双向格点和，并构造、聚合实际 dyadic 截断。
 
 ## Machine-checked in this PR
 
@@ -98,6 +114,11 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | actual finite-height moment equals diagonal plus progression expression, and the recombined height limit | `cubicAFEMollifiedMomentFinite_eq_diagonal_add_progression`, `tendsto_cubicAFEDiagonal_add_progression` |
 | entire logarithmic extension of the actual finite-height Mellin product weight, with constructed compact domination | `differentiable_cubicAFELogProductWeightFinite` |
 | exact positive-integer restriction and smoothness on positive real products, for every finite height orientation | `cubicAFERealProductWeightFinite_natCast`, `contDiffOn_cubicAFERealProductWeightFinite` |
+| exact real second index/product, open positive-index region and positivity of the full logarithm argument | `cubicAFEProgressionRealSecond`, `cubicAFEProgressionRealProduct_pos`, `isOpen_cubicAFEProgressionDomain`, `cubicAFEProgression_logArgument_pos` |
+| actual full progression kernel agrees with the original discrete AFE summand and is C-infinity on its positive-index region | `cubicAFEProgressionPhysicalSummand_eq_discrete`, `contDiffOn_cubicAFEProgressionPhysicalSummand` |
+| a smooth cutoff with closed support inside that region makes the actual kernel globally smooth, compactly supported, and Schwartz | `contDiff_cubicAFEProgressionCutoffSummand`, `hasCompactSupport_cubicAFEProgressionCutoffSummand`, `cubicAFEProgressionSchwartz` |
+| the cutoff kernel still agrees with the full discrete summand at every admissible integer | `cubicAFEProgressionCutoffSummand_eq_discrete` |
+| fixed-cutoff Poisson formula with exact scaling factor and inverse-residue negative phase | `cubicAFEProgressionCutoff_poisson`, `cubicAFEProgressionCutoff_poisson_inverseResidue` |
 | continuity, compact support, and integrability of every ordered twisted term | `continuous_cubicTwistedIntegrand`, `hasCompactSupport_cubicTwistedIntegrand`, `integrable_cubicTwistedIntegrand` |
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
@@ -120,6 +141,20 @@ No local physical smoothness hypothesis, project axiom, or enlarged heartbeat
 limit was inserted to obtain these results. This is a targeted verification,
 not a full cold build of unrelated project modules.
 
+### Physical-kernel and cutoff-Poisson verification
+
+Both new source modules were compiled to proof objects. Thirty-two
+contract/audit files (including the earlier C-infinity/nonzero-weight
+regressions) were checked in a single import-deduplicated Lean invocation;
+its final exit code was zero, with no error or warning diagnostics. All 86
+axiom reports contained only the standard foundations. The tests include
+negative shifts, the zero-index and zero-numerator boundaries, modulus one,
+the noninteger real quotient `n(3/2)=7/10` for `(d,e,delta)=(6,10,-1)`, and an
+explicit nonzero cutoff with its closed support in the positive-index region.
+Typed contracts retain both the `1/s` factor and negative inverse-residue
+phase. The new cutoff does not supply any hypothesis asserting smoothness,
+summability, or a spectral bound for the physical kernel itself.
+
 ## Remaining formalization boundary
 
 This PR does **not** yet make the analytic theorem unconditional inside Lean.
@@ -135,12 +170,18 @@ the shift fibers and the resulting outer shift series are summable at each
 finite height.  Each shift fiber has now been reindexed as a single positive
 integer variable in the explicit inverse residue class, with the exact
 positivity cutoff and real quotient identity.  The full physical kernel and
-logarithmic phase are retained.  This is not yet an application of Poisson
-summation: the actual Mellin product factor has a smooth real-variable
-extension, but its composition with the full progression kernel, integration
-in physical time, dyadic partition, and all transform hypotheses still need
-to be supplied. Compactness in the logarithmic-extension proof does not give
-uniform seminorm estimates in the varying physical parameters.
+logarithmic phase are retained. The real extension of the complete progression
+kernel and its local smoothness have now been proved. For every C-infinity
+cutoff with closed support inside the positive-index region, the actual
+cutoff kernel is Schwartz; its fixed-parameter Poisson formula includes the
+exact Jacobian and the negative inverse-residue phase. The cutoff class has
+an explicit nonzero bump regression. This is not yet the full Poisson
+decomposition of the moment: the positive progression series still needs
+to be identified with the bilateral residue lattice sum, the actual dyadic
+cutoffs constructed and summed, and the physical time-integral interchanges
+justified. Neither compactness in the logarithmic-extension proof nor the
+Schwartz construction supplies uniform seminorm estimates in the varying
+physical parameters.
 The height limit remains
 outside the recombined expression; separate limits and moving this limit
 through either infinite subseries have not been proved.  What remains is to
@@ -156,7 +197,7 @@ Consequently the accurate status is:
 - internal paper proof candidate and executable parameter audit;
 - kernel-checked structural/reassembly, finite-height series/integral
   interchange, diagonal split/reindexing, signed-shift/progression regrouping,
-  and fixed-`T` recombined AFE
-  integral-limit layers complete;
+  fixed-`T` recombined AFE integral limits, actual local physical-kernel
+  regularity and the fixed-cutoff Poisson identity;
 - full end-to-end Lean formalization still requires formalizing the named
   analytic inputs, including the external MRSTT theorem.
