@@ -379,9 +379,11 @@ with the common radius and quadratic-error constant chosen before `d`.
 The actual Euler integrand is identified on every circle boundary point;
 no equality with the raw totalized reciprocal at `z=0` is claimed.
 
-Native implementations of the finite Volterra profile transfer,
-shifted derivative/Cauchy error bounds, the other path integrability estimates
-and rectangular contour transfers, and their assembly into (GV) remain necessary.
+The rectangle derivative formula and the actual local-rectangle residue
+are now implemented as described in Section 11. Native implementations of
+the finite Volterra profile transfer, shifted derivative/Cauchy error bounds,
+the other path integrability estimates, the high-rectangle zero-free assembly
+and transfer, and their assembly into (GV) remain necessary.
 The previous arithmetic outer average and the actual
 Gaussian/Estermann/DI mean-square chain also remain unfinished.
 
@@ -450,3 +452,78 @@ baseline or a proof of the complete inner asymptotic or Conrey theorem.
 
 These checks do not prove the rectangular contour transfer, the shifted
 derivative error, or the full inner/outer/long-moment asymptotics.
+
+## 11. 从圆周留数到矩形公式：精确完成范围
+
+这一步证明任意包含零的矩形上的二阶 Cauchy 核公式，并将它接到
+实际互素 Möbius 被积函数。实际特化目前只覆盖统一解析小圆盘内的
+矩形；**不是**高度 `K=H^4` 的长矩形移线或其误差界。
+
+Let `R=[a,b]+i[c,d]`, with `a<0<b` and `c<0<d`, and let `f` be
+holomorphic on `R`. Twice removing a divided difference gives a holomorphic
+function `g` on `R` satisfying, for `w != 0`,
+
+\[
+ \frac{f(w)}{w^2}
+ =g(w)+\frac{f'(0)}w+\frac{f(0)}{w^2}.
+\]
+
+The first integral is zero by Cauchy–Goursat. The second is
+`2*pi*i*f'(0)` by the proved simple-pole rectangle formula. The last has
+the single-valued primitive `-f(0)/w` on every edge. The real fundamental
+theorem on each affine edge gives cancellation at all four corners.
+All four edge integrals are integrable; orientation is bottom minus top
+plus `i` times right minus `i` times left. Thus
+
+\[
+ \oint_{\partial R}\frac{f(w)}{w^2}\,dw=2\pi i f'(0).
+ \tag{RD}
+\]
+
+`MathlibAux.RectangleCauchyDerivative` proves (RD) with no assumption
+that `f(0)=0` and without using the unproved general meromorphic-residue
+proposition. In particular the independent polynomial check
+`f(w)=3+7w+11w^2` on `[-2,3]+i[-4,5]` has integral `2*pi*i*7`.
+
+For the actual function take `f(w)=X^w W_m(alpha+w)`, with `X>0`.
+Choose the common radius from (R0) **before** choosing `m`. Assume only
+the geometric conditions `alpha+R` lies in that disk, and both `0` and
+`-alpha` are strictly inside `R`. The latter keeps every boundary point
+away from the raw reciprocal's removable point; it does not exclude
+`alpha=0`. On the boundary the actual Euler expression agrees with `W_m`,
+so (RD) gives
+
+\[
+ \oint_{\partial R}
+ \frac{X^w}{w^2\zeta(1+\alpha+w)F_m(1+\alpha+w)}\,dw
+ =2\pi i\bigl(\log X\,W_m(\alpha)+W_m'(\alpha)\bigr).
+ \tag{RL}
+\]
+
+`HardyTheorem.ConreyCoprimeMobiusRectangle` proves (RL) with the actual
+Euler expression and actual pole-unit regularization, not a supplied
+surrogate. The geometric premises are nonvacuous: at `alpha=0`, the square
+`[-r/4,r/4]+i[-r/4,r/4]` is contained in the common disk, for every `m`.
+Extending analyticity to the high rectangle and estimating its edges is
+still required before (P1) and (RL)/(RD) give the full shifted Perron estimate.
+
+Verification of this local step:
+
+- Both exact contracts first failed on the intended missing theorem names,
+  with the existing imports already built. The generic contract also checks
+  the nonzero constant term and nonsymmetric rectangle above.
+- `nice -n10 lake build Test.RectangleCauchyDerivativeContract
+  Test.ConreyCoprimeMobiusRectangleContract
+  Test.ConreyCoprimeMobiusResidueContract
+  Test.ConreyCoprimeMobiusPerronContract`: exit 0, 8721 jobs.
+- Both new endpoints use only `propext`, `Classical.choice`, and `Quot.sound`.
+  The actual endpoint has ten local modules in its import closure, no Zeta23,
+  and only Mathlib as an external root. Both modules and contracts are Lake roots.
+- Python regression: 546 passed. Target inventory and chain-gap checks
+  passed; the diff whitespace check was clean.
+- Independent read-only review found no issue in the decomposition, corner
+  cancellation, integrability, actual Euler correspondence, uniform radius,
+  zero shift, or restricted local scope.
+
+Only targeted Lean verification is claimed; this is not a whole-repository
+baseline, GitHub CI pass, or completion of the full shifted contour estimate.
