@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-30 短区间输入的真实转移，不新增覆盖。** [SR1–SR12](2026-08-30-mwkf-short-row-transfer.md) 将经典 Möbius 短区间定理统一推广到多项式大小 q 的单位掩码，支付全部 q-smooth 除数与整数 +1，再作用于 GB7 的真实窗口 S/Z。内部物理 q 壳在 γ<3/5 时得到 CPX exp[−c(log T/log log T)^{1/3}]，恢复原外层为 T^{4−γ−ν} 乘同一衰减。平衡顶层仍是 normalized T^{5−o(1)}、物理 T^{3−o(1)}：缺失的固定 T² 没有减少。下列完整 adapter 的统一算子界仍未证明。
+
 > **2026-08-30 全部物理双频率与零差整带。** [SF1–SF19](2026-08-30-mwkf-shifted-frequency-adapter.md) 从 (4.5) 的原 hδ 相位推出全部双 completion 频率，保留 r−s 的符号、|r−s|=1、原 h=0/δ=0 两轴和精确 Jacobian。重组后标签是 zeta 整数差 j 与格点恢复频率 k，PA18 的补集由实际频率显式给出。|j|,|k|≤⌈T⁴⌉ 的全局尾为 O(T^{9−2a})，a 可任意大。零差整带的真实权为 W(t/T)(λ(t)+2γ+O_A(t^{-A}))：k≠0 补偿延拓常数 κχ，但不消掉 λ(t) 级长 Möbius Gram。统一 signed operator、共同截断 reflection 及两个 mixed 项保留；没有新覆盖、T² saving 或完整 twisted-moment 证明。
 
 > **2026-08-30 全 B 重组与端点回返，不新增覆盖。** [GB1–GB9](2026-08-30-mwkf-global-b-boundary.md) 证明全部 B/h 的单位 Möbius 除数和等于 µ(r)1_{r|M,(r,q)=1}。移除 χ 的 bare 全和因此快速衰减，但实际 quotient 端点不能随之删除。用精确 JT symbol 和 χ 在整数处的平坦性，整个实际 B/h 家族压缩为负号的 h=−1 项，完整误差为 CPFS log(2S)Z^{1−N}T^ε。剩余核保留 µ(M)µ(B) 与 (B,q)=1，可把 B 光滑截在原模数尺度 S。直接从 IC2 的 M=Ae、s=ed 双射也能核对：这本质上撤销了一次 Type 分解，unsigned 顶层成本仍是 T⁵，目标仍是 T³。不得把同一 h 平均再当成独立 saving；本轮没有证明新幂次节省、全 B 覆盖、canonical 零模求值或完整 gate。
@@ -39,6 +41,7 @@
 >
 > | component | status in this note |
 > |---|---|
+> | Restricted short-interval transfer to the actual GB kernel | SR1--SR12 preserve the varying-q unit mask by an exact q-smooth divisor convolution, including every integer +1. The B window is S/Z and the reverse M window is X/Z. On the stated interior physical q shells, classical short-interval cancellation gives only CPX times exp[-c(log T/log log T)^(1/3)]. The top normalized bound remains T^(5-o(1)), not the target T^3. No new coupled-kernel coverage or unified signed-operator estimate follows |
 > | Global B regrouping and quotient-boundary return | GB1--GB9 restore every B partition before the unit Mobius divisor identity. The bare sum collapses to r dividing M and is rapidly small; the actual smooth quotient cutoff instead leaves a negative h=-1 primitive term. Its complete endpoint/Fourier error is CPFS*log(2S)*Z^(1-N)*T^epsilon, with literal M=1/h=0 and other physical boundaries excluded. The remaining B unit mask and both Mobius weights survive. Direct all-e fusion of IC2 confirms this is a reverse Type identity, not a new saving; the top unsigned cost remains T^5 against T^3 |
 > | All-scale transfer and physical interior q-shell subregions | PQ1--PQ9 retain F=(R/S)J, the sampling cost Y/Kmax+(R/S)Kmin and primitive resonance CP(R/S)=rho*S. PQ10--PQ13 take q~Q, R=S=N/(8Q), keep the original mollifier strictly inside its cutoff, and pay the target S=T^(3-gamma). The original 2T/(qS) weight gives O(T^(1+epsilon)) for the specified covered kappa/B subfamilies summed over the whole q shell, with no extra Q count. This is not all off-diagonal terms of that shell; a remaining physical witness still costs T^(11/10+epsilon). Full zero-Gram/reflection operator and independent boundary estimates remain open |
 > | General-q all-e local smooth-core coverage, scope corrected | GQ retains all unit masks and gives GP6 times sqrt(rad(q)), with no independent e-shell cost. Its positive-power-q examples at R=S=T^3 violate qR,qS<=O(N) for N=T^3 and are only standalone smooth-core scale examples, not original nonempty boxes. The local formulas remain valid; PQ supplies the actual interior q-shell transfer with a smaller S budget. Neither result closes the full signed operator |
@@ -28757,6 +28760,34 @@ integer-lattice regrouping, with one common product cutoff and both mixed
 terms. No additional parameter coverage, T^2 saving or full twisted-moment
 theorem follows.
 
+### 9.220 Actual short-row transfer, with no additional gate coverage
+
+The [short-row transfer](2026-08-30-mwkf-short-row-transfer.md) applies
+the classical Motohashi--Ramachandra input to GB7, not to an arbitrary
+supplied weight. SR3--SR6 first retain the unit mask uniformly for
+q<=x^C by summing all q-smooth divisors. The large-divisor bound includes
+the integer +1 for each inner interval, including quotient-one endpoints.
+
+The actual B window is H_B=M/F~S/Z, independent of K; the reverse
+M window is H_M=X/Z. SR8 retains the actual Schwartz norm A4. Abel
+summation, paying short prefixes and the shell variation, yields
+CPX*A4*exp[-c(log S/log log S)^(1/3)] plus GB's existing errors.
+Only on the specified interior physical boxes is A4 uniformly bounded
+or polylogarithmic; a bare T^epsilon seminorm assertion would not suffice
+to claim an improvement over CPX.
+
+For q~T^gamma, R=S~T^(3-gamma), K~T^nu, the classical length condition
+holds on the B side for gamma<3/5 and on the reverse M side for
+gamma+nu<3/5, with fixed margins. These are input-length conditions,
+not gate-coverage regions. Restoring 2T/(qS) and the complete q shell
+gives T^(4-gamma-nu) times the same subpower decay for the stated B-row
+subfamily. At gamma=0, nu=1, the normalized and physical bounds are
+T^(5-o(1)) and T^(3-o(1)), against targets T^3 and T. The fixed T^2
+deficit is unchanged. The outer Mobius factor was taken in absolute
+value at the last step, so no independent second row saving remains.
+This does not estimate the full operator in Section 9.219 or any of its
+uncontrolled zero-Gram/reflection contributions.
+
 ## 10. What has and has not been proved
 
 **Canonical zero-frequency outcome.**  The finite Fourier Gram identity
@@ -28796,6 +28827,11 @@ lattice frequencies. The extension constant cancels, but the logarithmic
 long-Mobius Gram survives. Its global cutoff tail is bounded; its analytic
 quadratic-form bound, the signed unequal-zeta contribution and their
 combined coupled-kernel saving remain unproved.
+
+Section 9.220 transfers an actual published short-interval input to an
+interior GB row, with its original unit mask and full physical outer
+cost. Its subpower decay supplies no new gate coverage and leaves the
+fixed two-power deficit unchanged.
 
 **Final published coverage and unified Type gate.**  Section 9.197 puts
 the registered published estimates into one final-wedge table and adds

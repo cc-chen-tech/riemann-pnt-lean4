@@ -7,6 +7,10 @@ primitive h 家族可以整体压缩为一个负号的 h=−1 边界项。
 因此不能在已经使用这次全 B 抵消以后，又把同一个 h 家族当作
 独立平均来支付缺失的 T²。下一估计仍须处理压缩后的联合核。
 
+后续 [短区间转移 SR1–SR12](2026-08-30-mwkf-short-row-transfer.md)
+在原单位掩码下将经典短区间输入接到 GB7，并恢复完整 q 壳。
+它仅在指定内部族给出亚幂次衰减，不减少顶层缺失的固定 T²。
+
 范围沿用 [PQ1–PQ9](2026-08-30-mwkf-physical-q-shell-coverage.md)：
 R≥S、α=R/S、X=R/K、P=Kmin Kmax、Z=RP/S、J=Z/K、
 F=αJ=ZX/S、C=HL/R，Z 和 K/α 至少为固定正幂。
