@@ -1,6 +1,8 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
-> **2026-08-30 一般 q 的全 e 实际覆盖。** [GQ1–GQ10](2026-08-30-mwkf-all-e-general-q-coverage.md) 对多项式大小的固定 q 恢复全部 e；令 q₀=rad(q)、g=(M,q₀)、v=q₀/g、L=Mv，原单位条件精确化为 M,B 平方自由及 (B,q₀)=1。全 n Fourier 的 Jv 与原 1/v、µ(v) 符号消去，primitive 表示只增加 (B,q₀)=(h,q₀)=1 两个限制；整个精确共振仍为 T^{3+ε}。活跃 g 层的平方自由均值和联合斜率/B 采样给 GP6 乘 √q₀ 的误差，没有独立 e-shell 数量成本。新覆盖包括 (ν,a,χ,β)=(1,1/2,1/5,4/5) 与 (1,0,1/2,7/6)，χ=log_T q₀；后者有 B>T。此界不等于原 q 外层聚合，不提供固定 e 子和；canonical zero Gram、两个 reflection mixed 项、覆盖外补集和独立 AFE 尾仍未关闭。完整 twisted moment 未证明。
+> **2026-08-30 物理范围更正与内部 q 壳子域覆盖。** [PQ1–PQ13](2026-08-30-mwkf-physical-q-shell-coverage.md) 明确更正：旧 GQ 例子的 q=T^χ、χ>0 与 R=S=T³ 不满足原 N=T³ 的 qR,qS≲N，不能算非空物理箱。一般尺度转移保留 F=(R/S)J、B 采样的 R/S 因子及共振成本 CP(R/S)=ρS。取 q≈Q=T^γ、R=S=N/(8Q)，原 mollifier 在整片支持内光滑；误差目标是 S≈T^{3−γ}，不是 T³。PQ12 给指定 κ/B 子族的覆盖，原 2T/(qS) 外因子与 Σ_{q≈Q}µ²(q)/q≲1 将整个 q 壳内这部分的贡献控制为 T^{1+ε}，包括 (γ,ν,u,β)=(1/5,1,0,6/5) 的 B>T 区域。不是整个 q 壳的全部 off-diagonal；覆盖外实例如 (1/5,1,1/2,4/5) 当前仍只到 T^{11/10+ε}。完整 signed operator、canonical zero Gram、reflection mixed 项及全部物理边界仍未控制。
+
+> **2026-08-30 一般 q 的全 e 局部光滑核覆盖（物理范围已更正）。** [GQ1–GQ10](2026-08-30-mwkf-all-e-general-q-coverage.md) 对多项式大小的固定 q 恢复全部 e；令 q₀=rad(q)、g=(M,q₀)、v=q₀/g、L=Mv，原单位条件精确化为 M,B 平方自由及 (B,q₀)=1。全 n Fourier 的 Jv 与原 1/v、µ(v) 符号消去，primitive 表示只增加 (B,q₀)=(h,q₀)=1 两个限制；在指定 R=S=T³ 光滑核中整个精确共振为 T^{3+ε}。活跃 g 层的平方自由均值和联合斜率/B 采样给 GP6 乘 √q₀ 的误差，没有独立 e-shell 数量成本。局部例子 (ν,a,χ,β)=(1,1/2,1/5,4/5) 与 (1,0,1/2,7/6) 的 χ>0，故不在原 N=T³ 参数多面体内；不得再称为原问题的实际覆盖。真正内部 q 壳子域转移见 PQ。完整 twisted moment 未证明。
 
 > **2026-08-30 完整 κ 对偶频率族与新覆盖。** [GP1–GP13](2026-08-30-mwkf-variable-kappa-coverage.md) 将 all-e 光滑 core 扩展到固定 K≈T^ν、0<ν≤1，保留 J=P/K≈T^{1−ν}、n≈BJ 及精确归一化中的 X/M、P/(kl)。q=1、R=S=T³、P≈T 时，平方自由误差指数为 3−ν+3β/2；先完成较长光滑斜率后，两项指数为 2+a−ν+3β/2 与 3+a−ν+β/2。择优得到 GP8 的实际覆盖，包括 (ν,a,β)=(9/10,1/2,4/5) 和 (4/5,0,6/5)，后者有 B>T。全 n 完成保留 Jacobian J，完整 j 家族的精确 primitive 共振由联合除数计数达到 T^{3+ε}，不是把 j 当成固定个数。所有变换尾与整数端点分别计费。K≈1、一般 q、覆盖外 B、canonical zero Gram、两个 reflection mixed 项与独立 AFE 尾仍未关闭；完整 twisted moment 未证明。
 
@@ -33,7 +35,8 @@
 >
 > | component | status in this note |
 > |---|---|
-> | General-q all-e physical coverage | GQ2 retains mu(v), fractional n/v and every actual unit mask. GQ4 cancels Jv against the outer v factor and leaves exactly the extra B/q0 and h/q0 units in the primitive sum; all exact resonances stay O(T^(3+epsilon)). On active g layers, GQ9 is GP6 times sqrt(rad(q)), with no separate e-shell cost, giving GQ10's new nontrivial-q coverage. This is a uniform fixed-q core result, not the original q outer sum or a full zero-Gram/reflection operator estimate |
+> | All-scale transfer and physical interior q-shell subregions | PQ1--PQ9 retain F=(R/S)J, the sampling cost Y/Kmax+(R/S)Kmin and primitive resonance CP(R/S)=rho*S. PQ10--PQ13 take q~Q, R=S=N/(8Q), keep the original mollifier strictly inside its cutoff, and pay the target S=T^(3-gamma). The original 2T/(qS) weight gives O(T^(1+epsilon)) for the specified covered kappa/B subfamilies summed over the whole q shell, with no extra Q count. This is not all off-diagonal terms of that shell; a remaining physical witness still costs T^(11/10+epsilon). Full zero-Gram/reflection operator and independent boundary estimates remain open |
+> | General-q all-e local smooth-core coverage, scope corrected | GQ retains all unit masks and gives GP6 times sqrt(rad(q)), with no independent e-shell cost. Its positive-power-q examples at R=S=T^3 violate qR,qS<=O(N) for N=T^3 and are only standalone smooth-core scale examples, not original nonempty boxes. The local formulas remain valid; PQ supplies the actual interior q-shell transfer with a smaller S budget. Neither result closes the full signed operator |
 > | Variable-kappa all-e coverage | GP2 retains the exact compact scale ratios, j~J=P/K and n~BJ. GP8 covers beta<=2*nu/3 OR both beta<=2*(1+nu-a)/3 and beta<=2*(nu-a), for fixed 0<nu<=1 at q=1, R=S=T^3, P~T. This includes new K<T and some B>T cores, not fixed-e sub-sums. GP9 retains the Fourier Jacobian J; joint divisor counting bounds the entire j-family exact primitive resonance by T^(3+epsilon). K~1, other q/scales, uncovered B, canonical zero Gram and the complete signed operator remain open |
 > | General-unit Type-II density and e/b coverage | GU2 keeps primes shared by A and q and the induced mu(e) sign. At fixed q, GU9 bounds the arithmetic density summed over every e by HL*P/R; this is not the canonical zero Gram. GU10 charges the full E factor in the e-shell error, yielding top-core coverage eta+chi/2+3*beta/2<=1 with explicit endpoints. The original q outer sum, remaining long b/e and complete signed operator estimate stay open |
 > | Global-e primitive resonance | For q=1 at the balanced top, GE3 fuses M=Ae and B=eb with e=gcd(M,B). GE8 restores both mu(M) and mu(B). The entire exact primitive determinant-zero subterm, including every e and long b, is O(T^(3+epsilon)); the nonzero signed complement still has only an unsigned T^(5+epsilon) bound. This is not the canonical zero Gram or whole-packet coverage |
@@ -28621,13 +28624,54 @@ sqrt(q0), with no independent e-shell cardinality; its density
 still costs CP*T^epsilon.
 
 Thus GP7's three errors each gain chi/2, chi=log_T(q0), giving
-GQ10. New covered examples (nu,a,chi,beta)=(1,1/2,1/5,4/5)
-and (1,0,1/2,7/6) include nontrivial q and, in the latter case,
-B>T. All transform tails, integer endpoints and inactive g layers
-are explicitly accounted for. The fixed-q uniform conclusion is
-not an estimate of the original outer q sum or a fixed-e sub-sum.
-Coverage outside GQ10, K~1, other scales, canonical zero Gram,
-both reflection mixed terms and independent AFE tails remain open.
+GQ10 for the specified R=S=T^3 smooth core. **Scope correction:**
+the examples (nu,a,chi,beta)=(1,1/2,1/5,4/5) and
+(1,0,1/2,7/6) have positive chi and violate the original
+qR,qS<=O(N), N=T^3 condition. They are standalone scale examples,
+not nonempty original physical boxes. The local formulas and tail
+estimates remain valid. Section 9.217 restores the actual q-dependent
+scales and the smaller normalized target. Neither result estimates
+a fixed-e sub-sum or closes the full zero-Gram/reflection operator.
+
+### 9.217 All-scale transfer and original interior q-shell subregions
+
+The [physical q-shell note](2026-08-30-mwkf-physical-q-shell-coverage.md)
+keeps alpha=R/S>=1, X=R/K, Z=RP/S, J=Z/K and **F=alpha*J**.
+The exact critical symbol has n/(B*F*v), not n/(B*J*v), and the
+full primitive Fourier Jacobian is Fv. Joint divisor counting over
+j consequently gives CP*alpha=rho*S for the entire exact resonance.
+The squarefree density costs CP, while the same-discrepancy error is
+
+\[
+ CPX^{-1/2}F^{3/2}\sqrt{q_0}T^\varepsilon
+ \min\{Y^{3/2},Y^{3/2}/K_{\max}+\alpha K_{\min}Y^{1/2}\}.
+\]
+
+The integer sampling cost alpha*Kmin is retained. All noncritical,
+zero-quotient-frequency and finite-window tails are counted at general
+scales. Excluding d=1 needs a fixed-power margin K/alpha, not merely K.
+The finite primitive complement is still an actual Mobius-vector
+estimate, not a zero-row/column or unrestricted operator-norm theorem.
+
+For original q in [Q,2Q), Q~T^gamma, choose R=S=N/(8Q). Then every
+qr,qs on the compact support is <=N/2, so the original tapered weight
+is uniformly smooth without touching its hard endpoint. Take original
+AFE scales M_z=K_z~T^u, H~S/T^u, L~R*T^(u-1), 0<=u<=1/2,
+with nonempty H/L support. This yields HL~RS/T and P~T. For K~T^nu,
+0<nu<=min(1,3-gamma), the three error exponents are GP7 with a=u,
+but the target is **3-gamma**, not 3. PQ12 states the corrected
+coverage region. The original factor 2T/(qS) and the finite bound
+sum_{Q<=q<2Q}mu(q)^2/q<=1 give O(T^(1+epsilon)) for these specified
+kappa/B subpackets summed across the entire q shell.
+
+Actual examples (gamma,nu,u,beta)=(1/5,1,1/2,3/5),
+(1/5,1,0,6/5) and (1/2,1,0,1) meet that bound. The second has B>T.
+The admissible witness (1/5,1,1/2,4/5) still has only the upper
+bound T^(11/10+epsilon), not a lower bound or a contradiction.
+This does not cover every kappa/B region of a q shell, the original
+mollifier boundary, other scales, the canonical zero Gram, both
+reflection mixed terms or independent physical tails. The complete
+coupled-kernel gate and twisted moment remain unproved.
 
 ## 10. What has and has not been proved
 

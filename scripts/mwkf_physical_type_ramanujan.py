@@ -21,6 +21,61 @@ def _kappa_radical(r, n):
     return sum(mobius(d)*d for d in divisors(gcd(r, abs(n))))
 
 
+def all_scale_critical_parameters(R, S, K, P, M, B, v, n, j, kl):
+    """Exact all-scale normal coordinates; F=(R/S)*J, not generally J.
+
+    This finite interface does not select critical support or certify
+    the original mollifier cutoff. v=rad(q)/gcd(M,rad(q)) is supplied.
+    """
+    if (any(not isinstance(a, int) or a < 1 for a in (R, S, K, P, M, B, v))
+            or any(not isinstance(a, int) or not a for a in (n, j, kl))):
+        raise ValueError("positive integer scales and nonzero integer n,j,kl required")
+    alpha, X, Z = F(R, S), F(R, K), F(R*P, S)
+    J, freq, z0 = Z/K, Z*X/S, F(K*M*kl, S)
+    return {"alpha": alpha, "X": X, "Z": Z, "J": J, "F": freq,
+            "n_scale": B*freq*v, "z0": z0, "eta": j*K/z0,
+            "sigma": F(n*S, B*M*v)/z0}
+
+
+def all_scale_error_exponents(r, s, hl, nu, u, v, beta, chi):
+    """GSCALE normalized all-e ledger; no complete physical-coverage flag.
+
+    R>=S, K/(R/S) has a fixed positive power, and rho=HLP/S^2<=1.
+    These conditions exclude d=1 but not the separate AFE boundary/tails.
+    """
+    r, s, hl, nu, u, v, beta, chi = map(F, (r, s, hl, nu, u, v, beta, chi))
+    p, z = u+v, r+u+v-s
+    if (not 0 <= s <= r or min(hl, u, beta, chi) < 0 or v < u
+            or not r-s < nu <= min(r, z) or beta > s or hl+p > 2*s):
+        raise ValueError("ordered scales, positive endpoint margin and natural-frequency bounds required")
+    c, x, freq = hl+p-r, r-nu, z+r-nu-s
+    prefactor = c-x/2+F(3, 2)*freq+chi/2
+    uncompleted = prefactor+F(3, 2)*beta
+    interval = uncompleted-v
+    integer = prefactor+r-s+u+beta/2
+    return {"density": c, "resonance": c+r-s, "uncompleted_error": uncompleted,
+            "interval_error": interval, "integer_error": integer,
+            "best_error": min(uncompleted, max(interval, integer))}
+
+
+def physical_q_shell_exponents(gamma, nu, u, beta):
+    """Balanced INTERIOR original boxes R=S=N/(8Q), Q~T^gamma, N=T^3.
+
+    Returns original (rho,sigma,m,k,ell,h,kappa) for the independent
+    finite polytope checker. Bounds concern selected kappa/B subpackets,
+    not every term in the q shell, nor the nonsmooth mollifier endpoint.
+    """
+    gamma, nu, u, beta = map(F, (gamma, nu, u, beta))
+    s = 3-gamma
+    if gamma < 0 or not 0 <= u <= F(1, 2) or min(s-u, s-1+u) < 0:
+        raise ValueError("nonempty original h/delta core and 0<=u<=1/2 required")
+    bounds = all_scale_error_exponents(s, s, 2*s-1, nu, u, 1-u, beta, gamma)
+    return {"original_exponents": (s, s, u, u, s-1+u, s-u, gamma),
+            "target": s, "bounds": bounds, "physical_error": 1+bounds["best_error"]-s,
+            "physical_density": 1+bounds["density"]-s,
+            "physical_resonance": 1+bounds["resonance"]-s}
+
+
 def global_e_q_packet(M, B, q, j, k, l, ns, amplitude):
     """GQ all-e/v fusion with the actual q masks and common n cutoff.
 
