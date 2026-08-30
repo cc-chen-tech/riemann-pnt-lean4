@@ -11,8 +11,9 @@ Möbius 有限和等于真实 Euler 因子被积函数的 Perron 积分，且该
 绝对可积。这一步补齐移线的起点，不代表完整移线或渐近已经形式化。
 
 再下一步已原生证明 (R0) 与 (RC)：统一于互素参数的解析正规化、二次局部
-误差及实际圆周留数，包括零移位。矩形移线、移位导数误差和全部路径估计
-尚未拼接，完整内层渐近仍未完成。
+误差及实际圆周留数，包括零移位。第 12 节进一步构造任意大高度下的
+实际无零矩形并证明精确留数恒等式。整线尾积分拼接、移位导数误差和
+路径大小估计仍未闭合，完整内层渐近尚未完成。
 
 Source for comparison: [Conrey 1983, Lemma 10, printed pp. 54–56](https://aimath.org/~kaur/publications/3.pdf).
 The full contour and residue pages were visually checked. The following
@@ -90,14 +91,15 @@ Let the complex shift satisfy `|alpha|<=1/H`. Write
 
 All positive-base powers use real logarithms. All thresholds below are
 absolute or depend only on `P`, never on `d`, `X`, or `alpha`.
-Take `H` sufficiently large and set
+Let `0<kappa<=c` be the uniform compact/high-height constant constructed
+in Section 12. Take `H` sufficiently large and set
 
 \[
- K=H^4,\qquad b=\frac{c}{4\log K}=\frac{c}{16\ell},\qquad u=2/H.
+ K=H^4,\qquad b=\frac{\kappa}{4\log K}=\frac{\kappa}{16\ell},\qquad u=2/H.
 \]
 
-We may require `ell>=16`, `1/H<=b`, and `b+1/H` smaller than a
-fixed zero-free width at bounded height. At high height, throughout
+We may require `ell>=16` and `1/H<b`. Section 12 then gives the full
+zero-free rectangle, including bounded heights. At high height, throughout
 the rectangle `-b<=Re w<=u`, `|Im w|<=K`, the point
 `s=1+alpha+w` has `|Im s|<=K+1` and
 
@@ -298,7 +300,7 @@ the following paper estimate, including `alpha=0`:
 
 At `X=y/d` this implies the weaker `H^(-2) ell^2 [1+H(d/y)^b] B_d`
 form used in the preceding arithmetic main-term audit. The positive
-majorant sums there remain applicable, with `1/b=16ell/c=O(ell)`.
+majorant sums there remain applicable, with `1/b=16ell/kappa=O(ell)`.
 
 ## 6. Avoiding new higher-order Perron kernels in the native route
 
@@ -379,11 +381,13 @@ with the common radius and quadratic-error constant chosen before `d`.
 The actual Euler integrand is identified on every circle boundary point;
 no equality with the raw totalized reciprocal at `z=0` is claimed.
 
-The rectangle derivative formula and the actual local-rectangle residue
-are now implemented as described in Section 11. Native implementations of
-the finite Volterra profile transfer, shifted derivative/Cauchy error bounds,
-the other path integrability estimates, the high-rectangle zero-free assembly
-and transfer, and their assembly into (GV) remain necessary.
+The rectangle derivative formula and actual local-rectangle residue are
+implemented in Section 11. Section 12 additionally proves the high-rectangle
+zero-free assembly and exact actual residue. Native implementations of the
+finite Volterra profile transfer, shifted derivative/Cauchy error bounds,
+the path norm estimates and full-line tail assembly, and their combination
+into (GV) remain necessary. The eventual specialization of the geometric
+parameters in Section 12 is presently a paper calculation.
 The previous arithmetic outer average and the actual
 Gaussian/Estermann/DI mean-square chain also remain unfinished.
 
@@ -504,8 +508,9 @@ so (RD) gives
 Euler expression and actual pole-unit regularization, not a supplied
 surrogate. The geometric premises are nonvacuous: at `alpha=0`, the square
 `[-r/4,r/4]+i[-r/4,r/4]` is contained in the common disk, for every `m`.
-Extending analyticity to the high rectangle and estimating its edges is
-still required before (P1) and (RL)/(RD) give the full shifted Perron estimate.
+Section 12 extends analyticity to the high rectangle. Estimating its edges
+and attaching the full-line tails is still required before these identities
+give the full shifted Perron estimate.
 
 Verification of this local step:
 
@@ -527,3 +532,93 @@ Verification of this local step:
 
 Only targeted Lean verification is claimed; this is not a whole-repository
 baseline, GitHub CI pass, or completion of the full shifted contour estimate.
+
+## 12. 任意大高度的无零矩形与实际留数
+
+这一步解除第 11 节的小圆盘限制。统一常数在高度和互素模数之前选取；
+完整矩形上的解析性由实际 ζ 的性质推出，不作为调用方假设。
+
+Write `Q(s)=(s-1)zeta(s)` with its analytic value `Q(1)=1`.
+For each fixed `T`, the segment `{1+it: |t|<=T}` is compact and lies
+in the open set `{s: Re s>0, Q(s)!=0}`. An open thickening contains
+the segment, so there is `delta_low>0`, `delta_low<=1/4`, such that
+`Q(sigma+it)!=0` when `|t|<=T` and `1-delta_low<=sigma<1`.
+The existing one-line/right-half-plane theorem covers all `sigma>=1`.
+
+Take the height `T` and constant `c` from (Z), and set
+`kappa=min(c,delta_low)`. For every `K>=2`, put
+
+\[
+ q_K=\frac{\kappa}{1+\log(K+2)}.
+\]
+
+We have `q_K<=delta_low`. If `T<=|t|<=K`, monotonicity of the positive
+logarithm gives `q_K<=c/log|t|`. Thus low and high estimates cover the
+entire closed rectangle `1-q_K<=Re s<=2`, `|Im s|<=K`. In particular
+`Q(s)!=0`, including `s=1`. Finite Euler factors have no zero for
+`Re s>0`, so the actual `W_m(z)=z/Q(1+z)/F_m(1+z)` is analytic at
+every point
+
+\[
+ -q_K\le\Re z\le1,\qquad |\Im z|\le K.
+ \tag{HA}
+\]
+
+The theorem `exists_conrey_coprime_mobius_analytic_rectangles` proves
+(HA) and the actual pole-unit nonvanishing, with one `kappa` for all
+heights and moduli.
+
+For the shifted rectangle `R=[-b,u]+i[-K,K]`, assume
+
+\[
+ K\ge2,\quad X>0,\quad |\alpha|<\min(b,u),\quad
+ b+|\alpha|\le\frac{\kappa}{1+\log(K+3)},\quad u+|\alpha|\le1.
+\]
+
+These inequalities imply `|alpha|<=1`, so the imaginary shift fits in
+height `K+1`. Applying (HA) at that height proves actual analyticity
+on `alpha+R`. Both `0` and `-alpha` are strictly inside `R`. The common
+contour calculation from Section 11 then proves
+
+\[
+ \oint_{\partial R}
+ \frac{X^w}{w^2\zeta(1+\alpha+w)F_m(1+\alpha+w)}\,dw
+ =2\pi i\bigl(\log X\,W_m(\alpha)+W_m'(\alpha)\bigr).
+ \tag{HR}
+\]
+
+`exists_conrey_coprime_mobius_high_rectangle_residue` proves both the
+analyticity and (HR). The refactored helper is conditional only as a
+shared calculation; both local and high callers discharge all its
+analytic assumptions for the fixed actual function.
+
+The Section 2 parameters meet these conditions eventually: with
+`K=H^4`, `u=2/H`, `b=kappa/(16log H)`, and `|alpha|<=1/H`, choose
+`H>=3`, `log H>=1`, and `1/H<b`. Then
+`1+log(H^4+3)<=8log H`, hence
+`b+|alpha|<2b<=kappa/(1+log(K+3))`, while
+`u+|alpha|<=3/H<=1`. This eventual parameter specialization is a
+paper check, not yet a separate native endpoint. No path norm bound,
+Perron tail limit, Volterra estimate, or full inner asymptotic is claimed here.
+
+Verification of the high-rectangle step:
+
+- The two literal contracts first failed only on their intended missing
+  theorem names. The existing baseline and refactored local contract passed.
+- `nice -n10 lake build Test.ConreyCoprimeMobiusHighRectangleContract
+  Test.ConreyCoprimeMobiusRectangleContract
+  Test.ConreyCoprimeMobiusResidueContract
+  Test.ConreyReciprocalZetaStripContract
+  Test.ConreyCoprimeMobiusPerronContract`: exit 0, 8733 jobs.
+- Both new endpoints, the shared actual contour helper, and the now-public
+  finite Euler analyticity lemma use only the three standard axioms.
+  The high endpoint's 21-local-module closure contains no Zeta23; Mathlib is
+  the only external root. New module and contract are explicit Lake roots.
+- Python regression: 546 passed. Inventory, chain-gap and whitespace checks
+  passed. Independent read-only review confirmed the compact/high split,
+  common constant, inequality directions, shifted height, discharged helper
+  assumptions, raw pole handling and the paper parameter calculation.
+
+This is targeted Lean verification, not a fresh full-repository baseline
+or a GitHub CI result. (GV), the outer arithmetic mean, the actual long
+mean square/DI chain, and the final strict two-fifths conclusion remain open.

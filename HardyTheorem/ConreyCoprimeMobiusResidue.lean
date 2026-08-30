@@ -25,7 +25,8 @@ noncomputable def conreyMobiusPoleUnit (z : ℂ) : ℂ :=
 noncomputable def conreyCoprimeMobiusRegularized (d : ℕ) (z : ℂ) : ℂ :=
   z * conreyMobiusPoleUnit z * conreyCoprimeEulerInverse d z
 
-private theorem analyticAt_conreyCoprimeEulerInverse (d : ℕ) {z : ℂ}
+/-- The finite coprime Euler inverse is analytic throughout `Re z > -1`. -/
+theorem analyticAt_conreyCoprimeEulerInverse (d : ℕ) {z : ℂ}
     (hz : -1 < z.re) : AnalyticAt ℂ (conreyCoprimeEulerInverse d) z := by
   have hF : Differentiable ℂ (fun w : ℂ =>
       ∏ p ∈ d.primeFactors, (1 - (p : ℂ) ^ (-(1 + w)))) := by
