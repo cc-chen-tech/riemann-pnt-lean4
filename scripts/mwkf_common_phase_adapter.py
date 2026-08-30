@@ -5,11 +5,87 @@ Input type_weights already contains its Mobius or exact Type coefficient.
 The common outer scalar mu(g*p) is not included.
 """
 
+from cmath import exp
 from dataclasses import dataclass
 from fractions import Fraction as F
-from math import gcd, isqrt
+from math import gcd, isqrt, pi
 
 from scripts.mwkf_mobius_type_identity import mobius
+
+
+@dataclass(frozen=True)
+class JointCommonFrequencyKernel:
+    units: tuple[int, ...]
+    full: tuple[tuple[complex, ...], ...]
+    zero: tuple[tuple[complex, ...], ...]
+    nonzero: tuple[tuple[complex, ...], ...]
+
+
+def joint_common_frequency_kernel(
+    *, common_modulus: int, left_phase: int, right_phase: int, shift: int
+) -> JointCommonFrequencyKernel:
+    """Numerical finite certificate for joint frequency reassembly.
+
+    The physical pairing is Z_left.T @ K @ conjugate(Z_right).
+    The full kernel is obtained from the partial shift, while nonzero
+    is independently obtained by summing every nonzero Fourier mode.
+    These floating-point matrices do not certify an analytic estimate.
+    """
+    g = common_modulus
+    if g < 2 or mobius(g) == 0:
+        raise ValueError("common modulus must be squarefree and at least two")
+    if gcd(left_phase, g) != 1 or gcd(right_phase, g) != 1:
+        raise ValueError("both inverse-phase residues must be units")
+    units = tuple(z for z in range(g) if gcd(z, g) == 1)
+    roots = tuple(exp(2j * pi * k / g) for k in range(g))
+    full, zero, nonzero = [], [], []
+    for z in units:
+        full_row, zero_row, nonzero_row = [], [], []
+        for w in units:
+            phase = roots[(left_phase * pow(z, -1, g)
+                           - right_phase * pow(w, -1, g)) % g]
+            difference = (shift - z + w) % g
+            full_row.append(phase if difference == 0 else 0j)
+            zero_row.append(phase / g)
+            nonzero_row.append(phase * sum(roots[nu * difference % g]
+                                          for nu in range(1, g)) / g)
+        full.append(tuple(full_row))
+        zero.append(tuple(zero_row))
+        nonzero.append(tuple(nonzero_row))
+    return JointCommonFrequencyKernel(units, tuple(full), tuple(zero), tuple(nonzero))
+
+
+def common_character_support_polytope(
+    *,
+    common_exponent: F,
+    exceptional_gcd_exponent: F,
+    left_support_exponent: F,
+    right_support_exponent: F,
+    required_linear_gain: F,
+) -> dict[str, object]:
+    """Combine small-common-family Weil with the registered active baseline.
+
+    Supports are specified common character families, not conductor
+    cutoffs and not counts that may be assumed for arbitrary physical
+    coefficients.  This implication includes the full and the nonzero
+    common-frequency sum.  No old Type-I gain is subtracted.
+    """
+    gamma, exceptional, left, right, required = map(F, (
+        common_exponent, exceptional_gcd_exponent, left_support_exponent,
+        right_support_exponent, required_linear_gain,
+    ))
+    if min(gamma, exceptional, left, right, required) < 0:
+        raise ValueError("all exponents must be nonnegative")
+    if max(exceptional, left, right) > gamma:
+        raise ValueError("gcd and common support exponents cannot exceed g")
+    gain = max(F(0), (gamma - exceptional - left - right) / 2)
+    return {
+        "additional_linear_gain": gain,
+        "selected_sector_exponent_sufficient": gain >= required,
+        "nonzero_common_frequency_complement_included": True,
+        "unrestricted_common_character_family_covered": False,
+        "coupled_kernel_gate_closed": False,
+    }
 
 
 @dataclass(frozen=True)

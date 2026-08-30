@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-30 联合共同频率新增覆盖。** [小共同字符族定理](2026-08-30-mwkf-joint-common-frequency.md) 在重组全部共同频率后应用双极点 Weil 界，并保留共同字符族的大小成本。对指定的共同族 \(|E_i|\le T^{\kappa_{E_i}+o(1)}\)，(JF10) 给出 \(\kappa_{E_L}+\kappa_{E_S}+2\eta_{\rm imb}\le\gamma-\delta_0\)、\((g,D)=T^{\delta_0}\) 下的全共同频率及非零补集覆盖。它包括极端 \(g\asymp T\) 上两侧固定阶共同字符，不只上一轮的共同零频低导子族。稠密族未覆盖；删零频和两侧主字符后仍有范数 1 的方向。完整 gate 仍开放，旧 Type-I 删格不恢复。
+
 > **2026-08-30 物理 adapter 修正（优先于下列历史状态行）。** [共同相位与最小范数 lift 修正](2026-08-30-mwkf-common-phase-adapter.md)证明：共同 Fourier 零频仍含共同 g 的逆比率相位，不能直接替换为单层 F_p G_p。原 short-Type-I companion 覆盖/PCDI-SREM 删格暂不适用于实际行；未另证前须恢复全部格子及完整 eta_imb 目标。最小 graph-span lift 精确修复短侧 norm，||b_min||²=||R||²/phi(q)，而非未投影 tensor 的 norm。完整 U/V 与抽象 scalar Cauchy 保留。新式 (CG23) 覆盖共同零频的低共同导子子空间；在极端素数 g~T 的情形，包括任一侧共同字符 principal 的部分。两侧共同非主与其他共同频率仍需估计，耦合解析 gate 仍开放。
 
 
@@ -27998,6 +28000,47 @@ the inverse, weighted norms, exact LCM cutoff, negative signed cross
 Gram, and totient squares.  Tests are finite evidence for the formulas,
 not a proof of the complex analytic gate.  No Lean theorem or
 unconditional full twisted-moment bound is claimed.
+
+### 9.201 Joint common frequencies cover small common-character families
+
+The [joint common-frequency note](2026-08-30-mwkf-joint-common-frequency.md)
+reassembles the full common Fourier sum before applying Cauchy. Its exact
+kernel is a two-pole weighted partial shift, (JF2), and its zero-frequency
+term is the rank-one kernel (JF3). In orthonormal common-character
+coordinates the full entries obey the classical mixed Weil bound
+\(g^{-1/2+\varepsilon}(g,D)^{1/2}\); the zero entries are at most
+\(1/\varphi(g)\). Thus the nonzero complement has the same exponent bound.
+
+For fixed common families of cardinalities \(K_L,K_S\), the actual
+reconstruction cost is \(\sqrt{K_LK_S}\). Applying (9.1117) for each fixed
+common-character pair and then Cauchy in those labels proves (JF8), with
+all active modulus dependence retained. If
+\(g=T^\gamma\), \((g,D)=T^{\delta_0}\), and
+\(K_i\le T^{\kappa_{E_i}+o(1)}\), the selected sector is within target when
+\[
+ \kappa_{E_L}+\kappa_{E_S}+2\eta_{\rm imb}\le\gamma-\delta_0.
+\]
+The common families must be shared across each active modulus average;
+otherwise their union, not their largest per-row size, must be counted.
+The pre-phase projections commute with the active transform and preserve
+the registered row-energy inclusion. No common-conductor margin or
+withdrawn Type-I gain is counted again.
+
+This covers full common frequencies and their nonzero complement for
+two fixed-order common families whenever \(\gamma\ge2\eta_{\rm imb}\)
+and \(D\) is bounded. Common fixed order is different from active fixed
+order and from common low conductor. In particular, quadratic common
+characters at prime \(g\asymp T\) have conductor \(g\), and give new
+nonzero-frequency coverage even with high-order active characters.
+
+The dense complement remains. For odd prime \(g\) and nonzero common
+shift, (JF15) evaluates every singular value after deleting the common
+zero frequency. Deleting both pre-phase principal common characters
+still leaves at least \(g-5\) isometric directions for \(g\ge7\), (JF16).
+Thus a generic centered-common-operator saving is false. This is not a
+counterexample for the physical Selberg vector. The two Möbius weights,
+the nine Type blocks, and \(a=h\delta\) remain in (JF12)--(JF13), and the
+remaining dense-family, moving-active-modulus signed estimate is unproved.
 
 ## 10. What has and has not been proved
 

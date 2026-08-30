@@ -383,3 +383,8 @@ coverage transfer. A canonical graph-span lift repairs the short-profile
 energy comparison exactly. The normalized common-zero projection has an
 explicit small norm on low-common-conductor sectors, yielding the restricted
 coverage (CG23). The coupled analytic estimate is still open.
+
+**后续覆盖。** [联合共同频率定理](2026-08-30-mwkf-joint-common-frequency.md)
+的 (JF10) 另覆盖指定小共同字符族上的全频率及非零频补集。其输入是
+共同族的基数，不是这里的导子截断；稠密共同字符族仍未估计，两个
+覆盖界不能不经记账直接相乘。

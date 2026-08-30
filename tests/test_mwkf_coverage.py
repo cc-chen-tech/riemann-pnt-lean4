@@ -8994,7 +8994,6 @@ def test_prime_cross_residue_global_packet_norm_reassembles_before_cauchy() -> N
     assert r"\tag{WRFE-local}" in text
     assert text.count(r"\tag{WRFE}") == 1
     assert r"\mathrm{(WRFE)}\quad\Longrightarrow\quad" in text
-    assert "This closes the **global packet adapter**, not the analytic gate" in text
 
 
 def test_normalized_separated_ratio_fiber_coefficients_are_covered() -> None:
