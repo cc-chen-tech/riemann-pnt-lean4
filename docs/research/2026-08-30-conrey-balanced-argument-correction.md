@@ -49,7 +49,8 @@ argument `θⱼ`，其左右单侧极限为 `Aⱼ,Bⱼ`。定义
 \]
 
 所以半重数公式自然对应 `Dseg`；`D+` 对应的是严格内部零点计数。
-将 (2) 对实际 `V₁`、`η=HV₁` 的矩形作完整 Lean 特化，仍是后续任务。
+将 (2) 对实际 η 的矩形作 Lean 特化现已完成（第 12–13 节）；转为
+`V₁`、`η=HV₁` 的完整重数比较和定量边界仍是后续任务。
 式 (32) 的半重数与式 (41) 的计数下界，在采用 `Dseg` 时相容到一个显式
 `O(1)` 端点损失：本笔记证明的通用下界是 `Dseg/π-M-1`，并非逐字的
 `Dseg/π-M`。
@@ -124,7 +125,7 @@ argument `θⱼ`，其左右单侧极限为 `Aⱼ,Bⱼ`。定义
 的并；区间互不相交保证点数相加。这一步只依赖各分量自身，不依赖
 跨零点的全局相位参数。最后单独用绕行矩形积分识别 `Dseg`，避免把
 计数步骤与边界重数约定混在一起。上述实际 η 的有限计数特化现已完成
-（见第 6–7 节）；矩形积分识别仍待完成，数学路线见第 8 节。
+（见第 6–7 节）；第 8 节的矩形积分路线现已在第 12–13 节实现。
 
 ## 5. 精确的形式化边界
 
@@ -140,16 +141,16 @@ argument `θⱼ`，其左右单侧极限为 `Aⱼ,Bⱼ`。定义
   exit 0）；新定理公理依赖仅为 `propext`、`Classical.choice`、`Quot.sound`。
 - 严格格点计数和 `r+1≤M+1` 预算是有限计数步骤，不是式 (32) 的证明。
 - 实际 η 的完整分量构造、有限相位极限、不交性、重数预算和 ζ 简单零点
-  见证合并已全部完成（第 6–7 节）。后续仍需把实际矩形的半重数
-  argument 变幅与 `Dseg` 联系起来。
+  见证合并已全部完成（第 6–7 节）。实际矩形的半重数 argument 公式
+  也已在显式三边非零条件下接入 `Dseg` 的积分下界（第 12–13 节）。
 - 式 (38)–(41)、长 mollifier 均方渐近式与真正的 `>2/5` 结论仍未完成。
 
 English summary: the positive-jump variation is not the balanced component
 variation. The old generic bridge deletion argument has an entire-function
 counterexample. Strict interior levels give a correct componentwise lower
 bound; the number of components is paid for by the total zero multiplicity
-plus one. The half-weight boundary argument principle must be connected to
-this balanced variation, not to the positive-jump endpoint difference.
+plus one. Sections 12–13 connect the half-weight boundary argument identity
+to this balanced variation, not to the positive-jump endpoint difference.
 
 ## 6. 后续推进：实际分量端点与简单零点见证
 
@@ -192,7 +193,7 @@ exit 0），公理依赖仅为 `propext`、`Classical.choice`、`Quot.sound`。
 角点零点。后续式 (32) 的特化必须选取非零端点高度，或单独证明角点
 修正；计数预算 `M` 与相应矩形定理里的边界重数必须逐项核对。
 
-## 8. 下一步数学路线：主部正则化后的半重数公式
+## 8. 已实现的数学路线：主部正则化后的半重数公式
 
 设 `f` 在闭矩形 `[σ,A]×[U,T]` 的邻域内全纯，`σ<A`、`U<T`，其余
 三边及四个角点非零。将全部零点分为严格内部零点 `Koff` 与左边界
@@ -242,8 +243,8 @@ exit 0），公理依赖仅为 `propext`、`Classical.choice`、`Quot.sound`。
 
 这一路线已经过独立数学审查。相位导数、端点 FTC、有限积分重组及三边
 精确 `π` 恒等式现已完成 Lean 核验；给定精确零点表的正则化函数与内部
-留数公式也已构造。实际三边积分拆分与留数式的拼接，以及实际 η 矩形
-特化仍待完成。
+留数公式也已构造。通用三边积分拆分与留数式的拼接现已完成，实际 η
+匹配矩形零点表也已构造（第 12 节）；定量边界估计仍须另行证明。
 
 ## 9. 从连续 logarithm 到实际简单零点的积分下界
 
@@ -308,8 +309,9 @@ Lean release-baseline 构建，也不等于完整 Conrey 定理。
 半重数作为轮廓的精确解释，计数接口则直接用完整重数单调性。
 
 这一段是数学恒等式及剩余接口核对，不宣称轮廓拼接或均方渐近式已经
-形式化。端点根的排除、`η=H V1` 的非零因子、矩形到半带的零点区域
-一致性，以及误差项的定量界仍须由各自真实定理承担。
+形式化；轮廓的后续实现见第 12–13 节。端点根的排除、`η=H V1` 的非零
+因子、矩形到半带的零点区域一致性，以及误差项的定量界仍须由各自
+真实定理承担。
 
 ## 11. 正则化构造的实现与下一处连接
 
@@ -331,11 +333,77 @@ Lean release-baseline 构建，也不等于完整 Conrey 定理。
 该合约及两个水平积分回归独立构建通过（2677 jobs，exit 0），公理仍
 仅三条标准公理，独立只读审查未发现问题。
 
-下一步是对其余三边应用 `G` 的真实非零点恒等式，减去已证明的 `πM`，
-并用同一个 `G` 的左边迹和内部留数式重组。左边不作奇异复值积分的
-分拆。
+这一步的后续实现对其余三边应用 `G` 的真实非零点恒等式，减去已证明
+的 `πM`，并用同一个 `G` 的左边迹和内部留数式重组，见第 12 节。左边
+不作奇异复值积分的分拆。
 
-实际 η 特化还要构造与轮廓完全一致的零点表；若通过选取附近的良好
+实际 η 特化要使用与轮廓完全一致的零点表；若通过选取附近的良好
 高度来排除角点根，选择过程中应固定原来的 η 参数（包括 `L`），不能
 未经误差分析随新高度更改 `L=log T`。端点调整和最终所有大 `T` 的
 渐近结论须另行连接。
+
+## 12. 完整半重数公式与实际矩形零点表
+
+`MathlibAux.exists_regularized_trace_half_boundary_argument` 已把第 8 节
+全部通用部件连接为同一个存在性结论：构造闭区间上连续的 `q`，证明
+其在真实非零点等于 `Re(f'/f)`，并精确满足
+
+\[
+ E_f-\int_U^Tq(t)\,dt
+ =2\pi\left(\sum_{\rho\in Koff}m_\rho+
+                    \tfrac12\sum_{\rho\in K0}m_\rho\right).
+\]
+
+三边集合单独证明无零性与可积性，只有这些边上使用积分减法。第四边
+使用整个正则化函数 `G`；没有给奇异 `f'/f` 假造可积性。正常独立构建
+`Test.HalfBoundaryArgumentPrincipleContract` 成功（8709 jobs，exit 0），
+合约公理依赖仅 `propext`、`Classical.choice`、`Quot.sound`。
+
+`exists_conreyDegreeOneEta_rectangle_zero_finset` 进一步从实际 η 的
+紧矩形 divisor 支集构造 **全部闭矩形零点**，不是只列出临界线零点。
+假设 `g≠0`、`A≥1/2`、`U≥0` 及下左端点 η 非零，左边界过滤集的自然数
+解析重数和恰等于既有 `conreyEtaCriticalZeroMultiplicityMassBetween`。
+该结果允许 `A=1/2`、空矩形或上端点零点：`T` 两边都保留，而 `U` 由
+实际非零假设排除。它没有单独声称这些退化情形适用于轮廓公式。
+其独立合约构建成功（8713 jobs，exit 0），仍仅使用三条标准公理。
+
+独立只读审查核对了同一个 `G`、四边方向、半重数系数、完整零点表、
+临界点映射单射及端点预算，未发现重要问题。后续轮廓应用仍须明确
+`A>1/2`、`U<T` 以及整个上下、右三边的 **η 非零** 条件。
+
+## 13. 实际有限轮廓计数闭合，完整比例仍开放
+
+`exists_conreyDegreeOneEta_simpleZero_finset_of_three_edges` 现仅要求
+`g≠0`、`A>1/2`、`0≤U<T`，以及同一闭矩形的整个上下、右三边上 η 非零。
+它在证明内部构造全闭矩形实际 η 零点表 `K`，以实部是否等于 `1/2`
+分成不交的 `Koff` 与 `K0`；所有严格边界条件和下端点非零性均从同一个
+三边假设推出。第 12 节构造的 `q` 随即接入实际 ζ 简单零点积分计数。
+
+由精确的左边界重数恒等式，两笔重数损失合并为
+
+\[
+ \#S\ge\frac{E_\eta}{\pi}
+        -2\sum_{\rho\in K}\operatorname{ord}_\rho\eta-1.
+\]
+
+这里 `S⊂(U,T)` 的每个点均满足真实 `riemannZeta(1/2+it)=0` 且解析阶恰为
+1。定理没有输入零点表、正则化迹、连续 logarithm、相位端点或分割。
+独立只读审查未发现重要问题；包含三个新合约、实际迹/全局计数和边界
+根回归的定向构建成功（8735 jobs，exit 0），新端点仅依赖三条标准公理。
+
+**下一条真实缺口：**把同一 η 矩形的完整重数转入实际 `V1*B` 的完整
+重数上界。已有 `η=H V1` 的解析阶等式及 `V1` 到 `V1*B` 的点态重数
+单调性可以复用；已有半带 **半重数** 比较不能直接代替此完整重数预算。
+若矩形跨过 `Re s=1`，阶等式应使用 `Re s>0, s≠1` 的版本，而非仅适用
+于 `Re s<1` 的自然数阶辅助定理。零点表中的点满足 `Im ρ>U≥0`，
+因此不是 `s=1`；这不宣称当 `U=0` 时整个闭矩形避开了 `s=1`。
+
+之后仍须衔接固定参数的良好高度、三边积分定量估计、全体大高度的
+传递，以及长 mollifier 均方渐近式/DI 输入。没有把这些假设删掉，也
+没有将有限轮廓计数宣称为真正的 `>2/5` 定理。
+
+English update: the actual finite contour count is now kernel-checked under
+explicit nonvanishing on the other three edges. It constructs all eta zeros,
+the regularized trace and genuine zeta simple-zero witnesses, with loss twice
+the full rectangle multiplicity. Quantitative estimates and the genuine
+Conrey proportion theorem remain open.
