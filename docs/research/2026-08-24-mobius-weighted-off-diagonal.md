@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **2026-08-31 非平方自由删项修正，不新增覆盖。** [NS1–NS6](2026-08-31-nonsquarefree-mask-scope-correction.md) 撤回旧 §9.48 从未限制的 signed 中心化上界直接删除非平方自由子和的推断。平方自由支持上的 (9.311)–(9.313) 仍是精确恒等式，但完整 (9.315) 必须保留未付的 \(\mathfrak E_{\rm nsf}\)。一般 mask 继承有明确余类密度反例；这不构成原特殊 Möbius 子和的下界。本项与 PT 的全局 principal 修补不同，不将尚未证明的受限估计记成已付。
+
 > **共同上游已冻结，不新增覆盖。** [MWKF-PHYS-v1 / FP1–FP7](2026-08-30-mwkf-frozen-physical-atom.md) 锁定 `49cfacd7` 的原式定义、完整外权、非空 gcd 子族和 SF/PA 共同能量账本。真实 gcd 层的 µ(e) 不等于容斥正交叠项的 µ²(e)；固定约化模数与 Type 频率不消除 (e,n) 掩码，也不固定完成后的列 ξ=−euvk。三条研究线复用同一上游，但完整 paired adapter、跨对象范数转移和实际目标界仍开放。本轮新增覆盖 0、净幂次节省 0。
 
 > **2026-08-30 短区间输入的真实转移，不新增覆盖。** [SR1–SR12](2026-08-30-mwkf-short-row-transfer.md) 将经典 Möbius 短区间定理统一推广到多项式大小 q 的单位掩码，支付全部 q-smooth 除数与整数 +1，再作用于 GB7 的真实窗口 S/Z。内部物理 q 壳在 γ<3/5 时得到 CPX exp[−c(log T/log log T)^{1/3}]，恢复原外层为 T^{4−γ−ν} 乘同一衰减。平衡顶层仍是 normalized T^{5−o(1)}、物理 T^{3−o(1)}：缺失的固定 T² 没有减少。下列完整 adapter 的统一算子界仍未证明。
@@ -7836,11 +7838,16 @@ low-product Type-II modes have now been removed unconditionally.
 
 ### 9.48 Complementary divisor switching and the asymptotic-sieve boundary
 
-The nonsquarefree shifted arguments do not belong to the remaining
-gate.  If \(\mu(s+d)=0\), (9.307) says pointwise that its density plus
-complementary part is the negative of its centered part.  Hence (9.308)
-already bounds their total contribution.  It remains only to consider
-squarefree \(n=s+d\).
+**Scope correction (2026-08-31).** Nonsquarefree shifted arguments cannot
+be deleted using (9.308) alone.  If \(\mu(s+d)=0\), (9.307) does say
+pointwise that its density plus complementary part is the negative of
+its centered part.  But its sum has the additional mask
+\(1-\mu^2(s+d)\); the unmasked signed estimate (9.308) does not bound
+that restricted sum.  The former deletion claim is withdrawn.  See
+[NS1--NS6](2026-08-31-nonsquarefree-mask-scope-correction.md) for the
+explicit density counterexample and the retained remainder below.
+First consider only the squarefree sector \(n=s+d\); this is not yet
+the whole remaining gate.
 
 Every divisor \(m\mid n\) is then squarefree.  Since the endpoint high
 range has \(m>D\geq UV\), the short--short part of (9.295) is empty.
@@ -7907,8 +7914,22 @@ has no extra \(m\)-weight \(R_{U,V}(m)\).  Our \(A(n)\) is signed and
 retains the shifted two-Möbius correlation.  Consequently applying their
 Theorem 1 here would amount to assuming the missing estimate.
 
-The genuinely narrowed residual is the squarefree asymptotic-sieve
-bilinear gate
+Write \(C_{\rm low}(n)=\sum_{m\le D}\lambda_{U,V}(m)
+(1_{m\mid n}-1/m)\).  On the inherited support
+\(n>\max(U,V)\), the missing nonsquarefree sector is exactly
+\[
+\boxed{
+\begin{aligned}
+ \mathfrak E_{\rm nsf}
+ &:={\sum_{\substack{n\asymp S\\\mu^2(n)=0}}A(n)
+ \left\{\Lambda_{U,V}(D)
+       +\sum_{\substack{m>D\\m\mid n}}\lambda_{U,V}(m)\right\}}\\
+ &=-\sum_{n\asymp S}(1-\mu^2(n))A(n)C_{\rm low}(n).
+\end{aligned}}\tag{9.315ns}
+\]
+No target upper bound for this masked sum is supplied by (9.308).
+The corrected complete residual, keeping it signed with the squarefree
+sector, is
 \[
 \boxed{
  \Lambda_{U,V}(D)
@@ -7917,17 +7938,21 @@ bilinear gate
  \sum_{k\ll T}\mu(k)
  \sum_{\substack{m>D\\(m,k)=1\\mk\asymp S}}
  R_{U,V}(m)\mu(mk)A(mk)
+ +\mathfrak E_{\rm nsf}
  \ll_\varepsilon T^{9/2+\varepsilon}.}
 \tag{9.315}
 \]
 
-Equation (9.315), together with its scaled gcd layers, is equivalent to
-(9.310) modulo the already proved centered contribution.  It exposes
-the precise parity-breaking input still missing: a bilinear estimate for
+With \(\mathfrak E_{\rm nsf}\) included, (9.315) and its scaled gcd layers
+are exact rewritings of (9.310).  The former equivalence without that
+remainder is withdrawn.  The squarefree part exposes a parity-breaking
+input still missing: a bilinear estimate for
 the actual signed additive-convolution sequence \(A\), at
 \(k\leq\sqrt D\), with the divisor multiplicity \(R_{U,V}\) retained.
 The published asymptotic sieve names this kind of input but does not
-prove it.
+prove it, and does not supply the additional masked estimate.  A joint
+bound for (9.315) could use cancellation with \(\mathfrak E_{\rm nsf}\);
+separate bounds for its summands are not being assumed.
 
 The strongest all-interval Möbius theorem cited in Section 9.44 does not
 cover even one long factor of (9.315).  Write
@@ -29191,7 +29216,8 @@ Region-D recombination, remain unproved.  After transition completion,
 all Type-I nonzero modes and all centered low-product modes are now
 proved within target; their exact remaining projection is the joint
 density-plus-complementary gate (9.310), equivalently the squarefree
-parity-breaking bilinear gate (9.315).  The finite Ramanujan
+parity-breaking bilinear expression plus the unproved nonsquarefree
+remainder in corrected (9.315).  The finite Ramanujan
 diagonalization further closes every nonzero reduced denominator
 \(2\leq r\leq D\); the strictly weaker zero/high edge gate (9.334),
 with its quotient-aware two-Möbius form (9.337)--(9.344), remains
@@ -29989,13 +30015,14 @@ Proved in this note:
   \(S_j=S/j,D_j=D/j\) and cost no power.  The transition obstruction is
   therefore reduced to the joint density plus \(m>D_j\) complementary
   divisor gate (9.310), whose quotient always has length at most \(T\).
-* the squarefree complementary switch (9.311)--(9.313): nonsquarefree
-  shifted arguments return to the already bounded centered term, while
-  on the residual support \(\lambda(m)=\mu(m)R_{U,V}(m)\) and
+* the squarefree complementary switch (9.311)--(9.313): on that support
+  \(\lambda(m)=\mu(m)R_{U,V}(m)\) and
   \(\mu(m)=\mu(mk)\mu(k)\).  The exact FI parameter map is (9.314);
   their parity-breaking estimate (B) is an assumption, not a theorem
-  applicable here.  The remaining gate is equivalently the signed
-  asymptotic-sieve bilinear form (9.315).  At the final square-root
+  applicable here.  Nonsquarefree shifted arguments leave the masked
+  term \(\mathfrak E_{\rm nsf}\) in (9.315ns), not paid by the unmasked
+  centered estimate.  Only after retaining it does corrected (9.315)
+  give the equivalent complete residual.  At the final square-root
   cutoff, fixing either long factor misses the published \(5/8\)
   threshold by the exact exponent gap \(2/3\), (9.316)--(9.322).
 * the additive rational-denominator coverage ledger (9.323)--(9.327):
@@ -30099,7 +30126,7 @@ Proved in this note:
 | Centering after transition completion | exact short-box obstruction; no major-arc deletion | the centered numerator transform is the point-minus-uniform identity (9.283).  Its aligned short-box mass is (9.284), equal to \(D-D^2/(q-1)\) for prime \(q>D\), so the uniform background is a factor \(D/q=T^{-1/2}\) below the dilation point mass, (9.285)--(9.286).  This disproves an automatic vanishing-moment route but is not a lower bound for the actual signed smooth packet; published averaged/short-interval Möbius bounds remain logarithmic at the required power scale |
 | Actual archimedean zero-moment route | scale audit exact; special identity unproved | in the balanced transition every parameter \(TL/(MR),HM/S,M^2R/(ST),KS/(MR),gD/L,H/q\) has exponent zero, (9.287)--(9.288).  Thus the completed weight is sampled at bounded frequency and integration by parts gives no power.  The AFE zeros at Mellin \(z=\pm1/2\) do not force the proposed \(d\)-moment (9.289), and even that moment would remove only the additive origin |
 | Post-completion scalar recombination | exact two-Möbius form; published average only logarithmic | (9.290)--(9.291) merge \(\mu(g)\mu(q)\) into \(\mu(s)\) and put every separated scalar weight into \(\omega_{G,Q}(s)\).  Its divisor-bounded \(L^2\) norm (9.292), together with the exact gcd-divisor split, fits Lichtman's arbitrary-coefficient Fourier lemma componentwise.  The resulting bound has power exponent \(SD=T^5\), not the target \(S^{3/2}=T^{9/2}\), (9.293)--(9.294); no third independent Möbius sign remains |
-| Central Type-I/II density prefix | exact square-root split; parity-breaking bilinear gate unproved | (9.295)--(9.298) identify the product coefficient and finite density prefix; (9.299) gives only Abelian cancellation.  The exact split and additive large sieve (9.307)--(9.309) remove every centered low-product block.  Nonsquarefree complementary terms reduce to that bound; on squarefree support (9.311)--(9.313) maps the residual to the FI boundary (9.314), whose bilinear axiom is assumed rather than proved.  The endpoint \(U=V=\lfloor\sqrt D\rfloor\) makes \(m\leq D\) pure Type I and \(m>D\) pure Type II, (9.319)--(9.320), leaving \(\beta,\gamma\geq1,\kappa\leq1\), (9.321).  Fixing either long factor misses the \(5/8\) theorem by \(2/3\), (9.322), so the joint gate (9.315) remains essential |
+| Central Type-I/II density prefix | exact square-root split; squarefree bilinear and masked nonsquarefree residual unproved | (9.295)--(9.298) identify the product coefficient and finite density prefix; (9.299) gives only Abelian cancellation.  The exact split and additive large sieve (9.307)--(9.309) concern the unmasked centered low-product blocks.  Nonsquarefree restriction leaves the unproved signed term (9.315ns); it is retained in corrected (9.315), not inherited from (9.308).  On squarefree support (9.311)--(9.313) maps to the FI boundary (9.314), whose bilinear axiom is assumed rather than proved.  The endpoint \(U=V=\lfloor\sqrt D\rfloor\) makes \(m\leq D\) pure Type I and \(m>D\) pure Type II, (9.319)--(9.320), leaving \(\beta,\gamma\geq1,\kappa\leq1\), (9.321).  Fixing either long factor misses the \(5/8\) theorem by \(2/3\), (9.322); the complete joint gate remains open |
 | Additive Vinogradov circle route | exact denominator coverage; no positive-width overlap | The explicit rational-approximation bound is (9.323), and a relative saving \(X^{-\eta}\) is available only on (9.324).  The direct length-\(S\) polynomial and the fixed-\(g\), length-\(Q\) polynomial each meet their actual near-zero denominator interval at one endpoint only, (9.325)--(9.326).  A single complementary factor would need length at least \(T^{5/2}\), (9.327), while (9.321) gives at most \(T^2,T^2,T\).  Recent almost-all Möbius Fourier uniformity remains logarithmic, so the coupled major-arc gate is still unproved |
 | Density/complement Ramanujan spectrum | exact middle-spectrum closure; quotient-aware zero/high edge pair unproved | The finite coefficients and reconstruction are (9.328)--(9.331), with \(C_r\ll T^\varepsilon/r\).  Summation by parts plus the additive large sieve proves all \(2\leq r\leq D\), with exact exponent (9.333).  The weaker residual gate is (9.334): the combined \(r=1\) mode plus \(r>D\) small numerators.  On \(m=T^{3-\kappa}=rv\), lifting to \(a_{\rm R}=uv\) gives \(\nu+\lambda=1-\kappa\), not a constant \(1\), (9.335)--(9.337).  The finite bijection (9.338)--(9.339) shows \(u,v\) are gcd strata of one numerator.  The elementary gap is \(\nu\); two hypothetical square roots cover only \(\nu\leq\lambda\).  DRZZ is resonant on \(r\mid bc\), while the Robert--Sargos/Fouvry--Iwaniec monomial shapes cap at one half-power, so neither closes a positive-width residual, (9.340)--(9.344) |
 | Precompletion dual-product Type II | exact published coverage polytope; dominant coprime stratum unproved | Starting from the four-Möbius packet retaining \(h\delta_0\), exact numerator completion produces (9.345), whose circle transform factors into the \(bc\) and \(gq\) product polynomials.  DRZZ Lemma 4.2 is applicable here.  Equations (9.347)--(9.349) include the reduced denominator after \((k,q_\alpha)=T^{\tau_k}\), the approximation loss \((\kappa-2\tau_k)_+\), circle-band mass, and the competing Cauchy bound.  Some high-gcd strata satisfy the target, but for every \(\tau_k=0\) box the optimum is exactly exponent \(5\), leaving \(1/2\), (9.350).  Hence the postcompletion resonance is not the only obstruction |
