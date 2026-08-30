@@ -1669,6 +1669,40 @@ This is the precise zero-mode estimate to combine with the already proved
 Euler--Maclaurin truncation.  For `sigma>0`, the upper transition error
 tends to zero as `N` tends to infinity.  The subtraction must precede this
 limit; neither `I_0` nor `N^(1-s)/(1-s)` is asserted to converge separately.
+Both displayed zero-mode inequalities are now formal in
+`AFEExplicitPoissonZeroMode`.  Its exact contract build exits zero (8720
+jobs including cached dependencies), and both axiom audits contain only
+`propext`, `Classical.choice`, and `Quot.sound`.  This closes the uniform
+zero-mode estimate, not the subsequent combined cutoff-limit assembly.
+
+For a stationary negative mode the lower tail of its full Gamma integral
+must also retain oscillation.  Here is the exact bound, with no lower-cutoff
+loss: if `0<sigma<1`, `c>=0`, `x>0`, and `c*x<t`, then
+
+\[
+ \left|\int_0^x u^{-\sigma}e^{i(cu-t\log u)}\,du\right|
+ \leq \frac{2x^{1-\sigma}}{t-cx}.                         \tag{8.22-lower}
+\]
+
+To prove it first take `0<A<=x`, set `F(u)=cu-t log u` and
+`r(u)=u^(1-sigma)/(t-cu)`.  The denominator is positive, and
+
+\[
+ r'(u)=\frac{(1-\sigma)u^{-\sigma}}{t-cu}
+       +\frac{c u^{1-\sigma}}{(t-cu)^2}\geq0,
+ \qquad (i r(u))(iF'(u))=u^{-\sigma}.
+\]
+
+Integration by parts therefore bounds the integral on `[A,x]` by
+`r(x)+r(A)+integral_A^x r'=2r(x)`.  All functions involved are smooth
+on this compact positive interval, so the derivative integral is exactly
+`r(x)-r(A)`.  Finally `u^(-sigma)` is integrable at zero because `sigma<1`,
+and `r(A)` tends to zero.  Thus the interval integrals converge to the
+displayed integral as `A` tends down to zero, preserving the bound.
+For `c=2*pi*m`, this keeps precisely the harmonic endpoint denominator
+needed when summing modes below the stationary endpoint.  It is not a
+bound for the nearest stationary modes, which remain in the separate
+second-derivative endpoint band.
 
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
