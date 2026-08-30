@@ -1641,6 +1641,34 @@ then for every positive integer `m` its stationary point
 point beyond the right support endpoint.  This simplification is legitimate
 in the eventual upper-cutoff limit but is not assumed in the two displayed
 finite-sum estimates, which hold for every `N>=x`.
+Both displayed finite-band estimates are now proved in
+`AFEExplicitPoissonFiniteBand`; the proof derives phase smoothness and
+monotonicity internally and retains the exact `2*pi` frequency normalization.
+The contract build exits zero (8721 jobs including cached dependencies),
+with only `propext`, `Classical.choice`, and `Quot.sound` in both axiom audits.
+
+The zero mode has a separate elementary treatment.  Put `s=sigma+i*t`,
+`sigma>=0`, `t>0`, and retain the same width-one cutoff.  Split its integral
+at `x,N`.  On the core the cutoff is one, so the principal-power
+antiderivative on the positive axis gives
+
+\[
+ I_0=\frac{N^{1-s}-x^{1-s}}{1-s}+E_L+E_U,
+ \qquad |E_L|\leq(x-1)^{-\sigma},\quad |E_U|\leq N^{-\sigma}.
+\]
+
+The two error bounds use only the unit transition lengths and `0<=w<=1`.
+Consequently, since `|1-s|>=t`,
+
+\[
+ \left|I_0-\frac{N^{1-s}}{1-s}\right|
+ \leq(x-1)^{-\sigma}+N^{-\sigma}+\frac{x^{1-\sigma}}{t}.
+\]
+
+This is the precise zero-mode estimate to combine with the already proved
+Euler--Maclaurin truncation.  For `sigma>0`, the upper transition error
+tends to zero as `N` tends to infinity.  The subtraction must precede this
+limit; neither `I_0` nor `N^(1-s)/(1-s)` is asserted to converge separately.
 
 At both outer endpoints the real and complex amplitudes now satisfy the exact
 formal boundary conditions
