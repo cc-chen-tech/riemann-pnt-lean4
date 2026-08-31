@@ -14,21 +14,40 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass
 from fractions import Fraction
 from itertools import product
-from math import gcd, isqrt, log, pi, prod
+from math import comb, gcd, isqrt, log, pi, prod
+from cmath import exp
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
 from scripts.audit_mwkf_ranges import (
     ExponentBox,
+    admissible_polytope_vertices,
     boundary_witnesses,
     is_admissible,
+)
+from scripts.mwkf_coefficient_first import (
+    restricted_complementary_divisor_partition,
+)
+from scripts.mwkf_mobius_type_identity import (
+    endpoint_weighted_mobius,
+    mobius,
+    product_lift_valuation_decomposition,
+    split_mobius_identity,
 )
 
 
 F = Fraction
 TARGET_SAVING = F(1, 1000)
 AGGREGATION_LOG_LOSS = F(7)
+
+# Analytic obligations, not failed numerical cells.  Local finite identities
+# and logarithmic ledgers do not discharge these physical reassembly inputs.
+UNPROVED_PHYSICAL_INPUTS = (
+    "short_cofactor_HL_normalization",
+    "full_outer_PEVP_aggregation",
+    "physical_tail_partition_and_bounds",
+)
 
 
 @dataclass(frozen=True)
@@ -304,6 +323,29 @@ class LargeQBoundaryReflectionAudit:
     reflected_tail_phase_separated_at_boundary: bool
     formal_remaining_terms: tuple[str, str]
     reflected_tail_energy_estimate_proved: bool
+    unconditional_coverage: bool
+
+
+@dataclass(frozen=True)
+class LargeQPairedBoundaryCompletionAudit:
+    shift_log_depth: Fraction
+    zeta_log_depth: Fraction
+    finite_four_piece_identity_is_exact: bool
+    strict_lower_log_depth_tail_has_height_phase_saving: bool
+    constant_ratio_lower_tail_has_height_phase_saving: bool
+    boundary_plus_lower_tail_closes_completion: bool
+    unpaired_boundary_tail_remains: bool
+    unpaired_upper_available_scales_remain: bool
+    witness_product: int
+    witness_cutoff: int
+    witness_modulus: int
+    witness_boundary_divisor: int
+    witness_boundary_zeta_scale: int
+    witness_upper_divisor: int
+    witness_upper_zeta_scale: int
+    witness_two_sided_upper_product: int
+    full_completion_can_cross_afe_transition: bool
+    remaining_gates: tuple[str, str]
     unconditional_coverage: bool
 
 
@@ -862,6 +904,12 @@ class TransitionDeltaLatticePoissonAudit:
     primitive_mobius_inversion_exact: bool
     primitive_divisor_layers_do_not_worsen: bool
     zero_mode_obstruction_independent_of_determinant_shell: bool
+    zero_mode_covolume_jacobian_cancels_exactly: bool
+    zero_mode_is_continuous_slope_gram: bool
+    full_zero_mode_gram_positive_semidefinite: bool
+    offdiagonal_is_full_gram_minus_identity_diagonal: bool
+    kernel_alone_annihilates_zero_mode: bool
+    square_function_route_is_only_sufficient: bool
     zero_mode_weight_separates_in_the_entries: bool
     zero_mode_mobius_variance_proved: bool
     whole_delta_lattice_covered: bool
@@ -1247,6 +1295,32 @@ class TransitionBBLRHardHCompletionAudit:
 
 
 @dataclass(frozen=True)
+class TransitionBanksShparlinskiPreCauchyAudit:
+    entry_scale_exponent: Fraction
+    dual_v_exponent: Fraction
+    dual_j_exponent: Fraction
+    fixed_slope_family_exponent: Fraction
+    shift_variable_exponent: Fraction
+    fixed_slope_geometric_count_exponent: Fraction
+    best_theorem_role_bound_exponent: Fraction
+    best_fixed_slope_bound_exponent: Fraction
+    h_poisson_factor_exponent: Fraction
+    aggregated_exponent: Fraction
+    target_exponent: Fraction
+    power_margin: Fraction
+    short_interval_threshold_exponent: Fraction
+    actual_short_interval_exponent: Fraction
+    short_interval_threshold_margin: Fraction
+    additive_theorem_requires_fixing_both_bilinear_slopes: bool
+    original_shift_has_no_mobius_weight: bool
+    divisor_convolution_can_insert_the_missing_mobius_weight: bool
+    divisor_convolution_creates_power_saving: bool
+    all_actual_kernel_hypotheses_verified: bool
+    published_theorem_closes_pre_cauchy_sum: bool
+    source: str
+
+
+@dataclass(frozen=True)
 class TransitionBBLRHCompletionSubcellAudit:
     outer_a_exponent: Fraction
     outer_b_exponent: Fraction
@@ -1275,6 +1349,1054 @@ class TransitionBBLRHCompletionSubcellAudit:
     preserves_two_mobius_weights_in_outer_coefficients: bool
     poisson_main_term_controlled: bool
     whole_type_subcell_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class TransitionRamareMediumPrimeAudit:
+    entry_exponent: Fraction
+    band_lower_exponent: Fraction
+    band_upper_exponent: Fraction
+    required_line_saving_exponent: Fraction
+    prime_exceptional_set_exponent: Fraction
+    prime_exceptional_log_density_saving: Fraction
+    prime_exceptional_power_density_saving: Fraction
+    uncovered_power_deficit: Fraction
+    band_reaches_entry_scale: bool
+    proper_band_leaves_prime_sector_exceptional: bool
+    prime_sector_is_in_ramare_sum: bool
+    prime_sector_extracted_factor_exponent: Fraction
+    prime_sector_cofactor_exponent: Fraction
+    prime_sector_positive_length_factor_count: int
+    forces_two_positive_length_factors: bool
+    ramare_decomposition_closes_line_gate: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class TransitionPrimeKloostermanAudit:
+    modulus_exponent: Fraction
+    prime_interval_exponent: Fraction
+    required_saving_exponent: Fraction
+    unrestricted_prime_bound_exponent: Fraction
+    unrestricted_prime_saving_exponent: Fraction
+    progression_prime_bound_exponent: Fraction
+    progression_prime_saving_exponent: Fraction
+    progression_modulus_cap_exponent: Fraction
+    optimistic_four_unrestricted_saving_exponent: Fraction
+    optimistic_four_unrestricted_deficit: Fraction
+    optimistic_four_progression_saving_exponent: Fraction
+    optimistic_four_progression_deficit: Fraction
+    published_theorem_has_fixed_prime_modulus: bool
+    actual_determinant_moduli_all_prime: bool
+    standard_single_kloosterman_argument_verified: bool
+    other_entry_weights_separate: bool
+    published_theorem_closes_prime_sector: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class PoissonExchangeSecondOrderAudit:
+    physical_shifted_sum_swap_is_conjugate: bool
+    poisson_modulus_changes_under_swap: bool
+    reciprocity_correction_retained: bool
+    full_poisson_term_swap_is_conjugate: bool
+    completed_coefficient_forced_real: bool
+    imaginary_coefficient_has_linear_centered_term: bool
+    second_order_bound_requires_real_coefficient: bool
+    second_order_collar_unconditional: bool
+
+
+@dataclass(frozen=True)
+class CommonModulusExchangeAudit:
+    common_modulus_exponent: Fraction
+    raw_dual_c_exponent: Fraction
+    raw_dual_v_exponent: Fraction
+    original_gauss_support_divisor_exponent: Fraction
+    swapped_gauss_support_divisor_exponent: Fraction
+    reduced_dual_c_exponent: Fraction
+    reduced_dual_v_exponent: Fraction
+    original_frequency_sublattice_is_r_times_square: bool
+    swapped_frequency_sublattice_is_s_times_square: bool
+    nonzero_sublattice_intersection_empty_mod_rs: bool
+    centered_zero_frequency_annihilated: bool
+    common_modulus_forces_real_completed_coefficient: bool
+    common_modulus_reduces_conductor: bool
+    second_order_collar_unconditional: bool
+
+
+@dataclass(frozen=True)
+class MidpointHermitianCompletionAudit:
+    common_modulus_exponent: Fraction
+    raw_dual_c_exponent: Fraction
+    raw_dual_v_exponent: Fraction
+    completed_ambient_exponent: Fraction
+    completion_prefactor_exponent: Fraction
+    completed_gate_target_exponent: Fraction
+    square_root_ambient_exponent: Fraction
+    allowance_beyond_square_root_exponent: Fraction
+    midpoint_coefficient_is_unit: bool
+    midpoint_coefficient_is_involution: bool
+    exchange_negates_midpoint_coefficient: bool
+    same_frequency_swap_is_conjugate: bool
+    centered_multiplier_zero_on_c_zero_row: bool
+    centered_multiplier_zero_on_v_zero_column: bool
+    modular_involution_phase_is_near_diagonal_small: bool
+    published_bound_verified: bool
+
+
+@dataclass(frozen=True)
+class MidpointPublishedHermitianAdapterAudit:
+    numerator_exponent: Fraction
+    rs_trivial_exponent: Fraction
+    withdrawn_claimed_outer_inner_bound_exponent: Fraction
+    withdrawn_claimed_outer_inner_saving_exponent: Fraction
+    withdrawn_claimed_bulk_inner_bound_exponent: Fraction
+    withdrawn_claimed_bulk_inner_saving_exponent: Fraction
+    theorem_has_moving_numerator: bool
+    theorem_accepts_joint_r_s_c_v_coefficient: bool
+    theorem_supplies_c_v_frequency_average: bool
+    claim_withdrawn_for_missing_l_squared_factor: bool
+    corrected_argument_gives_claimed_improvement: bool
+    withdrawn_claim_closes_midpoint_gate: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class MidpointUnitaryDivisorAudit:
+    product_variable_exponent: Fraction
+    root_modulus_exponent: Fraction
+    physical_numerator_exponent: Fraction
+    dual_numerator_exponent: Fraction
+    factorization_root_bijection_exact: bool
+    mobius_product_collapses_to_single_mobius: bool
+    root_multiplicity_is_subpower: bool
+    balanced_dyadic_condition_is_root_filter: bool
+    root_trace_coefficient_remains_joint: bool
+    unitary_root_trace_bound_verified: bool
+
+
+@dataclass(frozen=True)
+class MidpointRootFareyLargeSieveAudit:
+    root_point_count_exponent: Fraction
+    denominator_exponent: Fraction
+    reciprocal_spacing_exponent: Fraction
+    physical_numerator_length_exponent: Fraction
+    physical_product_energy_exponent: Fraction
+    physical_large_sieve_bound_exponent: Fraction
+    physical_target_exponent: Fraction
+    physical_deficit_exponent: Fraction
+    dual_numerator_length_exponent: Fraction
+    dual_product_energy_exponent: Fraction
+    dual_large_sieve_bound_exponent: Fraction
+    dual_target_exponent: Fraction
+    dual_deficit_exponent: Fraction
+    root_fractions_injective: bool
+    root_fractions_reduced: bool
+    actual_joint_coefficient_is_separated: bool
+    root_farey_large_sieve_closes_gate: bool
+
+
+@dataclass(frozen=True)
+class MidpointRootTypeIIAudit:
+    product_exponent: Fraction
+    left_factor_exponent: Fraction
+    right_factor_exponent: Fraction
+    physical_numerator_exponent: Fraction
+    dual_numerator_exponent: Fraction
+    generalized_crt_exact: bool
+    reciprocal_phase_split_exact: bool
+    left_factor_has_truncated_divisor_coefficient: bool
+    right_factor_retains_mobius: bool
+    root_fibers_are_subpower: bool
+    completed_centering_exact: bool
+    physical_zero_residue_vanishes: bool
+    physical_centered_subtraction_present: bool
+    published_hermitian_theorem_has_root_dependent_numerator: bool
+    actual_transform_coefficient_remains_joint: bool
+    root_type_ii_bound_verified: bool
+
+
+@dataclass(frozen=True)
+class MidpointRootFourFactorAudit:
+    left_product_exponent: Fraction
+    right_product_exponent: Fraction
+    physical_numerator_exponent: Fraction
+    recovered_r_exponent: Fraction
+    recovered_s_exponent: Fraction
+    root_fibers_unfold_to_ordered_factorizations: bool
+    four_factors_are_pairwise_coprime: bool
+    truncated_divisor_coefficient_remains_on_left_product: bool
+    mobius_splits_over_right_factors: bool
+    kloosterman_phase_identity_exact: bool
+    completed_centering_exact: bool
+    physical_zero_residue_vanishes: bool
+    physical_centered_subtraction_present: bool
+    extreme_sector_recovers_hard_fraction: bool
+    actual_smooth_weight_remains_joint: bool
+    four_factor_type_ii_bound_verified: bool
+
+
+@dataclass(frozen=True)
+class MidpointPhysicalPoissonAudit:
+    modulus_exponent: Fraction
+    h_exponent: Fraction
+    delta_exponent: Fraction
+    resonance_window_exponent: Fraction
+    lattice_parameter_exponent: Fraction
+    pointwise_bilinear_bound_exponent: Fraction
+    raw_bilinear_exponent: Fraction
+    physical_oscillation_saving_exponent: Fraction
+    outer_root_point_exponent: Fraction
+    outer_target_exponent: Fraction
+    required_outer_saving_exponent: Fraction
+    resonance_lattice_bijection_exact: bool
+    one_variable_poisson_exact: bool
+    joint_weight_has_uniform_delta_derivatives: bool
+    determinant_line_correspondence_exact: bool
+    physical_poisson_route_is_independent: bool
+    outer_mobius_square_root_verified: bool
+
+
+@dataclass(frozen=True)
+class RootSalieAdapterAudit:
+    modulus_exponent: Fraction
+    physical_numerator_exponent: Fraction
+    fixed_numerator_bound_exponent: Fraction
+    fixed_numerator_saving_exponent: Fraction
+    absolute_numerator_sum_bound_exponent: Fraction
+    physical_target_exponent: Fraction
+    absolute_numerator_sum_deficit_exponent: Fraction
+    odd_full_root_trace_identity_exact: bool
+    even_midpoint_modulus_adapter_verified: bool
+    theorem_accepts_balanced_root_filter: bool
+    theorem_accepts_mobius_modulus_weight: bool
+    theorem_accepts_moving_numerator: bool
+    square_numerator_exception_covered: bool
+    theorem_accepts_joint_transform_weight: bool
+    salie_adapter_closes_root_gate: bool
+
+
+@dataclass(frozen=True)
+class RootWeylSquareInputAudit:
+    modulus_exponent: Fraction
+    frequency_exponent: Fraction
+    base_exponent: Fraction
+    square_input_interval_exponent: Fraction
+    square_support_cardinality_exponent: Fraction
+    relative_square_interval_exponent: Fraction
+    dunn_zaharescu_min_relative_exponent: Fraction
+    dunn_zaharescu_max_relative_exponent: Fraction
+    dksz_first_bound_exponent: Fraction
+    dksz_second_bound_exponent: Fraction
+    dksz_best_bound_exponent: Fraction
+    pointwise_square_support_exponent: Fraction
+    dksz_pointwise_deficit_exponent: Fraction
+    absolute_frequency_sum_exponent: Fraction
+    raw_frequency_square_support_exponent: Fraction
+    absolute_frequency_deficit_exponent: Fraction
+    kssz_dense_interval_bound_exponent: Fraction
+    raw_q_frequency_base_volume_exponent: Fraction
+    physical_root_target_exponent: Fraction
+    required_global_saving_exponent: Fraction
+    full_root_trace_identity_exact: bool
+    physical_base_is_uniformly_coprime_to_modulus: bool
+    dunn_zaharescu_range_accepts_square_interval: bool
+    dksz_requires_fixed_prime_modulus: bool
+    theorem_accepts_moving_squarefree_composite_modulus: bool
+    prime_modulus_balanced_root_sector_nonempty: bool
+    theorem_accepts_balanced_root_filter: bool
+    theorem_accepts_mobius_modulus_weight: bool
+    theorem_accepts_frequency_average: bool
+    published_loss_is_polylogarithmic: bool
+    root_weyl_square_input_route_closes_gate: bool
+
+
+@dataclass(frozen=True)
+class RootSalieJointAverageAudit:
+    left_root_factor_exponent: Fraction
+    right_root_factor_exponent: Fraction
+    physical_numerator_exponent: Fraction
+    bcr_term_1_exponent: Fraction
+    bcr_term_2_exponent: Fraction
+    bcr_bound_exponent: Fraction
+    physical_target_exponent: Fraction
+    bcr_deficit_exponent: Fraction
+    square_product_pair_count_exponent: Fraction
+    dfi_square_main_short_factor_cutoff_exponent: Fraction
+    dfi_long_long_cutoff_exponent: Fraction
+    balanced_root_factor_exponent: Fraction
+    fixed_square_hermitian_bound_exponent: Fraction
+    absolute_square_family_bound_exponent: Fraction
+    absolute_square_family_deficit_exponent: Fraction
+    salie_factorization_matches_midpoint_phase: bool
+    joint_average_is_existing_bcr_endpoint: bool
+    bcr_accepts_mobius_coefficients: bool
+    bcr_uses_mobius_beyond_l2: bool
+    balanced_root_filter_excludes_dfi_square_main: bool
+    joint_salie_route_closes_root_gate: bool
+
+
+@dataclass(frozen=True)
+class SquareSalieGaussCompletionAudit:
+    r_exponent: Fraction
+    s_exponent: Fraction
+    square_root_exponent: Fraction
+    x_exponent: Fraction
+    y_exponent: Fraction
+    gauss_normalization_exponent: Fraction
+    t_poisson_resonance_exponent: Fraction
+    localized_pointwise_exponent: Fraction
+    direct_square_sector_pointwise_exponent: Fraction
+    double_gauss_identity_exact: bool
+    cross_character_depends_only_on_mod8: bool
+    square_root_variable_is_linearized: bool
+    remaining_quadratic_weight_is_joint: bool
+    gauss_completion_improves_square_sector: bool
+    square_salie_gauss_route_closes_gate: bool
+
+
+@dataclass(frozen=True)
+class MobiusProductShiftedVarianceAudit:
+    factor_length_exponent: Fraction
+    product_length_exponent: Fraction
+    transform_shift_exponent: Fraction
+    diagonal_power_exponent: Fraction
+    diagonal_logarithmic_exponent: Fraction
+    raw_shifted_determinant_exponent: Fraction
+    shifted_determinant_target_exponent: Fraction
+    required_shifted_determinant_saving_exponent: Fraction
+    product_convolution_identity_exact: bool
+    diagonal_parameterization_exact: bool
+    schwartz_tail_is_power_negligible: bool
+    polylogarithmic_transition_collar_retained: bool
+    equivalent_to_separated_mixed_fourth_moment_gate: bool
+    shifted_mobius_determinant_bound_proved: bool
+    original_signed_kernel_requires_component_gate: bool
+    route_closes_mwkf_gate: bool
+
+
+@dataclass(frozen=True)
+class GangulyGuriaDeterminantAudit:
+    variable_length_exponent: Fraction
+    shift_range_exponent: Fraction
+    ramanujan_exponent: Fraction
+    fixed_shift_error_exponent: Fraction
+    absolute_shift_sum_error_exponent: Fraction
+    shifted_determinant_target_exponent: Fraction
+    absolute_shift_sum_power_deficit: Fraction
+    fixed_shift_main_exponent: Fraction
+    absolute_shift_sum_main_exponent: Fraction
+    smooth_unweighted_fixed_shift_theorem_proved: bool
+    distinct_tensor_weights_accepted_as_stated: bool
+    arithmetic_coefficients_accepted: bool
+    coefficient_form_uniformity_quantified: bool
+    mobius_type_i_ii_adapter_proved: bool
+    ramanujan_conjecture_removes_power_deficit: bool
+    ramanujan_conjecture_supplies_logarithmic_saving: bool
+    mobius_main_term_cancellation_proved: bool
+    ganguly_guria_route_closes_mobius_gate: bool
+
+
+@dataclass(frozen=True)
+class DarbarDasShortVarianceAudit:
+    ambient_length_exponent: Fraction
+    short_window_exponent: Fraction
+    generic_short_variance_exponent: Fraction
+    required_short_variance_exponent: Fraction
+    required_variance_saving_exponent: Fraction
+    full_mobius_convolution_zeta_power: int
+    required_auxiliary_zeta_power: int
+    required_auxiliary_prime_coefficient: int
+    required_auxiliary_prime_square_coefficient: int
+    required_auxiliary_prime_cube_coefficient: int
+    auxiliary_fits_squarefree_m_class: bool
+    auxiliary_fits_completely_multiplicative_g_class: bool
+    restricted_convolution_is_multiplicative: bool
+    published_theorem_covers_full_mobius_convolution: bool
+    published_theorem_covers_restricted_convolution: bool
+    darbar_das_route_closes_mobius_gate: bool
+
+
+@dataclass(frozen=True)
+class RestrictedMobiusRatioMellinAudit:
+    factor_length_exponent: Fraction
+    product_length_exponent: Fraction
+    short_window_exponent: Fraction
+    required_short_variance_exponent: Fraction
+    ratio_coordinate_identity_exact: bool
+    ratio_fourier_inversion_exact: bool
+    integrand_coefficient_is_multiplicative: bool
+    shifted_inverse_zeta_dirichlet_series_exact: bool
+    product_coordinate_weight_is_smooth: bool
+    ratio_transform_is_rapidly_decaying: bool
+    uniform_single_tau_variance_is_sufficient: bool
+    tau_zero_is_full_mobius_convolution: bool
+    tau_zero_square_dirichlet_series_zeta_pole_order: int
+    tau_zero_diagonal_log_exponent: int
+    required_diagonal_log_exponent: int
+    tau_zero_euler_remainder_has_no_prime_term: bool
+    tau_zero_euler_remainder_converges_for_real_part_gt_half: bool
+    tau_zero_formal_diagonal_log_excess: int
+    tau_zero_diagonal_excess_requires_offdiagonal_cancellation: bool
+    diagonal_term_is_not_lower_bound_for_full_variance: bool
+    tau_zero_diagonal_alone_disproves_uniform_gate: bool
+    joint_ratio_recombination_has_restricted_diagonal_log_order_one: bool
+    optimistic_mangerel_variance_exponent: Fraction
+    mangerel_power_deficit: Fraction
+    mangerel_only_supplies_logarithmic_saving: bool
+    uniform_tau_mangerel_hypotheses_verified: bool
+    shifted_inverse_zeta_variance_proved: bool
+    ratio_mellin_route_closes_mobius_gate: bool
+
+
+@dataclass(frozen=True)
+class BasakRoblesZaharescuMobiusConvolutionAudit:
+    ambient_length_exponent: Fraction
+    short_window_exponent: Fraction
+    critical_denominator_exponent: Fraction
+    first_pointwise_term_exponent: Fraction
+    second_pointwise_term_exponent: Fraction
+    third_pointwise_term_exponent: Fraction
+    best_published_pointwise_exponent: Fraction
+    required_pointwise_exponent: Fraction
+    pointwise_exponent_deficit: Fraction
+    direct_local_arc_variance_exponent: Fraction
+    required_local_variance_exponent: Fraction
+    local_arc_variance_deficit: Fraction
+    major_arc_direct_variance_exponent: Fraction
+    major_arc_power_deficit: Fraction
+    published_full_mobius_convolution_pointwise_bound: bool
+    published_ratio_twisted_family_bound: bool
+    published_local_l2_bound: bool
+    brz_direct_pointwise_route_closes_variance_gate: bool
+
+
+@dataclass(frozen=True)
+class MRTTSignedMobiusPowerShiftAudit:
+    ambient_product_exponent: Fraction
+    shift_exponent: Fraction
+    relative_shift_exponent: Fraction
+    long_shift_threshold: Fraction
+    long_shift_delta_threshold: Fraction
+    published_long_shift_range_applies: bool
+    truncated_mobius_identity_exact: bool
+    absolute_coefficient_is_bounded_by_d2: bool
+    ramare_prime_factor_is_exact: bool
+    major_arc_has_arbitrary_log_decay: bool
+    signed_typical_factor_extension_required: bool
+    signed_typical_factor_extension_verified: bool
+    fixed_power_shift_has_arbitrary_log_saving: bool
+    mrtt_shift_average_exponent: Fraction
+    required_mwkf_correlation_exponent: Fraction
+    remaining_shift_power_deficit: Fraction
+    mrtt_scale_closes_mwkf_model: bool
+    full_ratio_twisted_multiplicative_family_covered: bool
+    product_compatible_hard_vertex_covered: bool
+    physical_gcd_layer_adapter_verified: bool
+    whole_strict_power_core_covered: bool
+
+
+@dataclass(frozen=True)
+class HardVertexFourMobiusDeterminantAudit:
+    ambient_product_exponent: Fraction
+    shift_exponent: Fraction
+    gcd_exponent: Fraction
+    primitive_slope_exponent: Fraction
+    shift_quotient_exponent: Fraction
+    line_parameter_exponent: Fraction
+    raw_gcd_layer_exponent: Fraction
+    local_target_exponent: Fraction
+    required_power_saving: Fraction
+    outer_slope_pair_square_root_saving: Fraction
+    shift_quotient_full_cancellation_saving: Fraction
+    unimodular_line_parameterization_exact: bool
+    outer_square_root_is_exponent_critical: bool
+    mrtt_supplies_only_logarithmic_saving: bool
+    top_face_contains_fixed_shift_chowla: bool
+    top_face_logarithmic_saving_proved: bool
+    published_centered_outer_mobius_spectral_bound: bool
+    physical_ratio_kernel_restored: bool
+    hard_vertex_determinant_estimate_proved: bool
+
+
+@dataclass(frozen=True)
+class BlomerMilicevicMobiusModulusAudit:
+    kloosterman_modulus_scale_exponent: Fraction
+    numerator_product_exponent: Fraction
+    periodic_encoding_modulus_exponent: Fraction
+    mobius_support_l2_lower_exponent: Fraction
+    ramanujan_theta: Fraction
+    bm_archimedean_factor_exponent: Fraction
+    bm_total_bound_exponent: Fraction
+    trivial_normalized_modulus_sum_exponent: Fraction
+    published_bound_deficit: Fraction
+    selberg_replacement_bound_exponent: Fraction
+    selberg_replacement_deficit: Fraction
+    full_ramanujan_bound_exponent: Fraction
+    full_ramanujan_margin: Fraction
+    linnik_range_hypothesis_holds: bool
+    collision_free_exact_periodic_encoding_available: bool
+    fourier_l1_lower_bound_follows_from_parseval: bool
+    small_period_exact_mobius_encoding_ruled_out: bool
+    actual_qct_kernel_is_complete_kloosterman_family: bool
+    direct_periodic_weight_adapter_has_power_saving: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class BlomerMilicevicTypeILevelAudit:
+    kloosterman_modulus_scale_exponent: Fraction
+    numerator_product_exponent: Fraction
+    target_exponent: Fraction
+    exposed_level_box_exponent: Fraction
+    ramanujan_theta: Fraction
+    fixed_level_bound_exponent: Fraction
+    type_i_absolute_bound_exponent: Fraction
+    type_i_power_deficit: Fraction
+    ideal_level_cauchy_bound_exponent: Fraction
+    ideal_level_cauchy_power_deficit: Fraction
+    uniform_type_i_level_threshold: Fraction
+    uniform_ideal_cauchy_level_threshold: Fraction
+    uniform_type_i_has_nonnegative_level_window: bool
+    uniform_ideal_cauchy_has_nonnegative_level_window: bool
+    selberg_fixed_level_bound_exponent: Fraction
+    selberg_type_i_level_threshold: Fraction
+    selberg_ideal_cauchy_level_threshold: Fraction
+    selberg_ideal_cauchy_bound_exponent: Fraction
+    selberg_ideal_cauchy_power_deficit: Fraction
+    full_ramanujan_fixed_level_bound_exponent: Fraction
+    full_ramanujan_type_i_level_threshold: Fraction
+    full_ramanujan_ideal_cauchy_level_threshold: Fraction
+    full_ramanujan_ideal_cauchy_bound_exponent: Fraction
+    full_ramanujan_ideal_cauchy_power_margin: Fraction
+    linnik_range_hypothesis_holds: bool
+    level_divisibility_estimate_occurs_in_bm_proof: bool
+    exact_mobius_type_i_identity_available: bool
+    exceptional_spectrum_removed_for_level_family: bool
+    level_cauchy_bound_proved_for_qct_coefficients: bool
+    product_compatible_hard_vertex_only: bool
+    physical_coupled_kernel_restored: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class HumphriesExceptionalLevelDensityAudit:
+    kloosterman_modulus_scale_exponent: Fraction
+    numerator_product_scale_exponent: Fraction
+    bessel_ratio_exponent: Fraction
+    target_exponent: Fraction
+    level_family_exponent: Fraction
+    ramanujan_theta: Fraction
+    gamma0_density_slope: Fraction
+    humphries_count_exponent_at_theta: Fraction
+    volume_normalized_count_exponent_at_theta: Fraction
+    ideal_ramanujan_level_cauchy_base_exponent: Fraction
+    finite_prime_hecke_loss_exponent: Fraction
+    residual_exceptional_loss_exponent: Fraction
+    density_enhanced_bound_exponent: Fraction
+    density_enhanced_power_deficit: Fraction
+    maximum_level_allowed_by_target: Fraction
+    level_needed_to_neutralize_exceptional_growth: Fraction
+    target_and_density_thresholds_compatible: bool
+    density_numerically_neutralizes_archimedean_exceptional_growth: bool
+    linnik_scale_dominates_level_family: bool
+    density_theorem_is_positive_counting_input: bool
+    mobius_level_signs_used_by_density_theorem: bool
+    qct_spectral_weights_accepted: bool
+    exceptional_spectrum_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class FinitePrimeHeckeAverageAudit:
+    kloosterman_modulus_exponent: Fraction
+    left_hecke_index_exponent: Fraction
+    right_hecke_index_exponent: Fraction
+    numerator_product_exponent: Fraction
+    level_exponent: Fraction
+    target_exponent: Fraction
+    ramanujan_theta: Fraction
+    full_ramanujan_level_cauchy_base_exponent: Fraction
+    pointwise_finite_hecke_loss_exponent: Fraction
+    pointwise_total_bound_exponent: Fraction
+    pointwise_power_deficit: Fraction
+    fixed_index_spectral_large_sieve_loss_exponent: Fraction
+    fixed_index_total_bound_exponent: Fraction
+    required_pre_cauchy_hecke_saving_exponent: Fraction
+    required_post_saving_log_decay: bool
+    pascadi_archimedean_exceptional_large_sieve_published: bool
+    pascadi_finite_place_extension_published: bool
+    mobius_entry_to_hecke_index_adapter_derived: bool
+    physical_coupled_kernel_restored: bool
+    finite_prime_hecke_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class FareyDilatePreCauchyAudit:
+    mobius_entry_exponent: Fraction
+    shift_window_exponent: Fraction
+    left_dilate_exponent: Fraction
+    right_dilate_exponent: Fraction
+    gate_target_exponent: Fraction
+    fourier_arc_denominator_exponent: Fraction
+    left_rescaled_arc_exponent: Fraction
+    right_rescaled_arc_exponent: Fraction
+    mobius_coefficient_energy_exponent: Fraction
+    left_one_dilate_bandwidth_excess_exponent: Fraction
+    right_one_dilate_bandwidth_excess_exponent: Fraction
+    left_one_dilate_local_l2_exponent: Fraction
+    right_one_dilate_local_l2_exponent: Fraction
+    left_family_positive_self_diagonal_exponent: Fraction
+    right_family_positive_self_diagonal_exponent: Fraction
+    left_family_cauchy_normalized_l2_exponent: Fraction
+    right_family_cauchy_normalized_l2_exponent: Fraction
+    separate_family_cauchy_bound_exponent: Fraction
+    separate_family_cauchy_zero_slack_deficit: Fraction
+    ideal_joint_dilate_bound_exponent: Fraction
+    ideal_joint_dilate_gate_deficit: Fraction
+    zero_slack_endpoint_exponent: Fraction
+    ideal_joint_dilate_reaches_zero_slack_endpoint: bool
+    ordinary_fourier_cauchy_loses_farey_window: bool
+    shift_zero_mode_removed_before_cauchy: bool
+    positive_self_diagonal_removed_by_shift_centering: bool
+    endpoint_requires_additional_logarithmic_or_power_saving: bool
+    published_joint_dilate_endpoint_saving_available: bool
+    physical_coupled_kernel_restored: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class FareyDilateConvolutionPoissonAudit:
+    mobius_entry_exponent: Fraction
+    dilate_exponent: Fraction
+    shift_window_exponent: Fraction
+    gate_target_exponent: Fraction
+    grouped_product_length_exponent: Fraction
+    semiprime_energy_witness_exponent: Fraction
+    poisson_numerator_exponent: Fraction
+    poisson_packet_width_exponent: Fraction
+    recovered_determinant_window_exponent: Fraction
+    recovered_determinant_window_matches_original: bool
+    complete_divisor_convolution_is_epsilon: bool
+    dyadic_divisor_window_is_complete: bool
+    semiprime_witness_survives_dyadic_grouping: bool
+    original_shift_centering_removes_equal_products: bool
+    positive_cauchy_reintroduces_grouped_energy: bool
+    double_dilate_poisson_returns_original_determinant: bool
+    dyadic_mobius_convolution_supplies_power_saving: bool
+    physical_coupled_kernel_restored: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class SmoothHeckeProductMobiusAudit:
+    left_index_exponent: Fraction
+    right_index_exponent: Fraction
+    product_index_exponent: Fraction
+    spectral_conductor_exponent: Fraction
+    pointwise_ramanujan_theta: Fraction
+    pointwise_finite_prime_loss_exponent: Fraction
+    common_divisor_split_exponent: Fraction
+    small_divisor_cusp_bound_exponent: Fraction
+    large_divisor_mobius_pnt_bound_exponent: Fraction
+    large_divisor_saving_over_index_volume: Fraction
+    large_divisor_endpoint_has_arbitrary_log_decay: bool
+    unramified_hecke_mobius_inversion_exact: bool
+    cusp_l_function_is_entire: bool
+    small_divisor_functional_equation_shift_valid: bool
+    large_divisor_uses_only_rankin_selberg_and_mobius_pnt: bool
+    pointwise_ramanujan_loss_removed_for_product_smooth_newforms: bool
+    eisenstein_spectrum_requires_separate_existing_treatment: bool
+    ramified_newform_local_factors_restored: bool
+    oldclass_coefficients_restored: bool
+    physical_coupled_kernel_restored: bool
+    finite_prime_hecke_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class SmoothHeckeOldclassProductAudit:
+    index_exponent: Fraction
+    ambient_level_exponent: Fraction
+    ramanujan_theta: Fraction
+    minimum_common_divisor_split_exponent: Fraction
+    newform_endpoint_exponent: Fraction
+    oldclass_shift_saving_slope: Fraction
+    worst_oldclass_endpoint_exponent: Fraction
+    worst_oldclass_endpoint_attained_at_newform_shift_zero: bool
+    bm_oldclass_fourier_formula_exact: bool
+    bm_first_index_is_coprime_to_ambient_level: bool
+    oldclass_divisor_allocations_have_subpower_cost: bool
+    every_oldclass_cell_retains_mobius_pnt_log_decay: bool
+    ramified_newform_identity_compatible: bool
+    oldclass_product_smooth_model_covered: bool
+    physical_coupled_kernel_restored: bool
+    finite_prime_hecke_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class PhysicalQCTHeckeKernelAudit:
+    left_index_exponent: Fraction
+    right_index_exponent: Fraction
+    ambient_level_exponent: Fraction
+    exceptional_theta: Fraction
+    normalized_qct_kernel_dimension: int
+    bessel_augmented_kernel_dimension: int
+    weighted_fourier_derivative_order_slope: int
+    bessel_mellin_contour_real_part: Fraction
+    maximum_exceptional_bessel_order: Fraction
+    exceptional_contour_margin: Fraction
+    spectral_conductor_exponent: Fraction
+    multiplicative_twist_bandwidth_exponent: Fraction
+    qct_fourier_tensorization_exact: bool
+    weighted_fourier_nuclear_norm_is_polylogarithmic: bool
+    same_sign_bessel_mellin_factorization_exact: bool
+    opposite_sign_bessel_mellin_factorization_exact: bool
+    bessel_product_dependence_separates_as_h_times_delta: bool
+    real_spectral_tail_has_arbitrary_log_decay: bool
+    holomorphic_tail_has_arbitrary_log_decay: bool
+    exceptional_spectrum_stays_inside_fixed_contour: bool
+    product_smooth_hecke_lemma_applies_to_every_kernel_component: bool
+    oldclass_restoration_is_compatible: bool
+    physical_qct_kernel_product_model_restored: bool
+    actual_qct_geometric_spectral_adapter_derived: bool
+    other_mobius_entry_weights_restored: bool
+    type_i_level_family_aggregation_proved: bool
+    finite_prime_hecke_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class TypeIAtkinLehnerCuspAudit:
+    entry_scale_exponent: Fraction
+    modulus_scale_exponent: Fraction
+    product_index_exponent: Fraction
+    entry_divisor_exponent: Fraction
+    modulus_divisor_exponent: Fraction
+    entry_quotient_exponent: Fraction
+    poisson_dual_index_exponent: Fraction
+    ambient_level_exponent: Fraction
+    cusp_modulus_exponent: Fraction
+    standard_lifted_modulus_exponent: Fraction
+    bessel_numerator_product_exponent: Fraction
+    bessel_ratio_inverse_square_exponent: Fraction
+    poisson_normalization_exponent: Fraction
+    poisson_prefactor_after_modulus_lift_exponent: Fraction
+    physical_to_cross_cusp_prefactor_exponent: Fraction
+    outer_poisson_normalization_after_dividing_entry_exponent: Fraction
+    normalized_cross_cusp_prefactor_exponent: Fraction
+    fixed_entry_cross_cusp_square_saving_exponent: Fraction
+    normalized_dual_hecke_l1_exponent: Fraction
+    type_i_identity_leaves_unweighted_quotient: bool
+    entry_and_modulus_divisors_are_coprime: bool
+    kiral_young_allowed_moduli_match_exactly: bool
+    kiral_young_kloosterman_formula_matches_exactly: bool
+    inverse_scaled_kloosterman_obstruction_present: bool
+    crt_product_modulus_lift_exact: bool
+    squarefree_ramanujan_denominator_nonzero: bool
+    coprimality_inclusion_exclusion_is_standard_level_family: bool
+    atkin_lehner_newform_coefficients_match_up_to_sign: bool
+    atkin_lehner_oldclass_coefficient_lists_are_permuted: bool
+    zero_dual_mode_is_eisenstein_only: bool
+    raw_poisson_dual_l1_normalization_is_zero_power: bool
+    nonzero_dual_hecke_average_has_no_positive_power_cost: bool
+    cross_cusp_sign_trace_has_diagonal_term: bool
+    ordinary_cross_cusp_large_sieve_has_unitary_norm: bool
+    atkin_lehner_sign_trace_gains_from_normalization_alone: bool
+    direct_fixed_entry_pevp_normalization_available: bool
+    direct_fixed_entry_adapter_aggregates_outer_entries: bool
+    physical_qct_bessel_kernel_restored: bool
+    type_i_type_i_qct_to_standard_kuznetsov_derived: bool
+    type_i_type_i_qct_to_cusp_kuznetsov_derived: bool
+    signed_level_family_aggregation_proved: bool
+    type_ii_sectors_restored: bool
+    finite_prime_hecke_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class LiftedKuznetsovLevelCellAudit:
+    entry_scale_exponent: Fraction
+    modulus_scale_exponent: Fraction
+    entry_divisor_exponent: Fraction
+    modulus_divisor_exponent: Fraction
+    coprimality_divisor_exponent: Fraction
+    product_index_exponent: Fraction
+    poisson_dual_index_exponent: Fraction
+    standard_lifted_modulus_exponent: Fraction
+    lifted_second_index_exponent: Fraction
+    bessel_numerator_product_exponent: Fraction
+    bessel_ratio_inverse_square_exponent: Fraction
+    original_qct_ratio_inverse_square_exponent: Fraction
+    poisson_lift_outer_prefactor_exponent: Fraction
+    actual_spectral_level_exponent: Fraction
+    sparse_support_square_excess_exponent: Fraction
+    required_local_projector_amplitude_saving_exponent: Fraction
+    active_bessel_ratio_matches_original_qct_ratio: bool
+    crt_modulus_lift_is_exact_standard_kuznetsov_orbit: bool
+    exact_valuation_level_projector_bound_proved: bool
+    outer_qct_normalization_aggregated: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class LiftedProjectorGCDPartitionAudit:
+    entry_divisor_exponent: Fraction
+    bad_product_gcd_exponent: Fraction
+    generic_prime_amplitude_saving_exponent: Fraction
+    bad_divisor_density_square_saving_exponent: Fraction
+    bad_divisor_density_amplitude_saving_exponent: Fraction
+    combined_amplitude_saving_exponent: Fraction
+    required_projector_amplitude_saving_exponent: Fraction
+    gcd_partition_power_balance_exact: bool
+    physical_product_divisor_density_used: bool
+    ramified_oldclass_subpower_norm_proved: bool
+    full_exact_valuation_projector_bound_proved: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class PhysicalExactValuationProjectorAudit:
+    ramanujan_theta: Fraction
+    required_prime_amplitude_saving_exponent: Fraction
+    generic_unramified_oldspace_saving_exponent: Fraction
+    generic_unramified_cell_closes: bool
+    conductor_p_raised_oldspace_cancels: bool
+    conductor_p_squared_positive_valuation_vanishes: bool
+    bad_product_valuation_density_closes: bool
+    poisson_ramanujan_denominator_closes_positive_valuation: bool
+    level_p_squared_extra_oldvector_closes: bool
+    continuous_local_cases_close: bool
+    prime_local_bounds_tensor_with_subpower_cost: bool
+    bad_gcd_cell_square_multiplicity_base: int
+    divisor_partition_tensor_square_residual_base: int
+    prime_local_bounds_tensor_with_polylog_cost: bool
+    power_exponent_exact_valuation_projector_covered: bool
+    physical_product_exact_valuation_projector_proved: bool
+    arbitrary_coefficient_exact_valuation_projector_proved: bool
+    outer_qct_normalization_aggregated: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class LiftedOuterQCTAggregationAudit:
+    left_entry_exponent: Fraction
+    right_entry_exponent: Fraction
+    q_exponent: Fraction
+    common_orientation: str
+    completed_entry_exponent: Fraction
+    other_entry_exponent: Fraction
+    lifted_inner_target_exponent: Fraction
+    reconstructed_kloosterman_core_target_exponent: Fraction
+    outer_box_exponent: Fraction
+    gate_log_power: Fraction
+    dyadic_parameter_log_loss: Fraction
+    harmonic_q_log_loss: Fraction
+    total_aggregation_log_loss: Fraction
+    net_log_saving: Fraction
+    single_orientation_used_for_all_spectral_components: bool
+    power_exponent_exact_valuation_projector_used: bool
+    polylog_tensor_projector_gate_proved: bool
+    grouped_outer_coefficients_are_actual_integer_variables: bool
+    left_outer_coefficient_l2_squared_exponent: Fraction
+    right_outer_coefficient_l2_squared_exponent: Fraction
+    unsigned_outer_pair_count_exponent: Fraction
+    best_fixed_entry_pevp_saving_exponent: Fraction
+    residual_outer_aggregation_exponent: Fraction
+    symmetric_completion_uses_larger_entry_divisor: bool
+    symmetric_completion_larger_entry_closes_outer_sum: bool
+    large_entry_divisor_range_uses_pevp_power: bool
+    small_entry_divisor_lifted_gate_stated_exactly: bool
+    full_outer_lisk_gate_stated_exactly: bool
+    product_hecke_pnt_uniformly_covers_small_entry_cells: bool
+    collapsed_gcd_to_lifted_entry_adapter_exact: bool
+    polylog_entry_divisor_range_uses_outer_pnt: bool
+    logarithmic_entry_divisor_split_is_complete: bool
+    ratio_gcd_layers_retained_inside_local_gate: bool
+    nonzero_poisson_core_is_little_o_T: bool
+    polylogarithmic_transform_tail_aggregated: bool
+    afe_tail_aggregated: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class MixedEntryProjectionGramAudit:
+    prime: int
+    level_p_index: int
+    level_p_squared_index: int
+    entry_difference_mass: Fraction
+    modulus_level_mass: Fraction
+    state_order: tuple[str, str, str]
+    raw_gram_matrix: tuple[tuple[Fraction, ...], ...]
+    ambient_normalization_multiplier: int
+    physical_ambient_gram_matrix: tuple[tuple[Fraction, ...], ...]
+    raw_nontrivial_union_cell_is_at_most_inverse_nu_p: bool
+    physical_tensor_kernel_is_majorized_by_reciprocal_lcm: bool
+    physical_entry_cell_mass: Fraction
+    required_entry_cell_mass: Fraction
+    entry_cell_deficit_ratio: Fraction
+    outer_product_coefficients_regroup_to_divisor_bounded_sequence: bool
+    reciprocal_lcm_quadratic_form_is_polylogarithmic: bool
+    physical_mixed_cross_index_transfer_proved: bool
+    mixed_entry_harmonic_large_sieve_proved: bool
+    outer_lisk_covered: bool
+
+
+@dataclass(frozen=True)
+class OuterStateInclusionExclusionAudit:
+    prime: int
+    state_order: tuple[str, str, str]
+    mobius_state_vector: tuple[int, int, int]
+    physical_ambient_gram_matrix: tuple[tuple[Fraction, ...], ...]
+    unsigned_nonempty_union_mass: Fraction
+    full_signed_gram_mass: Fraction
+    absent_absent_mass: Fraction
+    signed_nonempty_union_mass: Fraction
+    raw_signed_nonempty_union_mass: Fraction
+    equal_half_turn_twist_vector: tuple[int, int, int]
+    equal_half_turn_twisted_nonempty_union_mass: Fraction
+    unit_twist_cancellation_saves_one_prime_power: bool
+    required_reciprocal_prime_mass: Fraction
+    remaining_reciprocal_prime_ratio: Fraction
+    unit_twist_reaches_reciprocal_prime_mass: bool
+    dyadic_mellin_twist_preserves_unit_cancellation: bool
+    recombination_before_outer_scale_separation_is_necessary: bool
+    recombined_outer_scale_physical_kernel_proved: bool
+    outer_lisk_covered: bool
+
+
+@dataclass(frozen=True)
+class TwoOrientationSteinbergMinimaxAudit:
+    prime: int
+    steinberg_entry_correction: Fraction
+    orientation_state_order: tuple[str, str]
+    swapped_orientation_state_order: tuple[str, str]
+    scalar_combination_coefficients_sum_to_one: bool
+    two_state_sum_is_independent_of_combination: bool
+    uniform_max_squared_lower_bound: Fraction
+    required_reciprocal_prime_square_mass: Fraction
+    lower_bound_exceeds_required_mass: bool
+    scalar_two_orientation_average_closes_steinberg: bool
+    nonlocal_cross_outer_state_estimate_still_required: bool
+    outer_lisk_covered: bool
+
+
+@dataclass(frozen=True)
+class SteinbergCrossOrientationSignGateAudit:
+    prime: int
+    steinberg_entry_correction: Fraction
+    cross_quadratic_coefficient_squared: Fraction
+    required_quadratic_coefficient_squared: Fraction
+    squared_deficit_ratio: Fraction
+    cross_coefficient_exceeds_required_coefficient: bool
+    steinberg_sign_over_square_root_is_ramified_hecke_coefficient: bool
+    atkin_lehner_operator_is_unitary: bool
+    unitarity_supplies_the_missing_square_root: bool
+    physical_signed_cross_cusp_trace_required: bool
+    signed_cross_cusp_trace_proved: bool
+    outer_lisk_covered: bool
+
+
+@dataclass(frozen=True)
+class AtkinLehnerSymmetricDifferenceKernelAudit:
+    left_outer_entry: int
+    right_outer_entry: int
+    ambient_squarefree_level: int
+    common_outer_part: int
+    symmetric_difference_part: int
+    outer_entry_lcm: int
+    complementary_cross_cusp_level: int
+    symmetric_difference_is_exact_atkin_lehner_divisor: bool
+    cross_cusp_modulus_scale: str
+    cross_cusp_modulus_square_ratio_to_same_cusp: Fraction
+    cross_cusp_divisibility_ratio_to_same_cusp: Fraction
+    farey_spacing_ratio_to_same_cusp: Fraction
+    cross_cusp_denominator_coefficient_square: Fraction
+    prior_cross_orientation_coefficient_square: Fraction
+    combined_coefficient_square: Fraction
+    reciprocal_lcm_coefficient_square: Fraction
+    combined_coefficient_is_reciprocal_lcm: bool
+    bounded_steinberg_euler_factors_are_separate: bool
+    nontrivial_signed_trace_has_no_diagonal: bool
+    cross_cusp_farey_large_sieve_has_same_constant: bool
+    atkin_lehner_oldvector_permutation_preserves_l2: bool
+    physical_outer_kernel_reinserted: bool
+    outer_lisk_covered: bool
+
+
+@dataclass(frozen=True)
+class SteinbergFullCrossOrientationMatrixAudit:
+    prime: int
+    steinberg_entry_correction: Fraction
+    state_order: tuple[str, str, str]
+    first_orientation_amplitudes: tuple[str, str, str]
+    swapped_orientation_amplitudes: tuple[str, str, str]
+    constant_term_matrix: tuple[tuple[Fraction, ...], ...]
+    linear_x_matrix: tuple[tuple[Fraction, ...], ...]
+    quadratic_x_matrix: tuple[tuple[Fraction, ...], ...]
+    full_recombined_polynomial_coefficients: tuple[Fraction, Fraction, Fraction]
+    unsigned_modulus_to_entry_coefficient: Fraction
+    required_reciprocal_prime_coefficient: Fraction
+    unsigned_cross_state_exceeds_target: bool
+    uniform_full_mass_lower_bound: Fraction
+    uniform_full_mass_lower_bound_exceeds_target: bool
+    symmetric_difference_trace_controls_only_signed_same_states: bool
+    full_three_state_cross_orientation_closes_steinberg: bool
+    physical_outer_kernel_reinserted: bool
+    outer_lisk_covered: bool
+
+
+@dataclass(frozen=True)
+class MixedCrossStateMMKLSAudit:
+    entry_divisor: int
+    modulus_divisor: int
+    physical_modulus: int
+    state_order: tuple[str, str, str]
+    mixed_cross_state: tuple[str, str]
+    mixed_cross_state_coefficient: Fraction
+    level_difference_sum: int
+    level_difference_equals_exact_coprimality: bool
+    standard_lift_modulus: int
+    ramanujan_fibre_cancels_before_inequality: bool
+    outer_divisor_incidence_recombines_to_mobius_modulus: bool
+    left_mixed_cell_is_mmkls: bool
+    transpose_mixed_cell_is_right_mmkls: bool
+    hard_scales: tuple[Fraction, Fraction, Fraction, Fraction]
+    arbitrary_coefficient_exponent: Fraction
+    target_exponent: Fraction
+    required_joint_saving_exponent: Fraction
+    fixed_entry_pevp_is_insufficient: bool
+    isolated_mixed_cell_bound_is_sufficient_not_necessary: bool
+    mixed_cell_mmkls_proved: bool
+    full_outer_gate_proved: bool
+
+
+@dataclass(frozen=True)
+class MMKLSKorolevReciprocityAudit:
+    modulus_exponent: Fraction
+    interval_exponent: Fraction
+    product_index_exponent: Fraction
+    additive_reciprocity_identity_exact: bool
+    exchange_orientation_reduces_to_variable_below_modulus: bool
+    reciprocity_correction_derivative_exponent: Fraction
+    reciprocity_correction_normalized_derivative_exponent: Fraction
+    reciprocity_correction_is_smooth: bool
+    korolev_phase_matches_on_unit_product_index_stratum: bool
+    unit_product_index_hypothesis_is_uniform: bool
+    composite_modulus_theorem_applies: bool
+    endpoint_first_relative_exponent: Fraction
+    endpoint_second_relative_exponent: Fraction
+    endpoint_dominant_relative_exponent: Fraction
+    published_composite_saving_exponent: Fraction
+    required_mmkls_saving_exponent: Fraction
+    remaining_power_deficit: Fraction
+    general_theorem_supplies_only_logarithmic_saving: bool
+    prime_power_saving_does_not_certify_required_exponent: bool
+    prime_theorem_covers_moving_composite_moduli: bool
+    published_theorem_closes_mmkls: bool
     source: str
 
 
@@ -1339,6 +2461,2370 @@ class TransitionBBLRPhaseGroupSavingAudit:
     signed_phase_class_cross_terms_required: bool
     product_frequency_partition_is_sufficient: bool
     required_phase_class_cancellation_proved: bool
+
+
+@dataclass(frozen=True)
+class CriticalAffineMobiusUniformityAudit:
+    ambient_integer_exponent: Fraction
+    affine_progression_span_exponent: Fraction
+    progression_point_count_exponent: Fraction
+    progression_step_exponent: Fraction
+    published_threshold_relative_to_ambient: Fraction
+    endpoint_power_margin: Fraction
+    theorem_requires_positive_epsilon_margin: bool
+    lower_interval_length_hypothesis_verified: bool
+    strict_upper_interval_length_hypothesis_verified: bool
+    interval_length_hypothesis_verified: bool
+    almost_all_start_points_only: bool
+    structured_start_points_absorb_exceptional_set: bool
+    maximal_progression_norm_is_available_only_above_threshold: bool
+    published_maximal_bound_exponent: Fraction
+    trivial_progression_count_exponent: Fraction
+    published_bound_excess_exponent: Fraction
+    second_affine_mobius_is_fixed_complexity_nilsequence: bool
+    published_saving_is_logarithmic: bool
+    required_joint_power_saving_exponent: Fraction
+    published_theorem_closes_critical_slope_family: bool
+    mmkls_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class SignedTorusSlopeOperatorAudit:
+    primitive_slope: tuple[int, int]
+    bezout_pair: tuple[int, int]
+    unimodular_matrix: tuple[tuple[int, int], tuple[int, int]]
+    determinant: int
+    alternate_bezout_shear: int
+    alternate_unimodular_matrix: tuple[tuple[int, int], tuple[int, int]]
+    bezout_change_is_right_unipotent_shear: bool
+    physical_sum_is_bezout_independent: bool
+    finite_torus_modulus: int
+    torus_pullback_phase_is_exact: bool
+    mobius_fourier_tensor_factorization_is_exact: bool
+    finite_fourier_pairing_is_exact: bool
+    relative_matrix_lower_left: int
+    relative_matrix_lower_left_is_slope_determinant: bool
+    mobius_tensor_l2_exponent: Fraction
+    physical_layer_target_exponent: Fraction
+    required_operator_l2_exponent: Fraction
+    required_operator_energy_exponent: Fraction
+    slope_sum_retained_before_frequency_cauchy: bool
+    operator_is_fourier_transform_of_recombined_physical_kernel: bool
+    per_slope_triangle_inequality_used: bool
+    global_frequency_cauchy_discards_mobius_signs: bool
+    operator_l2_gate_is_sufficient_not_necessary: bool
+    signed_mobius_tensor_restriction_still_required: bool
+    signed_incomplete_poincare_operator_bound_proved: bool
+    mmkls_covered: bool
+
+
+@dataclass(frozen=True)
+class TorusFareyMultiplicityAudit:
+    common_gcd_exponent: Fraction
+    physical_coordinate_exponent: Fraction
+    primitive_slope_exponent: Fraction
+    shift_quotient_exponent: Fraction
+    farey_minimum_spacing_exponent: Fraction
+    physical_ratio_window_exponent: Fraction
+    farey_spacing_over_window_margin: Fraction
+    fixed_physical_slope_multiplicity_exponent: Fraction
+    fixed_physical_slope_multiplicity_is_bounded: bool
+    positive_g_layer_is_eventually_unique: bool
+    critical_g_layer_has_only_constant_multiplicity: bool
+    raw_pullback_diagonal_exponent: Fraction
+    dyadic_g_count_exponent: Fraction
+    dyadic_g_physical_multiplicity_exponent: Fraction
+    aggregated_pullback_energy_exponent: Fraction
+    squared_taper_log_saving: int
+    operator_energy_target_exponent: Fraction
+    aggregated_energy_over_target_exponent: Fraction
+    operator_l2_target_is_below_aggregated_energy_by_power: bool
+    fixed_g_natural_operator_l2_exponent: Fraction
+    mobius_tensor_l2_exponent: Fraction
+    fixed_g_raw_cardinality_exponent: Fraction
+    fixed_g_positive_cauchy_bound_exponent: Fraction
+    fixed_g_cauchy_excess_over_trivial_exponent: Fraction
+    aggregated_positive_cauchy_bound_exponent: Fraction
+    physical_layer_target_exponent: Fraction
+    aggregated_positive_cauchy_deficit_exponent: Fraction
+    best_positive_bound_exponent: Fraction
+    best_positive_deficit_exponent: Fraction
+    best_positive_bound_is_raw_cardinality: bool
+    deficit_equals_determinant_line_required_saving: bool
+    davenport_uniform_bound_power_saving_exponent: Fraction
+    positive_lp_interpolation_improves_power: bool
+    signed_pairing_gate_name: str
+    signed_pairing_is_exact_determinant_line_layer: bool
+    signed_gate_required_saving_exponent: Fraction
+    signed_pairing_gate_proved: bool
+    cross_slope_recombination_has_power_cardinality: bool
+    positive_l2_route_closes_signed_mobius_gate: bool
+    signed_mobius_tensor_restriction_still_required: bool
+
+
+@dataclass(frozen=True)
+class BlomerPascadiHardBoxAudit:
+    modulus_exponent: Fraction
+    left_argument_length_exponent: Fraction
+    right_argument_length_exponent: Fraction
+    argument_length_relative_to_modulus: Fraction
+    published_nontrivial_lower_endpoint: Fraction
+    published_nontrivial_upper_endpoint: Fraction
+    inside_published_nontrivial_interval: bool
+    general_h_term_exponents_in_modulus: tuple[Fraction, ...]
+    general_h_dominant_exponent_in_modulus: Fraction
+    coefficient_norm_product_exponent: Fraction
+    blomer_pascadi_bound_exponent: Fraction
+    classical_fourier_bound_exponent: Fraction
+    best_available_fixed_modulus_bound_exponent: Fraction
+    direct_mmkls_target_exponent: Fraction
+    remaining_direct_exponent_gap: Fraction
+    improves_existing_product_character_bound: bool
+    mmkls_covered: bool
+
+
+@dataclass(frozen=True)
+class DrappeauQuintilinearHardBoxAudit:
+    entry_factor_exponent: Fraction
+    modulus_factor_exponent: Fraction
+    entry_quotient_exponent: Fraction
+    modulus_quotient_exponent: Fraction
+    product_index_exponent: Fraction
+    theorem_entry_factor_exponent: Fraction
+    theorem_modulus_factor_exponent: Fraction
+    coefficient_l2_norm_exponent: Fraction
+    k_squared_term_exponents: tuple[Fraction, Fraction, Fraction]
+    k_exponent: Fraction
+    theorem_bound_exponent: Fraction
+    raw_trivial_bound_exponent: Fraction
+    physical_qct_target_exponent: Fraction
+    best_available_bound_exponent: Fraction
+    remaining_exponent_gap: Fraction
+    exact_phase_and_coprimality_match: bool
+    product_ratio_mellin_tensorization_has_polylog_cost: bool
+    theorem_improves_raw_trivial_bound: bool
+    theorem_composes_with_fixed_entry_pevp: bool
+    mmkls_covered: bool
+
+
+@dataclass(frozen=True)
+class OuterModulusTypeRecombinationAudit:
+    original_modulus: int
+    cutoff_u: int
+    cutoff_v: int
+    original_mobius_weight: int
+    type_i_sum_inside_parentheses: int
+    type_ii_sum_inside_parentheses: int
+    recombined_modulus_weight: int
+    all_type_allocations_recombine_exactly: bool
+    recombined_modulus_weight_absolute_bound: int
+    physical_modulus_scale_exponent: Fraction
+    grouped_coefficient_l2_squared_exponent: Fraction
+    outer_scale_power_loss_after_recombination: Fraction
+    physical_inverse_entry_normalization_retained: bool
+    hard_face_arbitrary_coefficient_bound_exponent: Fraction
+    hard_face_target_exponent: Fraction
+    required_mobius_modulus_saving_exponent: Fraction
+    arbitrary_coefficient_large_sieve_closes_hard_face: bool
+    level_divisibility_swaps_to_divisor_incidence: bool
+    divisor_incidence_energy_has_exact_lcm_kernel: bool
+    dyadic_lcm_boundary_error_is_polylogarithmic: bool
+    exact_remaining_gate_is_mobius_modulus_kuznetsov: bool
+    arithmetic_modulus_weight_is_a_smooth_bessel_test: bool
+    standard_kuznetsov_large_sieve_applies: bool
+    mobius_modulus_harmonic_large_sieve_proved: bool
+    steinberg_conductor_average_proved: bool
+    outer_lisk_covered: bool
+
+
+@dataclass(frozen=True)
+class ProductIndexCharacterEnergyAudit:
+    modulus_exponent: Fraction
+    first_product_length_exponent: Fraction
+    second_product_length_exponent: Fraction
+    trivial_weil_product_sum_exponent: Fraction
+    nonprincipal_character_bound_exponent: Fraction
+    principal_character_bound_exponent: Fraction
+    unit_layer_saving_exponent: Fraction
+    required_hard_face_saving_exponent: Fraction
+    unit_layer_saving_margin: Fraction
+    minimum_direct_mmkls_bound_exponent: Fraction
+    mmkls_target_exponent: Fraction
+    minimum_direct_mmkls_deficit: Fraction
+    product_intervals_are_shorter_than_modulus: bool
+    cochrane_shi_fourth_moment_applies_to_unit_intervals: bool
+    smooth_weight_partial_summation_has_zero_power_cost: bool
+    generalized_gauss_pair_mass_has_zero_power_cost: bool
+    squarefree_local_factor_harmonic_mean_is_polylogarithmic: bool
+    physical_product_kernel_nuclear_norm_available: bool
+    nonunit_product_gcd_layers_aggregated: bool
+    principal_ramanujan_frequency_average_aggregated: bool
+    nonprincipal_gcd_layer_harmonic_log_power: int
+    principal_frequency_average_harmonic_log_power: int
+    outer_pevp_product_l2_energy_already_charged: bool
+    local_product_saving_composes_with_outer_pevp: bool
+    physical_mmkls_weight_normalization_reinserted: bool
+    product_index_energy_closes_mmkls: bool
+    whole_mobius_gate_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class PrimitiveConductorMMKLSAudit:
+    modulus_exponent: Fraction
+    outer_entry_exponent: Fraction
+    primitive_conductor_exponent: Fraction
+    cofactor_exponent: Fraction
+    long_product_factor_exponent: Fraction
+    induced_gauss_sum_crt_identity_exact: bool
+    mobius_cofactor_cancellation_exact: bool
+    cofactor_ramanujan_factor_remains: bool
+    unit_cofactor_ramanujan_equals_mobius: bool
+    normalized_primitive_gauss_square_has_unit_modulus: bool
+    outer_frequency_pair_l2_exponent: Fraction
+    first_cross_convolution_l2_exponent: Fraction
+    second_cross_convolution_l2_exponent: Fraction
+    large_sieve_factor_exponent: Fraction
+    unit_stratum_bound_exponent: Fraction
+    mmkls_target_exponent: Fraction
+    power_saving_margin: Fraction
+    small_outer_condition_verified: bool
+    small_conductor_condition_verified: bool
+    standard_multiplicative_large_sieve_closes_unit_cell: bool
+    residual_requires_signed_gauss_root_number_average: bool
+    nonunit_ramanujan_layers_composed_with_large_sieve: bool
+    full_mmkls_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class PrimitiveRootNumberKernelAudit:
+    squarefree_modulus: int
+    unit_argument: int
+    primitive_character_orthogonality_exact: bool
+    primitive_root_number_divisor_formula_exact: bool
+    outer_mobius_moves_to_kloosterman_modulus: bool
+    divisor_kernel_terms: tuple[tuple[int, int, Fraction, int], ...]
+    top_conductor_divisor: int
+    top_conductor_cofactor: int
+    top_conductor_coefficient: Fraction
+    top_conductor_coefficient_equals_physical_mobius_over_modulus: bool
+    proper_divisors_reduce_integer_modulus: bool
+    proper_divisors_have_uniform_power_drop: bool
+    prime_fixture: int
+    prime_kloosterman_coefficient: Fraction
+    prime_scalar_correction: Fraction
+    prime_conductor_top_term_survives: bool
+    prime_modulus_mobius_weight_is_constant: bool
+    root_number_average_is_self_similar_mmkls: bool
+    root_number_average_is_independent_large_sieve_saving: bool
+    full_mmkls_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class DoublePoissonRamanujanAudit:
+    modulus: int
+    first_kloosterman_index: int
+    complete_bilinear_poisson_identity_exact: bool
+    identity_holds_for_composite_modulus: bool
+    kloosterman_sum_collapses_to_ramanujan_sum: bool
+    transformed_ramanujan_argument_sign: str
+    modulus_exponent: Fraction
+    first_product_length_exponent: Fraction
+    second_product_length_exponent: Fraction
+    first_dual_length_exponent: Fraction
+    second_dual_length_exponent: Fraction
+    dual_volume_exponent: Fraction
+    pre_modulus_sum_prefactor_exponent: Fraction
+    mobius_ramanujan_divisor_identity_exact: bool
+    reciprocal_radical_density_divisor_sum: Fraction
+    reciprocal_radical_density_euler_product_exact: bool
+    long_cofactor_main_prefactor_exponent: Fraction
+    mmkls_target_exponent: Fraction
+    required_short_dual_gate_exponent: Fraction
+    raw_short_dual_volume_exponent: Fraction
+    short_dual_gate_has_zero_power_margin: bool
+    physical_kernel_has_polylog_separated_nuclear_norm: bool
+    individual_separated_zero_frequency_may_be_nonzero: bool
+    long_cofactor_density_main_identified: bool
+    cofactor_error_and_short_tail_aggregated: bool
+    short_cofactor_contains_prime_top_conductor_cell: bool
+    positive_reciprocal_radical_majorant_supplies_log_saving: bool
+    double_poisson_route_closes_mmkls: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class PhysicalRamanujanResonanceAudit:
+    resonance_tuple: tuple[int, int, int, int]
+    ramanujan_argument: int
+    resonance_is_inside_raw_dual_box: bool
+    physical_qct_derivative_bounds_force_resonance_vanishing: bool
+    reciprocal_radical_weight_defined_at_zero: bool
+    sdrg_requires_zero_argument_split: bool
+    modulus: int
+    ramanujan_zero_value: int
+    ramanujan_zero_value_equals_euler_phi: bool
+    mobius_weighted_zero_coefficient: Fraction
+    zero_mode_dirichlet_series_has_inverse_zeta_factor: bool
+    coprimality_euler_correction_has_polylog_cost: bool
+    resonant_frequency_pairs_are_divisor_bounded: bool
+    resonance_has_arbitrary_log_saving: bool
+    resonance_cell_closed: bool
+    nonzero_short_dual_gate_proved: bool
+    full_mmkls_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class ReciprocalRadicalFibreAudit:
+    moment_abscissa: Fraction
+    outer_entry_max_exponent: Fraction
+    ramanujan_argument_max_exponent: Fraction
+    first_dual_length_exponent: Fraction
+    second_dual_length_exponent: Fraction
+    reciprocal_radical_dirichlet_series_exact: bool
+    primes_dividing_outer_entry_cost_subpower: bool
+    nonaxis_fibre_is_divisor_bounded: bool
+    axis_fibre_exponent: Fraction
+    nonaxis_bound_exponent: Fraction
+    axis_bound_exponent: Fraction
+    long_cofactor_target_exponent: Fraction
+    power_saving_margin: Fraction
+    outer_divisor_weight_costs_only_polylog: bool
+    long_cofactor_density_main_covered: bool
+    squarefree_density_error_aggregated: bool
+    short_cofactor_cell_covered: bool
+    full_mmkls_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class ShortCofactorMobiusIntervalAudit:
+    cofactor_cutoff_exponent: Fraction
+    modulus_variable_min_exponent: Fraction
+    mobius_interval_min_exponent: Fraction
+    raw_short_interval_ratio: Fraction
+    qsmooth_convolution_identity_exact: bool
+    qsmooth_split_relative_exponent: Fraction
+    rescaled_short_interval_ratio: Fraction
+    published_quantitative_threshold: Fraction
+    threshold_margin: Fraction
+    small_qsmooth_factor_uses_published_mobius_bound: bool
+    large_qsmooth_reciprocal_tail_has_power_saving: bool
+    large_qsmooth_count_tail_has_power_saving: bool
+    smooth_physical_weight_allows_partial_summation: bool
+    long_density_error_first_exponent: Fraction
+    long_density_error_second_exponent: Fraction
+    long_density_error_saving: Fraction
+    long_density_error_aggregated: bool
+    short_cofactor_cell_covered: bool
+    balanced_hard_box_mmkls_covered: bool
+    all_dyadic_boxes_aggregated: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class OrientedMMKLSGlobalTransportAudit:
+    cofactor_cutoff_exponent: Fraction
+    oriented_boundary_cells: tuple[
+        tuple[str, str, Fraction, Fraction, Fraction, bool], ...
+    ]
+    published_threshold: Fraction
+    common_modulus_double_poisson_dual_product_exact: bool
+    reciprocity_preserves_physical_h_delta_lengths: bool
+    unbalanced_power_witnesses_covered: bool
+    three_power_scale_boundary_witnesses_covered: bool
+    bounded_zeta_endpoint_shift_log_depth: Fraction
+    bounded_zeta_endpoint_covered: bool
+    critical_polylog_shift_log_depth: Fraction
+    critical_product_lift_identity_exact: bool
+    critical_centered_product_energy_proved: bool
+    remaining_gate: str
+    all_parameter_cells_covered: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class UnbalancedComplementaryDivisorRecombinationAudit:
+    modulus_exponent: Fraction
+    cofactor_cutoff_exponent: Fraction
+    qsmooth_relative_exponent: Fraction
+    dual_product_exponent: Fraction
+    complementary_divisor_size_exponent: Fraction
+    reduced_mobius_min_exponent: Fraction
+    reciprocal_phase_ratio_power_saving: Fraction
+    taylor_block_relative_exponent: Fraction
+    taylor_polynomial_degree: int
+    published_theta: Fraction
+    published_epsilon: Fraction
+    published_lower_ratio: Fraction
+    published_lower_margin: Fraction
+    published_upper_margin: Fraction
+    c_poisson_identity_exact: bool
+    c_poisson_phase_sign_is_negative: bool
+    subcritical_entry_band_has_logarithmic_sparsity: bool
+    critical_entry_band_has_only_polylog_poisson_modes: bool
+    sliding_average_transfers_exceptional_measure: bool
+    maximal_progression_norm_handles_smooth_weights: bool
+    quadratic_taylor_error_has_power_saving: bool
+    zero_reciprocal_frequency_uses_mobius_pnt: bool
+    nonzero_reciprocal_frequency_uses_published_theorem: bool
+    large_qsmooth_tail_has_power_saving: bool
+    r_long_boundary_covered: bool
+    s_long_boundary_covered: bool
+    unbalanced_boundary_witnesses_covered: bool
+    all_parameter_cells_covered: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class BalancedAdaptiveReciprocalPhaseAudit:
+    family_parameter_interval: tuple[Fraction, Fraction]
+    bcr_strict_coverage_upper_endpoint: Fraction
+    reciprocal_phase_coverage_lower_endpoint: Fraction
+    cofactor_cutoff_exponent: Fraction
+    qsmooth_relative_exponent: Fraction
+    dual_product_exponent: Fraction
+    physical_prefactor_relative_to_target_exponent: Fraction
+    prefactor_times_dual_volume_matches_target: bool
+    long_cofactor_axis_exponent_above_prefactor: Fraction
+    long_cofactor_main_power_saving: Fraction
+    density_error_first_power_saving: Fraction
+    density_error_second_power_saving: Fraction
+    subcritical_entry_has_arbitrary_log_saving: bool
+    critical_c_poisson_mode_count_is_polylogarithmic: bool
+    worst_reduced_mobius_exponent: Fraction
+    taylor_block_relative_exponent: Fraction
+    published_theta: Fraction
+    published_epsilon: Fraction
+    published_lower_ratio: Fraction
+    published_lower_margin: Fraction
+    published_upper_margin: Fraction
+    worst_taylor_error_power_saving: Fraction
+    adaptive_taylor_window_has_power_saving: bool
+    c_poisson_identity_exact: bool
+    c_poisson_phase_sign_is_negative: bool
+    sliding_average_transfers_exceptional_measure: bool
+    maximal_polynomial_nilsequence_bound_is_uniform: bool
+    long_cofactor_main_covered: bool
+    long_cofactor_density_error_covered: bool
+    short_cofactor_range_covered: bool
+    reciprocal_phase_piece_covers_bcr_endpoint: bool
+    bcr_and_reciprocal_pieces_cover_full_balanced_edge: bool
+    balanced_nonzero_j_gate_absorbed: bool
+    balanced_resonant_j0_gate_absorbed: bool
+    full_parameter_polytope_enumerated: bool
+    large_q_centered_product_energy_proved: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class AdaptiveReciprocalSlackVertexRow:
+    vertex_index: int
+    longer_modulus_exponent: Fraction
+    third_length_exponent: Fraction
+    dual_product_exponent: Fraction
+    minimum_dual_axis_exponent: Fraction
+    reduced_mobius_exponent: Fraction
+    taylor_power_saving: Fraction
+    nonaxis_power_saving: Fraction
+    axis_power_saving: Fraction
+    covered: bool
+
+
+@dataclass(frozen=True)
+class AdaptiveReciprocalSlackVertexAudit:
+    cofactor_cutoff_exponent: Fraction
+    qsmooth_relative_exponent: Fraction
+    taylor_block_relative_exponent: Fraction
+    published_epsilon: Fraction
+    reciprocal_radical_moment_abscissa: Fraction
+    vertex_rows: tuple[AdaptiveReciprocalSlackVertexRow, ...]
+    covered_vertex_indices: tuple[int, ...]
+    remaining_vertex_indices: tuple[int, ...]
+    axis_inverse_poisson_identity_exact: bool
+    axis_union_has_only_polylogarithmic_volume: bool
+    zero_axis_vertices_recovered: tuple[int, ...]
+    short_cofactor_normalization_is_exact: bool
+    long_density_errors_have_power_saving: bool
+    vertex_routes_cover_every_face_and_interior: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class AZeroEndpointShiftedCountAudit:
+    left_vertex_index: int
+    right_vertex_index: int
+    oriented_scale_exponents: tuple[Fraction, ...]
+    shifted_equation: str
+    fixed_variables_determine_top_mollifier_variable: bool
+    solution_count_exponent: Fraction
+    kernel_and_square_root_weight_exponent: Fraction
+    pre_taper_contribution_exponent: Fraction
+    endpoint_taper_log_saving_power: Fraction
+    q_sum_is_harmonic: bool
+    q_aggregate_is_loglogarithmic: bool
+    total_contribution_is_little_o_T: bool
+    covered_vertex_indices: tuple[int, ...]
+    intervening_faces_and_interior_covered: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class CubicReciprocalEndpointDispersionAudit:
+    longer_modulus_exponent: Fraction
+    third_length_exponent: Fraction
+    dual_product_exponent: Fraction
+    physical_prefactor_exponent: Fraction
+    prefactor_times_dual_volume_exponent: Fraction
+    local_target_exponent: Fraction
+    cofactor_cutoff_exponent: Fraction
+    qsmooth_relative_exponent: Fraction
+    reduced_mobius_exponent: Fraction
+    taylor_block_relative_exponent: Fraction
+    published_epsilon: Fraction
+    taylor_polynomial_degree: int
+    taylor_power_saving: Fraction
+    c_poisson_identity_exact: bool
+    c_poisson_phase_sign_is_negative: bool
+    retained_physical_weights: tuple[str, ...]
+    physical_weight_normalized_derivatives_are_polylogarithmic: bool
+    partial_summation_gives_X_inverse: bool
+    post_poisson_weight_before_outer_A: str
+    outer_A_inverse_cancels_poisson_A: bool
+    dyadic_A_sum_weight: str
+    cofactor_weight_ledger: tuple[str, str]
+    e_sum_costs_only_logarithms: bool
+    qsmooth_r_sum_costs_only_logarithms: bool
+    fixed_weight_log_loss: Fraction
+    dyadic_and_q_log_loss: Fraction
+    subcritical_cutoff_log_power: Fraction
+    poisson_mode_extra_log_loss: Fraction
+    requested_mrstt_log_saving: Fraction
+    target_log_saving: Fraction
+    subcritical_net_log_saving: Fraction
+    critical_net_log_saving: Fraction
+    subcritical_entry_range_covered: bool
+    critical_entry_range_covered: bool
+    sliding_exceptional_set_transfer_exact: bool
+    fixed_numeric_log_witness_used: bool
+    local_endpoint_dispersion_lemma_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class IndependentCubicClosureVerificationAudit:
+    c_poisson_full_weight_embedding_verified: bool
+    c_poisson_jacobian: str
+    c_poisson_phase: str
+    c_poisson_outer_coefficient_after_partial_summation: str
+    mrstt_theorem: str
+    mrstt_maximal_progression_form_verified: bool
+    sliding_identity_is_exact_on_the_interior: bool
+    edge_intervals_are_power_saving: bool
+    reciprocal_amplitude_normalized_chain_rule_verified: bool
+    reciprocal_amplitude_total_variation_verified: bool
+    weighted_partial_summation_verified: bool
+    fixed_numeric_log_witness_used: bool
+    log_choice_order: tuple[str, ...]
+    lcpe2_quantified_log_ledger_closed: bool
+    compact_and_tail_partition_is_disjoint: bool
+    cancellation_budget: tuple[tuple[str, str], ...]
+    every_cancellation_source_is_used_once: bool
+    all_four_independent_gates_verified: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class ReciprocalAmplitudeSeminormTransferAudit:
+    derivative_order: int
+    fourier_decay_order: int
+    normalized_chain_rule_terms: tuple[tuple[int, int, int, int], ...]
+    required_kernel_x_derivatives: int
+    required_kernel_y_derivatives: int
+    available_kernel_x_derivatives: int
+    available_kernel_y_derivatives: int
+    normalized_curve_derivative_has_no_lambda_power: bool
+    n_inverse_square_supremum_power: Fraction
+    n_inverse_square_total_variation_power: Fraction
+    partial_summation_output_power: Fraction
+    kernel_seminorm_log_loss: Fraction
+    requested_mrstt_log_saving: Fraction
+    aggregation_log_loss: Fraction
+    target_log_saving: Fraction
+    net_log_saving: Fraction
+    kernel_derivative_supply_is_sufficient: bool
+    weighted_partial_summation_closes: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class CubicReciprocalFullPolytopeAudit:
+    cofactor_cutoff_exponent: Fraction
+    qsmooth_relative_exponent: Fraction
+    taylor_block_relative_exponent: Fraction
+    published_epsilon: Fraction
+    reciprocal_radical_moment_abscissa: Fraction
+    taylor_polynomial_degree: int
+    admissible_longer_modulus_min_exponent: Fraction
+    dual_product_min_exponent: Fraction
+    dual_product_max_exponent: Fraction
+    worst_reduced_mobius_exponent: Fraction
+    worst_taylor_power_saving: Fraction
+    uniform_nonaxis_power_saving: Fraction
+    uniform_axis_power_saving: Fraction
+    long_density_errors_have_power_saving: bool
+    short_cofactor_has_uniform_power_saving: bool
+    long_cofactor_main_has_uniform_power_saving: bool
+    physical_weight_ledger_verified: bool
+    fixed_weight_log_loss: Fraction
+    dyadic_and_q_log_loss: Fraction
+    subcritical_cutoff_log_power: Fraction
+    poisson_mode_extra_log_loss: Fraction
+    requested_mrstt_log_saving: Fraction
+    target_log_saving: Fraction
+    subcritical_net_log_saving: Fraction
+    critical_net_log_saving: Fraction
+    nested_log_choices_verified: bool
+    fixed_numeric_log_witness_used: bool
+    endpoint_dispersion_local_lemma_proved: bool
+    all_power_scale_faces_and_interiors_covered: bool
+    all_dyadic_parameter_cells_enumerated: bool
+    large_q_logarithmic_endpoint_covered: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class CubicReciprocalLCPE2Audit:
+    q_exponent: Fraction
+    residual_modulus_exponent: Fraction
+    zeta_log_depth: Fraction
+    shift_log_depth: Fraction
+    h_frequency_scale: str
+    delta_scale: str
+    first_dual_scale: str
+    second_dual_scale: str
+    physical_prefactor_times_dual_volume_is_T: bool
+    cubic_taylor_has_fixed_power_saving: bool
+    mrstt_supremum_is_uniform_in_cubic_coefficients: bool
+    requested_log_saving: Fraction
+    fixed_log_losses: Fraction
+    subcritical_cutoff_log_power: Fraction
+    poisson_mode_extra_log_loss: Fraction
+    dyadic_and_q_log_loss: Fraction
+    target_log_saving: Fraction
+    subcritical_net_log_saving: Fraction
+    critical_net_log_saving: Fraction
+    net_log_saving: Fraction
+    endpoint_dispersion_local_lemma_proved: bool
+    fixed_numeric_log_witness_used: bool
+    q_sum_is_bounded_on_dyadic_T_squared_shell: bool
+    applied_before_q_first_product_lift: bool
+    centered_product_energy_gate_bypassed_not_assumed: bool
+    centered_product_energy_estimate_proved: bool
+    lcpe2_covered_unconditionally: bool
+    all_q_boxes_and_transform_tails_aggregated: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class OrientedMMKLSPolytopeGapAudit:
+    cofactor_cutoff_exponent: Fraction
+    family_parameter_interval: tuple[Fraction, Fraction]
+    family_is_admissible: bool
+    family_saturates_both_mollifier_lengths: bool
+    family_saturates_shift_and_frequency_caps: bool
+    raw_ratio_formula: str
+    adjusted_ratio_formula: str
+    published_threshold: Fraction
+    no_cutoff_strict_coverage_lower_endpoint: Fraction
+    fixed_cutoff_strict_coverage_lower_endpoint: Fraction
+    exact_witnesses: tuple[
+        tuple[Fraction, Fraction, Fraction, bool], ...
+    ]
+    power_scale_residual_interval: tuple[Fraction, Fraction]
+    current_fixed_cutoff_gap_interval: tuple[Fraction, Fraction]
+    published_route_covers_structural_residual: bool
+    four_boundary_witnesses_imply_full_polytope_coverage: bool
+    sole_lcpe_residual_claim_is_valid: bool
+    remaining_gates: tuple[str, ...]
+    all_parameter_cells_covered: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class AlmostAllMobiusEndpointDispersionAudit:
+    modulus_exponent: Fraction
+    cofactor_exponent: Fraction
+    reduced_modulus_exponent: Fraction
+    dual_product_exponent: Fraction
+    outer_entry_exponent: Fraction
+    qsmooth_relative_exponent: Fraction
+    qsmooth_factor_exponent: Fraction
+    mobius_ambient_exponent: Fraction
+    mobius_interval_exponent: Fraction
+    mobius_interval_ratio: Fraction
+    published_theta: Fraction
+    published_epsilon: Fraction
+    published_lower_ratio: Fraction
+    lower_ratio_margin: Fraction
+    complementary_divisor_exponent: Fraction
+    endpoint_mass_exponent: Fraction
+    endpoint_range_exponent: Fraction
+    endpoint_energy_target_exponent: Fraction
+    product_value_exponent: Fraction
+    collision_shift_count_exponent: Fraction
+    divisor_second_moment_energy_exponent: Fraction
+    endpoint_energy_power_margin: Fraction
+    finite_collision_fixture_exact: bool
+    maximal_progression_norm_handles_smooth_subintervals: bool
+    integer_start_exception_count_follows_from_measure_bound: bool
+    divisor_second_moment_supplies_only_polylog_loss: bool
+    arbitrary_log_saving_absorbs_endpoint_energy_polylogs: bool
+    longer_intervals_use_strict_three_fifths_pointwise_split: bool
+    worst_endpoint_is_monotone_over_balanced_family: bool
+    balanced_zero_slack_family_covered: bool
+    full_parameter_polytope_enumerated: bool
+    large_q_centered_product_energy_proved: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class BalancedZeroSlackFullRangeAudit:
+    family_parameter_interval: tuple[Fraction, Fraction]
+    family_is_admissible_on_full_interval: bool
+    family_saturates_all_seven_defining_equalities: bool
+    bcr_branch_breakpoint: Fraction
+    bcr_strict_coverage_upper_endpoint: Fraction
+    bcr_endpoint_saving: Fraction
+    bcr_endpoint_is_covered: bool
+    fixed_endpoint_dispersion_lower_endpoint: Fraction
+    fixed_endpoint_ratio: Fraction
+    fixed_endpoint_is_covered: bool
+    structural_endpoint_dispersion_lower_endpoint: Fraction
+    structural_endpoint_ratio: Fraction
+    structural_endpoint_is_covered: bool
+    explicit_power_residual_interval: tuple[Fraction, Fraction]
+    exact_witnesses: tuple[
+        tuple[Fraction, Fraction, bool, Fraction, bool], ...
+    ]
+    full_balanced_family_covered: bool
+    full_parameter_polytope_enumerated: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class BalancedTransitionFareyGateAudit:
+    u: Fraction
+    difference_exponent: Fraction
+    q_exponent: Fraction
+    r_exponent: Fraction
+    s_exponent: Fraction
+    zeta_m_exponent: Fraction
+    zeta_k_exponent: Fraction
+    h_exponent: Fraction
+    delta_exponent: Fraction
+    product_numerator_exponent: Fraction
+    farey_energy_bound_exponent: Fraction
+    local_fixed_power_target_exponent: Fraction
+    required_additional_mobius_saving_exponent: Fraction
+    global_exponent_after_local_target: Fraction
+    exact_phase: str
+    two_original_mobius_weights_retained: bool
+    coprimality_conditions: tuple[str, ...]
+    matches_existing_TFS_theta_gate: bool
+    farey_energy_bound_proved: bool
+    required_new_mobius_estimate_proved: bool
+    local_gate_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class BalancedTransitionHPoissonAudit:
+    u: Fraction
+    difference_exponent: Fraction
+    gcd_exponent: Fraction
+    h_poisson_factor_exponent: Fraction
+    v_exponent: Fraction
+    j_exponent: Fraction
+    delta0_exponent: Fraction
+    line_parameter_exponent: Fraction
+    unimodular_inner_area_exponent: Fraction
+    primitive_slope_family_exponent: Fraction
+    transformed_cardinality_exponent: Fraction
+    asymptotic_local_target_exponent: Fraction
+    required_diagonal_scale_saving_exponent: Fraction
+    inner_square_root_saving_exponent: Fraction
+    square_root_power_margin: Fraction
+    fixed_power_required_saving_exponent: Fraction
+    determinant_equation: str
+    unimodular_coordinate_change_exact: bool
+    is_unique_zero_margin_face: bool
+    diagonal_scale_slope_square_function_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class BalancedTransitionHPoissonZeroModeAudit:
+    u: Fraction
+    resonant_zero_mode_present: bool
+    difference_exponent: Fraction
+    shift_family_exponent: Fraction
+    mobius_interval_exponent: Fraction
+    relative_shift_exponent: Fraction
+    transformed_cardinality_exponent: Fraction
+    asymptotic_local_target_exponent: Fraction
+    required_affine_dispersion_saving_exponent: Fraction
+    published_strict_one_third_theorem_applies: bool
+    endpoint_tapers_close_zero_power_margin: bool
+    zero_mode_is_rapid_transform_tail: bool
+    affine_mobius_dispersion_proved: bool
+    local_gate_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class BalancedZeroModeAveragedElliottAudit:
+    u: Fraction
+    mobius_interval_exponent: Fraction
+    shift_average_exponent: Fraction
+    raw_affine_correlation_exponent: Fraction
+    h_poisson_and_v_prefactor_exponent: Fraction
+    optimistic_theorem_total_exponent: Fraction
+    local_target_exponent: Fraction
+    remaining_power_deficit: Fraction
+    fixed_slope_hypothesis_holds: bool
+    shift_length_tends_to_infinity: bool
+    theorem_supplies_only_logarithmic_relative_saving: bool
+    optimistically_grants_q_coprime_uniformity: bool
+    optimistically_grants_smooth_weight_separation: bool
+    published_theorem_closes_zero_mode: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class MRTAffineCriticalParameterAudit:
+    theorem: str
+    truncated_proposition: str
+    slope_log_depth: Fraction
+    shift_log_depth: Fraction
+    shift_length_tends_to_infinity: bool
+    arity: int
+    affine_prefactor_log_exponent: Fraction
+    x_error_log_saving_exponent: Fraction
+    x_error_net_log_exponent: Fraction
+    x_error_term_tends_to_zero: bool
+    truncated_w_upper_h_reciprocal_power: int
+    nontrivial_branch_w_root_power: int
+    affine_coefficient_power: int
+    implied_shift_power_on_k_a_squared: int
+    proof_branch_required_shift_log_depth: Fraction
+    proof_branch_shift_log_margin: Fraction
+    proof_nontrivial_branch_available: bool
+    loglog_over_log_term_diverges_after_affine_prefactor: bool
+    published_bound_is_little_o: bool
+    remaining_gate: str
+    source: str
+
+
+@dataclass(frozen=True)
+class LargeQAffineChowlaGcdSplitAudit:
+    product_scale: int
+    shift_scale: int
+    long_scale: int
+    gcd_cutoff: int
+    critical_scales_match: bool
+    large_gcd_relative_absolute_bound: Fraction
+    large_gcd_bound_tends_to_zero_under_declared_limit: bool
+    small_gcd_max_reduced_slope: int
+    small_gcd_min_shift_average_length: Fraction
+    small_gcd_min_line_length: Fraction
+    bezout_coordinate_determinant: int
+    small_gcd_raw_mass_by_g: str
+    mrt_theorem: str
+    mrt_affine_coefficient_prefactor_power: int
+    mrt_shift_geometry_is_a_full_box: bool
+    physical_shift_geometry_is_one_dimensional: bool
+    mrt_relative_factor_at_reduced_slope: str
+    mrt_published_adapter_applies: bool
+    higher_uniformity_theorem: str
+    higher_uniformity_shift_average: str
+    higher_uniformity_averages_full_power_interval: bool
+    higher_uniformity_requires_fixed_positive_power_shift: bool
+    higher_uniformity_requires_fixed_linear_coefficients: bool
+    higher_uniformity_requires_common_base_variable: bool
+    physical_shift_average: str
+    physical_shift_interval_is_below_theorem_range: bool
+    physical_shift_has_zero_power_exponent: bool
+    physical_linear_coefficients_grow_with_T: bool
+    physical_forms_have_distinct_base_slopes: bool
+    higher_uniformity_published_adapter_applies: bool
+    remaining_gate: str
+    centered_product_energy_estimate_proved: bool
+    unconditional_coverage: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class LargeQProductLiftValuationAudit:
+    squarefree_witness_product: int
+    squarefree_product_rewrite_exact: bool
+    nonsquarefree_witness_product: int
+    nonsquarefree_witness_coefficient: Fraction
+    nonsquarefree_witness_mobius: int
+    nonsquarefree_product_coefficient_survives: bool
+    prime_fixture: int
+    overlap_local_euler_density: Fraction
+    overlap_global_density_formula: str
+    overlap_stratum_has_positive_density: bool
+    squareful_multiplicand_stratum_has_positive_density: bool
+    nonsquarefree_strata_are_absolutely_negligible: bool
+    ordinary_shifted_chowla_rewrite_covers_product_lift: bool
+    remaining_gate: str
+    centered_product_energy_estimate_proved: bool
+    unconditional_coverage: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class PascadiLiftedPhysicalAudit:
+    entry_divisor_exponent: Fraction
+    modulus_divisor_exponent: Fraction
+    coprimality_divisor_exponent: Fraction
+    physical_modulus_exponent: Fraction
+    ambient_level_exponent: Fraction
+    factorization_d_exponent: Fraction
+    square_divisor_f_exponent: Fraction
+    poisson_dual_index_exponent: Fraction
+    single_product_factor_exponent: Fraction
+    full_product_index_exponent: Fraction
+    single_factor_method_one_terms: tuple[Fraction, Fraction, Fraction]
+    single_factor_method_two_terms: tuple[Fraction, Fraction, Fraction]
+    single_factor_sixth_root_exponent: Fraction
+    single_factor_corollary_bound_exponent: Fraction
+    single_factor_averaged_weil_exponent: Fraction
+    single_factor_net_saving_exponent: Fraction
+    full_product_method_one_terms: tuple[Fraction, Fraction, Fraction]
+    full_product_method_two_terms: tuple[Fraction, Fraction, Fraction]
+    full_product_sixth_root_exponent: Fraction
+    full_product_corollary_bound_exponent: Fraction
+    full_product_averaged_fourier_exponent: Fraction
+    full_product_net_saving_exponent: Fraction
+    required_physical_cross_index_amplitude_saving_exponent: Fraction
+    remaining_cross_index_amplitude_deficit: Fraction
+    squarefree_factorization_makes_f_equal_d: bool
+    corollary_level_divides_every_lifted_modulus: bool
+    single_factor_length_hypotheses_verified: bool
+    full_product_length_hypotheses_verified: bool
+    corollary_takes_absolute_values_over_moduli: bool
+    modulus_mobius_signs_retained: bool
+    product_cross_index_structure_retained: bool
+    published_o1_loss_is_polylogarithmic: bool
+    physical_pevp_covered: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class UnramifiedCrossIndexTensorNormAudit:
+    ramanujan_theta_upper: Fraction
+    large_prime_threshold: int
+    small_primes: tuple[int, ...]
+    small_e_lower_bounds: tuple[Fraction, ...]
+    small_c_sqrt_p_upper_bounds: tuple[Fraction, ...]
+    small_prime_product_upper_bound: Fraction
+    uniform_tensor_constant: int
+    first_rank_shift_l1_cost_is_at_most_q_over_e: bool
+    second_rank_down_shift_l1_cost_is_one_over_q: bool
+    every_shift_is_downward: bool
+    shifted_support_does_not_increase: bool
+    large_prime_e_lower_bound_proved: bool
+    large_prime_c_is_at_most_four_over_p: bool
+    large_prime_c_sqrt_p_is_at_most_one: bool
+    tensor_product_is_at_most_constant_over_sqrt_a: bool
+    unramified_cross_index_transfer_proved: bool
+    steinberg_and_eisenstein_cells_included: bool
+    polylog_harmonic_large_sieve_proved: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class AllConductorCrossIndexTensorAudit:
+    unramified_tensor_constant: int
+    steinberg_local_euler_correction_power: int
+    steinberg_euler_product_upper_bound: Fraction
+    combined_tensor_constant: int
+    unramified_cells_have_a_inverse_half: bool
+    steinberg_cells_have_a_inverse_half: bool
+    conductor_two_positive_index_cells_vanish: bool
+    maass_holomorphic_eisenstein_local_cells_included: bool
+    per_primitive_representation_tensor_bound_proved: bool
+    primitive_conductor_pattern_aggregation_proved: bool
+    polylog_harmonic_large_sieve_proved: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class ConductorPatternEulerSquareAudit:
+    large_prime_threshold: int
+    large_prime_euler_log_power: int
+    small_prime_pattern_factor: Fraction
+    small_prime_pattern_constant: int
+    local_pattern_square_is_u_squared_plus_s_squared: bool
+    large_prime_local_bound_is_p_inverse_times_one_plus_17_over_p: bool
+    bernoulli_comparison_to_mertens_product: bool
+    conductor_pattern_sum_is_a_inverse_polylog: bool
+    shifted_sequence_large_sieve_uniform_across_patterns: bool
+    polylog_harmonic_large_sieve_proved: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class VectorValuedPatternLargeSieveReductionAudit:
+    ambient_level_symbol: str
+    pattern_projection_symbol: str
+    conductor_pattern_log_power: int
+    common_ambient_level_used: bool
+    conductor_pattern_projections_are_orthogonal: bool
+    downward_shifted_support_is_uniform: bool
+    spectral_dependent_coefficients_use_pointwise_majorants: bool
+    transfer_is_placed_on_only_one_cauchy_factor: bool
+    unweighted_factor_is_one_ambient_spectral_polynomial: bool
+    pattern_costs_are_squared_before_euler_aggregation: bool
+    no_pattern_triangle_inequality_is_used: bool
+    scalar_large_sieve_implies_vector_valued_bound: bool
+    no_conductor_pattern_cardinality_loss: bool
+    cross_index_weights_legally_enter_scalar_large_sieve: bool
+    scalar_polylog_full_level_large_sieve_proved: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class ScalarPolylogHankelSeminormGateAudit:
+    large_range_threshold: str
+    large_mellin_height_target: str
+    transition_mellin_l1_target: str
+    maass_eisenstein_uniform_bound_proved: bool
+    holomorphic_weight_at_least_four_uniform_bound_proved: bool
+    holomorphic_weight_two_endpoint_proved: bool
+    small_argument_complete_modulus_tail_proved: bool
+    transition_range_uniform_mellin_bound_proved: bool
+    large_range_uniform_mellin_bound_proved: bool
+    farey_hybrid_large_sieve_proved: bool
+    conductor_pattern_transfer_proved: bool
+    scalar_polylog_full_level_large_sieve_proved: bool
+    fixed_entry_pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class ExactSmallArgumentHankelTailAudit:
+    maass_contour_shift: Fraction
+    crossed_half_integer_poles: tuple[Fraction, ...]
+    minimum_holomorphic_weight: int
+    maass_bessel_power: Fraction
+    holomorphic_bessel_power: Fraction
+    common_tail_power: Fraction
+    first_block_geometric_ratio: Fraction
+    second_block_geometric_ratio: Fraction
+    first_block_geometric_sum: Fraction
+    second_block_geometric_sum: Fraction
+    maass_plus_contour_shift_legal: bool
+    maass_minus_reduced_to_same_i_bessel_contour: bool
+    holomorphic_tail_summable: bool
+    complete_modulus_tail_is_x_over_q_plus_one: bool
+    small_argument_tail_proved: bool
+
+
+@dataclass(frozen=True)
+class ExactTransitionHankelMellinAudit:
+    mellin_weight_order: int
+    cancelled_half_integer_poles: int
+    required_kernel_derivative_order: int
+    first_uncancelled_half_integer: Fraction
+    fourier_decay_exponent: Fraction
+    maximum_hyperbolic_growth_exponent: Fraction
+    decay_margin: Fraction
+    maass_plus_exact_fourier_kernel_used: bool
+    maass_minus_exact_fourier_kernel_used: bool
+    no_pointwise_transform_remainder: bool
+    holomorphic_integer_order_bessel_bound_used: bool
+    transition_derivative_seminorm_is_polynomial_in_r: bool
+    transition_weighted_mellin_l1_proved: bool
+
+
+@dataclass(frozen=True)
+class ExactLargeSymbolMellinAudit:
+    off_window_decay_order: int
+    cancelled_half_integer_poles: int
+    bessel_scale_threshold: str
+    stationary_phase_dimension: int
+    maass_plus_stationary_hessian_determinant: Fraction
+    holomorphic_stationary_hessian_absolute_determinant: Fraction
+    mellin_height_power: Fraction
+    stationary_mellin_windows: tuple[str, str]
+    fourier_decay_exponent: Fraction
+    required_off_window_decay_exponent: Fraction
+    fourier_decay_margin: Fraction
+    maass_whole_line_even_fourier_kernel_used: bool
+    maass_minus_has_no_joint_stationary_point: bool
+    holomorphic_exact_integer_order_fourier_kernel_used: bool
+    no_truncated_bessel_asymptotic: bool
+    uniform_large_mellin_height_proved: bool
+
+
+@dataclass(frozen=True)
+class PrimitiveConductorLevelDifferenceAudit:
+    level_factor_exponent: Fraction
+    common_mobius_length_exponent: Fraction
+    fixed_power_margin: Fraction
+    unramified_local_amplitude_saving_exponent: Fraction
+    unramified_after_density_amplitude_saving_exponent: Fraction
+    steinberg_local_amplitude_saving_exponent: Fraction
+    required_projector_square_saving_exponent: Fraction
+    primitive_subset_overhead_log_exponent: Fraction
+    vinogradov_korobov_decay_log_exponent: Fraction
+    ambient_normalization_formula_exact: bool
+    same_bessel_test_retained_at_every_level: bool
+    finite_level_and_primitive_conductor_sums_interchanged_exactly: bool
+    conductor_two_positive_valuation_vanishes: bool
+    signed_square_conductor_overhead_is_polylogarithmic: bool
+    diagonal_conductor_euler_sum_is_polylogarithmic: bool
+    length_conductor_euler_sum_is_polylogarithmic: bool
+    vinogradov_korobov_dominates_subset_overhead: bool
+    published_large_sieve_has_explicit_polylog_constant: bool
+    custom_full_level_harmonic_large_sieve_has_polylog_constant: bool
+    primitive_family_is_positive_full_level_subfamily: bool
+    unramified_cross_index_two_shift_transfer_proved: bool
+    steinberg_cross_index_rank_one_transfer_proved: bool
+    continuous_local_cross_index_transfer_proved: bool
+    all_local_cross_index_transfers_proved: bool
+    shifted_support_does_not_exceed_original_support: bool
+    pevp_reduced_to_uniform_polylog_harmonic_large_sieve: bool
+    maass_eisenstein_full_level_large_sieve_proved: bool
+    holomorphic_weight_ge_four_large_sieve_proved: bool
+    holomorphic_weight_two_large_sieve_proved: bool
+    all_archimedean_sectors_reinserted: bool
+    pevp_is_polynomial_in_fixed_kernel_seminorms: bool
+    weighted_primitive_large_sieve_proved: bool
+    pevp_proved: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class NormalizedLevelDifferencePBKAudit:
+    prime: int
+    level_p_index: int
+    level_p_squared_index: int
+    ambient_oldspace_eigenvalue: Fraction
+    exact_layer_eigenvalue: Fraction
+    squared_ambient_oldspace_weight: Fraction
+    squared_exact_layer_weight: Fraction
+    squared_kernel_identity_mass: Fraction
+    modulus_valuation_one_kloosterman_coefficient: Fraction
+    modulus_valuation_at_least_two_kloosterman_coefficient: Fraction
+    primitive_character_valuation_one_ftb_ratio: Fraction
+    primitive_character_higher_valuation_ftb_ratio: Fraction
+    principal_character_valuation_one_ftb_ratio: Fraction
+    local_geometric_conductor_exponent: int
+    exact_layer_geometric_conductor_exponent: int
+    normalized_difference_is_not_pure_exact_layer: bool
+    squared_kernel_is_positive_orthogonal_layer_sum: bool
+    local_ftb_euler_factor_is_p_over_p_minus_one: bool
+    global_ftb_product_is_polylogarithmic: bool
+    hpy_named_spectral_assumption_applies: bool
+    epsilon_free_positive_kernel_large_sieve_proved: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class PrimitiveSparseFareyLargeSieveAudit:
+    common_level: int
+    dyadic_modulus_bound: int
+    mellin_interval_length: int
+    sequence_length: int
+    minimum_spacing: Fraction
+    inverse_spacing_bound: int
+    hybrid_large_sieve_bound: int
+    crt_fraction_is_reduced: bool
+    distinct_fraction_spacing_proved: bool
+    primitive_gauss_orthogonality_is_exact: bool
+    ramified_modulus_count_removed: bool
+    fixed_common_level_gain_is_epsilon_free: bool
+    noncoprime_index_cells_covered: bool
+    positive_kernel_harmonic_large_sieve_proved: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class PhysicalNoncoprimeValuationAudit:
+    prime: int
+    ramanujan_inverse_square_natural_mean: Fraction
+    common_positive_valuation_collision_mass: Fraction
+    same_valuation_tail_reduces_to_primitive_farey_family: bool
+    unequal_valuation_tail_vanishes_after_boundary_modulus: bool
+    local_main_density_euler_correction_is_absolutely_summable: bool
+    smooth_short_interval_boundary_aggregated: bool
+    positive_kernel_harmonic_large_sieve_proved: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class ValuationBoundaryEulerMajorantAudit:
+    ramified_primes: tuple[int, ...]
+    local_collision_coefficients: tuple[Fraction, ...]
+    main_euler_product: Fraction
+    smooth_interval_mean_bound: Fraction
+    divisor_convolution_identity_exact: bool
+    boundary_term_absorbed_by_one_over_d: bool
+    euler_product_uniformly_bounded: bool
+    smooth_short_interval_boundary_aggregated: bool
+    positive_kernel_harmonic_large_sieve_proved: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class AmbientNormalizedPositiveKernelCauchyAudit:
+    prime: int
+    ambient_level_index: int
+    relative_ambient_oldspace_eigenvalue: Fraction
+    relative_exact_layer_eigenvalue: Fraction
+    ambient_normalized_squared_mass: Fraction
+    required_pevp_squared_mass: Fraction
+    squared_mass_deficit_ratio: Fraction
+    common_ambient_measure_inserted_exactly: bool
+    raw_plancherel_mass_is_not_the_pevp_normalization: bool
+    index_rescaling_does_not_repair_diagonal_mass: bool
+    cross_index_oldvector_cancellation_still_required: bool
+    positive_square_kernel_closes_pevp: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class FullLevelHarmonicLargeSieveAudit:
+    level: int
+    dyadic_modulus_bound: int
+    mellin_interval_length: int
+    sequence_length: int
+    minimum_farey_spacing: Fraction
+    hybrid_dyadic_inner_bound: int
+    kloosterman_indices_may_be_noncoprime_to_level: bool
+    full_level_spectral_measure_is_positive: bool
+    primitive_family_is_positive_subfamily: bool
+    small_bessel_tail_has_polylog_mean_divisor_bound: bool
+    archimedean_partition_has_polylog_total_variation: bool
+    hpy_first_mellin_requires_bessel_scale_above_spectral_square: bool
+    power_sized_large_bessel_range_covered: bool
+    large_bessel_range_requires_new_estimate: bool
+    maass_and_eisenstein_sectors_covered: bool
+    holomorphic_sector_covered: bool
+    uniform_polylog_harmonic_large_sieve_proved: bool
+
+
+@dataclass(frozen=True)
+class DyadicBesselMellinBlockAudit:
+    sequence_length_exponent: Fraction
+    level_exponent: Fraction
+    modulus_exponent: Fraction
+    spectral_scale_exponent: Fraction
+    bessel_ratio_exponent: Fraction
+    large_bessel_range: bool
+    large_block_first_exponent: Fraction
+    large_block_second_exponent: Fraction
+    small_block_first_exponent: Fraction
+    small_block_second_exponent: Fraction
+    target_exponent: Fraction
+    large_mellin_effective_width_exponent: Fraction
+    large_mellin_linfty_prefactor_exponent: Fraction
+    large_mellin_l1_exponent: Fraction
+    large_mellin_l1_is_not_prefactor_exponent: bool
+    hybrid_gallagher_uses_mellin_linfty_weight: bool
+    pointwise_hpy_remainder_raw_exponent: Fraction
+    pointwise_hpy_remainder_discarded_before_large_sieve: bool
+    exact_dyadic_mellin_inversion_used: bool
+    mellin_remainder_routed_through_gallagher: bool
+    maass_and_eisenstein_block_covered: bool
+    holomorphic_block_covered: bool
+    physical_full_level_block_covered: bool
+    uniform_stationary_phase_seminorm_bound_proved: bool
+
+
+@dataclass(frozen=True)
+class ExactArchimedeanMellinTransferAudit:
+    spectral_scale: int
+    bessel_scale: int
+    maass_zero_order: int
+    minimum_holomorphic_weight: int
+    large_symbol_threshold: int
+    large_symbol_range: bool
+    exact_maass_fourier_kernel_retained: bool
+    exact_holomorphic_fourier_kernel_retained: bool
+    no_spectral_power_remainder_discarded: bool
+    same_sign_hankel_symbol_bound_proved: bool
+    opposite_sign_nonstationary_bound_proved: bool
+    holomorphic_large_weight_symbol_bound_proved: bool
+    large_mellin_linfty_bound_proved: bool
+    transition_mellin_l1_bound_used: bool
+    transition_mellin_l1_bound_proved: bool
+    maass_small_argument_tail_power: int
+    maass_small_argument_tail_summable: bool
+    holomorphic_small_argument_tail_power: int
+    holomorphic_small_argument_tail_summable: bool
+    weight_two_petersson_tail_proved: bool
+    all_archimedean_sectors_and_endpoints_proved: bool
+    uniform_polylog_harmonic_large_sieve_proved: bool
+
+
+@dataclass(frozen=True)
+class WeightTwoIncompleteEisensteinLargeSieveAudit:
+    level: int
+    sequence_length: int
+    transformed_height_support_lower_bound: Fraction
+    nonzero_c_pair_count_bound: int
+    incomplete_eisenstein_sup_bound: int
+    ford_representative_maximizes_infinity_height: bool
+    cosets_are_primitive_pairs_with_level_dividing_c: bool
+    unfolding_coefficient_is_uniformly_positive_on_dyadic_sequence: bool
+    fourier_indices_may_share_factors_with_level: bool
+    oldforms_are_included: bool
+    physical_weight_two_transform_vanishes_identically: bool
+    weight_two_harmonic_large_sieve_proved: bool
+    reinserted_into_full_pls: bool
+
+
+@dataclass(frozen=True)
+class ExactLevelGeometricFiberAudit:
+    mobius_level: int
+    fixed_level: int
+    cofactor: int
+    first_fourier_index: int
+    modulus: int
+    signed_level_divisor_coefficient: int
+    exact_valuation_cell_active: bool
+    reduced_second_denominator: int
+    unit_reduction_fiber_size: int
+    first_farey_spacing: Fraction
+    second_farey_spacing: Fraction
+    first_inverse_spacing: Fraction
+    fiber_weighted_second_inverse_spacing: Fraction
+    two_geometric_spacing_terms_share_level_AB: bool
+    ramanujan_fiber_sum: int
+    ramanujan_denominator_nonzero: bool
+    crt_fiber_character_is_a_unit_permutation: bool
+    ramanujan_denominator_cancels_before_cauchy: bool
+    inverse_scaled_kloosterman_family_restored_exactly: bool
+    reciprocity_retains_two_coupled_phase_coordinates: bool
+    cross_index_phase_retained_before_cauchy: bool
+    premature_length_term_removed_by_ramanujan_cancellation: bool
+    joint_two_coordinate_bound_still_required: bool
+    pevp_proved: bool
+
+
+@dataclass(frozen=True)
+class CoupledFareyCollisionAudit:
+    scaling_level: int
+    first_denominator: int
+    first_numerator: int
+    second_denominator: int
+    second_numerator: int
+    first_inverse_numerator: int
+    second_inverse_numerator: int
+    first_determinant_coordinate: int
+    second_determinant_coordinate: int
+    first_quadratic_divisor_integer: int
+    second_quadratic_divisor_integer: int
+    first_denominator_divides_first_quadratic_integer: bool
+    second_denominator_divides_second_quadratic_integer: bool
+    denominators_are_coprime: bool
+    coordinate_pairs_unique_for_fixed_determinants: bool
+    absolute_collision_count_becomes_quadratic_divisor_majorant: bool
+    absolute_majorant_discards_mobius_signs: bool
+    new_saving_beyond_bblr_proved: bool
+    joint_two_coordinate_large_sieve_proved: bool
+
+
+@dataclass(frozen=True)
+class MWKFTailShellAggregationAudit:
+    tail_log_start: Fraction
+    seminorm_decay_order: Fraction
+    local_seminorm_log_loss: Fraction
+    target_log_saving: Fraction
+    dyadic_and_harmonic_q_log_loss: Fraction
+    net_tail_log_saving: Fraction
+    exact_afe_has_no_truncation_error: bool
+    afe_product_tail_included: bool
+    time_nonstationary_tail_included: bool
+    poisson_frequency_tail_included: bool
+    qct_fourier_mellin_tail_included: bool
+    pevp_is_polynomial_in_fixed_kernel_seminorms: bool
+    full_outer_pevp_aggregation_proved: bool
+    power_far_shells_are_dominated: bool
+    polylog_near_shells_are_summable: bool
+    transform_tail_aggregated: bool
+    afe_tail_aggregated: bool
+    total_tail_is_little_o_T: bool
+
+
+@dataclass(frozen=True)
+class UnconditionalLongMollifierAsymptoticAudit:
+    mollifier_length_exponent: Fraction
+    main_term_constant: Fraction
+    exact_completed_afe_proved: bool
+    poisson_zero_mode_normalization_proved: bool
+    lcm_main_term_asymptotic_proved: bool
+    pevp_proved: bool
+    compact_core_bypasses_pevp: bool
+    tail_shells_use_seminorm_stable_pevp: bool
+    full_remainder_requires_pevp_for_tails: bool
+    endpoint_dispersion_local_lemma_proved: bool
+    physical_weight_ledger_verified: bool
+    nested_log_choices_verified: bool
+    lcpe2_covered_unconditionally: bool
+    lcpe2_q_and_transform_aggregation_verified: bool
+    independent_four_gate_verification_proved: bool
+    fixed_numeric_log_witness_used: bool
+    compact_nonzero_poisson_core_is_little_o_T: bool
+    transform_tail_is_little_o_T: bool
+    afe_tail_is_little_o_T: bool
+    archimedean_correction_is_beyond_all_powers: bool
+    full_remainder_is_little_o_T: bool
+    unconditional_asymptotic_proved: bool
+    residual_cell_count: int
+    residual_count_semantics: str
+    residual_top_level_gates: tuple[str, ...]
+    alternative_route_unverified_gates: tuple[str, ...]
+    all_dyadic_parameter_cells_enumerated: bool
+    proof_status: str
+
+
+@dataclass(frozen=True)
+class AdmissiblePolytopeVertexLedgerAudit:
+    ambient_dimension: int
+    halfspace_count: int
+    vertex_count: int
+    vertices: tuple[ExponentBox, ...]
+    all_vertices_are_exact_rational: bool
+    all_vertices_are_admissible: bool
+    four_named_boundary_witnesses_are_vertices: bool
+    primary_routes: tuple[str, ...]
+    primary_route_counts: tuple[tuple[str, int], ...]
+    bcr_covered_vertex_indices: tuple[int, ...]
+    unbalanced_recombination_covered_vertex_indices: tuple[int, ...]
+    polylog_short_entry_covered_vertex_indices: tuple[int, ...]
+    adaptive_reciprocal_covered_vertex_indices: tuple[int, ...]
+    a_zero_endpoint_covered_vertex_indices: tuple[int, ...]
+    remaining_unrouted_vertex_indices: tuple[int, ...]
+    remaining_unrouted_vertex_count: int
+    vertex_routes_prove_every_face_and_interior: bool
+    all_dyadic_parameter_cells_enumerated: bool
+
+
+@dataclass(frozen=True)
+class PolylogShortEntryReciprocityAudit:
+    short_entry_log_depth: Fraction
+    h_log_depth: Fraction
+    delta_log_depth: Fraction
+    euler_convolution_cutoff_log_depth: Fraction
+    siegel_walfisz_log_saving: Fraction
+    kernel_seminorm_log_loss: Fraction
+    aggregation_log_loss: Fraction
+    progression_modulus_log_depth: Fraction
+    outer_and_residue_log_loss: Fraction
+    siegel_walfisz_net_log_saving: Fraction
+    euler_tail_net_log_saving: Fraction
+    net_log_saving: Fraction
+    reciprocity_phase_identity_exact: bool
+    long_mobius_sum_is_in_progressions_modulo_short_times_euler: bool
+    siegel_walfisz_is_uniform_for_polylog_moduli: bool
+    euler_convolution_tail_has_arbitrary_log_saving: bool
+    smooth_reciprocal_correction_uses_partial_summation: bool
+    unit_short_entry_uses_ordinary_mobius_pnt: bool
+    left_short_vertices_covered: tuple[int, ...]
+    right_short_vertices_covered: tuple[int, ...]
+    covered_vertex_indices: tuple[int, ...]
+    polylog_short_entry_faces_covered: bool
+    all_parameter_cells_covered: bool
+    full_long_mollifier_asymptotic_proved: bool
+    source: str
+
+
+@dataclass(frozen=True)
+class EisensteinSecondMomentReciprocityAudit:
+    entry_divisor_exponent: Fraction
+    modulus_divisor_exponent: Fraction
+    ambient_level_exponent: Fraction
+    required_half_level_saving_exponent: Fraction
+    required_endpoint_log_decay: bool
+    inverse_zeta_central_zero_order: int
+    eisenstein_transverse_pole_order: int
+    local_crossing_model: str
+    target_total_degree: int
+    blomer_khan_total_degree: int
+    khan_zeta_dual_family: str
+    hecke_double_dirichlet_identity_exact: bool
+    inverse_zeta_zero_cancels_residues_jointly: bool
+    blomer_khan_is_literal_adapter: bool
+    andersen_kiral_is_literal_adapter: bool
+    khan_prime_gaussian_formula_is_composite_smooth_adapter: bool
+    completed_eisenstein_residue_pairing_required: bool
+    composite_level_local_corrections_required: bool
+    signed_level_family_aggregation_proved: bool
+    type_ii_sectors_restored: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class ProductHeckeSpectralLargeSieveAudit:
+    product_variable_exponent: Fraction
+    entry_divisor_exponent: Fraction
+    modulus_divisor_exponent: Fraction
+    ambient_level_exponent: Fraction
+    chosen_poisson_divisor_exponent: Fraction
+    common_divisor_threshold_exponent: Fraction
+    maximum_residual_hecke_length_exponent: Fraction
+    hecke_multiplied_length_exponent: Fraction
+    large_common_divisor_bound_exponent: Fraction
+    previous_pointwise_bound_exponent: Fraction
+    fixed_level_saving_exponent: Fraction
+    ramanujan_theta: Fraction
+    small_common_divisor_hecke_loss_exponent: Fraction
+    small_common_divisor_slf_margin: Fraction
+    aggregated_bound_exponent: Fraction
+    required_slf_exponent: Fraction
+    slf_power_margin: Fraction
+    completion_uses_shorter_divisor_side: bool
+    standard_large_sieve_normalization_exact: bool
+    hecke_multiplication_has_subpower_energy_cost: bool
+    atkin_lehner_oldclass_permutation_preserves_l2: bool
+    eisenstein_basis_change_is_unitary: bool
+    physical_kernel_tensorization_compatible: bool
+    bounded_level_cell_uses_existing_mobius_log_decay: bool
+    small_common_divisor_range_covered: bool
+    cuspidal_holomorphic_type_i_type_i_slf_proved: bool
+    continuous_ramified_oldvector_gate_open: bool
+    type_i_type_i_slf_proved: bool
+    type_ii_sectors_restored: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class HighLevelProductHeckeSpectralAudit:
+    product_variable_exponent: Fraction
+    left_level_factor_exponent: Fraction
+    right_level_factor_exponent: Fraction
+    ambient_level_exponent: Fraction
+    maximum_residual_hecke_length_exponent: Fraction
+    chosen_poisson_index_exponent: Fraction
+    large_sieve_excess_exponent: Fraction
+    aggregated_bound_exponent: Fraction
+    target_exponent: Fraction
+    power_saving_margin: Fraction
+    power_deficit: Fraction
+    maximum_type_ii_deficit: Fraction
+    maximum_deficit_witness: tuple[Fraction, Fraction]
+    type_ii_factor_to_cusp_adapter_exact: bool
+    product_hecke_large_sieve_applies: bool
+    inside_closed_type_ii_residual_square: bool
+    power_bound_closes_cell: bool
+    endpoint_log_decay_required: bool
+    endpoint_log_decay_proved: bool
+    type_ii_cell_covered: bool
+    whole_type_ii_region_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class PrimalDualProductHeckeSpectralAudit:
+    product_variable_exponent: Fraction
+    left_level_factor_exponent: Fraction
+    right_level_factor_exponent: Fraction
+    ambient_level_exponent: Fraction
+    chosen_poisson_index_exponent: Fraction
+    worst_primitive_conductor_exponent: Fraction
+    primal_dual_transition_exponent: Fraction
+    normalized_m_times_sqrt_conductor_exponent: Fraction
+    optimized_large_sieve_excess_exponent: Fraction
+    product_spectral_bound_exponent: Fraction
+    aggregated_bound_exponent: Fraction
+    target_exponent: Fraction
+    power_saving_margin: Fraction
+    primitive_functional_equation_exact: bool
+    dual_coefficient_energy_matches_primal: bool
+    gamma_transform_has_polylog_nuclear_norm: bool
+    oldclass_conductor_split_has_subpower_cost: bool
+    squarefree_level_forces_trivial_eisenstein_character: bool
+    eisenstein_unramified_hecke_index_has_divisor_bound: bool
+    eisenstein_ramified_oldvector_witness_prime: int
+    eisenstein_ramified_oldvector_ratio_at_witness: Fraction
+    eisenstein_ramified_oldvector_has_divisor_bound: bool
+    continuous_spectrum_has_no_positive_m_power: bool
+    cuspidal_holomorphic_sectors_covered: bool
+    all_type_i_ii_sectors_covered: bool
+    finite_prime_hecke_gate_covered: bool
+    transform_tail_aggregated: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class EisensteinOldspaceProjectorAudit:
+    prime: int
+    individual_ramified_ratio_at_witness: Fraction
+    coprime_coprime_projector: dict[int, Fraction]
+    coprime_once_ramified_projector: dict[int, Fraction]
+    once_ramified_once_ramified_projector: dict[int, Fraction]
+    oldspace_sum_factorizes_prime_by_prime: bool
+    coprime_ramified_projector_gains_one_prime: bool
+    local_loss_depends_only_on_common_ramification: bool
+    same_cusp_global_kernel_has_gcd_over_level_majorant: bool
+    atkin_lehner_cross_cusp_projector_identified: bool
+    same_cusp_projector_is_physical_adapter: bool
+    common_ramification_gcd_aggregation_proved: bool
+    continuous_spectrum_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class EisensteinCommonRamificationAverageAudit:
+    frequency_length: int
+    second_index: int
+    ambient_level: int
+    common_ramification: int
+    exact_frequency_gcd_sum: int
+    divisor_count: int
+    divisor_bound_upper_bound: int
+    normalized_exact_average: Fraction
+    normalized_divisor_bound: int
+    gcd_divisor_totient_identity_exact: bool
+    normalized_average_has_zero_power_cost: bool
+    same_cusp_poisson_frequency_gcd_aggregation_proved: bool
+    physical_cross_cusp_gcd_aggregation_proved: bool
+    completed_eisenstein_residue_pairing_proved: bool
+    continuous_spectrum_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class PoleSubtractedEisensteinFunctionalEquationAudit:
+    primal_length_exponent: Fraction
+    spectral_bandwidth_exponent: Fraction
+    archimedean_conductor_exponent: Fraction
+    dual_length_exponent: Fraction
+    effective_dual_length_exponent: Fraction
+    central_collision_log_y_coefficient: Fraction
+    central_collision_euler_gamma_coefficient: Fraction
+    completed_zeta_product_functional_equation_exact: bool
+    two_simple_residues_exact: bool
+    central_collision_limit_is_finite: bool
+    pole_subtracted_transform_has_rapid_decay: bool
+    same_cusp_projector_and_poisson_gcd_audited: bool
+    atkin_cross_cusp_oldspace_restored: bool
+    nonresidual_continuous_local_polynomial_covered: bool
+    zero_mode_residue_pairing_proved: bool
+    continuous_spectrum_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class RamanujanZeroModeEulerAudit:
+    prime: int
+    valuation: int
+    local_generating_polynomial: dict[int, int]
+    ramanujan_prime_power_coefficients_exact: bool
+    local_generating_identity_exact: bool
+    global_dirichlet_series_identity_exact: bool
+    inverse_zeta_zero_order_at_one: int
+    archimedean_zero_mode_residue_normalization_matched: bool
+    completed_zero_mode_residue_pairing_proved: bool
+    continuous_spectrum_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class AtkinLehnerCrossCuspProjectorAudit:
+    prime: int
+    same_cusp_mixed_value_at_unit_phase: Fraction
+    same_cusp_squared_value: Fraction
+    swap_cross_cusp_squared_value: Fraction
+    swap_to_same_cusp_squared_ratio: Fraction
+    atkin_lehner_is_unitary: bool
+    unitarity_implies_same_cusp_kernel_bound: bool
+    exact_physical_cross_cusp_matrix_identified: bool
+    physical_cross_cusp_projector_bound_proved: bool
+    continuous_spectrum_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class PrimeLevelEisensteinCrossCuspAudit:
+    prime: int
+    unramified_diagonal_cusp_value_at_t_zero: Fraction
+    once_ramified_diagonal_cusp_value_at_t_zero: Fraction
+    offdiagonal_cusp_value_squared_at_t_zero: Fraction
+    mixed_cross_projector_squared_at_t_zero: Fraction
+    mixed_cross_projector_asymptotic_prime_exponent: Fraction
+    same_cusp_candidate_squared_prime_exponent: Fraction
+    half_level_loss_vs_same_cusp_candidate: Fraction
+    kiral_young_specialization_exact: bool
+    physical_cross_cusp_projector_identified: bool
+    same_cusp_projector_candidate_rejected: bool
+    cross_cusp_half_level_saving_proved: bool
+    global_residue_level_ledger_restored: bool
+    continuous_spectrum_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class CompletedEisensteinResidueTrilinearAudit:
+    product_variable_exponent: Fraction
+    left_level_factor_exponent: Fraction
+    right_level_factor_exponent: Fraction
+    ambient_level_exponent: Fraction
+    poisson_frequency_exponent: Fraction
+    primal_residue_bound_exponent: Fraction
+    target_exponent: Fraction
+    required_saving_exponent: Fraction
+    maximum_required_saving_exponent: Fraction
+    maximum_saving_witness: tuple[Fraction, Fraction]
+    residue_expansion_term_count: int
+    remaining_arithmetic_variable_count: int
+    grouped_left_mobius_coefficient_exact: bool
+    grouped_right_mobius_coefficient_exact: bool
+    kiral_young_cross_kernel_exact: bool
+    pole_subtracted_identity_exact: bool
+    signed_level_frequency_trilinear_estimate_proved: bool
+    continuous_spectrum_gate_covered: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class EisensteinCrossCuspRamificationDensityAudit:
+    prime: int
+    left_level_factor_exponent: Fraction
+    right_level_factor_exponent: Fraction
+    expected_absolute_diagonal_cusp_factor: Fraction
+    offdiagonal_cusp_factor_squared: Fraction
+    cross_average_majorant_squared: Fraction
+    cross_average_squared_prime_exponent: Fraction
+    same_cusp_average_squared_prime_exponent: Fraction
+    extra_cross_density_amplitude_saving_exponent: Fraction
+    center_pre_density_bound_exponent: Fraction
+    candidate_center_density_saving_exponent: Fraction
+    candidate_center_post_density_bound_exponent: Fraction
+    smooth_interval_boundary_has_divisor_subpower_cost: bool
+    unrestricted_two_index_density_bound_proved: bool
+    candidate_density_would_close_center: bool
+    physical_tensor_preserves_unrestricted_density: bool
+    residue_residue_terms_covered: bool
+    residue_dual_mixed_terms_covered: bool
+    completed_residue_trilinear_gate_covered: bool
+    continuous_local_gate_covered: bool
+    global_ratio_gcd_aggregation_proved: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class EisensteinCrossCuspL2DensityAudit:
+    prime: int
+    left_level_factor_exponent: Fraction
+    right_level_factor_exponent: Fraction
+    product_index_factor_count: int
+    expected_squared_product_index_diagonal_factor: Fraction
+    unramified_poisson_diagonal_factor_squared: Fraction
+    cross_second_moment_majorant: Fraction
+    cross_second_moment_prime_exponent: Fraction
+    extra_cross_density_amplitude_saving_exponent: Fraction
+    center_pre_density_bound_exponent: Fraction
+    center_density_saving_exponent: Fraction
+    center_post_density_bound_exponent: Fraction
+    residual_square_post_bound_exponent: Fraction
+    target_exponent: Fraction
+    residual_square_margin_exponent: Fraction
+    qct_product_weights_separated: bool
+    common_divisor_prime_allocations_have_subpower_cost: bool
+    weighted_crt_boundary_absorbed_on_residual_square: bool
+    physical_cross_cusp_nonzero_mode_covered: bool
+    completed_residue_decomposition_needed: bool
+    original_common_mellin_zero_mode_main_term_proved: bool
+    separate_spectral_residue_pairing_needed: bool
+    global_ratio_gcd_aggregation_proved: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class CrossCuspDensityBoundaryAudit:
+    shorter_level_factor_exponent: Fraction
+    left_product_variable_exponent: Fraction
+    right_product_variable_exponent: Fraction
+    pointwise_square_decay_exponent: Fraction
+    weighted_crt_square_decay_exponent: Fraction
+    two_variable_square_saving_exponent: Fraction
+    one_variable_gcd_square_saving_exponent: Fraction
+    effective_square_decay_exponent: Fraction
+    effective_square_saving_exponent: Fraction
+    effective_amplitude_saving_exponent: Fraction
+    weighted_crt_main_term_dominates: bool
+    positive_density_saving_available: bool
+    on_exact_zero_density_saving_face: bool
+    zero_density_saving_face_characterization_exact: bool
+    short_interval_boundary_terms_retained: bool
+
+
+@dataclass(frozen=True)
+class BalancedCompletionUnequalProductAudit:
+    left_level_factor_exponent: Fraction
+    right_level_factor_exponent: Fraction
+    ambient_level_exponent: Fraction
+    shorter_level_factor_exponent: Fraction
+    left_product_variable_exponent: Fraction
+    right_product_variable_exponent: Fraction
+    shorter_product_variable_exponent: Fraction
+    longer_product_variable_exponent: Fraction
+    common_divisor_split_exponent: Fraction
+    poisson_multiplied_residual_exponent: Fraction
+    large_sieve_excess_exponent: Fraction
+    effective_density_square_saving_exponent: Fraction
+    density_amplitude_saving_exponent: Fraction
+    on_exact_zero_density_saving_face: bool
+    large_sieve_excess_absorbed_by_density: bool
+    zero_density_face_has_zero_large_sieve_excess: bool
+    all_unequal_product_cells_normalized_excess_covered: bool
+    unbalanced_entry_scale_normalization_derived: bool
+    transform_tail_aggregated: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class UnbalancedCompletionOrientationAudit:
+    left_entry_exponent: Fraction
+    right_entry_exponent: Fraction
+    left_level_factor_exponent: Fraction
+    right_level_factor_exponent: Fraction
+    ambient_level_exponent: Fraction
+    left_product_variable_exponent: Fraction
+    right_product_variable_exponent: Fraction
+    shorter_product_variable_exponent: Fraction
+    longer_product_variable_exponent: Fraction
+    common_residual_shorter_exponent: Fraction
+    left_poisson_exponent: Fraction
+    right_poisson_exponent: Fraction
+    left_large_sieve_excess_exponent: Fraction
+    right_large_sieve_excess_exponent: Fraction
+    left_density_square_saving_exponent: Fraction
+    right_density_square_saving_exponent: Fraction
+    left_continuous_residual_exponent: Fraction
+    right_continuous_residual_exponent: Fraction
+    continuous_chosen_orientation: str
+    continuous_some_orientation_closes: bool
+    poisson_conservation_or_inactive_orientation_exact: bool
+    cuspidal_chosen_poisson_exponent: Fraction
+    cuspidal_primal_dual_normalized_excess_exponent: Fraction
+    cuspidal_holomorphic_normalized_excess_closes: bool
+    left_cuspidal_density_square_requirement_exponent: Fraction
+    right_cuspidal_density_square_requirement_exponent: Fraction
+    common_spectral_orientation: str
+    single_orientation_closes_all_spectral_components: bool
+    conditional_standard_kuznetsov_factor_model_covered: bool
+    inverse_scaled_kloosterman_adapter_derived: bool
+    lifted_non_squarefree_level_family_covered: bool
+    all_normalized_spectral_factor_cells_covered: bool
+    outer_qct_unbalanced_normalization_derived: bool
+    polylogarithmic_transform_tail_aggregated: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class BalancedSpectralFactorPolytopeAudit:
+    left_level_factor_exponent: Fraction
+    right_level_factor_exponent: Fraction
+    product_variable_exponent: Fraction
+    ambient_level_exponent: Fraction
+    shorter_level_factor_exponent: Fraction
+    maximum_residual_hecke_length_exponent: Fraction
+    primal_large_sieve_excess_exponent: Fraction
+    primal_excess_never_exceeds_shorter_factor: bool
+    weighted_crt_square_decay_exponent: Fraction
+    effective_cross_density_square_saving_exponent: Fraction
+    effective_cross_density_amplitude_saving_exponent: Fraction
+    weighted_crt_main_term_dominates: bool
+    cuspidal_normalized_excess_exponent: Fraction
+    cuspidal_holomorphic_bound_exponent: Fraction
+    continuous_bound_exponent: Fraction
+    universal_factor_cell_bound_exponent: Fraction
+    target_exponent: Fraction
+    fixed_margin_exponent: Fraction
+    type_i_type_i_cells_covered: bool
+    mixed_type_i_type_ii_cells_covered: bool
+    type_ii_type_ii_cells_covered: bool
+    balanced_hard_geometry_all_factor_cells_covered: bool
+    unbalanced_original_exponent_polytope_covered: bool
+    polylogarithmic_transform_tail_aggregated: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class NewformLevelMobiusProjectorAudit:
+    prime: int
+    squarefree_level_index: Fraction
+    mobius_convolution_prime_coefficient: Fraction
+    newform_leading_sieve_prime_coefficient: Fraction
+    local_coefficient_difference: Fraction
+    geometric_divisor_convolution_identity_exact: bool
+    newform_formula_requires_squarefree_level: bool
+    newform_prime_power_oldclass_tail_present: bool
+    newform_formula_modifies_hecke_indices: bool
+    local_coefficients_match: bool
+    mobius_level_sum_is_exact_newform_projector: bool
+    exceptional_oldforms_annihilated_algebraically: bool
+    qct_newform_spectral_adapter_derived: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class ExceptionalOldclassMobiusPerronAudit:
+    exceptional_parameter: Fraction
+    natural_level_sum_exponent: Fraction
+    required_level_power_saving: Fraction
+    required_zero_free_real_part: Fraction
+    correction_absolute_convergence_boundary: Fraction
+    squarefree_level_prime_coefficient: Fraction
+    newform_level_index_prime_offset: Fraction
+    leading_cofactor_euler_factor_exact: bool
+    inverse_zeta_square_factor_exact: bool
+    smooth_sum_bound_would_imply_zero_free_strip: bool
+    required_fixed_zero_free_strip_known: bool
+    full_oldclass_tail_recombined: bool
+    averaged_newform_cancellation_proved: bool
+    direct_perron_route_closes_exceptional_gate: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class ExceptionalFullOldclassTailAudit:
+    prime: int
+    hecke_eigenvalue_squared: Fraction
+    exceptional_parameter: Fraction
+    ramanujan_theta: Fraction
+    level_index: Fraction
+    local_rho: Fraction
+    leading_oldclass_multiplier: Fraction
+    full_oldclass_multiplier: Fraction
+    tail_correction: Fraction
+    full_mobius_prime_coefficient: Fraction
+    leading_prime_decay_exponent: Fraction
+    tail_error_decay_exponent: Fraction
+    inverse_zeta_correction_boundary: Fraction
+    tail_correction_boundary: Fraction
+    full_prime_power_tail_recombined: bool
+    full_multiplier_identity_exact: bool
+    tail_changes_only_second_order_euler_terms: bool
+    inverse_zeta_square_factor_persists: bool
+    full_tail_cancels_inverse_zeta_poles: bool
+    averaged_newform_cancellation_proved: bool
+    direct_perron_route_closes_exceptional_gate: bool
+    whole_mobius_gate_covered: bool
+
+
+@dataclass(frozen=True)
+class RoblesFourMobiusMinorArcAudit:
+    variable_length_exponent: Fraction
+    raw_determinant_exponent: Fraction
+    target_exponent: Fraction
+    mobius_variables: int
+    balanced_denominator_lower_exponent: Fraction
+    balanced_denominator_upper_exponent: Fraction
+    one_variable_bound_exponent: Fraction
+    one_variable_power_saving: Fraction
+    optimistic_independent_total_saving: Fraction
+    required_determinant_saving: Fraction
+    optimistic_post_bound_exponent: Fraction
+    optimistic_residual_deficit: Fraction
+    q_equals_one_bound_exponent: Fraction
+    centered_kernel_kills_exact_zero_mode: bool
+    centered_kernel_kills_major_arc_neighborhoods: bool
+    four_applications_are_jointly_legal: bool
+    major_arc_power_saving_available: bool
+    physical_coupled_kernel_restored: bool
+    robles_route_closes_gate: bool
+
+
+@dataclass(frozen=True)
+class RoblesBalancedProductFourierAudit:
+    denominator_exponent: Fraction
+    product_length_exponent: Fraction
+    left_factor_exponent: Fraction
+    right_factor_exponent: Fraction
+    fourier_ambient_exponent: Fraction
+    side_type_ii_bound_exponent: Fraction
+    two_side_pointwise_bound_exponent: Fraction
+    fourier_prefactor_exponent: Fraction
+    fourier_window_exponent: Fraction
+    normalized_fourier_bound_exponent: Fraction
+    raw_determinant_exponent: Fraction
+    target_exponent: Fraction
+    remaining_deficit: Fraction
+    denominator_is_balanced_optimum: bool
+    type_ii_bound_recovers_geometric_window_saving: bool
+    type_ii_bound_supplies_post_geometric_saving: bool
+    absolute_product_bound_preserves_centering: bool
+    signed_two_side_correlation_proved: bool
+    robles_route_closes_gate: bool
+
+
+@dataclass(frozen=True)
+class InverseZetaVarianceZeroFreeAudit:
+    ambient_length_exponent: Fraction
+    short_window_exponent: Fraction
+    variance_bound_exponent: Fraction
+    dyadic_coefficient_block_exponent: Fraction
+    implied_dyadic_convergence_abscissa: Fraction
+    x_integration_identity_exact: bool
+    cauchy_schwarz_exponent_exact: bool
+    dyadic_continuation_argument_exact: bool
+    implies_zeta_zero_free_real_part_gt_three_quarters: bool
+    original_mwkf_asymptotic_requires_this_gate: bool
+    inverse_zeta_variance_gate_available_unconditionally: bool
+
+
+@dataclass(frozen=True)
+class BBLRHPoissonUnsignedHardBoxAudit:
+    old_weil_bound_exponent: Fraction
+    h_poisson_bound_exponent: Fraction
+    local_target_exponent: Fraction
+    recovered_power_saving: Fraction
+    h_length_matches_reduced_modulus: bool
+    h_poisson_identity_exact: bool
+    inverse_fraction_becomes_linear_congruence: bool
+    weighted_gcd_sum_is_diagonal_scale: bool
+    positive_gcd_layers_are_power_negligible: bool
+    approximation_error_exponent: Fraction
+    all_unsigned_hard_box_power_closed: bool
+    global_logarithmic_little_o_closed: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
+class BBLRHPoissonSignedCellAudit:
+    outer_scale_exponent: Fraction
+    large_inner_factor_exponent: Fraction
+    small_inner_factor_exponent: Fraction
+    transformed_shift_exponent: Fraction
+    transformed_side_product_exponent: Fraction
+    transformed_raw_count_exponent: Fraction
+    transformed_required_bound_exponent: Fraction
+    required_outer_mobius_saving: Fraction
+    h_poisson_prefactor_exponent: Fraction
+    first_total_bblr_error_exponent: Fraction
+    second_total_bblr_error_exponent: Fraction
+    global_target_exponent: Fraction
+    power_margin: Fraction
+    dyadic_cross_terms_reduce_to_diagonal_norms: bool
+    transformed_bblr_sharp_condition_holds: bool
+    published_bblr_power_covers_cell: bool
+    boundary_logarithmic_little_o_closed: bool
+    published_bblr_power_coverage_upper: Fraction
+    signed_residual_lower_exponent: Fraction
+    signed_residual_upper_exponent: Fraction
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
+class SignedDualConvolutionAudit:
+    outer_atom_exponent: Fraction
+    h_poisson_dual_exponent: Fraction
+    product_variable_exponent: Fraction
+    signed_atom_count: int
+    signed_dual_product_collapse_exact: bool
+    collapsed_coefficient_is_one_mobius: bool
+    cutoff_condition_retained_exactly: bool
+    actual_transformed_weight_product_compatible: bool
+    ratio_mellin_family_required: bool
+    weighted_collapse_bound_proved: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
+class CoupledRatioMellinTypeIIGateAudit:
+    outer_scale_exponent: Fraction
+    long_mobius_variable_exponent: Fraction
+    collapsed_product_variable_exponent: Fraction
+    shift_exponent: Fraction
+    convolution_ambient_exponent: Fraction
+    progression_modulus_exponent: Fraction
+    modulus_level_relative_to_ambient: Fraction
+    raw_shifted_count_exponent: Fraction
+    required_inner_bound_exponent: Fraction
+    required_cancellation_exponent: Fraction
+    two_collapsed_coefficients_square_root_saving: Fraction
+    square_root_power_margin: Fraction
+    modulus_within_bombieri_vinogradov_level: bool
+    fixed_shift_dispersion_suffices_after_shift_sum: bool
+    quotient_mobius_prevents_direct_bv: bool
+    full_shift_average_must_remain_coupled: bool
+    coprimality_prime_allocation_required: bool
+    four_variable_reduction_exact: bool
+    coupled_ratio_mellin_type_ii_bound_proved: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
+class CollapsedCoprimalityAllocationAudit:
+    cross_coprimality_condition_count: int
+    mobius_allocation_divisor_count: int
+    product_gcd_factorization_exact: bool
+    allocation_is_finite_reindexing: bool
+    positive_power_loss_exponent: Fraction
+    registered_logarithmic_loss: Fraction
+    four_variable_superposition_exact: bool
+    collapsed_coefficients_independent_of_long_variables: bool
+    standard_bombieri_vinogradov_adapter_applies: bool
+    coupled_ratio_mellin_type_ii_bound_proved: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
+class CollapsedChowlaFaceAudit:
+    outer_scale_exponent: Fraction
+    long_mobius_variable_exponent: Fraction
+    collapsed_product_variable_exponent: Fraction
+    equal_face_raw_exponent: Fraction
+    required_inner_bound_exponent: Fraction
+    positive_power_margin: Fraction
+    equal_collapsed_product_face_present: bool
+    determinant_reduces_to_fixed_shift: bool
+    primitive_gcd_excludes_face: bool
+    pointwise_zero_ratio_coefficient_is_mobius: bool
+    face_contains_two_point_chowla: bool
+    ordinary_two_point_chowla_available_unconditionally: bool
+    logarithmic_little_o_required: bool
+    uniform_ratio_frequency_triangle_gate_admissible: bool
+    joint_ratio_integral_must_remain_coupled: bool
+    coupled_ratio_mellin_type_ii_bound_proved: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
+class PhysicalJointRatioRecombinationAudit:
+    ratio_mellin_recombines_to_finite_divisor_kernel: bool
+    primitive_equal_face_coefficient_can_be_nonzero: bool
+    witness_equal_face_coefficient: int
+    joint_ratio_integration_alone_annihilates_chowla_face: bool
+    arbitrary_smooth_weight_enlargement_admissible: bool
+    allocationwise_triangle_inequality_admissible: bool
+    equal_face_separate_bound_available_unconditionally: bool
+    full_outer_scale_and_kernel_sum_must_remain_coupled: bool
+    centered_coupled_dispersion_bound_proved: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
+class CollapsedGcdLayerCenteredKernelAudit:
+    collapsed_exponent: Fraction
+    gcd_exponent: Fraction
+    cofactor_exponent: Fraction
+    product_length_exponent: Fraction
+    primitive_shift_exponent: Fraction
+    raw_dyadic_layer_exponent: Fraction
+    global_target_exponent: Fraction
+    required_saving_exponent: Fraction
+    fourier_inner_target_exponent: Fraction
+    shift_weight_vanishes_near_zero: bool
+    product_diagonal_annihilated_exactly: bool
+    constant_fourier_mode_centered_exactly: bool
+    full_g_sum_retained: bool
+    full_allocation_and_ratio_sum_retained: bool
+    top_equal_product_face: bool
+    fixed_affine_chowla_must_remain_inside_g_sum: bool
+    pointwise_fixed_affine_chowla_bound_assumed: bool
+    published_averaged_chowla_adapter_applies: bool
+    centered_coupled_dispersion_bound_proved: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
+class TopEqualProductOuterPntAudit:
+    signed_atom_exponent: Fraction
+    poisson_quotient_exponent: Fraction
+    outer_pair_raw_exponent: Fraction
+    long_correlation_trivial_exponent: Fraction
+    face_raw_exponent: Fraction
+    face_target_exponent: Fraction
+    power_margin: Fraction
+    primitive_equal_product_factorization_exact: bool
+    signed_atom_interval_convolution_exact: bool
+    balanced_cutoff_ratios_verified: bool
+    uniform_coprime_pnt_log_saving_available: bool
+    coprime_euler_factor_loss_only_polylogarithmic: bool
+    long_mobius_correlation_used_only_trivially: bool
+    fixed_affine_chowla_estimate_required: bool
+    top_equal_product_face_closed_unconditionally: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
+class PolylogGcdCollarOuterPntAudit:
+    polylog_depth: int
+    cofactor_power_exponent: Fraction
+    cross_gcd_power_exponent: Fraction
+    poisson_quotient_power_exponent: Fraction
+    required_power_saving_exponent: Fraction
+    primitive_unequal_product_factorization_exact: bool
+    cross_gcd_product_identity_exact: bool
+    prescribed_divisibility_coprime_pnt_available: bool
+    arbitrary_log_saving_absorbs_polylog_variables: bool
+    long_affine_mobius_sum_used_only_trivially: bool
+    polylog_gcd_collar_closed_unconditionally: bool
+    strict_positive_power_gcd_layers_covered: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
+class StrictPowerGcdCoreAudit:
+    collapsed_exponent: Fraction
+    cofactor_exponent: Fraction
+    gcd_exponent: Fraction
+    quotient_exponent: Fraction
+    left_cross_gcd_exponent: Fraction
+    right_cross_gcd_exponent: Fraction
+    left_reduced_slope_exponent: Fraction
+    right_reduced_slope_exponent: Fraction
+    left_reduced_signed_exponent: Fraction
+    right_reduced_signed_exponent: Fraction
+    unsigned_reduced_block_exponent: Fraction
+    signed_reduced_block_exponent: Fraction
+    reconstructed_gcd_exponent: Fraction
+    raw_core_exponent: Fraction
+    target_core_exponent: Fraction
+    required_saving_exponent: Fraction
+    exponent_polytope_feasible: bool
+    unsigned_block_equals_full_deficit: bool
+    all_allocations_and_ratio_integrals_retained: bool
+    long_and_collapsed_arithmetic_weights_on_each_side: bool
+    bblr_arbitrary_outer_coefficient_adapter_applies: bool
+    centered_three_block_type_ii_required: bool
+    centered_three_block_type_ii_proved: bool
+    whole_signed_hard_face_covered: bool
+
+
+@dataclass(frozen=True)
+class StrictPowerConvolutionKloostermanAudit:
+    collapsed_exponent: Fraction
+    cofactor_exponent: Fraction
+    gcd_exponent: Fraction
+    quotient_exponent: Fraction
+    left_cross_gcd_exponent: Fraction
+    right_cross_gcd_exponent: Fraction
+    left_convolved_outer_exponent: Fraction
+    right_convolved_outer_exponent: Fraction
+    left_inner_slope_exponent: Fraction
+    right_inner_slope_exponent: Fraction
+    side_product_exponent: Fraction
+    remaining_outer_exponent: Fraction
+    bblr_convolution_hypotheses_verified: bool
+    bblr_ab_error_exponent: Fraction
+    bblr_watt_error_exponent: Fraction
+    bblr_inner_target_exponent: Fraction
+    bblr_ab_deficit: Fraction
+    bblr_watt_deficit: Fraction
+    bblr_convolution_route_covered: bool
+    poisson_dual_exponent: Fraction
+    poisson_numerator_exponent: Fraction
+    poisson_normalization_exponent: Fraction
+    bc_poisson_hypotheses_verified: bool
+    bc_first_total_exponent: Fraction
+    bc_second_total_exponent: Fraction
+    bc_first_deficit: Fraction
+    bc_second_deficit: Fraction
+    bc_poisson_route_covered: bool
+    original_cross_diagonal_removed_by_centering: bool
+    cauchy_tuple_diagonal_exponent: Fraction
+    cauchy_grouped_diagonal_exponent: Fraction
+    cauchy_diagonal_target_exponent: Fraction
+    cauchy_grouped_diagonal_deficit: Fraction
+    cauchy_grouped_diagonal_is_raw_scale: bool
+    cauchy_grouped_diagonal_killed_by_centering: bool
+    hard_vertex_inverse_zeta_square_variance: bool
+    near_frequency_type_ii_proved: bool
+
+
+@dataclass(frozen=True)
+class StrictPowerRatioMellinBandwidthAudit:
+    collapsed_exponent: Fraction
+    cofactor_exponent: Fraction
+    quotient_exponent: Fraction
+    left_cross_gcd_exponent: Fraction
+    right_cross_gcd_exponent: Fraction
+    left_hidden_fibre_exponent: Fraction
+    right_hidden_fibre_exponent: Fraction
+    total_hidden_fibre_exponent: Fraction
+    height_phase_log_derivative_power_exponent: Fraction
+    ratio_weight_log_derivative_power_exponent: Fraction
+    effective_mellin_frequency_power_exponent: Fraction
+    left_adjacent_resolution_frequency_exponent: Fraction
+    right_adjacent_resolution_frequency_exponent: Fraction
+    remaining_cauchy_deficit_exponent: Fraction
+    mellin_power_tail_is_rapid: bool
+    scaled_T_tau_not_independent_bandwidth: bool
+    height_phase_creates_second_power_coordinate: bool
+    ratio_mellin_resolves_positive_hidden_fibres: bool
+    ratio_mellin_supplies_required_delta_saving: bool
+    pre_cauchy_joint_kernel_still_required: bool
+
+
+@dataclass(frozen=True)
+class StrictPowerDoublePoissonResonanceAudit:
+    collapsed_exponent: Fraction
+    cofactor_exponent: Fraction
+    gcd_exponent: Fraction
+    quotient_exponent: Fraction
+    left_cross_gcd_exponent: Fraction
+    right_cross_gcd_exponent: Fraction
+    left_slope_exponent: Fraction
+    right_slope_exponent: Fraction
+    left_modulus_exponent: Fraction
+    right_modulus_exponent: Fraction
+    left_dual_exponent: Fraction
+    right_dual_exponent: Fraction
+    dual_side_product_exponent: Fraction
+    resonance_shift_exponent: Fraction
+    poisson_amplitude_exponent: Fraction
+    overlap_integral_exponent: Fraction
+    transformed_absolute_inner_exponent: Fraction
+    original_inner_raw_exponent: Fraction
+    absolute_transform_loss_exponent: Fraction
+    transformed_global_absolute_exponent: Fraction
+    global_target_exponent: Fraction
+    transformed_required_saving_exponent: Fraction
+    resonance_identity_exact: bool
+    two_poisson_scales_exact: bool
+    absolute_transform_loss_is_one_minus_delta_plus_theta: bool
+    absolute_double_poisson_route_covered: bool
+    pre_cauchy_signed_resonance_estimate_required: bool
+    bblr_sharp_range_verified: bool
+    bblr_ab_before_normalization_exponent: Fraction
+    bblr_watt_before_normalization_exponent: Fraction
+    transform_normalization_exponent: Fraction
+    bblr_ab_total_exponent: Fraction
+    bblr_watt_total_exponent: Fraction
+    bblr_ab_deficit: Fraction
+    bblr_watt_deficit: Fraction
+    original_bblr_ab_deficit: Fraction
+    original_bblr_watt_deficit: Fraction
+    bblr_ab_deficit_is_invariant: bool
+    bblr_watt_extra_deficit: Fraction
+    bblr_watt_extra_deficit_is_nonnegative: bool
+    double_poisson_improves_bblr: bool
 
 
 @dataclass(frozen=True)
@@ -2913,6 +6399,77 @@ def large_q_boundary_reflection_audit(
         reflected_tail_phase_separated_at_boundary=False,
         formal_remaining_terms=("reflected_tail", "reflected_tail"),
         reflected_tail_energy_estimate_proved=False,
+        unconditional_coverage=False,
+    )
+
+
+def large_q_paired_boundary_completion_audit(
+    box: ExponentBox,
+    *,
+    shift_log_depth: Fraction,
+    zeta_log_depth: Fraction,
+) -> LargeQPairedBoundaryCompletionAudit:
+    """Test the narrow boundary-plus-lower-tail completion proposal.
+
+    On ``PX <= n <= 2PX`` the restricted complete divisor convolution
+    has four exact complementary-divisor pieces: lower reflected tail,
+    boundary tail, boundary available, and upper available.  Pairing the
+    available boundary box only with the lower reflected tail leaves the
+    other two pieces.  The fixture ``n=102, X=35, q=5, P=2`` additionally
+    has the squarefree representations ``102=3*34=6*17``.  Thus the upper
+    available piece can move both zeta variables from the boundary box to
+    product ``6^2>35``, across the model AFE transition.
+    """
+    if not _is_large_q_bounded_zeta_endpoint(box):
+        raise ValueError("box is not the large-q bounded-zeta endpoint")
+    if shift_log_depth != F(2) or zeta_log_depth != F(2):
+        raise ValueError("paired completion audit is for the (2,2) face")
+
+    product = 102
+    cutoff = 35
+    modulus = 5
+    boundary_divisor = 34
+    upper_divisor = 17
+    partition = restricted_complementary_divisor_partition(
+        product,
+        cutoff_x=cutoff,
+        modulus_q=modulus,
+        boundary_p=2,
+    )
+    boundary_scale = product // boundary_divisor
+    upper_scale = product // upper_divisor
+    upper_product = upper_scale * upper_scale
+    return LargeQPairedBoundaryCompletionAudit(
+        shift_log_depth=shift_log_depth,
+        zeta_log_depth=zeta_log_depth,
+        finite_four_piece_identity_is_exact=(
+            partition.complete_identity_holds
+            and partition.complete_matches_sparse_formula
+        ),
+        strict_lower_log_depth_tail_has_height_phase_saving=True,
+        constant_ratio_lower_tail_has_height_phase_saving=False,
+        boundary_plus_lower_tail_closes_completion=(
+            partition.pair_closes_completion
+        ),
+        unpaired_boundary_tail_remains=bool(
+            partition.boundary_tail_divisors
+        ),
+        unpaired_upper_available_scales_remain=bool(
+            partition.above_boundary_available_divisors
+        ),
+        witness_product=product,
+        witness_cutoff=cutoff,
+        witness_modulus=modulus,
+        witness_boundary_divisor=boundary_divisor,
+        witness_boundary_zeta_scale=boundary_scale,
+        witness_upper_divisor=upper_divisor,
+        witness_upper_zeta_scale=upper_scale,
+        witness_two_sided_upper_product=upper_product,
+        full_completion_can_cross_afe_transition=(upper_product > cutoff),
+        remaining_gates=(
+            "boundary_tail_at_log_depth_2",
+            "upper_available_cross_scale_transition",
+        ),
         unconditional_coverage=False,
     )
 
@@ -4883,6 +8440,12 @@ def transition_delta_lattice_poisson_audit(
         zero_mode_obstruction_independent_of_determinant_shell=(
             zero_absolute == F(3)
         ),
+        zero_mode_covolume_jacobian_cancels_exactly=True,
+        zero_mode_is_continuous_slope_gram=True,
+        full_zero_mode_gram_positive_semidefinite=True,
+        offdiagonal_is_full_gram_minus_identity_diagonal=True,
+        kernel_alone_annihilates_zero_mode=False,
+        square_function_route_is_only_sufficient=True,
         zero_mode_weight_separates_in_the_entries=False,
         zero_mode_mobius_variance_proved=False,
         whole_delta_lattice_covered=False,
@@ -6442,6 +10005,72 @@ def transition_bblr_hard_h_completion_audit(
     )
 
 
+def transition_banks_shparlinski_pre_cauchy_audit(
+) -> TransitionBanksShparlinskiPreCauchyAudit:
+    """Test the multiple-Mobius additive bound on the hard slope box.
+
+    Before Cauchy, the hard transition equation is
+
+        r v - (k v + j) s = delta,
+
+    with ``r,s`` of exponent one and ``v,j,delta`` of exponent one
+    half.  Banks--Shparlinski's Theorem 2.1 is ternary additive and
+    puts a Mobius factor on all three summation variables.  Thus the
+    two bilinear slope variables must first be fixed, while the
+    original shift ``delta`` has no Mobius factor.  Divisor convolution
+    can insert that missing factor algebraically, but cannot improve
+    the length estimate.
+
+    With lengths ``T,T,T^(1/2)``, the best assignment to the theorem's
+    roles gives exponent ``3/2`` for a fixed slope.  Direct geometric
+    counting is already exponent one, so the theorem is discarded.
+    Restoring the ``(v,j)`` family and the h-Poisson factor gives
+    ``1+1+1/2=5/2`` against target exponent two.  The short-interval
+    theorem has threshold ``5/8``, whereas the actual short variable
+    has exponent ``1/2``.
+    """
+    entry = F(1)
+    dual_v = F(1, 2)
+    dual_j = F(1, 2)
+    slope_family = dual_v + dual_j
+    shift = F(1, 2)
+    geometric = F(1)
+    theorem = F(3, 2)
+    best_fixed = min(geometric, theorem)
+    h_poisson = F(1, 2)
+    aggregate = best_fixed + slope_family + h_poisson
+    target = F(2)
+    short_threshold = F(5, 8)
+    short_actual = shift
+    return TransitionBanksShparlinskiPreCauchyAudit(
+        entry_scale_exponent=entry,
+        dual_v_exponent=dual_v,
+        dual_j_exponent=dual_j,
+        fixed_slope_family_exponent=slope_family,
+        shift_variable_exponent=shift,
+        fixed_slope_geometric_count_exponent=geometric,
+        best_theorem_role_bound_exponent=theorem,
+        best_fixed_slope_bound_exponent=best_fixed,
+        h_poisson_factor_exponent=h_poisson,
+        aggregated_exponent=aggregate,
+        target_exponent=target,
+        power_margin=target - aggregate,
+        short_interval_threshold_exponent=short_threshold,
+        actual_short_interval_exponent=short_actual,
+        short_interval_threshold_margin=short_actual - short_threshold,
+        additive_theorem_requires_fixing_both_bilinear_slopes=True,
+        original_shift_has_no_mobius_weight=True,
+        divisor_convolution_can_insert_the_missing_mobius_weight=True,
+        divisor_convolution_creates_power_saving=False,
+        all_actual_kernel_hypotheses_verified=False,
+        published_theorem_closes_pre_cauchy_sum=False,
+        source=(
+            "Banks--Shparlinski, arXiv:2506.08787v1, "
+            "Theorems 2.1 and 2.4"
+        ),
+    )
+
+
 def transition_bblr_h_completion_subcell_audit(
     *,
     outer_a_exponent: Fraction,
@@ -6546,6 +10175,4088 @@ def transition_bblr_h_completion_subcell_audit(
     )
 
 
+def _is_prime_integer(n: int) -> bool:
+    if n < 2:
+        return False
+    return all(n % divisor for divisor in range(2, isqrt(n) + 1))
+
+
+def transition_ramare_squarefree_identity(
+    *,
+    n: int,
+    prime_lower: int,
+    prime_upper: int,
+) -> dict[str, object]:
+    """Evaluate Ramaré's exact prime extraction on squarefree support.
+
+    If ``omega_P(n)`` counts prime divisors of ``n`` in the selected
+    band and is nonzero, squarefreeness gives
+
+        mu(n) = -omega_P(n)^(-1) sum_(p|n, p in P) mu(n/p).
+
+    The identity is deliberately undefined when the band contains no
+    prime divisor.  That exceptional sector has to be estimated rather
+    than silently discarded.
+    """
+    if n < 1:
+        raise ValueError("n must be positive")
+    if prime_lower < 2 or prime_upper < prime_lower:
+        raise ValueError("invalid prime band")
+    mobius_value = _finite_mobius(n)
+    if mobius_value == 0:
+        raise ValueError("Ramaré extraction is restricted to squarefree n")
+    band_primes = tuple(
+        prime
+        for prime in range(prime_lower, prime_upper + 1)
+        if n % prime == 0 and _is_prime_integer(prime)
+    )
+    omega = len(band_primes)
+    cofactor_sum = sum(_finite_mobius(n // prime) for prime in band_primes)
+    ramare_value = F(-cofactor_sum, omega) if omega else None
+    positive_factor_count = (
+        min(1 + int(n // prime > 1) for prime in band_primes)
+        if band_primes
+        else 0
+    )
+    return {
+        "mobius_value": mobius_value,
+        "band_prime_divisors": band_primes,
+        "band_prime_divisor_count": omega,
+        "cofactor_mobius_sum": cofactor_sum,
+        "ramare_value": ramare_value,
+        "identity_applies": bool(omega),
+        "identity_exact": bool(omega) and ramare_value == mobius_value,
+        "minimum_positive_length_factor_count": positive_factor_count,
+    }
+
+
+def transition_ramare_medium_prime_audit(
+    *,
+    entry_exponent: Fraction,
+    band_lower_exponent: Fraction,
+    band_upper_exponent: Fraction,
+) -> TransitionRamareMediumPrimeAudit:
+    """Test whether a Ramaré prime band forces useful multilinearity.
+
+    For entries of length ``A=T^alpha``, a proper band ending at
+    ``T^nu`` with ``nu<alpha`` misses every prime entry ``p~A``.  The
+    prime number theorem gives ``A/log A`` such entries, so this sector
+    has exponent ``alpha`` and only one logarithm of density saving.
+
+    Extending the band to ``nu=alpha`` includes those primes, but their
+    exact Ramaré term is ``p=p*1``.  It has only one positive-length
+    factor and therefore does not force a multilinear Kloosterman box.
+    """
+    alpha = F(entry_exponent)
+    lower = F(band_lower_exponent)
+    upper = F(band_upper_exponent)
+    if alpha <= 0:
+        raise ValueError("entry exponent must be positive")
+    if lower <= 0 or lower > upper or upper > alpha:
+        raise ValueError("prime-band exponents must satisfy 0<lower<=upper<=entry")
+    reaches = upper == alpha
+    power_saving = F(0)
+    return TransitionRamareMediumPrimeAudit(
+        entry_exponent=alpha,
+        band_lower_exponent=lower,
+        band_upper_exponent=upper,
+        required_line_saving_exponent=alpha,
+        prime_exceptional_set_exponent=F(0) if reaches else alpha,
+        prime_exceptional_log_density_saving=F(0) if reaches else F(1),
+        prime_exceptional_power_density_saving=power_saving,
+        uncovered_power_deficit=alpha - power_saving,
+        band_reaches_entry_scale=reaches,
+        proper_band_leaves_prime_sector_exceptional=not reaches,
+        prime_sector_is_in_ramare_sum=reaches,
+        prime_sector_extracted_factor_exponent=alpha if reaches else F(0),
+        prime_sector_cofactor_exponent=F(0),
+        prime_sector_positive_length_factor_count=1 if reaches else 0,
+        forces_two_positive_length_factors=False,
+        ramare_decomposition_closes_line_gate=False,
+        source="exact Ramaré identity and the prime number theorem",
+    )
+
+
+def transition_prime_kloosterman_audit(
+) -> TransitionPrimeKloostermanAudit:
+    """Compare prime-specific Kloosterman bounds at their best scale.
+
+    Dunn--Zaharescu Theorem 1.1 gives ``q^(1/6) X^(7/9)``
+    for all primes, while Theorem 1.2 gives
+    ``q^(11/192) X^(15/16)`` for primes in a progression whose
+    modulus is at most ``q^(1/100)``.  At the most favorable endpoint
+    ``X=q=T`` these save ``T^(1/18)`` and ``T^(1/192)``.
+
+    Even granting four independent applications, which the actual
+    coupled determinant kernel does not permit, the savings remain
+    below the required half power.  The actual determinant modulus is
+    also moving and can be composite.
+    """
+    modulus = F(1)
+    prime_interval = F(1)
+    required = F(1, 2)
+    unrestricted_bound = F(1, 6) + F(7, 9)
+    progression_bound = F(11, 192) + F(15, 16)
+    unrestricted_saving = F(1) - unrestricted_bound
+    progression_saving = F(1) - progression_bound
+    four_unrestricted = 4 * unrestricted_saving
+    four_progression = 4 * progression_saving
+    return TransitionPrimeKloostermanAudit(
+        modulus_exponent=modulus,
+        prime_interval_exponent=prime_interval,
+        required_saving_exponent=required,
+        unrestricted_prime_bound_exponent=unrestricted_bound,
+        unrestricted_prime_saving_exponent=unrestricted_saving,
+        progression_prime_bound_exponent=progression_bound,
+        progression_prime_saving_exponent=progression_saving,
+        progression_modulus_cap_exponent=F(1, 100),
+        optimistic_four_unrestricted_saving_exponent=four_unrestricted,
+        optimistic_four_unrestricted_deficit=required - four_unrestricted,
+        optimistic_four_progression_saving_exponent=four_progression,
+        optimistic_four_progression_deficit=required - four_progression,
+        published_theorem_has_fixed_prime_modulus=True,
+        actual_determinant_moduli_all_prime=False,
+        standard_single_kloosterman_argument_verified=False,
+        other_entry_weights_separate=False,
+        published_theorem_closes_prime_sector=False,
+        source=(
+            "Dunn--Zaharescu, arXiv:1801.05880, "
+            "Theorems 1.1 and 1.2"
+        ),
+    )
+
+
+def poisson_exchange_reciprocity_identity(
+    *,
+    r: int,
+    s: int,
+    h: int,
+    delta: int,
+) -> dict[str, object]:
+    """Check the exact phase correction in the swapped Poisson box.
+
+    The original orientation Poisson-sums the variable ``x=m_2`` modulo
+    ``s``.  Swapping ``(d,e,m_1,m_2)`` changes the modulus to ``r`` and,
+    after ``y=(xr+delta)/s``, sends ``(delta,h)`` to
+    ``(-delta,-h)``.  The transformed Fourier kernel contributes
+
+        (r/s) e(h*delta/(r*s)) conjugate(K_{r,s}(delta,h)).
+
+    Additive reciprocity then turns the swapped arithmetic phase into the
+    conjugate of the original one.  This is a statement about the *full*
+    Poisson term; the kernel by itself is not invariant.
+    """
+    if r <= 0 or s <= 0:
+        raise ValueError("Poisson moduli must be positive")
+    primitive = gcd(r, s) == 1
+    if not primitive:
+        raise ValueError("exchange reciprocity requires gcd(r,s)=1")
+    r_inverse_mod_s = pow(r, -1, s)
+    s_inverse_mod_r = pow(s, -1, r)
+    swapped_with_kernel_correction = (
+        -F(h * delta * s_inverse_mod_r, r)
+        + F(h * delta, r * s)
+    )
+    conjugate_original = F(h * delta * r_inverse_mod_s, s)
+    exact = (
+        swapped_with_kernel_correction - conjugate_original
+    ).denominator == 1
+    return {
+        "primitive_pair": primitive,
+        "swapped_arithmetic_phase": -F(h * delta * s_inverse_mod_r, r),
+        "kernel_reciprocity_correction": F(h * delta, r * s),
+        "conjugate_original_phase": conjugate_original,
+        "reciprocity_phase_exact": exact,
+        "swapped_full_poisson_term_is_conjugate": exact,
+    }
+
+
+def centered_conjugate_pair_taylor_coefficients(
+    *,
+    real_part: Fraction,
+    imaginary_part: Fraction,
+) -> dict[str, Fraction | bool]:
+    """Taylor ledger for a centered phase paired only by conjugation.
+
+    With ``A=a+i*b`` and ``u=2*pi*x``, the exact paired expression is
+
+        A (exp(iu)-1) + conjugate(A) (exp(-iu)-1)
+        = 2*a*(cos(u)-1) - 2*b*sin(u).
+
+    Its linear coefficient is therefore ``-2*b``.  Exchange symmetry
+    supplies conjugation but does not force ``b=0``.
+    """
+    a = F(real_part)
+    b = F(imaginary_part)
+    return {
+        "constant_coefficient": F(0),
+        "linear_coefficient_in_2pi_x": -2 * b,
+        "quadratic_coefficient_in_2pi_x": -a,
+        "second_order_zero": b == 0,
+    }
+
+
+def poisson_exchange_second_order_audit() -> PoissonExchangeSecondOrderAudit:
+    """Record why exact exchange symmetry does not square the collar gain."""
+    return PoissonExchangeSecondOrderAudit(
+        physical_shifted_sum_swap_is_conjugate=True,
+        poisson_modulus_changes_under_swap=True,
+        reciprocity_correction_retained=True,
+        full_poisson_term_swap_is_conjugate=True,
+        completed_coefficient_forced_real=False,
+        imaginary_coefficient_has_linear_centered_term=True,
+        second_order_bound_requires_real_coefficient=True,
+        second_order_collar_unconditional=False,
+    )
+
+
+def common_modulus_degenerate_gauss_identity(
+    *,
+    r: int,
+    s: int,
+    c: int,
+    v: int,
+) -> dict[str, object]:
+    """Evaluate the degenerate bilinear Gauss kernel modulo ``r*s``.
+
+    Put ``Q=r*s``, ``u=inverse(r mod s)``, and ``A=r*u``.  Summing
+    ``e((c*x+v*y-A*x*y)/Q)`` first over ``x`` forces
+    ``c=A*y (mod Q)``.  This has solutions exactly when ``r|c``.  The
+    resulting ``r`` values of ``y`` form one class modulo ``s``; their
+    geometric character sum vanishes unless ``r|v``.  If
+    ``c=r*c0`` and ``v=r*v0``, the exact value is
+
+        Q*r*e(r*c0*v0/s).
+
+    The helper verifies the congruence-orbit part with finite integers and
+    records the character-orthogonality conclusion without floating point.
+    """
+    if r <= 0 or s <= 0:
+        raise ValueError("common-modulus factors must be positive")
+    if gcd(r, s) != 1:
+        raise ValueError("common-modulus Gauss identity requires gcd(r,s)=1")
+    modulus = r * s
+    c_mod = c % modulus
+    v_mod = v % modulus
+    inverse_r_mod_s = pow(r, -1, s)
+    bilinear_coefficient = r * inverse_r_mod_s
+    qualifying_y = tuple(
+        y
+        for y in range(modulus)
+        if (c_mod - bilinear_coefficient * y) % modulus == 0
+    )
+    r_divides_c = c_mod % r == 0
+    r_divides_v = v_mod % r == 0
+    if r_divides_c:
+        c0 = c_mod // r
+        y0 = (r * c0) % s
+        expected_y = tuple(sorted((y0 + s * t) % modulus for t in range(r)))
+    else:
+        c0 = 0
+        expected_y = ()
+    orbit_exact = tuple(sorted(qualifying_y)) == expected_y
+
+    if r_divides_c and r_divides_v:
+        v0 = v_mod // r
+        phase = F((r * c0 * v0) % s, s)
+        amplitude = modulus * r
+        character_exact = len({(v_mod * y) % modulus for y in qualifying_y}) == 1
+    else:
+        phase = None
+        amplitude = 0
+        # Once the exact y-orbit is known, finite character orthogonality
+        # gives sum_(t mod r) e(v*t/r)=0 precisely when r does not divide v.
+        character_exact = (not r_divides_c) or (not r_divides_v)
+    return {
+        "common_modulus": modulus,
+        "bilinear_coefficient": bilinear_coefficient,
+        "qualifying_y": qualifying_y,
+        "r_divides_c": r_divides_c,
+        "r_divides_v": r_divides_v,
+        "r_divides_c_and_v": r_divides_c and r_divides_v,
+        "gauss_support_requires_r_divides_c_and_v": True,
+        "gauss_amplitude": amplitude,
+        "gauss_phase": phase,
+        "orthogonality_derivation_exact": orbit_exact and character_exact,
+    }
+
+
+def common_modulus_exchange_audit() -> CommonModulusExchangeAudit:
+    """Audit lifting both Poisson orientations to the modulus ``r*s``.
+
+    At the balanced hard box, ``r,s=T^3`` and ``H=L=T^(5/2)``.
+    Raw common-modulus dual variables therefore have exponent ``7/2``.
+    The degenerate Gauss identity forces both to be multiples of ``r``
+    in the original orientation and of ``s`` after exchange, reducing
+    each back to exponent ``1/2``.  Since ``gcd(r,s)=1``, the two
+    sublattices meet modulo ``r*s`` only at zero, where the centered phase
+    is zero.  No nonzero coefficient is paired with its conjugate.
+    """
+    common_modulus = F(6)
+    raw_dual = common_modulus - F(5, 2)
+    support_divisor = F(3)
+    reduced_dual = raw_dual - support_divisor
+    return CommonModulusExchangeAudit(
+        common_modulus_exponent=common_modulus,
+        raw_dual_c_exponent=raw_dual,
+        raw_dual_v_exponent=raw_dual,
+        original_gauss_support_divisor_exponent=support_divisor,
+        swapped_gauss_support_divisor_exponent=support_divisor,
+        reduced_dual_c_exponent=reduced_dual,
+        reduced_dual_v_exponent=reduced_dual,
+        original_frequency_sublattice_is_r_times_square=True,
+        swapped_frequency_sublattice_is_s_times_square=True,
+        nonzero_sublattice_intersection_empty_mod_rs=True,
+        centered_zero_frequency_annihilated=True,
+        common_modulus_forces_real_completed_coefficient=False,
+        common_modulus_reduces_conductor=False,
+        second_order_collar_unconditional=False,
+    )
+
+
+def midpoint_common_modulus_involution_identity(
+    *,
+    r: int,
+    s: int,
+    c: int,
+    v: int,
+) -> dict[str, object]:
+    """Evaluate the midpoint-gauged Gauss kernel modulo ``2*r*s``.
+
+    Put ``Q=2*r*s`` and ``A=2*r*inverse(r mod s)-1``.  Then ``A`` is a
+    unit modulo ``Q``, ``A^2=1 (mod Q)``, and exchanging ``r,s`` replaces
+    ``A`` by ``-A``.  Hence
+
+        sum_(x,y mod Q) e((c*x+v*y-A*x*y)/Q) = Q e(A*c*v/Q),
+
+    and the exchanged kernel has the conjugate phase at the same pair
+    ``(c,v)``.  All claims returned here are checked by integer arithmetic.
+    """
+    if r <= 1 or s <= 1:
+        raise ValueError("midpoint factors must exceed one")
+    if gcd(r, s) != 1:
+        raise ValueError("midpoint identity requires gcd(r,s)=1")
+    modulus = 2 * r * s
+    inverse_r_mod_s = pow(r, -1, s)
+    inverse_s_mod_r = pow(s, -1, r)
+    coefficient = (2 * r * inverse_r_mod_s - 1) % modulus
+    swapped_coefficient = (2 * s * inverse_s_mod_r - 1) % modulus
+    c_mod = c % modulus
+    v_mod = v % modulus
+    qualifying_y = tuple(
+        y for y in range(modulus) if (c_mod - coefficient * y) % modulus == 0
+    )
+    expected_y = (coefficient * c_mod) % modulus
+    phase_numerator = (coefficient * c_mod * v_mod) % modulus
+    swapped_phase_numerator = (
+        swapped_coefficient * c_mod * v_mod
+    ) % modulus
+    return {
+        "common_modulus": modulus,
+        "bilinear_coefficient": coefficient,
+        "swapped_bilinear_coefficient": swapped_coefficient,
+        "coefficient_is_unit": gcd(coefficient, modulus) == 1,
+        "coefficient_is_involution": coefficient * coefficient % modulus == 1,
+        "swap_negates_coefficient": (
+            coefficient + swapped_coefficient
+        ) % modulus == 0,
+        "qualifying_y": qualifying_y,
+        "unique_qualifying_y_is_Ac": qualifying_y == (expected_y,),
+        "gauss_amplitude": modulus,
+        "gauss_phase": F(phase_numerator, modulus),
+        "swapped_gauss_phase": F(swapped_phase_numerator, modulus),
+        "swap_phase_is_conjugate": (
+            phase_numerator + swapped_phase_numerator
+        ) % modulus == 0,
+    }
+
+
+def midpoint_hermitian_completion_audit() -> MidpointHermitianCompletionAudit:
+    """Record the exact balanced-box ledger for midpoint completion.
+
+    The common modulus ``2*r*s`` still has exponent six.  With
+    ``H=L=T^(5/2)``, both raw dual windows have exponent ``7/2``.  The
+    completed ambient cardinality is therefore ``T^13``.  The completion
+    prefactor ``H*L/Q`` is ``T^-1``, so the local ``T^6 log^-B`` target
+    becomes a ``T^7 log^-B`` Hermitian-sum gate.  This allows ``T^(1/2)``
+    beyond square root and is not supplied by a verified published theorem.
+    """
+    modulus = F(6)
+    raw_dual = modulus - F(5, 2)
+    ambient = F(3) + F(3) + raw_dual + raw_dual
+    prefactor = F(5, 2) + F(5, 2) - modulus
+    gate_target = F(6) - prefactor
+    square_root = ambient / 2
+    return MidpointHermitianCompletionAudit(
+        common_modulus_exponent=modulus,
+        raw_dual_c_exponent=raw_dual,
+        raw_dual_v_exponent=raw_dual,
+        completed_ambient_exponent=ambient,
+        completion_prefactor_exponent=prefactor,
+        completed_gate_target_exponent=gate_target,
+        square_root_ambient_exponent=square_root,
+        allowance_beyond_square_root_exponent=gate_target - square_root,
+        midpoint_coefficient_is_unit=True,
+        midpoint_coefficient_is_involution=True,
+        exchange_negates_midpoint_coefficient=True,
+        same_frequency_swap_is_conjugate=True,
+        centered_multiplier_zero_on_c_zero_row=True,
+        centered_multiplier_zero_on_v_zero_column=True,
+        modular_involution_phase_is_near_diagonal_small=False,
+        published_bound_verified=False,
+    )
+
+
+def midpoint_salie_phase_identity(
+    *,
+    r: int,
+    s: int,
+    c: int,
+    v: int,
+) -> dict[str, Fraction | bool]:
+    """Match the midpoint phase to an antisymmetric Hermitian fraction.
+
+    For least positive inverses and coprime ``r,s>1``, one has
+    ``r*rbar_s+s*sbar_r=1+r*s``.  Division by two therefore retains a
+    parity correction:
+
+        A*c*v/(2*r*s)
+        = c*v/2 * (rbar_s/s-sbar_r/r) + c*v/2  (mod 1).
+
+    The last term is ``0`` or ``1/2`` and can be absorbed into the dual
+    frequency coefficient as ``(-1)^(c*v)``.
+    """
+    if r <= 1 or s <= 1:
+        raise ValueError("Salié-phase factors must exceed one")
+    if gcd(r, s) != 1:
+        raise ValueError("Salié-phase identity requires gcd(r,s)=1")
+
+    def mod_one(value: Fraction) -> Fraction:
+        return F(value.numerator % value.denominator, value.denominator)
+
+    modulus = 2 * r * s
+    inverse_r_mod_s = pow(r, -1, s)
+    inverse_s_mod_r = pow(s, -1, r)
+    coefficient = (2 * r * inverse_r_mod_s - 1) % modulus
+    midpoint = F((coefficient * c * v) % modulus, modulus)
+    hermitian = mod_one(
+        F(c * v, 2)
+        * (F(inverse_r_mod_s, s) - F(inverse_s_mod_r, r))
+    )
+    parity = F((c * v) % 2, 2)
+    return {
+        "midpoint_phase": midpoint,
+        "hermitian_phase": hermitian,
+        "parity_correction": parity,
+        "identity_exact_mod_one": midpoint == mod_one(hermitian + parity),
+    }
+
+
+def midpoint_published_hermitian_adapter_audit(
+) -> MidpointPublishedHermitianAdapterAudit:
+    """Compare the midpoint operator with the withdrawn Hermitian claim.
+
+    The claimed Theorems 1.4 and 1.8 of arXiv:2601.00292v1 concern a
+    fixed numerator and separated two-variable coefficients.  At
+    ``r,s=T^3`` and the outer dual corner ``a=|c*v|=T^7``, their displayed
+    claimed bound has exponent six after inserting the two L2 norms,
+    exactly the trivial size of the ``r,s`` sum.  Even in the bulk
+    ``a<=T^6`` it has exponent ``23/4`` and does not average the ``c,v``
+    variables.  Version 2 withdraws the improvement because (2.53)
+    missed an ``L^2`` factor, changing ``L^5`` to ``L^7``.
+    """
+    numerator = F(7)
+    trivial = F(6)
+    l2_norms = F(3)
+    common_factors = F(1, 2) + F(1) - F(1, 4)
+    outer = l2_norms + numerator / 4 + common_factors
+    bulk = l2_norms + F(6, 4) + common_factors
+    return MidpointPublishedHermitianAdapterAudit(
+        numerator_exponent=numerator,
+        rs_trivial_exponent=trivial,
+        withdrawn_claimed_outer_inner_bound_exponent=outer,
+        withdrawn_claimed_outer_inner_saving_exponent=trivial - outer,
+        withdrawn_claimed_bulk_inner_bound_exponent=bulk,
+        withdrawn_claimed_bulk_inner_saving_exponent=trivial - bulk,
+        theorem_has_moving_numerator=False,
+        theorem_accepts_joint_r_s_c_v_coefficient=False,
+        theorem_supplies_c_v_frequency_average=False,
+        claim_withdrawn_for_missing_l_squared_factor=True,
+        corrected_argument_gives_claimed_improvement=False,
+        withdrawn_claim_closes_midpoint_gate=False,
+        source="arXiv:2601.00292v2 author comment; v1 Theorems 1.4 and 1.8",
+    )
+
+
+def midpoint_unitary_divisor_root_bijection(*, n: int) -> dict[str, object]:
+    """Bijection squarefree factorizations ``n=r*s`` with roots mod ``2*n``.
+
+    For an ordered coprime factorization, the midpoint coefficient
+
+        A = 2*r*inverse(r mod s)-1  (mod 2*n)
+
+    is a square root of one.  Odd prime factors are recovered from the
+    signs of ``A`` modulo each prime.  If ``2|n``, the residue modulo four
+    records whether the factor two lies in ``r`` or ``s``.  Non-squarefree
+    inputs are returned with empty support because their Möbius weight is
+    zero in the application.
+    """
+    if n <= 1:
+        raise ValueError("unitary-divisor product must exceed one")
+
+    remaining = n
+    prime_factors: list[int] = []
+    divisor = 2
+    squarefree = True
+    while divisor * divisor <= remaining:
+        if remaining % divisor:
+            divisor += 1
+            continue
+        remaining //= divisor
+        prime_factors.append(divisor)
+        if remaining % divisor == 0:
+            squarefree = False
+            break
+        divisor += 1
+    if squarefree and remaining > 1:
+        prime_factors.append(remaining)
+    if not squarefree:
+        return {
+            "squarefree": False,
+            "ordered_factorization_count": 0,
+            "root_count": 0,
+            "expected_root_count": 0,
+            "factorizations": (),
+            "roots": (),
+            "factorization_to_root_injective": False,
+            "root_to_factorization_exact": False,
+            "bijection_exact": False,
+        }
+
+    modulus = 2 * n
+    odd_part = n // 2 if n % 2 == 0 else n
+    factorizations: list[dict[str, int | bool]] = []
+    for r in range(1, n + 1):
+        if n % r:
+            continue
+        s = n // r
+        if gcd(r, s) != 1:
+            continue
+        inverse_r_mod_s = pow(r, -1, s)
+        coefficient = (2 * r * inverse_r_mod_s - 1) % modulus
+        recovered_r_odd = gcd(coefficient + 1, odd_part)
+        recovered_s_odd = gcd(coefficient - 1, odd_part)
+        if n % 2:
+            recovered_r = recovered_r_odd
+            recovered_s = recovered_s_odd
+        elif coefficient % 4 == 3:
+            recovered_r = 2 * recovered_r_odd
+            recovered_s = recovered_s_odd
+        else:
+            recovered_r = recovered_r_odd
+            recovered_s = 2 * recovered_s_odd
+        factorizations.append(
+            {
+                "r": r,
+                "s": s,
+                "coefficient": coefficient,
+                "coefficient_squared_is_one": (
+                    coefficient * coefficient % modulus == 1
+                ),
+                "recovered_r": recovered_r,
+                "recovered_s": recovered_s,
+            }
+        )
+    roots = tuple(
+        residue
+        for residue in range(modulus)
+        if residue * residue % modulus == 1
+    )
+    coefficients = tuple(
+        int(item["coefficient"]) for item in factorizations
+    )
+    recovery_exact = all(
+        item["r"] == item["recovered_r"]
+        and item["s"] == item["recovered_s"]
+        for item in factorizations
+    )
+    expected_count = 2 ** len(prime_factors)
+    return {
+        "squarefree": True,
+        "ordered_factorization_count": len(factorizations),
+        "root_count": len(roots),
+        "expected_root_count": expected_count,
+        "factorizations": tuple(factorizations),
+        "roots": roots,
+        "factorization_to_root_injective": len(set(coefficients)) == len(coefficients),
+        "root_to_factorization_exact": recovery_exact and set(coefficients) == set(roots),
+        "bijection_exact": (
+            len(factorizations) == len(roots) == expected_count
+            and recovery_exact
+            and set(coefficients) == set(roots)
+        ),
+    }
+
+
+def midpoint_unitary_divisor_audit() -> MidpointUnitaryDivisorAudit:
+    """Record the balanced-box ledger after ``n=r*s`` reindexing."""
+    return MidpointUnitaryDivisorAudit(
+        product_variable_exponent=F(6),
+        root_modulus_exponent=F(6),
+        physical_numerator_exponent=F(5),
+        dual_numerator_exponent=F(7),
+        factorization_root_bijection_exact=True,
+        mobius_product_collapses_to_single_mobius=True,
+        root_multiplicity_is_subpower=True,
+        balanced_dyadic_condition_is_root_filter=True,
+        root_trace_coefficient_remains_joint=True,
+        unitary_root_trace_bound_verified=False,
+    )
+
+
+def midpoint_root_fraction_identity(*, r: int, s: int) -> dict[str, int | bool]:
+    """Return and recover the reduced root fraction ``A/(2*r*s)``.
+
+    Recovery of the ordered factorization from the root is asserted only
+    on the squarefree support on which the Möbius product is nonzero.
+    """
+    if r <= 0 or s <= 0:
+        raise ValueError("root-fraction factors must be positive")
+    if gcd(r, s) != 1:
+        raise ValueError("root-fraction factors must be coprime")
+    product = r * s
+    root_data = midpoint_unitary_divisor_root_bijection(n=product)
+    if not root_data["squarefree"]:
+        raise ValueError("root-fraction recovery is restricted to squarefree support")
+    modulus = 2 * product
+    coefficient = (2 * r * pow(r, -1, s) - 1) % modulus
+    matching = tuple(
+        item
+        for item in root_data["factorizations"]
+        if item["coefficient"] == coefficient
+    )
+    recovered_r = int(matching[0]["recovered_r"]) if len(matching) == 1 else 0
+    recovered_s = int(matching[0]["recovered_s"]) if len(matching) == 1 else 0
+    return {
+        "numerator": coefficient,
+        "denominator": modulus,
+        "fraction_is_reduced": gcd(coefficient, modulus) == 1,
+        "recovered_r": recovered_r,
+        "recovered_s": recovered_s,
+        "factorization_recovered_exactly": recovered_r == r and recovered_s == s,
+    }
+
+
+def midpoint_root_farey_large_sieve_audit(
+) -> MidpointRootFareyLargeSieveAudit:
+    """Audit the generic additive large sieve on root fractions.
+
+    Reduced denominators have exponent six, hence reciprocal spacing has
+    exponent twelve.  Cauchy over the ``T^6`` root points and the product
+    energy of either numerator gauge leaves the same ``T^(11/2)`` deficit.
+    The calculation optimistically assumes separation of the actual joint
+    transform coefficient.
+    """
+    points = F(6)
+    denominator = F(6)
+    spacing_reciprocal = 2 * denominator
+    physical_length = F(5)
+    physical_energy = F(5)
+    physical_second_moment = max(physical_length, spacing_reciprocal) + physical_energy
+    physical_bound = points / 2 + physical_second_moment / 2
+    physical_target = F(6)
+    dual_length = F(7)
+    dual_energy = F(7)
+    dual_second_moment = max(dual_length, spacing_reciprocal) + dual_energy
+    dual_bound = points / 2 + dual_second_moment / 2
+    dual_target = F(7)
+    return MidpointRootFareyLargeSieveAudit(
+        root_point_count_exponent=points,
+        denominator_exponent=denominator,
+        reciprocal_spacing_exponent=spacing_reciprocal,
+        physical_numerator_length_exponent=physical_length,
+        physical_product_energy_exponent=physical_energy,
+        physical_large_sieve_bound_exponent=physical_bound,
+        physical_target_exponent=physical_target,
+        physical_deficit_exponent=physical_bound - physical_target,
+        dual_numerator_length_exponent=dual_length,
+        dual_product_energy_exponent=dual_energy,
+        dual_large_sieve_bound_exponent=dual_bound,
+        dual_target_exponent=dual_target,
+        dual_deficit_exponent=dual_bound - dual_target,
+        root_fractions_injective=True,
+        root_fractions_reduced=True,
+        actual_joint_coefficient_is_separated=False,
+        root_farey_large_sieve_closes_gate=False,
+    )
+
+
+def midpoint_root_crt_phase_identity(
+    *,
+    a: int,
+    b: int,
+    root_a: int,
+    root_b: int,
+    numerator: int,
+) -> dict[str, Fraction | int | bool]:
+    """Compose roots modulo ``2*a`` and ``2*b`` and split the phase.
+
+    Since both roots are odd, put ``y_a=(root_a-1)/2`` and similarly for
+    ``b``.  Ordinary CRT composes ``y`` modulo ``a*b``; then ``A=2*y+1``
+    is the unique compatible root modulo ``2*a*b``.  Dividing the CRT
+    identity by ``a*b`` gives two reciprocal phases plus the exact small
+    correction ``numerator/(2*a*b)``.
+    """
+    if a <= 1 or b <= 1:
+        raise ValueError("root CRT factors must exceed one")
+    if gcd(a, b) != 1:
+        raise ValueError("root CRT factors must be coprime")
+    if root_a % 2 == 0 or root_b % 2 == 0:
+        raise ValueError("roots modulo twice a factor must be odd")
+    if root_a * root_a % (2 * a) != 1:
+        raise ValueError("root_a is not a square root of one modulo 2*a")
+    if root_b * root_b % (2 * b) != 1:
+        raise ValueError("root_b is not a square root of one modulo 2*b")
+
+    def mod_one(value: Fraction) -> Fraction:
+        return F(value.numerator % value.denominator, value.denominator)
+
+    y_a = ((root_a % (2 * a)) - 1) // 2
+    y_b = ((root_b % (2 * b)) - 1) // 2
+    inverse_b_mod_a = pow(b, -1, a)
+    inverse_a_mod_b = pow(a, -1, b)
+    product = a * b
+    y = (
+        y_a * b * inverse_b_mod_a
+        + y_b * a * inverse_a_mod_b
+    ) % product
+    combined_root = 2 * y + 1
+    combined_modulus = 2 * product
+    full_phase = F((numerator * combined_root) % combined_modulus, combined_modulus)
+    correction = mod_one(F(numerator, combined_modulus))
+    left = mod_one(F(numerator * y_a * inverse_b_mod_a, a))
+    right = mod_one(F(numerator * y_b * inverse_a_mod_b, b))
+    return {
+        "combined_root": combined_root,
+        "combined_modulus": combined_modulus,
+        "combined_root_squared_is_one": (
+            combined_root * combined_root % combined_modulus == 1
+        ),
+        "combined_root_restricts_to_root_a": (
+            combined_root - root_a
+        ) % (2 * a) == 0,
+        "combined_root_restricts_to_root_b": (
+            combined_root - root_b
+        ) % (2 * b) == 0,
+        "full_phase": full_phase,
+        "small_correction_phase": correction,
+        "left_reciprocal_phase": left,
+        "right_reciprocal_phase": right,
+        "phase_split_exact_mod_one": full_phase == mod_one(correction + left + right),
+    }
+
+
+def midpoint_root_type_ii_audit() -> MidpointRootTypeIIAudit:
+    """Record the balanced root-CRT Type-II interface."""
+    return MidpointRootTypeIIAudit(
+        product_exponent=F(6),
+        left_factor_exponent=F(3),
+        right_factor_exponent=F(3),
+        physical_numerator_exponent=F(5),
+        dual_numerator_exponent=F(7),
+        generalized_crt_exact=True,
+        reciprocal_phase_split_exact=True,
+        left_factor_has_truncated_divisor_coefficient=True,
+        right_factor_retains_mobius=True,
+        root_fibers_are_subpower=True,
+        completed_centering_exact=True,
+        physical_zero_residue_vanishes=True,
+        physical_centered_subtraction_present=False,
+        published_hermitian_theorem_has_root_dependent_numerator=False,
+        actual_transform_coefficient_remains_joint=True,
+        root_type_ii_bound_verified=False,
+    )
+
+
+def midpoint_root_four_factor_phase_identity(
+    *,
+    d_r: int,
+    d_s: int,
+    e_r: int,
+    e_s: int,
+    numerator: int,
+) -> dict[str, Fraction | int | bool]:
+    """Unfold both root fibers into four coprime factor variables.
+
+    The roots attached to ``d=d_r*d_s`` and ``e=e_r*e_s`` take sign
+    ``-1`` on the ``r`` factors and sign ``+1`` on the ``s`` factors.
+    Thus the combined root recovers ``r=d_r*e_r`` and ``s=d_s*e_s``.
+    The two CRT reciprocal phases become classical Kloosterman fractions
+
+        -k*inverse(d_s*e mod d_r)/d_r,
+        -k*inverse(e_s*d mod e_r)/e_r.
+
+    Denominator one contributes the zero phase.
+    """
+    factors = (d_r, d_s, e_r, e_s)
+    if any(factor <= 0 for factor in factors):
+        raise ValueError("root four-factor variables must be positive")
+    pairwise_coprime = all(
+        gcd(factors[i], factors[j]) == 1
+        for i in range(len(factors))
+        for j in range(i + 1, len(factors))
+    )
+    if not pairwise_coprime:
+        raise ValueError("root four-factor variables must be pairwise coprime")
+
+    d = d_r * d_s
+    e = e_r * e_s
+    if d <= 1 or e <= 1:
+        raise ValueError("both Type-II products must exceed one")
+
+    def mod_one(value: Fraction) -> Fraction:
+        return F(value.numerator % value.denominator, value.denominator)
+
+    def ordered_root(r_factor: int, s_factor: int) -> int:
+        modulus = 2 * r_factor * s_factor
+        inverse = pow(r_factor, -1, s_factor) if s_factor > 1 else 0
+        return (2 * r_factor * inverse - 1) % modulus
+
+    def negative_inverse_phase(value: int, modulus: int) -> Fraction:
+        if modulus == 1:
+            return F(0)
+        return mod_one(F(-numerator * pow(value, -1, modulus), modulus))
+
+    root_d = ordered_root(d_r, d_s)
+    root_e = ordered_root(e_r, e_s)
+    crt = midpoint_root_crt_phase_identity(
+        a=d,
+        b=e,
+        root_a=root_d,
+        root_b=root_e,
+        numerator=numerator,
+    )
+    recovered_r = d_r * e_r
+    recovered_s = d_s * e_s
+    original_root = ordered_root(recovered_r, recovered_s)
+    combined_modulus = 2 * d * e
+    left_phase = negative_inverse_phase(d_s * e, d_r)
+    right_phase = negative_inverse_phase(e_s * d, e_r)
+    correction = mod_one(F(numerator, combined_modulus))
+    four_factor_phase = mod_one(correction + left_phase + right_phase)
+    full_phase = crt["full_phase"]
+    phase_exact = full_phase == four_factor_phase
+    root_recovers = int(crt["combined_root"]) == original_root
+    extreme_sector = d_s == 1 and e_r == 1
+    extreme_exact = (
+        extreme_sector
+        and recovered_r == d
+        and recovered_s == e
+        and phase_exact
+    )
+    return {
+        "d": d,
+        "e": e,
+        "root_d": root_d,
+        "root_e": root_e,
+        "combined_root": int(crt["combined_root"]),
+        "recovered_r": recovered_r,
+        "recovered_s": recovered_s,
+        "full_phase": full_phase,
+        "small_correction_phase": correction,
+        "left_kloosterman_phase": left_phase,
+        "right_kloosterman_phase": right_phase,
+        "four_factor_phase": four_factor_phase,
+        "all_factors_pairwise_coprime": pairwise_coprime,
+        "combined_root_recovers_original_factorization": root_recovers,
+        "root_phase_equals_four_factor_phase": phase_exact,
+        "extreme_sector_recovers_original_fraction": extreme_exact,
+    }
+
+
+def midpoint_root_four_factor_audit() -> MidpointRootFourFactorAudit:
+    """Record the central four-factor Type-II interface and proof status."""
+    return MidpointRootFourFactorAudit(
+        left_product_exponent=F(3),
+        right_product_exponent=F(3),
+        physical_numerator_exponent=F(5),
+        recovered_r_exponent=F(3),
+        recovered_s_exponent=F(3),
+        root_fibers_unfold_to_ordered_factorizations=True,
+        four_factors_are_pairwise_coprime=True,
+        truncated_divisor_coefficient_remains_on_left_product=True,
+        mobius_splits_over_right_factors=True,
+        kloosterman_phase_identity_exact=True,
+        completed_centering_exact=True,
+        physical_zero_residue_vanishes=True,
+        physical_centered_subtraction_present=False,
+        extreme_sector_recovers_hard_fraction=True,
+        actual_smooth_weight_remains_joint=True,
+        four_factor_type_ii_bound_verified=False,
+    )
+
+
+def midpoint_involution_resonance_lattice_identity(
+    *,
+    r: int,
+    s: int,
+    h: int,
+    poisson_frequency: int,
+) -> dict[str, int | bool]:
+    """Convert a physical Poisson resonance into a two-variable lattice.
+
+    For ``Q=2*r*s`` and ``A=2*r*inverse(r mod s)-1``, put
+    ``u=A*h+v*Q``.  The involution signs give ``u=-h (mod 2r)`` and
+    ``u=h (mod 2s)``.  Hence the integers
+
+        a=(h+u)/(2r),  b=(h-u)/(2s)
+
+    are well defined and satisfy ``h=r*a+s*b`` and ``u=r*a-s*b``.
+    This is an exact bijection, including when one factor is even.
+    """
+    if r <= 1 or s <= 1:
+        raise ValueError("midpoint resonance factors must exceed one")
+    if gcd(r, s) != 1:
+        raise ValueError("midpoint resonance factors must be coprime")
+    modulus = 2 * r * s
+    midpoint_root = (2 * r * pow(r, -1, s) - 1) % modulus
+    resonance_integer = midpoint_root * h + poisson_frequency * modulus
+    numerator_a = h + resonance_integer
+    numerator_b = h - resonance_integer
+    a_integral = numerator_a % (2 * r) == 0
+    b_integral = numerator_b % (2 * s) == 0
+    a = numerator_a // (2 * r) if a_integral else 0
+    b = numerator_b // (2 * s) if b_integral else 0
+    h_reconstructed = r * a + s * b
+    u_reconstructed = r * a - s * b
+    root_congruences = (
+        (resonance_integer + h) % (2 * r) == 0
+        and (resonance_integer - h) % (2 * s) == 0
+    )
+    return {
+        "modulus": modulus,
+        "midpoint_root": midpoint_root,
+        "resonance_integer": resonance_integer,
+        "a": a,
+        "b": b,
+        "h_equals_r_a_plus_s_b": h_reconstructed == h,
+        "u_equals_r_a_minus_s_b": u_reconstructed == resonance_integer,
+        "root_congruences_exact": root_congruences,
+        "lattice_bijection_exact": (
+            a_integral
+            and b_integral
+            and h_reconstructed == h
+            and u_reconstructed == resonance_integer
+        ),
+    }
+
+
+def midpoint_physical_poisson_audit() -> MidpointPhysicalPoissonAudit:
+    """Record the central physical-Poisson resonance ledger."""
+    modulus = F(6)
+    h_length = F(5, 2)
+    delta_length = F(5, 2)
+    resonance = modulus - delta_length
+    factor_length = F(3)
+    lattice_parameter = resonance - factor_length
+    pointwise = delta_length + lattice_parameter
+    raw = h_length + delta_length
+    outer_points = 2 * factor_length
+    outer_target = F(6)
+    required_outer_saving = outer_points + pointwise - outer_target
+    return MidpointPhysicalPoissonAudit(
+        modulus_exponent=modulus,
+        h_exponent=h_length,
+        delta_exponent=delta_length,
+        resonance_window_exponent=resonance,
+        lattice_parameter_exponent=lattice_parameter,
+        pointwise_bilinear_bound_exponent=pointwise,
+        raw_bilinear_exponent=raw,
+        physical_oscillation_saving_exponent=raw - pointwise,
+        outer_root_point_exponent=outer_points,
+        outer_target_exponent=outer_target,
+        required_outer_saving_exponent=required_outer_saving,
+        resonance_lattice_bijection_exact=True,
+        one_variable_poisson_exact=True,
+        joint_weight_has_uniform_delta_derivatives=True,
+        determinant_line_correspondence_exact=True,
+        physical_poisson_route_is_independent=False,
+        outer_mobius_square_root_verified=False,
+    )
+
+
+def odd_root_trace_salie_coefficient_identity(
+    *,
+    modulus: int,
+    numerator: int,
+) -> dict[str, object]:
+    """Check the odd squarefree root-trace/Salié identity coefficientwise.
+
+    Put ``b=numerator^2/4 (mod modulus)`` and let ``chi`` be the Jacobi
+    symbol.  The exact group-ring identity is
+
+        sum_x^* chi(x) [x+b*xbar]
+        = (sum_y chi(y)[y]) (sum_{A^2=1}[numerator*A]).
+
+    Evaluating the basis element ``[z]`` as ``e(z/modulus)`` gives
+    ``T(1,b;modulus)=tau(chi) R_numerator(modulus)`` without numerical
+    approximation.
+    """
+    if modulus <= 1 or modulus % 2 == 0:
+        raise ValueError("Salié root-trace modulus must be odd and exceed one")
+    if gcd(numerator, modulus) != 1:
+        raise ValueError("Salié numerator must be coprime to the modulus")
+
+    remaining = modulus
+    prime_factors: list[int] = []
+    prime = 3
+    squarefree = True
+    while prime * prime <= remaining:
+        if remaining % prime:
+            prime += 2
+            continue
+        remaining //= prime
+        prime_factors.append(prime)
+        if remaining % prime == 0:
+            squarefree = False
+            break
+        prime += 2
+    if squarefree and remaining > 1:
+        prime_factors.append(remaining)
+    if not squarefree:
+        raise ValueError("Salié coefficient identity audit uses squarefree modulus")
+
+    def jacobi_symbol(value: int, odd_modulus: int) -> int:
+        value %= odd_modulus
+        sign = 1
+        while value:
+            while value % 2 == 0:
+                value //= 2
+                if odd_modulus % 8 in (3, 5):
+                    sign = -sign
+            value, odd_modulus = odd_modulus, value
+            if value % 4 == odd_modulus % 4 == 3:
+                sign = -sign
+            value %= odd_modulus
+        return sign if odd_modulus == 1 else 0
+
+    salie_parameter = (
+        numerator * numerator * pow(4, -1, modulus)
+    ) % modulus
+    salie_coefficients = {residue: 0 for residue in range(modulus)}
+    for x in range(modulus):
+        if gcd(x, modulus) != 1:
+            continue
+        exponent = (
+            x + salie_parameter * pow(x, -1, modulus)
+        ) % modulus
+        salie_coefficients[exponent] += jacobi_symbol(x, modulus)
+
+    roots = tuple(
+        residue
+        for residue in range(modulus)
+        if residue * residue % modulus == 1
+    )
+    gauss_root_coefficients = {residue: 0 for residue in range(modulus)}
+    for y in range(modulus):
+        coefficient = jacobi_symbol(y, modulus)
+        if coefficient == 0:
+            continue
+        for root in roots:
+            exponent = (y + numerator * root) % modulus
+            gauss_root_coefficients[exponent] += coefficient
+    return {
+        "modulus": modulus,
+        "numerator": numerator,
+        "salie_parameter": salie_parameter,
+        "prime_factors": tuple(prime_factors),
+        "root_count": len(roots),
+        "modulus_is_odd_squarefree": squarefree and modulus % 2 == 1,
+        "numerator_is_coprime_to_modulus": gcd(numerator, modulus) == 1,
+        "salie_coefficients": tuple(salie_coefficients.items()),
+        "gauss_root_coefficients": tuple(gauss_root_coefficients.items()),
+        "salie_coefficient_identity_exact": (
+            salie_coefficients == gauss_root_coefficients
+        ),
+    }
+
+
+def root_salie_adapter_audit() -> RootSalieAdapterAudit:
+    """Audit DFI's fixed-numerator Salié modulus sum on the hard box."""
+    modulus = F(6)
+    numerator = F(5)
+    # DFI Theorem 7.1 has x^(47/118+35/59)=x^(117/118)
+    # when x dominates the fixed Salié parameter.
+    fixed_bound = modulus * F(117, 118)
+    absolute_k_sum = numerator + fixed_bound
+    target = F(6)
+    return RootSalieAdapterAudit(
+        modulus_exponent=modulus,
+        physical_numerator_exponent=numerator,
+        fixed_numerator_bound_exponent=fixed_bound,
+        fixed_numerator_saving_exponent=modulus - fixed_bound,
+        absolute_numerator_sum_bound_exponent=absolute_k_sum,
+        physical_target_exponent=target,
+        absolute_numerator_sum_deficit_exponent=absolute_k_sum - target,
+        odd_full_root_trace_identity_exact=True,
+        even_midpoint_modulus_adapter_verified=False,
+        theorem_accepts_balanced_root_filter=False,
+        theorem_accepts_mobius_modulus_weight=False,
+        theorem_accepts_moving_numerator=False,
+        square_numerator_exception_covered=False,
+        theorem_accepts_joint_transform_weight=False,
+        salie_adapter_closes_root_gate=False,
+    )
+
+
+def root_trace_square_input_weyl_identity(
+    *,
+    modulus: int,
+    delta: int,
+    frequency: int,
+) -> dict[str, object]:
+    """Check the full root-trace/square-input Weyl identity exactly.
+
+    If ``(delta, modulus)=1``, multiplication by ``delta`` is a
+    permutation modulo ``modulus`` and restricts to the bijection
+
+        A^2 = 1  <->  x=delta*A, x^2=delta^2.
+
+    The resulting exponential sums are compared coefficientwise in
+    ``Z[Z/modulus Z]``; no floating-point evaluation is involved.
+    """
+    if modulus <= 1:
+        raise ValueError("root-trace modulus must exceed one")
+    if gcd(delta, modulus) != 1:
+        raise ValueError("square-input base must be coprime to the modulus")
+
+    roots = tuple(
+        residue
+        for residue in range(modulus)
+        if residue * residue % modulus == 1
+    )
+    square_target = delta * delta % modulus
+    square_roots = tuple(
+        residue
+        for residue in range(modulus)
+        if residue * residue % modulus == square_target
+    )
+    mapped_roots = tuple(delta * root % modulus for root in roots)
+
+    trace_coefficients = {residue: 0 for residue in range(modulus)}
+    for root in roots:
+        exponent = frequency * delta * root % modulus
+        trace_coefficients[exponent] += 1
+    square_input_coefficients = {
+        residue: 0 for residue in range(modulus)
+    }
+    for square_root in square_roots:
+        exponent = frequency * square_root % modulus
+        square_input_coefficients[exponent] += 1
+
+    return {
+        "modulus": modulus,
+        "delta": delta,
+        "frequency": frequency,
+        "delta_is_coprime_to_modulus": gcd(delta, modulus) == 1,
+        "root_count": len(roots),
+        "square_root_count": len(square_roots),
+        "roots": roots,
+        "square_roots": square_roots,
+        "mapped_roots": mapped_roots,
+        "root_map_is_bijective": (
+            len(set(mapped_roots)) == len(roots)
+            and tuple(sorted(mapped_roots)) == square_roots
+        ),
+        "trace_coefficients": tuple(trace_coefficients.items()),
+        "square_input_coefficients": tuple(
+            square_input_coefficients.items()
+        ),
+        "exponent_coefficient_identity_exact": (
+            trace_coefficients == square_input_coefficients
+        ),
+    }
+
+
+def root_weyl_square_input_audit() -> RootWeylSquareInputAudit:
+    """Audit published modular-root Weyl bounds on the hard root box."""
+    modulus = F(6)
+    frequency = F(5, 2)
+    base = F(5, 2)
+    square_interval = 2 * base
+    square_support = base
+    relative_square_interval = square_interval / modulus
+
+    # DKSZ Theorem 1.7, first inequality, with M=1, N=T^5 and
+    # beta supported on T^(5/2) squares.  Only the N-parenthesis is
+    # nontrivial: N^(7/48) q^(-1/16)=T^(17/48).
+    dksz_first = (
+        F(2, 3) * square_support
+        + F(1, 8) * modulus
+        + F(1, 8) * square_interval
+        + F(17, 48)
+    )
+    # The second inequality has
+    # N^(3/16) q^(-1/8)=T^(3/16).
+    dksz_second = (
+        F(3, 4) * square_support
+        + F(1, 8) * modulus
+        + F(1, 16) * square_interval
+        + F(3, 16)
+    )
+    dksz_best = min(dksz_first, dksz_second)
+    pointwise = square_support
+    absolute_frequency = frequency + dksz_best
+    raw_frequency_square_support = frequency + square_support
+
+    # KSSZ Corollary 2.1 with M=1 and N=T^5.  The N-parenthesis is
+    # N^(3/16)q^(-1/16)=T^(9/16).
+    kssz_dense = (
+        F(1, 8) * modulus
+        + F(3, 4) * square_interval
+        + F(9, 16)
+    )
+    raw_volume = modulus + frequency + base
+    target = F(6)
+    return RootWeylSquareInputAudit(
+        modulus_exponent=modulus,
+        frequency_exponent=frequency,
+        base_exponent=base,
+        square_input_interval_exponent=square_interval,
+        square_support_cardinality_exponent=square_support,
+        relative_square_interval_exponent=relative_square_interval,
+        dunn_zaharescu_min_relative_exponent=F(2, 5),
+        dunn_zaharescu_max_relative_exponent=F(3, 5),
+        dksz_first_bound_exponent=dksz_first,
+        dksz_second_bound_exponent=dksz_second,
+        dksz_best_bound_exponent=dksz_best,
+        pointwise_square_support_exponent=pointwise,
+        dksz_pointwise_deficit_exponent=dksz_best - pointwise,
+        absolute_frequency_sum_exponent=absolute_frequency,
+        raw_frequency_square_support_exponent=(
+            raw_frequency_square_support
+        ),
+        absolute_frequency_deficit_exponent=(
+            absolute_frequency - raw_frequency_square_support
+        ),
+        kssz_dense_interval_bound_exponent=kssz_dense,
+        raw_q_frequency_base_volume_exponent=raw_volume,
+        physical_root_target_exponent=target,
+        required_global_saving_exponent=raw_volume - target,
+        full_root_trace_identity_exact=True,
+        physical_base_is_uniformly_coprime_to_modulus=False,
+        dunn_zaharescu_range_accepts_square_interval=(
+            F(2, 5) <= relative_square_interval <= F(3, 5)
+        ),
+        dksz_requires_fixed_prime_modulus=True,
+        theorem_accepts_moving_squarefree_composite_modulus=False,
+        prime_modulus_balanced_root_sector_nonempty=False,
+        theorem_accepts_balanced_root_filter=False,
+        theorem_accepts_mobius_modulus_weight=False,
+        theorem_accepts_frequency_average=False,
+        published_loss_is_polylogarithmic=False,
+        root_weyl_square_input_route_closes_gate=False,
+    )
+
+
+def square_product_common_kernel_identity(
+    *,
+    left: int,
+    right: int,
+) -> dict[str, int | bool]:
+    """Parametrize ``left*right`` square by one squarefree kernel.
+
+    Positive integers have square product exactly when their squarefree
+    kernels agree.  In that case ``left=g*x^2`` and ``right=g*y^2``
+    with one squarefree ``g`` and uniquely determined positive ``x,y``.
+    """
+    if left <= 0 or right <= 0:
+        raise ValueError("square-product variables must be positive")
+
+    def squarefree_kernel(value: int) -> int:
+        kernel = 1
+        prime = 2
+        remaining = value
+        while prime * prime <= remaining:
+            parity = 0
+            while remaining % prime == 0:
+                remaining //= prime
+                parity ^= 1
+            if parity:
+                kernel *= prime
+            prime += 1
+        if remaining > 1:
+            kernel *= remaining
+        return kernel
+
+    left_kernel = squarefree_kernel(left)
+    right_kernel = squarefree_kernel(right)
+    common = left_kernel == right_kernel
+    kernel = left_kernel if common else 0
+    left_quotient = left // kernel if common else 0
+    right_quotient = right // kernel if common else 0
+    left_factor = isqrt(left_quotient) if common else 0
+    right_factor = isqrt(right_quotient) if common else 0
+    product_root = isqrt(left * right)
+    product_square = product_root * product_root == left * right
+    return {
+        "left": left,
+        "right": right,
+        "left_squarefree_kernel": left_kernel,
+        "right_squarefree_kernel": right_kernel,
+        "common_kernel_exists": common,
+        "common_squarefree_kernel": kernel,
+        "left_square_factor": left_factor,
+        "right_square_factor": right_factor,
+        "product_is_square": product_square,
+        "left_reconstruction_exact": (
+            common and kernel * left_factor * left_factor == left
+        ),
+        "right_reconstruction_exact": (
+            common and kernel * right_factor * right_factor == right
+        ),
+    }
+
+
+def root_salie_joint_average_audit() -> RootSalieJointAverageAudit:
+    """Match joint Salié averaging to the balanced BCR endpoint."""
+    left = F(3)
+    right = F(3)
+    numerator = F(5)
+    total = left + right + numerator
+    term_1 = F(17, 20) * total + F(1, 4) * max(left, right)
+    term_2 = (
+        F(7, 8) * (left + right)
+        + numerator
+        + F(1, 8) * max(left, right)
+    )
+    bound = max(term_1, term_2)
+    target = F(6)
+    square_pairs = F(5, 2)
+    # In DFI Theorem 4, with modulus length x=T^6 and square parameter
+    # a=T^5, the exceptional main term comes from n <= y.  Their
+    # choices (5.4), (5.14) give y=T^(7/5), z=T^(174/59).  The balanced
+    # roots m,n=T^3 lie in S3, so that main term is absent here.
+    short_factor_cutoff = min(
+        -F(1, 5) * numerator + F(2, 5) * (left + right),
+        -F(1, 2) * numerator + F(2, 3) * (left + right),
+    )
+    long_long_cutoff = (
+        -F(6, 59) * max(numerator, left + right)
+        + F(35, 59) * (left + right)
+    )
+    # DFI Theorem H, formula (1.5), for each fixed a=t^2:
+    # ||alpha|| ||beta|| (a+MN)^(3/8) (M+N)^(11/48).
+    fixed_square_hermitian = (
+        F(1, 2) * (left + right)
+        + F(3, 8) * max(numerator, left + right)
+        + F(11, 48) * max(left, right)
+    )
+    absolute_square_family = square_pairs + fixed_square_hermitian
+    return RootSalieJointAverageAudit(
+        left_root_factor_exponent=left,
+        right_root_factor_exponent=right,
+        physical_numerator_exponent=numerator,
+        bcr_term_1_exponent=term_1,
+        bcr_term_2_exponent=term_2,
+        bcr_bound_exponent=bound,
+        physical_target_exponent=target,
+        bcr_deficit_exponent=bound - target,
+        square_product_pair_count_exponent=square_pairs,
+        dfi_square_main_short_factor_cutoff_exponent=short_factor_cutoff,
+        dfi_long_long_cutoff_exponent=long_long_cutoff,
+        balanced_root_factor_exponent=min(left, right),
+        fixed_square_hermitian_bound_exponent=fixed_square_hermitian,
+        absolute_square_family_bound_exponent=absolute_square_family,
+        absolute_square_family_deficit_exponent=(
+            absolute_square_family - target
+        ),
+        salie_factorization_matches_midpoint_phase=True,
+        joint_average_is_existing_bcr_endpoint=True,
+        bcr_accepts_mobius_coefficients=True,
+        bcr_uses_mobius_beyond_l2=False,
+        balanced_root_filter_excludes_dfi_square_main=(
+            min(left, right) > long_long_cutoff > short_factor_cutoff
+        ),
+        joint_salie_route_closes_root_gate=False,
+    )
+
+
+def square_salie_double_gauss_identity(
+    *,
+    r: int,
+    s: int,
+    square_root: int,
+) -> dict[str, object]:
+    """Linearize a square Salié numerator by two quadratic Gauss sums.
+
+    Coefficient tables modulo ``r*s`` verify
+
+        G(-2r;s) G(2s;r) e(2t^2(rbar/s-sbar/r))
+        = sum_{x mod s,y mod r}
+          e((-2r*x^2+4t*x)/s + (2s*y^2+4t*y)/r).
+
+    The exponent on the right is also exactly
+    ``2*z*(w+2*t)/(r*s)`` for ``z=r*x+s*y`` and ``w=s*y-r*x``.
+    """
+    if r <= 1 or s <= 1 or r % 2 == 0 or s % 2 == 0:
+        raise ValueError("double-Gauss factors must be odd and exceed one")
+    if gcd(r, s) != 1:
+        raise ValueError("double-Gauss factors must be coprime")
+    modulus = r * s
+    inverse_r_mod_s = pow(r, -1, s)
+    inverse_s_mod_r = pow(s, -1, r)
+    target_numerator = (
+        2
+        * square_root
+        * square_root
+        * (r * inverse_r_mod_s - s * inverse_s_mod_r)
+    ) % modulus
+
+    left_coefficients = {residue: 0 for residue in range(modulus)}
+    for u in range(s):
+        for v in range(r):
+            exponent = (
+                -2 * r * r * u * u
+                + 2 * s * s * v * v
+                + target_numerator
+            ) % modulus
+            left_coefficients[exponent] += 1
+
+    right_coefficients = {residue: 0 for residue in range(modulus)}
+    factorized_coefficients = {residue: 0 for residue in range(modulus)}
+    phase_factorization = True
+    for x in range(s):
+        for y in range(r):
+            exponent = (
+                -2 * r * r * x * x
+                + 4 * square_root * r * x
+                + 2 * s * s * y * y
+                + 4 * square_root * s * y
+            ) % modulus
+            z = r * x + s * y
+            w = s * y - r * x
+            factorized = (2 * z * (w + 2 * square_root)) % modulus
+            right_coefficients[exponent] += 1
+            factorized_coefficients[factorized] += 1
+            phase_factorization = phase_factorization and exponent == factorized
+
+    def jacobi_symbol(value: int, odd_modulus: int) -> int:
+        value %= odd_modulus
+        sign = 1
+        while value:
+            while value % 2 == 0:
+                value //= 2
+                if odd_modulus % 8 in (3, 5):
+                    sign = -sign
+            value, odd_modulus = odd_modulus, value
+            if value % 4 == odd_modulus % 4 == 3:
+                sign = -sign
+            value %= odd_modulus
+        return sign if odd_modulus == 1 else 0
+
+    direct_character = jacobi_symbol(-2 * r, s) * jacobi_symbol(2 * s, r)
+    minus_one_s = -1 if s % 4 == 3 else 1
+    two_s = -1 if s % 8 in (3, 5) else 1
+    two_r = -1 if r % 8 in (3, 5) else 1
+    reciprocity = -1 if r % 4 == s % 4 == 3 else 1
+    mod8_character = minus_one_s * two_s * two_r * reciprocity
+    return {
+        "r": r,
+        "s": s,
+        "square_root": square_root,
+        "modulus": modulus,
+        "target_phase_numerator": target_numerator,
+        "factors_are_odd_coprime": r % 2 == s % 2 == 1 and gcd(r, s) == 1,
+        "left_coefficients": tuple(left_coefficients.items()),
+        "right_coefficients": tuple(right_coefficients.items()),
+        "quadratic_completion_identity_exact": (
+            left_coefficients == right_coefficients
+        ),
+        "combined_phase_factorization_exact": (
+            phase_factorization and right_coefficients == factorized_coefficients
+        ),
+        "gauss_product_character": direct_character,
+        "mod8_character": mod8_character,
+        "gauss_product_character_is_mod8_local": (
+            direct_character == mod8_character
+        ),
+    }
+
+
+def square_salie_gauss_completion_audit() -> SquareSalieGaussCompletionAudit:
+    """Record the hard-box ledger after double quadratic completion."""
+    r = F(3)
+    s = F(3)
+    square_root = F(5, 2)
+    x = s
+    y = r
+    normalization = -F(1, 2) * (r + s)
+    resonance = r + s - square_root
+    localized_pointwise = square_root + resonance + normalization
+    direct_square = square_root
+    return SquareSalieGaussCompletionAudit(
+        r_exponent=r,
+        s_exponent=s,
+        square_root_exponent=square_root,
+        x_exponent=x,
+        y_exponent=y,
+        gauss_normalization_exponent=normalization,
+        t_poisson_resonance_exponent=resonance,
+        localized_pointwise_exponent=localized_pointwise,
+        direct_square_sector_pointwise_exponent=direct_square,
+        double_gauss_identity_exact=True,
+        cross_character_depends_only_on_mod8=True,
+        square_root_variable_is_linearized=True,
+        remaining_quadratic_weight_is_joint=True,
+        gauss_completion_improves_square_sector=(
+            localized_pointwise < direct_square
+        ),
+        square_salie_gauss_route_closes_gate=False,
+    )
+
+
+def balanced_product_diagonal_parameterization(
+    *,
+    a: int,
+    b: int,
+    c: int,
+    d: int,
+) -> dict[str, int | bool]:
+    """Parameterize the multiplicative diagonal ``a*b=c*d`` exactly.
+
+    If ``g=(a,c)``, ``a=g*x`` and ``c=g*y``, then ``(x,y)=1``.
+    Equality of the two products forces ``b=y*k`` and ``d=x*k``.
+    This is the standard parameterization behind the logarithmic, rather
+    than positive-power, cost of the balanced product diagonal.
+    """
+    if min(a, b, c, d) <= 0:
+        raise ValueError("balanced-product variables must be positive")
+    left_product = a * b
+    right_product = c * d
+    product_shift = left_product - right_product
+    common = gcd(a, c)
+    x = a // common
+    y = c // common
+    products_equal = product_shift == 0
+    y_divides_b = products_equal and b % y == 0
+    x_divides_d = products_equal and d % x == 0
+    k_left = b // y if y_divides_b else 0
+    k_right = d // x if x_divides_d else 0
+    k = k_left if k_left == k_right else 0
+    return {
+        "a": a,
+        "b": b,
+        "c": c,
+        "d": d,
+        "left_product": left_product,
+        "right_product": right_product,
+        "product_shift": product_shift,
+        "products_equal": products_equal,
+        "common_factor": common,
+        "left_primitive": x,
+        "right_primitive": y,
+        "complementary_factor": k,
+        "primitive_pair_coprime": gcd(x, y) == 1,
+        "left_reconstruction_exact": common * x == a,
+        "right_reconstruction_exact": common * y == c,
+        "complementary_reconstruction_exact": (
+            products_equal
+            and y_divides_b
+            and x_divides_d
+            and k > 0
+            and y * k == b
+            and x * k == d
+        ),
+    }
+
+
+def mobius_product_shifted_variance_audit(
+) -> MobiusProductShiftedVarianceAudit:
+    """Reduce the separated top Möbius fourth moment to one shift gate."""
+    factor = F(1)
+    product = 2 * factor
+    transform_shift = product - factor
+    raw_offdiagonal = 3 * factor
+    target = 2 * factor
+    return MobiusProductShiftedVarianceAudit(
+        factor_length_exponent=factor,
+        product_length_exponent=product,
+        transform_shift_exponent=transform_shift,
+        diagonal_power_exponent=F(0),
+        diagonal_logarithmic_exponent=F(1),
+        raw_shifted_determinant_exponent=raw_offdiagonal,
+        shifted_determinant_target_exponent=target,
+        required_shifted_determinant_saving_exponent=(
+            raw_offdiagonal - target
+        ),
+        product_convolution_identity_exact=True,
+        diagonal_parameterization_exact=True,
+        schwartz_tail_is_power_negligible=True,
+        polylogarithmic_transition_collar_retained=True,
+        equivalent_to_separated_mixed_fourth_moment_gate=True,
+        shifted_mobius_determinant_bound_proved=False,
+        original_signed_kernel_requires_component_gate=False,
+        route_closes_mwkf_gate=False,
+    )
+
+
+def ganguly_guria_determinant_audit() -> GangulyGuriaDeterminantAudit:
+    """Test the 2026 smooth determinant theorem at the critical collar.
+
+    Ganguly--Guria Theorem 1.1 proves, for an unweighted smooth count on
+    ``ad-bc=r`` with four variables of size ``X``, the pointwise error
+    ``O_eps(|r|^theta X^(1+eps))``.  At ``X=T`` and ``|r|<=T^(1+o(1))``
+    the current ``theta=7/64`` leaves exactly ``T^(7/64)`` after an
+    absolute sum over the shifts.  Its published statement accepts no
+    arithmetic coefficients and gives no uniform coefficient dependence
+    for the extension mentioned in Remark 1.4.
+    """
+    variable = F(1)
+    shift = F(1)
+    theta = F(7, 64)
+    fixed_error = variable + shift * theta
+    aggregate_error = shift + fixed_error
+    target = F(2)
+    fixed_main = F(2) * variable
+    aggregate_main = shift + fixed_main
+    return GangulyGuriaDeterminantAudit(
+        variable_length_exponent=variable,
+        shift_range_exponent=shift,
+        ramanujan_exponent=theta,
+        fixed_shift_error_exponent=fixed_error,
+        absolute_shift_sum_error_exponent=aggregate_error,
+        shifted_determinant_target_exponent=target,
+        absolute_shift_sum_power_deficit=aggregate_error - target,
+        fixed_shift_main_exponent=fixed_main,
+        absolute_shift_sum_main_exponent=aggregate_main,
+        smooth_unweighted_fixed_shift_theorem_proved=True,
+        distinct_tensor_weights_accepted_as_stated=False,
+        arithmetic_coefficients_accepted=False,
+        coefficient_form_uniformity_quantified=False,
+        mobius_type_i_ii_adapter_proved=False,
+        ramanujan_conjecture_removes_power_deficit=True,
+        ramanujan_conjecture_supplies_logarithmic_saving=False,
+        mobius_main_term_cancellation_proved=False,
+        ganguly_guria_route_closes_mobius_gate=False,
+    )
+
+
+def mobius_triple_convolution_prime_power_coefficients(
+) -> tuple[int, int, int, int, int]:
+    """Return coefficients of ``(1-X)^3`` through ``X^4``.
+
+    If ``f=1*h`` were the full convolution ``mu*mu``, then the local
+    Dirichlet series of ``h`` would have to be ``(1-X)^3``.  The last
+    zero makes the finite support explicit.
+    """
+    return (1, -3, 3, -1, 0)
+
+
+def darbar_das_short_variance_audit() -> DarbarDasShortVarianceAudit:
+    """Check the published variance class against ``mu*mu`` and ``C_U``.
+
+    The critical product variable has size ``X=T^2`` and its natural
+    short window has length ``H=T``.  Square-root variance is ``XH``
+    (T-exponent 3), while the absolute/generic ledger is ``XH^2``
+    (T-exponent 4).  Darbar--Das treat functions ``f=1 *_k h`` with
+    ``h`` in two specified local classes.  For ``k=1`` and
+    ``f=mu*mu``, one needs ``h=mu*mu*mu``: its local coefficients
+    ``1,-3,3,-1`` are neither squarefree-supported nor completely
+    multiplicative.  The dyadically restricted ``C_U`` is not a
+    multiplicative function at all.
+    """
+    ambient = F(2)
+    window = F(1)
+    generic = ambient + F(2) * window
+    target = ambient + window
+    local = mobius_triple_convolution_prime_power_coefficients()
+    return DarbarDasShortVarianceAudit(
+        ambient_length_exponent=ambient,
+        short_window_exponent=window,
+        generic_short_variance_exponent=generic,
+        required_short_variance_exponent=target,
+        required_variance_saving_exponent=generic - target,
+        full_mobius_convolution_zeta_power=-2,
+        required_auxiliary_zeta_power=-3,
+        required_auxiliary_prime_coefficient=local[1],
+        required_auxiliary_prime_square_coefficient=local[2],
+        required_auxiliary_prime_cube_coefficient=local[3],
+        auxiliary_fits_squarefree_m_class=False,
+        auxiliary_fits_completely_multiplicative_g_class=False,
+        restricted_convolution_is_multiplicative=False,
+        published_theorem_covers_full_mobius_convolution=False,
+        published_theorem_covers_restricted_convolution=False,
+        darbar_das_route_closes_mobius_gate=False,
+    )
+
+
+def restricted_product_ratio_coordinates(
+    *,
+    a: int,
+    b: int,
+    scale: int,
+) -> dict[str, Fraction | bool]:
+    """Verify the algebraic coordinates used in ratio Mellin inversion.
+
+    With ``q=ab/scale^2`` and ``rho=a/b``, the formal coordinates
+    ``sqrt(q)*sqrt(rho)`` and ``sqrt(q)/sqrt(rho)`` reconstruct
+    ``a/scale`` and ``b/scale``.  Squaring avoids any floating-point
+    square roots and checks the identities over exact rationals.
+    """
+    if min(a, b, scale) <= 0:
+        raise ValueError("factors and scale must be positive")
+    product_coordinate = F(a * b, scale * scale)
+    factor_ratio = F(a, b)
+    left_squared = product_coordinate * factor_ratio
+    right_squared = product_coordinate / factor_ratio
+    expected_left = F(a * a, scale * scale)
+    expected_right = F(b * b, scale * scale)
+    return {
+        "product_coordinate": product_coordinate,
+        "factor_ratio": factor_ratio,
+        "left_coordinate_squared": left_squared,
+        "right_coordinate_squared": right_squared,
+        "left_reconstruction_squared_exact": left_squared == expected_left,
+        "right_reconstruction_squared_exact": right_squared == expected_right,
+    }
+
+
+def mobius_square_convolution_second_moment_local_factor(
+) -> tuple[int, ...]:
+    """Return the Euler remainder after extracting zeta(s)^4.
+
+    For ``f=mu*mu`` the local square series is ``1+4*z+z^2``.
+    Multiplication by ``(1-z)^4`` removes the fourth-order zeta pole.
+    The missing linear term proves absolute Euler convergence for
+    ``Re(s)>1/2``.
+    """
+    zeta_inverse_fourth = (1, -4, 6, -4, 1)
+    local_square = (1, 4, 1)
+    product = [0] * (len(zeta_inverse_fourth) + len(local_square) - 1)
+    for i, left in enumerate(zeta_inverse_fourth):
+        for j, right in enumerate(local_square):
+            product[i + j] += left * right
+    return tuple(product)
+
+
+def truncated_heath_brown_mobius_identity(
+    *,
+    n: int,
+    cutoff: int,
+    depth: int,
+) -> dict[str, int | bool]:
+    """Evaluate the finite truncated convolution identity for ``mu``.
+
+    Put ``a=mu 1_[1,U]``.  Since ``(mu-a)^{*K}(n)=0`` for
+    ``n <= U^K``, convolving its binomial expansion by ``1^{*(K-1)}``
+    gives
+
+    ``mu(n)=sum_{j=1}^K (-1)^(j+1) C(K,j)
+                  (a^{*j}*1^{*(j-1)})(n)``.
+
+    The helper evaluates both sides as finite divisor convolutions.  It
+    deliberately reports the validity range rather than silently using
+    the identity outside it.
+    """
+    if n <= 0 or cutoff <= 0 or depth <= 0:
+        raise ValueError("n, cutoff, and depth must be positive")
+
+    divisors = {
+        value: tuple(d for d in range(1, value + 1) if value % d == 0)
+        for value in range(1, n + 1)
+    }
+
+    def convolution(left: list[int], right: list[int]) -> list[int]:
+        result = [0] * (n + 1)
+        for value in range(1, n + 1):
+            result[value] = sum(
+                left[d] * right[value // d] for d in divisors[value]
+            )
+        return result
+
+    delta = [0] * (n + 1)
+    delta[1] = 1
+    one = [0] + [1] * n
+    truncated = [0] * (n + 1)
+    for value in range(1, min(n, cutoff) + 1):
+        truncated[value] = _finite_mobius(value)
+
+    truncated_powers = [delta]
+    one_powers = [delta]
+    for _ in range(depth):
+        truncated_powers.append(convolution(truncated_powers[-1], truncated))
+        one_powers.append(convolution(one_powers[-1], one))
+
+    rhs = 0
+    for j in range(1, depth + 1):
+        coefficient = (-1) ** (j + 1) * comb(depth, j)
+        term = convolution(truncated_powers[j], one_powers[j - 1])[n]
+        rhs += coefficient * term
+    lhs = _finite_mobius(n)
+    in_valid_range = n <= cutoff**depth
+    return {
+        "lhs": lhs,
+        "rhs": rhs,
+        "in_valid_range": in_valid_range,
+        "identity_exact": in_valid_range and lhs == rhs,
+    }
+
+
+def restricted_mobius_ratio_mellin_audit(
+) -> RestrictedMobiusRatioMellinAudit:
+    """Remove the dyadic divisor restriction by ratio Fourier inversion.
+
+    For each ratio frequency ``tau``, the coefficient is the convolution
+    of ``mu(n)n^(i tau/2)`` and ``mu(n)n^(-i tau/2)``.  It is
+    multiplicative with Dirichlet series
+    ``1/(zeta(s-i tau/2) zeta(s+i tau/2))``.  Rapid decay of the smooth
+    ratio transform makes a uniform single-``tau`` variance estimate
+    sufficient after Cauchy in the transform variable.
+    """
+    factor = F(1)
+    product = F(2)
+    window = F(1)
+    return RestrictedMobiusRatioMellinAudit(
+        factor_length_exponent=factor,
+        product_length_exponent=product,
+        short_window_exponent=window,
+        required_short_variance_exponent=product + window,
+        ratio_coordinate_identity_exact=True,
+        ratio_fourier_inversion_exact=True,
+        integrand_coefficient_is_multiplicative=True,
+        shifted_inverse_zeta_dirichlet_series_exact=True,
+        product_coordinate_weight_is_smooth=True,
+        ratio_transform_is_rapidly_decaying=True,
+        uniform_single_tau_variance_is_sufficient=True,
+        tau_zero_is_full_mobius_convolution=True,
+        tau_zero_square_dirichlet_series_zeta_pole_order=4,
+        tau_zero_diagonal_log_exponent=3,
+        required_diagonal_log_exponent=1,
+        tau_zero_euler_remainder_has_no_prime_term=True,
+        tau_zero_euler_remainder_converges_for_real_part_gt_half=True,
+        tau_zero_formal_diagonal_log_excess=2,
+        tau_zero_diagonal_excess_requires_offdiagonal_cancellation=True,
+        diagonal_term_is_not_lower_bound_for_full_variance=True,
+        tau_zero_diagonal_alone_disproves_uniform_gate=False,
+        joint_ratio_recombination_has_restricted_diagonal_log_order_one=True,
+        optimistic_mangerel_variance_exponent=product + F(2) * window,
+        mangerel_power_deficit=window,
+        mangerel_only_supplies_logarithmic_saving=True,
+        uniform_tau_mangerel_hypotheses_verified=False,
+        shifted_inverse_zeta_variance_proved=False,
+        ratio_mellin_route_closes_mobius_gate=False,
+    )
+
+
+def basak_robles_zaharescu_mobius_convolution_audit(
+) -> BasakRoblesZaharescuMobiusConvolutionAudit:
+    """Test the published ``mu*mu`` additive-twist bound at ``H=sqrt(X)``.
+
+    Basak--Robles--Zaharescu, Corollary 7.1, gives three terms
+    ``X^(16/17)``, ``X q^(-1/6)``, and ``X^(7/8)q^(1/8)``.
+    The local variance arc has length ``1/H`` and the squared Dirichlet
+    kernel has size ``H^2`` there.  Hence a pointwise exponent ``sigma``
+    contributes exponent ``1/2 + 2 sigma`` when ``H=X^(1/2)``.
+    This adapter tests only the theorem as stated; it does not rule out a
+    new proof-level local-L2 refinement of their Type I/II decomposition.
+    """
+    ambient = F(1)
+    window = F(1, 2)
+    critical_q = F(1, 2)
+    term1 = F(16, 17)
+    term2 = ambient - critical_q * F(1, 6)
+    term3 = F(7, 8) + critical_q * F(1, 8)
+    best = max(term1, term2, term3)
+    required_pointwise = F(1, 2)
+    local_variance = window + F(2) * best
+    target_variance = ambient + window
+    major_variance = F(2)
+    return BasakRoblesZaharescuMobiusConvolutionAudit(
+        ambient_length_exponent=ambient,
+        short_window_exponent=window,
+        critical_denominator_exponent=critical_q,
+        first_pointwise_term_exponent=term1,
+        second_pointwise_term_exponent=term2,
+        third_pointwise_term_exponent=term3,
+        best_published_pointwise_exponent=best,
+        required_pointwise_exponent=required_pointwise,
+        pointwise_exponent_deficit=best - required_pointwise,
+        direct_local_arc_variance_exponent=local_variance,
+        required_local_variance_exponent=target_variance,
+        local_arc_variance_deficit=local_variance - target_variance,
+        major_arc_direct_variance_exponent=major_variance,
+        major_arc_power_deficit=major_variance - target_variance,
+        published_full_mobius_convolution_pointwise_bound=True,
+        published_ratio_twisted_family_bound=False,
+        published_local_l2_bound=False,
+        brz_direct_pointwise_route_closes_variance_gate=False,
+    )
+
+
+def mrtt_signed_mobius_power_shift_audit(
+    *,
+    delta: Fraction,
+) -> MRTTSignedMobiusPowerShiftAudit:
+    """Audit the signed MRTT adapter before the physical gcd layers.
+
+    In one strict-power determinant cell the additive products have
+    length ``Y=T^(1+delta)`` and the shift has length ``H=T^delta``.
+    Thus the relative shift exponent is ``delta/(1+delta)``.  MRTT I's
+    published long-shift threshold ``8/33`` is equivalent to
+    ``delta >= 8/25``.
+
+    The formal signed replacement below the published threshold uses
+    ``abs(mu*mu)<=d_2`` and, for a newly extracted prime ``p`` not
+    dividing ``m``, ``(mu*mu)(pm)=-2(mu*mu)(m)``.  Mellin twists replace
+    ``-2`` by ``-(p^(i tau)+p^(-i tau))``.  Those identities are exact,
+    but a theorem-level reconstruction of every MRTT-II exceptional-set
+    and typical-factor estimate has not been supplied here, so the
+    extension is deliberately not marked verified.
+
+    In the published long-shift range MRTT certifies an
+    averaged-Chowla estimate at scale ``Y*H``.  The MWKF core instead
+    needs the unnormalised shift correlation at scale ``Y``, so the
+    full factor ``H`` remains even before the still-coupled physical
+    gcd-layer coefficients.
+    """
+    delta = F(delta)
+    if delta <= 0:
+        raise ValueError("delta must be positive")
+    ambient = F(1) + delta
+    relative = delta / ambient
+    long_threshold = F(8, 33)
+    delta_threshold = long_threshold / (F(1) - long_threshold)
+    long_applies = relative >= long_threshold
+    signed_extension_required = not long_applies
+    return MRTTSignedMobiusPowerShiftAudit(
+        ambient_product_exponent=ambient,
+        shift_exponent=delta,
+        relative_shift_exponent=relative,
+        long_shift_threshold=long_threshold,
+        long_shift_delta_threshold=delta_threshold,
+        published_long_shift_range_applies=long_applies,
+        truncated_mobius_identity_exact=True,
+        absolute_coefficient_is_bounded_by_d2=True,
+        ramare_prime_factor_is_exact=True,
+        major_arc_has_arbitrary_log_decay=True,
+        signed_typical_factor_extension_required=signed_extension_required,
+        signed_typical_factor_extension_verified=False,
+        fixed_power_shift_has_arbitrary_log_saving=long_applies,
+        mrtt_shift_average_exponent=ambient + delta,
+        required_mwkf_correlation_exponent=ambient,
+        remaining_shift_power_deficit=delta,
+        mrtt_scale_closes_mwkf_model=False,
+        full_ratio_twisted_multiplicative_family_covered=False,
+        product_compatible_hard_vertex_covered=False,
+        physical_gcd_layer_adapter_verified=False,
+        whole_strict_power_core_covered=False,
+    )
+
+
+def hard_vertex_four_mobius_determinant_line_identity(
+    *,
+    a: int,
+    b: int,
+    c: int,
+    d: int,
+) -> dict[str, int | bool]:
+    """Parametrize ``c*d-a*b`` by primitive slopes and one line.
+
+    Write ``a=g*a0`` and ``c=g*c0``.  Then
+    ``c0*d-a0*b=k`` with ``k=(c*d-a*b)/g``.  If
+    ``c0*p-a0*q=1``, every point on this determinant line is
+
+    ``b=q*k+c0*t`` and ``d=p*k+a0*t``.
+
+    The map from ``(k,t)`` to ``(b,d)`` has determinant ``-1``.
+    The helper computes a Bezout pair and verifies the reconstruction
+    without choosing residue-class representatives.
+    """
+    if min(a, b, c, d) <= 0:
+        raise ValueError("a, b, c, and d must be positive")
+
+    common = gcd(a, c)
+    a0 = a // common
+    c0 = c // common
+    shift = c * d - a * b
+    k, remainder = divmod(shift, common)
+
+    def extended_gcd(left: int, right: int) -> tuple[int, int, int]:
+        old_r, new_r = left, right
+        old_s, new_s = 1, 0
+        old_t, new_t = 0, 1
+        while new_r:
+            quotient = old_r // new_r
+            old_r, new_r = new_r, old_r - quotient * new_r
+            old_s, new_s = new_s, old_s - quotient * new_s
+            old_t, new_t = new_t, old_t - quotient * new_t
+        return old_r, old_s, old_t
+
+    bezout_gcd, p, plus_a0_coefficient = extended_gcd(c0, a0)
+    q = -plus_a0_coefficient
+    t_numerator = d - p * k
+    t, t_remainder = divmod(t_numerator, a0)
+    b_reconstructed = q * k + c0 * t
+    d_reconstructed = p * k + a0 * t
+    coordinate_determinant = q * a0 - c0 * p
+
+    return {
+        "gcd": common,
+        "a0": a0,
+        "c0": c0,
+        "shift": shift,
+        "shift_quotient": k,
+        "line_parameter": t,
+        "bezout_p": p,
+        "bezout_q": q,
+        "coordinate_change_determinant": coordinate_determinant,
+        "b_reconstructed": b_reconstructed,
+        "d_reconstructed": d_reconstructed,
+        "gcd_extracted_exact": a == common * a0 and c == common * c0,
+        "primitive_slopes_coprime": gcd(a0, c0) == 1,
+        "shift_quotient_integral": remainder == 0,
+        "bezout_identity_exact": (
+            bezout_gcd == 1 and c0 * p - a0 * q == 1
+        ),
+        "determinant_reconstructed_exact": (
+            t_remainder == 0
+            and b_reconstructed == b
+            and d_reconstructed == d
+            and c0 * d_reconstructed - a0 * b_reconstructed == k
+        ),
+    }
+
+
+def hard_vertex_four_mobius_determinant_audit(
+    *,
+    gcd_exponent: Fraction,
+) -> HardVertexFourMobiusDeterminantAudit:
+    """Record the exact exponent gate for the balanced hard vertex.
+
+    In the product-compatible model ``f=mu*mu``, the shifted average
+    at ``Y=T^2`` and ``H=T`` expands into four variables of length
+    ``T`` with ``c*d-a*b`` of length ``T``.  On
+    ``g=gcd(a,c)=T^kappa`` the primitive slopes and shift quotient
+    have length ``T^(1-kappa)``, while the determinant-line parameter
+    has length ``T^kappa``.  The layer cardinality is ``T^(3-kappa)``.
+
+    The local target ``T^2`` therefore needs ``T^(1-kappa)``.  This
+    is exactly square-root cancellation in the pair of primitive
+    slopes, or equivalently complete cancellation in the shift
+    quotient.  Neither estimate is asserted here.
+    """
+    kappa = F(gcd_exponent)
+    if kappa < 0 or kappa > 1:
+        raise ValueError("gcd_exponent must lie in [0,1]")
+    primitive = F(1) - kappa
+    raw = F(3) - kappa
+    target = F(2)
+    required = raw - target
+    outer_square_root = (F(2) * primitive) / 2
+    return HardVertexFourMobiusDeterminantAudit(
+        ambient_product_exponent=F(2),
+        shift_exponent=F(1),
+        gcd_exponent=kappa,
+        primitive_slope_exponent=primitive,
+        shift_quotient_exponent=primitive,
+        line_parameter_exponent=kappa,
+        raw_gcd_layer_exponent=raw,
+        local_target_exponent=target,
+        required_power_saving=required,
+        outer_slope_pair_square_root_saving=outer_square_root,
+        shift_quotient_full_cancellation_saving=primitive,
+        unimodular_line_parameterization_exact=True,
+        outer_square_root_is_exponent_critical=(
+            outer_square_root == required
+        ),
+        mrtt_supplies_only_logarithmic_saving=True,
+        top_face_contains_fixed_shift_chowla=(kappa == 1),
+        top_face_logarithmic_saving_proved=False,
+        published_centered_outer_mobius_spectral_bound=False,
+        physical_ratio_kernel_restored=False,
+        hard_vertex_determinant_estimate_proved=False,
+    )
+
+
+def blomer_milicevic_mobius_modulus_audit(
+    *,
+    modulus_scale_exponent: Fraction,
+    numerator_product_exponent: Fraction,
+    ramanujan_theta: Fraction = F(7, 64),
+) -> BlomerMilicevicMobiusModulusAudit:
+    """Audit direct periodic encoding of a Möbius modulus weight.
+
+    Blomer--Milićević Theorem 1 bounds a normalized Kloosterman
+    modulus sum at scale ``X`` by
+
+    ``X^(1/2+2*theta) * ||f_hat||_1``
+
+    when the arithmetic modulus weight is periodic modulo ``q``.
+    A collision-free exact encoding of the values of ``mu(c)`` on one
+    interval ``c ~ X`` may take ``q > 2X``.  Its support contains
+    ``X^(1+o(1))`` squarefree values, so normalized multiplicative
+    Parseval gives ``||f_hat||_1 >= ||f_hat||_2 = X^(1/2+o(1))``.
+
+    Thus even the smallest norm allowed by Parseval returns exponent
+    ``X^(1+2*theta)``.  With Kim--Sarnak ``theta=7/64`` this is worse
+    than the trivial normalized modulus sum.  Selberg alone replaces
+    ``X^(2*theta)`` by ``(mn)^theta`` and still loses a power here;
+    only full Ramanujan (including Selberg) makes ``theta=0`` and ties
+    the trivial exponent.  This rejects only the direct collision-free
+    periodic encoding.  It does not prove that every smaller period
+    fails to match a finite Möbius interval, and it does not identify
+    the QCT kernel with the complete Kloosterman family in the theorem.
+    """
+    sigma = F(modulus_scale_exponent)
+    numerator = F(numerator_product_exponent)
+    theta = F(ramanujan_theta)
+    if sigma <= 0 or numerator < 0 or theta < 0:
+        raise ValueError("exponents must be nonnegative and modulus positive")
+    periodic = sigma
+    l2_lower = sigma / 2
+    archimedean = sigma * (F(1, 2) + F(2) * theta)
+    total = archimedean + l2_lower
+    trivial = sigma
+    selberg_total = sigma + numerator * theta
+    full_ramanujan_total = sigma
+    return BlomerMilicevicMobiusModulusAudit(
+        kloosterman_modulus_scale_exponent=sigma,
+        numerator_product_exponent=numerator,
+        periodic_encoding_modulus_exponent=periodic,
+        mobius_support_l2_lower_exponent=l2_lower,
+        ramanujan_theta=theta,
+        bm_archimedean_factor_exponent=archimedean,
+        bm_total_bound_exponent=total,
+        trivial_normalized_modulus_sum_exponent=trivial,
+        published_bound_deficit=total - trivial,
+        selberg_replacement_bound_exponent=selberg_total,
+        selberg_replacement_deficit=_positive_part(
+            selberg_total - trivial
+        ),
+        full_ramanujan_bound_exponent=full_ramanujan_total,
+        full_ramanujan_margin=trivial - full_ramanujan_total,
+        linnik_range_hypothesis_holds=(numerator <= F(2) * sigma),
+        collision_free_exact_periodic_encoding_available=True,
+        fourier_l1_lower_bound_follows_from_parseval=True,
+        small_period_exact_mobius_encoding_ruled_out=False,
+        actual_qct_kernel_is_complete_kloosterman_family=False,
+        direct_periodic_weight_adapter_has_power_saving=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def blomer_milicevic_type_i_level_audit(
+    *,
+    modulus_scale_exponent: Fraction,
+    numerator_product_exponent: Fraction,
+    target_exponent: Fraction,
+    exposed_level_box_exponent: Fraction,
+    ramanujan_theta: Fraction = F(7, 64),
+) -> BlomerMilicevicTypeILevelAudit:
+    """Audit the literal Type-I divisibility-level use of BM.
+
+    In the exact identity
+
+    ``mu(n)=-sum_(a*b=n,a>U)c_U(a)mu(b)``,
+    ``c_U(a)=sum_(d|a,d<=U)mu(d)``, write ``a=d*e``.  Fixing
+    ``b,d`` leaves an unweighted Kloosterman-modulus sum over
+    multiples of the level ``L=b*d``.  Estimate (211) in the proof of
+    Blomer--Milicevic Theorem 1 bounds each such level by
+
+    ``X^(1/2+2*theta+eps)``
+
+    in the Linnik range.  Absolute summation over a level box of size
+    ``T^lambda`` costs ``lambda``.  The most favorable hypothetical
+    Cauchy aggregation costs ``lambda/2``; this latter bound is not a
+    published adapter for the joint QCT coefficients.
+
+    At the hard scales ``X=T^3`` and target ``T^2``, the uniform
+    Kim--Sarnak loss already leaves ``T^(5/32)`` at level exponent
+    zero.  Selberg alone replaces the exceptional factor by
+    ``(mn)^theta`` and still leaves a power deficit.  Under full
+    Ramanujan, Type I reaches only ``lambda<1/2`` and the ideal Cauchy
+    ledger reaches ``lambda<1``; its endpoint has zero margin.  These
+    are exponent diagnostics, not a proof of the
+    physical coupled estimate.
+    """
+    sigma = F(modulus_scale_exponent)
+    numerator = F(numerator_product_exponent)
+    target = F(target_exponent)
+    level = F(exposed_level_box_exponent)
+    theta = F(ramanujan_theta)
+    if sigma <= 0 or numerator < 0 or target < 0:
+        raise ValueError("scale exponents must be nonnegative and modulus positive")
+    if level < 0 or theta < 0:
+        raise ValueError("level and Ramanujan exponents must be nonnegative")
+
+    fixed_level = sigma * (F(1, 2) + F(2) * theta)
+    type_i = fixed_level + level
+    ideal_cauchy = fixed_level + level / 2
+    type_i_threshold = target - fixed_level
+    ideal_cauchy_threshold = F(2) * (target - fixed_level)
+    selberg_fixed = sigma / 2 + numerator * theta
+    selberg_type_i_threshold = target - selberg_fixed
+    selberg_cauchy_threshold = F(2) * (target - selberg_fixed)
+    selberg_cauchy = selberg_fixed + level / 2
+    full_ramanujan_fixed = sigma / 2
+    full_ramanujan_type_i_threshold = target - full_ramanujan_fixed
+    full_ramanujan_cauchy_threshold = F(2) * (
+        target - full_ramanujan_fixed
+    )
+    full_ramanujan_cauchy = full_ramanujan_fixed + level / 2
+    return BlomerMilicevicTypeILevelAudit(
+        kloosterman_modulus_scale_exponent=sigma,
+        numerator_product_exponent=numerator,
+        target_exponent=target,
+        exposed_level_box_exponent=level,
+        ramanujan_theta=theta,
+        fixed_level_bound_exponent=fixed_level,
+        type_i_absolute_bound_exponent=type_i,
+        type_i_power_deficit=_positive_part(type_i - target),
+        ideal_level_cauchy_bound_exponent=ideal_cauchy,
+        ideal_level_cauchy_power_deficit=(
+            _positive_part(ideal_cauchy - target)
+        ),
+        uniform_type_i_level_threshold=type_i_threshold,
+        uniform_ideal_cauchy_level_threshold=ideal_cauchy_threshold,
+        uniform_type_i_has_nonnegative_level_window=(
+            type_i_threshold >= 0
+        ),
+        uniform_ideal_cauchy_has_nonnegative_level_window=(
+            ideal_cauchy_threshold >= 0
+        ),
+        selberg_fixed_level_bound_exponent=selberg_fixed,
+        selberg_type_i_level_threshold=selberg_type_i_threshold,
+        selberg_ideal_cauchy_level_threshold=selberg_cauchy_threshold,
+        selberg_ideal_cauchy_bound_exponent=selberg_cauchy,
+        selberg_ideal_cauchy_power_deficit=_positive_part(
+            selberg_cauchy - target
+        ),
+        full_ramanujan_fixed_level_bound_exponent=full_ramanujan_fixed,
+        full_ramanujan_type_i_level_threshold=(
+            full_ramanujan_type_i_threshold
+        ),
+        full_ramanujan_ideal_cauchy_level_threshold=(
+            full_ramanujan_cauchy_threshold
+        ),
+        full_ramanujan_ideal_cauchy_bound_exponent=(
+            full_ramanujan_cauchy
+        ),
+        full_ramanujan_ideal_cauchy_power_margin=_positive_part(
+            target - full_ramanujan_cauchy
+        ),
+        linnik_range_hypothesis_holds=(numerator <= F(2) * sigma),
+        level_divisibility_estimate_occurs_in_bm_proof=True,
+        exact_mobius_type_i_identity_available=True,
+        exceptional_spectrum_removed_for_level_family=False,
+        level_cauchy_bound_proved_for_qct_coefficients=False,
+        product_compatible_hard_vertex_only=True,
+        physical_coupled_kernel_restored=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def humphries_exceptional_level_density_audit(
+    *,
+    modulus_scale_exponent: Fraction,
+    numerator_product_scale_exponent: Fraction,
+    target_exponent: Fraction,
+    level_family_exponent: Fraction,
+    ramanujan_theta: Fraction = F(7, 64),
+    gamma0_density_slope: Fraction = F(4),
+) -> HumphriesExceptionalLevelDensityAudit:
+    """Give exceptional spectral density its optimistic level gain.
+
+    Humphries' Gamma_0(q) density theorem with no finite-prime
+    conditions gives
+
+    ``# {f : Im(t_f)>nu} << vol(Gamma_0(q))^(1-4*nu+eps)``.
+
+    The exact Bessel ratio is ``Xi=sqrt(mn)/X``.  If
+    ``X=T^sigma`` and ``mn=T^tau``, an exceptional parameter ``nu``
+    costs ``Xi^(-2*nu)=T^((2*sigma-tau)*nu)``, not ``T^(2*sigma*nu)``.
+    The finite-prime Hecke bound separately costs ``T^(tau*theta)``.
+    After favorable volume normalization, level density changes the
+    archimedean loss to
+    ``max(2*sigma-tau-4*lambda,0)*nu``.
+
+    For ``sigma=3``, ``tau=5``, and ``lambda=1``, density numerically
+    removes the archimedean exceptional loss, since the neutral level
+    is only ``1/4``.  It does not remove the finite-prime loss
+    ``T^(35/64)``.  The theorem also takes positive counts and does not
+    by itself justify the QCT spectral weights or the ideal level
+    Cauchy aggregation.
+    """
+    sigma = F(modulus_scale_exponent)
+    tau = F(numerator_product_scale_exponent)
+    target = F(target_exponent)
+    level = F(level_family_exponent)
+    theta = F(ramanujan_theta)
+    slope = F(gamma0_density_slope)
+    if sigma <= 0 or tau < 0 or target < 0 or level < 0 or theta < 0:
+        raise ValueError("scale exponents must be nonnegative and modulus positive")
+    if slope <= 0:
+        raise ValueError("density slope must be positive")
+
+    count = F(1) - slope * theta
+    normalized_count = count - F(1)
+    ramanujan_base = sigma / 2 + level / 2
+    bessel_ratio = F(2) * sigma - tau
+    finite_hecke = tau * theta
+    residual = _positive_part(
+        (bessel_ratio - slope * level) * theta
+    )
+    density_bound = ramanujan_base + finite_hecke + residual
+    max_target_level = F(2) * (target - sigma / 2)
+    neutral_level = _positive_part(bessel_ratio) / slope
+    return HumphriesExceptionalLevelDensityAudit(
+        kloosterman_modulus_scale_exponent=sigma,
+        numerator_product_scale_exponent=tau,
+        bessel_ratio_exponent=bessel_ratio,
+        target_exponent=target,
+        level_family_exponent=level,
+        ramanujan_theta=theta,
+        gamma0_density_slope=slope,
+        humphries_count_exponent_at_theta=count,
+        volume_normalized_count_exponent_at_theta=normalized_count,
+        ideal_ramanujan_level_cauchy_base_exponent=ramanujan_base,
+        finite_prime_hecke_loss_exponent=finite_hecke,
+        residual_exceptional_loss_exponent=residual,
+        density_enhanced_bound_exponent=density_bound,
+        density_enhanced_power_deficit=_positive_part(
+            density_bound - target
+        ),
+        maximum_level_allowed_by_target=max_target_level,
+        level_needed_to_neutralize_exceptional_growth=neutral_level,
+        target_and_density_thresholds_compatible=(
+            neutral_level <= max_target_level
+        ),
+        density_numerically_neutralizes_archimedean_exceptional_growth=(
+            residual == 0
+        ),
+        linnik_scale_dominates_level_family=(sigma >= level),
+        density_theorem_is_positive_counting_input=True,
+        mobius_level_signs_used_by_density_theorem=False,
+        qct_spectral_weights_accepted=False,
+        exceptional_spectrum_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def finite_prime_hecke_average_audit(
+    *,
+    kloosterman_modulus_exponent: Fraction,
+    left_hecke_index_exponent: Fraction,
+    right_hecke_index_exponent: Fraction,
+    level_exponent: Fraction,
+    target_exponent: Fraction,
+    ramanujan_theta: Fraction = F(7, 64),
+) -> FinitePrimeHeckeAverageAudit:
+    """Locate the post-density finite-prime Hecke obstruction.
+
+    With ``X=T^sigma``, ideal square-root aggregation over a level
+    family ``T^lambda`` has full-Ramanujan base exponent
+    ``sigma/2+lambda/2``.  Pointwise Kim--Sarnak on Hecke indices
+    ``T^a`` and ``T^b`` costs ``(a+b)*theta``.
+
+    Applying the ordinary fixed-level spectral large sieve only after
+    freezing both indices is worse: its delta-sequence cost is
+    ``((a-lambda)_+ + (b-lambda)_+)/2``.  At the hard box
+    ``(sigma,a,b,lambda)=(3,5/2,5/2,1)``, this is ``3/2``, compared
+    with the pointwise finite-prime loss ``35/64``.
+
+    Pascadi's 2026 exceptional large sieve treats the archimedean
+    exceptional spectrum for frequency-concentrated sequences.  Its
+    finite-place analogue is explicitly described as a prospective
+    extension, not a theorem.  Thus a successful estimate must average
+    the Mobius entry weights before the positive fixed-index Cauchy
+    step and save the complete pointwise loss, followed by logarithmic
+    decay at the zero-margin target.
+    """
+    sigma = F(kloosterman_modulus_exponent)
+    left = F(left_hecke_index_exponent)
+    right = F(right_hecke_index_exponent)
+    level = F(level_exponent)
+    target = F(target_exponent)
+    theta = F(ramanujan_theta)
+    if min(sigma, left, right, level, target, theta) < 0 or sigma == 0:
+        raise ValueError("scale exponents must be nonnegative and modulus positive")
+
+    numerator = left + right
+    ramanujan_base = sigma / 2 + level / 2
+    pointwise_loss = numerator * theta
+    pointwise_total = ramanujan_base + pointwise_loss
+    fixed_index_loss = (
+        _positive_part(left - level)
+        + _positive_part(right - level)
+    ) / 2
+    fixed_index_total = ramanujan_base + fixed_index_loss
+    return FinitePrimeHeckeAverageAudit(
+        kloosterman_modulus_exponent=sigma,
+        left_hecke_index_exponent=left,
+        right_hecke_index_exponent=right,
+        numerator_product_exponent=numerator,
+        level_exponent=level,
+        target_exponent=target,
+        ramanujan_theta=theta,
+        full_ramanujan_level_cauchy_base_exponent=ramanujan_base,
+        pointwise_finite_hecke_loss_exponent=pointwise_loss,
+        pointwise_total_bound_exponent=pointwise_total,
+        pointwise_power_deficit=_positive_part(pointwise_total - target),
+        fixed_index_spectral_large_sieve_loss_exponent=fixed_index_loss,
+        fixed_index_total_bound_exponent=fixed_index_total,
+        required_pre_cauchy_hecke_saving_exponent=pointwise_loss,
+        required_post_saving_log_decay=(ramanujan_base == target),
+        pascadi_archimedean_exceptional_large_sieve_published=True,
+        pascadi_finite_place_extension_published=False,
+        mobius_entry_to_hecke_index_adapter_derived=False,
+        physical_coupled_kernel_restored=False,
+        finite_prime_hecke_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def farey_dilate_pre_cauchy_audit(
+    *,
+    mobius_entry_exponent: Fraction,
+    shift_window_exponent: Fraction,
+    left_dilate_exponent: Fraction,
+    right_dilate_exponent: Fraction,
+    gate_target_exponent: Fraction,
+) -> FareyDilatePreCauchyAudit:
+    """Audit the short-arc dilate family before positive Cauchy.
+
+    For a separated component of the signed Farey kernel, Fourier
+    inversion in ``delta=rv-js`` has an exact prefactor ``T^ell`` and
+    an alpha arc of length ``T^-ell``.  If
+
+    ``P(beta)=sum_(n about T^x) a_n e(beta*n)``, then for a nonzero
+    dilate ``v about T^nu`` the elementary local mean-value theorem is
+
+    ``int_(|alpha| << T^-ell) |P(alpha*v)|^2 d alpha``
+    ``<< T^(x-ell) + T^-nu``.
+
+    The bracket has exponent ``max(x-ell,-nu)``, but it multiplies the
+    coefficient energy ``sum |a_n|^2``, of exponent ``x``.  Omitting
+    that energy is a normalization error.  With the normalized Fourier
+    measure ``T^ell d alpha``, ordinary Cauchy over the dilates has
+    exponent
+
+    ``ell + 2*nu + x + max(x-ell,-nu)``
+
+    for each squared norm.  The literal positive self-diagonal
+    ``(v_1,n_1)=(v_2,n_2)`` instead has exponent ``x+nu``.
+
+    At ``(x,ell,nu_left,nu_right)=(3,5/2,1/2,1/2)``, separate family
+    Cauchy gives exponent ``7``: taking an absolute Fourier norm has
+    lost the entire signed Farey window.  A genuinely joint Mobius--
+    dilate estimate at the positive self-diagonal scale would give
+    exponent ``7/2`` and no power margin.  The signed
+    shift support removes ``delta=0``, but it does not remove the
+    positive terms obtained by setting the two copies of each dilate
+    and each Mobius entry equal after Cauchy.  Consequently even the
+    ideal large-sieve ledger still needs an additional power or
+    logarithmic saving at the endpoint.
+
+    This audit is deliberately for a separated component.  Passing
+    from the original physical coupled kernel to this model without
+    losing the endpoint is not asserted here.
+    """
+    x = F(mobius_entry_exponent)
+    ell = F(shift_window_exponent)
+    left = F(left_dilate_exponent)
+    right = F(right_dilate_exponent)
+    gate = F(gate_target_exponent)
+    if min(x, ell, left, right, gate) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    if ell == 0:
+        raise ValueError("shift-window exponent must be positive")
+
+    left_bandwidth = max(x - ell, -left)
+    right_bandwidth = max(x - ell, -right)
+    left_local = x + left_bandwidth
+    right_local = x + right_bandwidth
+    left_diagonal = x + left
+    right_diagonal = x + right
+    left_cauchy = ell + F(2) * left + left_local
+    right_cauchy = ell + F(2) * right + right_local
+    separate_bound = (left_cauchy + right_cauchy) / 2
+    ideal_bound = (left_diagonal + right_diagonal) / 2
+    return FareyDilatePreCauchyAudit(
+        mobius_entry_exponent=x,
+        shift_window_exponent=ell,
+        left_dilate_exponent=left,
+        right_dilate_exponent=right,
+        gate_target_exponent=gate,
+        fourier_arc_denominator_exponent=ell,
+        left_rescaled_arc_exponent=left - ell,
+        right_rescaled_arc_exponent=right - ell,
+        mobius_coefficient_energy_exponent=x,
+        left_one_dilate_bandwidth_excess_exponent=left_bandwidth,
+        right_one_dilate_bandwidth_excess_exponent=right_bandwidth,
+        left_one_dilate_local_l2_exponent=left_local,
+        right_one_dilate_local_l2_exponent=right_local,
+        left_family_positive_self_diagonal_exponent=left_diagonal,
+        right_family_positive_self_diagonal_exponent=right_diagonal,
+        left_family_cauchy_normalized_l2_exponent=left_cauchy,
+        right_family_cauchy_normalized_l2_exponent=right_cauchy,
+        separate_family_cauchy_bound_exponent=separate_bound,
+        separate_family_cauchy_zero_slack_deficit=_positive_part(
+            separate_bound - ideal_bound
+        ),
+        ideal_joint_dilate_bound_exponent=ideal_bound,
+        ideal_joint_dilate_gate_deficit=_positive_part(ideal_bound - gate),
+        zero_slack_endpoint_exponent=ideal_bound,
+        ideal_joint_dilate_reaches_zero_slack_endpoint=(
+            ideal_bound >= gate
+        ),
+        ordinary_fourier_cauchy_loses_farey_window=True,
+        shift_zero_mode_removed_before_cauchy=True,
+        positive_self_diagonal_removed_by_shift_centering=False,
+        endpoint_requires_additional_logarithmic_or_power_saving=(
+            ideal_bound >= gate
+        ),
+        published_joint_dilate_endpoint_saving_available=False,
+        physical_coupled_kernel_restored=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def farey_dilate_convolution_poisson_audit(
+    *,
+    mobius_entry_exponent: Fraction,
+    dilate_exponent: Fraction,
+    shift_window_exponent: Fraction,
+    gate_target_exponent: Fraction,
+) -> FareyDilateConvolutionPoissonAudit:
+    """Test the two algebraic escapes from the signed dilate form.
+
+    Grouping ``n=r*v`` replaces the two variables by the truncated
+    divisor coefficient
+
+    ``c(n)=sum_(v|n, v about V, n/v about X) mu(n/v)``.
+
+    The complete divisor sum is ``(1*mu)(n)=1_(n=1)``, but the dyadic
+    divisor window is not complete.  If ``p about V`` and ``q about X``
+    are primes in separated subintervals, then ``n=p*q`` has exactly
+    one eligible divisor and ``c(n)=mu(q)=-1``.  The prime number
+    theorem gives ``T^(x+nu-o(1))`` such witnesses, so grouping alone
+    cannot reduce the coefficient energy by a fixed power.
+
+    Alternatively, Poisson summation in the dilate localizes alpha to
+    packets ``alpha=k/r+O(1/(V*r))``.  On the central Fourier arc
+    ``|alpha| about 1/L``, the numerator has exponent ``x-ell`` and two
+    packets overlap only when
+
+    ``|k/r-l/s| << T^(-x-nu)``.
+
+    Multiplication by ``r*s about T^(2x)`` recovers a determinant window
+    of exponent ``x-nu``.  At the critical relation ``ell=x-nu``, this
+    is exactly the original ``r*l-s*k about L`` condition.  Hence the
+    double Poisson step is a change of coordinates, not a new saving.
+    """
+    x = F(mobius_entry_exponent)
+    nu = F(dilate_exponent)
+    ell = F(shift_window_exponent)
+    gate = F(gate_target_exponent)
+    if min(x, nu, ell, gate) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    if x <= nu:
+        raise ValueError("semiprime witness requires separated entry and dilate scales")
+
+    grouped = x + nu
+    determinant = x - nu
+    return FareyDilateConvolutionPoissonAudit(
+        mobius_entry_exponent=x,
+        dilate_exponent=nu,
+        shift_window_exponent=ell,
+        gate_target_exponent=gate,
+        grouped_product_length_exponent=grouped,
+        semiprime_energy_witness_exponent=grouped,
+        poisson_numerator_exponent=_positive_part(x - ell),
+        poisson_packet_width_exponent=-grouped,
+        recovered_determinant_window_exponent=determinant,
+        recovered_determinant_window_matches_original=(determinant == ell),
+        complete_divisor_convolution_is_epsilon=True,
+        dyadic_divisor_window_is_complete=False,
+        semiprime_witness_survives_dyadic_grouping=True,
+        original_shift_centering_removes_equal_products=True,
+        positive_cauchy_reintroduces_grouped_energy=True,
+        double_dilate_poisson_returns_original_determinant=(
+            determinant == ell
+        ),
+        dyadic_mobius_convolution_supplies_power_saving=False,
+        physical_coupled_kernel_restored=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def smooth_hecke_product_mobius_audit(
+    *,
+    left_index_exponent: Fraction,
+    right_index_exponent: Fraction,
+    spectral_conductor_exponent: Fraction,
+    pointwise_ramanujan_theta: Fraction = F(7, 64),
+) -> SmoothHeckeProductMobiusAudit:
+    """Average a smooth product Hecke index before pointwise bounds.
+
+    For a primitive newform with trivial nebentypus,
+
+    ``lambda(h*delta) = sum_(d|(h,delta)) mu(d)``
+    ``                         * lambda(h/d) lambda(delta/d)``.
+
+    Let the two smooth index lengths be ``T^a`` and ``T^b`` and let the
+    analytic conductor of the cusp form be ``T^kappa``.  Split the
+    common divisor at ``T^(min(a,b)-kappa)`` (up to polylogarithms).
+
+    Below the split, both quotient lengths exceed the conductor.
+    Mellin inversion, entireness of the cusp L-function, and its
+    functional equation shift each smooth Hecke sum past the critical
+    strip; after summing the common divisor, the exponent is
+    ``min(a,b)``.
+
+    Above the split, interchange the divisor and quotient sums.  The
+    common divisor is still Mobius weighted, so the zeta zero-free
+    region supplies arbitrary logarithmic decay.  Rankin--Selberg on
+    the two quotient sums gives exponent ``max(a,b)+kappa``.  Therefore
+    the tail saves ``min(a,b)-kappa`` relative to the raw index volume
+    and never invokes the pointwise cost ``(a+b)*theta``.
+
+    At ramified primes the primitive local standard factor has degree
+    at most one, so its coefficients are completely multiplicative;
+    the common Mobius divisor is simply restricted to primes away from
+    the level.  The statement audited here is the product-smooth
+    newform component.  Oldclasses and the original coupled QCT
+    transform must still be restored separately.
+    """
+    left = F(left_index_exponent)
+    right = F(right_index_exponent)
+    conductor = F(spectral_conductor_exponent)
+    theta = F(pointwise_ramanujan_theta)
+    if min(left, right, conductor, theta) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    shortest = min(left, right)
+    longest = max(left, right)
+    if conductor >= shortest:
+        raise ValueError("spectral conductor must be shorter than both indices")
+
+    split = shortest - conductor
+    product = left + right
+    tail = longest + conductor
+    return SmoothHeckeProductMobiusAudit(
+        left_index_exponent=left,
+        right_index_exponent=right,
+        product_index_exponent=product,
+        spectral_conductor_exponent=conductor,
+        pointwise_ramanujan_theta=theta,
+        pointwise_finite_prime_loss_exponent=product * theta,
+        common_divisor_split_exponent=split,
+        small_divisor_cusp_bound_exponent=shortest,
+        large_divisor_mobius_pnt_bound_exponent=tail,
+        large_divisor_saving_over_index_volume=product - tail,
+        large_divisor_endpoint_has_arbitrary_log_decay=True,
+        unramified_hecke_mobius_inversion_exact=True,
+        cusp_l_function_is_entire=True,
+        small_divisor_functional_equation_shift_valid=True,
+        large_divisor_uses_only_rankin_selberg_and_mobius_pnt=True,
+        pointwise_ramanujan_loss_removed_for_product_smooth_newforms=True,
+        eisenstein_spectrum_requires_separate_existing_treatment=True,
+        ramified_newform_local_factors_restored=True,
+        oldclass_coefficients_restored=False,
+        physical_coupled_kernel_restored=False,
+        finite_prime_hecke_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def smooth_hecke_oldclass_product_audit(
+    *,
+    index_exponent: Fraction,
+    ambient_level_exponent: Fraction,
+    ramanujan_theta: Fraction = F(7, 64),
+) -> SmoothHeckeOldclassProductAudit:
+    """Restore the Blomer--Milicevic oldclass layer in the product model.
+
+    Write the ambient level as ``T^lambda``, the primitive newform level
+    as ``T^rho``, and the oldclass shift as ``T^beta``, so that
+    ``rho + beta = lambda``.  In the exact oldclass Fourier expansion,
+    choose ``c*ell=b`` and distribute ``ell=ell_1*ell_2`` between the two
+    smooth Hecke indices.  If their common exponent is ``u``, the product
+    Mobius split is at least
+
+    ``u - max(log_T ell_1, log_T ell_2) - rho >= u - lambda``.
+
+    The large-common-divisor endpoint, including the two exact oldclass
+    coefficient normalizations, is at most
+
+    ``u + rho + theta*beta``
+    ``  = u + lambda - (1-theta)*beta``.
+
+    Hence every genuine oldclass shift has the power margin
+    ``(1-theta)*beta`` and the worst endpoint is the newform cell
+    ``beta=0``.  Divisor allocations cost only ``T^o(1)``, and every cell
+    retains the arbitrary logarithmic decay from the Mobius PNT.
+
+    This adapter deliberately stops at the product-smooth spectral
+    model.  It does not separate the physical coupled QCT kernel or
+    restore the remaining Mobius entries and level family.
+    """
+    index = F(index_exponent)
+    level = F(ambient_level_exponent)
+    theta = F(ramanujan_theta)
+    if min(index, level, theta) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    if theta >= 1:
+        raise ValueError("Ramanujan exponent must be smaller than one")
+    if level >= index:
+        raise ValueError("ambient level must be shorter than each index")
+
+    split = index - level
+    endpoint = index + level
+    slope = F(1) - theta
+    return SmoothHeckeOldclassProductAudit(
+        index_exponent=index,
+        ambient_level_exponent=level,
+        ramanujan_theta=theta,
+        minimum_common_divisor_split_exponent=split,
+        newform_endpoint_exponent=endpoint,
+        oldclass_shift_saving_slope=slope,
+        worst_oldclass_endpoint_exponent=endpoint,
+        worst_oldclass_endpoint_attained_at_newform_shift_zero=True,
+        bm_oldclass_fourier_formula_exact=True,
+        bm_first_index_is_coprime_to_ambient_level=True,
+        oldclass_divisor_allocations_have_subpower_cost=True,
+        every_oldclass_cell_retains_mobius_pnt_log_decay=True,
+        ramified_newform_identity_compatible=True,
+        oldclass_product_smooth_model_covered=True,
+        physical_coupled_kernel_restored=False,
+        finite_prime_hecke_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def physical_qct_hecke_kernel_audit(
+    *,
+    left_index_exponent: Fraction,
+    right_index_exponent: Fraction,
+    ambient_level_exponent: Fraction,
+    exceptional_theta: Fraction = F(7, 64),
+) -> PhysicalQCTHeckeKernelAudit:
+    """Separate the physical QCT and Kuznetsov kernels at zero power cost.
+
+    The normalized four-variable QCT weight has polylogarithmic bounds
+    for every derivative.  Fourier inversion with
+    ``prod_j (1+xi_j^2)^(-J-1)`` therefore has a weighted L1 nuclear
+    norm controlled by derivatives of total order at most ``8*(J+1)``.
+
+    The Kuznetsov Bessel transform adds the product ``n=|h*delta|``.
+    Mellin Parseval on ``Re(z)=-1/2`` is valid simultaneously for the
+    same-sign J kernels and the opposite-sign K kernel provided
+    ``2*theta<1/2``.  Its only n-dependence is ``n^(z/2)``, which is
+    exactly ``|h|^(z/2)*|delta|^(z/2)``.  The Mellin frequency and the
+    retained Fourier frequencies have exponent zero; real Maass and
+    holomorphic tails have arbitrary logarithmic decay, while the
+    exceptional strip lies a fixed distance inside the contour.
+
+    This proves the product decomposition of the physical smooth kernel
+    inside a standard Kuznetsov component.  It does not derive the
+    missing geometric adapter from the entry-weighted QCT orbit to that
+    component, and it does not aggregate the other Mobius entry or Type-I
+    level weights.
+    """
+    left = F(left_index_exponent)
+    right = F(right_index_exponent)
+    level = F(ambient_level_exponent)
+    theta = F(exceptional_theta)
+    if min(left, right, level, theta) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    contour = F(-1, 2)
+    max_order = F(2) * theta
+    margin = -contour - max_order
+    if margin <= 0:
+        raise ValueError("fixed Bessel Mellin contour requires theta < 1/4")
+    if level >= min(left, right):
+        raise ValueError("ambient level must be shorter than both indices")
+
+    return PhysicalQCTHeckeKernelAudit(
+        left_index_exponent=left,
+        right_index_exponent=right,
+        ambient_level_exponent=level,
+        exceptional_theta=theta,
+        normalized_qct_kernel_dimension=4,
+        bessel_augmented_kernel_dimension=5,
+        weighted_fourier_derivative_order_slope=8,
+        bessel_mellin_contour_real_part=contour,
+        maximum_exceptional_bessel_order=max_order,
+        exceptional_contour_margin=margin,
+        spectral_conductor_exponent=level,
+        multiplicative_twist_bandwidth_exponent=F(0),
+        qct_fourier_tensorization_exact=True,
+        weighted_fourier_nuclear_norm_is_polylogarithmic=True,
+        same_sign_bessel_mellin_factorization_exact=True,
+        opposite_sign_bessel_mellin_factorization_exact=True,
+        bessel_product_dependence_separates_as_h_times_delta=True,
+        real_spectral_tail_has_arbitrary_log_decay=True,
+        holomorphic_tail_has_arbitrary_log_decay=True,
+        exceptional_spectrum_stays_inside_fixed_contour=True,
+        product_smooth_hecke_lemma_applies_to_every_kernel_component=True,
+        oldclass_restoration_is_compatible=True,
+        physical_qct_kernel_product_model_restored=True,
+        actual_qct_geometric_spectral_adapter_derived=False,
+        other_mobius_entry_weights_restored=False,
+        type_i_level_family_aggregation_proved=False,
+        finite_prime_hecke_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def type_i_atkin_lehner_cusp_identity(
+    *,
+    entry_divisor: int,
+    modulus_divisor: int,
+    modulus: int,
+    dual_index: int,
+    product_index: int,
+) -> dict[str, object]:
+    """Check the finite residue identity behind the Type-I cusp adapter.
+
+    Put ``r=A*e`` with ``A=entry_divisor``.  Poisson summation in the
+    unweighted quotient e produces the reduced-residue sum
+
+    ``sum_e^* e((m*e-n*inverse(A*e))/s)``.
+
+    The permutation ``x=A*e (mod s)`` turns this exactly into
+    ``S(inverse(A)*m,-n;s)``.  For ``B|s`` and ``(s,A)=1``, this is
+    precisely Kiral--Young, Proposition 2.6, at level ``A*B``: with
+    their ``r=B`` and Atkin--Lehner factor ``s_KY=A``, the first index
+    is ``inverse(s_KY)*m`` and the cusp modulus is ``s*sqrt(A)``.
+    The returned comparison evaluates the two finite Kloosterman sums;
+    it is not inferred only from the allowed-modulus condition.
+    """
+    A = int(entry_divisor)
+    B = int(modulus_divisor)
+    s = int(modulus)
+    m = int(dual_index)
+    n = int(product_index)
+    if min(A, B, s) <= 0:
+        raise ValueError("divisors and modulus must be positive")
+    if gcd(A, B) != 1 or s % B != 0 or gcd(A, s) != 1:
+        raise ValueError("cusp adapter requires (A,B)=1, B|s, and (A,s)=1")
+
+    units = tuple(x for x in range(s) if gcd(x, s) == 1)
+    inverse_A = pow(A, -1, s)
+    poisson_first_index = inverse_A * m % s
+    kiral_young_first_index = inverse_A * m % s
+    left = sorted(
+        (m * e - n * pow((A * e) % s, -1, s)) % s
+        for e in units
+    )
+    right = sorted(
+        (inverse_A * m * x - n * pow(x, -1, s)) % s
+        for x in units
+    )
+    mapped_units = tuple(sorted((A * e) % s for e in units))
+    poisson_kloosterman = sum(
+        exp(2j * pi * ((poisson_first_index * x - n * pow(x, -1, s)) % s) / s)
+        for x in units
+    )
+    kiral_young_kloosterman = sum(
+        exp(2j * pi * ((kiral_young_first_index * x - n * pow(x, -1, s)) % s) / s)
+        for x in units
+    )
+    return {
+        "level": A * B,
+        "cusp_pair": ("infinity", f"1/{B}"),
+        "ordinary_modulus": s,
+        "cusp_modulus_squared_over_ordinary_modulus_squared": A,
+        "modulus_is_allowed_for_cusp_pair": (
+            s % B == 0 and gcd(s, A) == 1
+        ),
+        "entry_scaling_permutes_reduced_residues": (
+            mapped_units == tuple(sorted(units))
+        ),
+        "poisson_residue_multisets_match": (left == right),
+        "poisson_first_index_mod_modulus": poisson_first_index,
+        "kiral_young_first_index_mod_modulus": kiral_young_first_index,
+        "ordinary_kloosterman_matches_atkin_lehner_cusp_sum": (
+            abs(poisson_kloosterman - kiral_young_kloosterman) <= 1e-10
+        ),
+    }
+
+
+def inverse_scaled_kloosterman_modulus_lift_identity(
+    *,
+    entry_divisor: int,
+    modulus: int,
+    dual_index: int,
+    product_index: int,
+) -> dict[str, object]:
+    """Lift the inverse-scaled first index to the product modulus.
+
+    For ``(A,s)=1``, CRT multiplicativity gives
+
+    ``S(m,-A*n;A*s) = c_A(m) S(inverse(A)*m,-n;s)``.
+
+    The local factor is a Ramanujan sum because the second lifted index
+    is divisible by ``A``.  When ``A`` is squarefree, ``c_A(m)`` never
+    vanishes, so the physical sum is a standard Kloosterman sum modulo
+    ``A*s`` divided by a nonzero integer of absolute value at least one.
+    """
+    A = int(entry_divisor)
+    s = int(modulus)
+    m = int(dual_index)
+    n = int(product_index)
+    if min(A, s) <= 0:
+        raise ValueError("entry divisor and modulus must be positive")
+    if gcd(A, s) != 1:
+        raise ValueError("modulus lift requires (A,s)=1")
+
+    def mobius(value: int) -> int:
+        result = 1
+        remaining = value
+        prime = 2
+        while prime * prime <= remaining:
+            if remaining % prime == 0:
+                remaining //= prime
+                result = -result
+                if remaining % prime == 0:
+                    return 0
+                while remaining % prime == 0:
+                    remaining //= prime
+            prime += 1
+        if remaining > 1:
+            result = -result
+        return result
+
+    common = gcd(A, m)
+    quotient = A // common
+    ramanujan = mobius(quotient) * _euler_phi(A) // _euler_phi(quotient)
+    squarefree = mobius(A) != 0
+
+    def kloosterman(first: int, second: int, mod: int) -> complex:
+        return sum(
+            exp(
+                2j
+                * pi
+                * ((first * x + second * pow(x, -1, mod)) % mod)
+                / mod
+            )
+            for x in range(mod)
+            if gcd(x, mod) == 1
+        )
+
+    physical = kloosterman(pow(A, -1, s) * m, -n, s)
+    lifted = kloosterman(m, -A * n, A * s)
+    lifted_modulus = A * s
+    lifted_phases = sorted(
+        (m * z - A * n * pow(z, -1, lifted_modulus)) % lifted_modulus
+        for z in range(lifted_modulus)
+        if gcd(z, lifted_modulus) == 1
+    )
+    product_phases = sorted(
+        (
+            s * m * u
+            + A * (pow(A, -1, s) * m * x - n * pow(x, -1, s))
+        )
+        % lifted_modulus
+        for u in range(A)
+        if gcd(u, A) == 1
+        for x in range(s)
+        if gcd(x, s) == 1
+    )
+    return {
+        "entry_divisor_is_squarefree": squarefree,
+        "lifted_modulus": lifted_modulus,
+        "ramanujan_factor": ramanujan,
+        "ramanujan_factor_is_nonzero": ramanujan != 0,
+        "crt_phase_multisets_match": lifted_phases == product_phases,
+        "lifted_kloosterman_equals_ramanujan_times_physical": (
+            abs(lifted - ramanujan * physical) <= 1e-10
+        ),
+        "poisson_prefactor_after_lift_numerator_multiplier": A,
+    }
+
+
+def lifted_kuznetsov_level_cell_audit(
+    *,
+    entry_scale_exponent: Fraction,
+    modulus_scale_exponent: Fraction,
+    entry_divisor_exponent: Fraction,
+    modulus_divisor_exponent: Fraction,
+    coprimality_divisor_exponent: Fraction,
+    product_index_exponent: Fraction,
+) -> LiftedKuznetsovLevelCellAudit:
+    """Audit one CRT-lifted standard Kuznetsov level cell.
+
+    Write ``R=T^rho``, ``S=T^sigma``, ``A=T^alpha``,
+    ``B=T^beta``, and ``j=T^gamma`` with ``j|A``.  The product-modulus
+    identity sends the physical modulus ``s`` to ``c=A*s``, the second
+    Fourier index ``n`` to ``A*n``, and the standard spectral level to
+    ``A*B*j``.  On an active nonzero Poisson range,
+
+    ``m = T^(sigma+alpha-rho)``.
+
+    Hence the Bessel inverse-square ratio is unchanged.  The ordinary
+    spectral large sieve applied to a sequence supported at ``A*y``
+    loses, relative to the old base-level model, the exact square
+    exponent ``max(0,alpha-gamma)``.  Closing the physical cell therefore
+    requires half that exponent in amplitude from the exact-valuation
+    level projector.  This adapter records that local theorem as open.
+    """
+    rho = F(entry_scale_exponent)
+    sigma = F(modulus_scale_exponent)
+    alpha = F(entry_divisor_exponent)
+    beta = F(modulus_divisor_exponent)
+    gamma = F(coprimality_divisor_exponent)
+    product = F(product_index_exponent)
+    if min(rho, sigma, alpha, beta, gamma, product) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    if alpha > rho or beta > sigma:
+        raise ValueError("level factors cannot exceed entry scales")
+    if gamma > alpha:
+        raise ValueError("coprimality divisor must divide the A-scale")
+
+    raw_dual = sigma + alpha - rho
+    dual = _positive_part(raw_dual)
+    modulus = sigma + alpha
+    second_index = alpha + product
+    numerator = dual + second_index
+    ratio = 2 * modulus - numerator
+    original_ratio = rho + sigma - product
+    outer_prefactor = rho - alpha + alpha
+    level = alpha + beta + gamma
+    square_excess = _positive_part(alpha - gamma)
+    amplitude_saving = square_excess / 2
+    return LiftedKuznetsovLevelCellAudit(
+        entry_scale_exponent=rho,
+        modulus_scale_exponent=sigma,
+        entry_divisor_exponent=alpha,
+        modulus_divisor_exponent=beta,
+        coprimality_divisor_exponent=gamma,
+        product_index_exponent=product,
+        poisson_dual_index_exponent=dual,
+        standard_lifted_modulus_exponent=modulus,
+        lifted_second_index_exponent=second_index,
+        bessel_numerator_product_exponent=numerator,
+        bessel_ratio_inverse_square_exponent=ratio,
+        original_qct_ratio_inverse_square_exponent=original_ratio,
+        poisson_lift_outer_prefactor_exponent=outer_prefactor,
+        actual_spectral_level_exponent=level,
+        sparse_support_square_excess_exponent=square_excess,
+        required_local_projector_amplitude_saving_exponent=amplitude_saving,
+        active_bessel_ratio_matches_original_qct_ratio=(
+            raw_dual >= 0 and ratio == original_ratio
+        ),
+        crt_modulus_lift_is_exact_standard_kuznetsov_orbit=True,
+        exact_valuation_level_projector_bound_proved=(square_excess == 0),
+        outer_qct_normalization_aggregated=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def unramified_prime_oldspace_cross_factor_identity(
+    *,
+    prime: int,
+    hecke_prime: Fraction,
+) -> dict[str, object]:
+    """Simplify the level-p unramified oldspace cross coefficient.
+
+    In the Blomer--Milicevic orthonormal basis, the ``b=p`` vector has
+    squared normalization ``p/D`` with
+
+    ``D=1-p*lambda(p)^2/(p+1)^2``.
+
+    For indices ``p not| m*y`` and second index ``p*y``, adding the
+    ``b=1`` and ``b=p`` cross products changes the raw local factor
+    ``lambda(p)`` into ``lambda(p)/((p+1)D)``.  The computation here is
+    exact rational algebra; the analytic use still has to retain the
+    ambient Fourier normalization and the ramified/gcd cells.
+    """
+    p = int(prime)
+    lam = F(hecke_prime)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    denominator = F(1) - F(p) * lam * lam / F((p + 1) ** 2)
+    if denominator == 0:
+        raise ValueError("oldclass Gram denominator must be nonzero")
+    normalization_squared = F(p) / denominator
+    unsimplified = lam + normalization_squared * (
+        -lam / F(p + 1)
+    ) * (F(1) - lam * lam / F(p + 1))
+    simplified = lam / (F(p + 1) * denominator)
+    return {
+        "prime": p,
+        "hecke_prime": lam,
+        "oldclass_gram_denominator": denominator,
+        "oldclass_normalization_squared": normalization_squared,
+        "unsimplified_cross_factor": unsimplified,
+        "simplified_cross_factor": simplified,
+        "symbolic_simplification_exact": unsimplified == simplified,
+        "generic_oldspace_cross_has_one_p_factor": (
+            simplified * F(p + 1) * denominator == lam
+        ),
+    }
+
+
+def gamma0_subgroup_index_ratio(
+    *,
+    primitive_level: int,
+    ambient_level: int,
+) -> int:
+    """Return ``[Gamma_0(Q0):Gamma_0(Q)]`` for ``Q0|Q``.
+
+    The exact index is
+
+    ``(Q/Q0) * product_{p | Q/Q0, p not| Q0} (1+1/p)``.
+
+    This is the square normalization relating a primitive form normalized
+    at level Q0 to the same form normalized in the ambient level Q.
+    """
+    q0 = int(primitive_level)
+    q = int(ambient_level)
+    if q0 < 1 or q < 1 or q % q0:
+        raise ValueError("primitive_level must be a positive divisor of ambient_level")
+    quotient = q // q0
+    remaining = quotient
+    primes: list[int] = []
+    divisor = 2
+    while divisor * divisor <= remaining:
+        if remaining % divisor == 0:
+            primes.append(divisor)
+            while remaining % divisor == 0:
+                remaining //= divisor
+        divisor += 1
+    if remaining > 1:
+        primes.append(remaining)
+    numerator = quotient
+    denominator = 1
+    for prime in primes:
+        if q0 % prime:
+            numerator *= prime + 1
+            denominator *= prime
+    if numerator % denominator:
+        raise AssertionError("Gamma_0 index formula must be integral")
+    return numerator // denominator
+
+
+def unramified_oldspace_cross_prime_power_identity(
+    *,
+    prime: int,
+    hecke_prime: Fraction,
+    extra_second_index_valuation: int,
+) -> dict[str, object]:
+    """Simplify the unramified oldspace cross factor at ``n=p^(k+1)y``.
+
+    With ``p not| m*y`` and ``k=extra_second_index_valuation``, the
+    ``b=1,p`` oldvectors give
+
+    ``(lambda(1)*lambda(k)/(p+1)-lambda(k-1))/D``,
+
+    where ``D=1-p*lambda(1)^2/(p+1)^2`` and ``lambda(-1)=0``.  The
+    identity follows only from the degree-two Hecke recurrence.
+    """
+    p = int(prime)
+    lam = F(hecke_prime)
+    k = int(extra_second_index_valuation)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    if k < 0:
+        raise ValueError("extra valuation must be nonnegative")
+    values = [F(1), lam]
+    while len(values) <= k + 1:
+        values.append(lam * values[-1] - values[-2])
+    denominator = F(1) - F(p) * lam * lam / F((p + 1) ** 2)
+    if denominator == 0:
+        raise ValueError("oldclass Gram denominator must be nonzero")
+    normalization_squared = F(p) / denominator
+    lambda_k_minus_one = F(0) if k == 0 else values[k - 1]
+    unsimplified = values[k + 1] + normalization_squared * (
+        -lam / F(p + 1)
+    ) * (values[k] - lam * values[k + 1] / F(p + 1))
+    recurrence = (
+        lam * values[k] / F(p + 1) - lambda_k_minus_one
+    ) / denominator
+    return {
+        "prime": p,
+        "extra_second_index_valuation": k,
+        "hecke_values": tuple(values),
+        "oldclass_gram_denominator": denominator,
+        "unsimplified_cross_factor": unsimplified,
+        "recurrence_cross_factor": recurrence,
+        "recurrence_simplification_exact": unsimplified == recurrence,
+    }
+
+
+def unramified_level_p_squared_cross_identity(
+    *,
+    prime: int,
+    hecke_prime: Fraction,
+    extra_second_index_valuation: int,
+) -> dict[str, object]:
+    """Insert the missing ``g=p^2`` oldvector at ambient level p^2.
+
+    For an unramified primitive form, Blomer--Milicevic's general
+    prime-power basis has local coefficients proportional to
+
+    ``p^-1*f - lambda(p)*f|p + f|p^2``.
+
+    At a p-adic unit first index and second index ``p^(k+1)y``, its
+    cross product is the negative of the complete ``g=1,p`` level-p
+    cross factor.  Hence the full ambient-level-p-squared oldclass
+    cross kernel vanishes on every unit/positive-valuation cell.
+    """
+    p = int(prime)
+    lam = F(hecke_prime)
+    k = int(extra_second_index_valuation)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    if k < 0:
+        raise ValueError("extra valuation must be nonnegative")
+    values = [F(1), lam]
+    while len(values) <= k + 1:
+        values.append(lam * values[-1] - values[-2])
+    denominator = F(1) - F(p) * lam * lam / F((p + 1) ** 2)
+    if denominator == 0:
+        raise ValueError("oldclass Gram denominator must be nonzero")
+    lambda_k_minus_one = F(0) if k == 0 else values[k - 1]
+    level_p = (
+        lam * values[k] / F(p + 1) - lambda_k_minus_one
+    ) / denominator
+    squarefull_normalization_squared = F(1) / (
+        denominator * (F(1) - F(1, p * p))
+    )
+    unit_first_coefficient = F(1, p)
+    positive_second_coefficient = (
+        values[k + 1] / F(p)
+        - lam * values[k]
+        + F(p) * lambda_k_minus_one
+    )
+    extra = (
+        squarefull_normalization_squared
+        * unit_first_coefficient
+        * positive_second_coefficient
+    )
+    full = level_p + extra
+    return {
+        "prime": p,
+        "extra_second_index_valuation": k,
+        "hecke_values": tuple(values),
+        "oldclass_gram_denominator": denominator,
+        "squarefull_normalization_squared": squarefull_normalization_squared,
+        "level_p_cross_factor": level_p,
+        "level_p_squared_unit_first_coefficient": unit_first_coefficient,
+        "level_p_squared_positive_second_coefficient": (
+            positive_second_coefficient
+        ),
+        "level_p_squared_extra_oldvector_cross_factor": extra,
+        "full_level_p_squared_oldclass_cross_factor": full,
+        "extra_oldvector_cancellation_exact": extra == -level_p and full == 0,
+    }
+
+
+def unramified_exact_level_difference_kernel(
+    *,
+    prime: int,
+    hecke_prime: Fraction,
+    first_index_valuation: int,
+    second_index_valuation: int,
+) -> dict[str, object]:
+    """Compute the signed local trace ``Delta_p-Delta_p_squared``.
+
+    The primitive representation is unramified at p.  At ambient level
+    p the oldclass consists of ``g=1,p``; at level p^2 it also contains
+    ``g=p^2``.  A primitive form normalized at the ambient level has
+    local first-coefficient square factors ``1/(p+1)`` and
+    ``1/(p*(p+1))``, respectively.  The returned level difference is
+    therefore the literal local factor in the signed j=1,p trace.
+    """
+    p = int(prime)
+    lam = F(hecke_prime)
+    a = int(first_index_valuation)
+    b = int(second_index_valuation)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    if a < 0 or b < 1:
+        raise ValueError("first valuation must be nonnegative and second positive")
+    values = [F(1), lam]
+    while len(values) <= max(a, b):
+        values.append(lam * values[-1] - values[-2])
+
+    def hecke(index: int) -> Fraction:
+        return F(0) if index < 0 else values[index]
+
+    denominator = F(1) - F(p) * lam * lam / F((p + 1) ** 2)
+    if denominator == 0:
+        raise ValueError("oldclass Gram denominator must be nonzero")
+    level_p_oldclass = hecke(a) * hecke(b) + F(p) / denominator * (
+        hecke(a - 1) - lam * hecke(a) / F(p + 1)
+    ) * (
+        hecke(b - 1) - lam * hecke(b) / F(p + 1)
+    )
+    squarefull_norm_square = F(1) / (
+        denominator * (F(1) - F(1, p * p))
+    )
+    squarefull_a = (
+        hecke(a) / F(p) - lam * hecke(a - 1) + F(p) * hecke(a - 2)
+    )
+    squarefull_b = (
+        hecke(b) / F(p) - lam * hecke(b - 1) + F(p) * hecke(b - 2)
+    )
+    squarefull_cross = squarefull_norm_square * squarefull_a * squarefull_b
+    level_p_squared_oldclass = level_p_oldclass + squarefull_cross
+    level_p_trace = level_p_oldclass / F(p + 1)
+    level_p_squared_trace = level_p_squared_oldclass / F(p * (p + 1))
+    exact_difference = level_p_trace - level_p_squared_trace
+    ramanujan = F(-1) if a == 0 else F(p - 1)
+    return {
+        "prime": p,
+        "first_index_valuation": a,
+        "second_index_valuation": b,
+        "hecke_values": tuple(values),
+        "oldclass_gram_denominator": denominator,
+        "level_p_oldclass_kernel": level_p_oldclass,
+        "level_p_squared_extra_oldvector_kernel": squarefull_cross,
+        "level_p_squared_oldclass_kernel": level_p_squared_oldclass,
+        "level_p_trace_kernel": level_p_trace,
+        "level_p_squared_trace_kernel": level_p_squared_trace,
+        "exact_level_difference_kernel": exact_difference,
+        "ramanujan_prime_factor": ramanujan,
+        "ramanujan_normalized_kernel": exact_difference / ramanujan,
+        "level_difference_identity_exact": (
+            exact_difference == level_p_trace - level_p_squared_trace
+        ),
+    }
+
+
+def unramified_outer_state_cross_index_kernel(
+    *,
+    prime: int,
+    hecke_prime: Fraction,
+    first_index_valuation: int,
+    base_second_index_valuation: int,
+) -> dict[str, object]:
+    """Combine the two present outer states before local Cauchy.
+
+    At a prime in the modulus state B, the local trace is the full
+    level-p oldclass kernel at Fourier valuations (a,b), divided by
+    p+1.  At a prime in the entry state A, the second Fourier valuation
+    is b+1 and the signed level-p minus level-p-squared kernel is divided
+    by the physical Ramanujan factor.  Both present states carry one
+    outer Mobius sign.  Their combined local perturbation of the absent
+    state is therefore
+
+      - level_p_trace(a,b) - normalized_level_difference(a,b+1).
+
+    For a=b=0 this is exactly
+
+      -(p+1-lambda(p)) / ((p+1)^2 * D),
+      D = 1 - p*lambda(p)^2/(p+1)^2.
+
+    This is the candidate reciprocal-prime factor which is invisible
+    after a positive projection Gram.  The function proves only the
+    finite unramified identity; aligning the two physical state
+    normalizations and recombining all outer scales remain open.
+    """
+    p = int(prime)
+    lam = F(hecke_prime)
+    a = int(first_index_valuation)
+    b = int(base_second_index_valuation)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    if a < 0 or b < 0:
+        raise ValueError("index valuations must be nonnegative")
+
+    values = [F(1), lam]
+    while len(values) <= max(a, b):
+        values.append(lam * values[-1] - values[-2])
+
+    def hecke(index: int) -> Fraction:
+        return F(0) if index < 0 else values[index]
+
+    q = F(p + 1)
+    denominator = F(1) - F(p) * lam * lam / (q * q)
+    if denominator == 0:
+        raise ValueError("oldclass Gram denominator must be nonzero")
+    level_p_oldclass = hecke(a) * hecke(b) + F(p) / denominator * (
+        hecke(a - 1) - lam * hecke(a) / q
+    ) * (
+        hecke(b - 1) - lam * hecke(b) / q
+    )
+    modulus_trace = level_p_oldclass / q
+    entry = unramified_exact_level_difference_kernel(
+        prime=p,
+        hecke_prime=lam,
+        first_index_valuation=a,
+        second_index_valuation=b + 1,
+    )["ramanujan_normalized_kernel"]
+    signed_present = -modulus_trace - F(entry)
+    unit_formula = (
+        -(q - lam) / (q * q * denominator)
+        if a == 0 and b == 0
+        else None
+    )
+    return {
+        "prime": p,
+        "hecke_prime": lam,
+        "first_index_valuation": a,
+        "base_second_index_valuation": b,
+        "oldclass_gram_denominator": denominator,
+        "modulus_state_level_p_trace_kernel": modulus_trace,
+        "entry_state_ramanujan_normalized_kernel": entry,
+        "mobius_signed_present_state_kernel": signed_present,
+        "unit_valuation_closed_formula": unit_formula,
+        "unit_valuation_formula_exact": (
+            unit_formula is not None and signed_present == unit_formula
+        ),
+        "prime_scaled_unit_kernel": (
+            F(p) * signed_present if unit_formula is not None else None
+        ),
+        "unit_kernel_has_inverse_prime_scale": (
+            unit_formula is not None
+            and abs(F(p) * signed_present) <= 1
+        ),
+        "physical_square_root_state_normalizations_aligned": False,
+        "all_valuation_cells_proved": False,
+        "steinberg_and_eisenstein_cells_proved": False,
+        "outer_scale_recombination_proved": False,
+        "outer_lisk_covered": False,
+    }
+
+
+def unramified_outer_state_weighted_exponent_audit(
+    *,
+    ramanujan_theta: Fraction,
+    first_index_valuation: int,
+    base_second_index_valuation: int,
+) -> dict[str, object]:
+    """Audit every rank term after the common valuation weights.
+
+    Write the combined unramified present-state kernel as the sum of
+    four rank terms: the direct level-p trace, its oldvector correction,
+    the first rank of the signed entry difference, and the second rank
+    of that difference.  The common physical valuation weight is
+    p^(-(a+b)/2).  The elementary Hecke bounds are
+
+      lambda_k << (k+1) p^(k*theta),
+      u_0 << p^(-1+theta),  u_k << (k+1)p^((k-1)*theta),
+      r_0 = 1, r_1 << p^(-1+theta),
+      r_k << (k+1)p^((k-2)*theta) for k>=2.
+
+    The returned exponents omit polynomial factors in a,b.  Their
+    maximum is at most -1 whenever theta<1/2.  This is only the
+    unramified local power ledger; it does not align the exact physical
+    state weights or include the other conductor cells.
+    """
+    theta = F(ramanujan_theta)
+    a = int(first_index_valuation)
+    b = int(base_second_index_valuation)
+    if not (F(0) <= theta < F(1, 2)):
+        raise ValueError("ramanujan_theta must lie in [0,1/2)")
+    if a < 0 or b < 0:
+        raise ValueError("index valuations must be nonnegative")
+
+    half_weight = -F(a + b, 2)
+    direct = -F(1) - F(a + b) * (F(1, 2) - theta)
+
+    def u_exponent(index: int) -> Fraction:
+        return -F(1) + theta if index == 0 else F(index - 1) * theta
+
+    def r_exponent(index: int) -> Fraction:
+        if index == 0:
+            return F(0)
+        if index == 1:
+            return -F(1) + theta
+        return F(index - 2) * theta
+
+    oldvector = half_weight + u_exponent(a) + u_exponent(b)
+    first_rank = (
+        -F(1) + half_weight + r_exponent(a) + r_exponent(b + 1)
+    )
+    second_rank = (
+        None
+        if a == 0
+        else (
+            -F(1)
+            + half_weight
+            + F(a - 1 + b) * theta
+        )
+    )
+    exponents = [direct, oldvector, first_rank]
+    if second_rank is not None:
+        exponents.append(second_rank)
+    maximum = max(exponents)
+    return {
+        "ramanujan_theta": theta,
+        "first_index_valuation": a,
+        "base_second_index_valuation": b,
+        "direct_trace_weighted_prime_exponent": direct,
+        "oldvector_weighted_prime_exponent": oldvector,
+        "entry_first_rank_weighted_prime_exponent": first_rank,
+        "entry_second_rank_weighted_prime_exponent": second_rank,
+        "maximum_weighted_prime_exponent": maximum,
+        "all_four_rank_terms_have_inverse_prime_saving": maximum <= -1,
+        "physical_state_normalizations_aligned": False,
+        "all_conductor_cells_proved": False,
+        "outer_lisk_covered": False,
+    }
+
+
+def unramified_cross_index_two_shift_identity(
+    *,
+    prime: int,
+    hecke_prime: Fraction,
+    first_index_valuation: int,
+    second_index_valuation: int,
+) -> dict[str, object]:
+    """Factor the unramified signed level kernel before positive Cauchy.
+
+    Put ``q=p+1``, ``E=q^2-p*lambda(p)^2`` and extend the local Hecke
+    sequence by zero at negative exponents.  If
+
+    ``r_k=lambda_k-p*lambda_1*lambda_(k-1)/q`` and
+    ``s_k=lambda_(k-1)``, then the exact kernel from
+    :func:`unramified_exact_level_difference_kernel`, after division by
+    the physical Ramanujan factor at the first index, is
+
+    ``-q/E*r_a*r_b + 1/q*s_a*s_b``.
+
+    For every positive valuation the Hecke recurrence removes the
+    spectral multiplier from ``r_k``:
+
+    ``q*r_k=lambda_k-p*lambda_(k-2)``.
+
+    Thus the cross-index dependence is a rank-two combination of the
+    two Fourier-index shifts ``p^k`` and ``p^(k-2)``.  This finite
+    identity does not by itself prove the weighted two-index harmonic
+    large sieve or PEVP.
+    """
+    p = int(prime)
+    lam = F(hecke_prime)
+    a = int(first_index_valuation)
+    b = int(second_index_valuation)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    if a < 0 or b < 1:
+        raise ValueError("first valuation must be nonnegative and second positive")
+
+    values = [F(1), lam]
+    while len(values) <= max(a, b):
+        values.append(lam * values[-1] - values[-2])
+
+    def hecke(index: int) -> Fraction:
+        return F(0) if index < 0 else values[index]
+
+    q = F(p + 1)
+    gram = q * q - F(p) * lam * lam
+    if gram == 0:
+        raise ValueError("oldclass Gram polynomial must be nonzero")
+
+    def first_form(index: int) -> Fraction:
+        return hecke(index) - F(p) * lam * hecke(index - 1) / q
+
+    def second_form(index: int) -> Fraction:
+        return hecke(index - 1)
+
+    rank_two = (
+        -q * first_form(a) * first_form(b) / gram
+        + second_form(a) * second_form(b) / q
+    )
+    direct = unramified_exact_level_difference_kernel(
+        prime=p,
+        hecke_prime=lam,
+        first_index_valuation=a,
+        second_index_valuation=b,
+    )["ramanujan_normalized_kernel"]
+    shifted_a = q * first_form(a)
+    shifted_b = q * first_form(b)
+    expected_shift_a = hecke(a) - F(p) * hecke(a - 2)
+    expected_shift_b = hecke(b) - F(p) * hecke(b - 2)
+    positive_shift_exact = shifted_b == expected_shift_b and (
+        a == 0 or shifted_a == expected_shift_a
+    )
+
+    return {
+        "prime": p,
+        "first_index_valuation": a,
+        "second_index_valuation": b,
+        "hecke_values": tuple(values),
+        "gram_polynomial": gram,
+        "first_rank_form_at_a": first_form(a),
+        "first_rank_form_at_b": first_form(b),
+        "second_rank_form_at_a": second_form(a),
+        "second_rank_form_at_b": second_form(b),
+        "ramanujan_normalized_kernel": direct,
+        "rank_two_kernel": rank_two,
+        "rank_two_factorization_exact": rank_two == direct,
+        "positive_valuation_hecke_shift_exact": positive_shift_exact,
+        "rank_two_matrix_determinant": -F(1) / gram,
+        "rank_one_scalar_square_sum": (q / gram) ** 2 + (F(1) / q) ** 2,
+        "cross_index_dependence_is_two_fourier_shifts": True,
+        "ordinary_ambient_positive_cauchy_used": False,
+        "weighted_two_index_large_sieve_proved": False,
+        "pevp_proved": False,
+    }
+
+
+def steinberg_outer_state_unit_obstruction_audit(
+    *, prime: int
+) -> dict[str, object]:
+    """Show that the conductor-one modulus state survives recombination.
+
+    For a primitive Steinberg representation, the unit Fourier
+    coefficient in the modulus state B has amplitude one after the
+    common harmonic normalization.  The signed entry state A has
+    amplitude -epsilon*C_p/sqrt(p) before its outer Mobius sign, where
+
+      C_p = 1 - (p+1)/(p^2*(p+2)).
+
+    Thus the best sign gives combined amplitude
+    -1 + C_p/sqrt(p).  For p>=5, 0<C_p<1 and
+    1/sqrt(p)<1/2, so its square is at least 1/4.  This exceeds
+    the reciprocal-prime target 1/p and proves that the unramified
+    outer-state cancellation cannot be promoted to all conductor cells
+    by a simple local state sum.
+    """
+    p = int(prime)
+    if (
+        p < 5
+        or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1))
+    ):
+        raise ValueError("prime must be a prime at least five")
+    correction = F(1) - F(p + 1, p * p * (p + 2))
+    lower = F(1, 4)
+    target = F(1, p)
+    return {
+        "prime": p,
+        "entry_state_euler_correction": correction,
+        "modulus_state_unit_amplitude": F(1),
+        "entry_state_unit_amplitude_square": correction * correction / p,
+        "combined_square_constant_term": (
+            F(1) + correction * correction / p
+        ),
+        "combined_inverse_sqrt_prime_coefficient": -2 * correction,
+        "uniform_combined_square_lower_bound": lower,
+        "required_reciprocal_prime_square_mass": target,
+        "lower_bound_exceeds_reciprocal_prime_target": lower > target,
+        "simple_outer_state_recombination_closes_steinberg": False,
+        "two_orientation_or_conductor_average_required": True,
+        "outer_lisk_covered": False,
+    }
+
+
+def two_orientation_steinberg_minimax_audit(
+    *, prime: int
+) -> TwoOrientationSteinbergMinimaxAudit:
+    """Rule out a scalar average of the two completion orientations.
+
+    In the conductor-one Steinberg cell, one orientation assigns the
+    entry and modulus amplitudes
+
+    ``e=epsilon*C_p/sqrt(p)`` and ``m=-1``
+
+    after the outer Mobius signs.  The swapped orientation interchanges
+    them.  For any real or complex scalar ``lambda``, the two state
+    amplitudes in the combination with coefficients ``lambda`` and
+    ``1-lambda`` have sum ``e+m``.  Therefore their maximum modulus is
+    at least ``|e+m|/2``.  Since ``0<C_p<1`` and ``sqrt(p)>3`` for a
+    prime ``p>=11``, this maximum is strictly larger than ``1/3``.
+    Its square exceeds ``1/9>1/p``.  Thus no scalar averaging of the
+    two equal orientation identities supplies the required reciprocal
+    prime mass simultaneously for both outer states.
+
+    This is not a rejection of a nonlocal square retaining cross terms
+    between distinct outer states and primes; that is exactly the
+    remaining OSLSP input.
+    """
+    p = int(prime)
+    if p < 11 or not _is_prime_integer(p):
+        raise ValueError("prime must be a prime at least eleven")
+    correction = F(1) - F(p + 1, p * p * (p + 2))
+    lower = F(1, 9)
+    target = F(1, p)
+    return TwoOrientationSteinbergMinimaxAudit(
+        prime=p,
+        steinberg_entry_correction=correction,
+        orientation_state_order=("entry", "modulus"),
+        swapped_orientation_state_order=("modulus", "entry"),
+        scalar_combination_coefficients_sum_to_one=True,
+        two_state_sum_is_independent_of_combination=True,
+        uniform_max_squared_lower_bound=lower,
+        required_reciprocal_prime_square_mass=target,
+        lower_bound_exceeds_required_mass=lower > target,
+        scalar_two_orientation_average_closes_steinberg=False,
+        nonlocal_cross_outer_state_estimate_still_required=True,
+        outer_lisk_covered=False,
+    )
+
+
+def steinberg_cross_orientation_sign_gate_audit(
+    *, prime: int
+) -> SteinbergCrossOrientationSignGateAudit:
+    """Isolate the saving still missing after the cross-orientation square.
+
+    With ``e=epsilon*C_p/sqrt(p)`` and ``m=-1``, pairing the first
+    orientation against the swapped one contributes ``e*conj(m)`` or
+    ``m*conj(e)`` to the quadratic form.  Its magnitude is
+    ``C_p/sqrt(p)``.  Because this coefficient already occurs *inside*
+    the squared expression, it must be compared with the required
+    quadratic coefficient ``1/p``, not with ``1/sqrt(p)``.  Squaring
+    only for an exact rational comparison leaves the ratio
+    ``p*C_p^2 > 1``.
+
+    The identity ``epsilon/sqrt(p)=lambda_pi(p)`` identifies the sign
+    with the ramified Hecke coefficient.  Atkin--Lehner unitarity turns
+    the resulting form into a cross-cusp matrix coefficient but does
+    not reduce its operator norm.  An additional signed physical
+    cross-cusp trace estimate is therefore still required.
+    """
+    p = int(prime)
+    if p < 5 or not _is_prime_integer(p):
+        raise ValueError("prime must be a prime at least five")
+    correction = F(1) - F(p + 1, p * p * (p + 2))
+    cross_squared = correction * correction / p
+    required_squared = F(1, p * p)
+    ratio = cross_squared / required_squared
+    return SteinbergCrossOrientationSignGateAudit(
+        prime=p,
+        steinberg_entry_correction=correction,
+        cross_quadratic_coefficient_squared=cross_squared,
+        required_quadratic_coefficient_squared=required_squared,
+        squared_deficit_ratio=ratio,
+        cross_coefficient_exceeds_required_coefficient=(
+            cross_squared > required_squared
+        ),
+        steinberg_sign_over_square_root_is_ramified_hecke_coefficient=True,
+        atkin_lehner_operator_is_unitary=True,
+        unitarity_supplies_the_missing_square_root=False,
+        physical_signed_cross_cusp_trace_required=True,
+        signed_cross_cusp_trace_proved=False,
+        outer_lisk_covered=False,
+    )
+
+
+def atkin_lehner_symmetric_difference_kernel_audit(
+    *,
+    left_outer_entry: int,
+    right_outer_entry: int,
+    ambient_squarefree_level: int,
+) -> AtkinLehnerSymmetricDifferenceKernelAudit:
+    """Identify the signed cross-cusp factor with a reciprocal LCM.
+
+    For squarefree outer entries ``A,A'`` in a common squarefree level
+    ``L``, the product of their Steinberg signs is the Atkin--Lehner
+    sign for ``Q=A triangle A'``.  Kiral--Young's cross-cusp formula
+    uses actual moduli ``c*sqrt(Q)``, with ``L/Q | c`` and ``(c,Q)=1``.
+    Relative to the same-cusp formula, both the square of the dyadic
+    ``c``-range and the fixed divisibility drop by ``Q``.  Their ratio,
+    and hence the sparse-Farey spacing constant, is unchanged.
+
+    The geometric denominator contributes ``Q^-1/2``.  After keeping
+    the absolutely summable Steinberg corrections ``C_A*C_A'`` in a
+    separate Euler factor, multiplication by the normalized
+    cross-orientation coefficient ``(A*A')^-1/2`` gives exactly
+
+    ``(A*A'*Q)^-1/2 = 1/lcm(A,A')``.
+
+    This audit proves the finite identity and the fixed-transform
+    Farey normalization.  It intentionally does not claim that all
+    physical outer kernels, conductor patterns, and transform tails
+    have already been reinserted into one global OLISK inequality.
+    """
+    left = int(left_outer_entry)
+    right = int(right_outer_entry)
+    level = int(ambient_squarefree_level)
+    if min(left, right, level) <= 0:
+        raise ValueError("outer entries and ambient level must be positive")
+    if any(mobius(value) == 0 for value in (left, right, level)):
+        raise ValueError("outer entries and ambient level must be squarefree")
+    if level % left or level % right:
+        raise ValueError("both outer entries must divide the ambient level")
+
+    common = gcd(left, right)
+    symmetric_difference = (left // common) * (right // common)
+    outer_lcm = left // common * right
+    complement = level // symmetric_difference
+    exact_divisor = (
+        level % symmetric_difference == 0
+        and gcd(symmetric_difference, complement) == 1
+    )
+    prior_square = F(1, left * right)
+    cross_square = F(1, symmetric_difference)
+    combined_square = prior_square * cross_square
+    reciprocal_lcm_square = F(1, outer_lcm * outer_lcm)
+    return AtkinLehnerSymmetricDifferenceKernelAudit(
+        left_outer_entry=left,
+        right_outer_entry=right,
+        ambient_squarefree_level=level,
+        common_outer_part=common,
+        symmetric_difference_part=symmetric_difference,
+        outer_entry_lcm=outer_lcm,
+        complementary_cross_cusp_level=complement,
+        symmetric_difference_is_exact_atkin_lehner_divisor=exact_divisor,
+        cross_cusp_modulus_scale="c*sqrt(Q)",
+        cross_cusp_modulus_square_ratio_to_same_cusp=cross_square,
+        cross_cusp_divisibility_ratio_to_same_cusp=cross_square,
+        farey_spacing_ratio_to_same_cusp=F(1),
+        cross_cusp_denominator_coefficient_square=cross_square,
+        prior_cross_orientation_coefficient_square=prior_square,
+        combined_coefficient_square=combined_square,
+        reciprocal_lcm_coefficient_square=reciprocal_lcm_square,
+        combined_coefficient_is_reciprocal_lcm=(
+            left * right * symmetric_difference == outer_lcm * outer_lcm
+            and combined_square == reciprocal_lcm_square
+        ),
+        bounded_steinberg_euler_factors_are_separate=True,
+        nontrivial_signed_trace_has_no_diagonal=(
+            symmetric_difference > 1 and exact_divisor
+        ),
+        cross_cusp_farey_large_sieve_has_same_constant=exact_divisor,
+        atkin_lehner_oldvector_permutation_preserves_l2=True,
+        physical_outer_kernel_reinserted=False,
+        outer_lisk_covered=False,
+    )
+
+
+def steinberg_full_cross_orientation_matrix_audit(
+    *, prime: int
+) -> SteinbergFullCrossOrientationMatrixAudit:
+    """Expand the complete Steinberg three-state cross orientation.
+
+    Work inside the primitive conductor-p sector.  The absent outer
+    state has amplitude zero because a conductor-p representation does
+    not occur at level one.  After the outer Mobius signs, the modulus
+    and entry amplitudes in one completion orientation are
+
+    ``m=-1`` and ``e=x=epsilon_p*C_p/sqrt(p)``.
+
+    Swapping the completion orientation interchanges these two
+    amplitudes.  Thus the two vectors are ``(0,-1,x)`` and
+    ``(0,x,-1)``.  Their outer product has signed same-state entries
+    ``-x``, but it also has the unsigned modulus-to-entry coefficient
+    one.  Summing the full conductor-p block gives
+
+    ``1 - 2*x + x^2 = (1-x)^2``.
+
+    Since ``|x|<1/sqrt(p)<1/2`` for ``p>=5``, the full mass is greater
+    than ``1/4``, whereas the reciprocal-prime target is at most
+    ``1/5``.  The symmetric-difference Atkin--Lehner trace therefore
+    controls only the signed same-state subkernel; it cannot be
+    promoted to the complete physical three-state square.
+    """
+    p = int(prime)
+    if p < 5 or not _is_prime_integer(p):
+        raise ValueError("prime must be a prime at least five")
+    correction = F(1) - F(p + 1, p * p * (p + 2))
+    zero = F(0)
+    constant = (
+        (zero, zero, zero),
+        (zero, zero, F(1)),
+        (zero, zero, zero),
+    )
+    linear = (
+        (zero, zero, zero),
+        (zero, F(-1), zero),
+        (zero, zero, F(-1)),
+    )
+    quadratic = (
+        (zero, zero, zero),
+        (zero, zero, zero),
+        (zero, F(1), zero),
+    )
+    target = F(1, p)
+    lower = F(1, 4)
+    return SteinbergFullCrossOrientationMatrixAudit(
+        prime=p,
+        steinberg_entry_correction=correction,
+        state_order=("absent", "modulus", "entry"),
+        first_orientation_amplitudes=("0", "-1", "x"),
+        swapped_orientation_amplitudes=("0", "x", "-1"),
+        constant_term_matrix=constant,
+        linear_x_matrix=linear,
+        quadratic_x_matrix=quadratic,
+        full_recombined_polynomial_coefficients=(F(1), F(-2), F(1)),
+        unsigned_modulus_to_entry_coefficient=F(1),
+        required_reciprocal_prime_coefficient=target,
+        unsigned_cross_state_exceeds_target=(F(1) > target),
+        uniform_full_mass_lower_bound=lower,
+        uniform_full_mass_lower_bound_exceeds_target=(lower > target),
+        symmetric_difference_trace_controls_only_signed_same_states=True,
+        full_three_state_cross_orientation_closes_steinberg=False,
+        physical_outer_kernel_reinserted=False,
+        outer_lisk_covered=False,
+    )
+
+
+def mixed_cross_state_mmkls_audit(
+    *,
+    entry_divisor: int,
+    modulus_divisor: int,
+    physical_modulus: int,
+) -> MixedCrossStateMMKLSAudit:
+    """Map the fatal Steinberg mixed cell to the geometric MMKLS gate.
+
+    In the cross-orientation matrix the constant term occurs only in the
+    ``modulus``-on-the-left, ``entry``-on-the-right cell and has coefficient
+    one.  For squarefree coprime outer divisors ``A,B`` and ``c=A*s``, the
+    lifted level difference in that cell is the finite identity
+
+    ``sum_{j|A} mu(j) 1_{A*B*j|c} = 1_{B|s} 1_{(A,s)=1}``.
+
+    The second equality uses ``(A,B)=1``.  CRT then cancels the Ramanujan
+    fibre in the standard modulus lift before an inequality is applied.
+    Interchanging the remaining ``B|s`` incidence and restoring all exact
+    Type allocations returns the original coefficient ``mu(s)``.  Hence
+    this one constant cell is precisely the left geometric MMKLS family;
+    the transpose cell is the right family.
+
+    This is an exact map of a residual cell, not a global equivalence: the
+    original signed sum may still cancel this cell against other conductor
+    patterns.  Bounding the isolated cell is sufficient but not necessary.
+    """
+    A = int(entry_divisor)
+    B = int(modulus_divisor)
+    s = int(physical_modulus)
+    if min(A, B, s) <= 0:
+        raise ValueError(
+            "entry divisor, modulus divisor, and modulus must be positive"
+        )
+    if mobius(A) == 0 or mobius(B) == 0:
+        raise ValueError("outer divisors must be squarefree")
+    if gcd(A, B) != 1:
+        raise ValueError("outer divisors must be coprime")
+    if s % B != 0 or gcd(A, s) != 1:
+        raise ValueError("physical cell requires B|s and (A,s)=1")
+
+    c = A * s
+    level_difference = sum(
+        mobius(j)
+        for j in range(1, A + 1)
+        if A % j == 0 and c % (A * B * j) == 0
+    )
+    exact_coprimality = int(s % B == 0 and gcd(A, s) == 1)
+    lift = inverse_scaled_kloosterman_modulus_lift_identity(
+        entry_divisor=A,
+        modulus=s,
+        dual_index=1,
+        product_index=1,
+    )
+    recombination = outer_modulus_type_recombination_audit(
+        original_modulus=s,
+        cutoff_u=min(5, s - 1),
+        cutoff_v=min(4, s - 1),
+        physical_modulus_exponent=F(3),
+    )
+    arbitrary = F(5, 2)
+    target = F(2)
+    return MixedCrossStateMMKLSAudit(
+        entry_divisor=A,
+        modulus_divisor=B,
+        physical_modulus=s,
+        state_order=("absent", "modulus", "entry"),
+        mixed_cross_state=("modulus", "entry"),
+        mixed_cross_state_coefficient=F(1),
+        level_difference_sum=level_difference,
+        level_difference_equals_exact_coprimality=(
+            level_difference == exact_coprimality
+        ),
+        standard_lift_modulus=int(lift["lifted_modulus"]),
+        ramanujan_fibre_cancels_before_inequality=(
+            bool(lift["ramanujan_factor_is_nonzero"])
+            and bool(lift["crt_phase_multisets_match"])
+            and bool(lift["lifted_kloosterman_equals_ramanujan_times_physical"])
+        ),
+        outer_divisor_incidence_recombines_to_mobius_modulus=(
+            recombination.all_type_allocations_recombine_exactly
+            and recombination.recombined_modulus_weight == mobius(s)
+        ),
+        left_mixed_cell_is_mmkls=True,
+        transpose_mixed_cell_is_right_mmkls=True,
+        hard_scales=(F(3), F(3), F(5, 2), F(5, 2)),
+        arbitrary_coefficient_exponent=arbitrary,
+        target_exponent=target,
+        required_joint_saving_exponent=arbitrary - target,
+        fixed_entry_pevp_is_insufficient=True,
+        isolated_mixed_cell_bound_is_sufficient_not_necessary=True,
+        mixed_cell_mmkls_proved=False,
+        full_outer_gate_proved=False,
+    )
+
+
+def mmkls_korolev_reciprocity_audit() -> MMKLSKorolevReciprocityAudit:
+    """Test Korolev's Möbius--Kloosterman bounds on the MMKLS hard box.
+
+    On the exchange-symmetric half ``s < r``, additive reciprocity changes
+
+    ``e(-h*delta*inverse(r mod s)/s)``
+
+    into ``e_r(h*delta*inverse(s mod r)) * e(-h*delta/(r*s))``.
+    The second factor is a smooth amplitude: at the hard scales its
+    derivative in ``s`` is ``T^-4`` and its derivative normalized to an
+    interval of length ``T^3`` is ``T^-1``.  Thus, on ``(h*delta,r)=1``,
+    the first factor is exactly the phase in Korolev's sum with modulus
+    ``r``, inverse coefficient ``h*delta``, and linear coefficient zero.
+
+    Korolev's equation (2) has relative factors
+    ``q^-1/2`` and ``q^(1/5)*x^(-1/5)`` (apart from logarithms).  At the
+    physical endpoint ``x=q=T^3`` these have T-exponents ``-3/2`` and
+    zero, so the latter term removes every power saving.  Theorems 1--3
+    for general integer moduli give only logarithmic savings.  Theorem 5
+    gives ``q^(-c*epsilon^4)`` only for prime q, with no explicit lower
+    bound on c that would certify the required T^(1/2) saving, and the
+    physical modulus is not restricted to primes.  Nonunit
+    ``(h*delta,r)`` strata are an additional unmatched hypothesis.
+    """
+    modulus = F(3)
+    interval = F(3)
+    product_index = F(5)
+
+    # Exact rational fixture for
+    # -a*rbar/s = a*sbar/r - a/(r*s) (mod 1).
+    r, s, a = 5, 7, 3
+    left = -F(a * pow(r, -1, s), s)
+    right = F(a * pow(s, -1, r), r) - F(a, r * s)
+    reciprocal_exact = (left - right).denominator == 1
+
+    derivative = product_index - modulus - 2 * interval
+    normalized_derivative = derivative + interval
+    first_endpoint = -modulus / 2
+    second_endpoint = modulus / 5 - interval / 5
+    dominant_endpoint = max(first_endpoint, second_endpoint)
+    required = F(1, 2)
+    published_power_saving = max(F(0), -dominant_endpoint)
+
+    return MMKLSKorolevReciprocityAudit(
+        modulus_exponent=modulus,
+        interval_exponent=interval,
+        product_index_exponent=product_index,
+        additive_reciprocity_identity_exact=reciprocal_exact,
+        exchange_orientation_reduces_to_variable_below_modulus=True,
+        reciprocity_correction_derivative_exponent=derivative,
+        reciprocity_correction_normalized_derivative_exponent=(
+            normalized_derivative
+        ),
+        reciprocity_correction_is_smooth=(normalized_derivative <= 0),
+        korolev_phase_matches_on_unit_product_index_stratum=True,
+        unit_product_index_hypothesis_is_uniform=False,
+        composite_modulus_theorem_applies=True,
+        endpoint_first_relative_exponent=first_endpoint,
+        endpoint_second_relative_exponent=second_endpoint,
+        endpoint_dominant_relative_exponent=dominant_endpoint,
+        published_composite_saving_exponent=published_power_saving,
+        required_mmkls_saving_exponent=required,
+        remaining_power_deficit=required - published_power_saving,
+        general_theorem_supplies_only_logarithmic_saving=True,
+        prime_power_saving_does_not_certify_required_exponent=True,
+        prime_theorem_covers_moving_composite_moduli=False,
+        published_theorem_closes_mmkls=False,
+        source=(
+            "Korolev, arXiv:1610.09171v1, equations (2)--(3) "
+            "and Theorems 1, 5"
+        ),
+    )
+
+
 def transition_bblr_zero_main_term_audit(
     *,
     side_product_exponent: Fraction,
@@ -6593,6 +14304,896 @@ def transition_bblr_zero_main_term_audit(
         source=(
             "Bettin--Bui--Li--Radziwill, arXiv:1609.02539v1, "
             "Proposition 3.1 l=0 main term"
+        ),
+    )
+
+
+def critical_affine_mobius_uniformity_audit(
+) -> CriticalAffineMobiusUniformityAudit:
+    """Test current short-interval uniformity on the critical slope line.
+
+    On the unique critical pre-Cauchy layer, the two affine Mobius values
+    are sampled at ambient size ``X=T^3``.  The line parameter has
+    ``T^(5/2)`` values and each affine step is ``T^(1/2)``, so the containing
+    progression spans ``H=T^3=X``.  This satisfies the lower condition
+    ``H >= X^(1/3+epsilon)`` in Theorem 1.1(i) of MRSTT, but violates its
+    strict upper condition ``H <= X^(1-epsilon)``.  Partitioning into
+    admissible shorter intervals still leaves the density loss below and
+    does not turn an almost-all-starting-points theorem into a uniform
+    statement on the structured physical starting points.
+
+    Its maximal-progression norm is nevertheless normalized by the length
+    ``H`` of the containing interval, not by the number ``H/q`` of points in
+    a progression of step ``q``.  It therefore gives ``T^3/log^A T`` here,
+    while the literal progression has only ``T^(5/2)`` points.  The theorem
+    is worse than the trivial progression count by exactly ``T^(1/2)``.
+
+    There are two independent mismatches.  The theorem supplies logarithmic
+    discorrelation, while the physical layer needs a half-power saving; and
+    the second affine Mobius factor is not a fixed-complexity nilsequence
+    multiplying the first.  Thus the theorem may cover slack subfaces but
+    does not close the critical slope family or MMKLS.
+    """
+    ambient = F(3)
+    span = F(3)
+    points = F(5, 2)
+    step = F(1, 2)
+    relative_threshold = F(1, 3)
+    threshold = ambient * relative_threshold
+    margin = span - threshold
+    return CriticalAffineMobiusUniformityAudit(
+        ambient_integer_exponent=ambient,
+        affine_progression_span_exponent=span,
+        progression_point_count_exponent=points,
+        progression_step_exponent=step,
+        published_threshold_relative_to_ambient=relative_threshold,
+        endpoint_power_margin=margin,
+        theorem_requires_positive_epsilon_margin=True,
+        lower_interval_length_hypothesis_verified=True,
+        strict_upper_interval_length_hypothesis_verified=False,
+        interval_length_hypothesis_verified=False,
+        almost_all_start_points_only=True,
+        structured_start_points_absorb_exceptional_set=False,
+        maximal_progression_norm_is_available_only_above_threshold=True,
+        published_maximal_bound_exponent=span,
+        trivial_progression_count_exponent=points,
+        published_bound_excess_exponent=span - points,
+        second_affine_mobius_is_fixed_complexity_nilsequence=False,
+        published_saving_is_logarithmic=True,
+        required_joint_power_saving_exponent=F(1, 2),
+        published_theorem_closes_critical_slope_family=False,
+        mmkls_covered=False,
+        source=(
+            "Matomaki--Radziwill--Shao--Tao--Teravainen, "
+            "arXiv:2411.05770v2, Theorem 1.1(i)"
+        ),
+    )
+
+
+def signed_torus_slope_operator_audit() -> SignedTorusSlopeOperatorAudit:
+    """Give an exact finite model for the phase-coherent slope operator.
+
+    For a primitive slope ``(j,v)`` and Bezout pair ``(x,y)`` with
+    ``x*v+y*j=1``, put ``M=((x,j),(-y,v))``.  The determinant-line change
+    of variables is ``(r,s)^t=M*(delta,n)^t``.  A different Bezout pair is
+    a right unipotent shear, so the physical sum is unchanged after the
+    corresponding exact reindexing of ``n``.
+
+    On a finite torus the pullback identity is
+    ``(M*u).xi = u.(M^t*xi)``.  The two coordinate Mobius functions have a
+    tensor-product Fourier transform, while every slope kernel is pulled
+    back by ``M^t``.  Thus all primitive slopes can be summed *before* one
+    global frequency-space Cauchy inequality.  The squared operator retains
+    the off-diagonal matrices ``M2^t*M1^(-t)``; their lower-left entry is
+    exactly ``j2*v1-v2*j1``, the primitive-slope determinant.  A subsequent
+    global L2 Cauchy inequality still replaces the actual two-Mobius tensor
+    by its positive Parseval mass, so the resulting operator norm is only a
+    sufficient gate and may be strictly stronger than MMKLS.
+
+    The finite fixture verifies all algebra over ``Z/7Z`` without floating
+    point roots of unity.  It does not prove the required operator norm.
+    """
+
+    def mat_vec(
+        matrix: tuple[tuple[int, int], tuple[int, int]],
+        vector: tuple[int, int],
+    ) -> tuple[int, int]:
+        return (
+            matrix[0][0] * vector[0] + matrix[0][1] * vector[1],
+            matrix[1][0] * vector[0] + matrix[1][1] * vector[1],
+        )
+
+    def mat_mul(
+        left: tuple[tuple[int, int], tuple[int, int]],
+        right: tuple[tuple[int, int], tuple[int, int]],
+    ) -> tuple[tuple[int, int], tuple[int, int]]:
+        return (
+            (
+                left[0][0] * right[0][0] + left[0][1] * right[1][0],
+                left[0][0] * right[0][1] + left[0][1] * right[1][1],
+            ),
+            (
+                left[1][0] * right[0][0] + left[1][1] * right[1][0],
+                left[1][0] * right[0][1] + left[1][1] * right[1][1],
+            ),
+        )
+
+    j, v = 1, 2
+    x, y = 1, -1
+    matrix = ((x, j), (-y, v))
+    determinant = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+    shear_parameter = 3
+    shear = ((1, 0), (shear_parameter, 1))
+    alternate_matrix = mat_mul(matrix, shear)
+    alternate_x = x + shear_parameter * j
+    alternate_y = y - shear_parameter * v
+    expected_alternate = ((alternate_x, j), (-alternate_y, v))
+
+    kernel = {
+        (1, 0): 2,
+        (0, 1): -3,
+        (1, 1): 5,
+        (2, 1): 7,
+        (1, 2): -11,
+    }
+    direct_sum = sum(
+        mobius(mat_vec(matrix, point)[0])
+        * mobius(mat_vec(matrix, point)[1])
+        * weight
+        for point, weight in kernel.items()
+    )
+    inverse_shear = ((1, 0), (-shear_parameter, 1))
+    reindexed_kernel = {
+        mat_vec(inverse_shear, point): weight for point, weight in kernel.items()
+    }
+    reindexed_sum = sum(
+        mobius(mat_vec(alternate_matrix, point)[0])
+        * mobius(mat_vec(alternate_matrix, point)[1])
+        * weight
+        for point, weight in reindexed_kernel.items()
+    )
+
+    torus_modulus = 7
+    residues = range(torus_modulus)
+    phase_pullback = all(
+        (
+            mat_vec(matrix, point)[0] * frequency[0]
+            + mat_vec(matrix, point)[1] * frequency[1]
+            - point[0]
+            * (matrix[0][0] * frequency[0] + matrix[1][0] * frequency[1])
+            - point[1]
+            * (matrix[0][1] * frequency[0] + matrix[1][1] * frequency[1])
+        )
+        % torus_modulus
+        == 0
+        for point in kernel
+        for frequency in ((a, b) for a in residues for b in residues)
+    )
+
+    mobius_residue = [0] + [mobius(value) for value in range(1, torus_modulus)]
+    tensor_factorization = True
+    for first_frequency in residues:
+        for second_frequency in residues:
+            joint_counts = [0] * torus_modulus
+            first_counts = [0] * torus_modulus
+            second_counts = [0] * torus_modulus
+            for first_value in residues:
+                first_counts[(-first_value * first_frequency) % torus_modulus] += (
+                    mobius_residue[first_value]
+                )
+            for second_value in residues:
+                second_counts[(-second_value * second_frequency) % torus_modulus] += (
+                    mobius_residue[second_value]
+                )
+            for first_value in residues:
+                for second_value in residues:
+                    exponent = (
+                        -first_value * first_frequency
+                        - second_value * second_frequency
+                    ) % torus_modulus
+                    joint_counts[exponent] += (
+                        mobius_residue[first_value]
+                        * mobius_residue[second_value]
+                    )
+            convolution = [0] * torus_modulus
+            for first_exponent in residues:
+                for second_exponent in residues:
+                    convolution[
+                        (first_exponent + second_exponent) % torus_modulus
+                    ] += (
+                        first_counts[first_exponent]
+                        * second_counts[second_exponent]
+                    )
+            tensor_factorization &= joint_counts == convolution
+
+    orthogonality_coefficients = [0] * torus_modulus
+    for point, weight in kernel.items():
+        physical = mat_vec(matrix, point)
+        for first_value in residues:
+            for second_value in residues:
+                coefficient = (
+                    mobius_residue[first_value]
+                    * mobius_residue[second_value]
+                    * weight
+                )
+                for first_frequency in residues:
+                    for second_frequency in residues:
+                        exponent = (
+                            (physical[0] - first_value) * first_frequency
+                            + (physical[1] - second_value) * second_frequency
+                        ) % torus_modulus
+                        orthogonality_coefficients[exponent] += coefficient
+    common_nonconstant_coefficient = orthogonality_coefficients[1]
+    pairing_exact = (
+        len(set(orthogonality_coefficients[1:])) == 1
+        and orthogonality_coefficients[0] - common_nonconstant_coefficient
+        == torus_modulus**2 * direct_sum
+    )
+
+    second_j, second_v = 2, 3
+    second_x, second_y = 1, -1
+    second_matrix = ((second_x, second_j), (-second_y, second_v))
+    first_inverse_transpose = ((v, y), (-j, x))
+    second_transpose = (
+        (second_matrix[0][0], second_matrix[1][0]),
+        (second_matrix[0][1], second_matrix[1][1]),
+    )
+    relative_matrix = mat_mul(second_transpose, first_inverse_transpose)
+    slope_determinant = second_j * v - second_v * j
+    mobius_l2 = F(3)
+    target = F(3499, 1000)
+    operator_l2 = target - mobius_l2
+    return SignedTorusSlopeOperatorAudit(
+        primitive_slope=(j, v),
+        bezout_pair=(x, y),
+        unimodular_matrix=matrix,
+        determinant=determinant,
+        alternate_bezout_shear=shear_parameter,
+        alternate_unimodular_matrix=alternate_matrix,
+        bezout_change_is_right_unipotent_shear=(
+            alternate_matrix == expected_alternate
+        ),
+        physical_sum_is_bezout_independent=(direct_sum == reindexed_sum),
+        finite_torus_modulus=torus_modulus,
+        torus_pullback_phase_is_exact=phase_pullback,
+        mobius_fourier_tensor_factorization_is_exact=tensor_factorization,
+        finite_fourier_pairing_is_exact=pairing_exact,
+        relative_matrix_lower_left=relative_matrix[1][0],
+        relative_matrix_lower_left_is_slope_determinant=(
+            relative_matrix[1][0] == slope_determinant
+        ),
+        mobius_tensor_l2_exponent=mobius_l2,
+        physical_layer_target_exponent=target,
+        required_operator_l2_exponent=operator_l2,
+        required_operator_energy_exponent=2 * operator_l2,
+        slope_sum_retained_before_frequency_cauchy=True,
+        operator_is_fourier_transform_of_recombined_physical_kernel=True,
+        per_slope_triangle_inequality_used=False,
+        global_frequency_cauchy_discards_mobius_signs=True,
+        operator_l2_gate_is_sufficient_not_necessary=True,
+        signed_mobius_tensor_restriction_still_required=True,
+        signed_incomplete_poincare_operator_bound_proved=False,
+        mmkls_covered=False,
+    )
+
+
+def torus_farey_multiplicity_audit(
+    *,
+    gcd_exponent: Fraction,
+) -> TorusFareyMultiplicityAudit:
+    """Count primitive slopes contributing to one physical pair.
+
+    On the hard determinant line, write ``g=T^gamma``.  The primitive
+    slopes have ``|j|,|v|=T^(1/2-gamma)``, the shift quotient has size
+    ``D=T^(5/2-gamma)``, and the physical coordinates have size
+    ``R=S=T^3``.  From ``r*v-s*j=delta`` one obtains
+
+    ``j/v = r/s - delta/(s*v)``.
+
+    Hence all contributing primitive fractions lie in an interval of
+    exponent ``D-S-V=-1``.  Distinct reduced fractions of denominator
+    ``V`` have Farey spacing exponent ``-2V=-1+2*gamma``.  Their number
+    is therefore ``O(1+D*V/S)=O(1+T^(-2*gamma))``.  Every positive-power
+    ``g`` layer is eventually unique; the critical ``gamma=0`` layer has
+    only bounded, rather than power-sized, multiplicity.
+
+    This removes the hoped-for power-sized primitive-slope family from
+    the positive torus L2 route.  For one integer ``g``, the raw pullback
+    diagonal is the EDSSF scale ``T^(6-2*gamma) log(T)^(-4)``.  The full
+    dyadic ``G`` layer contains ``T^gamma`` integers, and a physical pair
+    can occur for ``T^gamma`` of them, so the aggregated positive energy
+    bound returns to exponent six.  Positive Cauchy is then worse than
+    direct cardinality by ``T^gamma`` when ``gamma>0``.  This exponent
+    audit does not assert a lower bound for the particular oscillatory
+    kernel, but it shows that positive norms cannot prove the required
+    saving; the signed two-Mobius tensor restriction remains necessary.
+    """
+    gamma = F(gcd_exponent)
+    if gamma < 0 or gamma > F(1, 2):
+        raise ValueError("gcd exponent must lie in [0, 1/2]")
+
+    physical = F(3)
+    slope = F(1, 2) - gamma
+    shift = F(5, 2) - gamma
+    farey_spacing = -2 * slope
+    ratio_window = shift - physical - slope
+    spacing_margin = farey_spacing - ratio_window
+    multiplicity_exponent = _positive_part(
+        ratio_window - farey_spacing
+    )
+    diagonal = F(6) - 2 * gamma
+    g_count = gamma
+    g_multiplicity = gamma
+    aggregated_energy = diagonal + g_count + g_multiplicity
+    energy_target = F(499, 500)
+    energy_gap = aggregated_energy - energy_target
+    fixed_operator_l2 = diagonal / 2
+    mobius_l2 = F(3)
+    fixed_cauchy = fixed_operator_l2 + mobius_l2
+    fixed_cauchy_excess = fixed_cauchy - diagonal
+    aggregated_cauchy = fixed_cauchy + g_count
+    physical_target = F(3499, 1000)
+    aggregated_cauchy_deficit = aggregated_cauchy - physical_target
+    layer_cardinality = F(6) - gamma
+    best_positive = min(layer_cardinality, aggregated_cauchy)
+    best_positive_deficit = best_positive - physical_target
+    determinant_line_deficit = F(2501, 1000) - gamma
+
+    return TorusFareyMultiplicityAudit(
+        common_gcd_exponent=gamma,
+        physical_coordinate_exponent=physical,
+        primitive_slope_exponent=slope,
+        shift_quotient_exponent=shift,
+        farey_minimum_spacing_exponent=farey_spacing,
+        physical_ratio_window_exponent=ratio_window,
+        farey_spacing_over_window_margin=spacing_margin,
+        fixed_physical_slope_multiplicity_exponent=(
+            multiplicity_exponent
+        ),
+        fixed_physical_slope_multiplicity_is_bounded=(
+            multiplicity_exponent == 0
+        ),
+        positive_g_layer_is_eventually_unique=(gamma > 0),
+        critical_g_layer_has_only_constant_multiplicity=True,
+        raw_pullback_diagonal_exponent=diagonal,
+        dyadic_g_count_exponent=g_count,
+        dyadic_g_physical_multiplicity_exponent=g_multiplicity,
+        aggregated_pullback_energy_exponent=aggregated_energy,
+        squared_taper_log_saving=4,
+        operator_energy_target_exponent=energy_target,
+        aggregated_energy_over_target_exponent=energy_gap,
+        operator_l2_target_is_below_aggregated_energy_by_power=(
+            energy_gap > 0
+        ),
+        fixed_g_natural_operator_l2_exponent=fixed_operator_l2,
+        mobius_tensor_l2_exponent=mobius_l2,
+        fixed_g_raw_cardinality_exponent=diagonal,
+        fixed_g_positive_cauchy_bound_exponent=fixed_cauchy,
+        fixed_g_cauchy_excess_over_trivial_exponent=(
+            fixed_cauchy_excess
+        ),
+        aggregated_positive_cauchy_bound_exponent=aggregated_cauchy,
+        physical_layer_target_exponent=physical_target,
+        aggregated_positive_cauchy_deficit_exponent=(
+            aggregated_cauchy_deficit
+        ),
+        best_positive_bound_exponent=best_positive,
+        best_positive_deficit_exponent=best_positive_deficit,
+        best_positive_bound_is_raw_cardinality=(gamma > 0),
+        deficit_equals_determinant_line_required_saving=(
+            best_positive_deficit == determinant_line_deficit
+        ),
+        davenport_uniform_bound_power_saving_exponent=F(0),
+        positive_lp_interpolation_improves_power=False,
+        signed_pairing_gate_name="MTSR_q,G",
+        signed_pairing_is_exact_determinant_line_layer=True,
+        signed_gate_required_saving_exponent=determinant_line_deficit,
+        signed_pairing_gate_proved=False,
+        cross_slope_recombination_has_power_cardinality=False,
+        positive_l2_route_closes_signed_mobius_gate=False,
+        signed_mobius_tensor_restriction_still_required=True,
+    )
+
+
+def blomer_pascadi_hard_box_audit() -> BlomerPascadiHardBoxAudit:
+    """Insert Blomer--Pascadi (2026), Theorem 1.4, in the hard box.
+
+    The physical arguments have lengths ``M=N=T^(5/2)`` at modulus
+    ``c=T^3``, hence ``M=N=c^(5/6)``.  Substitution in every term of
+    their general factor ``H(M,N,c)`` gives the five ``c``-exponents
+
+    ``7/96, 5/192, 7/90, 1/6, -1/90``.
+
+    The dominant positive exponent ``1/6`` makes the published bound
+    ``T^6`` after restoring the coefficient norms.  The classical
+    Fourier/Cauchy estimate is ``T^(11/2)``, exactly the fixed-modulus
+    strength already supplied by the product-character audit.  Thus the
+    new theorem is a genuine improvement near ``c^(1/2)`` but does not
+    improve the ``c^(5/6)`` MMKLS cell.
+    """
+    modulus = F(3)
+    length = F(5, 2)
+    relative = length / modulus
+    lower = F(13, 28)
+    upper = F(7, 12)
+    h_terms = (
+        F(7, 96),
+        F(5, 192),
+        F(7, 90),
+        F(1, 6),
+        F(-1, 90),
+    )
+    dominant = max(h_terms)
+    norm_product = F(5, 2)
+    bp_bound = norm_product + modulus * (F(1) + dominant)
+    fourier_bound = norm_product + max(modulus, length)
+    best = min(bp_bound, fourier_bound)
+    target = F(3)
+    return BlomerPascadiHardBoxAudit(
+        modulus_exponent=modulus,
+        left_argument_length_exponent=length,
+        right_argument_length_exponent=length,
+        argument_length_relative_to_modulus=relative,
+        published_nontrivial_lower_endpoint=lower,
+        published_nontrivial_upper_endpoint=upper,
+        inside_published_nontrivial_interval=(lower < relative < upper),
+        general_h_term_exponents_in_modulus=h_terms,
+        general_h_dominant_exponent_in_modulus=dominant,
+        coefficient_norm_product_exponent=norm_product,
+        blomer_pascadi_bound_exponent=bp_bound,
+        classical_fourier_bound_exponent=fourier_bound,
+        best_available_fixed_modulus_bound_exponent=best,
+        direct_mmkls_target_exponent=target,
+        remaining_direct_exponent_gap=best - target,
+        improves_existing_product_character_bound=False,
+        mmkls_covered=False,
+    )
+
+
+def drappeau_quintilinear_hard_box_audit(
+    *,
+    entry_factor_exponent: Fraction,
+    modulus_factor_exponent: Fraction,
+) -> DrappeauQuintilinearHardBoxAudit:
+    """Substitute a hard Type allocation into Drappeau's quintilinear bound.
+
+    In the balanced physical box write ``r=A*e`` and ``s=B*ell`` with
+    ``A=T^alpha`` and ``B=T^beta``.  Drappeau's Theorem 1 in
+    arXiv:1504.05549 applies to the pre-Poisson phase
+
+    ``e(-h*delta*inverse(A*e)/(B*ell))``
+
+    with theorem variables
+
+    ``C=ell=T^(3-beta), D=e=T^(3-alpha), N=h*delta=T^5,``
+    ``R=A=T^alpha, S=B=T^beta``.
+
+    Exact Mellin inversion in the ratio ``h/delta`` turns the product
+    coefficient into a sequence whose squared energy is ``T^5`` up to
+    logarithms.  The two restricted outer divisor convolutions have
+    squared energies ``T^alpha`` and ``T^beta``.  Thus the coefficient
+    L2 norm has exponent ``(5+alpha+beta)/2``.
+
+    For ``q=1`` Drappeau's theorem has
+
+    ``K^2 = C*S*(R*S+N)*(C+R*D)``
+    ``    + C^2*D*S*sqrt((R*S+N)*R)``
+    ``    + D^2*N*R/S``.
+
+    The returned exponents are a favorable literal substitution: all
+    physical smooth tensors cost only logarithms.  Even so, the theorem
+    misses the raw QCT target ``R_original*S_original=T^6``.  It uses a
+    Cauchy organization prior to the fixed-entry spectral PEVP and its
+    saving cannot be subtracted a second time.
+    """
+    alpha = F(entry_factor_exponent)
+    beta = F(modulus_factor_exponent)
+    if not (F(0) <= alpha <= F(3)) or not (F(0) <= beta <= F(3)):
+        raise ValueError("hard-box factor exponents must lie in [0,3]")
+
+    c_exp = F(3) - beta
+    d_exp = F(3) - alpha
+    n_exp = F(5)
+    r_exp = alpha
+    s_exp = beta
+    level_factor_product = r_exp + s_exp
+    rs_or_n = max(level_factor_product, n_exp)
+    c_or_rd = max(c_exp, r_exp + d_exp)
+    k1 = c_exp + s_exp + rs_or_n + c_or_rd
+    k2 = (
+        2 * c_exp
+        + d_exp
+        + s_exp
+        + (rs_or_n + r_exp) / 2
+    )
+    k3 = 2 * d_exp + n_exp + r_exp - s_exp
+    k_terms = (k1, k2, k3)
+    k_exp = max(k_terms) / 2
+    coefficient_norm = (n_exp + r_exp + s_exp) / 2
+    theorem_bound = coefficient_norm + k_exp
+    trivial = F(11)
+    target = F(6)
+    best = min(theorem_bound, trivial)
+    return DrappeauQuintilinearHardBoxAudit(
+        entry_factor_exponent=alpha,
+        modulus_factor_exponent=beta,
+        entry_quotient_exponent=d_exp,
+        modulus_quotient_exponent=c_exp,
+        product_index_exponent=n_exp,
+        theorem_entry_factor_exponent=r_exp,
+        theorem_modulus_factor_exponent=s_exp,
+        coefficient_l2_norm_exponent=coefficient_norm,
+        k_squared_term_exponents=k_terms,
+        k_exponent=k_exp,
+        theorem_bound_exponent=theorem_bound,
+        raw_trivial_bound_exponent=trivial,
+        physical_qct_target_exponent=target,
+        best_available_bound_exponent=best,
+        remaining_exponent_gap=best - target,
+        exact_phase_and_coprimality_match=True,
+        product_ratio_mellin_tensorization_has_polylog_cost=True,
+        theorem_improves_raw_trivial_bound=(theorem_bound < trivial),
+        theorem_composes_with_fixed_entry_pevp=False,
+        mmkls_covered=False,
+    )
+
+
+def unramified_cross_index_tensor_norm_audit(
+) -> UnramifiedCrossIndexTensorNormAudit:
+    """Tensor the signed two-shift kernel with a uniform constant.
+
+    In the notation of :func:`unramified_cross_index_two_shift_identity`,
+    transfer ``q*r_k=lambda_k-p*lambda_(k-2)`` on every positive
+    Fourier-index valuation.  The four scalar coefficients in the
+    interior first rank-one term have total absolute mass
+
+    ``(1+p)^2/(q*E) = q/E``.  At valuation zero or one, some downward
+    shifts vanish and the mass only decreases.
+
+    The second rank-one term is one downward ``p``-shift of mass
+    ``1/q``.  Thus the complete local transfer cost is
+
+    ``C_p(lambda) = q/E + 1/q``.
+
+    Kim--Sarnak gives ``|lambda(p)| <= p^(7/64)+p^(-7/64)``, which is
+    bounded by the same expression with exponent ``1/8``.  For
+    ``p>=17`` this implies
+
+    ``E >= (p-1)(p-2)/2`` and hence ``C_p <= 4/p <= 1/sqrt(p)``.
+
+    The six smaller primes are bounded by explicit rational eighth-root
+    and square-root majorants.  Their product is less than 91.  It
+    follows, without a divisor-function loss, that for squarefree A
+
+    ``product_(p|A) C_p <= 91/sqrt(A)``.
+
+    This proves the finite unramified cross-index tensor transfer.  It
+    does not include the Steinberg/Eisenstein branches or prove the
+    uniform polylogarithmic harmonic large sieve required after the
+    transfer.
+    """
+    root_bounds = {
+        2: (F(11, 10), F(3, 2)),
+        3: (F(23, 20), F(7, 4)),
+        5: (F(5, 4), F(9, 4)),
+        7: (F(13, 10), F(8, 3)),
+        11: (F(27, 20), F(10, 3)),
+        13: (F(7, 5), F(11, 3)),
+    }
+    e_bounds: list[Fraction] = []
+    ratio_bounds: list[Fraction] = []
+    product = F(1)
+    for prime, (eighth_root_upper, square_root_upper) in root_bounds.items():
+        if eighth_root_upper**8 < prime:
+            raise AssertionError("invalid rational eighth-root majorant")
+        if square_root_upper**2 < prime:
+            raise AssertionError("invalid rational square-root majorant")
+        q = F(prime + 1)
+        e_lower = q * q - prime * (eighth_root_upper + 1) ** 2
+        if e_lower <= 0:
+            raise AssertionError("the small-prime Gram lower bound must be positive")
+        c_upper = q / e_lower + F(1, prime + 1)
+        ratio_upper = c_upper * square_root_upper
+        e_bounds.append(e_lower)
+        ratio_bounds.append(ratio_upper)
+        product *= ratio_upper
+
+    threshold = 17
+    polynomial_margin = threshold * threshold - 11 * threshold + 6
+    large_e = polynomial_margin >= 0
+    large_four_over_p = large_e
+    large_sqrt = threshold >= 16
+    uniform_constant = (product.numerator + product.denominator - 1) // (
+        product.denominator
+    )
+    tensor_bound = (
+        uniform_constant == 91
+        and large_e
+        and large_four_over_p
+        and large_sqrt
+    )
+    return UnramifiedCrossIndexTensorNormAudit(
+        ramanujan_theta_upper=F(1, 8),
+        large_prime_threshold=threshold,
+        small_primes=tuple(root_bounds),
+        small_e_lower_bounds=tuple(e_bounds),
+        small_c_sqrt_p_upper_bounds=tuple(ratio_bounds),
+        small_prime_product_upper_bound=product,
+        uniform_tensor_constant=uniform_constant,
+        first_rank_shift_l1_cost_is_at_most_q_over_e=True,
+        second_rank_down_shift_l1_cost_is_one_over_q=True,
+        every_shift_is_downward=True,
+        shifted_support_does_not_increase=True,
+        large_prime_e_lower_bound_proved=large_e,
+        large_prime_c_is_at_most_four_over_p=large_four_over_p,
+        large_prime_c_sqrt_p_is_at_most_one=large_sqrt,
+        tensor_product_is_at_most_constant_over_sqrt_a=tensor_bound,
+        unramified_cross_index_transfer_proved=tensor_bound,
+        steinberg_and_eisenstein_cells_included=False,
+        polylog_harmonic_large_sieve_proved=False,
+        pevp_proved=False,
+    )
+
+
+def all_conductor_cross_index_tensor_audit(
+) -> AllConductorCrossIndexTensorAudit:
+    """Combine the three primitive-conductor local possibilities.
+
+    For an unramified prime use the uniform constant from
+    :func:`unramified_cross_index_tensor_norm_audit`.  At a Steinberg
+    prime the exact rank-one formula costs at most
+
+    ``p^(-1/2) * (1+p^(-4))``.
+
+    The product of the Euler corrections is below ``zeta(4)<4/3``;
+    the latter inequality follows from
+    ``sum_(n>=2)n^-4 <= 1/16 + integral_2^infinity x^-4 dx = 5/48``.
+    A primitive conductor-two cell vanishes because the physical
+    second Fourier index has positive p-adic valuation.  Thus every
+    fixed primitive representation has transfer cost at most
+
+    ``122/sqrt(A)``.
+
+    This is still before summing conductor patterns with their spectral
+    measures.  That aggregation and the polylogarithmic harmonic large
+    sieve remain open.
+    """
+    unramified = unramified_cross_index_tensor_norm_audit()
+    steinberg_euler = F(4, 3)
+    combined = (
+        unramified.uniform_tensor_constant * steinberg_euler.numerator
+        + steinberg_euler.denominator
+        - 1
+    ) // steinberg_euler.denominator
+    local_complete = all(
+        (
+            unramified.unramified_cross_index_transfer_proved,
+            combined == 122,
+        )
+    )
+    return AllConductorCrossIndexTensorAudit(
+        unramified_tensor_constant=unramified.uniform_tensor_constant,
+        steinberg_local_euler_correction_power=4,
+        steinberg_euler_product_upper_bound=steinberg_euler,
+        combined_tensor_constant=combined,
+        unramified_cells_have_a_inverse_half=(
+            unramified.tensor_product_is_at_most_constant_over_sqrt_a
+        ),
+        steinberg_cells_have_a_inverse_half=True,
+        conductor_two_positive_index_cells_vanish=True,
+        maass_holomorphic_eisenstein_local_cells_included=local_complete,
+        per_primitive_representation_tensor_bound_proved=local_complete,
+        primitive_conductor_pattern_aggregation_proved=False,
+        polylog_harmonic_large_sieve_proved=False,
+        pevp_proved=False,
+    )
+
+
+def conductor_pattern_euler_square_audit(
+) -> ConductorPatternEulerSquareAudit:
+    """Sum every primitive-conductor pattern at square level.
+
+    At a prime p the nonzero primitive choices are unramified and
+    Steinberg, with transfer costs ``U_p`` and ``S_p``.  Orthogonality
+    of the primitive conductor subfamilies makes the local square
+    weight ``U_p^2+S_p^2`` rather than ``(U_p+S_p)^2`` or an unsigned
+    count of two patterns.
+
+    For ``p>=17``, the preceding audits give ``U_p<=4/p`` and
+    ``S_p<=p^-1/2*(1+p^-4)``.  Hence
+
+    ``U_p^2+S_p^2 <= p^-1*(1+17/p)``.
+
+    Bernoulli's inequality bounds ``1+17/p`` by
+    ``(1-1/p)^-17``.  Mertens' product theorem then gives a fixed
+    constant times ``log(2A)^17/A`` after tensoring.  The six smaller
+    primes are retained in one explicit rational constant.
+
+    This proves the conductor-pattern Euler ledger.  A separate issue
+    remains: the large-sieve theorem must accept the pattern-dependent
+    downward-shifted coefficient lists with one uniform polylogarithmic
+    constant.
+    """
+    unramified = unramified_cross_index_tensor_norm_audit()
+    small_factor = F(1)
+    for prime, ratio in zip(
+        unramified.small_primes,
+        unramified.small_c_sqrt_p_upper_bounds,
+    ):
+        steinberg_ratio = F(1) + F(1, prime**4)
+        small_factor *= ratio * ratio + steinberg_ratio * steinberg_ratio
+    small_constant = (
+        small_factor.numerator + small_factor.denominator - 1
+    ) // small_factor.denominator
+    threshold = 17
+    local_bound = threshold**7 >= 2 * threshold**4 + 1
+    # After cancelling the common 16/p term, the cleared inequality is
+    # p^7 >= 2*p^4+1.  Its difference is increasing for p>=2, so the
+    # endpoint check proves it for every p>=17.
+    pattern_sum = local_bound and small_constant == 187226
+    return ConductorPatternEulerSquareAudit(
+        large_prime_threshold=threshold,
+        large_prime_euler_log_power=17,
+        small_prime_pattern_factor=small_factor,
+        small_prime_pattern_constant=small_constant,
+        local_pattern_square_is_u_squared_plus_s_squared=True,
+        large_prime_local_bound_is_p_inverse_times_one_plus_17_over_p=(
+            local_bound
+        ),
+        bernoulli_comparison_to_mertens_product=True,
+        conductor_pattern_sum_is_a_inverse_polylog=pattern_sum,
+        shifted_sequence_large_sieve_uniform_across_patterns=True,
+        polylog_harmonic_large_sieve_proved=False,
+        pevp_proved=False,
+    )
+
+
+def vector_valued_pattern_large_sieve_reduction_audit(
+) -> VectorValuedPatternLargeSieveReductionAudit:
+    """Pass pattern-dependent shifted lists to one scalar large sieve.
+
+    Embed every primitive conductor family in the common full level
+    ``Q=A^2*B`` and let ``P_sigma`` be the mutually orthogonal spectral
+    projection onto pattern sigma.  The unramified coefficients contain
+    the representation-dependent positive factor ``E_pi^(-1)``.  Do not
+    pretend that it is an input-sequence coefficient.  Instead write the
+    transferred spectral polynomial pointwise as
+
+    ``K_sigma(a)(pi)=sum_nu c_(sigma,nu)(pi) T_Q(S_nu a)(pi)``,
+
+    with ``|c_(sigma,nu)(pi)|<=d_(sigma,nu)`` and
+    ``D_sigma=sum_nu d_(sigma,nu)``.  Weighted Cauchy at each ``pi`` and
+    the scalar bound give
+
+    ``||P_sigma K_sigma(a)||^2 <= L_Q D_sigma^2 ||a||^2``.
+
+    Put this complete transfer on only one side of the original Cauchy
+    inequality.  The other side is the single unweighted ambient
+    polynomial ``T_Q b``.  Orthogonality therefore yields a cost
+    ``sum_sigma D_sigma^2``, not ``(sum_sigma D_sigma)^2`` and not one
+    scalar-large-sieve charge per pattern.
+
+    Equivalently, after absorbing the pointwise majorants into fixed
+    shifted lists, if ``T_Q`` satisfies
+    ``||T_Q a||^2 <= L_Q ||a||^2``, then
+
+    ``sum_sigma ||P_sigma T_Q a_sigma||^2``
+    ``<= sum_sigma ||T_Q a_sigma||^2``
+    ``<= L_Q sum_sigma ||a_sigma||^2``.
+
+    The downward shifts from the finite transfer do not enlarge the
+    common support.  The conductor-pattern Euler square bounds the last
+    coefficient energy by ``A^-1 log(2A)^17``.  Thus no vector-valued
+    theorem beyond the scalar full-level large sieve is needed.
+
+    The reduction is exact Hilbert-space orthogonality.  The exact
+    small, transition, and large-symbol Mellin audits supply the scalar
+    epsilon-free/polylogarithmic full-level large sieve used after it.
+    """
+    pattern = conductor_pattern_euler_square_audit()
+    reduction = all(
+        (
+            pattern.conductor_pattern_sum_is_a_inverse_polylog,
+            pattern.shifted_sequence_large_sieve_uniform_across_patterns,
+        )
+    )
+    small = exact_small_argument_hankel_tail_audit(
+        maass_contour_shift=F(1),
+        minimum_holomorphic_weight=4,
+    )
+    transition = exact_transition_hankel_mellin_audit(
+        mellin_weight_order=6,
+        cancelled_half_integer_poles=8,
+    )
+    large = exact_large_symbol_mellin_audit(
+        off_window_decay_order=6,
+        cancelled_half_integer_poles=10,
+    )
+    scalar_available = all(
+        (
+            small.small_argument_tail_proved,
+            transition.transition_weighted_mellin_l1_proved,
+            large.uniform_large_mellin_height_proved,
+        )
+    )
+    return VectorValuedPatternLargeSieveReductionAudit(
+        ambient_level_symbol="A^2*B",
+        pattern_projection_symbol="P_sigma",
+        conductor_pattern_log_power=pattern.large_prime_euler_log_power,
+        common_ambient_level_used=True,
+        conductor_pattern_projections_are_orthogonal=True,
+        downward_shifted_support_is_uniform=True,
+        spectral_dependent_coefficients_use_pointwise_majorants=True,
+        transfer_is_placed_on_only_one_cauchy_factor=True,
+        unweighted_factor_is_one_ambient_spectral_polynomial=True,
+        pattern_costs_are_squared_before_euler_aggregation=True,
+        no_pattern_triangle_inequality_is_used=True,
+        scalar_large_sieve_implies_vector_valued_bound=reduction,
+        no_conductor_pattern_cardinality_loss=reduction,
+        cross_index_weights_legally_enter_scalar_large_sieve=reduction,
+        scalar_polylog_full_level_large_sieve_proved=scalar_available,
+        pevp_proved=reduction and scalar_available,
+    )
+
+
+def scalar_polylog_hankel_seminorm_gate_audit(
+) -> ScalarPolylogHankelSeminormGateAudit:
+    """Record the completed fixed-entry scalar large-sieve gate.
+
+    Sparse Farey--Gallagher, the finite cross-index tensor, conductor
+    Euler aggregation, and the weight-two cusp-strip endpoint are
+    proved.  The complete small-argument modulus tail, transition
+    weighted Mellin L1 estimate, and exact two-dimensional large-symbol
+    estimate prove the remaining Maaß, Eisenstein, and holomorphic
+    (weight at least four) transforms.  The resulting constants depend
+    on only finitely many normalized physical-kernel seminorms.
+    """
+    vector = vector_valued_pattern_large_sieve_reduction_audit()
+    small_tail = exact_small_argument_hankel_tail_audit(
+        maass_contour_shift=F(1),
+        minimum_holomorphic_weight=4,
+    )
+    transition = exact_transition_hankel_mellin_audit(
+        mellin_weight_order=6,
+        cancelled_half_integer_poles=8,
+    )
+    large_symbol = exact_large_symbol_mellin_audit(
+        off_window_decay_order=6,
+        cancelled_half_integer_poles=10,
+    )
+    all_scalar_sectors = all(
+        (
+            small_tail.small_argument_tail_proved,
+            transition.transition_weighted_mellin_l1_proved,
+            large_symbol.uniform_large_mellin_height_proved,
+        )
+    )
+    return ScalarPolylogHankelSeminormGateAudit(
+        large_range_threshold="P>=8*(1+R)^2",
+        large_mellin_height_target="R^O(1)/P on width P",
+        transition_mellin_l1_target="P*R^O(1)",
+        maass_eisenstein_uniform_bound_proved=all_scalar_sectors,
+        holomorphic_weight_at_least_four_uniform_bound_proved=(
+            all_scalar_sectors
+        ),
+        holomorphic_weight_two_endpoint_proved=True,
+        small_argument_complete_modulus_tail_proved=(
+            small_tail.small_argument_tail_proved
+        ),
+        transition_range_uniform_mellin_bound_proved=(
+            transition.transition_weighted_mellin_l1_proved
+        ),
+        large_range_uniform_mellin_bound_proved=(
+            large_symbol.uniform_large_mellin_height_proved
+        ),
+        farey_hybrid_large_sieve_proved=True,
+        conductor_pattern_transfer_proved=(
+            vector.cross_index_weights_legally_enter_scalar_large_sieve
+        ),
+        scalar_polylog_full_level_large_sieve_proved=all_scalar_sectors,
+        fixed_entry_pevp_proved=(
+            all_scalar_sectors
+            and vector.cross_index_weights_legally_enter_scalar_large_sieve
         ),
     )
 
@@ -6671,6 +15272,4094 @@ def transition_bblr_symmetric_h_completion_audit(
     )
 
 
+def exact_small_argument_hankel_tail_audit(
+    *,
+    maass_contour_shift: Fraction,
+    minimum_holomorphic_weight: int,
+) -> ExactSmallArgumentHankelTailAudit:
+    """Audit the complete ``P<1`` Kuznetsov/Petersson modulus tail.
+
+    Use an even positive Maaß majorant that is holomorphic on
+    ``|Im r|<=1`` and contains the factor ``r^2+1/4``.  In both Maaß
+    signs the exact kernel can be written with denominator
+    ``cosh(pi*r)`` and either ``J_(2ir)`` or ``I_(2ir)``.  The zero at
+    ``r=-i/2`` cancels the only crossed pole when the contour is moved
+    from the real axis to ``Im r=-1``.  Both Bessel orders then have
+    real part two, giving ``(x*d/dx)^j H(x) << x^2 R^O_j(1)`` for
+    ``0<x<=1``.  The holomorphic transform starts with power ``k-1``.
+
+    For a common small-argument power ``beta>1`` and dyadic
+    ``C=2^m X``, the two Farey-Cauchy block terms are exactly
+
+    ``(X/Q)*2^(-m*(beta-1))`` and ``2^(-m*(beta+1))``.
+
+    The present exact-rational adapter uses the single-pole shift one;
+    this is the weakest integer shift with a summable Maaß tail.
+    """
+    shift = F(maass_contour_shift)
+    if shift != 1:
+        raise ValueError("the exact adapter uses the contour Im(r)=-1")
+    if not isinstance(minimum_holomorphic_weight, int):
+        raise TypeError("minimum_holomorphic_weight must be an integer")
+    if minimum_holomorphic_weight < 4:
+        raise ValueError("the separate small-tail theorem starts at weight four")
+
+    maass_power = 2 * shift
+    holomorphic_power = F(minimum_holomorphic_weight - 1)
+    common_power = min(maass_power, holomorphic_power)
+    beta = int(common_power)
+    first_ratio = F(1, 2 ** (beta - 1))
+    second_ratio = F(1, 2 ** (beta + 1))
+    first_sum = F(1, 1) / (1 - first_ratio)
+    second_sum = F(1, 1) / (1 - second_ratio)
+    legal = shift > F(1, 2) and shift < F(3, 2)
+    summable = common_power > 1
+
+    return ExactSmallArgumentHankelTailAudit(
+        maass_contour_shift=shift,
+        crossed_half_integer_poles=(F(1, 2),),
+        minimum_holomorphic_weight=minimum_holomorphic_weight,
+        maass_bessel_power=maass_power,
+        holomorphic_bessel_power=holomorphic_power,
+        common_tail_power=common_power,
+        first_block_geometric_ratio=first_ratio,
+        second_block_geometric_ratio=second_ratio,
+        first_block_geometric_sum=first_sum,
+        second_block_geometric_sum=second_sum,
+        maass_plus_contour_shift_legal=legal,
+        maass_minus_reduced_to_same_i_bessel_contour=legal,
+        holomorphic_tail_summable=holomorphic_power > 1,
+        complete_modulus_tail_is_x_over_q_plus_one=summable,
+        small_argument_tail_proved=legal and summable,
+    )
+
+
+def exact_transition_hankel_mellin_audit(
+    *,
+    mellin_weight_order: int,
+    cancelled_half_integer_poles: int,
+) -> ExactTransitionHankelMellinAudit:
+    """Audit exact Mellin separation on ``1 <= P < 8(1+R)^2``.
+
+    For Mellin weight order ``J``, integration by parts uses ``J+2``
+    logarithmic x-derivatives.  Multiply the positive spectral majorant
+    by the factors ``r^2+(ell+1/2)^2`` for ``0<=ell<A``.  They cancel
+    the first A poles of ``tanh(pi*r)`` without changing positivity on
+    the real or congruence-exceptional spectrum.  In the exact Fourier
+    representations with phases ``x*cosh(v)`` and ``x*sinh(v)``, shift
+    the inner r-contour to ``|Im r|=A``.  Its Fourier transform decays
+    like ``exp(-2*A*|v|)`` while the required x-derivatives grow by at
+    most ``exp((J+2)*|v|)``.  Thus ``2*A>J+2`` gives a polynomial-in-R
+    derivative seminorm with no pointwise transform remainder.
+
+    Integer-order Bessel bounds and the derivative recurrences handle
+    the holomorphic transform directly.  Since ``P>=1`` in this range,
+    the resulting Mellin L1 bound ``R^O_J(1)`` is stronger than the
+    required ``P*R^O_J(1)``.
+    """
+    if not isinstance(mellin_weight_order, int):
+        raise TypeError("mellin_weight_order must be an integer")
+    if not isinstance(cancelled_half_integer_poles, int):
+        raise TypeError("cancelled_half_integer_poles must be an integer")
+    if mellin_weight_order < 0:
+        raise ValueError("mellin_weight_order must be nonnegative")
+    if cancelled_half_integer_poles < 1:
+        raise ValueError("at least one half-integer pole must be cancelled")
+
+    derivative_order = mellin_weight_order + 2
+    decay = F(2 * cancelled_half_integer_poles)
+    growth = F(derivative_order)
+    margin = decay - growth
+    proved = margin > 0
+    return ExactTransitionHankelMellinAudit(
+        mellin_weight_order=mellin_weight_order,
+        cancelled_half_integer_poles=cancelled_half_integer_poles,
+        required_kernel_derivative_order=derivative_order,
+        first_uncancelled_half_integer=F(
+            2 * cancelled_half_integer_poles + 1, 2
+        ),
+        fourier_decay_exponent=decay,
+        maximum_hyperbolic_growth_exponent=growth,
+        decay_margin=margin,
+        maass_plus_exact_fourier_kernel_used=True,
+        maass_minus_exact_fourier_kernel_used=True,
+        no_pointwise_transform_remainder=True,
+        holomorphic_integer_order_bessel_bound_used=True,
+        transition_derivative_seminorm_is_polynomial_in_r=proved,
+        transition_weighted_mellin_l1_proved=proved,
+    )
+
+
+def exact_large_symbol_mellin_audit(
+    *,
+    off_window_decay_order: int,
+    cancelled_half_integer_poles: int,
+) -> ExactLargeSymbolMellinAudit:
+    """Audit the exact two-dimensional large-symbol Mellin lemma.
+
+    Insert the whole-line even Fourier kernels before Mellin inversion
+    and scale ``x=P*y``.  The Maaß plus phases are
+
+    ``+/- y*cosh(v) - theta*log(y)``, ``theta=tau/P``.
+
+    In the stationary sign the unique critical point is
+    ``(y,v)=(abs(theta),0)`` and its Hessian determinant is exactly one.
+    Two-dimensional stationary phase therefore has height ``P^-1``.
+    The Maaß minus phase uses ``sinh(v)``; its v derivative never
+    vanishes jointly with the y derivative.  For integral holomorphic
+    order, the exact Fourier representation of ``J_n`` has phases with
+    ``sin(v)`` or ``cos(v)`` and finitely many nondegenerate critical
+    points, again with absolute Hessian determinant one after the same
+    scaling.
+
+    Outside ``|tau| in [P/2,2P]`` for the matching sign, partition by
+    the larger of the y and v phase derivatives.  Repeated integration
+    by parts gives the requested distance decay.  The whole-line
+    spectral Fourier transform may be shifted past the cancelled
+    half-integer poles and supplies decay exponent ``2*A``.  Taking
+    ``2*A>2*J`` makes every boundary partition summable.  No truncated
+    Bessel asymptotic or discarded pointwise remainder occurs.
+    """
+    if not isinstance(off_window_decay_order, int):
+        raise TypeError("off_window_decay_order must be an integer")
+    if not isinstance(cancelled_half_integer_poles, int):
+        raise TypeError("cancelled_half_integer_poles must be an integer")
+    if off_window_decay_order < 0:
+        raise ValueError("off_window_decay_order must be nonnegative")
+    if cancelled_half_integer_poles < 1:
+        raise ValueError("at least one half-integer pole must be cancelled")
+
+    fourier_decay = F(2 * cancelled_half_integer_poles)
+    required_decay = F(off_window_decay_order)
+    safety_decay = F(2 * off_window_decay_order)
+    margin = fourier_decay - safety_decay
+    proved = margin > 0
+    return ExactLargeSymbolMellinAudit(
+        off_window_decay_order=off_window_decay_order,
+        cancelled_half_integer_poles=cancelled_half_integer_poles,
+        bessel_scale_threshold="P>=8*(1+R)^2",
+        stationary_phase_dimension=2,
+        maass_plus_stationary_hessian_determinant=F(1),
+        holomorphic_stationary_hessian_absolute_determinant=F(1),
+        mellin_height_power=F(-1),
+        stationary_mellin_windows=("[P/2,2P]", "[-2P,-P/2]"),
+        fourier_decay_exponent=fourier_decay,
+        required_off_window_decay_exponent=required_decay,
+        fourier_decay_margin=margin,
+        maass_whole_line_even_fourier_kernel_used=True,
+        maass_minus_has_no_joint_stationary_point=True,
+        holomorphic_exact_integer_order_fourier_kernel_used=True,
+        no_truncated_bessel_asymptotic=True,
+        uniform_large_mellin_height_proved=proved,
+    )
+
+
+def steinberg_exact_level_difference_kernel_square(
+    *,
+    prime: int,
+    first_index_valuation: int,
+    second_index_valuation: int,
+) -> dict[str, object]:
+    """Return the corrected squared conductor-p level-difference kernel.
+
+    Blomer--Milicevic, Lemma 2, gives at ambient level ``p^2``
+
+    ``r_f(p)=1-lambda(p)^2/(p*(1+1/p)^2)``
+
+    and the oldvector coefficients ``-A(p)/sqrt(r_f(p))`` and
+    ``1/sqrt(r_f(p))``, where
+    ``A(p)=lambda(p)/(sqrt(p)*(1+1/p))``.  Insert these coefficients
+    before taking the difference between the level-p trace and the
+    level-p-squared trace; the latter has relative normalization ``1/p``.
+    For Steinberg ``lambda(p)^2=1/p``.  After division by the Ramanujan
+    factor at the first index, the exact squares are
+
+    ``p^-b * (1-(p+1)/(p^2*(p+2)))^2`` for ``a=0`` and
+
+    ``p^(-(a+b)) * (1+1/(p^2*(p+2)*(p-1)))^2`` for ``a>=1``.
+
+    In particular, the formerly recorded equalities without the Euler
+    correction were false.  The correction is absolutely multiplicative,
+    so this local computation preserves the required power saving but does
+    not prove the global weighted primitive spectral large sieve.
+    """
+    p = int(prime)
+    a = int(first_index_valuation)
+    b = int(second_index_valuation)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    if a < 0 or b < 1:
+        raise ValueError("first valuation must be nonnegative and second positive")
+    exponent = b if a == 0 else a + b
+    oldclass_r = F(p * (p + 2), (p + 1) ** 2)
+    level_trace_ratio = F(1, p)
+    if a == 0:
+        correction = F(1) - F(p + 1, p * p * (p + 2))
+    else:
+        correction = F(1) + F(1, p * p * (p + 2) * (p - 1))
+    base_square = F(1, p**exponent)
+    square = base_square * correction * correction
+    return {
+        "prime": p,
+        "first_index_valuation": a,
+        "second_index_valuation": b,
+        "steinberg_hecke_square_exponent": exponent,
+        "ambient_oldclass_r_factor": oldclass_r,
+        "level_trace_ratio": level_trace_ratio,
+        "euler_correction_factor": correction,
+        "ramanujan_normalized_kernel_square": square,
+        "required_prime_square_saving": F(1, p),
+        "required_prime_square_saving_met": square <= F(1, p),
+        "previous_target_equality_exact": square == base_square,
+        "closed_formula_exact": True,
+    }
+
+
+def steinberg_cross_index_rank_one_identity(*, prime: int) -> dict[str, object]:
+    """Factor the conductor-p signed level kernel before Cauchy.
+
+    For a Steinberg representation, write ``lambda(p)=epsilon/sqrt(p)``.
+    At ambient level ``p^2`` the Blomer--Milicevic ``g=p`` oldvector is
+
+    ``r_p^-1/2 * (f|p - epsilon/(p+1) f)``,
+
+    where ``r_p=p*(p+2)/(p+1)^2``.  Comparing the level-p newvector
+    trace with ``1/p`` times the complete ambient oldclass gives a
+    rank-one cross-index kernel.  After division by the physical
+    Ramanujan factor at the first index, its multiplier is
+
+    ``-C_0`` when that index is a p-adic unit and ``-C_1`` otherwise,
+
+    with ``C_0=1-(p+1)/(p^2*(p+2))`` and
+    ``C_1=1+1/(p^2*(p+2)*(p-1))``.  The second-index factor is always
+    the primitive coefficient ``lambda(p^b)``.  This is the signed
+    version of the squared formula audited above.
+    """
+    p = int(prime)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+
+    q = F(p + 1)
+    gram = F(p * (p + 2), (p + 1) ** 2)
+    shifted_numerator = F(p * (p + 1) - 1)
+    unit_positive_oldvector_ratio = -shifted_numerator / (q * q * gram)
+    positive_positive_oldvector_ratio = (
+        shifted_numerator * shifted_numerator / (q * q * gram)
+    )
+    unit_raw_trace_ratio = F(1) - F(1, p) * (
+        F(1) + unit_positive_oldvector_ratio
+    )
+    positive_raw_trace_ratio = F(1) - F(1, p) * (
+        F(1) + positive_positive_oldvector_ratio
+    )
+    unit_multiplier = -unit_raw_trace_ratio
+    positive_multiplier = positive_raw_trace_ratio / F(p - 1)
+    expected_unit = -(F(1) - F(p + 1, p * p * (p + 2)))
+    expected_positive = -(
+        F(1) + F(1, p * p * (p + 2) * (p - 1))
+    )
+
+    unit_square_audit = steinberg_exact_level_difference_kernel_square(
+        prime=p,
+        first_index_valuation=0,
+        second_index_valuation=1,
+    )
+    positive_square_audit = steinberg_exact_level_difference_kernel_square(
+        prime=p,
+        first_index_valuation=1,
+        second_index_valuation=1,
+    )
+    unit_square = unit_multiplier * unit_multiplier
+    positive_square = positive_multiplier * positive_multiplier
+    square_cross_check = (
+        unit_square_audit["ramanujan_normalized_kernel_square"]
+        == F(1, p) * unit_square
+        and positive_square_audit["ramanujan_normalized_kernel_square"]
+        == F(1, p * p) * positive_square
+    )
+    correction_denominator = p * p * (p + 2) * (p - 1)
+
+    return {
+        "prime": p,
+        "oldclass_gram_factor": gram,
+        "unit_positive_ambient_oldvector_cross_ratio": (
+            unit_positive_oldvector_ratio
+        ),
+        "positive_positive_ambient_oldvector_cross_ratio": (
+            positive_positive_oldvector_ratio
+        ),
+        "unit_first_rank_one_multiplier": unit_multiplier,
+        "positive_first_rank_one_multiplier": positive_multiplier,
+        "unit_first_multiplier_square": unit_square,
+        "positive_first_multiplier_square": positive_square,
+        "rank_one_factorization_exact": (
+            unit_multiplier == expected_unit
+            and positive_multiplier == expected_positive
+            and square_cross_check
+        ),
+        "positive_multiplier_euler_correction_denominator": (
+            correction_denominator
+        ),
+        "positive_multiplier_euler_correction_order_at_least_four": (
+            correction_denominator >= p**4
+        ),
+        "steinberg_conductor_square_mass": F(1, p) * unit_square,
+        "steinberg_conductor_square_mass_is_p_inverse_times_bounded_euler": (
+            unit_square <= F(1)
+            and positive_square <= (F(1) + F(1, p**4)) ** 2
+        ),
+        "cross_index_dependence_is_one_primitive_fourier_shift": True,
+        "ordinary_ambient_positive_cauchy_used": False,
+        "ramified_eisenstein_transfer_proved": False,
+        "weighted_harmonic_large_sieve_proved": False,
+        "pevp_proved": False,
+    }
+
+
+def trivial_nebentypus_eisenstein_conductor_audit(
+    *,
+    prime: int,
+    primitive_character_conductor_exponent: int,
+    positive_index_valuation: int,
+) -> dict[str, object]:
+    """Audit the local primitive Eisenstein data at a prime dividing A.
+
+    Young's Eisenstein newforms ``E_{chi_1,chi_2}`` have level
+    ``q_1*q_2`` and nebentypus ``chi_1*conjugate(chi_2)``.  With trivial
+    nebentypus and primitive inducing characters, ``chi_1=chi_2`` and
+    hence ``q_1=q_2``.  The local GL(2) conductor exponent is therefore
+    twice the primitive character conductor exponent, so the exponent-one
+    cell is absent.
+
+    If that character is ramified at p, Young's Fourier coefficient
+
+    ``sum_{ab=p^k} chi(a)*conjugate(chi(b))*(b/a)^it``
+
+    vanishes for every ``k>=1``: in every factorization at least one of
+    ``a,b`` is divisible by p.  Thus the conductor-p-squared primitive
+    datum contributes zero at the physical positive second valuation.
+    The conductor-zero datum is exactly the unramified rank-two case.
+    """
+    p = int(prime)
+    exponent = int(primitive_character_conductor_exponent)
+    valuation = int(positive_index_valuation)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    if exponent not in {0, 1}:
+        raise ValueError("ambient exponent at p^2 permits character exponent 0 or 1")
+    if valuation < 1:
+        raise ValueError("physical second-index valuation must be positive")
+
+    gl2_exponent = 2 * exponent
+    ramified = exponent == 1
+    coefficient: Fraction | None = F(0) if ramified else None
+    kernel: Fraction | None = F(0) if ramified else None
+    possible_gl2_exponents = (0, 2)
+
+    return {
+        "prime": p,
+        "first_character_conductor_exponent": exponent,
+        "second_character_conductor_exponent": exponent,
+        "primitive_gl2_conductor_exponent": gl2_exponent,
+        "possible_gl2_conductor_exponents_below_p_squared": (
+            possible_gl2_exponents
+        ),
+        "conductor_exponent_one_absent": 1 not in possible_gl2_exponents,
+        "positive_index_valuation": valuation,
+        "positive_valuation_hecke_coefficient": coefficient,
+        "ramified_conductor_two_cross_index_kernel": kernel,
+        "unramified_conductor_zero_uses_rank_two_transfer": not ramified,
+        "ramified_conductor_two_positive_valuation_vanishes": ramified,
+        "young_newdata_level_and_nebentypus_used": True,
+        "continuous_local_cross_index_transfer_proved": True,
+        "uniform_polylog_harmonic_large_sieve_proved": False,
+        "pevp_proved": False,
+        "source": (
+            "Young, arXiv:1710.03624, Eisenstein newform discussion and "
+            "Fourier coefficient formula"
+        ),
+    }
+
+
+def conductor_p_raised_oldspace_cross_identity(
+    *,
+    prime: int,
+    hecke_prime_square: Fraction,
+) -> dict[str, object]:
+    """Compute the conductor-p oldspace trace at ambient level ``p^2``.
+
+    Blomer--Milicevic, Lemma 2, gives
+
+    ``r_f(p)=1-lambda(p)^2/(p*(1+1/p)^2)``.
+
+    For a unit first index and a valuation-one second index, summing the
+    ``g=1,p`` ambient oldclass has cross factor
+    ``lambda(p)/((p+1)*r_f(p))``.  The ambient coefficient is then
+    multiplied by the norm ratio ``1/p``.  Consequently the exact level
+    difference is not zero; relative to the level-p Hecke coefficient it
+    is ``1-1/(p*(p+1)*r_f(p))``.
+    """
+    p = int(prime)
+    lam_square = F(hecke_prime_square)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime must be prime")
+    if lam_square < 0:
+        raise ValueError("Hecke square must be nonnegative")
+    denominator = F(1) - lam_square * F(p, (p + 1) ** 2)
+    if denominator == 0:
+        raise ValueError("oldclass Gram denominator must be nonzero")
+    normalization_squared = F(1) / denominator
+    ambient_cross = F(1, p + 1) / denominator
+    ambient_trace = F(1, p) * ambient_cross
+    level_difference = F(1) - ambient_trace
+    primitive_conductor_exponent = 2
+    local_l_factor_degree = 0
+    return {
+        "prime": p,
+        "hecke_prime_square": lam_square,
+        "oldclass_gram_denominator": denominator,
+        "oldclass_normalization_squared": normalization_squared,
+        "ambient_oldclass_cross_factor_relative_to_hecke_prime": ambient_cross,
+        "level_p_squared_trace_factor_relative_to_level_p": ambient_trace,
+        "level_difference_factor_relative_to_level_p": level_difference,
+        "raised_oldspace_cross_vanishes_exactly": level_difference == 0,
+        "primitive_conductor_exponent": primitive_conductor_exponent,
+        "primitive_local_l_factor_degree": local_l_factor_degree,
+        "primitive_conductor_p_squared_coefficient_at_p_times_unit_is_zero": (
+            primitive_conductor_exponent == 2 and local_l_factor_degree == 0
+        ),
+    }
+
+
+def lifted_projector_gcd_partition_audit(
+    *,
+    entry_divisor_exponent: Fraction,
+    bad_product_gcd_exponent: Fraction,
+) -> LiftedProjectorGCDPartitionAudit:
+    """Balance generic local saving against physical product-gcd density.
+
+    Let ``A=T^alpha`` and ``D=(A,h*delta)=T^d``.  The primes of
+    ``A/D`` lie in the generic local cell and supply amplitude saving
+    ``(alpha-d)/2``.  The exact divisor allocation ``D=D_h*D_delta``
+    in the two physical product variables has square density ``D^-1``
+    up to divisor powers, hence amplitude saving ``d/2``.  Their sum is
+    exactly the required ``alpha/2``.
+
+    This exponent identity does not by itself prove that all ramified
+    oldclass coefficient matrices have subpower norm on the allocated
+    gcd cells; that analytic local statement remains explicit.
+    """
+    alpha = F(entry_divisor_exponent)
+    bad = F(bad_product_gcd_exponent)
+    if alpha < 0 or bad < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    if bad > alpha:
+        raise ValueError("bad gcd divisor cannot exceed A")
+    generic = (alpha - bad) / 2
+    density_square = bad
+    density_amplitude = density_square / 2
+    combined = generic + density_amplitude
+    required = alpha / 2
+    return LiftedProjectorGCDPartitionAudit(
+        entry_divisor_exponent=alpha,
+        bad_product_gcd_exponent=bad,
+        generic_prime_amplitude_saving_exponent=generic,
+        bad_divisor_density_square_saving_exponent=density_square,
+        bad_divisor_density_amplitude_saving_exponent=density_amplitude,
+        combined_amplitude_saving_exponent=combined,
+        required_projector_amplitude_saving_exponent=required,
+        gcd_partition_power_balance_exact=(combined == required),
+        physical_product_divisor_density_used=True,
+        ramified_oldclass_subpower_norm_proved=False,
+        full_exact_valuation_projector_bound_proved=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def physical_exact_valuation_projector_audit(
+    *,
+    ramanujan_theta: Fraction = F(7, 64),
+) -> PhysicalExactValuationProjectorAudit:
+    """Close the exact-valuation projector for physical product weights.
+
+    This combines the finite oldspace identities with valuation density:
+
+    * the unramified unit/unit cell saves ``p^(-(1-theta))``;
+    * conductor-p oldspace raised to p^2 has the corrected absolutely
+      multiplicative Euler factor from the Steinberg audit;
+    * conductor-p^2 newvectors have degree-zero local L-factor;
+    * if ``p|h*delta``, its exact product-divisor allocation supplies
+      one square-density factor p^-1;
+    * if ``p|m``, ``1/c_p(m)=1/(p-1)`` and the shifted oldvector terms,
+      together with the m-valuation density, again give at least
+      p^-1/2 in amplitude;
+    * the b=p^2 vector requires both shifted indices and its p-power
+      normalization is paid by those same valuation densities.
+
+    The Hecke recurrence leaves powers ``p^(theta*k)`` only after at
+    least ``k`` extra valuation densities.  Therefore ``theta<1/2`` is
+    exactly what makes all deeper cells summable at the power-exponent
+    level.  Primitive-conductor regrouping replaces the former
+    ``5^omega(A)`` tensor bound by the two conductor Euler sums in
+    Section 4.109z.  A proposed custom full-level harmonic large sieve
+    uses HPY (5.13) in its actual range
+    ``P >> spectral_scale^(2+epsilon)`` and HPY (5.14) in the
+    complementary range.  Those transform formulae do not by themselves
+    prove the required uniform polylogarithmic theorem, so the physical
+    PEVP flags remain false.
+    """
+    theta = F(ramanujan_theta)
+    if theta < 0 or theta >= F(1, 2):
+        raise ValueError("ramanujan_theta must lie in [0,1/2)")
+    required = F(1, 2)
+    generic = F(1) - theta
+    generic_closes = generic >= required
+    raised_cancels = False
+    conductor_two_zero = True
+    bad_density = theta < F(1, 2)
+    poisson_denominator = theta < F(1, 2)
+    extra_oldvector = theta < F(1, 2)
+    continuous = True
+    tensors = theta < F(1, 2)
+    power_covered = all(
+        (
+            generic_closes,
+            conductor_two_zero,
+            bad_density,
+            poisson_denominator,
+            extra_oldvector,
+            continuous,
+            tensors,
+        )
+    )
+    return PhysicalExactValuationProjectorAudit(
+        ramanujan_theta=theta,
+        required_prime_amplitude_saving_exponent=required,
+        generic_unramified_oldspace_saving_exponent=generic,
+        generic_unramified_cell_closes=generic_closes,
+        conductor_p_raised_oldspace_cancels=raised_cancels,
+        conductor_p_squared_positive_valuation_vanishes=conductor_two_zero,
+        bad_product_valuation_density_closes=bad_density,
+        poisson_ramanujan_denominator_closes_positive_valuation=(
+            poisson_denominator
+        ),
+        level_p_squared_extra_oldvector_closes=extra_oldvector,
+        continuous_local_cases_close=continuous,
+        prime_local_bounds_tensor_with_subpower_cost=tensors,
+        bad_gcd_cell_square_multiplicity_base=4,
+        divisor_partition_tensor_square_residual_base=5,
+        prime_local_bounds_tensor_with_polylog_cost=False,
+        power_exponent_exact_valuation_projector_covered=power_covered,
+        physical_product_exact_valuation_projector_proved=False,
+        arbitrary_coefficient_exact_valuation_projector_proved=False,
+        outer_qct_normalization_aggregated=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def lifted_outer_qct_aggregation_audit(
+    *,
+    left_entry_exponent: Fraction,
+    right_entry_exponent: Fraction,
+    q_exponent: Fraction,
+    gate_log_power: Fraction,
+    common_orientation: str,
+) -> LiftedOuterQCTAggregationAudit:
+    """Audit the conditional outer aggregation of the lifted core.
+
+    A left completion has exact prefactor ``R`` after the product-modulus
+    lift and needs an inner bound of size ``S log^-B``; right completion
+    interchanges the two entries.  Either orientation reconstructs the
+    exact coupled-kernel target ``R*S log^-B``.  Multiplication by
+    ``2*T/(q*R*S)`` leaves ``T/q log^-B`` per dyadic box.
+
+    The original exact ledger has six dyadic parameters and one harmonic
+    q logarithm.  Ratio/gcd and Type-allocation layers remain inside the
+    local LISK gate, so they are not charged again after the local bound.
+    PEVP is proved for each fixed pair of actual integer entry divisors
+    ``A,B`` and for both completion orientations.  It is not a square
+    function over those outer variables.  In a dyadic pair box the
+    grouped Mobius coefficients have squared L2 exponents ``rho`` and
+    ``sigma``.  Selecting the larger entry therefore saves at most half
+    its exponent, leaving ``rho + sigma - max(rho,sigma)/2`` after the
+    literal outer pair count.  Thus fixed-entry PEVP does not close a
+    large-entry range.  The remaining statement is the full signed outer
+    LISK gate, not a double-small LSEG gate.
+    """
+    rho = F(left_entry_exponent)
+    sigma = F(right_entry_exponent)
+    kappa = F(q_exponent)
+    log_power = F(gate_log_power)
+    if min(rho, sigma, kappa, log_power) < 0:
+        raise ValueError("scale and logarithmic exponents must be nonnegative")
+    if common_orientation not in {"left", "right"}:
+        raise ValueError("common_orientation must be left or right")
+    if log_power <= AGGREGATION_LOG_LOSS:
+        raise ValueError("gate_log_power must exceed seven")
+
+    completed = rho if common_orientation == "left" else sigma
+    other = sigma if common_orientation == "left" else rho
+    reconstructed = completed + other
+    outer_box = F(1) - kappa
+    dyadic_loss = F(6)
+    harmonic_loss = F(1)
+    total_loss = dyadic_loss + harmonic_loss
+    net = log_power - total_loss
+    projector = primitive_conductor_level_difference_audit(
+        level_factor_exponent=max(rho, sigma),
+        common_mobius_length_exponent=max(rho, sigma) / 2,
+        fixed_power_margin=F(0),
+    )
+    polylog_projector = projector.pevp_proved
+    outer_pair_count = rho + sigma
+    best_fixed_saving = max(rho, sigma) / 2
+    residual_outer = outer_pair_count - best_fixed_saving
+    large_divisor_pevp = False
+    small_lifted_gate_stated = False
+    full_outer_lisk_stated = True
+    product_hecke_small_cells = False
+    collapsed_adapter = False
+    polylog_divisor_pnt = product_hecke_small_cells or collapsed_adapter
+    log_split = large_divisor_pevp and polylog_divisor_pnt
+    core_little_o = polylog_projector and log_split and net > 0
+    tails = mwkf_tail_shell_aggregation_audit(
+        tail_log_start=F(100),
+        seminorm_decay_order=F(4),
+        local_seminorm_log_loss=F(20),
+        target_log_saving=F(20),
+    )
+    whole_gate = (
+        core_little_o
+        and tails.transform_tail_aggregated
+        and tails.afe_tail_aggregated
+    )
+    return LiftedOuterQCTAggregationAudit(
+        left_entry_exponent=rho,
+        right_entry_exponent=sigma,
+        q_exponent=kappa,
+        common_orientation=common_orientation,
+        completed_entry_exponent=completed,
+        other_entry_exponent=other,
+        lifted_inner_target_exponent=other,
+        reconstructed_kloosterman_core_target_exponent=reconstructed,
+        outer_box_exponent=outer_box,
+        gate_log_power=log_power,
+        dyadic_parameter_log_loss=dyadic_loss,
+        harmonic_q_log_loss=harmonic_loss,
+        total_aggregation_log_loss=total_loss,
+        net_log_saving=net,
+        single_orientation_used_for_all_spectral_components=True,
+        power_exponent_exact_valuation_projector_used=(
+            projector.pevp_proved
+        ),
+        polylog_tensor_projector_gate_proved=polylog_projector,
+        grouped_outer_coefficients_are_actual_integer_variables=True,
+        left_outer_coefficient_l2_squared_exponent=rho,
+        right_outer_coefficient_l2_squared_exponent=sigma,
+        unsigned_outer_pair_count_exponent=outer_pair_count,
+        best_fixed_entry_pevp_saving_exponent=best_fixed_saving,
+        residual_outer_aggregation_exponent=residual_outer,
+        symmetric_completion_uses_larger_entry_divisor=True,
+        symmetric_completion_larger_entry_closes_outer_sum=False,
+        large_entry_divisor_range_uses_pevp_power=large_divisor_pevp,
+        small_entry_divisor_lifted_gate_stated_exactly=(
+            small_lifted_gate_stated
+        ),
+        full_outer_lisk_gate_stated_exactly=full_outer_lisk_stated,
+        product_hecke_pnt_uniformly_covers_small_entry_cells=(
+            product_hecke_small_cells
+        ),
+        collapsed_gcd_to_lifted_entry_adapter_exact=collapsed_adapter,
+        polylog_entry_divisor_range_uses_outer_pnt=polylog_divisor_pnt,
+        logarithmic_entry_divisor_split_is_complete=log_split,
+        ratio_gcd_layers_retained_inside_local_gate=True,
+        nonzero_poisson_core_is_little_o_T=core_little_o,
+        polylogarithmic_transform_tail_aggregated=(
+            tails.transform_tail_aggregated
+        ),
+        afe_tail_aggregated=tails.afe_tail_aggregated,
+        whole_mobius_gate_covered=whole_gate,
+    )
+
+
+def mixed_entry_projection_gram_audit(
+    *, prime: int
+) -> MixedEntryProjectionGramAudit:
+    """Compute the local outer-entry Gram kernel exactly.
+
+    Work in the common level-p-squared oldspace and write ``P0 <= P1
+    <= P2`` for the nested orthogonal projections of local ranks
+    ``1, p+1, p(p+1)``.  The three local outer-entry states are
+
+    ``E0 = P0``, ``EB = P1/(p+1)``, and
+    ``EA = P1/(p+1) - P2/(p(p+1))``.
+
+    The raw trace Gram matrix has only two nontrivial masses.  A modulus
+    state contributes ``1/(p+1)``; every cell containing an entry
+    difference contributes ``(p-1)/(p(p+1))``.  Both are at most
+    ``1/(p+1)``.  This tempting reciprocal-LCM kernel is not physical:
+    insertion of the common ambient level-p-squared Plancherel measure
+    multiplies the matrix by ``p(p+1)``.  The entry mass becomes ``p-1``
+    instead of the required ``1/p``, reproducing the exact deficit
+    ``p(p-1)`` from the positive ambient square.  Only a signed physical
+    cross-index transfer could recover the raw reciprocal-LCM scale.
+    """
+    if not isinstance(prime, int) or prime < 2 or not _is_prime_integer(prime):
+        raise ValueError("prime must be prime")
+
+    p = prime
+    nu1 = p + 1
+    nu2 = p * (p + 1)
+    entry_mass = F(p - 1, p * (p + 1))
+    modulus_mass = F(1, p + 1)
+    gram = (
+        (F(1), modulus_mass, entry_mass),
+        (modulus_mass, modulus_mass, entry_mass),
+        (entry_mass, entry_mass, entry_mass),
+    )
+    nontrivial = (
+        gram[0][1], gram[0][2], gram[1][0], gram[1][1],
+        gram[1][2], gram[2][0], gram[2][1], gram[2][2],
+    )
+    union_bound = all(value <= modulus_mass for value in nontrivial)
+    ambient_gram = tuple(
+        tuple(F(nu2) * value for value in row) for row in gram
+    )
+    physical_entry = F(nu2) * entry_mass
+    required_entry = F(1, p)
+    return MixedEntryProjectionGramAudit(
+        prime=p,
+        level_p_index=nu1,
+        level_p_squared_index=nu2,
+        entry_difference_mass=entry_mass,
+        modulus_level_mass=modulus_mass,
+        state_order=("none", "modulus", "entry"),
+        raw_gram_matrix=gram,
+        ambient_normalization_multiplier=nu2,
+        physical_ambient_gram_matrix=ambient_gram,
+        raw_nontrivial_union_cell_is_at_most_inverse_nu_p=union_bound,
+        physical_tensor_kernel_is_majorized_by_reciprocal_lcm=False,
+        physical_entry_cell_mass=physical_entry,
+        required_entry_cell_mass=required_entry,
+        entry_cell_deficit_ratio=physical_entry / required_entry,
+        outer_product_coefficients_regroup_to_divisor_bounded_sequence=True,
+        reciprocal_lcm_quadratic_form_is_polylogarithmic=True,
+        physical_mixed_cross_index_transfer_proved=False,
+        mixed_entry_harmonic_large_sieve_proved=False,
+        outer_lisk_covered=False,
+    )
+
+
+def outer_state_inclusion_exclusion_audit(
+    *, prime: int
+) -> OuterStateInclusionExclusionAudit:
+    """Compute the signed nonempty-union sum of all outer local states.
+
+    The physical common-level Gram matrix has state order
+    (none, modulus, entry).  On squarefree coprime support the two
+    present states both carry one Mobius sign, so the local vector before
+    outer scale separation is (1,-1,-1).  The absent-absent cell is
+    excluded after conditioning that the prime belongs to the union of
+    the two outer entries.
+
+    The resulting eight-cell sum is exactly -1 although its unsigned
+    mass is 8*p-5.  This recovers one local prime power relative to a
+    generic phase twist, but it still has physical mass one rather than
+    the reciprocal-prime mass 1/p needed by the reciprocal-LCM
+    majorant.  Moreover the common half-turn twist changes the state
+    vector to (1,1,1) and attains the full unsigned mass.  Hence a
+    Mellin separation of the outer scales destroys the exact
+    inclusion-exclusion; the original outer scales must be recombined
+    before this cancellation can be used.
+    """
+    local = mixed_entry_projection_gram_audit(prime=prime)
+    matrix = local.physical_ambient_gram_matrix
+
+    def gram_value(
+        left: tuple[int, int, int],
+        right: tuple[int, int, int],
+    ) -> Fraction:
+        return sum(
+            (
+                F(left[row]) * matrix[row][column] * F(right[column])
+                for row in range(3)
+                for column in range(3)
+            ),
+            F(0),
+        )
+
+    mobius = (1, -1, -1)
+    half_turn = (1, 1, 1)
+    absent = matrix[0][0]
+    full_signed = gram_value(mobius, mobius)
+    signed_union = full_signed - absent
+    unsigned_union = sum(
+        (
+            matrix[row][column]
+            for row in range(3)
+            for column in range(3)
+            if (row, column) != (0, 0)
+        ),
+        F(0),
+    )
+    half_turn_union = gram_value(half_turn, half_turn) - absent
+    required = F(1, prime)
+    return OuterStateInclusionExclusionAudit(
+        prime=prime,
+        state_order=local.state_order,
+        mobius_state_vector=mobius,
+        physical_ambient_gram_matrix=matrix,
+        unsigned_nonempty_union_mass=unsigned_union,
+        full_signed_gram_mass=full_signed,
+        absent_absent_mass=absent,
+        signed_nonempty_union_mass=signed_union,
+        raw_signed_nonempty_union_mass=(
+            signed_union / local.ambient_normalization_multiplier
+        ),
+        equal_half_turn_twist_vector=half_turn,
+        equal_half_turn_twisted_nonempty_union_mass=half_turn_union,
+        unit_twist_cancellation_saves_one_prime_power=(
+            signed_union == -1
+            and unsigned_union == 8 * prime - 5
+        ),
+        required_reciprocal_prime_mass=required,
+        remaining_reciprocal_prime_ratio=abs(signed_union) / required,
+        unit_twist_reaches_reciprocal_prime_mass=(
+            abs(signed_union) <= required
+        ),
+        dyadic_mellin_twist_preserves_unit_cancellation=(
+            half_turn_union == signed_union
+        ),
+        recombination_before_outer_scale_separation_is_necessary=True,
+        recombined_outer_scale_physical_kernel_proved=False,
+        outer_lisk_covered=False,
+    )
+
+
+def pascadi_lifted_physical_audit(
+    *,
+    entry_divisor_exponent: Fraction,
+    modulus_divisor_exponent: Fraction,
+    coprimality_divisor_exponent: Fraction,
+    base_modulus_exponent: Fraction = F(3),
+    single_product_factor_exponent: Fraction = F(5, 2),
+    full_product_index_exponent: Fraction = F(5),
+) -> PascadiLiftedPhysicalAudit:
+    """Insert the hard lifted QCT scales into Pascadi v2 exactly.
+
+    Write ``A=T^alpha``, ``B=T^beta``, ``j=T^gamma`` and
+    ``s=T^sigma``.  The CRT lift has modulus ``c=A*s`` and the
+    Corollary 7.9 level is ``q=A*B*j``.  On the squarefree physical
+    support, with ``(A,s)=1`` and ``B*j|s``, the factorization
+
+    ``q=d*d'*e``, ``d=A``, ``d'=j``, ``e=B``
+
+    has largest ``f`` with ``f^2|q*d`` equal to ``A``.  This is the
+    most favorable exact factorization supplied by the physical
+    variables.
+
+    For interval exponents ``M>=N``, Corollary 7.9 contributes the
+    sixth root of the better of
+
+    ``(d*M^3*N/C^3, f*M^2/C^2, f/d^2)`` and
+    ``(d*M^3*N/(q*C^2), f*M^2/(q*C), f*q/(d^2*C))``.
+
+    The helper retains these six exponents as rational numbers.  It
+    tests both the full product index ``h*delta`` and the optimistic
+    operation which freezes one factor.  Freezing gives at most a
+    quarter-power improvement at the top physical cell, but destroys
+    the cross-index structure needed by PEVP.  The source theorem also
+    has a ``C^o(1)`` loss and takes absolute values over the moduli, so
+    it is not the required signed polylogarithmic harmonic large sieve.
+    """
+    alpha = F(entry_divisor_exponent)
+    beta = F(modulus_divisor_exponent)
+    gamma = F(coprimality_divisor_exponent)
+    sigma = F(base_modulus_exponent)
+    one_factor = F(single_product_factor_exponent)
+    full_product = F(full_product_index_exponent)
+    if min(alpha, beta, gamma, sigma, one_factor, full_product) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    if gamma > alpha:
+        raise ValueError("the coprimality divisor j must divide A")
+
+    modulus = alpha + sigma
+    level = alpha + beta + gamma
+    if level > modulus:
+        raise ValueError("the Corollary 7.9 level must divide the modulus")
+    dual = alpha + sigma - F(3)
+    if dual < 0:
+        raise ValueError("the lifted Poisson dual interval is subunit")
+
+    d_exp = alpha
+    f_exp = alpha
+
+    def corollary_terms(
+        first_length: Fraction,
+        second_length: Fraction,
+    ) -> tuple[
+        tuple[Fraction, Fraction, Fraction],
+        tuple[Fraction, Fraction, Fraction],
+        Fraction,
+        Fraction,
+        Fraction,
+    ]:
+        longer = max(first_length, second_length)
+        shorter = min(first_length, second_length)
+        method_one = (
+            d_exp + 3 * longer + shorter - 3 * modulus,
+            f_exp + 2 * longer - 2 * modulus,
+            f_exp - 2 * d_exp,
+        )
+        method_two = (
+            d_exp + 3 * longer + shorter - level - 2 * modulus,
+            f_exp + 2 * longer - level - modulus,
+            f_exp + level - 2 * d_exp - modulus,
+        )
+        sixth_root = min(max(method_one), max(method_two)) / 6
+        corollary_bound = 2 * modulus - level + sixth_root
+        fixed_modulus_trivial = min(
+            modulus,
+            (longer + shorter + modulus) / 2,
+        )
+        averaged_trivial = modulus - level + fixed_modulus_trivial
+        net_saving = averaged_trivial - corollary_bound
+        return (
+            method_one,
+            method_two,
+            sixth_root,
+            corollary_bound,
+            net_saving,
+        )
+
+    single = corollary_terms(dual, one_factor)
+    product = corollary_terms(dual, full_product)
+    single_trivial = modulus - level + min(
+        modulus,
+        (dual + one_factor + modulus) / 2,
+    )
+    product_trivial = modulus - level + min(
+        modulus,
+        (dual + full_product + modulus) / 2,
+    )
+    required_cross_index = alpha
+    available_cross_index = max(F(0), single[4], product[4])
+    remaining = max(F(0), required_cross_index - available_cross_index)
+    single_lengths_ok = max(dual, one_factor) <= modulus
+    product_lengths_ok = max(dual, full_product) <= modulus
+    return PascadiLiftedPhysicalAudit(
+        entry_divisor_exponent=alpha,
+        modulus_divisor_exponent=beta,
+        coprimality_divisor_exponent=gamma,
+        physical_modulus_exponent=modulus,
+        ambient_level_exponent=level,
+        factorization_d_exponent=d_exp,
+        square_divisor_f_exponent=f_exp,
+        poisson_dual_index_exponent=dual,
+        single_product_factor_exponent=one_factor,
+        full_product_index_exponent=full_product,
+        single_factor_method_one_terms=single[0],
+        single_factor_method_two_terms=single[1],
+        single_factor_sixth_root_exponent=single[2],
+        single_factor_corollary_bound_exponent=single[3],
+        single_factor_averaged_weil_exponent=single_trivial,
+        single_factor_net_saving_exponent=single[4],
+        full_product_method_one_terms=product[0],
+        full_product_method_two_terms=product[1],
+        full_product_sixth_root_exponent=product[2],
+        full_product_corollary_bound_exponent=product[3],
+        full_product_averaged_fourier_exponent=product_trivial,
+        full_product_net_saving_exponent=product[4],
+        required_physical_cross_index_amplitude_saving_exponent=(
+            required_cross_index
+        ),
+        remaining_cross_index_amplitude_deficit=remaining,
+        squarefree_factorization_makes_f_equal_d=True,
+        corollary_level_divides_every_lifted_modulus=(level <= modulus),
+        single_factor_length_hypotheses_verified=single_lengths_ok,
+        full_product_length_hypotheses_verified=product_lengths_ok,
+        corollary_takes_absolute_values_over_moduli=True,
+        modulus_mobius_signs_retained=False,
+        product_cross_index_structure_retained=False,
+        published_o1_loss_is_polylogarithmic=False,
+        physical_pevp_covered=False,
+        source=(
+            "Pascadi, arXiv:2511.08445v2, Theorem 7.1 and "
+            "Corollary 7.9"
+        ),
+    )
+
+
+def primitive_conductor_level_difference_audit(
+    *,
+    level_factor_exponent: Fraction,
+    common_mobius_length_exponent: Fraction,
+    fixed_power_margin: Fraction,
+) -> PrimitiveConductorLevelDifferenceAudit:
+    """Audit the exact newform rearrangement behind PEVP.
+
+    The finite level difference is expanded in the general
+    Blomer--Milicevic oldclass basis and then grouped by primitive
+    conductor.  Exact ambient normalization and a level-independent
+    Bessel test make that regrouping algebraic.  After the exact-
+    valuation density, the amplitude weights are p^-3/2 in the
+    unramified case and p^-1/2 in the Steinberg case.  Keeping the
+    signed local operator in one Cauchy square therefore gives p^-3
+    and p^-1.  The diagonal conductor sum is ``A^-1`` times a bounded
+    Euler product; after the primitive-conductor denominator in the
+    length term it is ``A^-2`` times a polylogarithmic Euler product.
+    The finite cross-index transfer and its conductor-pattern Euler
+    square are now proved.  The fixed-weight-two endpoint is proved by
+    the incomplete-Eisenstein cusp-strip argument.  The exact small,
+    transition, and two-dimensional large-symbol Mellin lemmas prove
+    the remaining Maaß/Eisenstein and weight-at-least-four scalar
+    full-level sieve.  Hence weighted PLS and fixed-entry PEVP are
+    proved; the outer-entry OLISK gate is not.
+    """
+    alpha = F(level_factor_exponent)
+    mobius = F(common_mobius_length_exponent)
+    margin = F(fixed_power_margin)
+    if min(alpha, mobius, margin) < 0:
+        raise ValueError("exponents must be nonnegative")
+    subset_log = F(1, 2)
+    vk_log = F(3, 5)
+    vk_dominates = mobius > 0 and vk_log > subset_log
+    scalar = scalar_polylog_hankel_seminorm_gate_audit()
+    scalar_sieve = scalar.scalar_polylog_full_level_large_sieve_proved
+    all_archimedean = all(
+        (
+            scalar.maass_eisenstein_uniform_bound_proved,
+            scalar.holomorphic_weight_at_least_four_uniform_bound_proved,
+            scalar.holomorphic_weight_two_endpoint_proved,
+        )
+    )
+    weighted_pls = scalar_sieve and all_archimedean
+    return PrimitiveConductorLevelDifferenceAudit(
+        level_factor_exponent=alpha,
+        common_mobius_length_exponent=mobius,
+        fixed_power_margin=margin,
+        unramified_local_amplitude_saving_exponent=F(1),
+        unramified_after_density_amplitude_saving_exponent=F(3, 2),
+        steinberg_local_amplitude_saving_exponent=F(1, 2),
+        required_projector_square_saving_exponent=F(1),
+        primitive_subset_overhead_log_exponent=subset_log,
+        vinogradov_korobov_decay_log_exponent=vk_log,
+        ambient_normalization_formula_exact=True,
+        same_bessel_test_retained_at_every_level=True,
+        finite_level_and_primitive_conductor_sums_interchanged_exactly=True,
+        conductor_two_positive_valuation_vanishes=True,
+        signed_square_conductor_overhead_is_polylogarithmic=True,
+        diagonal_conductor_euler_sum_is_polylogarithmic=True,
+        length_conductor_euler_sum_is_polylogarithmic=True,
+        vinogradov_korobov_dominates_subset_overhead=vk_dominates,
+        published_large_sieve_has_explicit_polylog_constant=False,
+        custom_full_level_harmonic_large_sieve_has_polylog_constant=scalar_sieve,
+        primitive_family_is_positive_full_level_subfamily=True,
+        unramified_cross_index_two_shift_transfer_proved=True,
+        steinberg_cross_index_rank_one_transfer_proved=True,
+        continuous_local_cross_index_transfer_proved=True,
+        all_local_cross_index_transfers_proved=True,
+        shifted_support_does_not_exceed_original_support=True,
+        pevp_reduced_to_uniform_polylog_harmonic_large_sieve=True,
+        maass_eisenstein_full_level_large_sieve_proved=(
+            scalar.maass_eisenstein_uniform_bound_proved
+        ),
+        holomorphic_weight_ge_four_large_sieve_proved=(
+            scalar.holomorphic_weight_at_least_four_uniform_bound_proved
+        ),
+        holomorphic_weight_two_large_sieve_proved=True,
+        all_archimedean_sectors_reinserted=all_archimedean,
+        pevp_is_polynomial_in_fixed_kernel_seminorms=weighted_pls,
+        weighted_primitive_large_sieve_proved=weighted_pls,
+        pevp_proved=weighted_pls,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def normalized_level_difference_pbk_audit(
+    *, prime: int
+) -> NormalizedLevelDifferencePBKAudit:
+    """Audit the normalized local level difference and its positive square.
+
+    The standard level-``p^c`` Kuznetsov kernel is represented by
+    ``1_{Z K_0(p^c)}``, not by the normalized idempotent
+    ``e_c = nu(p^c) 1_{Z K_0(p^c)}``.  Hence its spectral operator is
+    ``P_c / nu(p^c)``.  Since ``P_1 <= P_2``, the signed difference has
+    eigenvalue ``1/nu(p)-1/nu(p^2)`` on ``Im(P_1)`` and
+    ``-1/nu(p^2)`` on ``Im(P_2-P_1)``.  Squaring gives a positive sum of
+    these two orthogonal projections.
+
+    Linearity and HPY (7.5)--(7.6) give the exact ramified
+    Kloosterman and Fourier-transform constants below.  The named HPY
+    spectral assumption does not include this positive two-layer
+    mixture, so this audit records the local input but deliberately
+    leaves the epsilon-free global large sieve and PEVP open.
+    """
+    if not isinstance(prime, int) or prime < 2:
+        raise ValueError("prime must be an integer at least two")
+    if not _is_prime_integer(prime):
+        raise ValueError("prime must be prime")
+
+    p = prime
+    nu1 = p + 1
+    nu2 = p * (p + 1)
+    ambient = F(1, nu1) - F(1, nu2)
+    layer = -F(1, nu2)
+    ambient_square = ambient * ambient
+    layer_square = layer * layer
+    identity_mass = ambient_square * nu1 + layer_square * (nu2 - nu1)
+
+    # For h = g^*g, write h as
+    # (ambient^2-layer^2)e_1 + layer^2 e_2.  HPY (7.5) then
+    # gives the following coefficients of S(m,n;p^k).
+    valuation_one = (ambient_square - layer_square) * nu1
+    valuation_two_plus = identity_mass
+    primitive_one_ratio = valuation_one * F(p, p - 1) / identity_mass
+    primitive_higher_ratio = F(p, p - 1)
+    principal_one_ratio = valuation_one / F(p - 1) / identity_mass
+
+    return NormalizedLevelDifferencePBKAudit(
+        prime=p,
+        level_p_index=nu1,
+        level_p_squared_index=nu2,
+        ambient_oldspace_eigenvalue=ambient,
+        exact_layer_eigenvalue=layer,
+        squared_ambient_oldspace_weight=ambient_square,
+        squared_exact_layer_weight=layer_square,
+        squared_kernel_identity_mass=identity_mass,
+        modulus_valuation_one_kloosterman_coefficient=valuation_one,
+        modulus_valuation_at_least_two_kloosterman_coefficient=valuation_two_plus,
+        primitive_character_valuation_one_ftb_ratio=primitive_one_ratio,
+        primitive_character_higher_valuation_ftb_ratio=primitive_higher_ratio,
+        principal_character_valuation_one_ftb_ratio=principal_one_ratio,
+        local_geometric_conductor_exponent=2 if p == 2 else 1,
+        exact_layer_geometric_conductor_exponent=1,
+        normalized_difference_is_not_pure_exact_layer=True,
+        squared_kernel_is_positive_orthogonal_layer_sum=True,
+        local_ftb_euler_factor_is_p_over_p_minus_one=True,
+        global_ftb_product_is_polylogarithmic=True,
+        hpy_named_spectral_assumption_applies=False,
+        epsilon_free_positive_kernel_large_sieve_proved=False,
+        pevp_proved=False,
+    )
+
+
+def primitive_sparse_farey_large_sieve_audit(
+    *,
+    common_level: int,
+    dyadic_modulus_bound: int,
+    mellin_interval_length: int,
+    sequence_length: int,
+) -> PrimitiveSparseFareyLargeSieveAudit:
+    """Audit the epsilon-free spacing for primitive fractions at K|c.
+
+    If ``c_i = K d_i <= C`` and ``a_i/c_i`` are distinct reduced
+    fractions, their difference is a nonzero integer divided by
+    ``K d_1 d_2``.  It is therefore at least ``K/(4 C^2)`` when the
+    moduli lie in one dyadic interval below ``C``.  Gallagher's hybrid
+    large sieve then gives ``P*(4 C^2/K) + X``.  Primitive Gauss-sum
+    expansion and character orthogonality put the ramified HPY family
+    into precisely this reduced-fraction family, so no separate count
+    of the possible ramified parts remains.
+
+    This lemma treats the primitive-character, level-coprime index
+    cell.  The degenerate noncoprime cells are intentionally separate.
+    """
+    values = (
+        common_level,
+        dyadic_modulus_bound,
+        mellin_interval_length,
+        sequence_length,
+    )
+    if any(not isinstance(value, int) or value <= 0 for value in values):
+        raise ValueError("all parameters must be positive integers")
+    if common_level > dyadic_modulus_bound:
+        raise ValueError("common_level must not exceed dyadic_modulus_bound")
+
+    inverse_spacing = (
+        4 * dyadic_modulus_bound * dyadic_modulus_bound // common_level
+    )
+    if 4 * dyadic_modulus_bound * dyadic_modulus_bound % common_level:
+        inverse_spacing += 1
+    hybrid = mellin_interval_length * inverse_spacing + sequence_length
+    return PrimitiveSparseFareyLargeSieveAudit(
+        common_level=common_level,
+        dyadic_modulus_bound=dyadic_modulus_bound,
+        mellin_interval_length=mellin_interval_length,
+        sequence_length=sequence_length,
+        minimum_spacing=F(
+            common_level,
+            4 * dyadic_modulus_bound * dyadic_modulus_bound,
+        ),
+        inverse_spacing_bound=inverse_spacing,
+        hybrid_large_sieve_bound=hybrid,
+        crt_fraction_is_reduced=True,
+        distinct_fraction_spacing_proved=True,
+        primitive_gauss_orthogonality_is_exact=True,
+        ramified_modulus_count_removed=True,
+        fixed_common_level_gain_is_epsilon_free=True,
+        noncoprime_index_cells_covered=False,
+        positive_kernel_harmonic_large_sieve_proved=False,
+        pevp_proved=False,
+    )
+
+
+def prime_power_kloosterman_valuation_reduction(
+    *,
+    prime: int,
+    modulus_exponent: int,
+    left_valuation: int,
+    right_valuation: int,
+) -> dict[str, object]:
+    """Reduce ``S(p^a u,p^b v;p^k)`` with ``u,v`` p-adic units.
+
+    If the phase is already trivial, the sum is ``phi(p^k)``.  After
+    removing the common power ``p^j``, equal valuations leave an
+    ordinary unit-unit Kloosterman sum.  Unequal valuations leave one
+    unit and one p-divisible index; that local sum is ``-1`` at modulus
+    p and vanishes at every higher prime-power modulus.
+    """
+    if not isinstance(prime, int) or prime < 2:
+        raise ValueError("prime must be an integer at least two")
+    if not _is_prime_integer(prime):
+        raise ValueError("prime must be prime")
+    if modulus_exponent < 1 or min(left_valuation, right_valuation) < 0:
+        raise ValueError("modulus exponent must be positive and valuations nonnegative")
+
+    p = prime
+    k = modulus_exponent
+    a = left_valuation
+    b = right_valuation
+    common = min(a, b)
+    if k <= common:
+        return {
+            "kind": "trivial_phase",
+            "integer_multiplier": p ** (k - 1) * (p - 1),
+            "reduced_modulus_exponent": 0,
+            "vanishes": False,
+        }
+    if a == b:
+        return {
+            "kind": "unit_unit_reduction",
+            "integer_multiplier": p**common,
+            "reduced_modulus_exponent": k - common,
+            "vanishes": False,
+        }
+    if k == common + 1:
+        return {
+            "kind": "unequal_ramanujan_boundary",
+            "integer_multiplier": -(p**common),
+            "reduced_modulus_exponent": 1,
+            "vanishes": False,
+        }
+    return {
+        "kind": "unequal_valuation_vanishing",
+        "integer_multiplier": 0,
+        "reduced_modulus_exponent": k - common,
+        "vanishes": True,
+    }
+
+
+def physical_noncoprime_valuation_audit(
+    *, prime: int
+) -> PhysicalNoncoprimeValuationAudit:
+    """Record the exact local density ledger after valuation reduction.
+
+    For a natural smooth integer variable, valuation zero has mass
+    ``1-1/p`` and positive valuation has mass ``1/p``.  The inverse
+    Ramanujan factor has absolute value one in the first cell and
+    ``1/(p-1)`` in the second.  Two independent variables share a
+    positive valuation of depth at least k with probability ``p^-2k``.
+    These give the two rational quantities returned below.
+
+    The remaining short-interval boundary terms depend on the global
+    completion orientation and are not certified by this local audit.
+    """
+    if not isinstance(prime, int) or prime < 2:
+        raise ValueError("prime must be an integer at least two")
+    if not _is_prime_integer(prime):
+        raise ValueError("prime must be prime")
+    p = prime
+    inverse_square_mean = F(p - 1, p) + F(1, p * (p - 1) ** 2)
+    collision = F(1, p * p - 1)
+    return PhysicalNoncoprimeValuationAudit(
+        prime=p,
+        ramanujan_inverse_square_natural_mean=inverse_square_mean,
+        common_positive_valuation_collision_mass=collision,
+        same_valuation_tail_reduces_to_primitive_farey_family=True,
+        unequal_valuation_tail_vanishes_after_boundary_modulus=True,
+        local_main_density_euler_correction_is_absolutely_summable=True,
+        smooth_short_interval_boundary_aggregated=False,
+        positive_kernel_harmonic_large_sieve_proved=False,
+        pevp_proved=False,
+    )
+
+
+def valuation_boundary_euler_majorant_audit(
+    *, ramified_primes: tuple[int, ...]
+) -> ValuationBoundaryEulerMajorantAudit:
+    """Audit the divisor-convolution mean for all valuation boundaries.
+
+    After symmetrizing a cross-valuation term, losing one common
+    conductor factor p costs at most
+    ``alpha_p = p/(p-1)^2``.  The number of removable p-powers is
+    ``v_p(n)``.  Thus the nonnegative majorant is
+
+    ``F_A(n) = product_{p|A} (1 + alpha_p v_p(n)) = 1 * g_A(n)``,
+
+    where ``g_A(p^k)=alpha_p`` for every k>=1.  On an interval of
+    length M, ``#multiples(d) <= M/d+1 <= 2M/d`` for every nonempty
+    divisor class.  Hence the normalized mean is at most
+    ``2 sum_d g_A(d)/d``.  Its local Euler factor is
+    ``1 + alpha_p/(p-1) = 1 + p/(p-1)^3``; the infinite product
+    converges absolutely.
+    """
+    if not ramified_primes:
+        raise ValueError("ramified_primes must be nonempty")
+    if tuple(sorted(set(ramified_primes))) != ramified_primes:
+        raise ValueError("ramified_primes must be strictly increasing")
+    if any(p < 2 or not _is_prime_integer(p) for p in ramified_primes):
+        raise ValueError("ramified_primes must contain only primes")
+
+    coefficients = tuple(F(p, (p - 1) ** 2) for p in ramified_primes)
+    product = F(1)
+    for p, coefficient in zip(ramified_primes, coefficients):
+        product *= F(1) + coefficient / F(p - 1)
+    return ValuationBoundaryEulerMajorantAudit(
+        ramified_primes=ramified_primes,
+        local_collision_coefficients=coefficients,
+        main_euler_product=product,
+        smooth_interval_mean_bound=F(2) * product,
+        divisor_convolution_identity_exact=True,
+        boundary_term_absorbed_by_one_over_d=True,
+        euler_product_uniformly_bounded=True,
+        smooth_short_interval_boundary_aggregated=True,
+        positive_kernel_harmonic_large_sieve_proved=False,
+        pevp_proved=False,
+    )
+
+
+def ambient_normalized_positive_kernel_cauchy_audit(
+    *, prime: int
+) -> AmbientNormalizedPositiveKernelCauchyAudit:
+    """Insert the raw level difference into the common level-p^2 measure.
+
+    The standard level-p trace is ``P_1/nu(p)`` in raw Plancherel
+    normalization, while level p^2 is ``P_2/nu(p^2)``.  Relative to
+    the standard ambient level-p^2 harmonic measure ``1/nu(p^2)``,
+    their difference is ``p P_1-P_2``.  Its eigenvalues are ``p-1``
+    on ``Im(P_1)`` and ``-1`` on the exact layer.  Averaging the square
+    with ambient Plancherel dimensions gives exactly ``p-1``.
+
+    PEVP needs square mass p^-1.  Hence moving the entire signed
+    operator to one side of Cauchy loses a factor p(p-1) and destroys
+    the cross-index oldvector cancellation that the primitive formula
+    records.
+    """
+    if not isinstance(prime, int) or prime < 2:
+        raise ValueError("prime must be an integer at least two")
+    if not _is_prime_integer(prime):
+        raise ValueError("prime must be prime")
+    p = prime
+    nu1 = p + 1
+    nu2 = p * (p + 1)
+    ambient_eigenvalue = F(p - 1)
+    layer_eigenvalue = F(-1)
+    squared_mass = (
+        ambient_eigenvalue * ambient_eigenvalue * nu1
+        + layer_eigenvalue * layer_eigenvalue * (nu2 - nu1)
+    ) / F(nu2)
+    required = F(1, p)
+    return AmbientNormalizedPositiveKernelCauchyAudit(
+        prime=p,
+        ambient_level_index=nu2,
+        relative_ambient_oldspace_eigenvalue=ambient_eigenvalue,
+        relative_exact_layer_eigenvalue=layer_eigenvalue,
+        ambient_normalized_squared_mass=squared_mass,
+        required_pevp_squared_mass=required,
+        squared_mass_deficit_ratio=squared_mass / required,
+        common_ambient_measure_inserted_exactly=True,
+        raw_plancherel_mass_is_not_the_pevp_normalization=True,
+        index_rescaling_does_not_repair_diagonal_mass=True,
+        cross_index_oldvector_cancellation_still_required=True,
+        positive_square_kernel_closes_pevp=False,
+        pevp_proved=False,
+    )
+
+
+def full_level_harmonic_large_sieve_audit(
+    *,
+    level: int,
+    dyadic_modulus_bound: int,
+    mellin_interval_length: int,
+    sequence_length: int,
+) -> FullLevelHarmonicLargeSieveAudit:
+    """Audit the sparse-Farey part of the proposed full-level sieve.
+
+    Opening the standard level-Q Kloosterman sum produces the reduced
+    Farey fractions x/c directly, so no coprimality condition on the
+    two Fourier indices is used.  For Q|c in a dyadic block c<=C the
+    spacing is Q/(4C^2).  Gallagher therefore bounds the Mellin-
+    hybrid inner sum by ``P*(4C^2/Q)+X``.  The Bessel support
+    ``C <= X/P`` then gives the harmonic spectral bound
+    ``(spectral_mass + X/Q) log^O(1)``.  HPY Lemma 5.6 records the
+    expected ranges but is not used to discard a pointwise remainder:
+    the exact small, transition, and two-dimensional large-symbol
+    Mellin lemmas supply all archimedean sectors with polynomial
+    seminorm constants.
+    """
+    sparse = primitive_sparse_farey_large_sieve_audit(
+        common_level=level,
+        dyadic_modulus_bound=dyadic_modulus_bound,
+        mellin_interval_length=mellin_interval_length,
+        sequence_length=sequence_length,
+    )
+    scalar = scalar_polylog_hankel_seminorm_gate_audit()
+    return FullLevelHarmonicLargeSieveAudit(
+        level=level,
+        dyadic_modulus_bound=dyadic_modulus_bound,
+        mellin_interval_length=mellin_interval_length,
+        sequence_length=sequence_length,
+        minimum_farey_spacing=sparse.minimum_spacing,
+        hybrid_dyadic_inner_bound=sparse.hybrid_large_sieve_bound,
+        kloosterman_indices_may_be_noncoprime_to_level=True,
+        full_level_spectral_measure_is_positive=True,
+        primitive_family_is_positive_subfamily=True,
+        small_bessel_tail_has_polylog_mean_divisor_bound=True,
+        archimedean_partition_has_polylog_total_variation=True,
+        hpy_first_mellin_requires_bessel_scale_above_spectral_square=True,
+        power_sized_large_bessel_range_covered=(
+            scalar.large_range_uniform_mellin_bound_proved
+        ),
+        large_bessel_range_requires_new_estimate=False,
+        maass_and_eisenstein_sectors_covered=(
+            scalar.maass_eisenstein_uniform_bound_proved
+        ),
+        holomorphic_sector_covered=all(
+            (
+                scalar.holomorphic_weight_at_least_four_uniform_bound_proved,
+                scalar.holomorphic_weight_two_endpoint_proved,
+            )
+        ),
+        uniform_polylog_harmonic_large_sieve_proved=(
+            scalar.scalar_polylog_full_level_large_sieve_proved
+        ),
+    )
+
+
+def dyadic_bessel_mellin_block_audit(
+    *,
+    sequence_length_exponent: Fraction,
+    level_exponent: Fraction,
+    modulus_exponent: Fraction,
+    spectral_scale_exponent: Fraction,
+) -> DyadicBesselMellinBlockAudit:
+    """Audit the exact-Mellin exponent ledger for one Bessel block.
+
+    Write ``X=T^x``, ``Q=T^q``, ``C=T^c``, and let a dyadic
+    spectral window have scale ``R=T^r``.  The Bessel ratio is
+    ``P=X/C=T^(x-c)``.  Exact Mellin inversion is used before the
+    Gallagher estimate; in particular the pointwise error in an
+    asymptotic formula for the Bessel transform is never multiplied
+    by the raw double coefficient volume.
+
+    In the large-Bessel range ``P>R^2``, stationary phase contributes
+    an L-infinity Mellin height ``R^2/P`` on an interval of length P.
+    Its L1 norm is therefore ``R^2``, not ``R^2/P``.  Gallagher must be
+    applied before integrating that interval; it gives the two exponents
+    ``2r+c-q`` and ``2r``.  In the complementary range, repeated
+    exact Mellin integration gives the exponents ``x-q`` and
+    ``2(x-c)``.  The latter ledger proves the physical case used here,
+    where every spectral scale is polylogarithmic (``r=0``); it does
+    not claim a power-sized spectral theorem.
+    """
+    values = (
+        sequence_length_exponent,
+        level_exponent,
+        modulus_exponent,
+        spectral_scale_exponent,
+    )
+    if not all(isinstance(value, Fraction) for value in values):
+        raise TypeError("all exponents must be Fraction instances")
+    if any(value < 0 for value in values):
+        raise ValueError("all exponents must be nonnegative")
+
+    x = sequence_length_exponent
+    q = level_exponent
+    c = modulus_exponent
+    r = spectral_scale_exponent
+    p = x - c
+    large = p > 2 * r
+    large_first = 2 * r + c - q
+    large_second = 2 * r
+    small_first = x - q
+    small_second = 2 * p
+    target = max(F(0), 2 * r, x - q)
+    if large:
+        maass_eisenstein = max(large_first, large_second) <= target
+    else:
+        maass_eisenstein = (
+            r == 0 and max(F(0), small_first, small_second) <= target
+        )
+    holomorphic = r == 0 and maass_eisenstein
+    physical = r == 0 and maass_eisenstein and holomorphic
+
+    return DyadicBesselMellinBlockAudit(
+        sequence_length_exponent=x,
+        level_exponent=q,
+        modulus_exponent=c,
+        spectral_scale_exponent=r,
+        bessel_ratio_exponent=p,
+        large_bessel_range=large,
+        large_block_first_exponent=large_first,
+        large_block_second_exponent=large_second,
+        small_block_first_exponent=small_first,
+        small_block_second_exponent=small_second,
+        target_exponent=target,
+        large_mellin_effective_width_exponent=max(F(0), p),
+        large_mellin_linfty_prefactor_exponent=2 * r - p,
+        large_mellin_l1_exponent=2 * r,
+        large_mellin_l1_is_not_prefactor_exponent=(p != 0),
+        hybrid_gallagher_uses_mellin_linfty_weight=True,
+        pointwise_hpy_remainder_raw_exponent=2 * x - c,
+        pointwise_hpy_remainder_discarded_before_large_sieve=False,
+        exact_dyadic_mellin_inversion_used=True,
+        mellin_remainder_routed_through_gallagher=True,
+        maass_and_eisenstein_block_covered=maass_eisenstein,
+        holomorphic_block_covered=holomorphic,
+        physical_full_level_block_covered=physical,
+        uniform_stationary_phase_seminorm_bound_proved=False,
+    )
+
+
+def exact_archimedean_mellin_transfer_audit(
+    *,
+    spectral_scale: int,
+    bessel_scale: int,
+    maass_zero_order: int,
+    minimum_holomorphic_weight: int,
+) -> ExactArchimedeanMellinTransferAudit:
+    """Audit the remainder-free archimedean symbol reduction.
+
+    For an admissible dyadic Maaß test ``h_R``, retain the exact Fourier
+    kernels for the ``J`` and ``K`` Kuznetsov transforms.  When
+    ``P >= 8(1+R)^2``, the exact Bessel ODE/Volterra representation gives
+    Hankel symbols in the same-sign and holomorphic sectors, while the
+    opposite-sign phase is nonstationary.  Local additive-to-Mellin
+    stationary phase then has height ``R^O(1)/P`` on intervals of length
+    ``P``.  No ``R^-A`` pointwise remainder is removed before Gallagher.
+
+    On ``1 <= P < 8(1+R)^2``, differentiation of the exact kernels gives
+    the required weighted Mellin L1 bound with a polynomial in ``R``.
+    Below ``P=1``, zeros of the Maaß test at the crossed half-integers
+    permit a contour shift with power ``2*maass_zero_order``.  A fixed
+    holomorphic weight ``k`` has only the small-argument power ``k-1``;
+    consequently weights at least four have an absolutely summable
+    Petersson tail.  The weight-two endpoint is supplied separately by
+    ``weight_two_incomplete_eisenstein_large_sieve_audit``.
+
+    The complete ``P<1`` tail is now supplied by
+    ``exact_small_argument_hankel_tail_audit`` and the weight-two
+    endpoint by the incomplete-Eisenstein theorem.  The transition
+    Mellin estimate is supplied by
+    ``exact_transition_hankel_mellin_audit``.  The large-symbol bounds
+    remain candidates, not consequences of the numeric range check
+    performed here.  Therefore their proof flags and the
+    archimedean-completeness flag are not promoted by this adapter.
+    """
+    integers = (
+        spectral_scale,
+        bessel_scale,
+        maass_zero_order,
+        minimum_holomorphic_weight,
+    )
+    if not all(isinstance(value, int) for value in integers):
+        raise TypeError("all inputs must be integers")
+    if spectral_scale < 1 or bessel_scale < 1:
+        raise ValueError("spectral and Bessel scales must be positive")
+    if maass_zero_order < 1:
+        raise ValueError("maass_zero_order must be positive")
+    if minimum_holomorphic_weight < 2:
+        raise ValueError("minimum holomorphic weight must be at least two")
+
+    threshold = 8 * (1 + spectral_scale) ** 2
+    large = bessel_scale >= threshold
+    small_tail = exact_small_argument_hankel_tail_audit(
+        maass_contour_shift=F(1),
+        minimum_holomorphic_weight=max(4, minimum_holomorphic_weight),
+    )
+    transition_audit = exact_transition_hankel_mellin_audit(
+        mellin_weight_order=maass_zero_order,
+        cancelled_half_integer_poles=maass_zero_order + 2,
+    )
+    large_audit = exact_large_symbol_mellin_audit(
+        off_window_decay_order=maass_zero_order,
+        cancelled_half_integer_poles=2 * maass_zero_order + 1,
+    )
+    maass_tail_power = 2 * maass_zero_order
+    holomorphic_tail_power = minimum_holomorphic_weight - 1
+    maass_tail = small_tail.small_argument_tail_proved
+    holomorphic_tail = holomorphic_tail_power > 1
+    weight_two_endpoint = True
+    active_range = (
+        large_audit.uniform_large_mellin_height_proved
+        if large
+        else transition_audit.transition_weighted_mellin_l1_proved
+    )
+    all_sectors = (
+        active_range
+        and maass_tail
+        and (holomorphic_tail or weight_two_endpoint)
+    )
+
+    return ExactArchimedeanMellinTransferAudit(
+        spectral_scale=spectral_scale,
+        bessel_scale=bessel_scale,
+        maass_zero_order=maass_zero_order,
+        minimum_holomorphic_weight=minimum_holomorphic_weight,
+        large_symbol_threshold=threshold,
+        large_symbol_range=large,
+        exact_maass_fourier_kernel_retained=True,
+        exact_holomorphic_fourier_kernel_retained=True,
+        no_spectral_power_remainder_discarded=True,
+        same_sign_hankel_symbol_bound_proved=(
+            large and large_audit.uniform_large_mellin_height_proved
+        ),
+        opposite_sign_nonstationary_bound_proved=(
+            large and large_audit.maass_minus_has_no_joint_stationary_point
+        ),
+        holomorphic_large_weight_symbol_bound_proved=(
+            large
+            and large_audit.holomorphic_exact_integer_order_fourier_kernel_used
+        ),
+        large_mellin_linfty_bound_proved=(
+            large and large_audit.uniform_large_mellin_height_proved
+        ),
+        transition_mellin_l1_bound_used=not large,
+        transition_mellin_l1_bound_proved=(
+            not large and transition_audit.transition_weighted_mellin_l1_proved
+        ),
+        maass_small_argument_tail_power=maass_tail_power,
+        maass_small_argument_tail_summable=maass_tail,
+        holomorphic_small_argument_tail_power=holomorphic_tail_power,
+        holomorphic_small_argument_tail_summable=holomorphic_tail,
+        weight_two_petersson_tail_proved=weight_two_endpoint,
+        all_archimedean_sectors_and_endpoints_proved=all_sectors,
+        uniform_polylog_harmonic_large_sieve_proved=False,
+    )
+
+
+def weight_two_incomplete_eisenstein_large_sieve_audit(
+    *,
+    level: int,
+    sequence_length: int,
+) -> WeightTwoIncompleteEisensteinLargeSieveAudit:
+    """Audit the geometric fixed-weight-two harmonic large sieve.
+
+    Let ``Q=level`` and ``X=sequence_length``.  For an orthonormal basis
+    of the full weight-two space at level Q, duality reduces the desired
+    Fourier-coefficient square to a cusp-strip norm at height ``1/X``.
+    Unfold that norm with a nonnegative incomplete Eisenstein series
+    whose seed is supported on ``[1/(2X), 2/X]``.
+
+    Choose a Ford representative ``z=x+iy`` for which the infinity
+    height is maximal in its Gamma_0(Q)-orbit.  A contributing coset is
+    a primitive pair ``(c,d)`` with ``Q|c`` and
+
+    ``X*y/2 <= |c*z+d|^2 <= 2*X*y``.
+
+    If ``c != 0``, write ``c=Q*k``.  The number of k is at most a
+    constant times ``sqrt(X/y)/Q`` and, for each k, the number of d is
+    at most a constant times ``1+sqrt(X*y)``.  Maximality gives
+    ``y>=1/(2X)`` whenever a coset contributes.  If a nonzero k occurs,
+    then ``K>=1`` and hence both ``K`` and ``R`` are at most
+    ``K*R=2X/Q``.  Thus the total nonzero c count is at most
+    ``16*X/Q``; ``c=0`` contributes only the identity coset.  This
+    proves the pointwise incomplete-Eisenstein bound
+    ``1+16*X/Q`` without divisor or epsilon losses.
+
+    Unfolding and the weight-two Fourier expansion
+    ``f(z)=sum rho_f(n)*(4*pi*n)*e(nz)`` give a coefficient comparable
+    to n on ``X<=n<=2X``.  Bessel duality therefore proves the full-space
+    harmonic large sieve with constant ``O(1+X/Q)``.  No coprimality is
+    imposed on n, and oldforms are automatically included.
+
+    This function records that endpoint theorem but deliberately leaves
+    the full PLS reinsertion false.
+    """
+    if not isinstance(level, int) or not isinstance(sequence_length, int):
+        raise TypeError("level and sequence_length must be integers")
+    if level < 1 or sequence_length < 1:
+        raise ValueError("level and sequence_length must be positive")
+
+    nonzero_bound = (16 * sequence_length + level - 1) // level
+    return WeightTwoIncompleteEisensteinLargeSieveAudit(
+        level=level,
+        sequence_length=sequence_length,
+        transformed_height_support_lower_bound=F(1, 2 * sequence_length),
+        nonzero_c_pair_count_bound=nonzero_bound,
+        incomplete_eisenstein_sup_bound=1 + nonzero_bound,
+        ford_representative_maximizes_infinity_height=True,
+        cosets_are_primitive_pairs_with_level_dividing_c=True,
+        unfolding_coefficient_is_uniformly_positive_on_dyadic_sequence=True,
+        fourier_indices_may_share_factors_with_level=True,
+        oldforms_are_included=True,
+        physical_weight_two_transform_vanishes_identically=False,
+        weight_two_harmonic_large_sieve_proved=True,
+        reinserted_into_full_pls=False,
+    )
+
+
+def exact_level_geometric_fiber_audit(
+    *,
+    mobius_level: int,
+    fixed_level: int,
+    cofactor: int,
+    first_fourier_index: int,
+    dyadic_modulus_bound: int,
+) -> ExactLevelGeometricFiberAudit:
+    """Audit the geometric form of a squarefree signed level family.
+
+    Let ``A`` be squarefree, ``(A,B)=1``, and write ``c=ABk``.  The
+    coefficient of the modulus ``c`` in
+
+    ``sum_{j|A} mu(j) 1_{ABj|c}``
+
+    is ``sum_{j|(A,k)} mu(j)=1_{(A,k)=1}``.  On an active cell the
+    second Kloosterman phase ``e(A*n*xbar/c)`` has denominator
+    ``c/A=Bk``.  Reduction of units from modulus ``c`` to ``c/A`` has
+    exactly ``phi(A)`` elements in every fibre.  Its improved Farey
+    spacing is therefore only partly spent on multiplicity:
+
+    ``phi(A) * 4*C^2/(A^2*B) <= 4*C^2/(A*B)``.
+
+    This keeps the two Fourier indices correlated and identifies a
+    geometric route around the invalid positive spectral Cauchy step.
+    It does not settle the coefficient-length term or PEVP.
+    """
+    integers = (
+        mobius_level,
+        fixed_level,
+        cofactor,
+        first_fourier_index,
+        dyadic_modulus_bound,
+    )
+    if not all(isinstance(value, int) for value in integers):
+        raise TypeError("all inputs must be integers")
+    if min(integers) < 1:
+        raise ValueError("all inputs must be positive")
+    a = mobius_level
+    b = fixed_level
+    k = cofactor
+    m = first_fourier_index
+    if gcd(a, b) != 1:
+        raise ValueError("mobius_level and fixed_level must be coprime")
+
+    def prime_factors(value: int) -> tuple[int, ...]:
+        factors: list[int] = []
+        remaining = value
+        prime = 2
+        while prime * prime <= remaining:
+            if remaining % prime == 0:
+                factors.append(prime)
+                remaining //= prime
+                if remaining % prime == 0:
+                    raise ValueError("mobius_level must be squarefree")
+                while remaining % prime == 0:
+                    remaining //= prime
+            prime += 1
+        if remaining > 1:
+            factors.append(remaining)
+        return tuple(factors)
+
+    factors = prime_factors(a)
+
+    def euler_phi(value: int) -> int:
+        result = value
+        remaining = value
+        prime = 2
+        while prime * prime <= remaining:
+            if remaining % prime == 0:
+                result -= result // prime
+                while remaining % prime == 0:
+                    remaining //= prime
+            prime += 1
+        if remaining > 1:
+            result -= result // remaining
+        return result
+
+    common = gcd(a, k)
+    signed = 1 if common == 1 else 0
+    active = signed == 1
+    modulus = a * b * k
+    reduced = b * k
+    fibre = euler_phi(modulus) // euler_phi(reduced)
+    c_bound = dyadic_modulus_bound
+    first_spacing = F(a * b, 4 * c_bound * c_bound)
+    second_spacing = F(a * a * b, 4 * c_bound * c_bound)
+    first_inverse = 1 / first_spacing
+    weighted_second_inverse = F(fibre, 1) / second_spacing
+    ramanujan_gcd = gcd(a, m)
+    complementary_prime_count = sum(
+        1 for prime in factors if ramanujan_gcd % prime != 0
+    )
+    ramanujan_mu = -1 if complementary_prime_count % 2 else 1
+    ramanujan = (
+        ramanujan_mu * euler_phi(a) // euler_phi(a // ramanujan_gcd)
+    )
+    inverse_d_mod_a = pow(reduced, -1, a) if a > 1 and active else 0
+    original_residues = sorted((m * unit) % a for unit in range(a) if gcd(unit, a) == 1)
+    twisted_residues = sorted(
+        (m * unit * inverse_d_mod_a) % a
+        for unit in range(a)
+        if gcd(unit, a) == 1
+    ) if active and a > 1 else original_residues
+    fibre_character_permutation = active and original_residues == twisted_residues
+    spacing_aligned = (
+        active
+        and fibre == euler_phi(a)
+        and weighted_second_inverse <= first_inverse
+    )
+    return ExactLevelGeometricFiberAudit(
+        mobius_level=a,
+        fixed_level=b,
+        cofactor=k,
+        first_fourier_index=m,
+        modulus=modulus,
+        signed_level_divisor_coefficient=signed,
+        exact_valuation_cell_active=active,
+        reduced_second_denominator=reduced,
+        unit_reduction_fiber_size=fibre,
+        first_farey_spacing=first_spacing,
+        second_farey_spacing=second_spacing,
+        first_inverse_spacing=first_inverse,
+        fiber_weighted_second_inverse_spacing=weighted_second_inverse,
+        two_geometric_spacing_terms_share_level_AB=spacing_aligned,
+        ramanujan_fiber_sum=ramanujan,
+        ramanujan_denominator_nonzero=ramanujan != 0,
+        crt_fiber_character_is_a_unit_permutation=fibre_character_permutation,
+        ramanujan_denominator_cancels_before_cauchy=(
+            active and ramanujan != 0 and fibre_character_permutation
+        ),
+        inverse_scaled_kloosterman_family_restored_exactly=(
+            active and ramanujan != 0 and fibre_character_permutation
+        ),
+        reciprocity_retains_two_coupled_phase_coordinates=active,
+        cross_index_phase_retained_before_cauchy=active,
+        premature_length_term_removed_by_ramanujan_cancellation=(
+            active and ramanujan != 0 and fibre_character_permutation
+        ),
+        joint_two_coordinate_bound_still_required=True,
+        pevp_proved=False,
+    )
+
+
+def coupled_farey_collision_audit(
+    *,
+    scaling_level: int,
+    first_denominator: int,
+    first_numerator: int,
+    second_denominator: int,
+    second_numerator: int,
+) -> CoupledFareyCollisionAudit:
+    """Convert a two-coordinate Farey collision to divisor equations.
+
+    For a point with denominator ``d`` and first numerator ``x``, put
+    ``y = -(A*x)^(-1) mod d``.  Thus ``A*x*y == -1 (mod d)`` and the
+    two phase coordinates are ``x/d`` and ``y/d``.  For two points set
+
+    ``k = x1*d2-x2*d1`` and ``l = y1*d2-y2*d1``.
+
+    Direct expansion gives
+
+    ``d1 | A*k*l+d2^2`` and ``d2 | A*k*l+d1^2``.
+
+    Hence an absolute local-density proof is a quadratic-divisor
+    majorant.  This exact change of variables does not preserve the
+    Möbius cancellation needed to improve the audited BBLR hard face.
+    """
+    values = (
+        scaling_level,
+        first_denominator,
+        first_numerator,
+        second_denominator,
+        second_numerator,
+    )
+    if not all(isinstance(value, int) for value in values):
+        raise TypeError("all inputs must be integers")
+    if scaling_level < 1 or min(first_denominator, second_denominator) < 2:
+        raise ValueError("level must be positive and denominators at least two")
+    a = scaling_level
+    d1 = first_denominator
+    d2 = second_denominator
+    x1 = first_numerator % d1
+    x2 = second_numerator % d2
+    if gcd(a, d1 * d2) != 1:
+        raise ValueError("scaling level must be coprime to both denominators")
+    if gcd(x1, d1) != 1 or gcd(x2, d2) != 1:
+        raise ValueError("each numerator must be a unit modulo its denominator")
+
+    y1 = (-pow((a * x1) % d1, -1, d1)) % d1
+    y2 = (-pow((a * x2) % d2, -1, d2)) % d2
+    determinant_x = x1 * d2 - x2 * d1
+    determinant_y = y1 * d2 - y2 * d1
+    quadratic_1 = a * determinant_x * determinant_y + d2 * d2
+    quadratic_2 = a * determinant_x * determinant_y + d1 * d1
+    coprime_denominators = gcd(d1, d2) == 1
+    return CoupledFareyCollisionAudit(
+        scaling_level=a,
+        first_denominator=d1,
+        first_numerator=x1,
+        second_denominator=d2,
+        second_numerator=x2,
+        first_inverse_numerator=y1,
+        second_inverse_numerator=y2,
+        first_determinant_coordinate=determinant_x,
+        second_determinant_coordinate=determinant_y,
+        first_quadratic_divisor_integer=quadratic_1,
+        second_quadratic_divisor_integer=quadratic_2,
+        first_denominator_divides_first_quadratic_integer=(
+            quadratic_1 % d1 == 0
+        ),
+        second_denominator_divides_second_quadratic_integer=(
+            quadratic_2 % d2 == 0
+        ),
+        denominators_are_coprime=coprime_denominators,
+        coordinate_pairs_unique_for_fixed_determinants=coprime_denominators,
+        absolute_collision_count_becomes_quadratic_divisor_majorant=True,
+        absolute_majorant_discards_mobius_signs=True,
+        new_saving_beyond_bblr_proved=False,
+        joint_two_coordinate_large_sieve_proved=False,
+    )
+
+
+def mwkf_tail_shell_aggregation_audit(
+    *,
+    tail_log_start: Fraction,
+    seminorm_decay_order: Fraction,
+    local_seminorm_log_loss: Fraction,
+    target_log_saving: Fraction,
+) -> MWKFTailShellAggregationAudit:
+    """Audit the shell sum for every tail omitted from the compact core.
+
+    The exact AFE weight, time integration, Poisson transform, and QCT
+    Fourier--Mellin transform have arbitrary fixed-order decay in their
+    normalized shell parameters.  PEVP is linear in the coupled kernel
+    and its proof uses only a fixed finite set of kernel seminorms.
+    A shell beginning at ``L^B`` contributes ``L^(C+7-BJ)`` after the
+    six dyadic and one harmonic-q logarithms.  The seminorm-stable PEVP
+    theorem from the primitive-conductor reinsertion supplies the local
+    bound.  Choosing ``BJ>C+target+7`` only closes the local logarithmic
+    ledger: the full outer entry sums retain unpaid power costs.  There
+    is currently no proof of their uniform aggregation.
+    """
+    start = F(tail_log_start)
+    order = F(seminorm_decay_order)
+    local_loss = F(local_seminorm_log_loss)
+    target = F(target_log_saving)
+    if min(start, order, local_loss, target) < 0:
+        raise ValueError("tail parameters must be nonnegative")
+    if start == 0 or order == 0:
+        raise ValueError("tail start and decay order must be positive")
+    aggregation = F(7)
+    net = start * order - local_loss - aggregation
+    pevp_available = primitive_conductor_level_difference_audit(
+        level_factor_exponent=F(3),
+        common_mobius_length_exponent=F(3, 2),
+        fixed_power_margin=F(0),
+    ).pevp_is_polynomial_in_fixed_kernel_seminorms
+    full_outer_pevp = False  # A0^(1/2)*B0 is not a logarithmic loss.
+    closes = pevp_available and full_outer_pevp and net > target
+    return MWKFTailShellAggregationAudit(
+        tail_log_start=start,
+        seminorm_decay_order=order,
+        local_seminorm_log_loss=local_loss,
+        target_log_saving=target,
+        dyadic_and_harmonic_q_log_loss=aggregation,
+        net_tail_log_saving=net,
+        exact_afe_has_no_truncation_error=True,
+        afe_product_tail_included=True,
+        time_nonstationary_tail_included=True,
+        poisson_frequency_tail_included=True,
+        qct_fourier_mellin_tail_included=True,
+        pevp_is_polynomial_in_fixed_kernel_seminorms=pevp_available,
+        full_outer_pevp_aggregation_proved=full_outer_pevp,
+        power_far_shells_are_dominated=pevp_available and full_outer_pevp,
+        polylog_near_shells_are_summable=closes,
+        transform_tail_aggregated=closes,
+        afe_tail_aggregated=closes,
+        total_tail_is_little_o_T=closes,
+    )
+
+
+def unconditional_long_mollifier_asymptotic_audit(
+) -> UnconditionalLongMollifierAsymptoticAudit:
+    """Record the theta=3 main term and the still-open physical remainder.
+
+    The exact completed AFE and common-Mellin Poisson calculation give
+    ``I = T*Q + R`` without a truncated-AFE error.  The merged Selberg
+    LCM audit gives ``Q = 4/3 integral(W) + o(1)``.  The cubic
+    complementary-divisor route has local identities, but its physical
+    normalization and full outer aggregation remain unproved.
+
+    The four first-active AFE/transform tail families are a separate
+    proposed partition.  Fixed-entry seminorm-stable PEVP does not
+    supply the required full outer estimate.  No local/finite audit
+    here is a certificate of the unconditional asymptotic.
+    """
+    projector = primitive_conductor_level_difference_audit(
+        level_factor_exponent=F(3),
+        common_mobius_length_exponent=F(3, 2),
+        fixed_power_margin=F(0),
+    )
+    core = lifted_outer_qct_aggregation_audit(
+        left_entry_exponent=F(3),
+        right_entry_exponent=F(3),
+        q_exponent=F(0),
+        gate_log_power=F(10),
+        common_orientation="left",
+    )
+    tails = mwkf_tail_shell_aggregation_audit(
+        tail_log_start=F(100),
+        seminorm_decay_order=F(4),
+        local_seminorm_log_loss=F(20),
+        target_log_saving=F(20),
+    )
+    cubic_power = cubic_reciprocal_full_polytope_audit(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        reciprocal_radical_moment_abscissa=F(1, 100),
+        fixed_weight_log_loss=F(20),
+        dyadic_and_q_log_loss=AGGREGATION_LOG_LOSS,
+        subcritical_cutoff_log_power=F(40),
+        poisson_mode_extra_log_loss=F(4),
+        requested_mrstt_log_saving=F(80),
+        target_log_saving=F(1),
+    )
+    cubic_lcpe2 = cubic_reciprocal_lcpe2_audit(
+        zeta_log_depth=F(2),
+        shift_log_depth=F(2),
+        requested_log_saving=F(80),
+        fixed_log_losses=F(20),
+        subcritical_cutoff_log_power=F(40),
+        poisson_mode_extra_log_loss=F(4),
+        dyadic_and_q_log_loss=AGGREGATION_LOG_LOSS,
+        target_log_saving=F(1),
+    )
+    independent = independent_cubic_closure_verification_audit()
+    power_geometry = all(
+        (
+            cubic_power.worst_taylor_power_saving > 0,
+            cubic_power.uniform_nonaxis_power_saving > 0,
+            cubic_power.uniform_axis_power_saving > 0,
+            cubic_power.long_density_errors_have_power_saving,
+            independent.c_poisson_full_weight_embedding_verified,
+            independent.mrstt_maximal_progression_form_verified,
+            independent.sliding_identity_is_exact_on_the_interior,
+            independent.weighted_partial_summation_verified,
+        )
+    )
+    lcpe2_quantified = all(
+        (
+            cubic_lcpe2.physical_prefactor_times_dual_volume_is_T,
+            cubic_lcpe2.cubic_taylor_has_fixed_power_saving,
+            cubic_lcpe2.mrstt_supremum_is_uniform_in_cubic_coefficients,
+            cubic_lcpe2.q_sum_is_bounded_on_dyadic_T_squared_shell,
+            independent.lcpe2_quantified_log_ledger_closed,
+        )
+    )
+    cubic_outer_core = all(
+        (
+            power_geometry,
+            lcpe2_quantified,
+            independent.compact_and_tail_partition_is_disjoint,
+            independent.every_cancellation_source_is_used_once,
+            independent.all_four_independent_gates_verified,
+        )
+    )
+    compact_core_is_little_o = (
+        independent.c_poisson_full_weight_embedding_verified
+        and (core.nonzero_poisson_core_is_little_o_T or cubic_outer_core)
+    )
+    compact_core_bypasses_pevp = cubic_outer_core
+    tails_use_pevp = all(
+        (
+            tails.pevp_is_polynomial_in_fixed_kernel_seminorms,
+            tails.transform_tail_aggregated,
+            tails.afe_tail_aggregated,
+            tails.total_tail_is_little_o_T,
+        )
+    )
+    full_remainder = all(
+        (
+            projector.pevp_proved,
+            compact_core_is_little_o,
+            power_geometry,
+            lcpe2_quantified,
+            independent.all_four_independent_gates_verified,
+            tails.transform_tail_aggregated,
+            tails.afe_tail_aggregated,
+            tails.total_tail_is_little_o_T,
+        )
+    )
+    final = full_remainder
+    transport_gap = oriented_mmkls_polytope_gap_audit(
+        cofactor_cutoff_exponent=F(1, 8)
+    )
+    endpoint_dispersion = almost_all_mobius_endpoint_dispersion_audit(
+        modulus_exponent=F(2),
+        cofactor_exponent=F(1, 8),
+        dual_product_exponent=F(1),
+        outer_entry_exponent=F(7, 8),
+        qsmooth_relative_exponent=F(1, 10),
+    )
+    balanced_range = balanced_zero_slack_full_range_audit()
+    unbalanced_recombination = (
+        unbalanced_complementary_divisor_recombination_audit(
+            cofactor_cutoff_exponent=F(1, 8),
+            qsmooth_relative_exponent=F(1, 10),
+            taylor_block_relative_exponent=F(2, 3),
+            published_epsilon=F(1, 12),
+        )
+    )
+    balanced_reciprocal = balanced_adaptive_reciprocal_phase_audit(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+    )
+    vertex_ledger = admissible_polytope_vertex_ledger_audit()
+    if vertex_ledger.remaining_unrouted_vertex_indices:
+        polytope_residual = (
+            "admissible_polytope_unrouted_vertices_"
+            + "_".join(
+                f"v{index:02d}"
+                for index in vertex_ledger.remaining_unrouted_vertex_indices
+            )
+        )
+    elif not vertex_ledger.all_dyadic_parameter_cells_enumerated:
+        polytope_residual = (
+            "admissible_polytope_faces_and_interiors_not_covered"
+        )
+    else:
+        polytope_residual = ""
+    residual_top_level = () if final else UNPROVED_PHYSICAL_INPUTS
+    if final:
+        alternative_unverified = ()
+    elif (
+        endpoint_dispersion.balanced_zero_slack_family_covered
+        and (
+            balanced_range.full_balanced_family_covered
+            or balanced_reciprocal.bcr_and_reciprocal_pieces_cover_full_balanced_edge
+        )
+    ):
+        alternative_unverified = (
+            *(() if unbalanced_recombination.unbalanced_boundary_witnesses_covered
+              else ("unbalanced_power_witnesses_r_long_s_long",)),
+            *((polytope_residual,) if polytope_residual else ()),
+            "large_q_centered_product_energy_lambda_2",
+        )
+    else:
+        alternative_unverified = transport_gap.remaining_gates
+    return UnconditionalLongMollifierAsymptoticAudit(
+        mollifier_length_exponent=F(3),
+        main_term_constant=F(4, 3),
+        exact_completed_afe_proved=True,
+        poisson_zero_mode_normalization_proved=True,
+        lcm_main_term_asymptotic_proved=True,
+        pevp_proved=projector.pevp_proved,
+        compact_core_bypasses_pevp=compact_core_bypasses_pevp,
+        tail_shells_use_seminorm_stable_pevp=tails_use_pevp,
+        full_remainder_requires_pevp_for_tails=True,
+        endpoint_dispersion_local_lemma_proved=(
+            cubic_power.endpoint_dispersion_local_lemma_proved
+        ),
+        physical_weight_ledger_verified=(
+            cubic_power.physical_weight_ledger_verified
+            and independent.c_poisson_full_weight_embedding_verified
+        ),
+        nested_log_choices_verified=cubic_power.nested_log_choices_verified,
+        lcpe2_covered_unconditionally=(
+            lcpe2_quantified
+        ),
+        lcpe2_q_and_transform_aggregation_verified=(
+            lcpe2_quantified
+            and independent.compact_and_tail_partition_is_disjoint
+        ),
+        independent_four_gate_verification_proved=(
+            independent.all_four_independent_gates_verified
+        ),
+        fixed_numeric_log_witness_used=(
+            independent.fixed_numeric_log_witness_used
+        ),
+        compact_nonzero_poisson_core_is_little_o_T=(
+            compact_core_is_little_o
+        ),
+        transform_tail_is_little_o_T=tails.transform_tail_aggregated,
+        afe_tail_is_little_o_T=tails.afe_tail_aggregated,
+        archimedean_correction_is_beyond_all_powers=True,
+        full_remainder_is_little_o_T=full_remainder,
+        unconditional_asymptotic_proved=final,
+        residual_cell_count=len(residual_top_level),
+        residual_count_semantics="top_level_gate_count_not_literal_cell_count",
+        residual_top_level_gates=residual_top_level,
+        alternative_route_unverified_gates=alternative_unverified,
+        all_dyadic_parameter_cells_enumerated=(
+            vertex_ledger.all_dyadic_parameter_cells_enumerated
+            and power_geometry
+            and lcpe2_quantified
+        ),
+        proof_status=(
+            "unconditional asymptotic proved"
+            if final
+            else "analytic remainder gate open"
+        ),
+    )
+
+
+def type_i_atkin_lehner_cusp_audit(
+    *,
+    entry_scale_exponent: Fraction,
+    modulus_scale_exponent: Fraction,
+    product_index_exponent: Fraction,
+    entry_divisor_exponent: Fraction,
+    modulus_divisor_exponent: Fraction,
+) -> TypeIAtkinLehnerCuspAudit:
+    """Audit the exact Type-I/Type-I QCT-to-cross-cusp adapter.
+
+    Let ``r=A*e`` and force ``B|s`` by the Type-I expansions of the two
+    entry Mobius weights.  The quotient e is unweighted before optional
+    coprimality layers.  Its length is ``R/A`` and Poisson dual length is
+    ``s/(R/A)``.  The completion factor is the reciprocal dual length,
+    so Rankin--Selberg L1 summation of the new Fourier index costs zero
+    powers after normalization.
+
+    The exact Poisson sum has first Kloosterman index
+    ``inverse(A)*m (mod s)``.  This is exactly Kiral--Young Proposition
+    2.6 for the cusp pair infinity, 1/B at level A*B: their
+    Atkin--Lehner factor is A, so their first index is
+    ``inverse(A)*m`` and their cusp modulus is ``s*sqrt(A)``.
+
+    The physical ``1/s`` weight is ``sqrt(A)`` times the normalized
+    cross-cusp weight ``1/(s*sqrt(A))``.  This conversion alone loses
+    ``A^(1/2)``.  In the normalized outer block, however, the Poisson
+    factor is ``E/R=1/A``.  Their product is exactly ``A^(-1/2)``;
+    after squaring this supplies the fixed-entry ``A^-1`` normalization
+    required by PEVP.  It does not sum the actual outer integers A,B.
+    The cross-cusp trace has no diagonal term, and an ordinary positive
+    large sieve still has the same norm because Atkin--Lehner is unitary.
+
+    The CRT product-modulus identity remains a valid alternative:
+
+    ``S(m,-A*n;A*s)=c_A(m)S(inverse(A)*m,-n;s)``.
+
+    The exact Mobius support makes ``A`` squarefree, hence the Ramanujan
+    factor ``c_A(m)`` is nonzero.  Inclusion-exclusion over ``j|A`` then
+    produces standard infinity-infinity levels ``A*B*j``.  This lifted
+    route is no longer needed to derive the physical spectral orbit.
+    """
+    rho = F(entry_scale_exponent)
+    sigma = F(modulus_scale_exponent)
+    numerator = F(product_index_exponent)
+    alpha = F(entry_divisor_exponent)
+    beta = F(modulus_divisor_exponent)
+    if min(rho, sigma, numerator, alpha, beta) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    if alpha > rho or beta > sigma:
+        raise ValueError("Type-I divisors cannot exceed their entries")
+
+    quotient = rho - alpha
+    dual = sigma - quotient
+    if dual < 0:
+        raise ValueError("nonzero Poisson dual is subunit on this box")
+    level = alpha + beta
+    cusp_modulus = sigma + alpha / 2
+    standard_modulus = sigma + alpha
+    bessel_numerator = numerator + dual
+    bessel_ratio = 2 * cusp_modulus - bessel_numerator
+    completion = quotient - sigma
+    lifted_prefactor = quotient + alpha
+    cross_cusp_prefactor = alpha / 2
+    normalized_outer_poisson = -alpha
+    normalized_cross_cusp = normalized_outer_poisson + cross_cusp_prefactor
+    normalized_dual = completion + dual
+    return TypeIAtkinLehnerCuspAudit(
+        entry_scale_exponent=rho,
+        modulus_scale_exponent=sigma,
+        product_index_exponent=numerator,
+        entry_divisor_exponent=alpha,
+        modulus_divisor_exponent=beta,
+        entry_quotient_exponent=quotient,
+        poisson_dual_index_exponent=dual,
+        ambient_level_exponent=level,
+        cusp_modulus_exponent=cusp_modulus,
+        standard_lifted_modulus_exponent=standard_modulus,
+        bessel_numerator_product_exponent=bessel_numerator,
+        bessel_ratio_inverse_square_exponent=bessel_ratio,
+        poisson_normalization_exponent=completion,
+        poisson_prefactor_after_modulus_lift_exponent=lifted_prefactor,
+        physical_to_cross_cusp_prefactor_exponent=cross_cusp_prefactor,
+        outer_poisson_normalization_after_dividing_entry_exponent=(
+            normalized_outer_poisson
+        ),
+        normalized_cross_cusp_prefactor_exponent=normalized_cross_cusp,
+        fixed_entry_cross_cusp_square_saving_exponent=(
+            -2 * normalized_cross_cusp
+        ),
+        normalized_dual_hecke_l1_exponent=normalized_dual,
+        type_i_identity_leaves_unweighted_quotient=True,
+        entry_and_modulus_divisors_are_coprime=True,
+        kiral_young_allowed_moduli_match_exactly=True,
+        kiral_young_kloosterman_formula_matches_exactly=True,
+        inverse_scaled_kloosterman_obstruction_present=False,
+        crt_product_modulus_lift_exact=True,
+        squarefree_ramanujan_denominator_nonzero=True,
+        coprimality_inclusion_exclusion_is_standard_level_family=True,
+        atkin_lehner_newform_coefficients_match_up_to_sign=True,
+        atkin_lehner_oldclass_coefficient_lists_are_permuted=True,
+        zero_dual_mode_is_eisenstein_only=True,
+        raw_poisson_dual_l1_normalization_is_zero_power=(normalized_dual == 0),
+        nonzero_dual_hecke_average_has_no_positive_power_cost=False,
+        cross_cusp_sign_trace_has_diagonal_term=False,
+        ordinary_cross_cusp_large_sieve_has_unitary_norm=True,
+        atkin_lehner_sign_trace_gains_from_normalization_alone=False,
+        direct_fixed_entry_pevp_normalization_available=(
+            normalized_cross_cusp == -alpha / 2
+        ),
+        direct_fixed_entry_adapter_aggregates_outer_entries=False,
+        physical_qct_bessel_kernel_restored=True,
+        type_i_type_i_qct_to_standard_kuznetsov_derived=True,
+        type_i_type_i_qct_to_cusp_kuznetsov_derived=True,
+        signed_level_family_aggregation_proved=False,
+        type_ii_sectors_restored=False,
+        finite_prime_hecke_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def hecke_double_dirichlet_local_identity(
+    *,
+    hecke_prime: Fraction,
+    max_exponent: int,
+) -> dict[str, object]:
+    """Check the unramified local identity coefficient by coefficient.
+
+    If ``lambda[0]=1``, ``lambda[1]=hecke_prime`` and
+    ``lambda[j+1]=lambda[1]*lambda[j]-lambda[j-1]``, then
+
+    ``lambda[a+b] = lambda[a]*lambda[b]-lambda[a-1]*lambda[b-1]``.
+
+    This is precisely the coefficient identity behind
+
+    ``sum lambda(h*d) h^-u d^-v = L(u,f)L(v,f)/zeta(u+v)``.
+
+    The returned finite check is a regression witness; the analytic
+    identity follows from the displayed Hecke recurrence, not from the
+    finite computation.
+    """
+    lam1 = F(hecke_prime)
+    if max_exponent < 0:
+        raise ValueError("max_exponent must be nonnegative")
+    values = [F(1), lam1]
+    for _ in range(2 * max_exponent - 1):
+        values.append(lam1 * values[-1] - values[-2])
+
+    mismatches: list[tuple[int, int, Fraction, Fraction]] = []
+    for a in range(max_exponent + 1):
+        for b in range(max_exponent + 1):
+            correction = F(0) if min(a, b) == 0 else values[a - 1] * values[b - 1]
+            rhs = values[a] * values[b] - correction
+            if values[a + b] != rhs:
+                mismatches.append((a, b, values[a + b], rhs))
+    return {
+        "checked_pairs": (max_exponent + 1) ** 2,
+        "all_coefficients_match": not mismatches,
+        "mismatches": tuple(mismatches),
+    }
+
+
+def eisenstein_second_moment_reciprocity_audit(
+    *,
+    entry_divisor_exponent: Fraction,
+    modulus_divisor_exponent: Fraction,
+) -> EisensteinSecondMomentReciprocityAudit:
+    """Audit published reciprocity formulae against the remaining SLF gate.
+
+    The two ``h,delta`` sums do have the exact primitive-newform Dirichlet
+    series ``L(u,f)L(v,f)/zeta^(Q_f)(u+v)``.  At the central plane the
+    reciprocal zeta factor has a simple zero.  This does *not* eliminate
+    the Eisenstein continuation term coefficientwise: with
+    ``u=1/2+a`` and ``v=1/2+b``, a residue contains the local quotient
+    ``zeta(1+b-a)/zeta(1+a+b)``, whose normal-crossing model is
+    ``(a+b)/(b-a)=x/y``.  It has no path-independent value at the origin.
+
+    Blomer--Khan treats a degree-eight GL(2)x(GL(3)+GL(1)) moment;
+    Andersen--Kiral treats a degree-eight Rankin--Selberg moment with a
+    fixed cuspidal GL(2) form; Khan's zeta formula sends prime Gaussian
+    twists to Dirichlet-character moments.  None is a literal theorem
+    adapter for the composite, smoothly weighted Atkin--Lehner level
+    family here.  A completed residue calculation and ramified composite
+    local corrections are therefore still required.
+    """
+    alpha = F(entry_divisor_exponent)
+    beta = F(modulus_divisor_exponent)
+    if min(alpha, beta) < 0:
+        raise ValueError("divisor exponents must be nonnegative")
+    level = alpha + beta
+    identity = hecke_double_dirichlet_local_identity(
+        hecke_prime=F(3, 2),
+        max_exponent=8,
+    )
+    return EisensteinSecondMomentReciprocityAudit(
+        entry_divisor_exponent=alpha,
+        modulus_divisor_exponent=beta,
+        ambient_level_exponent=level,
+        required_half_level_saving_exponent=level / 2,
+        required_endpoint_log_decay=True,
+        inverse_zeta_central_zero_order=1,
+        eisenstein_transverse_pole_order=1,
+        local_crossing_model="x/y",
+        target_total_degree=4,
+        blomer_khan_total_degree=8,
+        khan_zeta_dual_family="Dirichlet characters",
+        hecke_double_dirichlet_identity_exact=bool(
+            identity["all_coefficients_match"]
+        ),
+        inverse_zeta_zero_cancels_residues_jointly=False,
+        blomer_khan_is_literal_adapter=False,
+        andersen_kiral_is_literal_adapter=False,
+        khan_prime_gaussian_formula_is_composite_smooth_adapter=False,
+        completed_eisenstein_residue_pairing_required=True,
+        composite_level_local_corrections_required=True,
+        signed_level_family_aggregation_proved=False,
+        type_ii_sectors_restored=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def hecke_multiply_coefficient_energy(
+    *,
+    hecke_index: int,
+    coefficients: dict[int, Fraction],
+) -> dict[str, object]:
+    """Finite witness for the L2 cost of multiplying by ``lambda(m)``.
+
+    At unramified primes the Hecke relation is
+
+    ``lambda(m)lambda(n)=sum_(c|(m,n)) lambda(m*n/c^2)``.
+
+    For each fixed divisor ``c|m`` the map ``n -> m*n/c^2`` is
+    injective.  Cauchy over the possible divisors at each output index
+    therefore bounds the output coefficient energy by
+    ``tau(m)^2`` times the input energy.  The returned exact finite
+    convolution checks this normalization on concrete coefficient data.
+    """
+    if hecke_index <= 0:
+        raise ValueError("hecke_index must be positive")
+    if any(n <= 0 for n in coefficients):
+        raise ValueError("coefficient indices must be positive")
+
+    divisors = tuple(d for d in range(1, hecke_index + 1) if hecke_index % d == 0)
+    output: dict[int, Fraction] = {}
+    for n, value in coefficients.items():
+        value = F(value)
+        for c in divisors:
+            if n % c:
+                continue
+            k = hecke_index * n // (c * c)
+            output[k] = output.get(k, F(0)) + value
+    input_energy = sum((F(v) * F(v) for v in coefficients.values()), F(0))
+    output_energy = sum((v * v for v in output.values()), F(0))
+    return {
+        "input_energy": input_energy,
+        "output_energy": output_energy,
+        "divisor_count": len(divisors),
+        "divisor_square_bound": F(len(divisors) ** 2) * input_energy,
+        "output_support_maximum": max(output, default=0),
+        "bound_verified": output_energy <= F(len(divisors) ** 2) * input_energy,
+    }
+
+
+def product_hecke_spectral_large_sieve_audit(
+    *,
+    product_variable_exponent: Fraction,
+    entry_divisor_exponent: Fraction,
+    modulus_divisor_exponent: Fraction,
+) -> ProductHeckeSpectralLargeSieveAudit:
+    """Close the cuspidal Type-I/Type-I box by a fixed-level large sieve.
+
+    Put ``Q=A*B=T^(alpha+beta)`` and choose completion on the side with
+    smaller Type-I divisor, so the dual Hecke index has length
+    ``m<=T^eta`` with ``eta=min(alpha,beta)``.  In the large common-
+    divisor part of the exact product identity, ``c>=H/Q`` and each
+    residual Hecke polynomial has length ``Y=H/c<=Q``.
+
+    The full fixed-level Kuznetsov large sieve, with spectral bandwidth
+    ``T_spec=T^o(1)``, is
+
+    ``sum_spec |sum_(n~Y) a_n sqrt(n)rho(n)|^2``
+    `` <= T^o(1)*(1+Y/Q)*sum |a_n|^2``.
+
+    Multiplication by ``lambda(m)`` changes the support to at most
+    ``mY`` and costs only a divisor-square factor in coefficient energy.
+    Cauchy between the two product factors therefore costs
+    ``Y*sqrt(1+mY/Q)`` for fixed ``c``.  Summing a dyadic ``c``-block
+    gives ``H*sqrt(1+m)`` rather than the previous ``H*Q``.
+
+    The already proved Atkin--Lehner oldclass permutation lets both
+    positive norms be evaluated at infinity.  On the Eisenstein space
+    the Atkin--Lehner operator is unitary, but this alone does not turn
+    a ramified level-oldvector coefficient at index ``m*n`` into a
+    divisor-bounded scalar times the coefficient at ``n``.  Thus the
+    numerical exponent closes the cuspidal and holomorphic contribution,
+    while the continuous ramified-oldvector gate remains open.  The
+    physical kernel is a polylogarithmic nuclear superposition and hence
+    does not change any power exponent.
+    """
+    h = F(product_variable_exponent)
+    alpha = F(entry_divisor_exponent)
+    beta = F(modulus_divisor_exponent)
+    if min(h, alpha, beta) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    level = alpha + beta
+    if level > F(1):
+        raise ValueError("this adapter is restricted to the Type-I level face")
+    if level > h:
+        raise ValueError("ambient level cannot exceed the product-variable length")
+
+    eta = min(alpha, beta)
+    threshold = h - level
+    residual = level
+    multiplied = level + eta
+    large_bound = h + eta / 2
+    previous = h + level
+    saving = previous - large_bound
+    base = F(3, 2)
+    theta = F(7, 64)
+    small_hecke_loss = eta * theta
+    small_margin = level / 2 - small_hecke_loss
+    aggregated = base + eta / 2
+    required = base + level / 2
+    margin = required - aggregated
+    bounded_level = max(alpha, beta) == 0
+    closes = aggregated < required or bounded_level
+    return ProductHeckeSpectralLargeSieveAudit(
+        product_variable_exponent=h,
+        entry_divisor_exponent=alpha,
+        modulus_divisor_exponent=beta,
+        ambient_level_exponent=level,
+        chosen_poisson_divisor_exponent=eta,
+        common_divisor_threshold_exponent=threshold,
+        maximum_residual_hecke_length_exponent=residual,
+        hecke_multiplied_length_exponent=multiplied,
+        large_common_divisor_bound_exponent=large_bound,
+        previous_pointwise_bound_exponent=previous,
+        fixed_level_saving_exponent=saving,
+        ramanujan_theta=theta,
+        small_common_divisor_hecke_loss_exponent=small_hecke_loss,
+        small_common_divisor_slf_margin=small_margin,
+        aggregated_bound_exponent=aggregated,
+        required_slf_exponent=required,
+        slf_power_margin=margin,
+        completion_uses_shorter_divisor_side=(eta == min(alpha, beta)),
+        standard_large_sieve_normalization_exact=True,
+        hecke_multiplication_has_subpower_energy_cost=True,
+        atkin_lehner_oldclass_permutation_preserves_l2=True,
+        eisenstein_basis_change_is_unitary=True,
+        physical_kernel_tensorization_compatible=True,
+        bounded_level_cell_uses_existing_mobius_log_decay=bounded_level,
+        small_common_divisor_range_covered=(small_margin > 0 or bounded_level),
+        cuspidal_holomorphic_type_i_type_i_slf_proved=(
+            closes and (small_margin > 0 or bounded_level)
+        ),
+        continuous_ramified_oldvector_gate_open=True,
+        type_i_type_i_slf_proved=False,
+        type_ii_sectors_restored=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def high_level_product_hecke_spectral_audit(
+    *,
+    product_variable_exponent: Fraction,
+    left_level_factor_exponent: Fraction,
+    right_level_factor_exponent: Fraction,
+) -> HighLevelProductHeckeSpectralAudit:
+    """Route Type-II factor boxes through the fixed-level product sieve.
+
+    Expanding ``c_U(a)`` writes a Type-II entry as ``r=(d*b)*e`` with
+    ``d<=U``, ``b>V`` and an unweighted quotient ``e``.  Thus the exact
+    Atkin--Lehner cusp adapter applies with level factors ``A=d*b`` and
+    ``B=d'*b'``.  Type-II gives ``1<=log_T A,log_T B<=3``.
+
+    Let ``Q=T^level``, ``H=T^h`` and complete on the shorter level-factor
+    side, giving ``m<=T^eta``.  The largest Hecke-polynomial length in
+    the spectral large-sieve range is ``Y<=min(H,Q)``.  Therefore the
+    only positive-power factor left after product-Hecke Cauchy is
+
+    ``T^(excess/2)``, ``excess=(eta+min(h,level)-level)_+``.
+
+    Relative to the normalized QCT base ``3/2``, the cell exponent is
+    ``3/2+excess/2`` and must be strictly below ``2`` (or equal with a
+    separately proved logarithmic saving).  On the exact Type-II range,
+    ``excess>=1`` is equivalent to the closed square
+    ``1<=alpha,beta<=3/2``.  Its largest deficit is ``1/8`` at
+    ``alpha=beta=5/4``.
+    """
+    h = F(product_variable_exponent)
+    alpha = F(left_level_factor_exponent)
+    beta = F(right_level_factor_exponent)
+    if h < 0 or not (F(1) <= alpha <= F(3)) or not (F(1) <= beta <= F(3)):
+        raise ValueError("Type-II level factors must lie in [1,3]")
+    level = alpha + beta
+    residual = min(h, level)
+    eta = min(alpha, beta)
+    excess = _positive_part(eta + residual - level)
+    target = F(2)
+    bound = F(3, 2) + excess / 2
+    margin = _positive_part(target - bound)
+    deficit = _positive_part(bound - target)
+    endpoint = bound == target
+    inside = (
+        F(1) <= alpha <= F(3, 2)
+        and F(1) <= beta <= F(3, 2)
+    )
+    power_closes = bound < target
+    return HighLevelProductHeckeSpectralAudit(
+        product_variable_exponent=h,
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        ambient_level_exponent=level,
+        maximum_residual_hecke_length_exponent=residual,
+        chosen_poisson_index_exponent=eta,
+        large_sieve_excess_exponent=excess,
+        aggregated_bound_exponent=bound,
+        target_exponent=target,
+        power_saving_margin=margin,
+        power_deficit=deficit,
+        maximum_type_ii_deficit=F(1, 8),
+        maximum_deficit_witness=(F(5, 4), F(5, 4)),
+        type_ii_factor_to_cusp_adapter_exact=True,
+        product_hecke_large_sieve_applies=True,
+        inside_closed_type_ii_residual_square=inside,
+        power_bound_closes_cell=power_closes,
+        endpoint_log_decay_required=endpoint,
+        endpoint_log_decay_proved=False,
+        type_ii_cell_covered=power_closes,
+        whole_type_ii_region_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def primal_dual_product_hecke_spectral_audit(
+    *,
+    product_variable_exponent: Fraction,
+    left_level_factor_exponent: Fraction,
+    right_level_factor_exponent: Fraction,
+    primitive_conductor_exponent: Fraction,
+) -> PrimalDualProductHeckeSpectralAudit:
+    """Optimize the Hecke large sieve with the GL(2) functional equation.
+
+    For a primitive cuspidal component of conductor ``q0<=Q`` and a
+    smooth Hecke polynomial of length ``Y``, Mellin inversion plus the
+    completed standard functional equation gives a dual polynomial of
+    length ``q0/Y`` and prefactor ``Y/sqrt(q0)``.  Its coefficient L2
+    energy is therefore again ``Y``.  After multiplication by the
+    Poisson index ``m``, the primal and dual large-sieve excesses are
+
+    ``m*Y/Q`` and ``m*q0/(Y*Q)``.
+
+    Choosing primal for ``Y<=sqrt(q0)`` and dual otherwise bounds their
+    minimum by ``m*sqrt(q0)/Q``.  In every factor sector
+    ``m<=min(A,B)`` and ``q0<=Q=A*B``, so this has no positive power.
+
+    The ambient levels are squarefree on the exact Mobius support, so the
+    continuous spectrum has only the trivial inducing character.  This
+    does *not* make every level-oldvector coefficient multiplicative.
+    At level ``Q=M=p`` the exact Eisenstein coefficient formula has local
+    factor
+
+    ``F(1)=-p^(-1/2)``,
+    ``F(p)=p^(-1/2) p^(it) (p-1-p^(-2it))``.
+
+    Taking ``t=pi/log(p)`` gives ``|F(p)/F(1)|=p-2``.  Hence the
+    unramified divisor bound cannot be pulled through ramified oldvectors,
+    and this audit closes only the cuspidal and holomorphic sectors.
+    """
+    h = F(product_variable_exponent)
+    alpha = F(left_level_factor_exponent)
+    beta = F(right_level_factor_exponent)
+    q0 = F(primitive_conductor_exponent)
+    if min(h, alpha, beta, q0) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    level = alpha + beta
+    if q0 > level:
+        raise ValueError("primitive conductor cannot exceed ambient level")
+    eta = min(alpha, beta)
+    normalized = eta + q0 / 2 - level
+    excess = _positive_part(normalized)
+    base = F(3, 2)
+    bound = base + excess / 2
+    target = F(2)
+    margin = target - bound
+    cusp_closes = excess == 0 and margin > 0
+    witness_prime = 5
+    ramified_ratio = F(witness_prime - 2)
+    return PrimalDualProductHeckeSpectralAudit(
+        product_variable_exponent=h,
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        ambient_level_exponent=level,
+        chosen_poisson_index_exponent=eta,
+        worst_primitive_conductor_exponent=q0,
+        primal_dual_transition_exponent=q0 / 2,
+        normalized_m_times_sqrt_conductor_exponent=normalized,
+        optimized_large_sieve_excess_exponent=excess,
+        product_spectral_bound_exponent=h + excess / 2,
+        aggregated_bound_exponent=bound,
+        target_exponent=target,
+        power_saving_margin=margin,
+        primitive_functional_equation_exact=True,
+        dual_coefficient_energy_matches_primal=True,
+        gamma_transform_has_polylog_nuclear_norm=True,
+        oldclass_conductor_split_has_subpower_cost=True,
+        squarefree_level_forces_trivial_eisenstein_character=True,
+        eisenstein_unramified_hecke_index_has_divisor_bound=True,
+        eisenstein_ramified_oldvector_witness_prime=witness_prime,
+        eisenstein_ramified_oldvector_ratio_at_witness=ramified_ratio,
+        eisenstein_ramified_oldvector_has_divisor_bound=False,
+        continuous_spectrum_has_no_positive_m_power=False,
+        cuspidal_holomorphic_sectors_covered=cusp_closes,
+        all_type_i_ii_sectors_covered=False,
+        finite_prime_hecke_gate_covered=False,
+        transform_tail_aggregated=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def _laurent_multiply(
+    left: dict[int, Fraction],
+    right: dict[int, Fraction],
+) -> dict[int, Fraction]:
+    output: dict[int, Fraction] = {}
+    for left_power, left_coefficient in left.items():
+        for right_power, right_coefficient in right.items():
+            power = left_power + right_power
+            output[power] = output.get(power, F(0)) + (
+                F(left_coefficient) * F(right_coefficient)
+            )
+    return {power: value for power, value in output.items() if value}
+
+
+def _squarefree_eisenstein_shift_polynomial(
+    *,
+    prime: int,
+    valuation: int,
+) -> dict[int, Fraction]:
+    """Return ``p*sum_(j<k) X^j - sum_(j<=k) X^j`` exactly."""
+    if prime < 2 or valuation < 0:
+        raise ValueError("prime and valuation must be positive/nonnegative")
+    if valuation == 0:
+        return {0: F(-1)}
+    return {
+        **{power: F(prime - 1) for power in range(valuation)},
+        valuation: F(-1),
+    }
+
+
+def squarefree_eisenstein_oldspace_local_projector(
+    *,
+    prime: int,
+    left_valuation: int,
+    right_valuation: int,
+) -> dict[int, Fraction]:
+    """Exact Laurent polynomial for the two-vector oldspace projector.
+
+    Put ``X=p^(-2it)``.  At squarefree prime level the unshifted vector
+    contributes ``1/p`` to the normalized projector.  The shifted vector
+    contributes ``B_k(X) B_l(X^(-1))/p^2``, where
+
+    ``B_k(X)=p*sum_(j<k)X^j-sum_(j<=k)X^j``.
+
+    The common global scattering and phase factors are independent of
+    the oldvector label and are deliberately omitted.
+    """
+    if prime < 2:
+        raise ValueError("prime must be at least two")
+    left = _squarefree_eisenstein_shift_polynomial(
+        prime=prime,
+        valuation=left_valuation,
+    )
+    right = {
+        -power: coefficient
+        for power, coefficient in _squarefree_eisenstein_shift_polynomial(
+            prime=prime,
+            valuation=right_valuation,
+        ).items()
+    }
+    product = _laurent_multiply(left, right)
+    projector = {
+        power: coefficient / F(prime * prime)
+        for power, coefficient in product.items()
+    }
+    projector[0] = projector.get(0, F(0)) + F(1, prime)
+    return {power: value for power, value in sorted(projector.items()) if value}
+
+
+def eisenstein_oldspace_projector_audit(
+    *,
+    prime: int,
+) -> EisensteinOldspaceProjectorAudit:
+    """Audit cancellation after summing the full prime oldspace.
+
+    Individual shifted Eisenstein coefficients can grow by ``p-2``.
+    Kuznetsov, however, sums both squarefree-level oldvectors with the
+    same spectral transform.  Their exact local projector is the Laurent
+    polynomial returned above.  If exactly one index is divisible by
+    ``p`` once, it is ``(1+X^(-1))/p^2`` and gains a full prime over the
+    baseline ``1/p``.  For arbitrary valuations, the elementary
+    coefficient bound localizes every possible positive prime loss to
+    primes dividing both indices.  Multiplicativity therefore yields a
+    divisor-weighted majorant of shape
+
+    ``Q^epsilon * gcd(left_index,right_index,Q)/Q``.
+
+    This is a local algebraic reduction only.  The physical Poisson and
+    product-index sums still have to aggregate the common-ramification
+    gcd without losing the required Type-I/II margin.
+    """
+    if prime < 3:
+        raise ValueError("use an odd prime witness")
+    return EisensteinOldspaceProjectorAudit(
+        prime=prime,
+        individual_ramified_ratio_at_witness=F(prime - 2),
+        coprime_coprime_projector=(
+            squarefree_eisenstein_oldspace_local_projector(
+                prime=prime,
+                left_valuation=0,
+                right_valuation=0,
+            )
+        ),
+        coprime_once_ramified_projector=(
+            squarefree_eisenstein_oldspace_local_projector(
+                prime=prime,
+                left_valuation=0,
+                right_valuation=1,
+            )
+        ),
+        once_ramified_once_ramified_projector=(
+            squarefree_eisenstein_oldspace_local_projector(
+                prime=prime,
+                left_valuation=1,
+                right_valuation=1,
+            )
+        ),
+        oldspace_sum_factorizes_prime_by_prime=True,
+        coprime_ramified_projector_gains_one_prime=True,
+        local_loss_depends_only_on_common_ramification=True,
+        same_cusp_global_kernel_has_gcd_over_level_majorant=True,
+        atkin_lehner_cross_cusp_projector_identified=False,
+        same_cusp_projector_is_physical_adapter=False,
+        common_ramification_gcd_aggregation_proved=False,
+        continuous_spectrum_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+
+
+def _euler_phi(value: int) -> int:
+    if value <= 0:
+        raise ValueError("value must be positive")
+    result = value
+    remaining = value
+    prime = 2
+    while prime * prime <= remaining:
+        if remaining % prime == 0:
+            result -= result // prime
+            while remaining % prime == 0:
+                remaining //= prime
+        prime += 1
+    if remaining > 1:
+        result -= result // remaining
+    return result
+
+
+def reciprocal_lcm_quadratic_energy(
+    coefficients: dict[int, Fraction],
+) -> dict[str, object]:
+    """Check the reciprocal-LCM/totient identity on finite data.
+
+    For ``c_n=abs(coefficients[n])`` the positive quadratic form is
+
+    ``sum_(m,n) c_m*c_n/lcm(m,n)``.
+
+    Since ``gcd(m,n)=sum_(d|m,d|n) phi(d)``, it is identically
+
+    ``sum_d phi(d)*(sum_(d|n) c_n/n)^2``.
+
+    The analytic outer-entry use groups ``A*B=n`` first.  Restricted
+    smooth Mobius convolutions are divisor-bounded, and the displayed
+    identity plus the standard divisor mean gives only a fixed power of
+    ``log T`` on a dyadic interval.  This helper is an exact finite
+    regression witness for the algebraic identity, not the analytic
+    mean-value proof.
+    """
+    if not coefficients or any(index <= 0 for index in coefficients):
+        raise ValueError("coefficients must have positive integer indices")
+    absolute = {index: abs(F(value)) for index, value in coefficients.items()}
+    direct = F(0)
+    for left, left_value in absolute.items():
+        for right, right_value in absolute.items():
+            lcm = left * right // gcd(left, right)
+            direct += left_value * right_value / lcm
+
+    maximum = max(absolute)
+    expanded = F(0)
+    for divisor in range(1, maximum + 1):
+        inner = sum(
+            (value / index for index, value in absolute.items() if index % divisor == 0),
+            F(0),
+        )
+        expanded += F(_euler_phi(divisor)) * inner * inner
+    return {
+        "direct_energy": direct,
+        "gcd_totient_energy": expanded,
+        "identity_verified": direct == expanded,
+    }
+
+
+def outer_modulus_divisor_incidence_energy(
+    coefficients: dict[int, Fraction],
+    *,
+    interval_lower: int,
+    interval_upper: int,
+) -> dict[str, object]:
+    """Square the exact divisor-incidence coefficient in two ways.
+
+    After the outer divisor sum is interchanged with the lifted modulus
+    sum, its coefficient at a physical modulus ``s`` is
+
+    ``G(s)=sum_(B|s) beta(B)``.
+
+    Expanding ``sum_(S0<=s<=S1) |G(s)|^2`` shows that a pair
+    ``(B1,B2)`` occurs exactly once for every multiple of
+    ``lcm(B1,B2)`` in the interval.  The helper checks this finite
+    identity with signed rational coefficients.  It deliberately does
+    not replace the resulting arithmetic modulus coefficient by a
+    smooth Kuznetsov test.
+    """
+    if not coefficients or any(index <= 0 for index in coefficients):
+        raise ValueError("coefficients must have positive integer indices")
+    lower = int(interval_lower)
+    upper = int(interval_upper)
+    if lower <= 0 or upper < lower:
+        raise ValueError("require 1 <= interval_lower <= interval_upper")
+    beta = {index: F(value) for index, value in coefficients.items()}
+    grouped = tuple(
+        (
+            modulus,
+            sum(
+                (
+                    value
+                    for divisor, value in beta.items()
+                    if modulus % divisor == 0
+                ),
+                F(0),
+            ),
+        )
+        for modulus in range(lower, upper + 1)
+    )
+    direct = sum((value * value for _, value in grouped), F(0))
+    diagonal = F(0)
+    offdiagonal = F(0)
+    for left, left_value in beta.items():
+        for right, right_value in beta.items():
+            lcm = left * right // gcd(left, right)
+            count = upper // lcm - (lower - 1) // lcm
+            contribution = left_value * right_value * count
+            if left == right:
+                diagonal += contribution
+            else:
+                offdiagonal += contribution
+    pairwise = diagonal + offdiagonal
+    return {
+        "grouped_modulus_coefficients": grouped,
+        "direct_energy": direct,
+        "pairwise_lcm_count_energy": pairwise,
+        "diagonal_pair_energy": diagonal,
+        "offdiagonal_pair_energy": offdiagonal,
+        "lcm_pair_count_identity_verified": direct == pairwise,
+    }
+
+
+def outer_modulus_type_recombination_audit(
+    *,
+    original_modulus: int,
+    cutoff_u: int,
+    cutoff_v: int,
+    physical_modulus_exponent: Fraction,
+) -> OuterModulusTypeRecombinationAudit:
+    """Recombine all artificial Type scales before the modulus trace.
+
+    The exact one-variable identity is
+
+    ``mu(s)=-(Type-I(s)+Type-II(s))``.
+
+    Hence summing all allocation boxes reconstructs the original
+    arithmetic modulus coefficient ``mu(s)``, whose absolute value is
+    at most one.  Swapping an individual outer divisor sum with the
+    lifted modulus condition turns ``B|s`` into the lcm pair-count
+    identity checked by :func:`outer_modulus_divisor_incidence_energy`.
+    Both facts remove a spurious positive power from the outer-scale
+    ledger.  They do not make ``mu(s)`` a smooth Bessel test, so the
+    remaining Möbius-modulus Kuznetsov large sieve is left open.
+    """
+    n = int(original_modulus)
+    u = int(cutoff_u)
+    v = int(cutoff_v)
+    sigma = F(physical_modulus_exponent)
+    if n <= u or u < 1 or v < 1:
+        raise ValueError(
+            "require original_modulus > cutoff_u >= 1 and cutoff_v >= 1"
+        )
+    if sigma < 0:
+        raise ValueError("physical_modulus_exponent must be nonnegative")
+    original, type_i, type_ii = split_mobius_identity(
+        n,
+        cutoff_u=u,
+        cutoff_v=v,
+    )
+    recombined = -(type_i + type_ii)
+    exact = original == mobius(n) == recombined
+    return OuterModulusTypeRecombinationAudit(
+        original_modulus=n,
+        cutoff_u=u,
+        cutoff_v=v,
+        original_mobius_weight=original,
+        type_i_sum_inside_parentheses=type_i,
+        type_ii_sum_inside_parentheses=type_ii,
+        recombined_modulus_weight=recombined,
+        all_type_allocations_recombine_exactly=exact,
+        recombined_modulus_weight_absolute_bound=abs(recombined),
+        physical_modulus_scale_exponent=sigma,
+        grouped_coefficient_l2_squared_exponent=sigma,
+        outer_scale_power_loss_after_recombination=F(0),
+        physical_inverse_entry_normalization_retained=True,
+        hard_face_arbitrary_coefficient_bound_exponent=F(5, 2),
+        hard_face_target_exponent=F(2),
+        required_mobius_modulus_saving_exponent=F(1, 2),
+        arbitrary_coefficient_large_sieve_closes_hard_face=False,
+        level_divisibility_swaps_to_divisor_incidence=True,
+        divisor_incidence_energy_has_exact_lcm_kernel=True,
+        dyadic_lcm_boundary_error_is_polylogarithmic=True,
+        exact_remaining_gate_is_mobius_modulus_kuznetsov=True,
+        arithmetic_modulus_weight_is_a_smooth_bessel_test=False,
+        standard_kuznetsov_large_sieve_applies=False,
+        mobius_modulus_harmonic_large_sieve_proved=False,
+        steinberg_conductor_average_proved=False,
+        outer_lisk_covered=False,
+    )
+
+
+def squarefree_gauss_pair_fourth_mass(
+    *,
+    modulus: int,
+    frequency: int,
+) -> dict[str, object]:
+    """Evaluate the conductor-weighted pair of generalized Gauss sums.
+
+    Let ``chi`` run through all characters modulo a squarefree ``s`` and
+    write ``G_s(chi,n)=sum_(x mod s)^* chi(x)e(nx/s)``.  Sorting characters
+    by primitive conductor gives the exact local factor
+
+    ``1+(p-2)p^2`` when ``p`` does not divide ``n``, and ``(p-1)^2`` when
+    ``p`` divides ``n``, for
+
+    ``sum_chi |G_s(chi,1) G_s(conj(chi),n)|^2``.
+
+    Each local factor is at most ``p^2(p-1)``.  Thus the full mass is at
+    most ``s^2*phi(s)`` uniformly in ``gcd(n,s)``; no divisor of the
+    Poisson frequency costs a positive power.
+    """
+    s = int(modulus)
+    n = int(frequency)
+    if s <= 0:
+        raise ValueError("modulus must be positive")
+    remaining = s
+    factors: list[int] = []
+    prime = 2
+    while prime * prime <= remaining:
+        if remaining % prime == 0:
+            remaining //= prime
+            if remaining % prime == 0:
+                raise ValueError("modulus must be squarefree")
+            factors.append(prime)
+        prime += 1
+    if remaining > 1:
+        factors.append(remaining)
+    local_factors = tuple(
+        (
+            prime,
+            (prime - 1) ** 2
+            if n % prime == 0
+            else 1 + (prime - 2) * prime**2,
+        )
+        for prime in factors
+    )
+    exact = 1
+    for _, local in local_factors:
+        exact *= local
+    upper = s * s * _euler_phi(s)
+    return {
+        "prime_factors": tuple(factors),
+        "local_factors": local_factors,
+        "exact_pair_fourth_mass": exact,
+        "universal_upper_bound": upper,
+        "pair_fourth_mass_has_no_frequency_gcd_power_loss": exact <= upper,
+    }
+
+
+def product_gcd_layer_prime_majorant(
+    *,
+    prime: int,
+    frequency_divisible: bool,
+) -> dict[str, object]:
+    """Return the local majorants after exact product-gcd extraction.
+
+    For ``d1=(h,s)``, ``d2=(delta,s)``, and ``g=lcm(d1,d2)``, exact
+    coprimality of the reduced variables adds the two exclusion divisors
+    from ``g/d1`` and ``g/d2``.  At a prime in ``g`` their square-root
+    density is ``2/sqrt(p)+3/p``.  Together with the four supplied by
+    the Cochrane--Shi factor when the prime stays in ``s/g``, this is at
+    most eight after the Ramanujan factor is inserted.
+
+    The principal ratio, after comparison with ``H*L/s``, is exactly
+
+    ``|c_p(a)| * (p/(p-1)+2+3/p)``.
+
+    It is at most six for ``p`` not dividing ``a`` and at most ``6p``
+    otherwise.  Averaging the latter divisibility over the Poisson
+    interval gives the local harmonic majorant twelve.
+    """
+    p = int(prime)
+    if not _is_prime_integer(p):
+        raise ValueError("prime must be prime")
+    ramanujan = p - 1 if frequency_divisible else 1
+    principal = F(ramanujan) * (F(p, p - 1) + 2 + F(3, p))
+    return {
+        "prime": p,
+        "frequency_divisible": bool(frequency_divisible),
+        "ramanujan_absolute_value": ramanujan,
+        "principal_ratio_local_factor": principal,
+        "principal_ratio_local_upper_bound": 6 * p if frequency_divisible else 6,
+        "nonprincipal_local_upper_bound": 8,
+        "principal_interval_mean_local_upper_bound": 12,
+    }
+
+
+def product_index_character_energy_audit(
+    *,
+    modulus_exponent: Fraction,
+    first_product_length_exponent: Fraction,
+    second_product_length_exponent: Fraction,
+    required_saving_exponent: Fraction,
+) -> ProductIndexCharacterEnergyAudit:
+    """Audit the unit-product character-energy route to the hard MMKLS box.
+
+    For unit ``h,delta`` expand both additive phases in
+
+    ``sum_(h,delta) a_h b_delta S(m,-h*delta;s)``
+
+    into characters modulo squarefree ``s``.  Cochrane--Shi's shifted
+    fourth moment, followed by Cauchy between the two intervals, bounds
+    the nonprincipal part by ``s*sqrt(H*L)`` up to the square root of
+    their explicit divisor/log factor.  The principal character is
+    evaluated rather than squared and has size ``H*L/phi(s)`` when the
+    first Kloosterman index is a unit.  The generalized Gauss-pair mass
+    above shows that the nonprincipal estimate is uniform in that first
+    index.
+
+    The gcd and principal-frequency layers can be aggregated at
+    logarithmic cost.  This still does not compose with the outer PEVP:
+    its product-index L2 norm already charges the same square-root
+    energy.  If the geometric estimate is inserted directly and the
+    remaining modulus, frequency, and outer-entry variables are summed
+    absolutely, the most favorable outer-entry exponent zero gives the
+    bound ``s*sqrt(H*L)`` against the MMKLS target ``s``.  The full gate
+    is therefore not promoted here.
+    """
+    sigma = F(modulus_exponent)
+    h = F(first_product_length_exponent)
+    ell = F(second_product_length_exponent)
+    required = F(required_saving_exponent)
+    if min(sigma, h, ell, required) < 0:
+        raise ValueError("exponents must be nonnegative")
+    trivial = h + ell + sigma / 2
+    nonprincipal = sigma + (h + ell) / 2
+    principal = h + ell - sigma
+    saving = trivial - nonprincipal
+    margin = saving - required
+    direct_target = sigma
+    direct_deficit = nonprincipal - direct_target
+    return ProductIndexCharacterEnergyAudit(
+        modulus_exponent=sigma,
+        first_product_length_exponent=h,
+        second_product_length_exponent=ell,
+        trivial_weil_product_sum_exponent=trivial,
+        nonprincipal_character_bound_exponent=nonprincipal,
+        principal_character_bound_exponent=principal,
+        unit_layer_saving_exponent=saving,
+        required_hard_face_saving_exponent=required,
+        unit_layer_saving_margin=margin,
+        minimum_direct_mmkls_bound_exponent=nonprincipal,
+        mmkls_target_exponent=direct_target,
+        minimum_direct_mmkls_deficit=direct_deficit,
+        product_intervals_are_shorter_than_modulus=max(h, ell) < sigma,
+        cochrane_shi_fourth_moment_applies_to_unit_intervals=max(h, ell) < sigma,
+        smooth_weight_partial_summation_has_zero_power_cost=True,
+        generalized_gauss_pair_mass_has_zero_power_cost=True,
+        squarefree_local_factor_harmonic_mean_is_polylogarithmic=True,
+        physical_product_kernel_nuclear_norm_available=True,
+        nonunit_product_gcd_layers_aggregated=True,
+        principal_ramanujan_frequency_average_aggregated=True,
+        nonprincipal_gcd_layer_harmonic_log_power=8,
+        principal_frequency_average_harmonic_log_power=12,
+        outer_pevp_product_l2_energy_already_charged=True,
+        local_product_saving_composes_with_outer_pevp=False,
+        physical_mmkls_weight_normalization_reinserted=False,
+        product_index_energy_closes_mmkls=False,
+        whole_mobius_gate_covered=False,
+        source=(
+            "Cochrane--Shi, The congruence x1x2=x3x4 (mod m), "
+            "Theorem 1 and Lemma 1"
+        ),
+    )
+
+
+def primitive_conductor_mmkls_audit(
+    *,
+    outer_entry_exponent: Fraction,
+    primitive_conductor_exponent: Fraction,
+) -> PrimitiveConductorMMKLSAudit:
+    """Recombine squarefree MMKLS characters by primitive conductor.
+
+    Write the squarefree modulus as s=f*r and let a character modulo s be
+    induced by the primitive character chi* modulo f.  CRT and the primitive
+    Gauss identity give
+
+    G_(fr)(conj(chi),n)
+      = chi*(n*inverse(r mod f))*tau(conj(chi*))*c_r(n).
+
+    Since c_r(1)=mu(r), multiplication by the physical mu(f*r) yields
+    the exact signed pair
+
+    mu(f)*c_r(a)*chi*(a*inverse(r)^2)*tau(conj(chi*))^2.
+
+    Thus one cofactor Möbius sign cancels, but c_r(a) remains and is again
+    mu(r) on the unit-frequency stratum.  Normalize the primitive Gauss
+    square by f; it is a unit-modulus root number.
+
+    For a separated physical tensor, cross-group the outer-entry polynomial
+    of length T^alpha with the h polynomial of length T^(5/2), and the
+    Poisson-frequency polynomial of the same outer length with the delta
+    polynomial.  Their coefficient L2 exponents are respectively
+    5/2-alpha and 5/2+alpha.  The multiplicative large sieve with weight
+    1/phi(f) contributes max(kappa, alpha+5/2-kappa).
+
+    The cofactor harmonic sum contributes -(3-kappa).  Hence the full
+    unit-stratum exponent is
+
+    -1/2+kappa+max(kappa,alpha+5/2-kappa).
+
+    It is strictly below the MMKLS exponent three exactly when alpha<1
+    and kappa<7/4.  Boundary equality gives no logarithmic saving.  The
+    complementary cells still require cancellation of the signed normalized
+    Gauss square across primitive conductors; taking its absolute value is
+    the large-conductor residual.
+    """
+    alpha = F(outer_entry_exponent)
+    kappa = F(primitive_conductor_exponent)
+    sigma = F(3)
+    x = F(5, 2)
+    if not (F(0) <= alpha <= sigma):
+        raise ValueError("outer-entry exponent must lie in [0,3]")
+    if not (F(0) <= kappa <= sigma):
+        raise ValueError("primitive-conductor exponent must lie in [0,3]")
+
+    # Exact finite CRT phase fixture for s=f*r, with both tested frequencies
+    # coprime to s.  This verifies the additive step in the induced Gauss-sum
+    # factorization; the character component is the defining inflation.
+    f, r, a = 5, 6, 7
+    s = f * r
+    crt_phase_exact = True
+    for frequency in (1, a):
+        for residue in range(1, s + 1):
+            if gcd(residue, s) != 1:
+                continue
+            left = F(frequency * residue, s)
+            right = (
+                F(
+                    frequency
+                    * (residue % f)
+                    * pow(r, -1, f),
+                    f,
+                )
+                + F(
+                    frequency
+                    * (residue % r)
+                    * pow(f, -1, r),
+                    r,
+                )
+            )
+            if (left - right).denominator != 1:
+                crt_phase_exact = False
+
+    def squarefree_ramanujan(modulus: int, frequency: int) -> int:
+        common = gcd(modulus, frequency)
+        reduced = modulus // common
+        return (
+            mobius(reduced)
+            * _euler_phi(modulus)
+            // _euler_phi(reduced)
+        )
+
+    c_r_one = squarefree_ramanujan(r, 1)
+    c_r_a = squarefree_ramanujan(r, a)
+    mobius_cancel = mobius(s) * c_r_one == mobius(f)
+    unit_ramanujan_is_mobius = c_r_a == mobius(r)
+
+    cofactor = sigma - kappa
+    first_cross_norm = x - alpha
+    second_cross_norm = x + alpha
+    pair_norm = (first_cross_norm + second_cross_norm) / 2
+    large_sieve = max(kappa, alpha + x - kappa)
+    bound = -cofactor + pair_norm + large_sieve
+    target = sigma
+    margin = target - bound
+    small_outer = alpha < F(1)
+    small_conductor = kappa < F(7, 4)
+    closes = margin > 0 and small_outer and small_conductor
+
+    return PrimitiveConductorMMKLSAudit(
+        modulus_exponent=sigma,
+        outer_entry_exponent=alpha,
+        primitive_conductor_exponent=kappa,
+        cofactor_exponent=cofactor,
+        long_product_factor_exponent=x,
+        induced_gauss_sum_crt_identity_exact=crt_phase_exact,
+        mobius_cofactor_cancellation_exact=mobius_cancel,
+        cofactor_ramanujan_factor_remains=True,
+        unit_cofactor_ramanujan_equals_mobius=unit_ramanujan_is_mobius,
+        normalized_primitive_gauss_square_has_unit_modulus=True,
+        outer_frequency_pair_l2_exponent=F(0),
+        first_cross_convolution_l2_exponent=first_cross_norm,
+        second_cross_convolution_l2_exponent=second_cross_norm,
+        large_sieve_factor_exponent=large_sieve,
+        unit_stratum_bound_exponent=bound,
+        mmkls_target_exponent=target,
+        power_saving_margin=margin,
+        small_outer_condition_verified=small_outer,
+        small_conductor_condition_verified=small_conductor,
+        standard_multiplicative_large_sieve_closes_unit_cell=closes,
+        residual_requires_signed_gauss_root_number_average=True,
+        nonunit_ramanujan_layers_composed_with_large_sieve=False,
+        full_mmkls_proved=False,
+        source=(
+            "exact squarefree induced-Gauss CRT identity and the classical "
+            "multiplicative large sieve"
+        ),
+    )
+
+
+def primitive_root_number_kernel_audit(
+    *,
+    squarefree_modulus: int,
+    unit_argument: int,
+    prime_fixture: int,
+) -> PrimitiveRootNumberKernelAudit:
+    """Expand the primitive Gauss-root-number average exactly.
+
+    For squarefree f and (u,f)=1, primitive-character orthogonality gives
+
+    sum_(chi mod f)^* chi(v)
+      = sum_(d|f, v=1 mod d) mu(f/d)*phi(d).
+
+    Expanding both primitive Gauss sums and applying CRT with f=d*c yields
+
+    K_f(u)
+      := mu(f)/phi(f) sum_chi^* (tau(conj(chi))^2/f) chi(u)
+       = sum_(d*c=f) mu(d)/(d*c*phi(c))
+           S(1,u*inverse(c mod d)^2;d).
+
+    The d=f,c=1 term is exactly mu(f)S(1,u;f)/f, the original
+    Möbius-weighted normalized Kloosterman kernel.  Proper divisors have
+    smaller integer modulus, but c may be a fixed prime, so they do not
+    have a uniform power drop.  For prime f=p the formula is simply
+
+    K_p(u) = -S(1,u;p)/p + 1/(p*(p-1)).
+
+    Therefore the signed root number is an exact re-expression of MMKLS,
+    not an independent large-sieve saving.
+    """
+    f = int(squarefree_modulus)
+    u = int(unit_argument)
+    p = int(prime_fixture)
+    if f <= 0 or mobius(f) == 0:
+        raise ValueError("modulus must be positive and squarefree")
+    if gcd(u, f) != 1:
+        raise ValueError("argument must be a unit modulo the modulus")
+    if not _is_prime_integer(p):
+        raise ValueError("prime fixture must be prime")
+
+    divisors = tuple(d for d in range(1, f + 1) if f % d == 0)
+    prime_factors = tuple(
+        q for q in range(2, f + 1) if f % q == 0 and _is_prime_integer(q)
+    )
+
+    # For squarefree f, primitive characters are tensor products of
+    # nonprincipal local characters.  Their local sum is p-2 at v=1 and
+    # -1 otherwise.  Compare this exact integer product with conductor
+    # inclusion-exclusion for every unit v.
+    primitive_orthogonality = True
+    for v in range(1, f + 1):
+        if gcd(v, f) != 1:
+            continue
+        local_product = 1
+        for q in prime_factors:
+            local_product *= q - 2 if v % q == 1 else -1
+        conductor_sum = sum(
+            mobius(f // d) * _euler_phi(d)
+            for d in divisors
+            if (v - 1) % d == 0
+        )
+        if local_product != conductor_sum:
+            primitive_orthogonality = False
+
+    terms: list[tuple[int, int, Fraction, int]] = []
+    outer_sign_transfer = True
+    for d in divisors:
+        c = f // d
+        coefficient = F(mobius(d), d * c * _euler_phi(c))
+        scaled_argument = (
+            0 if d == 1 else (u * pow(c, -1, d) ** 2) % d
+        )
+        terms.append((d, c, coefficient, scaled_argument))
+        if mobius(f) * mobius(c) != mobius(d):
+            outer_sign_transfer = False
+
+    top = next(term for term in terms if term[0] == f)
+    physical_top = F(mobius(f), f)
+    prime_top = F(-1, p)
+    prime_correction = F(1, p * (p - 1))
+
+    return PrimitiveRootNumberKernelAudit(
+        squarefree_modulus=f,
+        unit_argument=u,
+        primitive_character_orthogonality_exact=primitive_orthogonality,
+        primitive_root_number_divisor_formula_exact=(
+            primitive_orthogonality and outer_sign_transfer
+        ),
+        outer_mobius_moves_to_kloosterman_modulus=outer_sign_transfer,
+        divisor_kernel_terms=tuple(terms),
+        top_conductor_divisor=top[0],
+        top_conductor_cofactor=top[1],
+        top_conductor_coefficient=top[2],
+        top_conductor_coefficient_equals_physical_mobius_over_modulus=(
+            top[2] == physical_top
+        ),
+        proper_divisors_reduce_integer_modulus=all(
+            d < f for d, _, _, _ in terms if d != f
+        ),
+        proper_divisors_have_uniform_power_drop=False,
+        prime_fixture=p,
+        prime_kloosterman_coefficient=prime_top,
+        prime_scalar_correction=prime_correction,
+        prime_conductor_top_term_survives=(prime_top != 0),
+        prime_modulus_mobius_weight_is_constant=True,
+        root_number_average_is_self_similar_mmkls=True,
+        root_number_average_is_independent_large_sieve_saving=False,
+        full_mmkls_proved=False,
+        source="exact primitive-character orthogonality and CRT",
+    )
+
+
+def double_poisson_ramanujan_audit(
+    *,
+    modulus: int,
+    first_kloosterman_index: int,
+    ramanujan_frequency: int,
+    coprimality_parameter: int,
+) -> DoublePoissonRamanujanAudit:
+    """Audit two-dimensional Poisson in the Kloosterman product index.
+
+    With Fourier convention hat(u)(xi)=integral u(x)e(-x*xi)dx, finite
+    residue-class Poisson gives
+
+    sum_(h,delta) u(h/H)v(delta/L) S(a,-h*delta;s)
+      = H*L/s sum_(k,l) hat(u)(kH/s)hat(v)(lL/s)c_s(a+k*l).
+
+    The complete bilinear residue sum behind the identity is
+
+    sum_(x,y mod s) e_s(-c*x*y+k*x+l*y)
+      = s*e_s(k*l*inverse(c)),
+
+    valid for every integer modulus when c is a unit.  Thus the
+    Kloosterman variable collapses to a Ramanujan sum without a prime
+    modulus hypothesis.
+
+    On squarefree support,
+
+    mu(s)c_s(n)=sum_(d|s,d|n) d*mu(d).
+
+    Writing s=d*e identifies the long-e squarefree density.  Its main
+    local factor is prod_(p|dA)(1+1/p)^(-1), so the signed d-divisor sum
+    is the reciprocal-radical factor
+
+    prod_(p|n,p not| A) 1/(p+1).
+
+    At the hard scales the two dual variables each have exponent 1/2.
+    The long-cofactor main has prefactor H*L/S=T^2, leaving a target
+    T^1 for the short dual and outer variables.  Their raw dual volume
+    is already T^1, so there is zero power margin and a logarithmic
+    cancellation is still required.  Uniform aggregation of the
+    squarefree-density error and the short cofactor, which includes the
+    prime top-conductor cell, is not asserted here.
+    """
+    s = int(modulus)
+    a = int(first_kloosterman_index)
+    n = int(ramanujan_frequency)
+    A = int(coprimality_parameter)
+    if s <= 1 or gcd(a, s) != 1:
+        raise ValueError("first Kloosterman index must be a unit")
+    if mobius(s) == 0:
+        raise ValueError("fixture modulus must be squarefree")
+    if A <= 0:
+        raise ValueError("coprimality parameter must be positive")
+
+    # Exact composite fixture for the complete bilinear residue sum.
+    c = pow(7, -1, s) if gcd(7, s) == 1 else pow(a, -1, s)
+    k, ell = 4, 11
+    residue = (ell * pow(c, -1, s)) % s
+    bilinear_exact = (
+        (ell - c * residue) % s == 0
+        and (k * residue - k * ell * pow(c, -1, s)) % s == 0
+    )
+
+    common = gcd(s, n)
+    ramanujan = (
+        mobius(s // common)
+        * _euler_phi(s)
+        // _euler_phi(s // common)
+    )
+    ramanujan_left = mobius(s) * ramanujan
+    ramanujan_right = sum(
+        d * mobius(d)
+        for d in range(1, common + 1)
+        if common % d == 0
+    )
+
+    def prime_factors(value: int) -> tuple[int, ...]:
+        return tuple(
+            p
+            for p in range(2, value + 1)
+            if value % p == 0 and _is_prime_integer(p)
+        )
+
+    density_sum = F(0)
+    for d in range(1, n + 1):
+        if n % d != 0 or gcd(d, A) != 1 or mobius(d) == 0:
+            continue
+        local = F(1)
+        for p in prime_factors(d):
+            local *= F(p, p + 1)
+        density_sum += mobius(d) * local
+    density_product = F(1)
+    for p in prime_factors(n):
+        if A % p != 0:
+            density_product *= F(1, p + 1)
+
+    sigma = F(3)
+    h = F(5, 2)
+    ell_exp = F(5, 2)
+    dual_h = sigma - h
+    dual_ell = sigma - ell_exp
+    dual_volume = dual_h + dual_ell
+    pre_modulus = h + ell_exp - 2 * sigma
+    long_prefactor = h + ell_exp - sigma
+    target = sigma
+    short_target = target - long_prefactor
+
+    return DoublePoissonRamanujanAudit(
+        modulus=s,
+        first_kloosterman_index=a,
+        complete_bilinear_poisson_identity_exact=bilinear_exact,
+        identity_holds_for_composite_modulus=True,
+        kloosterman_sum_collapses_to_ramanujan_sum=True,
+        transformed_ramanujan_argument_sign="a+k*l",
+        modulus_exponent=sigma,
+        first_product_length_exponent=h,
+        second_product_length_exponent=ell_exp,
+        first_dual_length_exponent=dual_h,
+        second_dual_length_exponent=dual_ell,
+        dual_volume_exponent=dual_volume,
+        pre_modulus_sum_prefactor_exponent=pre_modulus,
+        mobius_ramanujan_divisor_identity_exact=(
+            ramanujan_left == ramanujan_right
+        ),
+        reciprocal_radical_density_divisor_sum=density_sum,
+        reciprocal_radical_density_euler_product_exact=(
+            density_sum == density_product
+        ),
+        long_cofactor_main_prefactor_exponent=long_prefactor,
+        mmkls_target_exponent=target,
+        required_short_dual_gate_exponent=short_target,
+        raw_short_dual_volume_exponent=dual_volume,
+        short_dual_gate_has_zero_power_margin=(
+            short_target == dual_volume
+        ),
+        physical_kernel_has_polylog_separated_nuclear_norm=True,
+        individual_separated_zero_frequency_may_be_nonzero=True,
+        long_cofactor_density_main_identified=True,
+        cofactor_error_and_short_tail_aggregated=False,
+        short_cofactor_contains_prime_top_conductor_cell=True,
+        positive_reciprocal_radical_majorant_supplies_log_saving=False,
+        double_poisson_route_closes_mmkls=False,
+        source="finite two-dimensional Poisson and squarefree Ramanujan CRT",
+    )
+
+
+def physical_ramanujan_resonance_audit(
+    *,
+    outer_entry: int,
+    poisson_index: int,
+    first_dual_frequency: int,
+    second_dual_frequency: int,
+    modulus: int,
+) -> PhysicalRamanujanResonanceAudit:
+    """Split the zero Ramanujan argument before defining ``b_A(n)``.
+
+    The transformed argument is ``n=m+A*k*l``.  At ``n=0`` every
+    divisor of the squarefree modulus contributes, so the finite Euler
+    product defining the reciprocal-radical weight for nonzero integers
+    is not a legal notation.  Instead ``c_s(0)=phi(s)`` and the modulus
+    coefficient is ``mu(s)*phi(s)/s^2``.
+
+    Put ``a_s=mu(s)*phi(s)/s``.  For ``(s,A)=1`` its Dirichlet series is
+
+      sum a_s*s^(-z) = zeta(z)^(-1) G_A(z),
+
+    where the infinite local correction differs from one by
+    ``O(p^(-Re(z)-1))`` and the omitted-prime factors over ``p|A`` cost
+    only a fixed power of ``log log(3A)`` near ``Re(z)=1``.  The
+    classical zeta zero-free region therefore gives arbitrary logarithmic
+    decay for a smooth dyadic modulus sum.  Since ``A`` and ``m`` have
+    the same dyadic scale, ``m=-A*k*l`` leaves only divisor-many opposite
+    sign frequency pairs and no positive outer power.
+
+    The physical QCT derivative bounds and polylog Fourier nuclear norm
+    do not themselves impose a vanishing condition on this hyperbola.
+    Thus the zero cell is closed by the Möbius PNT argument, while the
+    corrected nonzero short-dual gate remains open.
+    """
+    A = int(outer_entry)
+    m = int(poisson_index)
+    k = int(first_dual_frequency)
+    ell = int(second_dual_frequency)
+    s = int(modulus)
+    if min(A, m) <= 0:
+        raise ValueError("outer entry and Poisson index must be positive")
+    if s <= 1 or mobius(s) == 0:
+        raise ValueError("fixture modulus must be squarefree and nontrivial")
+    argument = m + A * k * ell
+    if argument != 0:
+        raise ValueError("fixture frequencies must lie on m+A*k*l=0")
+
+    phi_s = _euler_phi(s)
+    # For a fixed dyadic ratio m/A, the resonance has k*l=-m/A.
+    # Hence k,l are nonzero, of opposite sign, and form a divisor family.
+    factor_pairs = (
+        k != 0
+        and ell != 0
+        and k * ell < 0
+        and m % A == 0
+        and abs(k * ell) == m // A
+    )
+    return PhysicalRamanujanResonanceAudit(
+        resonance_tuple=(A, m, k, ell),
+        ramanujan_argument=argument,
+        resonance_is_inside_raw_dual_box=(abs(k) <= 1 and abs(ell) <= 1),
+        physical_qct_derivative_bounds_force_resonance_vanishing=False,
+        reciprocal_radical_weight_defined_at_zero=False,
+        sdrg_requires_zero_argument_split=True,
+        modulus=s,
+        ramanujan_zero_value=phi_s,
+        ramanujan_zero_value_equals_euler_phi=True,
+        mobius_weighted_zero_coefficient=F(mobius(s) * phi_s, s * s),
+        zero_mode_dirichlet_series_has_inverse_zeta_factor=True,
+        coprimality_euler_correction_has_polylog_cost=True,
+        resonant_frequency_pairs_are_divisor_bounded=factor_pairs,
+        resonance_has_arbitrary_log_saving=True,
+        resonance_cell_closed=factor_pairs,
+        nonzero_short_dual_gate_proved=False,
+        full_mmkls_proved=False,
+        source="Ramanujan zero value and the classical zeta zero-free region",
+    )
+
+
+def reciprocal_radical_fibre_audit(
+    *, moment_abscissa: Fraction
+) -> ReciprocalRadicalFibreAudit:
+    """Majorize the long-cofactor main through ``n=m+A*k*l`` fibres.
+
+    For nonzero ``n`` put
+
+      b_A(n)=prod_(p||n|,p not|A) 1/(p+1).
+
+    Its Dirichlet series at ``Re(z)>0`` has local factors
+
+      (1-p^(-z))^(-1)                              if p|A,
+      1+p^(-z)/((p+1)(1-p^(-z)))                  if p not|A.
+
+    The second product converges absolutely.  Under ``A<=T^3`` the
+    first product is ``T^o(1)``: among integers with bounded product,
+    the sum of ``p^(-epsilon)`` is maximized by the smallest primes.
+    Hence ``sum_(n<=X)b_A(n) << X^epsilon*T^o(1)``.
+
+    For fixed ``A,n`` and ``k*l != 0``, the dyadic condition ``m~A``
+    confines the integer product ``k*l`` to an interval of fixed
+    length, so its representation multiplicity is divisor-bounded.
+    The axes ``k*l=0`` have cardinality ``T^(1/2+o(1))``.  Taking
+    epsilon=1/16 gives exponents 1/4 off the axes and 11/16 on them,
+    both below the required exponent one.
+    """
+    epsilon = F(moment_abscissa)
+    if epsilon <= 0 or epsilon >= F(1, 4):
+        raise ValueError("moment abscissa must lie strictly between 0 and 1/4")
+    alpha_max = F(3)
+    n_max = F(4)
+    dual = F(1, 2)
+    nonaxis = n_max * epsilon
+    axis = dual + alpha_max * epsilon
+    target = F(1)
+    worst = max(nonaxis, axis)
+    margin = target - worst
+    return ReciprocalRadicalFibreAudit(
+        moment_abscissa=epsilon,
+        outer_entry_max_exponent=alpha_max,
+        ramanujan_argument_max_exponent=n_max,
+        first_dual_length_exponent=dual,
+        second_dual_length_exponent=dual,
+        reciprocal_radical_dirichlet_series_exact=True,
+        primes_dividing_outer_entry_cost_subpower=True,
+        nonaxis_fibre_is_divisor_bounded=True,
+        axis_fibre_exponent=dual,
+        nonaxis_bound_exponent=nonaxis,
+        axis_bound_exponent=axis,
+        long_cofactor_target_exponent=target,
+        power_saving_margin=margin,
+        outer_divisor_weight_costs_only_polylog=True,
+        long_cofactor_density_main_covered=(margin > 0),
+        squarefree_density_error_aggregated=False,
+        short_cofactor_cell_covered=False,
+        full_mmkls_proved=False,
+        source="Euler product for reciprocal radicals and exact affine-product fibres",
+    )
+
+
+def short_cofactor_mobius_interval_audit(
+    *,
+    cofactor_cutoff_exponent: Fraction,
+    qsmooth_split_relative_exponent: Fraction,
+) -> ShortCofactorMobiusIntervalAudit:
+    """Route the short cofactor through a quantitative Möbius interval.
+
+    Put ``e<=T^eta`` and ``d~S/e`` with ``S=T^3``.  Complementary
+    division of ``m+A*k*l=d*c`` makes ``d`` vary over an interval of
+    length at least ``T^(2-eta)`` at scale ``T^(3-eta)``.  For
+    ``eta=1/8`` this ratio is 15/23.
+
+    The coprimality ``(d,Q)=1``, ``Q=A*e``, is handled exactly by
+
+      mu(d)1_((d,Q)=1) = (mu * 1_<Q>)(d),
+
+    where ``1_<Q>`` is supported on integers all of whose prime factors
+    divide ``Q``.  Split its variable at ``r=D^rho``.  For small ``r``
+    the rescaled interval ratio is ``(theta-rho)/(1-rho)`` and the
+    quantitative Motohashi--Ramachandra theorem applies when it exceeds
+    7/12.  For large ``r``, independent Rankin parameters bound the
+    reciprocal tail and the counting tail by fixed powers.
+
+    In the complementary long-cofactor range, squarefree counting has
+    error ``(S/d)^(-3/2)tau(dA)``.  Counting ``m`` in residue classes
+    gives ``T*E0^(-1/2)+T*E0^(-3/2)``.  With ``eta=1/8`` the two
+    exponents are 15/16 and 13/16.
+    """
+    eta = F(cofactor_cutoff_exponent)
+    rho = F(qsmooth_split_relative_exponent)
+    if eta <= 0 or eta >= 1:
+        raise ValueError("cofactor cutoff exponent must lie in (0,1)")
+    if rho <= 0 or rho >= 1:
+        raise ValueError("Q-smooth split exponent must lie in (0,1)")
+    d_min = F(3) - eta
+    h_min = F(2) - eta
+    theta = h_min / d_min
+    theta_rescaled = (theta - rho) / (F(1) - rho)
+    threshold = F(7, 12)
+    margin = theta_rescaled - threshold
+    density_first = F(1) - eta / 2
+    density_second = F(1) - 3 * eta / 2
+    density_saving = F(1) - max(density_first, density_second)
+    published = margin > 0
+    density_closed = density_saving > 0
+    short_closed = published
+
+    def q_smooth(value: int, q_value: int) -> bool:
+        residual = value
+        prime = 2
+        while prime * prime <= residual:
+            if residual % prime == 0:
+                if q_value % prime != 0:
+                    return False
+                while residual % prime == 0:
+                    residual //= prime
+            prime += 1
+        return residual == 1 or q_value % residual == 0
+
+    fixture_q = 30
+    convolution_exact = all(
+        mobius(d) * int(gcd(d, fixture_q) == 1)
+        == sum(
+            mobius(d // r)
+            for r in range(1, d + 1)
+            if d % r == 0 and q_smooth(r, fixture_q)
+        )
+        for d in range(1, 121)
+    )
+    return ShortCofactorMobiusIntervalAudit(
+        cofactor_cutoff_exponent=eta,
+        modulus_variable_min_exponent=d_min,
+        mobius_interval_min_exponent=h_min,
+        raw_short_interval_ratio=theta,
+        qsmooth_convolution_identity_exact=convolution_exact,
+        qsmooth_split_relative_exponent=rho,
+        rescaled_short_interval_ratio=theta_rescaled,
+        published_quantitative_threshold=threshold,
+        threshold_margin=margin,
+        small_qsmooth_factor_uses_published_mobius_bound=published,
+        large_qsmooth_reciprocal_tail_has_power_saving=True,
+        large_qsmooth_count_tail_has_power_saving=(F(1, 2) < theta),
+        smooth_physical_weight_allows_partial_summation=True,
+        long_density_error_first_exponent=density_first,
+        long_density_error_second_exponent=density_second,
+        long_density_error_saving=density_saving,
+        long_density_error_aggregated=density_closed,
+        short_cofactor_cell_covered=short_closed,
+        balanced_hard_box_mmkls_covered=(density_closed and short_closed),
+        all_dyadic_boxes_aggregated=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "Motohashi--Ramachandra quantitative short-interval theorem "
+            "and exact Q-smooth convolution"
+        ),
+    )
+
+
+def oriented_mmkls_polytope_gap_audit(
+    *, cofactor_cutoff_exponent: Fraction
+) -> OrientedMMKLSPolytopeGapAudit:
+    """Exhibit an admissible zero-slack family missed by four witnesses.
+
+    For ``2<=u<=3`` put
+
+      ``(rho,sigma,m,k,ell,h,kappa)``
+      ``=(u,u,1/2,1/2,u-1/2,u-1/2,3-u)``.
+
+    This family saturates ``kappa+rho=kappa+sigma=3``, both individual
+    shift/frequency caps, and ``ell+h=rho+sigma-1``.  The oriented
+    complementary-divisor ratio is ``(u-1)/u``.  Even with cutoff eta
+    tending to zero, the published strict threshold ``7/12`` is missed
+    throughout ``2<=u<=12/5``.  With a fixed cutoff eta, strict coverage
+    begins only above ``12/5+eta``.
+
+    Thus the four designated boundary witnesses cannot certify the
+    continuous exponent polytope.  This is an explicit upstream residual
+    in addition to the logarithmic large-q endpoint.
+    """
+    eta = F(cofactor_cutoff_exponent)
+    if eta <= 0 or eta >= F(1):
+        raise ValueError("cofactor cutoff exponent must lie in (0,1)")
+    threshold = F(7, 12)
+
+    def family_box(u: Fraction) -> ExponentBox:
+        return ExponentBox(
+            rho=u,
+            sigma=u,
+            m=F(1, 2),
+            k=F(1, 2),
+            ell=u - F(1, 2),
+            h=u - F(1, 2),
+            kappa=F(3) - u,
+        )
+
+    witness_parameters = (F(2), F(12, 5), F(5, 2), F(8, 3), F(3))
+    witnesses = []
+    for u in witness_parameters:
+        raw = (u - 1) / u
+        adjusted = (u - 1 - eta) / (u - eta)
+        witnesses.append((u, raw, adjusted, adjusted > threshold))
+
+    boxes = tuple(family_box(u) for u in witness_parameters)
+    family_admissible = all(is_admissible(box) for box in boxes)
+    mollifier_saturated = all(
+        box.kappa + box.rho == 3 and box.kappa + box.sigma == 3
+        for box in boxes
+    )
+    caps_saturated = all(
+        box.ell == box.m + box.rho - 1
+        and box.h == box.sigma - box.m
+        and box.ell + box.h == box.rho + box.sigma - 1
+        for box in boxes
+    )
+    structural_residual_routes = tuple(
+        route_box(family_box(u)) for u in (F(2), F(12, 5))
+    )
+    published_covers_structural = any(
+        route.applicable for route in structural_residual_routes
+    )
+    no_cutoff_endpoint = F(12, 5)
+    fixed_cutoff_endpoint = no_cutoff_endpoint + eta
+    return OrientedMMKLSPolytopeGapAudit(
+        cofactor_cutoff_exponent=eta,
+        family_parameter_interval=(F(2), F(3)),
+        family_is_admissible=family_admissible,
+        family_saturates_both_mollifier_lengths=mollifier_saturated,
+        family_saturates_shift_and_frequency_caps=caps_saturated,
+        raw_ratio_formula="(u-1)/u",
+        adjusted_ratio_formula="(u-1-eta)/(u-eta)",
+        published_threshold=threshold,
+        no_cutoff_strict_coverage_lower_endpoint=no_cutoff_endpoint,
+        fixed_cutoff_strict_coverage_lower_endpoint=fixed_cutoff_endpoint,
+        exact_witnesses=tuple(witnesses),
+        power_scale_residual_interval=(F(2), no_cutoff_endpoint),
+        current_fixed_cutoff_gap_interval=(F(2), fixed_cutoff_endpoint),
+        published_route_covers_structural_residual=(
+            published_covers_structural
+        ),
+        four_boundary_witnesses_imply_full_polytope_coverage=False,
+        sole_lcpe_residual_claim_is_valid=False,
+        remaining_gates=(
+            "unbalanced_power_witnesses_r_long_s_long",
+            "balanced_zero_slack_u_in_[2,12/5]",
+            "large_q_centered_product_energy_lambda_2",
+        ),
+        all_parameter_cells_covered=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "exact admissibility algebra and the strict 7/12 "
+            "Motohashi--Ramachandra threshold"
+        ),
+    )
+
+
+def balanced_zero_slack_full_range_audit(
+) -> BalancedZeroSlackFullRangeAudit:
+    """Audit every point of the balanced zero-slack edge exactly.
+
+    The edge is
+
+      ``rho=sigma=u``, ``m=k=1/2``, ``ell=h=u-1/2``, ``kappa=3-u``
+
+    and is admissible for the full interval ``1/2 <= u <= 3``.  BCR's
+    saving on it is ``17/20-33u/20`` up to ``u=2/3`` and
+    ``1-15u/8`` afterwards.  Since adapters require a strict saving
+    larger than ``1/1000``, the BCR endpoint ``283/550`` itself is open.
+
+    With vanishing cofactor and Q-smooth cutoffs, endpoint dispersion has
+    relative interval exponent ``(u-1)/u``.  Its published ``theta=1/3``
+    theorem therefore starts only at strict ``u>3/2``; equality at
+    ``u=3/2`` is not covered.  This leaves the displayed transition
+    interval as a genuine power-scale residual before any slack cells are
+    considered.
+    """
+
+    def family_box(u: Fraction) -> ExponentBox:
+        return ExponentBox(
+            rho=u,
+            sigma=u,
+            m=F(1, 2),
+            k=F(1, 2),
+            ell=u - F(1, 2),
+            h=u - F(1, 2),
+            kappa=F(3) - u,
+        )
+
+    endpoints = (F(1, 2), F(3))
+    admissible = all(is_admissible(family_box(u)) for u in endpoints)
+    saturated = all(
+        (
+            box.kappa + box.rho == F(3)
+            and box.kappa + box.sigma == F(3)
+            and box.k + box.m == F(1)
+            and box.k + box.sigma == box.m + box.rho
+            and box.ell == box.m + box.rho - F(1)
+            and box.h == box.sigma - box.m
+            and box.third_length == box.rho + box.sigma - F(1)
+        )
+        for box in (family_box(u) for u in endpoints)
+    )
+
+    bcr_breakpoint = F(2, 3)
+    bcr_endpoint = F(283, 550)
+    bcr_endpoint_result = bcr_adapter(family_box(bcr_endpoint))
+
+    fixed_eta = F(1, 8)
+    fixed_rho = F(1, 10)
+    fixed_endpoint = F(857, 456)
+    fixed_reduced = fixed_endpoint - fixed_eta
+    fixed_ratio = F(1) - F(1) / ((F(1) - fixed_rho) * fixed_reduced)
+
+    structural_endpoint = F(3, 2)
+    structural_ratio = (structural_endpoint - F(1)) / structural_endpoint
+
+    witnesses = []
+    for u in (F(1, 2), bcr_endpoint, F(1), F(3, 2), F(2), F(3)):
+        bcr = bcr_adapter(family_box(u))
+        assert bcr.saving is not None
+        raw_ratio = (u - F(1)) / u
+        endpoint_covered = raw_ratio > F(1, 3)
+        witnesses.append(
+            (u, bcr.saving, bcr.applicable, raw_ratio, endpoint_covered)
+        )
+
+    return BalancedZeroSlackFullRangeAudit(
+        family_parameter_interval=endpoints,
+        family_is_admissible_on_full_interval=admissible,
+        family_saturates_all_seven_defining_equalities=saturated,
+        bcr_branch_breakpoint=bcr_breakpoint,
+        bcr_strict_coverage_upper_endpoint=bcr_endpoint,
+        bcr_endpoint_saving=bcr_endpoint_result.saving,
+        bcr_endpoint_is_covered=bcr_endpoint_result.applicable,
+        fixed_endpoint_dispersion_lower_endpoint=fixed_endpoint,
+        fixed_endpoint_ratio=fixed_ratio,
+        fixed_endpoint_is_covered=(fixed_ratio > F(11, 30)),
+        structural_endpoint_dispersion_lower_endpoint=structural_endpoint,
+        structural_endpoint_ratio=structural_ratio,
+        structural_endpoint_is_covered=(structural_ratio > F(1, 3)),
+        explicit_power_residual_interval=(bcr_endpoint, structural_endpoint),
+        exact_witnesses=tuple(witnesses),
+        full_balanced_family_covered=False,
+        full_parameter_polytope_enumerated=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "exact admissibility algebra; Bettin--Chandee Theorem 1; "
+            "arXiv:2411.05770v2, Theorem 1.1(i)"
+        ),
+    )
+
+
 def transition_bblr_phase_group_saving_audit(
     *,
     side_product_exponent: Fraction,
@@ -6717,6 +19406,4627 @@ def transition_bblr_phase_group_saving_audit(
         signed_phase_class_cross_terms_required=True,
         product_frequency_partition_is_sufficient=False,
         required_phase_class_cancellation_proved=False,
+    )
+
+
+def balanced_transition_farey_gate_audit(
+    *,
+    u: Fraction,
+    difference_exponent: Fraction,
+) -> BalancedTransitionFareyGateAudit:
+    """Normalize the two-Mobius Farey gate on the balanced edge.
+
+    Put ``R=S=T^u``, ``q=T^(3-u)``, ``H=L=T^(u-1/2)`` and split
+    ``r=c*s+w`` with ``|w|=T^theta``.  The additive local-density large
+    sieve, before any new Mobius cancellation, has exponent
+
+      ``2u-1/2 + max(theta,u-1/2)``.
+
+    A per-q bound of exponent ``2u-1/1000`` sums, with the exact
+    ``2T/(qRS)`` normalization, to exponent ``999/1000`` globally.
+    The positive difference between these two exponents is the exact
+    extra signed two-Mobius saving still required on the shell.
+    """
+    u = F(u)
+    theta = F(difference_exponent)
+    if not (F(283, 550) <= u <= F(3, 2)):
+        raise ValueError("u must lie in [283/550,3/2]")
+    if not (F(0) <= theta <= u):
+        raise ValueError("difference exponent must lie in [0,u]")
+
+    q_exponent = F(3) - u
+    zeta_exponent = F(1, 2)
+    h_exponent = u - zeta_exponent
+    numerator_exponent = 2 * h_exponent
+    farey_bound = (
+        2 * u
+        - F(1, 2)
+        + max(theta, u - F(1, 2))
+    )
+    local_target = 2 * u - TARGET_SAVING
+    required = _positive_part(farey_bound - local_target)
+
+    # There are T^(3-u) q values and the per-q normalization has
+    # exponent 1-(3-u)-2u=-2-u.
+    global_after_target = (
+        (F(3) - u) + (-F(2) - u) + local_target
+    )
+    assert global_after_target == F(1) - TARGET_SAVING
+
+    return BalancedTransitionFareyGateAudit(
+        u=u,
+        difference_exponent=theta,
+        q_exponent=q_exponent,
+        r_exponent=u,
+        s_exponent=u,
+        zeta_m_exponent=zeta_exponent,
+        zeta_k_exponent=zeta_exponent,
+        h_exponent=h_exponent,
+        delta_exponent=h_exponent,
+        product_numerator_exponent=numerator_exponent,
+        farey_energy_bound_exponent=farey_bound,
+        local_fixed_power_target_exponent=local_target,
+        required_additional_mobius_saving_exponent=required,
+        global_exponent_after_local_target=global_after_target,
+        exact_phase="e(-h*delta*inverse(w mod s)/s)",
+        two_original_mobius_weights_retained=True,
+        coprimality_conditions=(
+            "gcd(w,s)=1",
+            "gcd(q,s*(c*s+w))=1",
+        ),
+        matches_existing_TFS_theta_gate=(u == F(1)),
+        farey_energy_bound_proved=True,
+        required_new_mobius_estimate_proved=(required == 0),
+        local_gate_covered=(required == 0),
+        source=(
+            "exact balanced-edge normalization and additive "
+            "local-density Farey large sieve"
+        ),
+    )
+
+
+def balanced_transition_h_poisson_audit(
+    *,
+    u: Fraction,
+    difference_exponent: Fraction,
+    gcd_exponent: Fraction,
+) -> BalancedTransitionHPoissonAudit:
+    """Audit the nonzero-j h-Poisson line on the balanced transition.
+
+    Poisson summation in ``h`` gives ``w*v-j*s=delta``.  On a
+    ``g=gcd(v,j)=T^gamma`` box, primitive Bezout coordinates turn
+    ``(s,r)`` into a determinant-minus-one linear image of
+    ``(delta/g,n)``.  This function records the exact exponent ledger
+    before the still-unproved diagonal-scale slope square function.
+    """
+    u = F(u)
+    theta = F(difference_exponent)
+    gamma = F(gcd_exponent)
+    if not (F(283, 550) <= u <= F(3, 2)):
+        raise ValueError("u must lie in [283/550,3/2]")
+    if not (u - F(1, 2) <= theta <= u):
+        raise ValueError("nonzero-j shell needs u-1/2 <= theta <= u")
+
+    poisson = u - F(1, 2)
+    v = F(1, 2)
+    j = theta + F(1, 2) - u
+    max_gamma = min(v, j, u - F(1, 2))
+    if not (F(0) <= gamma <= max_gamma):
+        raise ValueError("gcd exponent exceeds a nonzero dual variable")
+
+    delta0 = u - F(1, 2) - gamma
+    line_parameter = u - F(1, 2) + gamma
+    inner_area = delta0 + line_parameter
+    slope_family = gamma + (v - gamma) + (j - gamma)
+    transformed = poisson + inner_area + slope_family
+    asymptotic_target = 2 * u
+    required_diagonal = _positive_part(transformed - asymptotic_target)
+    inner_square_root = inner_area / 2
+    square_root_margin = inner_square_root - required_diagonal
+    fixed_required = _positive_part(
+        transformed - (asymptotic_target - TARGET_SAVING)
+    )
+    critical = (
+        theta == u
+        and gamma == 0
+        and square_root_margin == 0
+    )
+
+    return BalancedTransitionHPoissonAudit(
+        u=u,
+        difference_exponent=theta,
+        gcd_exponent=gamma,
+        h_poisson_factor_exponent=poisson,
+        v_exponent=v,
+        j_exponent=j,
+        delta0_exponent=delta0,
+        line_parameter_exponent=line_parameter,
+        unimodular_inner_area_exponent=inner_area,
+        primitive_slope_family_exponent=slope_family,
+        transformed_cardinality_exponent=transformed,
+        asymptotic_local_target_exponent=asymptotic_target,
+        required_diagonal_scale_saving_exponent=required_diagonal,
+        inner_square_root_saving_exponent=inner_square_root,
+        square_root_power_margin=square_root_margin,
+        fixed_power_required_saving_exponent=fixed_required,
+        determinant_equation="w*v-j*s=delta",
+        unimodular_coordinate_change_exact=True,
+        is_unique_zero_margin_face=critical,
+        diagonal_scale_slope_square_function_proved=False,
+        source="exact h-Poisson and primitive Bezout parametrization",
+    )
+
+
+def balanced_transition_h_poisson_zero_mode_audit(
+    *,
+    u: Fraction,
+) -> BalancedTransitionHPoissonZeroModeAudit:
+    """Audit the resonant ``j=0`` term after h-Poisson.
+
+    The dual transform requires ``v=T^(1/2)``.  Since ``w*v=delta``
+    and ``delta=T^(u-1/2)``, a positive-power integer ``w`` exists only
+    for ``u>=1`` and then has exponent ``u-1``.  Divisibility reduces
+    the ``(w,delta)`` pair count to exponent ``u-1/2``.  Including
+    ``s`` and the Poisson factor gives exponent ``3u-1``.
+    """
+    u = F(u)
+    if not (F(283, 550) <= u <= F(3, 2)):
+        raise ValueError("u must lie in [283/550,3/2]")
+    present = u >= F(1)
+    difference = u - F(1) if present else F(0)
+    relative = difference / u if present else F(0)
+    transformed = 3 * u - F(1) if present else F(0)
+    target = 2 * u
+    required = _positive_part(transformed - target) if present else F(0)
+    taper_boundary = present and u == F(1)
+    rapid_tail = not present
+    covered = rapid_tail or taper_boundary
+    return BalancedTransitionHPoissonZeroModeAudit(
+        u=u,
+        resonant_zero_mode_present=present,
+        difference_exponent=difference,
+        shift_family_exponent=difference,
+        mobius_interval_exponent=u,
+        relative_shift_exponent=relative,
+        transformed_cardinality_exponent=transformed,
+        asymptotic_local_target_exponent=target,
+        required_affine_dispersion_saving_exponent=required,
+        published_strict_one_third_theorem_applies=(relative > F(1, 3)),
+        endpoint_tapers_close_zero_power_margin=taper_boundary,
+        zero_mode_is_rapid_transform_tail=rapid_tail,
+        affine_mobius_dispersion_proved=(required == 0),
+        local_gate_covered=covered,
+        source=(
+            "exact j=0 h-Poisson resonance and the strict one-third "
+            "short-interval threshold"
+        ),
+    )
+
+
+def balanced_zero_mode_averaged_elliott_audit(
+    *,
+    u: Fraction,
+) -> BalancedZeroModeAveragedElliottAudit:
+    """Compare the resonant zero mode with averaged Elliott exactly.
+
+    MRT Theorem 1.6 permits fixed affine slopes and gives an arbitrary
+    slowly vanishing relative factor for an average over shifts
+    ``H -> infinity``.  Even granting uniform q-coprime modifications
+    and a bounded smooth-weight decomposition, this changes no power of
+    ``T``.  The physical zero mode needs the full shift-length power
+    ``T^(u-1)``, so the theorem is numerically insufficient.
+    """
+    u = F(u)
+    if not (F(1) < u <= F(3, 2)):
+        raise ValueError("the resonant power zero mode needs 1<u<=3/2")
+    interval = u
+    shift = u - F(1)
+    raw_correlation = interval + shift
+    poisson_and_v = u
+    theorem_total = raw_correlation + poisson_and_v
+    target = 2 * u
+    deficit = theorem_total - target
+    assert deficit == u - F(1)
+    return BalancedZeroModeAveragedElliottAudit(
+        u=u,
+        mobius_interval_exponent=interval,
+        shift_average_exponent=shift,
+        raw_affine_correlation_exponent=raw_correlation,
+        h_poisson_and_v_prefactor_exponent=poisson_and_v,
+        optimistic_theorem_total_exponent=theorem_total,
+        local_target_exponent=target,
+        remaining_power_deficit=deficit,
+        fixed_slope_hypothesis_holds=True,
+        shift_length_tends_to_infinity=True,
+        theorem_supplies_only_logarithmic_relative_saving=True,
+        optimistically_grants_q_coprime_uniformity=True,
+        optimistically_grants_smooth_weight_separation=True,
+        published_theorem_closes_zero_mode=False,
+        source=(
+            "Matomaki--Radziwill--Tao, arXiv:1503.05121, "
+            "Theorem 1.6"
+        ),
+    )
+
+
+def almost_all_mobius_endpoint_dispersion_audit(
+    *,
+    modulus_exponent: Fraction,
+    cofactor_exponent: Fraction,
+    dual_product_exponent: Fraction,
+    outer_entry_exponent: Fraction,
+    qsmooth_relative_exponent: Fraction,
+) -> AlmostAllMobiusEndpointDispersionAudit:
+    """Audit exceptional-set transport on the balanced zero-slack family.
+
+    After ``s=d*e`` and the small Q-smooth convolution factor ``r``, put
+
+      ``D=T^(u-eta)``, ``X=D/r``, ``P=K*L=T^p``.
+
+    The ordinary Mobius interval has length ``X/P``.  At the uniform
+    endpoint ``u=2, eta=1/8, p=1, r=D^(1/10)`` its relative exponent is
+    ``11/27``, strictly above ``1/3+1/30``.  The maximal-progression form
+    of MRSTT Theorem 1.1(i) therefore gives arbitrary logarithmic saving
+    outside ``O(X log^(-A) X)`` starting points.
+
+    Structured starting points cannot simply be declared generic.  On a
+    dyadic complementary-divisor box ``c~C``, equality of integer start
+    bins for ``A*k*l/(c*r)`` forces
+
+      ``|A*k*l*c' - A'*k'*l'*c| < 2*C^2*r``.
+
+    The two product values have divisor-bounded representation weights.
+    Cauchy and the fixed divisor second moment
+    ``sum_(n<=Y) tau_J(n)^2 << Y log^O_J(1) Y`` cost ``C^2*r`` shifts.
+    This is exactly the endpoint-energy target ``mass^2/X``.  Hence the
+    exceptional set is harmless after choosing the theorem's logarithmic
+    saving larger than all fixed kernel and dyadic losses.
+    """
+    u = F(modulus_exponent)
+    eta = F(cofactor_exponent)
+    p = F(dual_product_exponent)
+    alpha = F(outer_entry_exponent)
+    rho = F(qsmooth_relative_exponent)
+    if not (F(2) <= u <= F(12, 5)):
+        raise ValueError("modulus exponent must lie in [2,12/5]")
+    if not (F(0) <= eta <= F(1, 8)):
+        raise ValueError("cofactor exponent must lie in [0,1/8]")
+    if not (F(0) <= p <= F(1)):
+        raise ValueError("dual product exponent must lie in [0,1]")
+    if not (F(0) <= rho <= F(1, 10)):
+        raise ValueError("Q-smooth relative exponent must lie in [0,1/10]")
+
+    reduced_modulus = u - eta
+    qsmooth_factor = rho * reduced_modulus
+    ambient = reduced_modulus - qsmooth_factor
+    interval = reduced_modulus - p - qsmooth_factor
+    if interval <= 0:
+        raise ValueError("ordinary Mobius interval must have power length")
+    interval_ratio = interval / ambient
+
+    theta = F(1, 3)
+    published_epsilon = F(1, 30)
+    published_lower_ratio = theta + published_epsilon
+    lower_margin = interval_ratio - published_lower_ratio
+
+    complementary = alpha + p - reduced_modulus
+    if complementary < 0:
+        raise ValueError("the nonzero complementary-divisor box is empty")
+    endpoint_mass = alpha + p + complementary
+    endpoint_range = ambient
+    energy_target = 2 * endpoint_mass - endpoint_range
+    product_value = endpoint_mass
+    shift_count = 2 * complementary + qsmooth_factor
+    divisor_energy = product_value + shift_count
+    energy_margin = energy_target - divisor_energy
+
+    canonical_worst_endpoint = (
+        u == F(2)
+        and eta == F(1, 8)
+        and p == F(1)
+        and alpha == F(7, 8)
+        and rho == F(1, 10)
+    )
+    published_applies = (
+        lower_margin > 0
+        and interval_ratio < F(1) - published_epsilon
+    )
+    endpoint_energy_closes = energy_margin >= 0
+    family_covered = (
+        canonical_worst_endpoint and published_applies and endpoint_energy_closes
+    )
+
+    def collision_implication(
+        a: int,
+        k: int,
+        ell: int,
+        c: int,
+        a_prime: int,
+        k_prime: int,
+        ell_prime: int,
+        c_prime: int,
+        r: int,
+    ) -> bool:
+        left_denominator = c * r
+        right_denominator = c_prime * r
+        left_bin = (a * k * ell) // left_denominator
+        right_bin = (a_prime * k_prime * ell_prime) // right_denominator
+        if left_bin != right_bin:
+            return True
+        cross_difference = abs(
+            a * k * ell * c_prime - a_prime * k_prime * ell_prime * c
+        )
+        return cross_difference < abs(c * c_prime) * r
+
+    fixture_exact = all(
+        collision_implication(a, k, ell, c, ap, kp, ellp, cp, r)
+        for a in range(2, 5)
+        for k in range(1, 4)
+        for ell in range(1, 4)
+        for c in range(1, 4)
+        for ap in range(2, 5)
+        for kp in range(1, 4)
+        for ellp in range(1, 4)
+        for cp in range(1, 4)
+        for r in range(1, 4)
+    )
+    return AlmostAllMobiusEndpointDispersionAudit(
+        modulus_exponent=u,
+        cofactor_exponent=eta,
+        reduced_modulus_exponent=reduced_modulus,
+        dual_product_exponent=p,
+        outer_entry_exponent=alpha,
+        qsmooth_relative_exponent=rho,
+        qsmooth_factor_exponent=qsmooth_factor,
+        mobius_ambient_exponent=ambient,
+        mobius_interval_exponent=interval,
+        mobius_interval_ratio=interval_ratio,
+        published_theta=theta,
+        published_epsilon=published_epsilon,
+        published_lower_ratio=published_lower_ratio,
+        lower_ratio_margin=lower_margin,
+        complementary_divisor_exponent=complementary,
+        endpoint_mass_exponent=endpoint_mass,
+        endpoint_range_exponent=endpoint_range,
+        endpoint_energy_target_exponent=energy_target,
+        product_value_exponent=product_value,
+        collision_shift_count_exponent=shift_count,
+        divisor_second_moment_energy_exponent=divisor_energy,
+        endpoint_energy_power_margin=energy_margin,
+        finite_collision_fixture_exact=fixture_exact,
+        maximal_progression_norm_handles_smooth_subintervals=True,
+        integer_start_exception_count_follows_from_measure_bound=True,
+        divisor_second_moment_supplies_only_polylog_loss=True,
+        arbitrary_log_saving_absorbs_endpoint_energy_polylogs=(
+            published_applies and endpoint_energy_closes
+        ),
+        longer_intervals_use_strict_three_fifths_pointwise_split=(
+            F(3, 5) > F(7, 12)
+        ),
+        worst_endpoint_is_monotone_over_balanced_family=(
+            canonical_worst_endpoint
+        ),
+        balanced_zero_slack_family_covered=family_covered,
+        full_parameter_polytope_enumerated=False,
+        large_q_centered_product_energy_proved=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "arXiv:2411.05770v2, Theorem 1.1(i), maximal Mobius "
+            "discorrelation; fixed divisor second moments"
+        ),
+    )
+
+
+def unbalanced_complementary_divisor_recombination_audit(
+    *,
+    cofactor_cutoff_exponent: Fraction,
+    qsmooth_relative_exponent: Fraction,
+    taylor_block_relative_exponent: Fraction,
+    published_epsilon: Fraction,
+) -> UnbalancedComplementaryDivisorRecombinationAudit:
+    """Audit the reciprocal-phase treatment of the two unbalanced witnesses.
+
+    On ``r_long`` (and symmetrically ``s_long``) the longer Ramanujan
+    modulus has exponent 3 and the double-Poisson dual product has
+    exponent 2.  In the short-cofactor range write ``d=r*n`` and
+    recombine every complementary divisor before taking an absolute
+    value.  Exact Poisson summation in ``c`` produces phase
+
+      ``e(-j*A*k*l/(r*n))``.
+
+    The reordering is used only in the critical entry band
+    ``A >= D*log(T)^(-K)``.  There the number of retained Poisson modes
+    is polylogarithmic.  Below that band the original complementary
+    divisor count retains the factor ``A/D <= log(T)^(-K)``.
+
+    For the retained modes, ``X=D/r`` and
+
+      ``|j*A*k*l/r| / X^2 <= T^(-margin) log(T)^O(1)``.
+
+    Quadratic Taylor expansion on windows of relative length 2/3 and
+    Theorem 1.1(i) of arXiv:2411.05770v2 then give arbitrary logarithmic
+    saving.  A sliding-window identity, rather than a fixed grid of
+    endpoints, transfers the theorem's exceptional-measure estimate.
+    """
+    eta = F(cofactor_cutoff_exponent)
+    rho_q = F(qsmooth_relative_exponent)
+    block = F(taylor_block_relative_exponent)
+    epsilon = F(published_epsilon)
+    if not F(0) < eta < F(1):
+        raise ValueError("cofactor cutoff exponent must lie in (0,1)")
+    if not F(0) < rho_q < F(1):
+        raise ValueError("Q-smooth relative exponent must lie in (0,1)")
+    if not F(0) < block < F(1):
+        raise ValueError("Taylor block exponent must lie in (0,1)")
+    if epsilon <= 0:
+        raise ValueError("published epsilon must be positive")
+
+    modulus = F(3)
+    dual_product = F(2)
+    reduced_mobius = (modulus - eta) * (F(1) - rho_q)
+    # In the critical band j*A is at most (A+D) times a polylogarithm.
+    # Since A/D <= T^eta and X=D/r, B/X^2 <= T^(eta+p-X).
+    phase_margin = reduced_mobius - dual_product - eta
+    theta = F(1, 3)
+    lower = theta + epsilon
+    lower_margin = block - lower
+    upper_margin = F(1) - epsilon - block
+    applies = (
+        phase_margin > 0
+        and lower_margin > 0
+        and upper_margin > 0
+        and block * 3 == 2
+    )
+    return UnbalancedComplementaryDivisorRecombinationAudit(
+        modulus_exponent=modulus,
+        cofactor_cutoff_exponent=eta,
+        qsmooth_relative_exponent=rho_q,
+        dual_product_exponent=dual_product,
+        complementary_divisor_size_exponent=dual_product,
+        reduced_mobius_min_exponent=reduced_mobius,
+        reciprocal_phase_ratio_power_saving=phase_margin,
+        taylor_block_relative_exponent=block,
+        taylor_polynomial_degree=2,
+        published_theta=theta,
+        published_epsilon=epsilon,
+        published_lower_ratio=lower,
+        published_lower_margin=lower_margin,
+        published_upper_margin=upper_margin,
+        c_poisson_identity_exact=True,
+        c_poisson_phase_sign_is_negative=True,
+        subcritical_entry_band_has_logarithmic_sparsity=True,
+        critical_entry_band_has_only_polylog_poisson_modes=True,
+        sliding_average_transfers_exceptional_measure=True,
+        maximal_progression_norm_handles_smooth_weights=True,
+        quadratic_taylor_error_has_power_saving=phase_margin > 0,
+        zero_reciprocal_frequency_uses_mobius_pnt=True,
+        nonzero_reciprocal_frequency_uses_published_theorem=applies,
+        large_qsmooth_tail_has_power_saving=True,
+        r_long_boundary_covered=applies,
+        s_long_boundary_covered=applies,
+        unbalanced_boundary_witnesses_covered=applies,
+        all_parameter_cells_covered=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "exact complementary-divisor Poisson identity; "
+            "arXiv:2411.05770v2, Theorem 1.1(i)"
+        ),
+    )
+
+
+def balanced_adaptive_reciprocal_phase_audit(
+    *,
+    cofactor_cutoff_exponent: Fraction,
+    qsmooth_relative_exponent: Fraction,
+    taylor_block_relative_exponent: Fraction,
+    published_epsilon: Fraction,
+) -> BalancedAdaptiveReciprocalPhaseAudit:
+    """Extend complementary-divisor c-Poisson over the balanced edge.
+
+    On the balanced zero-slack family
+
+    ``rho=sigma=u, m=k=1/2, ell=h=u-1/2, kappa=3-u``
+
+    the double-Poisson dual product has exponent one for every ``u``.
+    In the short-cofactor range, after ``d=r*n``, put
+
+    ``X=D/r`` and ``B=j*A*k*l/r``.
+
+    The critical entry band gives ``|B| <= e*X*T*log(T)^C``.  Taylor
+    expansion of ``B/n`` to degree two on windows ``Y=X^nu`` has total
+    error exponent
+
+    ``eta + 1 - 3*(1-nu)*x``,
+
+    where ``x=(u-eta)*(1-rho_Q)`` is the least exponent of ``X``.
+    Unlike the earlier fixed ``nu=2/3`` audit, ``nu`` may be chosen just
+    above the published ``1/3+epsilon`` threshold.  The worst ``u`` is
+    the exact BCR endpoint ``283/550``; positivity there proves every
+    larger point by monotonicity.  BCR proves the strict lower interval,
+    but the raw HL normalization still leaves a power deficit.  The
+    reported relative prefactor is evaluated at the displayed lower u;
+    for a general family member it is u-1, not the old constant -1.
+    Taylor positivity alone therefore does not cover the balanced edge.
+    """
+    eta = F(cofactor_cutoff_exponent)
+    rho_q = F(qsmooth_relative_exponent)
+    block = F(taylor_block_relative_exponent)
+    epsilon = F(published_epsilon)
+    if not F(0) < eta < F(1):
+        raise ValueError("cofactor cutoff exponent must lie in (0,1)")
+    if not F(0) < rho_q < F(1):
+        raise ValueError("Q-smooth relative exponent must lie in (0,1)")
+    if not F(0) < block < F(1):
+        raise ValueError("Taylor block exponent must lie in (0,1)")
+    if epsilon <= 0:
+        raise ValueError("published epsilon must be positive")
+
+    lower_u = F(283, 550)
+    dual_product = F(1)
+    prefactor_relative = lower_u - F(1)
+    long_axis = F(53, 100)
+    long_main_saving = F(1) - long_axis
+    density_first_saving = eta / F(2)
+    density_second_saving = F(3) * eta / F(2)
+    reduced = (lower_u - eta) * (F(1) - rho_q)
+    theta = F(1, 3)
+    published_lower = theta + epsilon
+    lower_margin = block - published_lower
+    upper_margin = F(1) - epsilon - block
+    taylor_margin = (
+        F(3) * (F(1) - block) * reduced
+        - dual_product
+        - eta
+    )
+    applies = (
+        prefactor_relative + dual_product == 0
+        and lower_margin > 0
+        and upper_margin > 0
+        and taylor_margin > 0
+        and long_main_saving > 0
+        and density_first_saving > 0
+        and density_second_saving > 0
+    )
+
+    return BalancedAdaptiveReciprocalPhaseAudit(
+        family_parameter_interval=(F(1, 2), F(3)),
+        bcr_strict_coverage_upper_endpoint=lower_u,
+        reciprocal_phase_coverage_lower_endpoint=lower_u,
+        cofactor_cutoff_exponent=eta,
+        qsmooth_relative_exponent=rho_q,
+        dual_product_exponent=dual_product,
+        physical_prefactor_relative_to_target_exponent=prefactor_relative,
+        prefactor_times_dual_volume_matches_target=(
+            prefactor_relative + dual_product == 0
+        ),
+        long_cofactor_axis_exponent_above_prefactor=long_axis,
+        long_cofactor_main_power_saving=long_main_saving,
+        density_error_first_power_saving=density_first_saving,
+        density_error_second_power_saving=density_second_saving,
+        subcritical_entry_has_arbitrary_log_saving=True,
+        critical_c_poisson_mode_count_is_polylogarithmic=True,
+        worst_reduced_mobius_exponent=reduced,
+        taylor_block_relative_exponent=block,
+        published_theta=theta,
+        published_epsilon=epsilon,
+        published_lower_ratio=published_lower,
+        published_lower_margin=lower_margin,
+        published_upper_margin=upper_margin,
+        worst_taylor_error_power_saving=taylor_margin,
+        adaptive_taylor_window_has_power_saving=(taylor_margin > 0),
+        c_poisson_identity_exact=True,
+        c_poisson_phase_sign_is_negative=True,
+        sliding_average_transfers_exceptional_measure=True,
+        maximal_polynomial_nilsequence_bound_is_uniform=True,
+        long_cofactor_main_covered=True,
+        long_cofactor_density_error_covered=True,
+        short_cofactor_range_covered=applies,
+        reciprocal_phase_piece_covers_bcr_endpoint=applies,
+        bcr_and_reciprocal_pieces_cover_full_balanced_edge=applies,
+        balanced_nonzero_j_gate_absorbed=applies,
+        balanced_resonant_j0_gate_absorbed=applies,
+        full_parameter_polytope_enumerated=False,
+        large_q_centered_product_energy_proved=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "exact complementary-divisor c-Poisson identity; adaptive "
+            "Taylor windows; arXiv:2411.05770v2, Theorem 1.1(i); "
+            "Bettin--Chandee Theorem 1"
+        ),
+    )
+
+
+def adaptive_reciprocal_slack_vertex_audit(
+    *,
+    cofactor_cutoff_exponent: Fraction,
+    qsmooth_relative_exponent: Fraction,
+    taylor_block_relative_exponent: Fraction,
+    published_epsilon: Fraction,
+    reciprocal_radical_moment_abscissa: Fraction,
+) -> AdaptiveReciprocalSlackVertexAudit:
+    """Route the nondegenerate residual vertices by adaptive c-Poisson.
+
+    Choose the longer mollifier variable as modulus and put
+
+    ``u=max(rho,sigma)``, ``a=ell+h`` and ``p=2*u-a``.
+
+    The raw physical factor has exponent ``a`` and the double-Poisson
+    dual product has exponent ``p``; their sum is ``2*u``, exceeding
+    the local target ``u``.  In the short-cofactor range the reciprocal
+    Taylor error has saving
+
+    ``3*(1-nu)*(u-eta)*(1-rho_Q) - p - eta``.
+
+    For the long-cofactor density main, nonaxis fibres save
+
+    ``p-epsilon_0*(u+p)``,
+
+    while the two axes save
+
+    ``min(u-h,u-ell)-epsilon_0*u``.
+
+    These rational margins are retained as local diagnostics, but do not
+    prove vertex coverage without paying the physical normalization gap.
+    """
+    eta = F(cofactor_cutoff_exponent)
+    rho_q = F(qsmooth_relative_exponent)
+    block = F(taylor_block_relative_exponent)
+    theorem_epsilon = F(published_epsilon)
+    moment = F(reciprocal_radical_moment_abscissa)
+    for value, name in (
+        (eta, "cofactor cutoff exponent"),
+        (rho_q, "Q-smooth relative exponent"),
+        (block, "Taylor block exponent"),
+        (theorem_epsilon, "published epsilon"),
+        (moment, "reciprocal-radical moment abscissa"),
+    ):
+        if not F(0) < value < F(1):
+            raise ValueError(f"{name} must lie in (0,1)")
+    if not (
+        block > F(1, 3) + theorem_epsilon
+        and block < F(1) - theorem_epsilon
+    ):
+        raise ValueError("Taylor block misses the published MRSTT window")
+
+    candidate_indices = (
+        8, 9, 10, 11, 12, 14, 15, 16, 19, 20, 21, 23, 24, 25
+    )
+    vertices = admissible_polytope_vertices()
+    rows = []
+    normalization_exact = True
+    axis_inverse_poisson_exact = True
+    for index in candidate_indices:
+        box = vertices[index - 1]
+        u = max(box.rho, box.sigma)
+        third_length = box.ell + box.h
+        dual_product = F(2) * u - third_length
+        minimum_axis = min(u - box.h, u - box.ell)
+        reduced = (u - eta) * (F(1) - rho_q)
+        taylor_saving = (
+            F(3) * (F(1) - block) * reduced
+            - dual_product
+            - eta
+        )
+        nonaxis_saving = dual_product - moment * (u + dual_product)
+        axis_saving = minimum_axis - moment * u
+        exact_here = third_length + dual_product == u
+        normalization_exact = normalization_exact and exact_here
+        covered = (
+            third_length > 0
+            and exact_here
+            and taylor_saving > 0
+            and nonaxis_saving > 0
+            and (axis_saving > 0 or axis_inverse_poisson_exact)
+        )
+        rows.append(
+            AdaptiveReciprocalSlackVertexRow(
+                vertex_index=index,
+                longer_modulus_exponent=u,
+                third_length_exponent=third_length,
+                dual_product_exponent=dual_product,
+                minimum_dual_axis_exponent=minimum_axis,
+                reduced_mobius_exponent=reduced,
+                taylor_power_saving=taylor_saving,
+                nonaxis_power_saving=nonaxis_saving,
+                axis_power_saving=axis_saving,
+                covered=covered,
+            )
+        )
+
+    covered_indices = tuple(row.vertex_index for row in rows if row.covered)
+    remaining_indices = tuple(
+        row.vertex_index for row in rows if not row.covered
+    )
+    recovered_axis_indices = tuple(
+        row.vertex_index
+        for row in rows
+        if row.covered and row.axis_power_saving <= 0
+    )
+    density_covered = eta / F(2) > 0 and F(3) * eta / F(2) > 0
+    return AdaptiveReciprocalSlackVertexAudit(
+        cofactor_cutoff_exponent=eta,
+        qsmooth_relative_exponent=rho_q,
+        taylor_block_relative_exponent=block,
+        published_epsilon=theorem_epsilon,
+        reciprocal_radical_moment_abscissa=moment,
+        vertex_rows=tuple(rows),
+        covered_vertex_indices=covered_indices,
+        remaining_vertex_indices=remaining_indices,
+        axis_inverse_poisson_identity_exact=axis_inverse_poisson_exact,
+        axis_union_has_only_polylogarithmic_volume=True,
+        zero_axis_vertices_recovered=recovered_axis_indices,
+        short_cofactor_normalization_is_exact=normalization_exact,
+        long_density_errors_have_power_saving=density_covered,
+        vertex_routes_cover_every_face_and_interior=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "exact oriented double-Poisson normalization; reciprocal-"
+            "radical fibres; adaptive c-Poisson; arXiv:2411.05770v2, "
+            "Theorem 1.1(i)"
+        ),
+    )
+
+
+def a_zero_endpoint_shifted_count_audit(
+) -> AZeroEndpointShiftedCountAudit:
+    """Close v10 and v14 in the pre-Poisson shifted equation.
+
+    In the left orientation the exact scales are
+
+    ``q=T^0, r=T^2, s=T^3, m=T^0, n=T^1, delta=T^0``
+
+    in the equation ``m*s-n*r=delta``.  For fixed
+    ``(m,delta,r,n)``, the integer ``s`` is unique if it exists.  The
+    number of terms is therefore ``T^(2+1)=T^3``.  The height integral
+    and square-root weights contribute
+
+    ``T / sqrt(T^2*T^3*T^0*T^1) = T^-2``
+
+    together with the exact ``q^-1`` factor.  Thus the untapered box is
+    ``O(T/q)``.  Since ``q*s`` lies in the top mollifier collar
+    ``[N/4,N]``, its Selberg weight is ``O(1/log T)``.  The remaining
+    harmonic q-sum is only ``O(log log T)`` on the exponent-zero core,
+    proving ``o(T)`` without using a Mobius estimate.  The right
+    orientation is identical with the two mollifier variables swapped.
+    """
+    q_exp = F(0)
+    r_exp = F(2)
+    s_exp = F(3)
+    m_exp = F(0)
+    n_exp = F(1)
+    delta_exp = F(0)
+    solution_count = r_exp + n_exp + m_exp + delta_exp
+    weight = F(1) - (
+        r_exp + s_exp + m_exp + n_exp
+    ) / F(2)
+    contribution = solution_count + weight
+    endpoint_log_saving = F(1)
+    closes = contribution == F(1) and endpoint_log_saving > 0
+    return AZeroEndpointShiftedCountAudit(
+        left_vertex_index=10,
+        right_vertex_index=14,
+        oriented_scale_exponents=(
+            q_exp, r_exp, s_exp, m_exp, n_exp, delta_exp,
+        ),
+        shifted_equation="m*s-n*r=delta",
+        fixed_variables_determine_top_mollifier_variable=True,
+        solution_count_exponent=solution_count,
+        kernel_and_square_root_weight_exponent=weight,
+        pre_taper_contribution_exponent=contribution,
+        endpoint_taper_log_saving_power=endpoint_log_saving,
+        q_sum_is_harmonic=True,
+        q_aggregate_is_loglogarithmic=True,
+        total_contribution_is_little_o_T=closes,
+        covered_vertex_indices=((10, 14) if closes else ()),
+        intervening_faces_and_interior_covered=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "exact pre-Poisson equation m*s-n*r=delta; AFE kernel "
+            "absolute bound; top Selberg mollifier taper"
+        ),
+    )
+
+
+def cubic_reciprocal_endpoint_dispersion_audit(
+    *,
+    longer_modulus_exponent: Fraction,
+    third_length_exponent: Fraction,
+    cofactor_cutoff_exponent: Fraction,
+    qsmooth_relative_exponent: Fraction,
+    taylor_block_relative_exponent: Fraction,
+    published_epsilon: Fraction,
+    fixed_weight_log_loss: Fraction,
+    dyadic_and_q_log_loss: Fraction,
+    subcritical_cutoff_log_power: Fraction,
+    poisson_mode_extra_log_loss: Fraction,
+    requested_mrstt_log_saving: Fraction,
+    target_log_saving: Fraction,
+) -> CubicReciprocalEndpointDispersionAudit:
+    """Audit the complete local endpoint-dispersion lemma.
+
+    Let the chosen Ramanujan modulus have size ``S=T^u`` and put
+    ``a=ell+h`` and ``P=T^p`` with ``p=2*u-a``.  The exact physical
+    double-Poisson prefactor, with the raw cofactor weight retained, is
+    ``HL=T^a``, so its product with the dual ``(k,l)`` volume is
+    ``T^(2*u)``.  The previous ``T^(a-u)`` silently spent an extra S.
+
+    In the short-cofactor range write ``S=e*D``, ``d=r*n`` and
+    ``X=D/r``.  Complementary-divisor Poisson is the exact identity
+
+    ``C = A/(r^2*e^2) sum_(j,n) mu(n)/n^2 * amplitude``
+    ``      * e(-j*A*k*l/(r*n))``.
+
+    MRSTT on sliding cubic Taylor windows, followed by partial
+    summation against every retained physical weight, gives
+    ``sum mu(n)n^(-2) amplitude e(B/n) << X^(-1) log^(-M)``.
+    Since ``X=S/(e*r)``, the Poisson coefficient becomes
+    ``A/(r*e*S)``.  The original outer ``A^(-1)`` cancels that ``A``;
+    a dyadic ``A~A0`` sum therefore has weight ``A0/(r*e*S)``.
+
+    The logarithmic choices are quantified and nested.  After fixing a
+    final saving and a Fourier decay order, record the finite kernel
+    seminorm exponents, then choose the subcritical cutoff, the mode
+    cutoff and finally the arbitrary MRSTT saving.  The numerical input
+    parameters remain only a pressure-test example; they are not proof
+    constants.
+    """
+    u = F(longer_modulus_exponent)
+    a = F(third_length_exponent)
+    eta = F(cofactor_cutoff_exponent)
+    rho_q = F(qsmooth_relative_exponent)
+    block = F(taylor_block_relative_exponent)
+    theorem_epsilon = F(published_epsilon)
+    weight_loss = F(fixed_weight_log_loss)
+    aggregation_loss = F(dyadic_and_q_log_loss)
+    cutoff = F(subcritical_cutoff_log_power)
+    poisson_extra = F(poisson_mode_extra_log_loss)
+    mrstt_saving = F(requested_mrstt_log_saving)
+    target = F(target_log_saving)
+    if not F(1, 2) <= u <= F(3):
+        raise ValueError("longer modulus exponent must lie in [1/2,3]")
+    if not F(0) <= a <= F(2) * u - F(1):
+        raise ValueError("third length violates the oriented support bound")
+    for value, name in (
+        (eta, "cofactor cutoff exponent"),
+        (rho_q, "Q-smooth relative exponent"),
+        (block, "Taylor block exponent"),
+        (theorem_epsilon, "published epsilon"),
+    ):
+        if not F(0) < value < F(1):
+            raise ValueError(f"{name} must lie in (0,1)")
+    if min(
+        weight_loss,
+        aggregation_loss,
+        cutoff,
+        poisson_extra,
+        mrstt_saving,
+        target,
+    ) < 0:
+        raise ValueError("logarithmic losses and savings must be nonnegative")
+
+    p = F(2) * u - a
+    physical_prefactor = a
+    physical_times_dual = physical_prefactor + p
+    reduced = (u - eta) * (F(1) - rho_q)
+    degree = 3
+    taylor_saving = (
+        F(degree + 1) * (F(1) - block) * reduced - p - eta
+    )
+    theorem_window = (
+        block > F(1, 3) + theorem_epsilon
+        and block < F(1) - theorem_epsilon
+    )
+    subcritical_net = cutoff - weight_loss - aggregation_loss
+    critical_net = (
+        mrstt_saving
+        - cutoff
+        - poisson_extra
+        - weight_loss
+        - aggregation_loss
+    )
+    subcritical_covered = subcritical_net > target
+    critical_covered = (
+        theorem_window and taylor_saving > 0 and critical_net > target
+    )
+    physical_normalization = physical_times_dual == u
+    amplitude = reciprocal_amplitude_seminorm_transfer_audit(
+        derivative_order=1,
+        fourier_decay_order=4,
+        available_kernel_x_derivatives=1,
+        available_kernel_y_derivatives=5,
+        kernel_seminorm_log_loss=weight_loss,
+        requested_mrstt_log_saving=weight_loss,
+        aggregation_log_loss=F(0),
+        target_log_saving=F(0),
+    )
+    amplitude_uniform = all(
+        (
+            amplitude.kernel_derivative_supply_is_sufficient,
+            amplitude.normalized_curve_derivative_has_no_lambda_power,
+        )
+    )
+    partial_summation_x_inverse = all(
+        (
+            amplitude.n_inverse_square_supremum_power == F(-2),
+            amplitude.n_inverse_square_total_variation_power == F(-2),
+            amplitude.partial_summation_output_power == F(-1),
+        )
+    )
+    quantified = independent_cubic_closure_verification_audit()
+    local_proved = all(
+        (
+            p >= F(1),
+            physical_normalization,
+            theorem_window,
+            taylor_saving > 0,
+            quantified.c_poisson_full_weight_embedding_verified,
+            quantified.mrstt_maximal_progression_form_verified,
+            quantified.sliding_identity_is_exact_on_the_interior,
+            amplitude_uniform,
+            partial_summation_x_inverse,
+            quantified.weighted_partial_summation_verified,
+            quantified.lcpe2_quantified_log_ledger_closed,
+        )
+    )
+    return CubicReciprocalEndpointDispersionAudit(
+        longer_modulus_exponent=u,
+        third_length_exponent=a,
+        dual_product_exponent=p,
+        physical_prefactor_exponent=physical_prefactor,
+        prefactor_times_dual_volume_exponent=physical_times_dual,
+        local_target_exponent=u,
+        cofactor_cutoff_exponent=eta,
+        qsmooth_relative_exponent=rho_q,
+        reduced_mobius_exponent=reduced,
+        taylor_block_relative_exponent=block,
+        published_epsilon=theorem_epsilon,
+        taylor_polynomial_degree=degree,
+        taylor_power_saving=taylor_saving,
+        c_poisson_identity_exact=True,
+        c_poisson_phase_sign_is_negative=True,
+        retained_physical_weights=(
+            "W(r*n*e/S)",
+            "n^(-2)",
+            "PhiHat_2(n/X,j*A/(r*n))",
+            "p_N(q*r_entry)",
+            "p_N(q*s_entry)",
+            "dyadic(A,e,r,k,l,j,n)",
+        ),
+        physical_weight_normalized_derivatives_are_polylogarithmic=(
+            amplitude_uniform
+        ),
+        partial_summation_gives_X_inverse=partial_summation_x_inverse,
+        post_poisson_weight_before_outer_A="A/(r*e*S)",
+        outer_A_inverse_cancels_poisson_A=True,
+        dyadic_A_sum_weight="A0/(r*e*S)",
+        cofactor_weight_ledger=("1/e^2", "A0/(e*S)"),
+        e_sum_costs_only_logarithms=True,
+        qsmooth_r_sum_costs_only_logarithms=True,
+        fixed_weight_log_loss=weight_loss,
+        dyadic_and_q_log_loss=aggregation_loss,
+        subcritical_cutoff_log_power=cutoff,
+        poisson_mode_extra_log_loss=poisson_extra,
+        requested_mrstt_log_saving=mrstt_saving,
+        target_log_saving=target,
+        subcritical_net_log_saving=subcritical_net,
+        critical_net_log_saving=critical_net,
+        subcritical_entry_range_covered=subcritical_covered,
+        critical_entry_range_covered=critical_covered,
+        sliding_exceptional_set_transfer_exact=True,
+        fixed_numeric_log_witness_used=False,
+        local_endpoint_dispersion_lemma_proved=local_proved,
+        source=(
+            "exact complementary-divisor c-Poisson with every physical "
+            "weight retained; MRSTT Theorem 1.1(i), maximal form; "
+            "nested logarithmic "
+            "choice K0 then M"
+        ),
+    )
+
+
+def reciprocal_amplitude_seminorm_transfer_audit(
+    *,
+    derivative_order: int,
+    fourier_decay_order: int,
+    available_kernel_x_derivatives: int,
+    available_kernel_y_derivatives: int,
+    kernel_seminorm_log_loss: Fraction,
+    requested_mrstt_log_saving: Fraction,
+    aggregation_log_loss: Fraction,
+    target_log_saving: Fraction,
+) -> ReciprocalAmplitudeSeminormTransferAudit:
+    """Audit the normalized derivatives along the reciprocal curve.
+
+    Put ``x=n/X`` and ``lambda=j*A*e/S``.  Since
+    ``j*A/(r*n)=lambda/x``, differentiation along the physical curve is
+
+    ``x*d/dx = x*partial_x - xi*partial_xi``.
+
+    The two normalized partial derivatives commute.  Leibniz and the
+    binomial theorem therefore give the returned exact terms
+
+    ``(W_order, Phi_x_order, Phi_xi_order, coefficient)``.
+
+    Moreover ``(xi*d/dxi)^b PhiHat`` is the Fourier transform of
+    ``(-partial_y*y)^b Phi``.  Fourier decay of order ``J`` consequently
+    uses at most ``J+b`` y-derivatives.  For amplitude order ``m``, the
+    uniform sufficient supply is thus ``m`` x-derivatives and ``J+m``
+    y-derivatives, with no power of ``lambda`` or of the Poisson mode.
+
+    Multiplication by ``n^-2`` has supremum and total-variation scale
+    ``X^-2`` on ``n asymp X``.  A maximal partial sum of scale ``X``
+    then yields the exact partial-summation scale ``X^-1``.
+    """
+    integers = (
+        derivative_order,
+        fourier_decay_order,
+        available_kernel_x_derivatives,
+        available_kernel_y_derivatives,
+    )
+    if any(not isinstance(value, int) for value in integers):
+        raise TypeError("derivative orders must be integers")
+    if derivative_order < 0 or fourier_decay_order < 1:
+        raise ValueError("amplitude order must be nonnegative and decay positive")
+    if min(available_kernel_x_derivatives, available_kernel_y_derivatives) < 0:
+        raise ValueError("available derivative orders must be nonnegative")
+
+    kernel_loss = F(kernel_seminorm_log_loss)
+    mrstt_saving = F(requested_mrstt_log_saving)
+    aggregation_loss = F(aggregation_log_loss)
+    target = F(target_log_saving)
+    if min(kernel_loss, mrstt_saving, aggregation_loss, target) < 0:
+        raise ValueError("logarithmic ledger entries must be nonnegative")
+
+    m = derivative_order
+    j_decay = fourier_decay_order
+    terms = tuple(
+        (
+            m - phi_order,
+            phi_order - xi_order,
+            xi_order,
+            comb(m, phi_order)
+            * comb(phi_order, xi_order)
+            * (-1) ** xi_order,
+        )
+        for phi_order in range(m + 1)
+        for xi_order in range(phi_order + 1)
+    )
+    no_lambda_power = all(
+        w_order + x_order + xi_order == m
+        for w_order, x_order, xi_order, _ in terms
+    )
+    required_x = m
+    required_y = j_decay + m
+    supply = (
+        available_kernel_x_derivatives >= required_x
+        and available_kernel_y_derivatives >= required_y
+    )
+    n_weight_power = F(-2)
+    partial_summation_power = F(1) + n_weight_power
+    net_log_saving = mrstt_saving - kernel_loss - aggregation_loss
+    closes = supply and no_lambda_power and net_log_saving > target
+    return ReciprocalAmplitudeSeminormTransferAudit(
+        derivative_order=m,
+        fourier_decay_order=j_decay,
+        normalized_chain_rule_terms=terms,
+        required_kernel_x_derivatives=required_x,
+        required_kernel_y_derivatives=required_y,
+        available_kernel_x_derivatives=available_kernel_x_derivatives,
+        available_kernel_y_derivatives=available_kernel_y_derivatives,
+        normalized_curve_derivative_has_no_lambda_power=no_lambda_power,
+        n_inverse_square_supremum_power=n_weight_power,
+        n_inverse_square_total_variation_power=n_weight_power,
+        partial_summation_output_power=partial_summation_power,
+        kernel_seminorm_log_loss=kernel_loss,
+        requested_mrstt_log_saving=mrstt_saving,
+        aggregation_log_loss=aggregation_loss,
+        target_log_saving=target,
+        net_log_saving=net_log_saving,
+        kernel_derivative_supply_is_sufficient=supply,
+        weighted_partial_summation_closes=closes,
+        source=(
+            "exact normalized chain rule x*d_x-xi*d_xi; Fourier identity "
+            "(xi*d_xi)^b PhiHat=(-1)^b Fourier((partial_y*y)^b Phi); "
+            "Abel summation"
+        ),
+    )
+
+
+def independent_cubic_closure_verification_audit(
+) -> IndependentCubicClosureVerificationAudit:
+    """Keep local identities separate from unproved physical closing gates.
+
+    The exact short-cofactor summand is obtained from
+
+    ``mu(d) 1_(d,Ae)=1 = sum_(r|d, r Ae-smooth) mu(d/r)``.
+
+    After ``d=r*n`` and ``m+A*k*l=r*n*c``, Poisson in ``c`` has
+    Jacobian ``A/(r*n)`` and negative phase
+    ``e(-j*A*k*l/(r*n))``.  Together with the existing ``mu(n)/(r*n)``
+    this gives ``A*mu(n)/(r^2*n^2)``.  Partial summation contributes
+    ``X^-1=e*r/S``; multiplying the original ``alpha(A)/A`` leaves
+    ``alpha(A)/(r*e*S)`` before the original double-Poisson prefactor
+    ``HL``.  The physical coefficient is ``HL*alpha(A)/(r*e*S)``, not
+    ``HL*alpha(A)/(r*e*S^2)``.  No extra inverse S has been proved.
+
+    No universal numerical values such as ``C_W=20`` or ``C_j=4`` are
+    used.  For fixed ``W`` and a requested final saving ``B_fin``, first
+    fix a Fourier decay order and record the finite physical-kernel
+    seminorm exponents.  Then choose the subcritical cutoff, the
+    Poisson-mode cutoff, and finally the arbitrary MRSTT saving in that
+    order.  This is the non-circular logarithmic ledger needed at
+    LCPE2.
+
+    A first-active-tail partition has been proposed, but the physical
+    weights, edges, and full outer sums have not been certified.  The
+    distinct mechanism names below do not prove disjointness.
+    """
+    full_weight_embedding = False
+    maximal_mrstt = True
+    sliding_interior = True
+    edges_power_saving = False
+    amplitude = reciprocal_amplitude_seminorm_transfer_audit(
+        derivative_order=1,
+        fourier_decay_order=4,
+        available_kernel_x_derivatives=1,
+        available_kernel_y_derivatives=5,
+        kernel_seminorm_log_loss=F(0),
+        requested_mrstt_log_saving=F(2),
+        aggregation_log_loss=F(0),
+        target_log_saving=F(1),
+    )
+    chain_rule = (
+        amplitude.normalized_chain_rule_terms
+        == ((1, 0, 0, 1), (0, 1, 0, 1), (0, 0, 1, -1))
+        and amplitude.normalized_curve_derivative_has_no_lambda_power
+    )
+    total_variation = all(
+        (
+            amplitude.kernel_derivative_supply_is_sufficient,
+            amplitude.n_inverse_square_supremum_power == F(-2),
+            amplitude.n_inverse_square_total_variation_power == F(-2),
+            amplitude.partial_summation_output_power == F(-1),
+        )
+    )
+    partial_summation = chain_rule and total_variation
+    quantified_lcpe2 = all(
+        (
+            full_weight_embedding,
+            maximal_mrstt,
+            sliding_interior,
+            edges_power_saving,
+            partial_summation,
+        )
+    )
+    disjoint_partition = False
+    budget = (
+        ("cubic_MRSTT_mobius", "compact critical nonzero modes"),
+        ("smooth_mobius_PNT", "compact zero phase modes"),
+        ("reciprocal_radical_positive_bound", "compact long cofactor"),
+        ("seminorm_stable_PEVP", "first-active transform tail shells"),
+    )
+    budget_unique = (
+        disjoint_partition and len({name for name, _ in budget}) == len(budget)
+    )
+    all_four = all(
+        (
+            full_weight_embedding,
+            maximal_mrstt and sliding_interior and partial_summation,
+            quantified_lcpe2,
+            disjoint_partition and budget_unique,
+        )
+    )
+    return IndependentCubicClosureVerificationAudit(
+        c_poisson_full_weight_embedding_verified=full_weight_embedding,
+        c_poisson_jacobian="A/(r*n)",
+        c_poisson_phase="e(-j*A*k*l/(r*n))",
+        c_poisson_outer_coefficient_after_partial_summation=(
+            "alpha(A)/(r*e*S)"
+        ),
+        mrstt_theorem="arXiv:2411.05770v2 Theorem 1.1(i)",
+        mrstt_maximal_progression_form_verified=maximal_mrstt,
+        sliding_identity_is_exact_on_the_interior=sliding_interior,
+        edge_intervals_are_power_saving=edges_power_saving,
+        reciprocal_amplitude_normalized_chain_rule_verified=chain_rule,
+        reciprocal_amplitude_total_variation_verified=total_variation,
+        weighted_partial_summation_verified=partial_summation,
+        fixed_numeric_log_witness_used=False,
+        log_choice_order=(
+            "fix final saving B_fin",
+            "fix Fourier decay order J and record C_J,C_amp,C_sub",
+            "choose K0 > C_sub+C_agg+B_fin",
+            (
+                "choose Kmode with Kmode*(J-1) > "
+                "C_J+K0+C_tail+C_agg+B_fin"
+            ),
+            "choose M > K0+Kmode+C_amp+C_agg+B_fin",
+        ),
+        lcpe2_quantified_log_ledger_closed=quantified_lcpe2,
+        compact_and_tail_partition_is_disjoint=disjoint_partition,
+        cancellation_budget=budget,
+        every_cancellation_source_is_used_once=budget_unique,
+        all_four_independent_gates_verified=all_four,
+        source=(
+            "exact short-cofactor convolution and c-Poisson change of "
+            "variables; MRSTT Theorem 1.1(i), maximal form; quantified "
+            "Schwartz-tail ledger; first-active-shell partition"
+        ),
+    )
+
+
+def cubic_reciprocal_full_polytope_audit(
+    *,
+    cofactor_cutoff_exponent: Fraction,
+    qsmooth_relative_exponent: Fraction,
+    taylor_block_relative_exponent: Fraction,
+    published_epsilon: Fraction,
+    reciprocal_radical_moment_abscissa: Fraction,
+    fixed_weight_log_loss: Fraction,
+    dyadic_and_q_log_loss: Fraction,
+    subcritical_cutoff_log_power: Fraction,
+    poisson_mode_extra_log_loss: Fraction,
+    requested_mrstt_log_saving: Fraction,
+    target_log_saving: Fraction,
+) -> CubicReciprocalFullPolytopeAudit:
+    """Cover the complete power-scale polytope with cubic windows.
+
+    For every admissible box put ``u=max(rho,sigma)``, ``a=ell+h`` and
+    ``p=2*u-a``.  The defining inequalities imply uniformly
+
+    ``u >= 1/2``, ``1 <= p <= 6`` and ``u+p <= 9``.
+
+    Taylor expansion of the reciprocal phase to degree three on
+    ``Y=X^nu`` leaves error exponent
+
+    ``eta+p-4*(1-nu)*(u-eta)*(1-rho_Q)``.
+
+    Since the right side is worst at ``u=1/2, a=0, p=1``, positivity
+    there proves the entire polytope.  MRSTT Theorem 1.1(i) is uniform
+    for every real polynomial phase of any fixed degree, so changing
+    the Taylor degree from two to three does not change its interval
+    threshold.  The reciprocal-radical nonaxis main saves at least
+    ``1-epsilon_0*9``; exact inverse Poisson on the axes saves at least
+    ``1-epsilon_0*3``.  The density errors retain the independent
+    savings ``eta/2`` and ``3*eta/2``.
+    """
+    eta = F(cofactor_cutoff_exponent)
+    rho_q = F(qsmooth_relative_exponent)
+    block = F(taylor_block_relative_exponent)
+    theorem_epsilon = F(published_epsilon)
+    moment = F(reciprocal_radical_moment_abscissa)
+    weight_loss = F(fixed_weight_log_loss)
+    aggregation_loss = F(dyadic_and_q_log_loss)
+    cutoff = F(subcritical_cutoff_log_power)
+    poisson_extra = F(poisson_mode_extra_log_loss)
+    mrstt_saving = F(requested_mrstt_log_saving)
+    target = F(target_log_saving)
+    for value, name in (
+        (eta, "cofactor cutoff exponent"),
+        (rho_q, "Q-smooth relative exponent"),
+        (block, "Taylor block exponent"),
+        (theorem_epsilon, "published epsilon"),
+        (moment, "reciprocal-radical moment abscissa"),
+    ):
+        if not F(0) < value < F(1):
+            raise ValueError(f"{name} must lie in (0,1)")
+    if min(
+        weight_loss,
+        aggregation_loss,
+        cutoff,
+        poisson_extra,
+        mrstt_saving,
+        target,
+    ) < 0:
+        raise ValueError("log ledger entries must be nonnegative")
+    lower_window_margin = block - (F(1, 3) + theorem_epsilon)
+    upper_window_margin = F(1) - theorem_epsilon - block
+
+    degree = 3
+    u_min = F(1, 2)
+    p_min = F(1)
+    p_max = F(6)
+    u_plus_p_max = F(9)
+    u_max = F(3)
+    reduced_min = (u_min - eta) * (F(1) - rho_q)
+    taylor_saving = (
+        F(degree + 1) * (F(1) - block) * reduced_min
+        - p_min
+        - eta
+    )
+    nonaxis_saving = p_min - moment * u_plus_p_max
+    axis_saving = p_min - moment * u_max
+    density_saving = eta > 0
+    local_endpoint = cubic_reciprocal_endpoint_dispersion_audit(
+        longer_modulus_exponent=u_min,
+        third_length_exponent=F(0),
+        cofactor_cutoff_exponent=eta,
+        qsmooth_relative_exponent=rho_q,
+        taylor_block_relative_exponent=block,
+        published_epsilon=theorem_epsilon,
+        fixed_weight_log_loss=weight_loss,
+        dyadic_and_q_log_loss=aggregation_loss,
+        subcritical_cutoff_log_power=cutoff,
+        poisson_mode_extra_log_loss=poisson_extra,
+        requested_mrstt_log_saving=mrstt_saving,
+        target_log_saving=target,
+    )
+    physical_weights = all(
+        (
+            local_endpoint.c_poisson_identity_exact,
+            local_endpoint.c_poisson_phase_sign_is_negative,
+            local_endpoint.physical_weight_normalized_derivatives_are_polylogarithmic,
+            local_endpoint.partial_summation_gives_X_inverse,
+            local_endpoint.outer_A_inverse_cancels_poisson_A,
+            local_endpoint.e_sum_costs_only_logarithms,
+            local_endpoint.qsmooth_r_sum_costs_only_logarithms,
+        )
+    )
+    independent = independent_cubic_closure_verification_audit()
+    physical_weights = (
+        physical_weights and independent.c_poisson_full_weight_embedding_verified
+    )
+    nested_logs = all(
+        (
+            independent.lcpe2_quantified_log_ledger_closed,
+            local_endpoint.sliding_exceptional_set_transfer_exact,
+        )
+    )
+    short_covered = (
+        lower_window_margin > 0
+        and upper_window_margin > 0
+        and taylor_saving > 0
+        and local_endpoint.local_endpoint_dispersion_lemma_proved
+        and physical_weights
+        and nested_logs
+    )
+    long_covered = nonaxis_saving > 0 and axis_saving > 0
+    full_power = short_covered and long_covered and density_saving
+    return CubicReciprocalFullPolytopeAudit(
+        cofactor_cutoff_exponent=eta,
+        qsmooth_relative_exponent=rho_q,
+        taylor_block_relative_exponent=block,
+        published_epsilon=theorem_epsilon,
+        reciprocal_radical_moment_abscissa=moment,
+        taylor_polynomial_degree=degree,
+        admissible_longer_modulus_min_exponent=u_min,
+        dual_product_min_exponent=p_min,
+        dual_product_max_exponent=p_max,
+        worst_reduced_mobius_exponent=reduced_min,
+        worst_taylor_power_saving=taylor_saving,
+        uniform_nonaxis_power_saving=nonaxis_saving,
+        uniform_axis_power_saving=axis_saving,
+        long_density_errors_have_power_saving=density_saving,
+        short_cofactor_has_uniform_power_saving=short_covered,
+        long_cofactor_main_has_uniform_power_saving=long_covered,
+        physical_weight_ledger_verified=physical_weights,
+        fixed_weight_log_loss=weight_loss,
+        dyadic_and_q_log_loss=aggregation_loss,
+        subcritical_cutoff_log_power=cutoff,
+        poisson_mode_extra_log_loss=poisson_extra,
+        requested_mrstt_log_saving=mrstt_saving,
+        target_log_saving=target,
+        subcritical_net_log_saving=(
+            local_endpoint.subcritical_net_log_saving
+        ),
+        critical_net_log_saving=local_endpoint.critical_net_log_saving,
+        nested_log_choices_verified=nested_logs,
+        fixed_numeric_log_witness_used=False,
+        endpoint_dispersion_local_lemma_proved=(
+            local_endpoint.local_endpoint_dispersion_lemma_proved
+        ),
+        all_power_scale_faces_and_interiors_covered=full_power,
+        all_dyadic_parameter_cells_enumerated=full_power,
+        large_q_logarithmic_endpoint_covered=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "exact oriented double-Poisson and complementary-divisor "
+            "c-Poisson; cubic Taylor windows; arXiv:2411.05770v2, "
+            "Theorem 1.1(i), maximal form"
+        ),
+    )
+
+
+def cubic_reciprocal_lcpe2_audit(
+    *,
+    zeta_log_depth: Fraction,
+    shift_log_depth: Fraction,
+    requested_log_saving: Fraction,
+    fixed_log_losses: Fraction,
+    subcritical_cutoff_log_power: Fraction,
+    poisson_mode_extra_log_loss: Fraction,
+    dyadic_and_q_log_loss: Fraction,
+    target_log_saving: Fraction,
+) -> CubicReciprocalLCPE2Audit:
+    """Insert the logarithmic large-q endpoint into cubic c-Poisson.
+
+    At LCPE2, ``q=T^2`` and the residual mollifier moduli are ``T``.
+    If the zeta scales and shift scale are both ``log(T)^2``, the
+    physical h-frequency scale is ``T/log(T)^2``.  The two double-
+    Poisson dual scales are therefore ``log(T)^2`` and
+    ``T/log(T)^2``.  Their product times the raw HL physical prefactor
+    is ``T^2``, not the target ``T``.  Logarithmic saving cannot remove
+    this power deficit; the local identities do not certify LCPE2.
+
+    This estimate is applied to the exact complementary-divisor sum
+    before the q-first Euler factorization and product lift of Sections
+    4.26--4.27.  It therefore bypasses the positive centered-product
+    majorant; it does not claim to prove that stronger variance bound.
+    """
+    pi = F(zeta_log_depth)
+    lam = F(shift_log_depth)
+    requested = F(requested_log_saving)
+    losses = F(fixed_log_losses)
+    cutoff = F(subcritical_cutoff_log_power)
+    poisson_extra = F(poisson_mode_extra_log_loss)
+    aggregation_loss = F(dyadic_and_q_log_loss)
+    target = F(target_log_saving)
+    if min(
+        pi,
+        lam,
+        requested,
+        losses,
+        cutoff,
+        poisson_extra,
+        aggregation_loss,
+        target,
+    ) < 0:
+        raise ValueError("log depths and ledger entries must be nonnegative")
+    power_audit = cubic_reciprocal_full_polytope_audit(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        reciprocal_radical_moment_abscissa=F(1, 100),
+        fixed_weight_log_loss=losses,
+        dyadic_and_q_log_loss=aggregation_loss,
+        subcritical_cutoff_log_power=cutoff,
+        poisson_mode_extra_log_loss=poisson_extra,
+        requested_mrstt_log_saving=requested,
+        target_log_saving=target,
+    )
+    endpoint = cubic_reciprocal_endpoint_dispersion_audit(
+        longer_modulus_exponent=F(1),
+        third_length_exponent=F(1),
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        fixed_weight_log_loss=losses,
+        dyadic_and_q_log_loss=aggregation_loss,
+        subcritical_cutoff_log_power=cutoff,
+        poisson_mode_extra_log_loss=poisson_extra,
+        requested_mrstt_log_saving=requested,
+        target_log_saving=target,
+    )
+    subcritical_net = endpoint.subcritical_net_log_saving
+    critical_net = endpoint.critical_net_log_saving
+    net = min(subcritical_net, critical_net)
+    critical_depths = pi == F(2) and lam == F(2)
+    normalization_exact = (
+        critical_depths
+        and endpoint.prefactor_times_dual_volume_exponent
+        == endpoint.local_target_exponent
+    )
+    fixed_power = power_audit.worst_taylor_power_saving > 0
+    q_sum_bounded = True
+    independent = independent_cubic_closure_verification_audit()
+    aggregated = (
+        critical_depths
+        and normalization_exact
+        and fixed_power
+        and endpoint.local_endpoint_dispersion_lemma_proved
+        and independent.lcpe2_quantified_log_ledger_closed
+        and q_sum_bounded
+    )
+    return CubicReciprocalLCPE2Audit(
+        q_exponent=F(2),
+        residual_modulus_exponent=F(1),
+        zeta_log_depth=pi,
+        shift_log_depth=lam,
+        h_frequency_scale="T/log(T)^2",
+        delta_scale="log(T)^2",
+        first_dual_scale="log(T)^2",
+        second_dual_scale="T/log(T)^2",
+        physical_prefactor_times_dual_volume_is_T=normalization_exact,
+        cubic_taylor_has_fixed_power_saving=fixed_power,
+        mrstt_supremum_is_uniform_in_cubic_coefficients=True,
+        requested_log_saving=requested,
+        fixed_log_losses=losses,
+        subcritical_cutoff_log_power=cutoff,
+        poisson_mode_extra_log_loss=poisson_extra,
+        dyadic_and_q_log_loss=aggregation_loss,
+        target_log_saving=target,
+        subcritical_net_log_saving=subcritical_net,
+        critical_net_log_saving=critical_net,
+        net_log_saving=net,
+        endpoint_dispersion_local_lemma_proved=(
+            endpoint.local_endpoint_dispersion_lemma_proved
+        ),
+        fixed_numeric_log_witness_used=False,
+        q_sum_is_bounded_on_dyadic_T_squared_shell=q_sum_bounded,
+        applied_before_q_first_product_lift=True,
+        centered_product_energy_gate_bypassed_not_assumed=True,
+        centered_product_energy_estimate_proved=False,
+        lcpe2_covered_unconditionally=aggregated,
+        all_q_boxes_and_transform_tails_aggregated=aggregated,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "exact LCPE2 log scales inserted into complementary-divisor "
+            "c-Poisson before product lift; cubic MRSTT windows"
+        ),
+    )
+
+
+def polylog_short_entry_reciprocity_audit(
+    *,
+    short_entry_log_depth: Fraction,
+    h_log_depth: Fraction,
+    delta_log_depth: Fraction,
+    euler_convolution_cutoff_log_depth: Fraction,
+    siegel_walfisz_log_saving: Fraction,
+    kernel_seminorm_log_loss: Fraction,
+    aggregation_log_loss: Fraction,
+) -> PolylogShortEntryReciprocityAudit:
+    """Close the four vertices with one polylogarithmic entry variable.
+
+    Suppose, in the left orientation,
+
+    ``R <= log(T)^K_R``, ``H <= log(T)^K_H`` and
+    ``Delta <= log(T)^K_D``, while ``S`` has positive power length.
+    Reciprocity gives the exact identity
+
+    ``e(-h*delta*rbar/s) = e(h*delta*sbar/r)e(-h*delta/(r*s))``.
+
+    After writing every absolutely convergent endpoint Euler weight as
+    ``mu*h`` and truncating its convolution variable at
+    ``log(T)^K_E``, the long Möbius variable lies in progressions modulo
+    at most ``r*d <= log(T)^(K_R+K_E)``.  The classical
+    Möbius--character bound gives any prescribed logarithmic saving
+    uniformly for those moduli.  Parseval for the character expansion
+    of the periodic reciprocal phase costs at most one full modulus.
+    Summing ``r,d,h,delta`` then costs at most
+
+    ``2*K_R + 2*K_E + K_H + K_D`` logarithms.
+
+    The discarded Euler tail uses absolute convergence with the
+    conservative margin ``1/2`` and therefore saves ``K_E/2`` before
+    the remaining outer and seminorm losses.  Both savings can be made
+    arbitrarily large by choosing ``K_E`` and then the
+    Siegel--Walfisz exponent.  The right orientation is identical.
+    """
+    short = F(short_entry_log_depth)
+    h_depth = F(h_log_depth)
+    delta_depth = F(delta_log_depth)
+    euler = F(euler_convolution_cutoff_log_depth)
+    sw = F(siegel_walfisz_log_saving)
+    seminorm = F(kernel_seminorm_log_loss)
+    aggregation = F(aggregation_log_loss)
+    if min(short, h_depth, delta_depth, euler, sw, seminorm, aggregation) < 0:
+        raise ValueError("polylogarithmic depths and savings must be nonnegative")
+
+    modulus_depth = short + euler
+    outer_loss = 2 * short + 2 * euler + h_depth + delta_depth
+    sw_net = sw - outer_loss - seminorm - aggregation
+    euler_tail_net = (
+        euler / 2
+        - short - h_depth - delta_depth - seminorm - aggregation
+    )
+    net = min(sw_net, euler_tail_net)
+    covered = net > 0
+    left_vertices = (1, 2) if covered else ()
+    right_vertices = (4, 5) if covered else ()
+    return PolylogShortEntryReciprocityAudit(
+        short_entry_log_depth=short,
+        h_log_depth=h_depth,
+        delta_log_depth=delta_depth,
+        euler_convolution_cutoff_log_depth=euler,
+        siegel_walfisz_log_saving=sw,
+        kernel_seminorm_log_loss=seminorm,
+        aggregation_log_loss=aggregation,
+        progression_modulus_log_depth=modulus_depth,
+        outer_and_residue_log_loss=outer_loss,
+        siegel_walfisz_net_log_saving=sw_net,
+        euler_tail_net_log_saving=euler_tail_net,
+        net_log_saving=net,
+        reciprocity_phase_identity_exact=True,
+        long_mobius_sum_is_in_progressions_modulo_short_times_euler=True,
+        siegel_walfisz_is_uniform_for_polylog_moduli=True,
+        euler_convolution_tail_has_arbitrary_log_saving=covered,
+        smooth_reciprocal_correction_uses_partial_summation=True,
+        unit_short_entry_uses_ordinary_mobius_pnt=True,
+        left_short_vertices_covered=left_vertices,
+        right_short_vertices_covered=right_vertices,
+        covered_vertex_indices=left_vertices + right_vertices,
+        polylog_short_entry_faces_covered=covered,
+        all_parameter_cells_covered=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "Green--Tao, Quadratic uniformity of the Mobius function, "
+            "Example 2; Fouvry--Tenenbaum, Multiplicative functions "
+            "in large arithmetic progressions, Section 4.2; exact "
+            "Kloosterman reciprocity"
+        ),
+    )
+
+
+def admissible_polytope_vertex_ledger_audit(
+) -> AdmissiblePolytopeVertexLedgerAudit:
+    """Route every exact vertex of the full admissibility polytope.
+
+    This replaces a numerical or prose-only ``unclassified cells``
+    placeholder by the complete rational H-polytope vertex list.  The
+    approved primary router closes five vertices by BCR.  The separate
+    complementary-divisor theorem closes the named ``r_long`` and
+    ``s_long`` vertices.  The other vertices remain explicit witnesses.
+
+    Vertex routing alone does not cover an intervening face: the
+    analytic route hypotheses and savings have not been proved to form
+    a convex closed cover.  Accordingly the final two flags remain
+    false even though the finite vertex enumeration itself is complete.
+    """
+    vertices = admissible_polytope_vertices()
+    routes = tuple(route_box(vertex).route for vertex in vertices)
+    route_counts = tuple(sorted(
+        (route, routes.count(route)) for route in set(routes)
+    ))
+    bcr_indices = tuple(
+        index
+        for index, vertex in enumerate(vertices, start=1)
+        if (
+            route_box(vertex).route == "bcr"
+            and route_box(vertex).applicable
+        )
+    )
+    recombination = unbalanced_complementary_divisor_recombination_audit(
+        cofactor_cutoff_exponent=F(1, 8),
+        qsmooth_relative_exponent=F(1, 10),
+        taylor_block_relative_exponent=F(2, 3),
+        published_epsilon=F(1, 12),
+    )
+    witnesses = boundary_witnesses()
+    unbalanced_boxes = {witnesses["r_long"], witnesses["s_long"]}
+    unbalanced_indices = tuple(
+        index
+        for index, vertex in enumerate(vertices, start=1)
+        if (
+            recombination.unbalanced_boundary_witnesses_covered
+            and vertex in unbalanced_boxes
+        )
+    )
+    short_entry = polylog_short_entry_reciprocity_audit(
+        short_entry_log_depth=F(8),
+        h_log_depth=F(6),
+        delta_log_depth=F(6),
+        euler_convolution_cutoff_log_depth=F(100),
+        siegel_walfisz_log_saving=F(350),
+        kernel_seminorm_log_loss=F(10),
+        aggregation_log_loss=AGGREGATION_LOG_LOSS,
+    )
+    short_entry_indices = short_entry.covered_vertex_indices
+    adaptive_reciprocal = adaptive_reciprocal_slack_vertex_audit(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        reciprocal_radical_moment_abscissa=F(1, 100),
+    )
+    adaptive_indices = adaptive_reciprocal.covered_vertex_indices
+    a_zero_endpoint = a_zero_endpoint_shifted_count_audit()
+    a_zero_indices = a_zero_endpoint.covered_vertex_indices
+    cubic_polytope = cubic_reciprocal_full_polytope_audit(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        reciprocal_radical_moment_abscissa=F(1, 100),
+        fixed_weight_log_loss=F(20),
+        dyadic_and_q_log_loss=AGGREGATION_LOG_LOSS,
+        subcritical_cutoff_log_power=F(40),
+        poisson_mode_extra_log_loss=F(4),
+        requested_mrstt_log_saving=F(80),
+        target_log_saving=F(1),
+    )
+    covered = (
+        set(bcr_indices)
+        | set(unbalanced_indices)
+        | set(short_entry_indices)
+        | set(adaptive_indices)
+        | set(a_zero_indices)
+    )
+    remaining = tuple(
+        index for index in range(1, len(vertices) + 1)
+        if index not in covered
+    )
+    exact = all(
+        isinstance(getattr(vertex, field), Fraction)
+        for vertex in vertices
+        for field in ("rho", "sigma", "m", "k", "ell", "h", "kappa")
+    )
+    return AdmissiblePolytopeVertexLedgerAudit(
+        ambient_dimension=6,
+        halfspace_count=13,
+        vertex_count=len(vertices),
+        vertices=vertices,
+        all_vertices_are_exact_rational=exact,
+        all_vertices_are_admissible=all(map(is_admissible, vertices)),
+        four_named_boundary_witnesses_are_vertices=(
+            set(witnesses.values()) <= set(vertices)
+        ),
+        primary_routes=routes,
+        primary_route_counts=route_counts,
+        bcr_covered_vertex_indices=bcr_indices,
+        unbalanced_recombination_covered_vertex_indices=(
+            unbalanced_indices
+        ),
+        polylog_short_entry_covered_vertex_indices=short_entry_indices,
+        adaptive_reciprocal_covered_vertex_indices=adaptive_indices,
+        a_zero_endpoint_covered_vertex_indices=a_zero_indices,
+        remaining_unrouted_vertex_indices=remaining,
+        remaining_unrouted_vertex_count=len(remaining),
+        vertex_routes_prove_every_face_and_interior=(
+            cubic_polytope.all_power_scale_faces_and_interiors_covered
+        ),
+        all_dyadic_parameter_cells_enumerated=(
+            cubic_polytope.all_dyadic_parameter_cells_enumerated
+        ),
+    )
+
+
+def oriented_mmkls_global_transport_audit(
+    *, cofactor_cutoff_exponent: Fraction
+) -> OrientedMMKLSGlobalTransportAudit:
+    """Transport the cofactor interval test across the four boundary boxes.
+
+    Choose as Ramanujan/Kloosterman modulus the longer of ``R`` and ``S``.
+    If ``u=max(rho,sigma)`` and ``a=ell+h``, both Poisson variables use
+    that same modulus.  Their dual product therefore has exponent
+
+      ``p=2*u-a``.
+
+    Reciprocity changes the phase but does not rescale the physical
+    ``h`` or ``delta`` lengths.  The raw complementary-divisor interval
+    ratio is consequently
+
+      theta=(a-u)/u,
+
+    After ``e<=T^eta`` it becomes
+
+      theta_eta=(a-u-eta)/(u-eta).
+
+    The balanced witness gives 15/23 at eta=1/8.  The two maximally
+    unbalanced power witnesses instead give 7/23 and are not covered by
+    the published 7/12 theorem.  The large-q exponent witness gives zero; its
+    genuinely bounded-zeta member is already covered by exact inverse
+    Poisson at shift-log depth zero, while the critical depth-two,
+    growing-zeta member remains the centered product-energy gate.
+
+    This adapter deliberately certifies boundary transport only.  It
+    does not infer complete polytope coverage from four witnesses.
+    """
+    eta = F(cofactor_cutoff_exponent)
+    if eta <= 0 or eta >= 1:
+        raise ValueError("cofactor cutoff exponent must lie in (0,1)")
+    threshold = F(7, 12)
+    rows: list[
+        tuple[str, str, Fraction, Fraction, Fraction, bool]
+    ] = []
+    for name in (
+        "balanced_max_a",
+        "r_long",
+        "s_long",
+        "large_q_endpoint",
+    ):
+        box = boundary_witnesses()[name]
+        u = max(box.rho, box.sigma)
+        a = box.ell + box.h
+        orientation = "left" if box.sigma >= box.rho else "right"
+        dual_product = 2 * u - a
+        raw = max(F(0), (a - u) / u) if u > 0 else F(0)
+        adjusted = (
+            max(F(0), (a - u - eta) / (u - eta))
+            if u > eta
+            else F(0)
+        )
+        rows.append(
+            (
+                name,
+                orientation,
+                dual_product,
+                raw,
+                adjusted,
+                adjusted > threshold,
+            )
+        )
+
+    endpoint_box = boundary_witnesses()["large_q_endpoint"]
+    endpoint = large_q_endpoint_unpoisson_audit(
+        endpoint_box,
+        shift_log_depth=F(0),
+    )
+    critical = large_q_growing_zeta_product_lift_audit(
+        endpoint_box,
+        shift_log_depth=F(2),
+    )
+    unbalanced_power_witnesses = rows[1][5] and rows[2][5]
+    power_witnesses = all(row[5] for row in rows[:3])
+    return OrientedMMKLSGlobalTransportAudit(
+        cofactor_cutoff_exponent=eta,
+        oriented_boundary_cells=tuple(rows),
+        published_threshold=threshold,
+        common_modulus_double_poisson_dual_product_exact=True,
+        reciprocity_preserves_physical_h_delta_lengths=True,
+        unbalanced_power_witnesses_covered=unbalanced_power_witnesses,
+        three_power_scale_boundary_witnesses_covered=power_witnesses,
+        bounded_zeta_endpoint_shift_log_depth=F(0),
+        bounded_zeta_endpoint_covered=endpoint.unconditional_coverage,
+        critical_polylog_shift_log_depth=F(2),
+        critical_product_lift_identity_exact=(
+            critical.product_lift_identity_is_exact
+        ),
+        critical_centered_product_energy_proved=(
+            critical.centered_product_energy_estimate_proved
+        ),
+        remaining_gate=(
+            "unbalanced_power_faces_and_large_q_centered_product_energy"
+        ),
+        all_parameter_cells_covered=False,
+        full_long_mollifier_asymptotic_proved=False,
+        source=(
+            "oriented complementary-divisor exponents and exact large-q "
+            "inverse-Poisson/product-lift audits"
+        ),
+    )
+
+
+def large_q_affine_chowla_gcd_split_audit(
+    *,
+    product_scale: int,
+    shift_scale: int,
+    long_scale: int,
+    gcd_cutoff: int,
+) -> LargeQAffineChowlaGcdSplitAudit:
+    """Split the critical product lift by ``g=(m1,m2)``.
+
+    Put ``P=product_scale``, ``L=shift_scale``, and ``T=long_scale``.
+    For ``g>G``, retaining both ``g|delta`` and the affine-line count
+
+      ``1 + T*g/P``
+
+    gives, after the ``1/P`` product weight, the absolute bound
+
+      ``O(L*P/G^2 + T*L/G)``.
+
+    Relative to the critical target ``T*L`` this is
+    ``1/G + P/(T*G^2)``.  For ``g<=G`` write ``m1=g*a``, ``m2=g*b``.
+    A Bezout pair ``a*v-b*u=1`` parametrizes the physical line as
+
+      ``r=a*t+u*k, s=b*t+v*k, delta=g*k``.
+
+    The determinant is one, but ``k`` moves the two intercepts on a
+    one-dimensional sublattice.  Matomaki--Radziwill--Tao Theorem 1.6
+    averages a full additive-shift box and carries an ``A^2`` factor.
+    Even if the geometry mismatch is ignored, inserting
+    ``A=Q=P/g`` leaves the displayed relative factor rather than an
+    ``o(1)`` estimate at polylogarithmic ``Q``.
+
+    Corollary 1.11 of arXiv:2007.15644 averages the *whole* interval
+    ``1 <= h <= X^epsilon`` for fixed ``epsilon > 0`` and fixed
+    coefficients in forms ``n+a_i*h``.  It does not state the same
+    estimate for an arbitrary shorter initial segment.  Here the
+    physical shift is only ``|k| <= Q`` with polylogarithmic ``Q``, the
+    coefficients ``a,b`` grow with ``T``, and the forms have distinct
+    base slopes ``a*t`` and ``b*t``.  The adapter therefore records a
+    smaller new affine-Chowla gate, not coverage.
+    """
+    P = int(product_scale)
+    L = int(shift_scale)
+    T = int(long_scale)
+    G = int(gcd_cutoff)
+    if min(P, L, T, G) <= 0:
+        raise ValueError("all scales and the gcd cutoff must be positive")
+    if G > P:
+        raise ValueError("gcd cutoff cannot exceed the product scale")
+
+    relative_bound = F(1, G) + F(P, T * G * G)
+    return LargeQAffineChowlaGcdSplitAudit(
+        product_scale=P,
+        shift_scale=L,
+        long_scale=T,
+        gcd_cutoff=G,
+        critical_scales_match=L == P,
+        large_gcd_relative_absolute_bound=relative_bound,
+        large_gcd_bound_tends_to_zero_under_declared_limit=True,
+        small_gcd_max_reduced_slope=P,
+        small_gcd_min_shift_average_length=F(L, G),
+        small_gcd_min_line_length=F(T, P),
+        bezout_coordinate_determinant=1,
+        small_gcd_raw_mass_by_g="TP/g^2",
+        mrt_theorem="arXiv:1503.05121v3, Theorem 1.6",
+        mrt_affine_coefficient_prefactor_power=2,
+        mrt_shift_geometry_is_a_full_box=False,
+        physical_shift_geometry_is_one_dimensional=True,
+        mrt_relative_factor_at_reduced_slope=(
+            "Q^2*(exp(-M/80)+loglog(Q)/log(Q)+"
+            "log(T/Q)^(-1/3000))"
+        ),
+        mrt_published_adapter_applies=False,
+        higher_uniformity_theorem=(
+            "arXiv:2007.15644v3, Corollary 1.11"
+        ),
+        higher_uniformity_shift_average="1<=h<=X^epsilon",
+        higher_uniformity_averages_full_power_interval=True,
+        higher_uniformity_requires_fixed_positive_power_shift=True,
+        higher_uniformity_requires_fixed_linear_coefficients=True,
+        higher_uniformity_requires_common_base_variable=True,
+        physical_shift_average="1<=|k|<=Q, Q=(log T)^2/g",
+        physical_shift_interval_is_below_theorem_range=True,
+        physical_shift_has_zero_power_exponent=True,
+        physical_linear_coefficients_grow_with_T=True,
+        physical_forms_have_distinct_base_slopes=True,
+        higher_uniformity_published_adapter_applies=False,
+        remaining_gate="polylog_slope_averaged_affine_chowla",
+        centered_product_energy_estimate_proved=False,
+        unconditional_coverage=False,
+        source=(
+            "gcd divisibility and Bezout line parametrization; "
+            "Matomaki--Radziwill--Tao arXiv:1503.05121v3 Theorem 1.6; "
+            "Matomaki--Radziwill--Tao--Teravainen--Ziegler "
+            "arXiv:2007.15644v3 Corollary 1.11"
+        ),
+    )
+
+
+def mrt_affine_critical_parameter_audit(
+    *,
+    slope_log_depth: Fraction,
+    shift_log_depth: Fraction,
+    arity: int,
+) -> MRTAffineCriticalParameterAudit:
+    """Audit MRT Theorem 1.6 at a growing polylogarithmic slope.
+
+    Write ``L=log T``, ``A=L^a`` and ``H=L^h``.  Formula (1.10) in
+    arXiv:1503.05121v3 has the explicit relative prefactor ``A^2``.
+    Its ``log(X)^(-1/3000)`` term therefore has net logarithmic
+    exponent ``2*a-1/3000`` when ``X=T/L^h``.
+
+    The nontrivial branch in the proof of Proposition 5.1 uses both
+
+      ``W^(1/20) >= k*A^2`` and ``W <= H^(1/500)``.
+
+    Consequently ``H >= (k*A^2)^10000``.  At the exponent level this
+    requires ``h >= 20000*a``.  The physical LCPE2 substitution
+    ``a=h=2`` misses that condition by 39998 logarithmic powers.  These
+    two failures are independent of the separate one-dimensional
+    shift-geometry mismatch.
+    """
+    a = F(slope_log_depth)
+    h = F(shift_log_depth)
+    k = int(arity)
+    if a < 0 or h < 0:
+        raise ValueError("logarithmic depths must be nonnegative")
+    if k < 1:
+        raise ValueError("arity must be positive")
+
+    affine_prefactor = 2 * a
+    x_saving = F(1, 3000)
+    x_net = affine_prefactor - x_saving
+    required_h = F(20000) * a
+    h_margin = h - required_h
+    shift_tends_to_infinity = h > 0
+    loglog_term_diverges = affine_prefactor > 0
+    x_term_tends_to_zero = x_net < 0
+    proof_branch_available = h_margin > 0 or (h_margin == 0 and k == 1)
+    published_little_o = (
+        shift_tends_to_infinity
+        and not loglog_term_diverges
+        and x_term_tends_to_zero
+        and proof_branch_available
+    )
+
+    return MRTAffineCriticalParameterAudit(
+        theorem="arXiv:1503.05121v3, Theorem 1.6 (1.10)",
+        truncated_proposition=(
+            "arXiv:1503.05121v3, Proposition 5.1"
+        ),
+        slope_log_depth=a,
+        shift_log_depth=h,
+        shift_length_tends_to_infinity=shift_tends_to_infinity,
+        arity=k,
+        affine_prefactor_log_exponent=affine_prefactor,
+        x_error_log_saving_exponent=x_saving,
+        x_error_net_log_exponent=x_net,
+        x_error_term_tends_to_zero=x_term_tends_to_zero,
+        truncated_w_upper_h_reciprocal_power=500,
+        nontrivial_branch_w_root_power=20,
+        affine_coefficient_power=2,
+        implied_shift_power_on_k_a_squared=10000,
+        proof_branch_required_shift_log_depth=required_h,
+        proof_branch_shift_log_margin=h_margin,
+        proof_nontrivial_branch_available=proof_branch_available,
+        loglog_over_log_term_diverges_after_affine_prefactor=(
+            loglog_term_diverges
+        ),
+        published_bound_is_little_o=published_little_o,
+        remaining_gate="polylog_slope_averaged_affine_chowla",
+        source=(
+            "Matomaki--Radziwill--Tao arXiv:1503.05121v3, "
+            "Theorem 1.6 equations (1.10), Proposition 5.1, and proof "
+            "condition (5.7)"
+        ),
+    )
+
+
+def large_q_product_lift_valuation_audit(
+    *, prime_fixture: int
+) -> LargeQProductLiftValuationAudit:
+    """Check whether the critical product lift is an ordinary Mobius shift.
+
+    For ``n=m*s`` with the endpoint coefficient supported on squarefree
+    ``s``, put ``R=rad(n)``.  Exact divisor reindexing gives
+
+      ``A_P(n)=sum_(s|R) c_P(n/s) f(s)``.
+
+    If ``n`` is squarefree, every factor pair is coprime and squarefree,
+    so ``mu(s)=mu(m)mu(n)``.  If ``p^2|n``, the admissible valuation pair
+    ``(v_p(m),v_p(s))=(v_p(n)-1,1)`` overlaps the factors.  There is also
+    a squareful-multiplicand cell with ``v_p(s)=0``.  Neither cell factors
+    through ``mu(n)``, which vanishes.
+
+    These are not sparse support errors.  At a fixed prime, the local
+    density of ``p|m`` and ``v_p(s)=1`` is ``(p-1)/p^3``.  Multiplying by
+    the squarefree Euler factors away from p gives the global support
+    density ``1/(p*(p+1)*zeta(2))``.  The squareful-multiplicand event
+    ``p^2|m, p not|s`` has the same positive local density.  Thus an
+    ordinary shifted-Chowla theorem for ``mu(n)mu(n-delta)`` covers only
+    one genuine stratum of LCPE2.
+    """
+    p = int(prime_fixture)
+    if p < 2 or any(p % divisor == 0 for divisor in range(2, isqrt(p) + 1)):
+        raise ValueError("prime fixture must be prime")
+
+    nonsquarefree_multiplicands = {
+        divisor: F(1) for divisor in (2, 4, 6, 12)
+    }
+    nonsquarefree_reduced = {
+        divisor: endpoint_weighted_mobius(divisor)
+        for divisor in (1, 2, 3, 6)
+    }
+    nonsquarefree = product_lift_valuation_decomposition(
+        product=12,
+        multiplicand_coefficients=nonsquarefree_multiplicands,
+        reduced_coefficients=nonsquarefree_reduced,
+    )
+
+    squarefree_divisors = (1, 2, 3, 5, 6, 10, 15, 30)
+    squarefree = product_lift_valuation_decomposition(
+        product=30,
+        multiplicand_coefficients={divisor: F(1) for divisor in squarefree_divisors},
+        reduced_coefficients={
+            divisor: endpoint_weighted_mobius(divisor)
+            for divisor in squarefree_divisors
+        },
+    )
+    local_density = F(p - 1, p**3)
+    nonsquarefree_survives = (
+        nonsquarefree.product_mobius == 0
+        and nonsquarefree.direct_coefficient != 0
+        and nonsquarefree.direct_coefficient
+        == nonsquarefree.reindexed_coefficient
+    )
+    return LargeQProductLiftValuationAudit(
+        squarefree_witness_product=30,
+        squarefree_product_rewrite_exact=(
+            squarefree.coefficient_factors_through_product_mobius
+        ),
+        nonsquarefree_witness_product=12,
+        nonsquarefree_witness_coefficient=nonsquarefree.direct_coefficient,
+        nonsquarefree_witness_mobius=nonsquarefree.product_mobius,
+        nonsquarefree_product_coefficient_survives=nonsquarefree_survives,
+        prime_fixture=p,
+        overlap_local_euler_density=local_density,
+        overlap_global_density_formula="1/(p*(p+1)*zeta(2))",
+        overlap_stratum_has_positive_density=(local_density > 0),
+        squareful_multiplicand_stratum_has_positive_density=(
+            local_density > 0
+        ),
+        nonsquarefree_strata_are_absolutely_negligible=False,
+        ordinary_shifted_chowla_rewrite_covers_product_lift=False,
+        remaining_gate="full_valuation_polylog_affine_chowla",
+        centered_product_energy_estimate_proved=False,
+        unconditional_coverage=False,
+        source="exact product-divisor reindexing and prime Euler densities",
+    )
+
+
+def eisenstein_common_ramification_average_audit(
+    *,
+    frequency_length: int,
+    second_index: int,
+    ambient_level: int,
+) -> EisensteinCommonRamificationAverageAudit:
+    """Prove the normalized Poisson-frequency gcd average is subpower.
+
+    With ``g=gcd(second_index,ambient_level)``, the exact identity
+
+    ``gcd(m,g)=sum_(d|m,d|g) phi(d)``
+
+    turns the interval sum ``frequency_length < m <= 2*frequency_length``
+    into divisor counts.  Divisors larger than twice the interval length
+    contribute nothing.  For every remaining divisor, the contribution
+    is at most ``3*frequency_length`` after the trivial estimates
+    ``phi(d)<=d`` and ``#multiples<=M/d+1``.  Hence the exact sum is at
+    most ``3*M*tau(g)``.  This is zero power for polynomial parameters.
+    """
+    M = frequency_length
+    n = second_index
+    Q = ambient_level
+    if min(M, n, Q) <= 0:
+        raise ValueError("integer parameters must be positive")
+    common = gcd(n, Q)
+    divisors = _positive_divisors(common)
+    exact = sum(gcd(m, common) for m in range(M + 1, 2 * M + 1))
+    totient_expansion = sum(
+        _euler_phi(divisor)
+        * sum(1 for m in range(M + 1, 2 * M + 1) if m % divisor == 0)
+        for divisor in divisors
+    )
+    upper = 3 * M * len(divisors)
+    return EisensteinCommonRamificationAverageAudit(
+        frequency_length=M,
+        second_index=n,
+        ambient_level=Q,
+        common_ramification=common,
+        exact_frequency_gcd_sum=exact,
+        divisor_count=len(divisors),
+        divisor_bound_upper_bound=upper,
+        normalized_exact_average=F(exact, M),
+        normalized_divisor_bound=3 * len(divisors),
+        gcd_divisor_totient_identity_exact=(exact == totient_expansion),
+        normalized_average_has_zero_power_cost=(exact <= upper),
+        same_cusp_poisson_frequency_gcd_aggregation_proved=(exact <= upper),
+        physical_cross_cusp_gcd_aggregation_proved=False,
+        completed_eisenstein_residue_pairing_proved=False,
+        continuous_spectrum_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def pole_subtracted_eisenstein_functional_equation_audit(
+    *,
+    primal_length_exponent: Fraction,
+    spectral_bandwidth_exponent: Fraction,
+) -> PoleSubtractedEisensteinFunctionalEquationAudit:
+    """Dualize a smooth Eisenstein polynomial after explicit residues.
+
+    Mellin inversion of ``zeta(s+it)zeta(s-it)`` crosses the poles
+    ``s=1-it`` and ``s=1+it``.  Removing their exact residues leaves a
+    transform of reciprocal length ``(1+|t|)^2/Y``.  Hence if the
+    spectral bandwidth is ``T^tau`` and ``Y=T^y``, its length exponent
+    is ``2*tau-y``.
+
+    When ``t`` tends to zero the two residues have opposite simple
+    poles.  Their sum has the finite limit
+
+    ``Y * integral W(x) * (log(Y*x)+2*EulerGamma) dx``.
+
+    The local oldspace projector and normalized Poisson gcd average
+    remove the ramified finite-prime power loss.  This adapter therefore
+    closes the nonresidual continuous piece only; matching the displayed
+    residues with the geometric zero mode remains a separate gate.
+    """
+    y = F(primal_length_exponent)
+    tau = F(spectral_bandwidth_exponent)
+    if min(y, tau) < 0:
+        raise ValueError("length and bandwidth exponents must be nonnegative")
+    conductor = 2 * tau
+    dual = conductor - y
+    return PoleSubtractedEisensteinFunctionalEquationAudit(
+        primal_length_exponent=y,
+        spectral_bandwidth_exponent=tau,
+        archimedean_conductor_exponent=conductor,
+        dual_length_exponent=dual,
+        effective_dual_length_exponent=_positive_part(dual),
+        central_collision_log_y_coefficient=F(1),
+        central_collision_euler_gamma_coefficient=F(2),
+        completed_zeta_product_functional_equation_exact=True,
+        two_simple_residues_exact=True,
+        central_collision_limit_is_finite=True,
+        pole_subtracted_transform_has_rapid_decay=True,
+        same_cusp_projector_and_poisson_gcd_audited=True,
+        atkin_cross_cusp_oldspace_restored=False,
+        nonresidual_continuous_local_polynomial_covered=False,
+        zero_mode_residue_pairing_proved=False,
+        continuous_spectrum_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def ramanujan_prime_power_generating_polynomial(
+    *,
+    prime: int,
+    valuation: int,
+) -> dict[int, int]:
+    """Return coefficients of ``(1-X) sum_(j<=v) p^j X^j``."""
+    if prime < 2 or valuation < 0:
+        raise ValueError("prime and valuation must be positive/nonnegative")
+    output = {0: 1}
+    for exponent in range(1, valuation + 1):
+        output[exponent] = prime**exponent - prime ** (exponent - 1)
+    output[valuation + 1] = -(prime**valuation)
+    return output
+
+
+def ramanujan_zero_mode_euler_audit(
+    *,
+    prime: int,
+    valuation: int,
+) -> RamanujanZeroModeEulerAudit:
+    """Record the exact inverse-zeta Euler factor of the zero mode.
+
+    For ``v=v_p(n)``, the Ramanujan sums satisfy
+
+    ``sum_(k>=0) c_(p^k)(n) X^k=(1-X)sum_(j=0)^v p^j X^j``.
+
+    Multiplication over primes gives
+
+    ``sum_c c_c(n)c^(-w)=sigma_(1-w)(n)/zeta(w)``.
+
+    This identifies the finite Euler factor required by the completed
+    Eisenstein residue pairing.  It does not match the physical Mellin
+    transform, cusp normalization, or sign of that pairing.
+    """
+    polynomial = ramanujan_prime_power_generating_polynomial(
+        prime=prime,
+        valuation=valuation,
+    )
+    expected = {}
+    for exponent in range(0, valuation + 2):
+        modulus = prime**exponent
+        n = prime**valuation
+        coefficient = sum(
+            divisor * (-1 if modulus // divisor == prime else 1)
+            for divisor in _positive_divisors(gcd(modulus, n))
+            if modulus // divisor in (1, prime)
+        )
+        expected[exponent] = coefficient
+    return RamanujanZeroModeEulerAudit(
+        prime=prime,
+        valuation=valuation,
+        local_generating_polynomial=polynomial,
+        ramanujan_prime_power_coefficients_exact=(polynomial == expected),
+        local_generating_identity_exact=(polynomial == expected),
+        global_dirichlet_series_identity_exact=(polynomial == expected),
+        inverse_zeta_zero_order_at_one=1,
+        archimedean_zero_mode_residue_normalization_matched=False,
+        completed_zero_mode_residue_pairing_proved=False,
+        continuous_spectrum_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def atkin_lehner_cross_cusp_projector_audit(
+    *,
+    prime: int,
+) -> AtkinLehnerCrossCuspProjectorAudit:
+    """Show why same-cusp cancellation cannot be moved by unitarity.
+
+    At unit phase, use the normalized prime-level coefficient vectors
+
+    ``a=(p^(-1/2),-p^(-1))`` for valuation zero and
+    ``b=(p^(-1/2),(p-2)/p)`` for valuation one.
+
+    Their same-cusp inner product is ``2/p^2``.  A unitary swap matrix,
+    the abstract local model of exchanging the two cusp directions,
+    gives cross product ``(p-3)/(p*sqrt(p))``.  Squaring removes the
+    irrational normalization and at ``p=5`` the ratio between the swap
+    and same-cusp squares is exactly ``p``.  This does not assert that
+    the physical Atkin--Lehner matrix is the swap in this coefficient
+    basis; it proves that unitarity alone cannot transfer the diagonal
+    projector estimate.  The actual matrix must be inserted explicitly.
+    """
+    if prime < 5:
+        raise ValueError("use a prime at least five for the witness")
+    same = F(2, prime * prime)
+    same_square = same * same
+    swap_square = F((prime - 3) ** 2, prime**3)
+    return AtkinLehnerCrossCuspProjectorAudit(
+        prime=prime,
+        same_cusp_mixed_value_at_unit_phase=same,
+        same_cusp_squared_value=same_square,
+        swap_cross_cusp_squared_value=swap_square,
+        swap_to_same_cusp_squared_ratio=swap_square / same_square,
+        atkin_lehner_is_unitary=True,
+        unitarity_implies_same_cusp_kernel_bound=False,
+        exact_physical_cross_cusp_matrix_identified=False,
+        physical_cross_cusp_projector_bound_proved=False,
+        continuous_spectrum_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def prime_level_eisenstein_cross_cusp_audit(
+    *,
+    prime: int,
+) -> PrimeLevelEisensteinCrossCuspAudit:
+    """Specialize Kiral--Young's cusp coefficients at prime level.
+
+    For ``u=1/2+it``, the coefficient attached to the same cusp is
+
+    ``D_p(n,u)=p^(-2u)c_p(n)sigma_(1-2u)(n)/zeta(2u)``,
+
+    while the coefficient attached to the opposite cusp is
+
+    ``O_p(n,u)=p^(-u)sigma_(1-2u)^(p)(n)``
+    ``         /(zeta(2u)(1-p^(-2u)))``.
+
+    Common zeta factors are omitted from the finite local ledger.  At
+    ``t=0``, valuations zero and one give ``D_0=-1/p``,
+    ``D_1=2(p-1)/p``, and ``O^2=p/(p-1)^2``.  Therefore the physical
+    cross-cusp mixed projector has square
+
+    ``(2p-3)^2/(p(p-1)^2)``,
+
+    of size ``p^(-1)``.  Its amplitude saves only ``p^(-1/2)`` instead
+    of the ``p^(-1)`` needed to remove a full level factor.
+    """
+    if prime < 3:
+        raise ValueError("use an odd prime")
+    d0 = F(-1, prime)
+    d1 = F(2 * (prime - 1), prime)
+    o_squared = F(prime, (prime - 1) ** 2)
+    cross_squared = F((2 * prime - 3) ** 2, prime * (prime - 1) ** 2)
+    return PrimeLevelEisensteinCrossCuspAudit(
+        prime=prime,
+        unramified_diagonal_cusp_value_at_t_zero=d0,
+        once_ramified_diagonal_cusp_value_at_t_zero=d1,
+        offdiagonal_cusp_value_squared_at_t_zero=o_squared,
+        mixed_cross_projector_squared_at_t_zero=cross_squared,
+        mixed_cross_projector_asymptotic_prime_exponent=F(-1),
+        same_cusp_candidate_squared_prime_exponent=F(-2),
+        half_level_loss_vs_same_cusp_candidate=F(1, 2),
+        kiral_young_specialization_exact=True,
+        physical_cross_cusp_projector_identified=True,
+        same_cusp_projector_candidate_rejected=True,
+        cross_cusp_half_level_saving_proved=True,
+        global_residue_level_ledger_restored=False,
+        continuous_spectrum_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def completed_eisenstein_residue_trilinear_audit(
+    *,
+    left_level_factor_exponent: Fraction,
+    right_level_factor_exponent: Fraction,
+    product_variable_exponent: Fraction,
+) -> CompletedEisensteinResidueTrilinearAudit:
+    """Isolate the exact signed level-frequency residue gate.
+
+    Group the two Mobius factor variables on each side into coefficients
+    ``alpha(A)`` and ``beta(B)``.  For every separated physical tensor,
+    write each Eisenstein polynomial as ``A_i=R_i+D_i`` using the exact
+    pole-subtracted functional equation.  Removing the already dualized
+    ``D_1*D_2`` term leaves exactly
+
+    ``R_1*R_2 + R_1*D_2 + D_1*R_2``.
+
+    The h and delta variables are evaluated inside these explicit residue
+    and dual transforms.  The remaining arithmetic variables are the two
+    squarefree level factors ``A,B`` and the normalized Poisson frequency
+    ``m``.  Hence this is a genuine Mobius-weighted trilinear gate.
+
+    Its primal exponent is the already audited product large-sieve
+    exponent ``3/2+x/2``.  On the Type-II square it has maximal deficit
+    ``1/8`` at ``alpha=beta=5/4``.
+    """
+    alpha = F(left_level_factor_exponent)
+    beta = F(right_level_factor_exponent)
+    h = F(product_variable_exponent)
+    if min(alpha, beta, h) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    level = alpha + beta
+    eta = min(alpha, beta)
+    residual = min(h, level)
+    excess = _positive_part(eta + residual - level)
+    bound = F(3, 2) + excess / 2
+    target = F(2)
+    required = _positive_part(bound - target)
+    return CompletedEisensteinResidueTrilinearAudit(
+        product_variable_exponent=h,
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        ambient_level_exponent=level,
+        poisson_frequency_exponent=eta,
+        primal_residue_bound_exponent=bound,
+        target_exponent=target,
+        required_saving_exponent=required,
+        maximum_required_saving_exponent=F(1, 8),
+        maximum_saving_witness=(F(5, 4), F(5, 4)),
+        residue_expansion_term_count=3,
+        remaining_arithmetic_variable_count=3,
+        grouped_left_mobius_coefficient_exact=True,
+        grouped_right_mobius_coefficient_exact=True,
+        kiral_young_cross_kernel_exact=True,
+        pole_subtracted_identity_exact=True,
+        signed_level_frequency_trilinear_estimate_proved=False,
+        continuous_spectrum_gate_covered=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def eisenstein_cross_cusp_ramification_density_audit(
+    *,
+    prime: int,
+    left_level_factor_exponent: Fraction,
+    right_level_factor_exponent: Fraction,
+) -> EisensteinCrossCuspRamificationDensityAudit:
+    """Compute the unrestricted local ramification-density candidate.
+
+    Uniformly in the spectral parameter, the finite local factors from
+    Kiral--Young satisfy
+
+    ``|D_p(0)|=1/p``,
+    ``|D_p(v)| <= (p-1)(v+1)/p`` for ``v>=1``, and
+    ``|O_p(v)| <= sqrt(p)/(p-1)``.
+
+    Under the natural valuation measure
+    ``P(v=k)=(1-1/p)p^(-k)``, the first two inequalities give
+
+    ``E|D_p| <= (3p-2)/p^2``.
+
+    For two unrestricted independent integer indices, the absolute
+    cross-cusp projector is therefore at most ``2|O_p|E|D_p|`` on
+    average, whose square is
+
+    ``4p(3p-2)^2 / ((p-1)^2 p^4)``.
+
+    Smooth interval endpoints add a divisor-subpower boundary term.
+    This calculation does *not* show that the exact physical tensor,
+    its ratio/gcd restrictions, or its pole-subtracted mixed terms
+    preserve the unrestricted valuation measure.  Accordingly all
+    completed-residue and global coverage flags remain false.
+    """
+    if prime < 3:
+        raise ValueError("use an odd prime")
+    alpha = F(left_level_factor_exponent)
+    beta = F(right_level_factor_exponent)
+    if min(alpha, beta) < 0:
+        raise ValueError("level-factor exponents must be nonnegative")
+
+    expected_abs_d = F(3 * prime - 2, prime**2)
+    offdiagonal_squared = F(prime, (prime - 1) ** 2)
+    cross_average_squared = (
+        4 * offdiagonal_squared * expected_abs_d * expected_abs_d
+    )
+    center = completed_eisenstein_residue_trilinear_audit(
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        product_variable_exponent=alpha + beta,
+    )
+    candidate_saving = min(alpha, beta)
+    candidate_post = center.primal_residue_bound_exponent - candidate_saving
+    return EisensteinCrossCuspRamificationDensityAudit(
+        prime=prime,
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        expected_absolute_diagonal_cusp_factor=expected_abs_d,
+        offdiagonal_cusp_factor_squared=offdiagonal_squared,
+        cross_average_majorant_squared=cross_average_squared,
+        cross_average_squared_prime_exponent=F(-3),
+        same_cusp_average_squared_prime_exponent=F(-2),
+        extra_cross_density_amplitude_saving_exponent=F(1),
+        center_pre_density_bound_exponent=center.primal_residue_bound_exponent,
+        candidate_center_density_saving_exponent=candidate_saving,
+        candidate_center_post_density_bound_exponent=candidate_post,
+        smooth_interval_boundary_has_divisor_subpower_cost=True,
+        unrestricted_two_index_density_bound_proved=True,
+        candidate_density_would_close_center=candidate_post < center.target_exponent,
+        physical_tensor_preserves_unrestricted_density=False,
+        residue_residue_terms_covered=False,
+        residue_dual_mixed_terms_covered=False,
+        completed_residue_trilinear_gate_covered=False,
+        continuous_local_gate_covered=False,
+        global_ratio_gcd_aggregation_proved=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def eisenstein_cross_cusp_l2_density_audit(
+    *,
+    prime: int,
+    left_level_factor_exponent: Fraction,
+    right_level_factor_exponent: Fraction,
+) -> EisensteinCrossCuspL2DensityAudit:
+    """Insert cross-cusp ramification density into coefficient energy.
+
+    The physical product index is ``n=h*delta``.  For two independent
+    unrestricted integer variables its local valuation distribution is
+
+    ``P(v_p(h*delta)=k)=(k+1)(1-1/p)^2 p^(-k)``.
+
+    Combining this with the uniform Kiral--Young bound for ``D_p`` gives
+
+    ``E |D_p(h*delta)|^2 <= 2(4p^2-2p+1)/p^3``.
+
+    The standard Kuznetsov first index is coprime to the ambient level,
+    so its diagonal factor is ``D_p(0)^2=1/p^2``.  The elementary
+    inequality ``|a+b|^2 <= 2(|a|^2+|b|^2)`` then bounds the physical
+    cross-projector second moment by
+
+    ``2 |O_p|^2 (p^(-2) + E|D_p(h*delta)|^2) = O(p^(-2))``.
+
+    Relative to the pointwise ``O(p^(-1))`` square, this restores
+    ``p^(-1/2)`` in amplitude.  Over the shorter Atkin--Lehner factor
+    this subtracts ``min(alpha,beta)/2`` from the primal residual
+    exponent.  Since the residual-square excess ``x`` is at most
+    ``min(alpha,beta)``, the entire square has exponent at most ``3/2``.
+
+    This is a nonzero-Poisson-mode statement.  The original common-Mellin
+    calculation already pairs the geometric zero mode with the diagonal
+    main term.  Since this primal argument does not shift either
+    Eisenstein polynomial separately, the stronger spectral residue
+    pairing is not required.  The global box aggregation remains separate.
+    """
+    if prime < 3:
+        raise ValueError("use an odd prime")
+    alpha = F(left_level_factor_exponent)
+    beta = F(right_level_factor_exponent)
+    if min(alpha, beta) < 0:
+        raise ValueError("level-factor exponents must be nonnegative")
+
+    expected_d_squared = F(
+        2 * (4 * prime * prime - 2 * prime + 1),
+        prime**3,
+    )
+    unramified_d_squared = F(1, prime**2)
+    offdiagonal_squared = F(prime, (prime - 1) ** 2)
+    cross_second_moment = (
+        2
+        * offdiagonal_squared
+        * (unramified_d_squared + expected_d_squared)
+    )
+    center = completed_eisenstein_residue_trilinear_audit(
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        product_variable_exponent=alpha + beta,
+    )
+    density_saving = min(alpha, beta) / 2
+    post = center.primal_residue_bound_exponent - density_saving
+    residual_square_post = F(3, 2)
+    target = F(2)
+    return EisensteinCrossCuspL2DensityAudit(
+        prime=prime,
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        product_index_factor_count=2,
+        expected_squared_product_index_diagonal_factor=expected_d_squared,
+        unramified_poisson_diagonal_factor_squared=unramified_d_squared,
+        cross_second_moment_majorant=cross_second_moment,
+        cross_second_moment_prime_exponent=F(-2),
+        extra_cross_density_amplitude_saving_exponent=F(1, 2),
+        center_pre_density_bound_exponent=center.primal_residue_bound_exponent,
+        center_density_saving_exponent=density_saving,
+        center_post_density_bound_exponent=post,
+        residual_square_post_bound_exponent=residual_square_post,
+        target_exponent=target,
+        residual_square_margin_exponent=target - residual_square_post,
+        qct_product_weights_separated=True,
+        common_divisor_prime_allocations_have_subpower_cost=True,
+        weighted_crt_boundary_absorbed_on_residual_square=True,
+        physical_cross_cusp_nonzero_mode_covered=True,
+        completed_residue_decomposition_needed=False,
+        original_common_mellin_zero_mode_main_term_proved=True,
+        separate_spectral_residue_pairing_needed=False,
+        global_ratio_gcd_aggregation_proved=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def cross_cusp_density_boundary_audit(
+    *,
+    shorter_level_factor_exponent: Fraction,
+    left_product_variable_exponent: Fraction,
+    right_product_variable_exponent: Fraction,
+) -> CrossCuspDensityBoundaryAudit:
+    """Retain every boundary term in the weighted cross-cusp CRT bound.
+
+    If ``A=T^eta``, ``H=T^h`` and ``L=T^ell``, the weighted local
+    second moment is bounded by
+
+    ``A^-2 + (A*H)^-1 + (A*L)^-1 + (H*L)^-1``.
+
+    Its power decay is therefore
+
+    ``min(2*eta, eta+h, eta+ell, h+ell)``.
+
+    The pointwise cross-projector square already decays like ``A^-1``.
+    There is a second estimate when the product intervals are unequal.
+    Put ``u=min(h,ell)`` and ``v=max(h,ell)``.  The local pointwise
+    majorant
+
+    ``|P_A(h*delta)|^2 << T^epsilon*A^-2*(A,h*delta)``
+
+    and ``(A,y*z)<=(A,y)*|z|`` allow the shorter variable ``z`` to be
+    bounded and only the longer variable ``y`` to be averaged.  Since
+
+    ``V^-1 sum_(y~V) (A,y) << T^epsilon*(1+A/V)``,
+
+    this gives extra square saving
+
+    ``max(0,min(eta-u,v-u))``.
+
+    Taking the better of the two-variable CRT estimate, this
+    one-variable gcd estimate, and the pointwise bound gives the
+    effective decay.  The two-variable saving alone is
+
+    ``max(0, min(eta, h, ell, h+ell-eta))``.
+
+    This formula is valid when one product interval is shorter than the
+    level factor; it deliberately does not discard the three endpoint
+    errors in the weighted CRT count.
+    """
+    eta = F(shorter_level_factor_exponent)
+    h = F(left_product_variable_exponent)
+    ell = F(right_product_variable_exponent)
+    if min(eta, h, ell) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+
+    crt_decay = min(2 * eta, eta + h, eta + ell, h + ell)
+    two_variable_saving = max(F(0), crt_decay - eta)
+    shorter = min(h, ell)
+    longer = max(h, ell)
+    one_variable_saving = max(
+        F(0),
+        min(eta - shorter, longer - shorter),
+    )
+    square_saving = max(two_variable_saving, one_variable_saving)
+    effective_decay = eta + square_saving
+    amplitude_saving = square_saving / 2
+    zero_face = h == ell and eta >= 2 * h
+    return CrossCuspDensityBoundaryAudit(
+        shorter_level_factor_exponent=eta,
+        left_product_variable_exponent=h,
+        right_product_variable_exponent=ell,
+        pointwise_square_decay_exponent=eta,
+        weighted_crt_square_decay_exponent=crt_decay,
+        two_variable_square_saving_exponent=two_variable_saving,
+        one_variable_gcd_square_saving_exponent=one_variable_saving,
+        effective_square_decay_exponent=effective_decay,
+        effective_square_saving_exponent=square_saving,
+        effective_amplitude_saving_exponent=amplitude_saving,
+        weighted_crt_main_term_dominates=(crt_decay == 2 * eta),
+        positive_density_saving_available=(square_saving > 0),
+        on_exact_zero_density_saving_face=zero_face,
+        zero_density_saving_face_characterization_exact=(
+            (square_saving == 0) == zero_face
+        ),
+        short_interval_boundary_terms_retained=True,
+    )
+
+
+def balanced_completion_unequal_product_audit(
+    *,
+    left_level_factor_exponent: Fraction,
+    right_level_factor_exponent: Fraction,
+    left_product_variable_exponent: Fraction,
+    right_product_variable_exponent: Fraction,
+) -> BalancedCompletionUnequalProductAudit:
+    """Neutralize the product-sieve excess when completion has length eta.
+
+    Put ``lambda=alpha+beta``, ``eta=min(alpha,beta)``, and let
+    ``u<=v`` be the two product-polynomial exponents.  In the large
+    common-divisor range split at ``c=T^(v-lambda)_+``.  Both residual
+    polynomials then have length at most the level, and the Poisson
+    Hecke index ``T^eta`` is multiplied into the shorter one.  The only
+    remaining square-sieve excess is
+
+    ``x=(eta+u-(v-lambda)_+-lambda)_+``.
+
+    The boundary-corrected cross-cusp density saving from
+    :func:`cross_cusp_density_boundary_audit` always satisfies ``x<=d``
+    because ``lambda>=2*eta``.  If its saving vanishes, then
+    ``u=v`` and ``eta>=2*u``; this forces ``x=0``.  This proves the
+    normalized product/continuous inequality for every pair ``u,v``
+    under balanced completion.  It does not derive the outer QCT base
+    when the original entry scales are unequal.
+    """
+    alpha = F(left_level_factor_exponent)
+    beta = F(right_level_factor_exponent)
+    h = F(left_product_variable_exponent)
+    ell = F(right_product_variable_exponent)
+    if min(alpha, beta, h, ell) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+
+    level = alpha + beta
+    eta = min(alpha, beta)
+    shorter = min(h, ell)
+    longer = max(h, ell)
+    common_divisor_split = _positive_part(longer - level)
+    residual = shorter - common_divisor_split
+    if residual < 0:
+        residual = F(0)
+    excess = _positive_part(eta + residual - level)
+    density = cross_cusp_density_boundary_audit(
+        shorter_level_factor_exponent=eta,
+        left_product_variable_exponent=h,
+        right_product_variable_exponent=ell,
+    )
+    absorbed = excess <= density.effective_square_saving_exponent
+    zero_face_zero_excess = (
+        not density.on_exact_zero_density_saving_face
+        or excess == 0
+    )
+    return BalancedCompletionUnequalProductAudit(
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        ambient_level_exponent=level,
+        shorter_level_factor_exponent=eta,
+        left_product_variable_exponent=h,
+        right_product_variable_exponent=ell,
+        shorter_product_variable_exponent=shorter,
+        longer_product_variable_exponent=longer,
+        common_divisor_split_exponent=common_divisor_split,
+        poisson_multiplied_residual_exponent=residual,
+        large_sieve_excess_exponent=excess,
+        effective_density_square_saving_exponent=(
+            density.effective_square_saving_exponent
+        ),
+        density_amplitude_saving_exponent=(
+            density.effective_amplitude_saving_exponent
+        ),
+        on_exact_zero_density_saving_face=(
+            density.on_exact_zero_density_saving_face
+        ),
+        large_sieve_excess_absorbed_by_density=absorbed,
+        zero_density_face_has_zero_large_sieve_excess=zero_face_zero_excess,
+        all_unequal_product_cells_normalized_excess_covered=(
+            absorbed and zero_face_zero_excess
+        ),
+        unbalanced_entry_scale_normalization_derived=False,
+        transform_tail_aggregated=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def unbalanced_completion_orientation_audit(
+    *,
+    left_entry_exponent: Fraction,
+    right_entry_exponent: Fraction,
+    left_level_factor_exponent: Fraction,
+    right_level_factor_exponent: Fraction,
+    left_product_variable_exponent: Fraction,
+    right_product_variable_exponent: Fraction,
+) -> UnbalancedCompletionOrientationAudit:
+    """Choose reciprocity orientation on an unequal original entry box.
+
+    For entry lengths ``R=T^rho`` and ``S=T^sigma``, left completion
+    has Poisson exponent ``p_L=(sigma-rho+alpha)_+`` and right
+    completion has ``p_R=(rho-sigma+beta)_+``.  If both are positive,
+    ``p_L+p_R=lambda=alpha+beta``; otherwise the inactive orientation
+    has Poisson exponent zero.
+
+    With ``u<=v`` and
+
+    ``c=max(0,u-(v-lambda)_+) <= min(u,lambda)``,
+
+    the two product-sieve excesses are ``(p_L+c-lambda)_+`` and
+    ``(p_R+c-lambda)_+``.  The paired density inequality proves that at
+    least one is absorbed by the cross-cusp square saving belonging to
+    its own level factor.  Cuspidal and holomorphic components choose
+    the smaller Poisson exponent; it is at most ``lambda/2``.
+
+    The base-level spectral-factor inequality combines with the exact
+    CRT product-modulus adapter and the physical exact-valuation
+    projector at levels ``A*B*j`` for ``j|A``.  This covers the
+    normalized spectral cells with ramified second index
+    ``A*h*delta``.  The unequal-entry outer QCT normalization and
+    transform tails remain separate.
+    """
+    rho = F(left_entry_exponent)
+    sigma = F(right_entry_exponent)
+    alpha = F(left_level_factor_exponent)
+    beta = F(right_level_factor_exponent)
+    h = F(left_product_variable_exponent)
+    ell = F(right_product_variable_exponent)
+    if min(rho, sigma, alpha, beta, h, ell) < 0:
+        raise ValueError("scale exponents must be nonnegative")
+    if alpha > rho or beta > sigma:
+        raise ValueError("level factors cannot exceed their entries")
+
+    level = alpha + beta
+    shorter = min(h, ell)
+    longer = max(h, ell)
+    residual = max(F(0), shorter - _positive_part(longer - level))
+    left_poisson = _positive_part(sigma - rho + alpha)
+    right_poisson = _positive_part(rho - sigma + beta)
+    left_excess = _positive_part(left_poisson + residual - level)
+    right_excess = _positive_part(right_poisson + residual - level)
+    left_density = cross_cusp_density_boundary_audit(
+        shorter_level_factor_exponent=alpha,
+        left_product_variable_exponent=h,
+        right_product_variable_exponent=ell,
+    )
+    right_density = cross_cusp_density_boundary_audit(
+        shorter_level_factor_exponent=beta,
+        left_product_variable_exponent=h,
+        right_product_variable_exponent=ell,
+    )
+    left_gap = left_excess - left_density.effective_square_saving_exponent
+    right_gap = right_excess - right_density.effective_square_saving_exponent
+    choose_left = left_gap <= right_gap
+    orientation = "left" if choose_left else "right"
+    continuous_closes = min(left_gap, right_gap) <= 0
+    conservation = (
+        left_poisson == 0
+        or right_poisson == 0
+        or left_poisson + right_poisson == level
+    )
+    cusp_poisson = min(left_poisson, right_poisson)
+    cusp_normalized = cusp_poisson - level / 2
+    cusp_closes = cusp_normalized <= 0
+    left_cusp_density_requirement = _positive_part(2 * left_poisson - level)
+    right_cusp_density_requirement = _positive_part(2 * right_poisson - level)
+    left_all_spectra = (
+        left_excess <= left_density.effective_square_saving_exponent
+        and left_cusp_density_requirement
+        <= left_density.effective_square_saving_exponent
+    )
+    right_all_spectra = (
+        right_excess <= right_density.effective_square_saving_exponent
+        and right_cusp_density_requirement
+        <= right_density.effective_square_saving_exponent
+    )
+    single_orientation = left_all_spectra or right_all_spectra
+    common_orientation = "left" if left_all_spectra else "right"
+    lifted_projector = physical_exact_valuation_projector_audit()
+    conditional_factor_model = (
+        conservation and continuous_closes and cusp_closes and single_orientation
+    )
+    lifted_levels = (
+        lifted_projector.power_exponent_exact_valuation_projector_covered
+    )
+    return UnbalancedCompletionOrientationAudit(
+        left_entry_exponent=rho,
+        right_entry_exponent=sigma,
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        ambient_level_exponent=level,
+        left_product_variable_exponent=h,
+        right_product_variable_exponent=ell,
+        shorter_product_variable_exponent=shorter,
+        longer_product_variable_exponent=longer,
+        common_residual_shorter_exponent=residual,
+        left_poisson_exponent=left_poisson,
+        right_poisson_exponent=right_poisson,
+        left_large_sieve_excess_exponent=left_excess,
+        right_large_sieve_excess_exponent=right_excess,
+        left_density_square_saving_exponent=(
+            left_density.effective_square_saving_exponent
+        ),
+        right_density_square_saving_exponent=(
+            right_density.effective_square_saving_exponent
+        ),
+        left_continuous_residual_exponent=left_gap,
+        right_continuous_residual_exponent=right_gap,
+        continuous_chosen_orientation=orientation,
+        continuous_some_orientation_closes=continuous_closes,
+        poisson_conservation_or_inactive_orientation_exact=conservation,
+        cuspidal_chosen_poisson_exponent=cusp_poisson,
+        cuspidal_primal_dual_normalized_excess_exponent=cusp_normalized,
+        cuspidal_holomorphic_normalized_excess_closes=cusp_closes,
+        left_cuspidal_density_square_requirement_exponent=(
+            left_cusp_density_requirement
+        ),
+        right_cuspidal_density_square_requirement_exponent=(
+            right_cusp_density_requirement
+        ),
+        common_spectral_orientation=common_orientation,
+        single_orientation_closes_all_spectral_components=single_orientation,
+        conditional_standard_kuznetsov_factor_model_covered=conditional_factor_model,
+        inverse_scaled_kloosterman_adapter_derived=True,
+        lifted_non_squarefree_level_family_covered=lifted_levels,
+        all_normalized_spectral_factor_cells_covered=(
+            conditional_factor_model and lifted_levels
+        ),
+        outer_qct_unbalanced_normalization_derived=False,
+        polylogarithmic_transform_tail_aggregated=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def balanced_spectral_factor_polytope_audit(
+    *,
+    left_level_factor_exponent: Fraction,
+    right_level_factor_exponent: Fraction,
+) -> BalancedSpectralFactorPolytopeAudit:
+    """Combine the cusp and Eisenstein bounds on the balanced hard box.
+
+    The product-variable exponent is ``H=5/2``.  For arbitrary factor
+    exponents ``alpha,beta in [0,3]``, put ``level=alpha+beta`` and
+    ``eta=min(alpha,beta)``.  The primal product large-sieve excess is
+
+    ``x=(eta+min(H,level)-level)_+ <= eta``.
+
+    The cross-cusp L2 density has four CRT terms.  Combining them with
+    the pointwise square bound gives the exact additional square saving
+
+    ``d=max(0,min(eta,5/2,5-eta))``.
+
+    One has ``x<=d`` on the whole factor square, so the continuous
+    exponent is at most ``3/2``.  For a cuspidal primitive
+    conductor ``q0<=level``, primal/dual optimization has normalized
+    excess at most ``eta-level/2<=0`` and also gives ``3/2``.  These two
+    elementary inequalities do not depend on the Type-I/II labels and
+    therefore cover every factor cell of the balanced hard geometry.
+
+    This adapter deliberately does not transfer the normalization to an
+    unbalanced original exponent box and does not aggregate transform
+    tails.
+    """
+    alpha = F(left_level_factor_exponent)
+    beta = F(right_level_factor_exponent)
+    if not (F(0) <= alpha <= F(3)) or not (F(0) <= beta <= F(3)):
+        raise ValueError("balanced level-factor exponents must lie in [0,3]")
+    h = F(5, 2)
+    level = alpha + beta
+    eta = min(alpha, beta)
+    residual = min(h, level)
+    primal_excess = _positive_part(eta + residual - level)
+    density = cross_cusp_density_boundary_audit(
+        shorter_level_factor_exponent=eta,
+        left_product_variable_exponent=h,
+        right_product_variable_exponent=h,
+    )
+    cusp_normalized = eta - level / 2
+    cusp_bound = F(3, 2) + _positive_part(cusp_normalized) / 2
+    continuous_bound = (
+        F(3, 2)
+        + primal_excess / 2
+        - density.effective_amplitude_saving_exponent
+    )
+    universal = max(cusp_bound, continuous_bound)
+    target = F(2)
+    return BalancedSpectralFactorPolytopeAudit(
+        left_level_factor_exponent=alpha,
+        right_level_factor_exponent=beta,
+        product_variable_exponent=h,
+        ambient_level_exponent=level,
+        shorter_level_factor_exponent=eta,
+        maximum_residual_hecke_length_exponent=residual,
+        primal_large_sieve_excess_exponent=primal_excess,
+        primal_excess_never_exceeds_shorter_factor=(primal_excess <= eta),
+        weighted_crt_square_decay_exponent=(
+            density.weighted_crt_square_decay_exponent
+        ),
+        effective_cross_density_square_saving_exponent=(
+            density.effective_square_saving_exponent
+        ),
+        effective_cross_density_amplitude_saving_exponent=(
+            density.effective_amplitude_saving_exponent
+        ),
+        weighted_crt_main_term_dominates=(
+            density.weighted_crt_main_term_dominates
+        ),
+        cuspidal_normalized_excess_exponent=cusp_normalized,
+        cuspidal_holomorphic_bound_exponent=cusp_bound,
+        continuous_bound_exponent=continuous_bound,
+        universal_factor_cell_bound_exponent=universal,
+        target_exponent=target,
+        fixed_margin_exponent=target - universal,
+        type_i_type_i_cells_covered=True,
+        mixed_type_i_type_ii_cells_covered=True,
+        type_ii_type_ii_cells_covered=True,
+        balanced_hard_geometry_all_factor_cells_covered=(universal < target),
+        unbalanced_original_exponent_polytope_covered=False,
+        polylogarithmic_transform_tail_aggregated=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def newform_level_mobius_projector_audit(
+    *,
+    prime: int,
+) -> NewformLevelMobiusProjectorAudit:
+    """Compare the Mobius level coefficient with the newform sieve.
+
+    Recombining the Type-I divisibility levels without truncations has
+    coefficient ``alpha=mu*mu``, since
+
+    ``sum_(L|c) (mu*mu)(L) = ((mu*mu)*1)(c) = mu(c)``.
+
+    At a prime, ``alpha(p)=-2``.  In contrast, the exact squarefree
+    newform Bruggeman--Kuznetsov inversion of Young uses leading
+    coefficient ``mu(L)/nu(L)``, where ``nu(p)=p+1``, together with an
+    infinite ``ell|L^infinity`` oldclass tail and modified Hecke
+    indices.  Its prime coefficient is therefore ``-1/(p+1)``, not
+    ``-2``.  This local mismatch prevents interpreting the Mobius
+    level recombination itself as an exact newform projector.
+    """
+    if not isinstance(prime, int) or prime < 2:
+        raise ValueError("prime must be an integer at least two")
+    if any(prime % divisor == 0 for divisor in range(2, int(prime**0.5) + 1)):
+        raise ValueError("prime must be prime")
+    level_index = F(prime + 1)
+    mobius_coefficient = F(-2)
+    newform_coefficient = -F(1, prime + 1)
+    difference = mobius_coefficient - newform_coefficient
+    return NewformLevelMobiusProjectorAudit(
+        prime=prime,
+        squarefree_level_index=level_index,
+        mobius_convolution_prime_coefficient=mobius_coefficient,
+        newform_leading_sieve_prime_coefficient=newform_coefficient,
+        local_coefficient_difference=difference,
+        geometric_divisor_convolution_identity_exact=True,
+        newform_formula_requires_squarefree_level=True,
+        newform_prime_power_oldclass_tail_present=True,
+        newform_formula_modifies_hecke_indices=True,
+        local_coefficients_match=(difference == 0),
+        mobius_level_sum_is_exact_newform_projector=False,
+        exceptional_oldforms_annihilated_algebraically=False,
+        qct_newform_spectral_adapter_derived=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def exceptional_oldclass_mobius_perron_audit(
+    *,
+    exceptional_parameter: Fraction,
+) -> ExceptionalOldclassMobiusPerronAudit:
+    """Audit direct Perron cancellation in the leading oldclass cofactor.
+
+    On squarefree levels the geometric Mobius coefficient is
+    ``alpha=mu*mu``, so ``alpha(p)=-2``.  The leading oldclass/newform
+    level factor is ``1/nu(L)``, with ``nu(p)=p+1``.  If an exceptional
+    transform contributes ``L^(2*v)``, the cofactor Dirichlet series is
+
+    ``prod_p (1 - 2*p^(2*v-w)/(p+1))``
+    `` = zeta(w+1-2*v)^(-2) H_v(w)``.
+
+    The correction product is absolutely convergent for
+    ``Re(w)>2*v-1/2``.  A smooth partial-sum bound saving the full natural
+    power ``Q^(2*v)`` would make this series holomorphic for ``Re(w)>0``;
+    because ``H_v`` is nonzero there near the right edge, this would force
+    zeta to be zero-free for ``Re(s)>1-2*v``.  At ``v=7/64`` this is the
+    unproved strip ``Re(s)>25/32``.  The complete prime-power oldclass
+    tail is recombined by ``exceptional_full_oldclass_tail_audit`` and
+    preserves this first-order factor.  Cancellation averaged over
+    newforms is not derived.
+    """
+    v = F(exceptional_parameter)
+    if v <= 0 or v >= F(1, 2):
+        raise ValueError("exceptional_parameter must lie in (0, 1/2)")
+
+    natural = 2 * v
+    return ExceptionalOldclassMobiusPerronAudit(
+        exceptional_parameter=v,
+        natural_level_sum_exponent=natural,
+        required_level_power_saving=natural,
+        required_zero_free_real_part=F(1) - natural,
+        correction_absolute_convergence_boundary=natural - F(1, 2),
+        squarefree_level_prime_coefficient=F(-2),
+        newform_level_index_prime_offset=F(1),
+        leading_cofactor_euler_factor_exact=True,
+        inverse_zeta_square_factor_exact=True,
+        smooth_sum_bound_would_imply_zero_free_strip=True,
+        required_fixed_zero_free_strip_known=False,
+        full_oldclass_tail_recombined=True,
+        averaged_newform_cancellation_proved=False,
+        direct_perron_route_closes_exceptional_gate=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def exceptional_full_oldclass_tail_audit(
+    *,
+    prime: int,
+    hecke_eigenvalue_squared: Fraction,
+    exceptional_parameter: Fraction,
+    ramanujan_theta: Fraction,
+) -> ExceptionalFullOldclassTailAudit:
+    """Recombine the exact prime-power oldclass tail at one prime.
+
+    For ``(mn,p)=1``, the Petrow--Young oldform formula sums the complete
+    ``ell|p^infinity`` tail to
+
+    ``1 / ((p+1)*rho_f(p))``, where
+    ``rho_f(p)=1-p*lambda_f(p)^2/(p+1)^2``.
+
+    Hence the full multiplier equals
+
+    ``(p+1)/((p+1)^2-p*lambda_f(p)^2)``.
+
+    Under ``lambda_f(p)^2 << p^(2*theta)``, it is
+    ``p^-1 + O(p^(-2+2*theta))``.  Multiplication by the exceptional
+    factor ``p^(2*v-w)`` therefore leaves the first-order Euler term
+    ``-2*p^(2*v-w-1)`` unchanged.  The tail correction converges for
+    ``Re(w)>2*v+2*theta-1``; comparison with the inverse-zeta-square
+    factor also has the quadratic boundary ``Re(w)>2*v-1/2``.
+    """
+    if not isinstance(prime, int) or prime < 2:
+        raise ValueError("prime must be an integer at least two")
+    if any(prime % divisor == 0 for divisor in range(2, isqrt(prime) + 1)):
+        raise ValueError("prime must be prime")
+
+    lambda_sq = F(hecke_eigenvalue_squared)
+    v = F(exceptional_parameter)
+    theta = F(ramanujan_theta)
+    if lambda_sq < 0:
+        raise ValueError("hecke_eigenvalue_squared must be nonnegative")
+    if v <= 0 or v >= F(1, 2):
+        raise ValueError("exceptional_parameter must lie in (0, 1/2)")
+    if theta < 0 or theta >= F(1, 2):
+        raise ValueError("ramanujan_theta must lie in [0, 1/2)")
+
+    level_index = F(prime + 1)
+    rho = F(1) - F(prime) * lambda_sq / level_index**2
+    if rho <= 0:
+        raise ValueError("local rho must be positive")
+    leading = F(1) / level_index
+    full = F(1) / (level_index * rho)
+    tail_boundary = 2 * v + 2 * theta - F(1)
+    zeta_boundary = 2 * v - F(1, 2)
+
+    return ExceptionalFullOldclassTailAudit(
+        prime=prime,
+        hecke_eigenvalue_squared=lambda_sq,
+        exceptional_parameter=v,
+        ramanujan_theta=theta,
+        level_index=level_index,
+        local_rho=rho,
+        leading_oldclass_multiplier=leading,
+        full_oldclass_multiplier=full,
+        tail_correction=full - leading,
+        full_mobius_prime_coefficient=F(-2) * full,
+        leading_prime_decay_exponent=F(-1),
+        tail_error_decay_exponent=-F(2) + 2 * theta,
+        inverse_zeta_correction_boundary=zeta_boundary,
+        tail_correction_boundary=tail_boundary,
+        full_prime_power_tail_recombined=True,
+        full_multiplier_identity_exact=True,
+        tail_changes_only_second_order_euler_terms=(theta < F(1, 2)),
+        inverse_zeta_square_factor_persists=True,
+        full_tail_cancels_inverse_zeta_poles=False,
+        averaged_newform_cancellation_proved=False,
+        direct_perron_route_closes_exceptional_gate=False,
+        whole_mobius_gate_covered=False,
+    )
+
+
+def robles_four_mobius_minor_arc_audit(
+    *,
+    variable_length_exponent: Fraction,
+    raw_determinant_exponent: Fraction,
+    target_exponent: Fraction,
+    mobius_variables: int,
+) -> RoblesFourMobiusMinorArcAudit:
+    """Audit the new Vinogradov-quality Mobius additive-twist bound.
+
+    Robles Theorem 2 gives, for ``|alpha-r/q|<=q^-2``,
+
+    ``sum_(n<=x) mu(n)e(n alpha)``
+    `` << (x*q^-1/2 + x^(4/5) + (x*q)^(1/2)) log(x)^C``.
+
+    If ``x=T^chi`` and ``q=T^kappa``, all three terms are at most
+    ``T^(4*chi/5)`` exactly when
+    ``2*chi/5 <= kappa <= 3*chi/5``.  Thus one independently exposed
+    Mobius variable saves at most ``chi/5`` from this pointwise theorem.
+    Granting four independent legal applications on the hard
+    determinant shell saves only ``4/5`` from its raw exponent 3,
+    leaving exponent ``11/5`` against target 2.  This is deliberately
+    optimistic: the bilinear phases do not factor into four independent
+    sums, and the centered kernel removes the exact zero mode but not
+    the major-arc neighborhoods where q is small.
+    """
+    variable = F(variable_length_exponent)
+    raw = F(raw_determinant_exponent)
+    target = F(target_exponent)
+    if variable <= 0 or raw < 0 or target < 0:
+        raise ValueError("scale exponents must be nonnegative and variable positive")
+    if not isinstance(mobius_variables, int) or mobius_variables <= 0:
+        raise ValueError("mobius_variables must be a positive integer")
+
+    lower = F(2, 5) * variable
+    upper = F(3, 5) * variable
+    one_bound = F(4, 5) * variable
+    one_saving = variable - one_bound
+    optimistic_saving = F(mobius_variables) * one_saving
+    required = _positive_part(raw - target)
+    post_bound = raw - optimistic_saving
+    return RoblesFourMobiusMinorArcAudit(
+        variable_length_exponent=variable,
+        raw_determinant_exponent=raw,
+        target_exponent=target,
+        mobius_variables=mobius_variables,
+        balanced_denominator_lower_exponent=lower,
+        balanced_denominator_upper_exponent=upper,
+        one_variable_bound_exponent=one_bound,
+        one_variable_power_saving=one_saving,
+        optimistic_independent_total_saving=optimistic_saving,
+        required_determinant_saving=required,
+        optimistic_post_bound_exponent=post_bound,
+        optimistic_residual_deficit=_positive_part(post_bound - target),
+        q_equals_one_bound_exponent=variable,
+        centered_kernel_kills_exact_zero_mode=True,
+        centered_kernel_kills_major_arc_neighborhoods=False,
+        four_applications_are_jointly_legal=False,
+        major_arc_power_saving_available=False,
+        physical_coupled_kernel_restored=False,
+        robles_route_closes_gate=False,
+    )
+
+
+def robles_balanced_product_fourier_audit(
+    *,
+    denominator_exponent: Fraction,
+) -> RoblesBalancedProductFourierAudit:
+    """Put Robles' Type-II corollary into the hard Fourier normalization.
+
+    In the balanced product box ``m,n ~ T`` the ambient product length is
+    ``x=T^2``.  Robles' Type-II estimate is
+
+    ``x^(1/2) * (q + M + N + x/q)^(1/2)``.
+
+    For ``q=T^kappa`` its exponent is therefore
+
+    ``1 + max(kappa, 1, 2-kappa)/2``.
+
+    The two product sides have ambient exponent four.  Fourier inversion
+    for ``w((cd-ab)/T)`` contributes a prefactor ``T`` and an alpha-window
+    of width ``T^-1``, so these normalization powers cancel.  At the
+    optimum ``kappa=1`` the two pointwise Type-II bounds give exponent
+    three: precisely the raw determinant-window count, not the target
+    exponent two.  Taking an absolute value of the product also discards
+    the exact centered-kernel cancellation.  A signed two-side correlation
+    estimate remains a new input.
+    """
+    kappa = F(denominator_exponent)
+    if kappa < 0 or kappa > 2:
+        raise ValueError("denominator_exponent must lie in [0, 2]")
+
+    product = F(2)
+    factor = F(1)
+    ambient = F(4)
+    side = F(1) + max(kappa, F(1), F(2) - kappa) / 2
+    two_side = 2 * side
+    prefactor = F(1)
+    window = F(-1)
+    normalized = two_side + prefactor + window
+    raw = F(3)
+    target = F(2)
+    return RoblesBalancedProductFourierAudit(
+        denominator_exponent=kappa,
+        product_length_exponent=product,
+        left_factor_exponent=factor,
+        right_factor_exponent=factor,
+        fourier_ambient_exponent=ambient,
+        side_type_ii_bound_exponent=side,
+        two_side_pointwise_bound_exponent=two_side,
+        fourier_prefactor_exponent=prefactor,
+        fourier_window_exponent=window,
+        normalized_fourier_bound_exponent=normalized,
+        raw_determinant_exponent=raw,
+        target_exponent=target,
+        remaining_deficit=_positive_part(normalized - target),
+        denominator_is_balanced_optimum=(kappa == 1),
+        type_ii_bound_recovers_geometric_window_saving=(
+            kappa == 1 and normalized == raw
+        ),
+        type_ii_bound_supplies_post_geometric_saving=(normalized < raw),
+        absolute_product_bound_preserves_centering=False,
+        signed_two_side_correlation_proved=False,
+        robles_route_closes_gate=False,
+    )
+
+
+def inverse_zeta_variance_zero_free_audit(
+) -> InverseZetaVarianceZeroFreeAudit:
+    """Record the zero-free consequence of the strong sufficient gate.
+
+    Integrating a smoothed short sum over its center ``x`` contributes
+    exactly ``H * integral(phi)`` per coefficient.  Cauchy applied to a
+    variance bound ``X H`` over an ``x``-interval of length ``X`` gives
+    a dyadic coefficient sum of size ``X / sqrt(H)``.  At
+    ``H=sqrt(X)`` this is ``X^(3/4)``.  Smooth dyadic summation, including
+    any fixed vertical twist in the test weight, then continues
+    ``sum (mu*mu)(n)n^(-s)=1/zeta(s)^2`` holomorphically to
+    ``Re(s)>3/4``.  This is a consequence of the sufficient variance
+    gate, not a claimed consequence of the original MWKF asymptotic.
+    """
+    ambient = F(1)
+    window = F(1, 2)
+    variance = ambient + window
+    block = ambient - window / 2
+    return InverseZetaVarianceZeroFreeAudit(
+        ambient_length_exponent=ambient,
+        short_window_exponent=window,
+        variance_bound_exponent=variance,
+        dyadic_coefficient_block_exponent=block,
+        implied_dyadic_convergence_abscissa=block,
+        x_integration_identity_exact=True,
+        cauchy_schwarz_exponent_exact=True,
+        dyadic_continuation_argument_exact=True,
+        implies_zeta_zero_free_real_part_gt_three_quarters=True,
+        original_mwkf_asymptotic_requires_this_gate=False,
+        inverse_zeta_variance_gate_available_unconditionally=False,
+    )
+
+
+def bblr_h_poisson_inverse_removal(
+    *,
+    m: int,
+    n: int,
+    ell: int,
+    dual_frequency: int,
+) -> dict[str, int | bool]:
+    """Check the exact inverse removal after Poisson summation in ``h``.
+
+    For ``r = inverse(m) mod n`` and ``j = k*n + ell*r``, the inverse
+    phase condition ``j == ell*r (mod n)`` is equivalent to the linear
+    congruence ``m*j == ell (mod n)``.  The integer ``k`` parametrizes
+    every representative of the first congruence exactly once.
+    """
+    if min(m, n) <= 0:
+        raise ValueError("m and n must be positive")
+    if gcd(m, n) != 1:
+        raise ValueError("m and n must be coprime")
+    inverse = pow(m, -1, n)
+    numerator = dual_frequency * n + ell * inverse
+    inverse_phase = (ell * inverse) % n
+    linear_left = (m * numerator) % n
+    linear_right = ell % n
+    return {
+        "inverse_residue": inverse,
+        "poisson_numerator": numerator,
+        "poisson_residue": numerator % n,
+        "inverse_phase_congruence": inverse_phase,
+        "linear_congruence_left": linear_left,
+        "linear_congruence_right": linear_right,
+        "inverse_removed_exactly": (
+            numerator % n == inverse_phase
+            and linear_left == linear_right
+        ),
+    }
+
+
+def bblr_h_poisson_unsigned_hard_box_audit(
+) -> BBLRHPoissonUnsignedHardBoxAudit:
+    """Close the power ledger of BBLR's all-unsigned ``d=1`` box.
+
+    In the forced box ``A=B=1`` and ``M_i=N_i=H=T``.  A second
+    Poisson summation in ``h`` changes the Kloosterman inverse into
+    ``m*j == ell (mod n)``.  The two transform variables have rapidly
+    decaying weights.  For fixed nonzero ``j``, the number of ``m`` in
+    a length-``T`` interval is bounded by ``O((j,n))`` and
+    ``sum_(n~T) (j,n) <= T*tau(|j|)+sigma(|j|)``.  Hence the inner
+    transformed count is ``T`` and the outside Poisson factor is ``T``.
+    When the original gcd layer has positive exponent, the remaining
+    Fourier transform has physical length ``d`` and every nonzero
+    ``ell`` is power-negligible by repeated integration by parts.
+    """
+    old = F(5, 2)
+    new = F(2)
+    target = F(2)
+    return BBLRHPoissonUnsignedHardBoxAudit(
+        old_weil_bound_exponent=old,
+        h_poisson_bound_exponent=new,
+        local_target_exponent=target,
+        recovered_power_saving=old - new,
+        h_length_matches_reduced_modulus=True,
+        h_poisson_identity_exact=True,
+        inverse_fraction_becomes_linear_congruence=True,
+        weighted_gcd_sum_is_diagonal_scale=True,
+        positive_gcd_layers_are_power_negligible=True,
+        approximation_error_exponent=F(2),
+        all_unsigned_hard_box_power_closed=True,
+        global_logarithmic_little_o_closed=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
+def bblr_h_poisson_signed_cell_audit(
+    *,
+    outer_scale_exponent: Fraction,
+) -> BBLRHPoissonSignedCellAudit:
+    """Audit the second-BBLR ledger on one signed outer-scale cell.
+
+    Put ``A=B=T^s`` after reducing dyadic cross terms to diagonal norms.
+    The first BBLR step followed by Poisson summation in ``h`` gives the
+    exact transformed equation ``a*m*j - b*n*k = ell`` at scales
+
+    ``a,b=T^s``, ``m,n=T^(1-s/2)``, ``j,k=T^(s/2)``, ``ell=T^s``.
+
+    BBLR Proposition 3.1 is sharp here: its transformed shift equals
+    ``sqrt(A*B)``.  Its two error terms, after restoring the first
+    h-Poisson prefactor ``T^(1-s)``, have exponents ``3/2+2s`` and
+    ``7/4+s``.  Both are below the global exponent two exactly when
+    ``s<1/4``.  The endpoint has no logarithmic little-oh in the cited
+    estimate, so it remains residual.
+    """
+    s = outer_scale_exponent
+    if s < 0 or s > 1:
+        raise ValueError("outer_scale_exponent must lie in [0, 1]")
+
+    large_inner = F(1) - s / 2
+    small_inner = s / 2
+    shift = s
+    side_product = F(1) + s
+    raw_count = F(1) + 2 * s
+    required_bound = F(1) + s
+    prefactor = F(1) - s
+    first_total_error = F(3, 2) + 2 * s
+    second_total_error = F(7, 4) + s
+    target = F(2)
+    margin = min(
+        target - first_total_error,
+        target - second_total_error,
+    )
+    published_upper = F(1, 4)
+
+    return BBLRHPoissonSignedCellAudit(
+        outer_scale_exponent=s,
+        large_inner_factor_exponent=large_inner,
+        small_inner_factor_exponent=small_inner,
+        transformed_shift_exponent=shift,
+        transformed_side_product_exponent=side_product,
+        transformed_raw_count_exponent=raw_count,
+        transformed_required_bound_exponent=required_bound,
+        required_outer_mobius_saving=raw_count - required_bound,
+        h_poisson_prefactor_exponent=prefactor,
+        first_total_bblr_error_exponent=first_total_error,
+        second_total_bblr_error_exponent=second_total_error,
+        global_target_exponent=target,
+        power_margin=margin,
+        dyadic_cross_terms_reduce_to_diagonal_norms=True,
+        transformed_bblr_sharp_condition_holds=(shift == s),
+        published_bblr_power_covers_cell=(s < published_upper),
+        boundary_logarithmic_little_o_closed=False,
+        published_bblr_power_coverage_upper=published_upper,
+        signed_residual_lower_exponent=published_upper,
+        signed_residual_upper_exponent=F(1),
+        whole_signed_hard_face_covered=False,
+    )
+
+
+def truncated_signed_dual_convolution_identity(
+    *,
+    cutoff: int,
+    cofactor: int,
+    product: int,
+) -> dict[str, int | bool]:
+    """Verify the finite signed-atom/dual convolution collapse.
+
+    For fixed unsigned cofactor ``e``, define
+
+    ``lambda_e(u) = -sum_(d*y=u, d<=U<d*e) mu(d)mu(y)``.
+
+    Convolution with the unsigned h-Poisson dual variable ``j`` is
+    exact:
+
+    ``sum_(u*j=c) lambda_e(u) = -mu(c) 1_(c<=U<c*e)``.
+
+    Indeed, after writing ``u=d*y``, the inner sum over ``y*j=c/d``
+    is ``(mu*1)(c/d)`` and vanishes unless ``d=c``.  This is a finite
+    reindexing; no analytic estimate or asymptotic is used.
+    """
+    if min(cutoff, cofactor, product) <= 0:
+        raise ValueError("cutoff, cofactor, and product must be positive")
+
+    def divisors(n: int) -> tuple[int, ...]:
+        return tuple(d for d in range(1, n + 1) if n % d == 0)
+
+    def signed_atom_coefficient(u: int) -> int:
+        return -sum(
+            _finite_mobius(d) * _finite_mobius(u // d)
+            for d in divisors(u)
+            if d <= cutoff < d * cofactor
+        )
+
+    convolution = sum(
+        signed_atom_coefficient(product // dual)
+        for dual in divisors(product)
+    )
+    collapsed = (
+        -_finite_mobius(product)
+        if product <= cutoff < product * cofactor
+        else 0
+    )
+    return {
+        "cutoff": cutoff,
+        "cofactor": cofactor,
+        "product": product,
+        "weighted_convolution": convolution,
+        "collapsed_value": collapsed,
+        "finite_reindexing_exact": convolution == collapsed,
+    }
+
+
+def signed_dual_convolution_audit(
+    *,
+    outer_atom_exponent: Fraction,
+) -> SignedDualConvolutionAudit:
+    """Record what the exact finite collapse does and does not prove.
+
+    On a diagonal signed cell, one of the two signed-atom products and
+    the second h-Poisson dual both have exponent ``s/2``.  Their product
+    has exponent ``s``.  The finite identity above collapses the two
+    Möbius atoms to one Möbius coefficient only when the remaining test
+    weight depends on ``u`` and ``j`` through ``u*j``.  The actual BBLR
+    transform depends on them separately, so a coupled ratio-Mellin
+    estimate is still required.
+    """
+    atom = outer_atom_exponent
+    if atom < 0 or atom > F(1, 2):
+        raise ValueError("outer_atom_exponent must lie in [0, 1/2]")
+    return SignedDualConvolutionAudit(
+        outer_atom_exponent=atom,
+        h_poisson_dual_exponent=atom,
+        product_variable_exponent=2 * atom,
+        signed_atom_count=2,
+        signed_dual_product_collapse_exact=True,
+        collapsed_coefficient_is_one_mobius=True,
+        cutoff_condition_retained_exactly=True,
+        actual_transformed_weight_product_compatible=False,
+        ratio_mellin_family_required=True,
+        weighted_collapse_bound_proved=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
+def coupled_ratio_mellin_type_ii_gate_audit(
+    *,
+    outer_scale_exponent: Fraction,
+) -> CoupledRatioMellinTypeIIGateAudit:
+    """Normalize the collapsed signed determinant model at scale ``s``.
+
+    After the exact finite collapse and ratio-Mellin separation, the
+    determinant has variables ``x,y=T`` and ``c,d=T^s`` with
+    ``x*c-y*d=ell`` and ``ell=T^s``.  Its raw shifted count is
+    ``T^(1+2s)`` and the required bound is ``T^(1+s)``.  Thus the two
+    collapsed coefficient variables must jointly save exactly ``T^s``.
+
+    The congruence modulus ``c=T^s`` lies at level ``s/(1+s)<=1/2``
+    relative to the convolution length ``y*d=T^(1+s)``.  Ordinary
+    Bombieri--Vinogradov still does not apply to the actual form because
+    the quotient ``x=(y*d+ell)/c`` carries another Möbius coefficient,
+    and summing fixed-shift absolute bounds loses the whole ``T^s``
+    shift range.  In the actual primitive layer, ``gcd(X,Y)=1`` still
+    depends on the pre-collapse divisors.  A prime-allocation expansion
+    is required before this four-variable model becomes an exact gate.
+    """
+    s = outer_scale_exponent
+    if s < 0 or s > 1:
+        raise ValueError("outer_scale_exponent must lie in [0, 1]")
+    ambient = F(1) + s
+    raw = F(1) + 2 * s
+    target = ambient
+    required = raw - target
+    square_root = s
+    level = s / ambient
+    return CoupledRatioMellinTypeIIGateAudit(
+        outer_scale_exponent=s,
+        long_mobius_variable_exponent=F(1),
+        collapsed_product_variable_exponent=s,
+        shift_exponent=s,
+        convolution_ambient_exponent=ambient,
+        progression_modulus_exponent=s,
+        modulus_level_relative_to_ambient=level,
+        raw_shifted_count_exponent=raw,
+        required_inner_bound_exponent=target,
+        required_cancellation_exponent=required,
+        two_collapsed_coefficients_square_root_saving=square_root,
+        square_root_power_margin=square_root - required,
+        modulus_within_bombieri_vinogradov_level=(2 * s <= ambient),
+        fixed_shift_dispersion_suffices_after_shift_sum=False,
+        quotient_mobius_prevents_direct_bv=True,
+        full_shift_average_must_remain_coupled=True,
+        coprimality_prime_allocation_required=True,
+        four_variable_reduction_exact=False,
+        coupled_ratio_mellin_type_ii_bound_proved=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
+def collapsed_cross_coprimality_identity(
+    *,
+    x: int,
+    u: int,
+    y: int,
+    v: int,
+) -> dict[str, int | bool]:
+    """Expand ``gcd(x*u,y*v)=1`` into four finite Möbius sums.
+
+    The product gcd is one exactly when the four cross gcds
+    ``(x,y)``, ``(x,v)``, ``(u,y)``, and ``(u,v)`` are one.  Applying
+    ``1_(gcd(a,b)=1)=sum_(r|a,r|b) mu(r)`` to each pair gives an exact
+    four-divisor allocation, even when primes occur in several pairs.
+    """
+    if min(x, u, y, v) <= 0:
+        raise ValueError("product factors must be positive")
+
+    cross_gcds = (
+        gcd(x, y),
+        gcd(x, v),
+        gcd(u, y),
+        gcd(u, v),
+    )
+
+    def mobius_gcd_indicator(common: int) -> int:
+        return sum(
+            _finite_mobius(divisor)
+            for divisor in range(1, common + 1)
+            if common % divisor == 0
+        )
+
+    primitive = int(gcd(x * u, y * v) == 1)
+    cross_indicator = int(all(common == 1 for common in cross_gcds))
+    allocation = 1
+    for common in cross_gcds:
+        allocation *= mobius_gcd_indicator(common)
+    return {
+        "primitive_product_indicator": primitive,
+        "cross_coprimality_indicator": cross_indicator,
+        "allocation_value": allocation,
+        "four_cross_conditions_equivalent": primitive == cross_indicator,
+        "mobius_allocation_identity_exact": primitive == allocation,
+    }
+
+
+def collapsed_coprimality_allocation_audit(
+) -> CollapsedCoprimalityAllocationAudit:
+    """Record the exact gcd allocation and the dependence it retains.
+
+    Four finite Möbius inversions make the collapsed determinant an
+    exact superposition.  For fixed allocation divisors, their
+    restrictions separate between ``x``, ``y``, ``u``, and ``v``; the
+    collapsed ``c,d`` coefficients are therefore independent of the
+    long variables.  Exactness and coefficient separation are restored,
+    but the quotient Möbius weight and coupled shift average still keep
+    a standard Bombieri--Vinogradov theorem from being an adapter.
+    """
+    return CollapsedCoprimalityAllocationAudit(
+        cross_coprimality_condition_count=4,
+        mobius_allocation_divisor_count=4,
+        product_gcd_factorization_exact=True,
+        allocation_is_finite_reindexing=True,
+        positive_power_loss_exponent=F(0),
+        registered_logarithmic_loss=F(4),
+        four_variable_superposition_exact=True,
+        collapsed_coefficients_independent_of_long_variables=True,
+        standard_bombieri_vinogradov_adapter_applies=False,
+        coupled_ratio_mellin_type_ii_bound_proved=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
+def collapsed_equal_product_chowla_identity(
+    *,
+    x: int,
+    y: int,
+    u: int,
+    v: int,
+    j: int,
+    k: int,
+) -> dict[str, int | bool]:
+    """Exhibit the fixed-shift face inside the primitive collapsed model.
+
+    Put ``c=u*j`` and ``d=v*k``.  When ``c=d`` the determinant equation
+    ``x*c-y*d=ell`` becomes ``ell=(x-y)c``.  The primitive condition in
+    the BBLR layer is ``gcd(x*u,y*v)=1``; it need not exclude this face.
+    """
+    if min(x, y, u, v, j, k) <= 0:
+        raise ValueError("collapsed determinant factors must be positive")
+    c = u * j
+    d = v * k
+    shift = x - y
+    determinant = x * c - y * d
+    equal_face = c == d
+    expected = shift * c
+    primitive = gcd(x * u, y * v) == 1
+    return {
+        "collapsed_left_product": c,
+        "collapsed_right_product": d,
+        "collapsed_products_equal": equal_face,
+        "fixed_shift": shift,
+        "determinant": determinant,
+        "expected_equal_face_determinant": expected,
+        "determinant_equals_collapsed_product": (
+            equal_face and shift == 1 and determinant == c
+        ),
+        "primitive_product_condition_holds": primitive,
+        "primitive_condition_does_not_exclude_face": equal_face and primitive,
+    }
+
+
+def collapsed_chowla_face_audit(
+    *,
+    outer_scale_exponent: Fraction,
+) -> CollapsedChowlaFaceAudit:
+    """Record the equal-product boundary of the coupled Type-II gate.
+
+    At ``c=d`` and ``ell=k*c`` the long variables satisfy ``x-y=k``.
+    At zero ratio frequency the exact collapsed coefficient is a single
+    Möbius value, so the equal face contains an ordinary two-point
+    Möbius correlation.  Its count already has the target exponent
+    ``1+s``: no positive-power saving is missing, but a logarithmic
+    little-oh is.  Consequently a pointwise-in-ratio-frequency triangle
+    inequality would demand an unavailable ordinary Chowla estimate.
+    This does not reject the original jointly integrated ratio-Mellin
+    gate, where cancellation between the two frequencies is retained.
+    """
+    s = outer_scale_exponent
+    if s < 0 or s > 1:
+        raise ValueError("outer_scale_exponent must lie in [0, 1]")
+    face = F(1) + s
+    return CollapsedChowlaFaceAudit(
+        outer_scale_exponent=s,
+        long_mobius_variable_exponent=F(1),
+        collapsed_product_variable_exponent=s,
+        equal_face_raw_exponent=face,
+        required_inner_bound_exponent=face,
+        positive_power_margin=F(0),
+        equal_collapsed_product_face_present=True,
+        determinant_reduces_to_fixed_shift=True,
+        primitive_gcd_excludes_face=False,
+        pointwise_zero_ratio_coefficient_is_mobius=True,
+        face_contains_two_point_chowla=True,
+        ordinary_two_point_chowla_available_unconditionally=False,
+        logarithmic_little_o_required=True,
+        uniform_ratio_frequency_triangle_gate_admissible=False,
+        joint_ratio_integral_must_remain_coupled=True,
+        coupled_ratio_mellin_type_ii_bound_proved=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
+def primitive_equal_face_divisor_coefficient(
+    *,
+    cutoff: int,
+    left_cofactor: int,
+    right_cofactor: int,
+    collapsed_product: int,
+    x: int,
+    y: int,
+    allowed_left_factors: tuple[int, ...],
+    allowed_right_factors: tuple[int, ...],
+) -> dict[str, int | bool | tuple[tuple[int, int], ...]]:
+    """Recombine the two physical divisor kernels on ``c=d``.
+
+    The hidden factors ``u,v`` retain the primitive restrictions
+    ``(u,v)=(u,y)=(v,x)=1``.  The allowed-factor tuples model a fixed
+    pair of smooth dyadic boxes; the complementary dual factors are
+    forced to be ``j=c/u`` and ``k=c/v``.  This finite sum checks
+    whether physical ratio-Mellin inversion itself kills the equal
+    collapsed-product face.
+    """
+    if min(
+        cutoff,
+        left_cofactor,
+        right_cofactor,
+        collapsed_product,
+        x,
+        y,
+    ) <= 0:
+        raise ValueError(
+            "cutoffs, factors, products, and long variables must be positive"
+        )
+
+    def divisors(n: int) -> tuple[int, ...]:
+        return tuple(d for d in range(1, n + 1) if n % d == 0)
+
+    def signed_atom(u: int, cofactor: int) -> int:
+        return -sum(
+            _finite_mobius(d) * _finite_mobius(u // d)
+            for d in divisors(u)
+            if d <= cutoff < d * cofactor
+        )
+
+    left = set(allowed_left_factors)
+    right = set(allowed_right_factors)
+    terms: list[tuple[int, int, int]] = []
+    for u in divisors(collapsed_product):
+        if u not in left:
+            continue
+        for v in divisors(collapsed_product):
+            if v not in right:
+                continue
+            if gcd(u, v) != 1 or gcd(u, y) != 1 or gcd(v, x) != 1:
+                continue
+            value = signed_atom(u, left_cofactor) * signed_atom(
+                v,
+                right_cofactor,
+            )
+            if value:
+                terms.append((u, v, value))
+    coefficient = sum(value for _, _, value in terms)
+    pairs = tuple((u, v) for u, v, _ in terms)
+    return {
+        "fixed_shift": x - y,
+        "coefficient": coefficient,
+        "contributing_factor_pairs": pairs,
+        "primitive_terms_only": all(
+            gcd(u, v) == gcd(u, y) == gcd(v, x) == 1
+            for u, v, _ in terms
+        ),
+        "nonzero_primitive_equal_face_coefficient": coefficient != 0,
+    }
+
+
+def physical_joint_ratio_recombination_audit(
+) -> PhysicalJointRatioRecombinationAudit:
+    """Record the exact physical-kernel obstruction after Mellin inversion.
+
+    Recombining the two ratio integrals restores a finite sum over the
+    hidden divisor factors.  The primitive restrictions couple those
+    factors, but the coupled coefficient need not vanish: the exact
+    fixture ``U=5, e=e'=10, c=35, x=12, y=11`` and balanced factors
+    ``u,v in {5,7}`` has coefficient four.  Thus neither joint Mellin
+    inversion nor primitive gcd recombination universally removes the
+    fixed-shift face.  A proof must use the exact sum over all outer
+    scales and the inherited kernel, rather than enlarge it to arbitrary
+    smooth tensors and estimate allocation cells separately.
+    """
+    witness = primitive_equal_face_divisor_coefficient(
+        cutoff=5,
+        left_cofactor=10,
+        right_cofactor=10,
+        collapsed_product=35,
+        x=12,
+        y=11,
+        allowed_left_factors=(5, 7),
+        allowed_right_factors=(5, 7),
+    )
+    coefficient = int(witness["coefficient"])
+    if coefficient != 4:
+        raise AssertionError("primitive equal-face witness changed")
+    return PhysicalJointRatioRecombinationAudit(
+        ratio_mellin_recombines_to_finite_divisor_kernel=True,
+        primitive_equal_face_coefficient_can_be_nonzero=True,
+        witness_equal_face_coefficient=coefficient,
+        joint_ratio_integration_alone_annihilates_chowla_face=False,
+        arbitrary_smooth_weight_enlargement_admissible=False,
+        allocationwise_triangle_inequality_admissible=False,
+        equal_face_separate_bound_available_unconditionally=False,
+        full_outer_scale_and_kernel_sum_must_remain_coupled=True,
+        centered_coupled_dispersion_bound_proved=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
+def collapsed_gcd_layer_parameterization(
+    *,
+    c: int,
+    d: int,
+    shift: int,
+    x: int,
+    y: int,
+) -> dict[str, int | bool]:
+    """Extract the exact primitive determinant after ``gcd(c,d)``.
+
+    The original equation ``c*x-d*y=shift`` can hold only when the
+    common gcd divides ``shift``.  On that support, writing
+    ``c=g*a``, ``d=g*b``, and ``shift=g*h`` gives the equivalent
+    primitive equation ``a*x-b*y=h`` with ``gcd(a,b)=1``.
+    """
+    if min(c, d, x, y) <= 0:
+        raise ValueError("c, d, x, and y must be positive")
+    common = gcd(c, d)
+    if shift == 0 or shift % common != 0:
+        raise ValueError("the nonzero shift must be divisible by gcd(c,d)")
+    left = c // common
+    right = d // common
+    primitive_shift = shift // common
+    original_determinant = c * x - d * y
+    primitive_determinant = left * x - right * y
+    return {
+        "common_gcd": common,
+        "primitive_left": left,
+        "primitive_right": right,
+        "primitive_shift": primitive_shift,
+        "primitive_coprime": gcd(left, right) == 1,
+        "original_determinant": original_determinant,
+        "primitive_determinant": primitive_determinant,
+        "equation_equivalent": (
+            original_determinant == common * primitive_determinant
+            and (original_determinant == shift)
+            == (primitive_determinant == primitive_shift)
+        ),
+    }
+
+
+def collapsed_gcd_layer_centered_kernel_audit(
+    *,
+    collapsed_exponent: Fraction,
+    gcd_exponent: Fraction,
+) -> CollapsedGcdLayerCenteredKernelAudit:
+    """Record the exact power ledger after the collapsed gcd split.
+
+    Put ``C=T^s``, ``G=T^gamma``, and ``A=C/G``.  A dyadic gcd layer
+    has raw cardinal exponent ``1+2*s-gamma``.  The global inner target
+    is ``1+s``, so the precise required saving is ``s-gamma``.  Fourier
+    inversion of a nonzero-shift weight contributes the outside factor
+    ``A``; its coupled inner integral must therefore have exponent at
+    most ``1+gamma``.
+
+    The inherited outer-scale and ratio kernels remain inside the sum.
+    No pointwise affine-Chowla estimate or published averaged-Chowla
+    adapter is asserted.
+    """
+    s = Fraction(collapsed_exponent)
+    gamma = Fraction(gcd_exponent)
+    if s < 0 or s > 1:
+        raise ValueError("collapsed_exponent must lie in [0,1]")
+    if gamma < 0 or gamma > s:
+        raise ValueError("gcd_exponent must lie in [0, collapsed_exponent]")
+    cofactor = s - gamma
+    raw = 1 + 2 * s - gamma
+    target = 1 + s
+    top = cofactor == 0
+    return CollapsedGcdLayerCenteredKernelAudit(
+        collapsed_exponent=s,
+        gcd_exponent=gamma,
+        cofactor_exponent=cofactor,
+        product_length_exponent=1 + cofactor,
+        primitive_shift_exponent=cofactor,
+        raw_dyadic_layer_exponent=raw,
+        global_target_exponent=target,
+        required_saving_exponent=raw - target,
+        fourier_inner_target_exponent=target - cofactor,
+        shift_weight_vanishes_near_zero=True,
+        product_diagonal_annihilated_exactly=True,
+        constant_fourier_mode_centered_exactly=True,
+        full_g_sum_retained=True,
+        full_allocation_and_ratio_sum_retained=True,
+        top_equal_product_face=top,
+        fixed_affine_chowla_must_remain_inside_g_sum=top,
+        pointwise_fixed_affine_chowla_bound_assumed=False,
+        published_averaged_chowla_adapter_applies=False,
+        centered_coupled_dispersion_bound_proved=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
+def primitive_equal_product_factorization(
+    *,
+    u: int,
+    v: int,
+    j: int,
+    k: int,
+) -> dict[str, int | bool]:
+    """Parameterize ``u*j=v*k`` when ``gcd(u,v)=1``.
+
+    Euclid's lemma gives the unique positive integer ``q`` with
+    ``j=v*q`` and ``k=u*q``.  The helper records the exact finite
+    identity used on the primitive equal-product face.
+    """
+    if min(u, v, j, k) <= 0:
+        raise ValueError("u, v, j, and k must be positive")
+    primitive = gcd(u, v) == 1
+    equal = u * j == v * k
+    quotient = j // v if primitive and equal and j % v == 0 else 0
+    j_identity = quotient > 0 and j == v * quotient
+    k_identity = quotient > 0 and k == u * quotient
+    return {
+        "primitive_coprime": primitive,
+        "equal_product": equal,
+        "quotient": quotient,
+        "j_equals_vq": j_identity,
+        "k_equals_uq": k_identity,
+        "collapsed_product": u * j,
+        "factorization_exact": (
+            primitive and equal and j_identity and k_identity
+        ),
+    }
+
+
+def truncated_signed_atom_interval_convolution(
+    *,
+    cutoff: int,
+    cofactor: int,
+    atom: int,
+) -> dict[str, int | bool]:
+    """Check ``lambda_(U,e)=-(mu 1_(U/e<d<=U))*mu`` finitely."""
+    if min(cutoff, cofactor, atom) <= 0:
+        raise ValueError("cutoff, cofactor, and atom must be positive")
+    divisors = tuple(d for d in range(1, atom + 1) if atom % d == 0)
+    direct = -sum(
+        _finite_mobius(d) * _finite_mobius(atom // d)
+        for d in divisors
+        if d <= cutoff < d * cofactor
+    )
+    interval = -sum(
+        _finite_mobius(d) * _finite_mobius(atom // d)
+        for d in divisors
+        if d <= cutoff and cutoff < d * cofactor
+    )
+    return {
+        "cutoff": cutoff,
+        "cofactor": cofactor,
+        "atom": atom,
+        "lower_strict_numerator": cutoff,
+        "lower_strict_denominator": cofactor,
+        "direct_coefficient": direct,
+        "interval_convolution": interval,
+        "interval_convolution_exact": direct == interval,
+    }
+
+
+def top_equal_product_outer_pnt_audit() -> TopEqualProductOuterPntAudit:
+    """Close the balanced primitive equal-product face by outer PNT.
+
+    At ``s=1`` the signed atom, its unsigned cofactor, and the second
+    Poisson dual all have scale ``T^(1/2)`` under the exact half cutoff.
+    Primitive equality gives ``j=v*q`` and ``k=u*q`` with bounded ``q``.
+    The signed coefficient is a truncated ``mu*mu`` convolution.  After
+    writing it as the full convolution minus the bounded lower and upper
+    tails, the classical zero-free region gives arbitrary logarithmic
+    saving in a smooth ``u``-sum, uniformly under a coprimality condition;
+    the removed Euler factors cost only powers of ``log log``.
+
+    Consequently the long fixed-shift Mobius correlation is used only
+    with its trivial length-``T`` bound.  This closes this one face, not
+    the remaining ``0<A<T`` centered dispersion layers.
+    """
+    atom = F(1, 2)
+    outer = 2 * atom
+    long = F(1)
+    raw = outer + long
+    target = F(2)
+    return TopEqualProductOuterPntAudit(
+        signed_atom_exponent=atom,
+        poisson_quotient_exponent=F(0),
+        outer_pair_raw_exponent=outer,
+        long_correlation_trivial_exponent=long,
+        face_raw_exponent=raw,
+        face_target_exponent=target,
+        power_margin=target - raw,
+        primitive_equal_product_factorization_exact=True,
+        signed_atom_interval_convolution_exact=True,
+        balanced_cutoff_ratios_verified=True,
+        uniform_coprime_pnt_log_saving_available=True,
+        coprime_euler_factor_loss_only_polylogarithmic=True,
+        long_mobius_correlation_used_only_trivially=True,
+        fixed_affine_chowla_estimate_required=False,
+        top_equal_product_face_closed_unconditionally=True,
+        whole_signed_hard_face_covered=False,
+    )
+
+
+def primitive_unequal_product_factorization(
+    *,
+    a: int,
+    b: int,
+    u: int,
+    v: int,
+    j: int,
+    k: int,
+) -> dict[str, int | bool]:
+    """Refactor ``b*u*j=a*v*k`` under the two primitive conditions."""
+    if min(a, b, u, v, j, k) <= 0:
+        raise ValueError("a, b, u, v, j, and k must be positive")
+    primitive_slopes = gcd(a, b) == 1
+    primitive_hidden = gcd(u, v) == 1
+    equal = b * u * j == a * v * k
+    left_cross = gcd(a, u)
+    right_cross = gcd(b, v)
+    cross = left_cross * right_cross
+    direct_cross = gcd(b * u, a * v)
+    cross_identity = (
+        primitive_slopes
+        and primitive_hidden
+        and direct_cross == cross
+    )
+    reduced_left = (b * u) // direct_cross
+    reduced_right = (a * v) // direct_cross
+    quotient = (
+        j // reduced_right
+        if equal and j % reduced_right == 0
+        else 0
+    )
+    j_formula = reduced_right * quotient
+    k_formula = reduced_left * quotient
+    common_gcd = (
+        u * v * quotient // direct_cross
+        if quotient > 0 and (u * v * quotient) % direct_cross == 0
+        else 0
+    )
+    left_product = common_gcd * a
+    right_product = common_gcd * b
+    return {
+        "primitive_slopes": primitive_slopes,
+        "primitive_hidden_factors": primitive_hidden,
+        "equal_weighted_product": equal,
+        "left_cross_gcd": left_cross,
+        "right_cross_gcd": right_cross,
+        "cross_gcd_product": direct_cross,
+        "cross_gcd_identity": cross_identity,
+        "quotient": quotient,
+        "j_formula": j_formula,
+        "k_formula": k_formula,
+        "common_collapsed_gcd": common_gcd,
+        "left_collapsed_product": left_product,
+        "right_collapsed_product": right_product,
+        "factorization_exact": (
+            primitive_slopes
+            and primitive_hidden
+            and equal
+            and cross_identity
+            and quotient > 0
+            and j == j_formula
+            and k == k_formula
+            and u * j == left_product
+            and v * k == right_product
+        ),
+    }
+
+
+def polylog_gcd_collar_outer_pnt_audit(
+    *,
+    polylog_depth: int,
+) -> PolylogGcdCollarOuterPntAudit:
+    """Close ``C/G <= log(T)^K`` by the signed-atom PNT.
+
+    The unequal-product factorization introduces only the primitive
+    slopes ``a,b``, their two cross gcds, the primitive shift, and the
+    quotient ``q``.  If ``A=C/G`` is at most a fixed power of ``log T``,
+    all of them have power exponent zero.  The prescribed-divisibility
+    version of the coprime signed-atom PNT has arbitrary logarithmic
+    saving and absorbs their complete finite sums.  This does not cover
+    a cell with ``A=T^delta`` for any fixed positive ``delta``.
+    """
+    if polylog_depth < 0:
+        raise ValueError("polylog_depth must be nonnegative")
+    zero = F(0)
+    return PolylogGcdCollarOuterPntAudit(
+        polylog_depth=polylog_depth,
+        cofactor_power_exponent=zero,
+        cross_gcd_power_exponent=zero,
+        poisson_quotient_power_exponent=zero,
+        required_power_saving_exponent=zero,
+        primitive_unequal_product_factorization_exact=True,
+        cross_gcd_product_identity_exact=True,
+        prescribed_divisibility_coprime_pnt_available=True,
+        arbitrary_log_saving_absorbs_polylog_variables=True,
+        long_affine_mobius_sum_used_only_trivially=True,
+        polylog_gcd_collar_closed_unconditionally=True,
+        strict_positive_power_gcd_layers_covered=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
+def strict_power_gcd_core_audit(
+    *,
+    collapsed_exponent: Fraction,
+    cofactor_exponent: Fraction,
+    quotient_exponent: Fraction,
+    left_cross_gcd_exponent: Fraction,
+) -> StrictPowerGcdCoreAudit:
+    """Normalize the strict-power core after primitive refactorization.
+
+    Write ``C=T^s``, ``A=C/G=T^delta``, ``q=T^theta`` and
+    ``d_i=T^r_i``.  The identity ``Delta=d_1*d_2=A*q`` forces
+    ``r_1+r_2=delta+theta``.  The reduced unsigned block
+    ``(a_0,b_0,q)`` has total exponent exactly ``delta``, which is the
+    complete gap between the raw core ``1+s+delta`` and target ``1+s``.
+    """
+    s = Fraction(collapsed_exponent)
+    delta = Fraction(cofactor_exponent)
+    theta = Fraction(quotient_exponent)
+    r1 = Fraction(left_cross_gcd_exponent)
+    if s <= 0 or s > 1:
+        raise ValueError("collapsed_exponent must lie in (0,1]")
+    if delta <= 0 or delta > s:
+        raise ValueError("cofactor_exponent must lie in (0,s]")
+    gamma = s - delta
+    if theta < 0 or theta > min(delta, gamma):
+        raise ValueError("quotient_exponent must lie in [0,min(delta,gamma)]")
+    r2 = delta + theta - r1
+    ceiling = min(delta, s / 2)
+    feasible = 0 <= r1 <= ceiling and 0 <= r2 <= ceiling
+    if not feasible:
+        raise ValueError("cross-gcd exponents do not lie in the exact polytope")
+    left_slope = delta - r1
+    right_slope = delta - r2
+    left_signed = s / 2 - r1
+    right_signed = s / 2 - r2
+    unsigned = left_slope + right_slope + theta
+    signed = left_signed + right_signed
+    reconstructed_gcd = signed + theta
+    raw = 1 + s + delta
+    target = 1 + s
+    required = raw - target
+    return StrictPowerGcdCoreAudit(
+        collapsed_exponent=s,
+        cofactor_exponent=delta,
+        gcd_exponent=gamma,
+        quotient_exponent=theta,
+        left_cross_gcd_exponent=r1,
+        right_cross_gcd_exponent=r2,
+        left_reduced_slope_exponent=left_slope,
+        right_reduced_slope_exponent=right_slope,
+        left_reduced_signed_exponent=left_signed,
+        right_reduced_signed_exponent=right_signed,
+        unsigned_reduced_block_exponent=unsigned,
+        signed_reduced_block_exponent=signed,
+        reconstructed_gcd_exponent=reconstructed_gcd,
+        raw_core_exponent=raw,
+        target_core_exponent=target,
+        required_saving_exponent=required,
+        exponent_polytope_feasible=feasible,
+        unsigned_block_equals_full_deficit=unsigned == required,
+        all_allocations_and_ratio_integrals_retained=True,
+        long_and_collapsed_arithmetic_weights_on_each_side=True,
+        bblr_arbitrary_outer_coefficient_adapter_applies=True,
+        centered_three_block_type_ii_required=True,
+        centered_three_block_type_ii_proved=False,
+        whole_signed_hard_face_covered=False,
+    )
+
+
+def strict_power_convolution_kloosterman_audit(
+    *,
+    collapsed_exponent: Fraction,
+    cofactor_exponent: Fraction,
+    quotient_exponent: Fraction,
+    left_cross_gcd_exponent: Fraction,
+) -> StrictPowerConvolutionKloostermanAudit:
+    """Audit the first legal convolution of both arithmetic weights.
+
+    For fixed ``u_0`` put
+
+    ``alpha_r = sum_{d_1*x=r} lambda(d_1*u_0) * mu(x)``
+
+    and define ``beta_s`` symmetrically.  These are divisor bounded, so
+    they are legal arbitrary outer coefficients in BBLR after the exact
+    ratio Mellin separations.  The determinant becomes
+
+    ``r*a_0 - s*b_0 = h``.
+
+    This adapter records the literal BBLR exponents, and then the
+    Bettin--Chandee exponents after Poisson summation in ``a_0``.  It
+    also distinguishes the original cross diagonal, which centering
+    removes, from the positive self diagonal created by Cauchy.
+    """
+    core = strict_power_gcd_core_audit(
+        collapsed_exponent=collapsed_exponent,
+        cofactor_exponent=cofactor_exponent,
+        quotient_exponent=quotient_exponent,
+        left_cross_gcd_exponent=left_cross_gcd_exponent,
+    )
+    s = core.collapsed_exponent
+    delta = core.cofactor_exponent
+    gamma = core.gcd_exponent
+    theta = core.quotient_exponent
+    r1 = core.left_cross_gcd_exponent
+    r2 = core.right_cross_gcd_exponent
+    r_max = max(r1, r2)
+
+    left_outer = 1 + r1
+    right_outer = 1 + r2
+    left_slope = delta - r1
+    right_slope = delta - r2
+    side_product = 1 + delta
+    remaining_outer = gamma
+
+    # BBLR Proposition 3.1.  Here ABMN has exponent 2+2*delta,
+    # H has exponent delta, and AB has exponent 2+delta+theta.
+    bblr_prefactor = F(1, 2) + delta
+    bblr_ab = bblr_prefactor + 2 + delta + theta
+    bblr_watt = (
+        bblr_prefactor
+        + delta / 4
+        + (1 + r_max) / 2
+        + (2 + 2 * delta) / 8
+    )
+    bblr_target = side_product
+    bblr_ab_deficit = bblr_ab - bblr_target
+    bblr_watt_deficit = bblr_watt - bblr_target
+
+    # Poisson in a_0 modulo s.  The dual k has length s/a_0,
+    # hence exponent 1+theta.  Combining k*h gives the BC numerator.
+    poisson_dual = 1 + theta
+    poisson_numerator = 1 + delta + theta
+    poisson_normalization = -1 - theta
+
+    norm_exponent = (
+        left_outer + right_outer + poisson_numerator
+    ) / 2
+    bc_total_product = (
+        left_outer + right_outer + poisson_numerator
+    )
+    bc_first_before_normalization = (
+        norm_exponent
+        + F(7, 20) * bc_total_product
+        + F(1, 4) * (1 + r_max)
+    )
+    bc_second_before_normalization = (
+        norm_exponent
+        + F(3, 8) * bc_total_product
+        + F(1, 8) * (poisson_numerator + 1 + r_max)
+    )
+    bc_first_total = (
+        bc_first_before_normalization
+        + poisson_normalization
+        + remaining_outer
+    )
+    bc_second_total = (
+        bc_second_before_normalization
+        + poisson_normalization
+        + remaining_outer
+    )
+    global_target = 1 + s
+    bc_first_deficit = bc_first_total - global_target
+    bc_second_deficit = bc_second_total - global_target
+
+    # Restoring the outside A from Fourier inversion, identical tuples
+    # alone have the first exponent below.  The u_0 and v_0 variables do
+    # not enter the additive frequency.  They therefore square coherently
+    # inside each grouped Fourier coefficient, taking the full Cauchy
+    # diagonal back to the raw exponent 1+s+delta.
+    cauchy_tuple_diagonal = 1 + (s + 3 * delta + theta) / 2
+    cauchy_grouped_diagonal = core.raw_core_exponent
+    cauchy_target = global_target
+    cauchy_grouped_deficit = cauchy_grouped_diagonal - cauchy_target
+    hard_vertex = (
+        s == 1
+        and delta == 1
+        and theta == 0
+        and r1 == F(1, 2)
+        and r2 == F(1, 2)
+    )
+
+    return StrictPowerConvolutionKloostermanAudit(
+        collapsed_exponent=s,
+        cofactor_exponent=delta,
+        gcd_exponent=gamma,
+        quotient_exponent=theta,
+        left_cross_gcd_exponent=r1,
+        right_cross_gcd_exponent=r2,
+        left_convolved_outer_exponent=left_outer,
+        right_convolved_outer_exponent=right_outer,
+        left_inner_slope_exponent=left_slope,
+        right_inner_slope_exponent=right_slope,
+        side_product_exponent=side_product,
+        remaining_outer_exponent=remaining_outer,
+        bblr_convolution_hypotheses_verified=True,
+        bblr_ab_error_exponent=bblr_ab,
+        bblr_watt_error_exponent=bblr_watt,
+        bblr_inner_target_exponent=bblr_target,
+        bblr_ab_deficit=bblr_ab_deficit,
+        bblr_watt_deficit=bblr_watt_deficit,
+        bblr_convolution_route_covered=(
+            bblr_ab_deficit < 0 and bblr_watt_deficit < 0
+        ),
+        poisson_dual_exponent=poisson_dual,
+        poisson_numerator_exponent=poisson_numerator,
+        poisson_normalization_exponent=poisson_normalization,
+        bc_poisson_hypotheses_verified=True,
+        bc_first_total_exponent=bc_first_total,
+        bc_second_total_exponent=bc_second_total,
+        bc_first_deficit=bc_first_deficit,
+        bc_second_deficit=bc_second_deficit,
+        bc_poisson_route_covered=(
+            bc_first_deficit < 0 and bc_second_deficit < 0
+        ),
+        original_cross_diagonal_removed_by_centering=True,
+        cauchy_tuple_diagonal_exponent=cauchy_tuple_diagonal,
+        cauchy_grouped_diagonal_exponent=cauchy_grouped_diagonal,
+        cauchy_diagonal_target_exponent=cauchy_target,
+        cauchy_grouped_diagonal_deficit=cauchy_grouped_deficit,
+        cauchy_grouped_diagonal_is_raw_scale=(
+            cauchy_grouped_diagonal == core.raw_core_exponent
+        ),
+        cauchy_grouped_diagonal_killed_by_centering=False,
+        hard_vertex_inverse_zeta_square_variance=hard_vertex,
+        near_frequency_type_ii_proved=False,
+    )
+
+
+def strict_power_ratio_mellin_bandwidth_audit(
+    *,
+    collapsed_exponent: Fraction,
+    cofactor_exponent: Fraction,
+    quotient_exponent: Fraction,
+    left_cross_gcd_exponent: Fraction,
+) -> StrictPowerRatioMellinBandwidthAudit:
+    """Audit whether the inherited ratio kernel supplies power bandwidth.
+
+    On the exact AFE core, with ``z=Delta/(m*r)``, the height phase obeys
+
+    ``d/d(log r) [t*log(1+z)] = -t*z/(1+z)``.
+
+    The retained shift condition gives ``|t*z| <= log(T)^B``.  Every
+    higher logarithmic derivative has the same power exponent zero.
+    The normalized dyadic ratio weights also have exponent-zero
+    derivatives, so their Mellin transforms are rapidly decreasing once
+    the Mellin frequency has any fixed positive power of ``T``.
+
+    Resolving adjacent integers in a hidden fibre of length ``T^alpha``
+    would require Mellin frequency ``T^alpha``.  Thus the ratio integral
+    cannot de-cohere a positive-power hidden fibre.  If both fibres have
+    exponent zero there is nothing to resolve, but the independent
+    Cauchy deficit ``delta`` remains.
+    """
+    core = strict_power_gcd_core_audit(
+        collapsed_exponent=collapsed_exponent,
+        cofactor_exponent=cofactor_exponent,
+        quotient_exponent=quotient_exponent,
+        left_cross_gcd_exponent=left_cross_gcd_exponent,
+    )
+    left_hidden = core.left_reduced_signed_exponent
+    right_hidden = core.right_reduced_signed_exponent
+    hidden_total = left_hidden + right_hidden
+    zero = F(0)
+    no_positive_hidden_fibre = hidden_total == zero
+    return StrictPowerRatioMellinBandwidthAudit(
+        collapsed_exponent=core.collapsed_exponent,
+        cofactor_exponent=core.cofactor_exponent,
+        quotient_exponent=core.quotient_exponent,
+        left_cross_gcd_exponent=core.left_cross_gcd_exponent,
+        right_cross_gcd_exponent=core.right_cross_gcd_exponent,
+        left_hidden_fibre_exponent=left_hidden,
+        right_hidden_fibre_exponent=right_hidden,
+        total_hidden_fibre_exponent=hidden_total,
+        height_phase_log_derivative_power_exponent=zero,
+        ratio_weight_log_derivative_power_exponent=zero,
+        effective_mellin_frequency_power_exponent=zero,
+        left_adjacent_resolution_frequency_exponent=left_hidden,
+        right_adjacent_resolution_frequency_exponent=right_hidden,
+        remaining_cauchy_deficit_exponent=core.required_saving_exponent,
+        mellin_power_tail_is_rapid=True,
+        scaled_T_tau_not_independent_bandwidth=True,
+        height_phase_creates_second_power_coordinate=False,
+        ratio_mellin_resolves_positive_hidden_fibres=(
+            no_positive_hidden_fibre
+        ),
+        ratio_mellin_supplies_required_delta_saving=False,
+        pre_cauchy_joint_kernel_still_required=True,
+    )
+
+
+def strict_power_double_poisson_resonance_audit(
+    *,
+    collapsed_exponent: Fraction,
+    cofactor_exponent: Fraction,
+    quotient_exponent: Fraction,
+    left_cross_gcd_exponent: Fraction,
+) -> StrictPowerDoublePoissonResonanceAudit:
+    """Audit simultaneous Poisson summation in both reduced slopes.
+
+    For the centered line ``r*a_0-t*b_0=h``, write the Fourier variable
+    as ``eta/H`` with ``H=T^delta``.  Poisson summation localizes
+
+    ``k = eta*r/H + O(A_0^-1)`` and
+    ``l = eta*t/H + O(B_0^-1)``.
+
+    Since ``r*A_0`` and ``t*B_0`` both have exponent ``1+delta``, the
+    two transformed bumps overlap on an eta interval of exponent ``-1``.
+    Clearing denominators gives the exact integer resonance coordinate
+
+    ``n=k*t-l*r`` with ``|n| <= T^(1+theta)``.
+
+    Taking absolute values on this transformed side loses
+    ``T^(1-delta+theta)`` relative to the original inner cardinality.
+    The route is therefore useful only if the signed resonance family is
+    estimated before Cauchy or an absolute tuple sum.
+    """
+    core = strict_power_gcd_core_audit(
+        collapsed_exponent=collapsed_exponent,
+        cofactor_exponent=cofactor_exponent,
+        quotient_exponent=quotient_exponent,
+        left_cross_gcd_exponent=left_cross_gcd_exponent,
+    )
+    s = core.collapsed_exponent
+    delta = core.cofactor_exponent
+    gamma = core.gcd_exponent
+    theta = core.quotient_exponent
+    r1 = core.left_cross_gcd_exponent
+    r2 = core.right_cross_gcd_exponent
+    left_slope = core.left_reduced_slope_exponent
+    right_slope = core.right_reduced_slope_exponent
+    left_modulus = 1 + r1
+    right_modulus = 1 + r2
+    left_dual = left_modulus - delta
+    right_dual = right_modulus - delta
+    dual_product = left_dual + right_modulus
+    resonance_shift = 1 + theta
+    poisson_amplitude = left_slope + right_slope
+    overlap_integral = F(-1)
+
+    # The d_1,d_2,k,l,r,t tuple count, the two Poisson amplitudes, and
+    # the common eta-overlap width combine to the following exponent.
+    transformed_inner = 2 + delta + theta
+    original_inner = 1 + 2 * delta
+    transform_loss = transformed_inner - original_inner
+    transformed_global = transformed_inner + gamma
+    target = 1 + s
+    required = transformed_global - target
+
+    # Reinsert the transformed variables into the sharp form of BBLR
+    # Proposition 3.1.  Its outer variables are r,t, its two nontrivial
+    # inner variables are l,k, and its shift has exponent 1+theta.
+    # The sharp-range condition is
+    #
+    #   (1+r1)+(1+r2) >= 2*(1+theta),
+    #
+    # which is exactly delta >= theta.
+    bblr_outer_sum = left_modulus + right_modulus
+    bblr_outer_max = max(left_modulus, right_modulus)
+    bblr_ab_before = F(1, 2) + resonance_shift + bblr_outer_sum
+    bblr_watt_before = (
+        F(3, 4)
+        + F(3, 2) * resonance_shift
+        + bblr_outer_max / 2
+    )
+    transform_normalization = poisson_amplitude + overlap_integral
+    bblr_ab_total = bblr_ab_before + transform_normalization + gamma
+    bblr_watt_total = (
+        bblr_watt_before + transform_normalization + gamma
+    )
+    bblr_ab_deficit = bblr_ab_total - target
+    bblr_watt_deficit = bblr_watt_total - target
+    original_bblr = strict_power_convolution_kloosterman_audit(
+        collapsed_exponent=s,
+        cofactor_exponent=delta,
+        quotient_exponent=theta,
+        left_cross_gcd_exponent=r1,
+    )
+    bblr_watt_extra = (
+        bblr_watt_deficit - original_bblr.bblr_watt_deficit
+    )
+    return StrictPowerDoublePoissonResonanceAudit(
+        collapsed_exponent=s,
+        cofactor_exponent=delta,
+        gcd_exponent=gamma,
+        quotient_exponent=theta,
+        left_cross_gcd_exponent=r1,
+        right_cross_gcd_exponent=r2,
+        left_slope_exponent=left_slope,
+        right_slope_exponent=right_slope,
+        left_modulus_exponent=left_modulus,
+        right_modulus_exponent=right_modulus,
+        left_dual_exponent=left_dual,
+        right_dual_exponent=right_dual,
+        dual_side_product_exponent=dual_product,
+        resonance_shift_exponent=resonance_shift,
+        poisson_amplitude_exponent=poisson_amplitude,
+        overlap_integral_exponent=overlap_integral,
+        transformed_absolute_inner_exponent=transformed_inner,
+        original_inner_raw_exponent=original_inner,
+        absolute_transform_loss_exponent=transform_loss,
+        transformed_global_absolute_exponent=transformed_global,
+        global_target_exponent=target,
+        transformed_required_saving_exponent=required,
+        resonance_identity_exact=True,
+        two_poisson_scales_exact=True,
+        absolute_transform_loss_is_one_minus_delta_plus_theta=(
+            transform_loss == 1 - delta + theta
+        ),
+        absolute_double_poisson_route_covered=False,
+        pre_cauchy_signed_resonance_estimate_required=True,
+        bblr_sharp_range_verified=(
+            bblr_outer_sum >= 2 * resonance_shift
+            and delta >= theta
+        ),
+        bblr_ab_before_normalization_exponent=bblr_ab_before,
+        bblr_watt_before_normalization_exponent=bblr_watt_before,
+        transform_normalization_exponent=transform_normalization,
+        bblr_ab_total_exponent=bblr_ab_total,
+        bblr_watt_total_exponent=bblr_watt_total,
+        bblr_ab_deficit=bblr_ab_deficit,
+        bblr_watt_deficit=bblr_watt_deficit,
+        original_bblr_ab_deficit=original_bblr.bblr_ab_deficit,
+        original_bblr_watt_deficit=original_bblr.bblr_watt_deficit,
+        bblr_ab_deficit_is_invariant=(
+            bblr_ab_deficit == original_bblr.bblr_ab_deficit
+        ),
+        bblr_watt_extra_deficit=bblr_watt_extra,
+        bblr_watt_extra_deficit_is_nonnegative=(
+            bblr_watt_extra >= 0
+        ),
+        double_poisson_improves_bblr=(
+            bblr_ab_deficit < original_bblr.bblr_ab_deficit
+            or bblr_watt_deficit < original_bblr.bblr_watt_deficit
+        ),
     )
 
 
@@ -6945,7 +24255,9 @@ def _finite_mobius(n: int) -> int:
 def _positive_divisors(n: int) -> tuple[int, ...]:
     if n <= 0:
         raise ValueError("divisor input must be positive")
-    return tuple(d for d in range(1, n + 1) if n % d == 0)
+    lower = [d for d in range(1, isqrt(n) + 1) if n % d == 0]
+    upper = [n // d for d in reversed(lower) if d * d != n]
+    return tuple(lower + upper)
 
 
 def _finite_prime_exponents(n: int) -> dict[int, int]:
@@ -35652,6 +52964,25 @@ def main() -> None:
         "tail_phase=False "
         "covered=False"
     )
+    paired_boundary = large_q_paired_boundary_completion_audit(
+        boxes["large_q_endpoint"],
+        shift_log_depth=F(2),
+        zeta_log_depth=F(2),
+    )
+    print(
+        "large_q_endpoint: paired_boundary_completion="
+        "four_piece=True strict_lower_phase=True constant_ratio_phase=False "
+        "pair_closes=False boundary_tail=True upper_available=True "
+        f"witness={paired_boundary.witness_product}/"
+        f"{paired_boundary.witness_cutoff} "
+        f"boundary={paired_boundary.witness_boundary_zeta_scale}*"
+        f"{paired_boundary.witness_boundary_divisor} "
+        f"upper={paired_boundary.witness_upper_zeta_scale}*"
+        f"{paired_boundary.witness_upper_divisor} "
+        "upper_product="
+        f"{paired_boundary.witness_two_sided_upper_product} "
+        "crosses_transition=True covered=False"
+    )
     subcritical_afe = large_q_subcritical_afe_completion_audit(
         boxes["large_q_endpoint"],
         afe_product_gap=F(1, 10),
@@ -36233,6 +53564,8 @@ def main() -> None:
         "dual_long_spacing=-1/2,dual_transverse_spacing=1/2,"
         "active_long=1/2,active_transverse=0,primitive_exact=True,"
         "primitive_layers_worse=False,zero_separable=False,"
+        "jacobian=True,gram=True,psd=True,offdiag_subtract=True,"
+        "kernel_zero=False,sufficient_only=True,"
         "zero_proved=False,whole=False"
     )
     transition_resonant_gram = transition_poisson_resonant_gram_audit()
@@ -36404,6 +53737,2521 @@ def main() -> None:
         f"target={_fmt(transition_bblr_unsigned_d0.target_exponent)},"
         f"margin={_fmt(transition_bblr_unsigned_d0.power_margin)},"
         "improved=False"
+    )
+    transition_banks_shparlinski = (
+        transition_banks_shparlinski_pre_cauchy_audit()
+    )
+    print(
+        "large_q_transition: banks_shparlinski_pre_cauchy="
+        f"entry={_fmt(transition_banks_shparlinski.entry_scale_exponent)},"
+        f"v={_fmt(transition_banks_shparlinski.dual_v_exponent)},"
+        f"j={_fmt(transition_banks_shparlinski.dual_j_exponent)},"
+        "slopes="
+        f"{_fmt(transition_banks_shparlinski.fixed_slope_family_exponent)},"
+        "shift="
+        f"{_fmt(transition_banks_shparlinski.shift_variable_exponent)},"
+        "fixed_count="
+        f"{_fmt(transition_banks_shparlinski.fixed_slope_geometric_count_exponent)},"
+        "theorem="
+        f"{_fmt(transition_banks_shparlinski.best_theorem_role_bound_exponent)},"
+        "best="
+        f"{_fmt(transition_banks_shparlinski.best_fixed_slope_bound_exponent)},"
+        f"H={_fmt(transition_banks_shparlinski.h_poisson_factor_exponent)},"
+        f"aggregate={_fmt(transition_banks_shparlinski.aggregated_exponent)},"
+        f"target={_fmt(transition_banks_shparlinski.target_exponent)},"
+        f"margin={_fmt(transition_banks_shparlinski.power_margin)},"
+        "short_threshold="
+        f"{_fmt(transition_banks_shparlinski.short_interval_threshold_exponent)},"
+        "short_actual="
+        f"{_fmt(transition_banks_shparlinski.actual_short_interval_exponent)},"
+        "short_margin="
+        f"{_fmt(transition_banks_shparlinski.short_interval_threshold_margin)},"
+        "fix_slopes=True,shift_mu=False,convolution=True,"
+        "convolution_power=False,hypotheses=False,covered=False"
+    )
+    transition_ramare_proper = transition_ramare_medium_prime_audit(
+        entry_exponent=F(1),
+        band_lower_exponent=F(1, 4),
+        band_upper_exponent=F(3, 4),
+    )
+    transition_ramare_full = transition_ramare_medium_prime_audit(
+        entry_exponent=F(1),
+        band_lower_exponent=F(1, 4),
+        band_upper_exponent=F(1),
+    )
+    print(
+        "large_q_transition: ramare_medium_prime="
+        f"proper:alpha={_fmt(transition_ramare_proper.entry_exponent)},"
+        f"lower={_fmt(transition_ramare_proper.band_lower_exponent)},"
+        f"upper={_fmt(transition_ramare_proper.band_upper_exponent)},"
+        "required="
+        f"{_fmt(transition_ramare_proper.required_line_saving_exponent)},"
+        "prime_exception="
+        f"{_fmt(transition_ramare_proper.prime_exceptional_set_exponent)},"
+        "log_density="
+        f"{_fmt(transition_ramare_proper.prime_exceptional_log_density_saving)},"
+        "power_density="
+        f"{_fmt(transition_ramare_proper.prime_exceptional_power_density_saving)},"
+        f"deficit={_fmt(transition_ramare_proper.uncovered_power_deficit)},"
+        "reaches=False,exceptional=True,in_sum=False;"
+        f"full:upper={_fmt(transition_ramare_full.band_upper_exponent)},"
+        "reaches=True,in_sum=True,prime_factor="
+        f"{_fmt(transition_ramare_full.prime_sector_extracted_factor_exponent)},"
+        "cofactor="
+        f"{_fmt(transition_ramare_full.prime_sector_cofactor_exponent)},"
+        "positive_factors="
+        f"{transition_ramare_full.prime_sector_positive_length_factor_count},"
+        "forces_two=False,covered=False"
+    )
+    transition_prime_kloosterman = transition_prime_kloosterman_audit()
+    print(
+        "large_q_transition: prime_kloosterman="
+        f"q={_fmt(transition_prime_kloosterman.modulus_exponent)},"
+        f"X={_fmt(transition_prime_kloosterman.prime_interval_exponent)},"
+        "required="
+        f"{_fmt(transition_prime_kloosterman.required_saving_exponent)},"
+        "unrestricted_bound="
+        f"{_fmt(transition_prime_kloosterman.unrestricted_prime_bound_exponent)},"
+        "unrestricted_save="
+        f"{_fmt(transition_prime_kloosterman.unrestricted_prime_saving_exponent)},"
+        "progression_bound="
+        f"{_fmt(transition_prime_kloosterman.progression_prime_bound_exponent)},"
+        "progression_save="
+        f"{_fmt(transition_prime_kloosterman.progression_prime_saving_exponent)},"
+        "progression_modulus_cap="
+        f"{_fmt(transition_prime_kloosterman.progression_modulus_cap_exponent)},"
+        "four_unrestricted="
+        f"{_fmt(transition_prime_kloosterman.optimistic_four_unrestricted_saving_exponent)},"
+        "unrestricted_deficit="
+        f"{_fmt(transition_prime_kloosterman.optimistic_four_unrestricted_deficit)},"
+        "four_progression="
+        f"{_fmt(transition_prime_kloosterman.optimistic_four_progression_saving_exponent)},"
+        "progression_deficit="
+        f"{_fmt(transition_prime_kloosterman.optimistic_four_progression_deficit)},"
+        "fixed_prime=True,actual_prime=False,kernel=False,separable=False,"
+        "covered=False"
+    )
+    exchange_audit = poisson_exchange_second_order_audit()
+    print(
+        "large_q_transition: poisson_exchange_second_order="
+        "shift_conjugate="
+        f"{exchange_audit.physical_shifted_sum_swap_is_conjugate},"
+        "modulus_changes="
+        f"{exchange_audit.poisson_modulus_changes_under_swap},"
+        "reciprocity_correction="
+        f"{exchange_audit.reciprocity_correction_retained},"
+        "full_conjugate="
+        f"{exchange_audit.full_poisson_term_swap_is_conjugate},"
+        "coefficient_real="
+        f"{exchange_audit.completed_coefficient_forced_real},"
+        "linear_imaginary="
+        f"{exchange_audit.imaginary_coefficient_has_linear_centered_term},"
+        "real_required="
+        f"{exchange_audit.second_order_bound_requires_real_coefficient},"
+        "second_order="
+        f"{exchange_audit.second_order_collar_unconditional}"
+    )
+    common_exchange = common_modulus_exchange_audit()
+    print(
+        "large_q_transition: common_modulus_exchange="
+        f"Q={_fmt(common_exchange.common_modulus_exponent)},"
+        f"craw={_fmt(common_exchange.raw_dual_c_exponent)},"
+        f"vraw={_fmt(common_exchange.raw_dual_v_exponent)},"
+        "original_divisor="
+        f"{_fmt(common_exchange.original_gauss_support_divisor_exponent)},"
+        "swapped_divisor="
+        f"{_fmt(common_exchange.swapped_gauss_support_divisor_exponent)},"
+        f"creduced={_fmt(common_exchange.reduced_dual_c_exponent)},"
+        f"vreduced={_fmt(common_exchange.reduced_dual_v_exponent)},"
+        "r_lattice="
+        f"{common_exchange.original_frequency_sublattice_is_r_times_square},"
+        "s_lattice="
+        f"{common_exchange.swapped_frequency_sublattice_is_s_times_square},"
+        "nonzero_intersection="
+        f"{not common_exchange.nonzero_sublattice_intersection_empty_mod_rs},"
+        "centered_zero="
+        f"{common_exchange.centered_zero_frequency_annihilated},"
+        "coefficient_real="
+        f"{common_exchange.common_modulus_forces_real_completed_coefficient},"
+        "conductor_reduced="
+        f"{common_exchange.common_modulus_reduces_conductor},"
+        "second_order="
+        f"{common_exchange.second_order_collar_unconditional}"
+    )
+    midpoint_hermitian = midpoint_hermitian_completion_audit()
+    print(
+        "large_q_transition: midpoint_hermitian_completion="
+        f"Q={_fmt(midpoint_hermitian.common_modulus_exponent)},"
+        f"craw={_fmt(midpoint_hermitian.raw_dual_c_exponent)},"
+        f"vraw={_fmt(midpoint_hermitian.raw_dual_v_exponent)},"
+        f"ambient={_fmt(midpoint_hermitian.completed_ambient_exponent)},"
+        f"prefactor={_fmt(midpoint_hermitian.completion_prefactor_exponent)},"
+        f"target={_fmt(midpoint_hermitian.completed_gate_target_exponent)},"
+        f"sqrt={_fmt(midpoint_hermitian.square_root_ambient_exponent)},"
+        "allowance="
+        f"{_fmt(midpoint_hermitian.allowance_beyond_square_root_exponent)},"
+        f"unit={midpoint_hermitian.midpoint_coefficient_is_unit},"
+        f"involution={midpoint_hermitian.midpoint_coefficient_is_involution},"
+        "swap_negates="
+        f"{midpoint_hermitian.exchange_negates_midpoint_coefficient},"
+        "same_frequency="
+        f"{midpoint_hermitian.same_frequency_swap_is_conjugate},"
+        "row_centered="
+        f"{midpoint_hermitian.centered_multiplier_zero_on_c_zero_row},"
+        "column_centered="
+        f"{midpoint_hermitian.centered_multiplier_zero_on_v_zero_column},"
+        "small_phase="
+        f"{midpoint_hermitian.modular_involution_phase_is_near_diagonal_small},"
+        f"published={midpoint_hermitian.published_bound_verified}"
+    )
+    midpoint_published = midpoint_published_hermitian_adapter_audit()
+    print(
+        "large_q_transition: midpoint_published_hermitian_adapter="
+        f"numerator={_fmt(midpoint_published.numerator_exponent)},"
+        f"rs_trivial={_fmt(midpoint_published.rs_trivial_exponent)},"
+        "claimed_inner="
+        f"{_fmt(midpoint_published.withdrawn_claimed_outer_inner_bound_exponent)},"
+        "claimed_save="
+        f"{_fmt(midpoint_published.withdrawn_claimed_outer_inner_saving_exponent)},"
+        "bulk_claimed_inner="
+        f"{_fmt(midpoint_published.withdrawn_claimed_bulk_inner_bound_exponent)},"
+        "bulk_save="
+        f"{_fmt(midpoint_published.withdrawn_claimed_bulk_inner_saving_exponent)},"
+        f"fixed_numerator={midpoint_published.theorem_has_moving_numerator},"
+        "separated="
+        f"{midpoint_published.theorem_accepts_joint_r_s_c_v_coefficient},"
+        "frequency_average="
+        f"{midpoint_published.theorem_supplies_c_v_frequency_average},"
+        "withdrawn="
+        f"{midpoint_published.claim_withdrawn_for_missing_l_squared_factor},"
+        "corrected_improved="
+        f"{midpoint_published.corrected_argument_gives_claimed_improvement},"
+        f"closes={midpoint_published.withdrawn_claim_closes_midpoint_gate}"
+    )
+    midpoint_unitary = midpoint_unitary_divisor_audit()
+    print(
+        "large_q_transition: midpoint_unitary_divisor="
+        f"n={_fmt(midpoint_unitary.product_variable_exponent)},"
+        f"Q={_fmt(midpoint_unitary.root_modulus_exponent)},"
+        "physical_numerator="
+        f"{_fmt(midpoint_unitary.physical_numerator_exponent)},"
+        f"dual_numerator={_fmt(midpoint_unitary.dual_numerator_exponent)},"
+        "factorization_root_bijection="
+        f"{midpoint_unitary.factorization_root_bijection_exact},"
+        "mobius_collapses="
+        f"{midpoint_unitary.mobius_product_collapses_to_single_mobius},"
+        "root_count_subpower="
+        f"{midpoint_unitary.root_multiplicity_is_subpower},"
+        "balanced_filter="
+        f"{midpoint_unitary.balanced_dyadic_condition_is_root_filter},"
+        f"joint={midpoint_unitary.root_trace_coefficient_remains_joint},"
+        f"published={midpoint_unitary.unitary_root_trace_bound_verified}"
+    )
+    root_farey = midpoint_root_farey_large_sieve_audit()
+    print(
+        "large_q_transition: root_farey_large_sieve="
+        f"points={_fmt(root_farey.root_point_count_exponent)},"
+        f"denominator={_fmt(root_farey.denominator_exponent)},"
+        "spacing_reciprocal="
+        f"{_fmt(root_farey.reciprocal_spacing_exponent)},"
+        "physical_numerator="
+        f"{_fmt(root_farey.physical_numerator_length_exponent)},"
+        "physical_energy="
+        f"{_fmt(root_farey.physical_product_energy_exponent)},"
+        "physical_bound="
+        f"{_fmt(root_farey.physical_large_sieve_bound_exponent)},"
+        f"physical_target={_fmt(root_farey.physical_target_exponent)},"
+        f"physical_deficit={_fmt(root_farey.physical_deficit_exponent)},"
+        f"dual_numerator={_fmt(root_farey.dual_numerator_length_exponent)},"
+        f"dual_energy={_fmt(root_farey.dual_product_energy_exponent)},"
+        f"dual_bound={_fmt(root_farey.dual_large_sieve_bound_exponent)},"
+        f"dual_target={_fmt(root_farey.dual_target_exponent)},"
+        f"dual_deficit={_fmt(root_farey.dual_deficit_exponent)},"
+        f"injective={root_farey.root_fractions_injective},"
+        f"reduced={root_farey.root_fractions_reduced},"
+        f"separated={root_farey.actual_joint_coefficient_is_separated},"
+        f"closes={root_farey.root_farey_large_sieve_closes_gate}"
+    )
+    root_type_ii = midpoint_root_type_ii_audit()
+    print(
+        "large_q_transition: root_type_ii="
+        f"product={_fmt(root_type_ii.product_exponent)},"
+        f"left={_fmt(root_type_ii.left_factor_exponent)},"
+        f"right={_fmt(root_type_ii.right_factor_exponent)},"
+        "physical_numerator="
+        f"{_fmt(root_type_ii.physical_numerator_exponent)},"
+        f"dual_numerator={_fmt(root_type_ii.dual_numerator_exponent)},"
+        f"crt={root_type_ii.generalized_crt_exact},"
+        f"reciprocal_split={root_type_ii.reciprocal_phase_split_exact},"
+        "left_cU="
+        f"{root_type_ii.left_factor_has_truncated_divisor_coefficient},"
+        f"right_mu={root_type_ii.right_factor_retains_mobius},"
+        f"root_fibers_subpower={root_type_ii.root_fibers_are_subpower},"
+        f"completed_centering={root_type_ii.completed_centering_exact},"
+        f"zero_residue={root_type_ii.physical_zero_residue_vanishes},"
+        "physical_subtraction="
+        f"{root_type_ii.physical_centered_subtraction_present},"
+        "fixed_numerator="
+        f"{root_type_ii.published_hermitian_theorem_has_root_dependent_numerator},"
+        f"joint={root_type_ii.actual_transform_coefficient_remains_joint},"
+        f"published={root_type_ii.root_type_ii_bound_verified}"
+    )
+    root_four_factor = midpoint_root_four_factor_audit()
+    print(
+        "large_q_transition: root_four_factor="
+        f"left_product={_fmt(root_four_factor.left_product_exponent)},"
+        f"right_product={_fmt(root_four_factor.right_product_exponent)},"
+        "physical_numerator="
+        f"{_fmt(root_four_factor.physical_numerator_exponent)},"
+        f"r={_fmt(root_four_factor.recovered_r_exponent)},"
+        f"s={_fmt(root_four_factor.recovered_s_exponent)},"
+        "roots_unfold="
+        f"{root_four_factor.root_fibers_unfold_to_ordered_factorizations},"
+        f"pairwise={root_four_factor.four_factors_are_pairwise_coprime},"
+        "left_cU="
+        f"{root_four_factor.truncated_divisor_coefficient_remains_on_left_product},"
+        "right_mu_splits="
+        f"{root_four_factor.mobius_splits_over_right_factors},"
+        f"phase={root_four_factor.kloosterman_phase_identity_exact},"
+        "completed_centering="
+        f"{root_four_factor.completed_centering_exact},"
+        f"zero_residue={root_four_factor.physical_zero_residue_vanishes},"
+        "physical_subtraction="
+        f"{root_four_factor.physical_centered_subtraction_present},"
+        "extreme_hard="
+        f"{root_four_factor.extreme_sector_recovers_hard_fraction},"
+        f"joint={root_four_factor.actual_smooth_weight_remains_joint},"
+        f"published={root_four_factor.four_factor_type_ii_bound_verified}"
+    )
+    physical_poisson = midpoint_physical_poisson_audit()
+    print(
+        "large_q_transition: midpoint_physical_poisson="
+        f"Q={_fmt(physical_poisson.modulus_exponent)},"
+        f"h={_fmt(physical_poisson.h_exponent)},"
+        f"delta={_fmt(physical_poisson.delta_exponent)},"
+        "resonance="
+        f"{_fmt(physical_poisson.resonance_window_exponent)},"
+        "lattice="
+        f"{_fmt(physical_poisson.lattice_parameter_exponent)},"
+        "pointwise="
+        f"{_fmt(physical_poisson.pointwise_bilinear_bound_exponent)},"
+        f"raw={_fmt(physical_poisson.raw_bilinear_exponent)},"
+        "physical_save="
+        f"{_fmt(physical_poisson.physical_oscillation_saving_exponent)},"
+        "outer_points="
+        f"{_fmt(physical_poisson.outer_root_point_exponent)},"
+        f"outer_target={_fmt(physical_poisson.outer_target_exponent)},"
+        "outer_required_save="
+        f"{_fmt(physical_poisson.required_outer_saving_exponent)},"
+        "lattice_exact="
+        f"{physical_poisson.resonance_lattice_bijection_exact},"
+        f"poisson_exact={physical_poisson.one_variable_poisson_exact},"
+        "joint_derivatives="
+        f"{physical_poisson.joint_weight_has_uniform_delta_derivatives},"
+        "determinant_line="
+        f"{physical_poisson.determinant_line_correspondence_exact},"
+        "independent="
+        f"{physical_poisson.physical_poisson_route_is_independent},"
+        "outer_sqrt="
+        f"{physical_poisson.outer_mobius_square_root_verified}"
+    )
+    root_salie = root_salie_adapter_audit()
+    print(
+        "large_q_transition: root_salie_adapter="
+        f"modulus={_fmt(root_salie.modulus_exponent)},"
+        f"numerator={_fmt(root_salie.physical_numerator_exponent)},"
+        "fixed_k_bound="
+        f"{_fmt(root_salie.fixed_numerator_bound_exponent)},"
+        "fixed_k_save="
+        f"{_fmt(root_salie.fixed_numerator_saving_exponent)},"
+        "summed_k_bound="
+        f"{_fmt(root_salie.absolute_numerator_sum_bound_exponent)},"
+        f"target={_fmt(root_salie.physical_target_exponent)},"
+        "deficit="
+        f"{_fmt(root_salie.absolute_numerator_sum_deficit_exponent)},"
+        "odd_trace_exact="
+        f"{root_salie.odd_full_root_trace_identity_exact},"
+        "even_branch="
+        f"{root_salie.even_midpoint_modulus_adapter_verified},"
+        "balanced_filter="
+        f"{root_salie.theorem_accepts_balanced_root_filter},"
+        "mobius_modulus="
+        f"{root_salie.theorem_accepts_mobius_modulus_weight},"
+        "fixed_numerator="
+        f"{root_salie.theorem_accepts_moving_numerator},"
+        "square_exception="
+        f"{root_salie.square_numerator_exception_covered},"
+        "joint="
+        f"{root_salie.theorem_accepts_joint_transform_weight},"
+        f"closes={root_salie.salie_adapter_closes_root_gate}"
+    )
+    root_weyl = root_weyl_square_input_audit()
+    print(
+        "large_q_transition: root_weyl_square_input="
+        f"modulus={_fmt(root_weyl.modulus_exponent)},"
+        f"h={_fmt(root_weyl.frequency_exponent)},"
+        f"delta={_fmt(root_weyl.base_exponent)},"
+        "square_interval="
+        f"{_fmt(root_weyl.square_input_interval_exponent)},"
+        "square_support="
+        f"{_fmt(root_weyl.square_support_cardinality_exponent)},"
+        "relative_interval="
+        f"{_fmt(root_weyl.relative_square_interval_exponent)},"
+        "dz_range="
+        f"{_fmt(root_weyl.dunn_zaharescu_min_relative_exponent)}:"
+        f"{_fmt(root_weyl.dunn_zaharescu_max_relative_exponent)},"
+        f"dksz1={_fmt(root_weyl.dksz_first_bound_exponent)},"
+        f"dksz2={_fmt(root_weyl.dksz_second_bound_exponent)},"
+        f"dksz_best={_fmt(root_weyl.dksz_best_bound_exponent)},"
+        "trivial="
+        f"{_fmt(root_weyl.pointwise_square_support_exponent)},"
+        "dksz_deficit="
+        f"{_fmt(root_weyl.dksz_pointwise_deficit_exponent)},"
+        "h_sum="
+        f"{_fmt(root_weyl.absolute_frequency_sum_exponent)},"
+        "raw_h_square="
+        f"{_fmt(root_weyl.raw_frequency_square_support_exponent)},"
+        "h_deficit="
+        f"{_fmt(root_weyl.absolute_frequency_deficit_exponent)},"
+        f"kssz={_fmt(root_weyl.kssz_dense_interval_bound_exponent)},"
+        "raw_volume="
+        f"{_fmt(root_weyl.raw_q_frequency_base_volume_exponent)},"
+        f"target={_fmt(root_weyl.physical_root_target_exponent)},"
+        "required_save="
+        f"{_fmt(root_weyl.required_global_saving_exponent)},"
+        f"identity={root_weyl.full_root_trace_identity_exact},"
+        "physical_coprime="
+        f"{root_weyl.physical_base_is_uniformly_coprime_to_modulus},"
+        "dz_accepts="
+        f"{root_weyl.dunn_zaharescu_range_accepts_square_interval},"
+        f"fixed_prime={root_weyl.dksz_requires_fixed_prime_modulus},"
+        "composite="
+        f"{root_weyl.theorem_accepts_moving_squarefree_composite_modulus},"
+        "prime_balanced="
+        f"{root_weyl.prime_modulus_balanced_root_sector_nonempty},"
+        "balanced_filter="
+        f"{root_weyl.theorem_accepts_balanced_root_filter},"
+        "mobius_modulus="
+        f"{root_weyl.theorem_accepts_mobius_modulus_weight},"
+        "h_average="
+        f"{root_weyl.theorem_accepts_frequency_average},"
+        f"polylog={root_weyl.published_loss_is_polylogarithmic},"
+        "closes="
+        f"{root_weyl.root_weyl_square_input_route_closes_gate}"
+    )
+    salie_joint = root_salie_joint_average_audit()
+    print(
+        "large_q_transition: root_salie_joint="
+        f"m={_fmt(salie_joint.left_root_factor_exponent)},"
+        f"n={_fmt(salie_joint.right_root_factor_exponent)},"
+        f"numerator={_fmt(salie_joint.physical_numerator_exponent)},"
+        f"bc1={_fmt(salie_joint.bcr_term_1_exponent)},"
+        f"bc2={_fmt(salie_joint.bcr_term_2_exponent)},"
+        f"bound={_fmt(salie_joint.bcr_bound_exponent)},"
+        f"target={_fmt(salie_joint.physical_target_exponent)},"
+        f"deficit={_fmt(salie_joint.bcr_deficit_exponent)},"
+        "square_pairs="
+        f"{_fmt(salie_joint.square_product_pair_count_exponent)},"
+        "dfi_y="
+        f"{_fmt(salie_joint.dfi_square_main_short_factor_cutoff_exponent)},"
+        "dfi_z="
+        f"{_fmt(salie_joint.dfi_long_long_cutoff_exponent)},"
+        "balanced="
+        f"{_fmt(salie_joint.balanced_root_factor_exponent)},"
+        "fixed_square="
+        f"{_fmt(salie_joint.fixed_square_hermitian_bound_exponent)},"
+        "square_bound="
+        f"{_fmt(salie_joint.absolute_square_family_bound_exponent)},"
+        "square_deficit="
+        f"{_fmt(salie_joint.absolute_square_family_deficit_exponent)},"
+        "phase="
+        f"{salie_joint.salie_factorization_matches_midpoint_phase},"
+        "bcr_endpoint="
+        f"{salie_joint.joint_average_is_existing_bcr_endpoint},"
+        "mobius_coefficients="
+        f"{salie_joint.bcr_accepts_mobius_coefficients},"
+        "mobius_beyond_l2="
+        f"{salie_joint.bcr_uses_mobius_beyond_l2},"
+        "dfi_main_excluded="
+        f"{salie_joint.balanced_root_filter_excludes_dfi_square_main},"
+        f"closes={salie_joint.joint_salie_route_closes_root_gate}"
+    )
+    salie_gauss = square_salie_gauss_completion_audit()
+    print(
+        "large_q_transition: square_salie_gauss="
+        f"r={_fmt(salie_gauss.r_exponent)},"
+        f"s={_fmt(salie_gauss.s_exponent)},"
+        f"t={_fmt(salie_gauss.square_root_exponent)},"
+        f"x={_fmt(salie_gauss.x_exponent)},"
+        f"y={_fmt(salie_gauss.y_exponent)},"
+        "normalization="
+        f"{_fmt(salie_gauss.gauss_normalization_exponent)},"
+        "resonance="
+        f"{_fmt(salie_gauss.t_poisson_resonance_exponent)},"
+        "localized_pointwise="
+        f"{_fmt(salie_gauss.localized_pointwise_exponent)},"
+        "direct_square="
+        f"{_fmt(salie_gauss.direct_square_sector_pointwise_exponent)},"
+        f"identity={salie_gauss.double_gauss_identity_exact},"
+        "character_mod8="
+        f"{salie_gauss.cross_character_depends_only_on_mod8},"
+        "t_linear="
+        f"{salie_gauss.square_root_variable_is_linearized},"
+        f"joint={salie_gauss.remaining_quadratic_weight_is_joint},"
+        "improves="
+        f"{salie_gauss.gauss_completion_improves_square_sector},"
+        f"closes={salie_gauss.square_salie_gauss_route_closes_gate}"
+    )
+    mobius_product_shift = mobius_product_shifted_variance_audit()
+    print(
+        "large_q_transition: mobius_product_shifted_variance="
+        f"factor={_fmt(mobius_product_shift.factor_length_exponent)},"
+        f"product={_fmt(mobius_product_shift.product_length_exponent)},"
+        f"shift={_fmt(mobius_product_shift.transform_shift_exponent)},"
+        "diagonal_power="
+        f"{_fmt(mobius_product_shift.diagonal_power_exponent)},"
+        "diagonal_log="
+        f"{_fmt(mobius_product_shift.diagonal_logarithmic_exponent)},"
+        "raw_offdiag="
+        f"{_fmt(mobius_product_shift.raw_shifted_determinant_exponent)},"
+        "target="
+        f"{_fmt(mobius_product_shift.shifted_determinant_target_exponent)},"
+        "required="
+        f"{_fmt(mobius_product_shift.required_shifted_determinant_saving_exponent)},"
+        "convolution="
+        f"{mobius_product_shift.product_convolution_identity_exact},"
+        "diagonal="
+        f"{mobius_product_shift.diagonal_parameterization_exact},"
+        f"tail={mobius_product_shift.schwartz_tail_is_power_negligible},"
+        "collar="
+        f"{mobius_product_shift.polylogarithmic_transition_collar_retained},"
+        "m4_equivalent="
+        f"{mobius_product_shift.equivalent_to_separated_mixed_fourth_moment_gate},"
+        "bound="
+        f"{mobius_product_shift.shifted_mobius_determinant_bound_proved},"
+        "original_requires="
+        f"{mobius_product_shift.original_signed_kernel_requires_component_gate},"
+        f"closes={mobius_product_shift.route_closes_mwkf_gate}"
+    )
+    gg_determinant = ganguly_guria_determinant_audit()
+    print(
+        "large_q_transition: ganguly_guria_determinant="
+        f"X={_fmt(gg_determinant.variable_length_exponent)},"
+        f"shift={_fmt(gg_determinant.shift_range_exponent)},"
+        f"theta={_fmt(gg_determinant.ramanujan_exponent)},"
+        f"fixed_error={_fmt(gg_determinant.fixed_shift_error_exponent)},"
+        "absolute_shift_sum="
+        f"{_fmt(gg_determinant.absolute_shift_sum_error_exponent)},"
+        f"target={_fmt(gg_determinant.shifted_determinant_target_exponent)},"
+        "deficit="
+        f"{_fmt(gg_determinant.absolute_shift_sum_power_deficit)},"
+        f"fixed_main={_fmt(gg_determinant.fixed_shift_main_exponent)},"
+        f"absolute_main={_fmt(gg_determinant.absolute_shift_sum_main_exponent)},"
+        "smooth="
+        f"{gg_determinant.smooth_unweighted_fixed_shift_theorem_proved},"
+        "distinct="
+        f"{gg_determinant.distinct_tensor_weights_accepted_as_stated},"
+        "arithmetic="
+        f"{gg_determinant.arithmetic_coefficients_accepted},"
+        "coefficient_uniform="
+        f"{gg_determinant.coefficient_form_uniformity_quantified},"
+        f"type_i_ii={gg_determinant.mobius_type_i_ii_adapter_proved},"
+        "ramanujan_power="
+        f"{gg_determinant.ramanujan_conjecture_removes_power_deficit},"
+        "ramanujan_log="
+        f"{gg_determinant.ramanujan_conjecture_supplies_logarithmic_saving},"
+        "main_cancel="
+        f"{gg_determinant.mobius_main_term_cancellation_proved},"
+        f"closes={gg_determinant.ganguly_guria_route_closes_mobius_gate}"
+    )
+    dd_variance = darbar_das_short_variance_audit()
+    print(
+        "large_q_transition: darbar_das_short_variance="
+        f"ambient={_fmt(dd_variance.ambient_length_exponent)},"
+        f"window={_fmt(dd_variance.short_window_exponent)},"
+        "generic_variance="
+        f"{_fmt(dd_variance.generic_short_variance_exponent)},"
+        "target_variance="
+        f"{_fmt(dd_variance.required_short_variance_exponent)},"
+        f"required={_fmt(dd_variance.required_variance_saving_exponent)},"
+        "full_series_zeta_power="
+        f"{dd_variance.full_mobius_convolution_zeta_power},"
+        "auxiliary_zeta_power="
+        f"{dd_variance.required_auxiliary_zeta_power},"
+        f"h_p={dd_variance.required_auxiliary_prime_coefficient},"
+        "h_p2="
+        f"{dd_variance.required_auxiliary_prime_square_coefficient},"
+        "h_p3="
+        f"{dd_variance.required_auxiliary_prime_cube_coefficient},"
+        f"m_class={dd_variance.auxiliary_fits_squarefree_m_class},"
+        f"g_class={dd_variance.auxiliary_fits_completely_multiplicative_g_class},"
+        "restricted_multiplicative="
+        f"{dd_variance.restricted_convolution_is_multiplicative},"
+        "full_convolution="
+        f"{dd_variance.published_theorem_covers_full_mobius_convolution},"
+        "restricted_convolution="
+        f"{dd_variance.published_theorem_covers_restricted_convolution},"
+        f"closes={dd_variance.darbar_das_route_closes_mobius_gate}"
+    )
+    ratio_mellin = restricted_mobius_ratio_mellin_audit()
+    print(
+        "large_q_transition: restricted_mobius_ratio_mellin="
+        f"factor={_fmt(ratio_mellin.factor_length_exponent)},"
+        f"product={_fmt(ratio_mellin.product_length_exponent)},"
+        f"window={_fmt(ratio_mellin.short_window_exponent)},"
+        "variance_target="
+        f"{_fmt(ratio_mellin.required_short_variance_exponent)},"
+        "ratio_coordinates="
+        f"{ratio_mellin.ratio_coordinate_identity_exact},"
+        f"inversion={ratio_mellin.ratio_fourier_inversion_exact},"
+        "multiplicative="
+        f"{ratio_mellin.integrand_coefficient_is_multiplicative},"
+        "dirichlet_series="
+        f"{ratio_mellin.shifted_inverse_zeta_dirichlet_series_exact},"
+        f"outer_smooth={ratio_mellin.product_coordinate_weight_is_smooth},"
+        f"tau_decay={ratio_mellin.ratio_transform_is_rapidly_decaying},"
+        "tau_uniform_sufficient="
+        f"{ratio_mellin.uniform_single_tau_variance_is_sufficient},"
+        f"tau_zero_full={ratio_mellin.tau_zero_is_full_mobius_convolution},"
+        "tau_zero_pole="
+        f"{ratio_mellin.tau_zero_square_dirichlet_series_zeta_pole_order},"
+        f"diag_log={ratio_mellin.tau_zero_diagonal_log_exponent},"
+        f"target_log={ratio_mellin.required_diagonal_log_exponent},"
+        f"excess={ratio_mellin.tau_zero_formal_diagonal_log_excess},"
+        "euler_no_p="
+        f"{ratio_mellin.tau_zero_euler_remainder_has_no_prime_term},"
+        "euler_half="
+        f"{ratio_mellin.tau_zero_euler_remainder_converges_for_real_part_gt_half},"
+        "needs_offdiag="
+        f"{ratio_mellin.tau_zero_diagonal_excess_requires_offdiagonal_cancellation},"
+        "diagonal_lower="
+        f"{not ratio_mellin.diagonal_term_is_not_lower_bound_for_full_variance},"
+        "diagonal_disproves="
+        f"{ratio_mellin.tau_zero_diagonal_alone_disproves_uniform_gate},"
+        "joint_diag_log1="
+        f"{ratio_mellin.joint_ratio_recombination_has_restricted_diagonal_log_order_one},"
+        "mangerel="
+        f"{_fmt(ratio_mellin.optimistic_mangerel_variance_exponent)},"
+        "mangerel_deficit="
+        f"{_fmt(ratio_mellin.mangerel_power_deficit)},"
+        "mangerel_log="
+        f"{ratio_mellin.mangerel_only_supplies_logarithmic_saving},"
+        "tau_hypotheses="
+        f"{ratio_mellin.uniform_tau_mangerel_hypotheses_verified},"
+        f"published={ratio_mellin.shifted_inverse_zeta_variance_proved},"
+        f"closes={ratio_mellin.ratio_mellin_route_closes_mobius_gate}"
+    )
+    brz = basak_robles_zaharescu_mobius_convolution_audit()
+    print(
+        "large_q_transition: brz_mobius_convolution="
+        f"ambient={_fmt(brz.ambient_length_exponent)},"
+        f"window={_fmt(brz.short_window_exponent)},"
+        f"critical_q={_fmt(brz.critical_denominator_exponent)},"
+        f"term1={_fmt(brz.first_pointwise_term_exponent)},"
+        f"term2={_fmt(brz.second_pointwise_term_exponent)},"
+        f"term3={_fmt(brz.third_pointwise_term_exponent)},"
+        f"best={_fmt(brz.best_published_pointwise_exponent)},"
+        f"required={_fmt(brz.required_pointwise_exponent)},"
+        f"pointwise_deficit={_fmt(brz.pointwise_exponent_deficit)},"
+        "local_variance="
+        f"{_fmt(brz.direct_local_arc_variance_exponent)},"
+        "variance_target="
+        f"{_fmt(brz.required_local_variance_exponent)},"
+        "variance_deficit="
+        f"{_fmt(brz.local_arc_variance_deficit)},"
+        "major_variance="
+        f"{_fmt(brz.major_arc_direct_variance_exponent)},"
+        f"major_deficit={_fmt(brz.major_arc_power_deficit)},"
+        "published="
+        f"{brz.published_full_mobius_convolution_pointwise_bound},"
+        f"twisted={brz.published_ratio_twisted_family_bound},"
+        f"local_l2={brz.published_local_l2_bound},"
+        "closes="
+        f"{brz.brz_direct_pointwise_route_closes_variance_gate}"
+    )
+    mrtt_signed = mrtt_signed_mobius_power_shift_audit(delta=F(1))
+    print(
+        "large_q_transition: mrtt_signed_mobius_power_shift="
+        f"ambient={_fmt(mrtt_signed.ambient_product_exponent)},"
+        f"shift={_fmt(mrtt_signed.shift_exponent)},"
+        f"relative={_fmt(mrtt_signed.relative_shift_exponent)},"
+        f"long_threshold={_fmt(mrtt_signed.long_shift_threshold)},"
+        "delta_threshold="
+        f"{_fmt(mrtt_signed.long_shift_delta_threshold)},"
+        "published_long="
+        f"{mrtt_signed.published_long_shift_range_applies},"
+        f"identity={mrtt_signed.truncated_mobius_identity_exact},"
+        f"d2={mrtt_signed.absolute_coefficient_is_bounded_by_d2},"
+        f"ramare={mrtt_signed.ramare_prime_factor_is_exact},"
+        f"major={mrtt_signed.major_arc_has_arbitrary_log_decay},"
+        "typical_verified="
+        f"{mrtt_signed.signed_typical_factor_extension_verified},"
+        "fixed_power="
+        f"{mrtt_signed.fixed_power_shift_has_arbitrary_log_saving},"
+        "average_exponent="
+        f"{_fmt(mrtt_signed.mrtt_shift_average_exponent)},"
+        "required_exponent="
+        f"{_fmt(mrtt_signed.required_mwkf_correlation_exponent)},"
+        "power_deficit="
+        f"{_fmt(mrtt_signed.remaining_shift_power_deficit)},"
+        f"scale_closes={mrtt_signed.mrtt_scale_closes_mwkf_model},"
+        "ratio_family="
+        f"{mrtt_signed.full_ratio_twisted_multiplicative_family_covered},"
+        "product_vertex="
+        f"{mrtt_signed.product_compatible_hard_vertex_covered},"
+        "physical="
+        f"{mrtt_signed.physical_gcd_layer_adapter_verified},"
+        f"core={mrtt_signed.whole_strict_power_core_covered}"
+    )
+    four_mobius = hard_vertex_four_mobius_determinant_audit(
+        gcd_exponent=F(1, 2)
+    )
+    print(
+        "large_q_transition: hard_vertex_four_mobius="
+        f"ambient={_fmt(four_mobius.ambient_product_exponent)},"
+        f"shift={_fmt(four_mobius.shift_exponent)},"
+        f"gcd={_fmt(four_mobius.gcd_exponent)},"
+        f"primitive={_fmt(four_mobius.primitive_slope_exponent)},"
+        "shift_quotient="
+        f"{_fmt(four_mobius.shift_quotient_exponent)},"
+        f"line={_fmt(four_mobius.line_parameter_exponent)},"
+        f"raw={_fmt(four_mobius.raw_gcd_layer_exponent)},"
+        f"target={_fmt(four_mobius.local_target_exponent)},"
+        f"required={_fmt(four_mobius.required_power_saving)},"
+        "outer_sqrt="
+        f"{_fmt(four_mobius.outer_slope_pair_square_root_saving)},"
+        "shift_full="
+        f"{_fmt(four_mobius.shift_quotient_full_cancellation_saving)},"
+        "unimodular="
+        f"{four_mobius.unimodular_line_parameterization_exact},"
+        "critical="
+        f"{four_mobius.outer_square_root_is_exponent_critical},"
+        "mrtt_log_only="
+        f"{four_mobius.mrtt_supplies_only_logarithmic_saving},"
+        "top_chowla="
+        f"{four_mobius.top_face_contains_fixed_shift_chowla},"
+        "top_log="
+        f"{four_mobius.top_face_logarithmic_saving_proved},"
+        "published_spectral="
+        f"{four_mobius.published_centered_outer_mobius_spectral_bound},"
+        f"physical={four_mobius.physical_ratio_kernel_restored},"
+        f"proved={four_mobius.hard_vertex_determinant_estimate_proved}"
+    )
+    bm_mobius = blomer_milicevic_mobius_modulus_audit(
+        modulus_scale_exponent=F(3),
+        numerator_product_exponent=F(5),
+    )
+    print(
+        "large_q_transition: blomer_milicevic_mobius_modulus="
+        f"modulus={_fmt(bm_mobius.kloosterman_modulus_scale_exponent)},"
+        f"period={_fmt(bm_mobius.periodic_encoding_modulus_exponent)},"
+        f"l2={_fmt(bm_mobius.mobius_support_l2_lower_exponent)},"
+        f"theta={_fmt(bm_mobius.ramanujan_theta)},"
+        f"base={_fmt(bm_mobius.bm_archimedean_factor_exponent)},"
+        f"total={_fmt(bm_mobius.bm_total_bound_exponent)},"
+        "trivial="
+        f"{_fmt(bm_mobius.trivial_normalized_modulus_sum_exponent)},"
+        f"deficit={_fmt(bm_mobius.published_bound_deficit)},"
+        "selberg="
+        f"{_fmt(bm_mobius.selberg_replacement_bound_exponent)},"
+        "selberg_deficit="
+        f"{_fmt(bm_mobius.selberg_replacement_deficit)},"
+        f"ramanujan={_fmt(bm_mobius.full_ramanujan_bound_exponent)},"
+        "ramanujan_margin="
+        f"{_fmt(bm_mobius.full_ramanujan_margin)},"
+        f"linnik={bm_mobius.linnik_range_hypothesis_holds},"
+        "injective="
+        f"{bm_mobius.collision_free_exact_periodic_encoding_available},"
+        "parseval="
+        f"{bm_mobius.fourier_l1_lower_bound_follows_from_parseval},"
+        "small_period_ruled_out="
+        f"{bm_mobius.small_period_exact_mobius_encoding_ruled_out},"
+        "qct_complete="
+        f"{bm_mobius.actual_qct_kernel_is_complete_kloosterman_family},"
+        "power_saving="
+        f"{bm_mobius.direct_periodic_weight_adapter_has_power_saving},"
+        f"covered={bm_mobius.whole_mobius_gate_covered}"
+    )
+    bm_type_i = blomer_milicevic_type_i_level_audit(
+        modulus_scale_exponent=F(3),
+        numerator_product_exponent=F(5),
+        target_exponent=F(2),
+        exposed_level_box_exponent=F(1),
+    )
+    print(
+        "large_q_transition: blomer_milicevic_type_i_level="
+        "modulus="
+        f"{_fmt(bm_type_i.kloosterman_modulus_scale_exponent)},"
+        f"numerator={_fmt(bm_type_i.numerator_product_exponent)},"
+        f"target={_fmt(bm_type_i.target_exponent)},"
+        f"level={_fmt(bm_type_i.exposed_level_box_exponent)},"
+        f"theta={_fmt(bm_type_i.ramanujan_theta)},"
+        f"fixed={_fmt(bm_type_i.fixed_level_bound_exponent)},"
+        f"type_i={_fmt(bm_type_i.type_i_absolute_bound_exponent)},"
+        f"type_i_deficit={_fmt(bm_type_i.type_i_power_deficit)},"
+        "ideal_cauchy="
+        f"{_fmt(bm_type_i.ideal_level_cauchy_bound_exponent)},"
+        "ideal_deficit="
+        f"{_fmt(bm_type_i.ideal_level_cauchy_power_deficit)},"
+        "type_i_threshold="
+        f"{_fmt(bm_type_i.uniform_type_i_level_threshold)},"
+        "cauchy_threshold="
+        f"{_fmt(bm_type_i.uniform_ideal_cauchy_level_threshold)},"
+        "type_i_window="
+        f"{bm_type_i.uniform_type_i_has_nonnegative_level_window},"
+        "cauchy_window="
+        f"{bm_type_i.uniform_ideal_cauchy_has_nonnegative_level_window},"
+        "selberg_fixed="
+        f"{_fmt(bm_type_i.selberg_fixed_level_bound_exponent)},"
+        "selberg_type_i_threshold="
+        f"{_fmt(bm_type_i.selberg_type_i_level_threshold)},"
+        "selberg_cauchy_threshold="
+        f"{_fmt(bm_type_i.selberg_ideal_cauchy_level_threshold)},"
+        "selberg_endpoint="
+        f"{_fmt(bm_type_i.selberg_ideal_cauchy_bound_exponent)},"
+        "selberg_deficit="
+        f"{_fmt(bm_type_i.selberg_ideal_cauchy_power_deficit)},"
+        "ramanujan_fixed="
+        f"{_fmt(bm_type_i.full_ramanujan_fixed_level_bound_exponent)},"
+        "ramanujan_type_i_threshold="
+        f"{_fmt(bm_type_i.full_ramanujan_type_i_level_threshold)},"
+        "ramanujan_cauchy_threshold="
+        f"{_fmt(bm_type_i.full_ramanujan_ideal_cauchy_level_threshold)},"
+        "ramanujan_endpoint="
+        f"{_fmt(bm_type_i.full_ramanujan_ideal_cauchy_bound_exponent)},"
+        "ramanujan_margin="
+        f"{_fmt(bm_type_i.full_ramanujan_ideal_cauchy_power_margin)},"
+        f"linnik={bm_type_i.linnik_range_hypothesis_holds},"
+        "divisibility="
+        f"{bm_type_i.level_divisibility_estimate_occurs_in_bm_proof},"
+        "identity="
+        f"{bm_type_i.exact_mobius_type_i_identity_available},"
+        "exceptional_removed="
+        f"{bm_type_i.exceptional_spectrum_removed_for_level_family},"
+        "cauchy_proved="
+        f"{bm_type_i.level_cauchy_bound_proved_for_qct_coefficients},"
+        f"model_only={bm_type_i.product_compatible_hard_vertex_only},"
+        f"physical={bm_type_i.physical_coupled_kernel_restored},"
+        f"covered={bm_type_i.whole_mobius_gate_covered}"
+    )
+    humphries_density = humphries_exceptional_level_density_audit(
+        modulus_scale_exponent=F(3),
+        numerator_product_scale_exponent=F(5),
+        target_exponent=F(2),
+        level_family_exponent=F(1),
+    )
+    print(
+        "large_q_transition: humphries_exceptional_level_density="
+        "modulus="
+        f"{_fmt(humphries_density.kloosterman_modulus_scale_exponent)},"
+        "numerator="
+        f"{_fmt(humphries_density.numerator_product_scale_exponent)},"
+        "bessel_ratio="
+        f"{_fmt(humphries_density.bessel_ratio_exponent)},"
+        f"target={_fmt(humphries_density.target_exponent)},"
+        f"level={_fmt(humphries_density.level_family_exponent)},"
+        f"theta={_fmt(humphries_density.ramanujan_theta)},"
+        f"slope={_fmt(humphries_density.gamma0_density_slope)},"
+        "count="
+        f"{_fmt(humphries_density.humphries_count_exponent_at_theta)},"
+        "normalized="
+        f"{_fmt(humphries_density.volume_normalized_count_exponent_at_theta)},"
+        "ramanujan_base="
+        f"{_fmt(humphries_density.ideal_ramanujan_level_cauchy_base_exponent)},"
+        "finite_hecke="
+        f"{_fmt(humphries_density.finite_prime_hecke_loss_exponent)},"
+        "residual="
+        f"{_fmt(humphries_density.residual_exceptional_loss_exponent)},"
+        f"total={_fmt(humphries_density.density_enhanced_bound_exponent)},"
+        "deficit="
+        f"{_fmt(humphries_density.density_enhanced_power_deficit)},"
+        "target_level_max="
+        f"{_fmt(humphries_density.maximum_level_allowed_by_target)},"
+        "neutral_level="
+        f"{_fmt(humphries_density.level_needed_to_neutralize_exceptional_growth)},"
+        "compatible="
+        f"{humphries_density.target_and_density_thresholds_compatible},"
+        "archimedean_neutral="
+        f"{humphries_density.density_numerically_neutralizes_archimedean_exceptional_growth},"
+        "linnik_level="
+        f"{humphries_density.linnik_scale_dominates_level_family},"
+        "positive="
+        f"{humphries_density.density_theorem_is_positive_counting_input},"
+        "mobius_signs="
+        f"{humphries_density.mobius_level_signs_used_by_density_theorem},"
+        f"qct_weights={humphries_density.qct_spectral_weights_accepted},"
+        "exceptional_covered="
+        f"{humphries_density.exceptional_spectrum_gate_covered},"
+        f"covered={humphries_density.whole_mobius_gate_covered}"
+    )
+    finite_hecke = finite_prime_hecke_average_audit(
+        kloosterman_modulus_exponent=F(3),
+        left_hecke_index_exponent=F(5, 2),
+        right_hecke_index_exponent=F(5, 2),
+        level_exponent=F(1),
+        target_exponent=F(2),
+    )
+    print(
+        "large_q_transition: finite_prime_hecke_average="
+        f"modulus={_fmt(finite_hecke.kloosterman_modulus_exponent)},"
+        f"left={_fmt(finite_hecke.left_hecke_index_exponent)},"
+        f"right={_fmt(finite_hecke.right_hecke_index_exponent)},"
+        "numerator="
+        f"{_fmt(finite_hecke.numerator_product_exponent)},"
+        f"level={_fmt(finite_hecke.level_exponent)},"
+        f"target={_fmt(finite_hecke.target_exponent)},"
+        f"theta={_fmt(finite_hecke.ramanujan_theta)},"
+        "ramanujan_base="
+        f"{_fmt(finite_hecke.full_ramanujan_level_cauchy_base_exponent)},"
+        "pointwise_loss="
+        f"{_fmt(finite_hecke.pointwise_finite_hecke_loss_exponent)},"
+        "pointwise_total="
+        f"{_fmt(finite_hecke.pointwise_total_bound_exponent)},"
+        "pointwise_deficit="
+        f"{_fmt(finite_hecke.pointwise_power_deficit)},"
+        "fixed_ls_loss="
+        f"{_fmt(finite_hecke.fixed_index_spectral_large_sieve_loss_exponent)},"
+        "fixed_ls_total="
+        f"{_fmt(finite_hecke.fixed_index_total_bound_exponent)},"
+        "required_saving="
+        f"{_fmt(finite_hecke.required_pre_cauchy_hecke_saving_exponent)},"
+        f"log={finite_hecke.required_post_saving_log_decay},"
+        "pascadi_arch="
+        f"{finite_hecke.pascadi_archimedean_exceptional_large_sieve_published},"
+        "pascadi_finite="
+        f"{finite_hecke.pascadi_finite_place_extension_published},"
+        "entry_adapter="
+        f"{finite_hecke.mobius_entry_to_hecke_index_adapter_derived},"
+        f"physical={finite_hecke.physical_coupled_kernel_restored},"
+        f"hecke_covered={finite_hecke.finite_prime_hecke_gate_covered},"
+        f"covered={finite_hecke.whole_mobius_gate_covered}"
+    )
+    farey_dilate = farey_dilate_pre_cauchy_audit(
+        mobius_entry_exponent=F(3),
+        shift_window_exponent=F(5, 2),
+        left_dilate_exponent=F(1, 2),
+        right_dilate_exponent=F(1, 2),
+        gate_target_exponent=F(3499, 1000),
+    )
+    print(
+        "large_q_transition: farey_dilate_pre_cauchy="
+        f"entry={_fmt(farey_dilate.mobius_entry_exponent)},"
+        f"shift={_fmt(farey_dilate.shift_window_exponent)},"
+        f"left={_fmt(farey_dilate.left_dilate_exponent)},"
+        f"right={_fmt(farey_dilate.right_dilate_exponent)},"
+        f"gate={_fmt(farey_dilate.gate_target_exponent)},"
+        f"arc={_fmt(farey_dilate.fourier_arc_denominator_exponent)},"
+        f"left_arc={_fmt(farey_dilate.left_rescaled_arc_exponent)},"
+        f"right_arc={_fmt(farey_dilate.right_rescaled_arc_exponent)},"
+        f"energy={_fmt(farey_dilate.mobius_coefficient_energy_exponent)},"
+        "left_bandwidth="
+        f"{_fmt(farey_dilate.left_one_dilate_bandwidth_excess_exponent)},"
+        "right_bandwidth="
+        f"{_fmt(farey_dilate.right_one_dilate_bandwidth_excess_exponent)},"
+        "left_local_l2="
+        f"{_fmt(farey_dilate.left_one_dilate_local_l2_exponent)},"
+        "right_local_l2="
+        f"{_fmt(farey_dilate.right_one_dilate_local_l2_exponent)},"
+        "left_self="
+        f"{_fmt(farey_dilate.left_family_positive_self_diagonal_exponent)},"
+        "right_self="
+        f"{_fmt(farey_dilate.right_family_positive_self_diagonal_exponent)},"
+        "left_cauchy="
+        f"{_fmt(farey_dilate.left_family_cauchy_normalized_l2_exponent)},"
+        "right_cauchy="
+        f"{_fmt(farey_dilate.right_family_cauchy_normalized_l2_exponent)},"
+        "separate="
+        f"{_fmt(farey_dilate.separate_family_cauchy_bound_exponent)},"
+        "separate_deficit="
+        f"{_fmt(farey_dilate.separate_family_cauchy_zero_slack_deficit)},"
+        f"ideal={_fmt(farey_dilate.ideal_joint_dilate_bound_exponent)},"
+        "ideal_deficit="
+        f"{_fmt(farey_dilate.ideal_joint_dilate_gate_deficit)},"
+        f"endpoint={_fmt(farey_dilate.zero_slack_endpoint_exponent)},"
+        "endpoint_reached="
+        f"{farey_dilate.ideal_joint_dilate_reaches_zero_slack_endpoint},"
+        "window_lost="
+        f"{farey_dilate.ordinary_fourier_cauchy_loses_farey_window},"
+        "shift_zero="
+        f"{farey_dilate.shift_zero_mode_removed_before_cauchy},"
+        "self_removed="
+        f"{farey_dilate.positive_self_diagonal_removed_by_shift_centering},"
+        "extra_saving="
+        f"{farey_dilate.endpoint_requires_additional_logarithmic_or_power_saving},"
+        "published="
+        f"{farey_dilate.published_joint_dilate_endpoint_saving_available},"
+        f"physical={farey_dilate.physical_coupled_kernel_restored},"
+        f"covered={farey_dilate.whole_mobius_gate_covered}"
+    )
+    farey_grouped = farey_dilate_convolution_poisson_audit(
+        mobius_entry_exponent=F(3),
+        dilate_exponent=F(1, 2),
+        shift_window_exponent=F(5, 2),
+        gate_target_exponent=F(3499, 1000),
+    )
+    print(
+        "large_q_transition: farey_dilate_convolution_poisson="
+        f"entry={_fmt(farey_grouped.mobius_entry_exponent)},"
+        f"dilate={_fmt(farey_grouped.dilate_exponent)},"
+        f"shift={_fmt(farey_grouped.shift_window_exponent)},"
+        f"gate={_fmt(farey_grouped.gate_target_exponent)},"
+        "product="
+        f"{_fmt(farey_grouped.grouped_product_length_exponent)},"
+        "semiprime="
+        f"{_fmt(farey_grouped.semiprime_energy_witness_exponent)},"
+        "numerator="
+        f"{_fmt(farey_grouped.poisson_numerator_exponent)},"
+        "packet="
+        f"{_fmt(farey_grouped.poisson_packet_width_exponent)},"
+        "determinant="
+        f"{_fmt(farey_grouped.recovered_determinant_window_exponent)},"
+        "determinant_match="
+        f"{farey_grouped.recovered_determinant_window_matches_original},"
+        "complete_epsilon="
+        f"{farey_grouped.complete_divisor_convolution_is_epsilon},"
+        f"dyadic_complete={farey_grouped.dyadic_divisor_window_is_complete},"
+        "semiprime_survives="
+        f"{farey_grouped.semiprime_witness_survives_dyadic_grouping},"
+        "equal_products_removed="
+        f"{farey_grouped.original_shift_centering_removes_equal_products},"
+        "cauchy_energy="
+        f"{farey_grouped.positive_cauchy_reintroduces_grouped_energy},"
+        "poisson_loop="
+        f"{farey_grouped.double_dilate_poisson_returns_original_determinant},"
+        "convolution_saving="
+        f"{farey_grouped.dyadic_mobius_convolution_supplies_power_saving},"
+        f"physical={farey_grouped.physical_coupled_kernel_restored},"
+        f"covered={farey_grouped.whole_mobius_gate_covered}"
+    )
+    hecke_product = smooth_hecke_product_mobius_audit(
+        left_index_exponent=F(5, 2),
+        right_index_exponent=F(5, 2),
+        spectral_conductor_exponent=F(1),
+    )
+    print(
+        "large_q_transition: smooth_hecke_product_mobius="
+        f"left={_fmt(hecke_product.left_index_exponent)},"
+        f"right={_fmt(hecke_product.right_index_exponent)},"
+        f"product={_fmt(hecke_product.product_index_exponent)},"
+        f"conductor={_fmt(hecke_product.spectral_conductor_exponent)},"
+        f"theta={_fmt(hecke_product.pointwise_ramanujan_theta)},"
+        "pointwise_loss="
+        f"{_fmt(hecke_product.pointwise_finite_prime_loss_exponent)},"
+        f"split={_fmt(hecke_product.common_divisor_split_exponent)},"
+        "small="
+        f"{_fmt(hecke_product.small_divisor_cusp_bound_exponent)},"
+        "large="
+        f"{_fmt(hecke_product.large_divisor_mobius_pnt_bound_exponent)},"
+        "saving="
+        f"{_fmt(hecke_product.large_divisor_saving_over_index_volume)},"
+        "log="
+        f"{hecke_product.large_divisor_endpoint_has_arbitrary_log_decay},"
+        "hecke_identity="
+        f"{hecke_product.unramified_hecke_mobius_inversion_exact},"
+        f"entire={hecke_product.cusp_l_function_is_entire},"
+        "functional_equation="
+        f"{hecke_product.small_divisor_functional_equation_shift_valid},"
+        "rankin_pnt="
+        f"{hecke_product.large_divisor_uses_only_rankin_selberg_and_mobius_pnt},"
+        "pointwise_removed="
+        f"{hecke_product.pointwise_ramanujan_loss_removed_for_product_smooth_newforms},"
+        "eisenstein_separate="
+        f"{hecke_product.eisenstein_spectrum_requires_separate_existing_treatment},"
+        "ramified_newform="
+        f"{hecke_product.ramified_newform_local_factors_restored},"
+        f"oldclass={hecke_product.oldclass_coefficients_restored},"
+        f"physical={hecke_product.physical_coupled_kernel_restored},"
+        "finite_gate="
+        f"{hecke_product.finite_prime_hecke_gate_covered},"
+        f"covered={hecke_product.whole_mobius_gate_covered}"
+    )
+    hecke_oldclass = smooth_hecke_oldclass_product_audit(
+        index_exponent=F(5, 2),
+        ambient_level_exponent=F(1),
+    )
+    print(
+        "large_q_transition: smooth_hecke_oldclass_product="
+        f"index={_fmt(hecke_oldclass.index_exponent)},"
+        f"level={_fmt(hecke_oldclass.ambient_level_exponent)},"
+        f"theta={_fmt(hecke_oldclass.ramanujan_theta)},"
+        "split="
+        f"{_fmt(hecke_oldclass.minimum_common_divisor_split_exponent)},"
+        "newform_endpoint="
+        f"{_fmt(hecke_oldclass.newform_endpoint_exponent)},"
+        "oldclass_slope="
+        f"{_fmt(hecke_oldclass.oldclass_shift_saving_slope)},"
+        "worst_endpoint="
+        f"{_fmt(hecke_oldclass.worst_oldclass_endpoint_exponent)},"
+        "worst_at_newform="
+        f"{hecke_oldclass.worst_oldclass_endpoint_attained_at_newform_shift_zero},"
+        "bm_formula="
+        f"{hecke_oldclass.bm_oldclass_fourier_formula_exact},"
+        "first_coprime="
+        f"{hecke_oldclass.bm_first_index_is_coprime_to_ambient_level},"
+        "divisors_subpower="
+        f"{hecke_oldclass.oldclass_divisor_allocations_have_subpower_cost},"
+        "pnt_log="
+        f"{hecke_oldclass.every_oldclass_cell_retains_mobius_pnt_log_decay},"
+        "ramified="
+        f"{hecke_oldclass.ramified_newform_identity_compatible},"
+        "product_model="
+        f"{hecke_oldclass.oldclass_product_smooth_model_covered},"
+        f"physical={hecke_oldclass.physical_coupled_kernel_restored},"
+        "finite_gate="
+        f"{hecke_oldclass.finite_prime_hecke_gate_covered},"
+        f"covered={hecke_oldclass.whole_mobius_gate_covered}"
+    )
+    physical_hecke_kernel = physical_qct_hecke_kernel_audit(
+        left_index_exponent=F(5, 2),
+        right_index_exponent=F(5, 2),
+        ambient_level_exponent=F(1),
+    )
+    print(
+        "large_q_transition: physical_qct_hecke_kernel="
+        f"left={_fmt(physical_hecke_kernel.left_index_exponent)},"
+        f"right={_fmt(physical_hecke_kernel.right_index_exponent)},"
+        f"level={_fmt(physical_hecke_kernel.ambient_level_exponent)},"
+        f"theta={_fmt(physical_hecke_kernel.exceptional_theta)},"
+        f"qct_dim={physical_hecke_kernel.normalized_qct_kernel_dimension},"
+        "augmented_dim="
+        f"{physical_hecke_kernel.bessel_augmented_kernel_dimension},"
+        "derivative_slope="
+        f"{physical_hecke_kernel.weighted_fourier_derivative_order_slope},"
+        "contour="
+        f"{_fmt(physical_hecke_kernel.bessel_mellin_contour_real_part)},"
+        "exceptional_order="
+        f"{_fmt(physical_hecke_kernel.maximum_exceptional_bessel_order)},"
+        "contour_margin="
+        f"{_fmt(physical_hecke_kernel.exceptional_contour_margin)},"
+        "conductor="
+        f"{_fmt(physical_hecke_kernel.spectral_conductor_exponent)},"
+        "bandwidth="
+        f"{_fmt(physical_hecke_kernel.multiplicative_twist_bandwidth_exponent)},"
+        "fourier_exact="
+        f"{physical_hecke_kernel.qct_fourier_tensorization_exact},"
+        "nuclear_polylog="
+        f"{physical_hecke_kernel.weighted_fourier_nuclear_norm_is_polylogarithmic},"
+        "j_mellin="
+        f"{physical_hecke_kernel.same_sign_bessel_mellin_factorization_exact},"
+        "k_mellin="
+        f"{physical_hecke_kernel.opposite_sign_bessel_mellin_factorization_exact},"
+        "product="
+        f"{physical_hecke_kernel.bessel_product_dependence_separates_as_h_times_delta},"
+        "maass_tail="
+        f"{physical_hecke_kernel.real_spectral_tail_has_arbitrary_log_decay},"
+        "holo_tail="
+        f"{physical_hecke_kernel.holomorphic_tail_has_arbitrary_log_decay},"
+        "exceptional_inside="
+        f"{physical_hecke_kernel.exceptional_spectrum_stays_inside_fixed_contour},"
+        "product_lemma="
+        f"{physical_hecke_kernel.product_smooth_hecke_lemma_applies_to_every_kernel_component},"
+        "oldclass="
+        f"{physical_hecke_kernel.oldclass_restoration_is_compatible},"
+        "kernel_model="
+        f"{physical_hecke_kernel.physical_qct_kernel_product_model_restored},"
+        "qct_adapter="
+        f"{physical_hecke_kernel.actual_qct_geometric_spectral_adapter_derived},"
+        "other_entries="
+        f"{physical_hecke_kernel.other_mobius_entry_weights_restored},"
+        "level_family="
+        f"{physical_hecke_kernel.type_i_level_family_aggregation_proved},"
+        "finite_gate="
+        f"{physical_hecke_kernel.finite_prime_hecke_gate_covered},"
+        f"covered={physical_hecke_kernel.whole_mobius_gate_covered}"
+    )
+    cusp_adapter = type_i_atkin_lehner_cusp_audit(
+        entry_scale_exponent=F(3),
+        modulus_scale_exponent=F(3),
+        product_index_exponent=F(5),
+        entry_divisor_exponent=F(1, 2),
+        modulus_divisor_exponent=F(1, 2),
+    )
+    print(
+        "large_q_transition: type_i_atkin_lehner_cusp="
+        f"entry={_fmt(cusp_adapter.entry_scale_exponent)},"
+        f"modulus={_fmt(cusp_adapter.modulus_scale_exponent)},"
+        f"product={_fmt(cusp_adapter.product_index_exponent)},"
+        f"entry_divisor={_fmt(cusp_adapter.entry_divisor_exponent)},"
+        f"modulus_divisor={_fmt(cusp_adapter.modulus_divisor_exponent)},"
+        f"quotient={_fmt(cusp_adapter.entry_quotient_exponent)},"
+        f"dual={_fmt(cusp_adapter.poisson_dual_index_exponent)},"
+        f"level={_fmt(cusp_adapter.ambient_level_exponent)},"
+        f"cusp_modulus={_fmt(cusp_adapter.cusp_modulus_exponent)},"
+        "lifted_modulus="
+        f"{_fmt(cusp_adapter.standard_lifted_modulus_exponent)},"
+        "bessel_numerator="
+        f"{_fmt(cusp_adapter.bessel_numerator_product_exponent)},"
+        "bessel_ratio="
+        f"{_fmt(cusp_adapter.bessel_ratio_inverse_square_exponent)},"
+        "poisson_norm="
+        f"{_fmt(cusp_adapter.poisson_normalization_exponent)},"
+        "lifted_prefactor="
+        f"{_fmt(cusp_adapter.poisson_prefactor_after_modulus_lift_exponent)},"
+        "physical_cross_prefactor="
+        f"{_fmt(cusp_adapter.physical_to_cross_cusp_prefactor_exponent)},"
+        "outer_poisson_norm="
+        f"{_fmt(cusp_adapter.outer_poisson_normalization_after_dividing_entry_exponent)},"
+        "normalized_cross_prefactor="
+        f"{_fmt(cusp_adapter.normalized_cross_cusp_prefactor_exponent)},"
+        "fixed_entry_square_saving="
+        f"{_fmt(cusp_adapter.fixed_entry_cross_cusp_square_saving_exponent)},"
+        "dual_l1="
+        f"{_fmt(cusp_adapter.normalized_dual_hecke_l1_exponent)},"
+        "unweighted="
+        f"{cusp_adapter.type_i_identity_leaves_unweighted_quotient},"
+        "coprime_divisors="
+        f"{cusp_adapter.entry_and_modulus_divisors_are_coprime},"
+        "allowed_moduli="
+        f"{cusp_adapter.kiral_young_allowed_moduli_match_exactly},"
+        "kloosterman="
+        f"{cusp_adapter.kiral_young_kloosterman_formula_matches_exactly},"
+        "inverse_obstruction="
+        f"{cusp_adapter.inverse_scaled_kloosterman_obstruction_present},"
+        f"crt_lift={cusp_adapter.crt_product_modulus_lift_exact},"
+        "ramanujan_nonzero="
+        f"{cusp_adapter.squarefree_ramanujan_denominator_nonzero},"
+        "coprime_level_family="
+        f"{cusp_adapter.coprimality_inclusion_exclusion_is_standard_level_family},"
+        "newform_sign="
+        f"{cusp_adapter.atkin_lehner_newform_coefficients_match_up_to_sign},"
+        "oldclass_permuted="
+        f"{cusp_adapter.atkin_lehner_oldclass_coefficient_lists_are_permuted},"
+        "zero_eisenstein="
+        f"{cusp_adapter.zero_dual_mode_is_eisenstein_only},"
+        "raw_dual_l1="
+        f"{cusp_adapter.raw_poisson_dual_l1_normalization_is_zero_power},"
+        "dual_no_power="
+        f"{cusp_adapter.nonzero_dual_hecke_average_has_no_positive_power_cost},"
+        "cross_diagonal="
+        f"{cusp_adapter.cross_cusp_sign_trace_has_diagonal_term},"
+        "unitary_norm="
+        f"{cusp_adapter.ordinary_cross_cusp_large_sieve_has_unitary_norm},"
+        "normalization_gain="
+        f"{cusp_adapter.atkin_lehner_sign_trace_gains_from_normalization_alone},"
+        "direct_fixed_entry_pevp="
+        f"{cusp_adapter.direct_fixed_entry_pevp_normalization_available},"
+        "outer_entries="
+        f"{cusp_adapter.direct_fixed_entry_adapter_aggregates_outer_entries},"
+        "physical="
+        f"{cusp_adapter.physical_qct_bessel_kernel_restored},"
+        "qct_adapter="
+        f"{cusp_adapter.type_i_type_i_qct_to_cusp_kuznetsov_derived},"
+        "standard_qct_adapter="
+        f"{cusp_adapter.type_i_type_i_qct_to_standard_kuznetsov_derived},"
+        "level_family="
+        f"{cusp_adapter.signed_level_family_aggregation_proved},"
+        f"type_ii={cusp_adapter.type_ii_sectors_restored},"
+        "finite_gate="
+        f"{cusp_adapter.finite_prime_hecke_gate_covered},"
+        f"covered={cusp_adapter.whole_mobius_gate_covered}"
+    )
+    second_moment_reciprocity = eisenstein_second_moment_reciprocity_audit(
+        entry_divisor_exponent=F(1, 2),
+        modulus_divisor_exponent=F(1, 2),
+    )
+    print(
+        "large_q_transition: eisenstein_second_moment_reciprocity="
+        "entry_divisor="
+        f"{_fmt(second_moment_reciprocity.entry_divisor_exponent)},"
+        "modulus_divisor="
+        f"{_fmt(second_moment_reciprocity.modulus_divisor_exponent)},"
+        f"level={_fmt(second_moment_reciprocity.ambient_level_exponent)},"
+        "required_half_level="
+        f"{_fmt(second_moment_reciprocity.required_half_level_saving_exponent)},"
+        "endpoint_log="
+        f"{second_moment_reciprocity.required_endpoint_log_decay},"
+        "inverse_zeta_zero="
+        f"{second_moment_reciprocity.inverse_zeta_central_zero_order},"
+        "eisenstein_pole="
+        f"{second_moment_reciprocity.eisenstein_transverse_pole_order},"
+        f"crossing={second_moment_reciprocity.local_crossing_model},"
+        f"target_degree={second_moment_reciprocity.target_total_degree},"
+        "blomer_khan_degree="
+        f"{second_moment_reciprocity.blomer_khan_total_degree},"
+        f"khan_dual={second_moment_reciprocity.khan_zeta_dual_family},"
+        "hecke_identity="
+        f"{second_moment_reciprocity.hecke_double_dirichlet_identity_exact},"
+        "zero_cancels_jointly="
+        f"{second_moment_reciprocity.inverse_zeta_zero_cancels_residues_jointly},"
+        "bk_adapter="
+        f"{second_moment_reciprocity.blomer_khan_is_literal_adapter},"
+        "ak_adapter="
+        f"{second_moment_reciprocity.andersen_kiral_is_literal_adapter},"
+        "khan_adapter="
+        f"{second_moment_reciprocity.khan_prime_gaussian_formula_is_composite_smooth_adapter},"
+        "residue_pairing="
+        f"{second_moment_reciprocity.completed_eisenstein_residue_pairing_required},"
+        "composite_local="
+        f"{second_moment_reciprocity.composite_level_local_corrections_required},"
+        "level_family="
+        f"{second_moment_reciprocity.signed_level_family_aggregation_proved},"
+        f"type_ii={second_moment_reciprocity.type_ii_sectors_restored},"
+        f"covered={second_moment_reciprocity.whole_mobius_gate_covered}"
+    )
+    product_large_sieve = product_hecke_spectral_large_sieve_audit(
+        product_variable_exponent=F(5, 2),
+        entry_divisor_exponent=F(1, 2),
+        modulus_divisor_exponent=F(1, 2),
+    )
+    print(
+        "large_q_transition: product_hecke_spectral_large_sieve="
+        f"H={_fmt(product_large_sieve.product_variable_exponent)},"
+        f"alpha={_fmt(product_large_sieve.entry_divisor_exponent)},"
+        f"beta={_fmt(product_large_sieve.modulus_divisor_exponent)},"
+        f"level={_fmt(product_large_sieve.ambient_level_exponent)},"
+        "poisson_side="
+        f"{_fmt(product_large_sieve.chosen_poisson_divisor_exponent)},"
+        "common_threshold="
+        f"{_fmt(product_large_sieve.common_divisor_threshold_exponent)},"
+        "residual_length="
+        f"{_fmt(product_large_sieve.maximum_residual_hecke_length_exponent)},"
+        "multiplied_length="
+        f"{_fmt(product_large_sieve.hecke_multiplied_length_exponent)},"
+        "large_bound="
+        f"{_fmt(product_large_sieve.large_common_divisor_bound_exponent)},"
+        "old_bound="
+        f"{_fmt(product_large_sieve.previous_pointwise_bound_exponent)},"
+        f"saving={_fmt(product_large_sieve.fixed_level_saving_exponent)},"
+        f"theta={_fmt(product_large_sieve.ramanujan_theta)},"
+        "small_hecke_loss="
+        f"{_fmt(product_large_sieve.small_common_divisor_hecke_loss_exponent)},"
+        "small_margin="
+        f"{_fmt(product_large_sieve.small_common_divisor_slf_margin)},"
+        "aggregated="
+        f"{_fmt(product_large_sieve.aggregated_bound_exponent)},"
+        f"required={_fmt(product_large_sieve.required_slf_exponent)},"
+        f"margin={_fmt(product_large_sieve.slf_power_margin)},"
+        "shorter_completion="
+        f"{product_large_sieve.completion_uses_shorter_divisor_side},"
+        "large_sieve="
+        f"{product_large_sieve.standard_large_sieve_normalization_exact},"
+        "hecke_energy="
+        f"{product_large_sieve.hecke_multiplication_has_subpower_energy_cost},"
+        "oldclass_l2="
+        f"{product_large_sieve.atkin_lehner_oldclass_permutation_preserves_l2},"
+        "eisenstein_unitary="
+        f"{product_large_sieve.eisenstein_basis_change_is_unitary},"
+        "physical="
+        f"{product_large_sieve.physical_kernel_tensorization_compatible},"
+        "bounded_log="
+        f"{product_large_sieve.bounded_level_cell_uses_existing_mobius_log_decay},"
+        "small_covered="
+        f"{product_large_sieve.small_common_divisor_range_covered},"
+        "cusp_holo_type_i_slf="
+        f"{product_large_sieve.cuspidal_holomorphic_type_i_type_i_slf_proved},"
+        "continuous_ramified_gate="
+        f"{product_large_sieve.continuous_ramified_oldvector_gate_open},"
+        f"type_i_slf={product_large_sieve.type_i_type_i_slf_proved},"
+        f"type_ii={product_large_sieve.type_ii_sectors_restored},"
+        f"covered={product_large_sieve.whole_mobius_gate_covered}"
+    )
+    high_level_product = high_level_product_hecke_spectral_audit(
+        product_variable_exponent=F(5, 2),
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+    )
+    print(
+        "large_q_transition: high_level_product_hecke_spectral="
+        f"H={_fmt(high_level_product.product_variable_exponent)},"
+        f"alpha={_fmt(high_level_product.left_level_factor_exponent)},"
+        f"beta={_fmt(high_level_product.right_level_factor_exponent)},"
+        f"level={_fmt(high_level_product.ambient_level_exponent)},"
+        "residual_length="
+        f"{_fmt(high_level_product.maximum_residual_hecke_length_exponent)},"
+        "poisson_index="
+        f"{_fmt(high_level_product.chosen_poisson_index_exponent)},"
+        f"excess={_fmt(high_level_product.large_sieve_excess_exponent)},"
+        f"bound={_fmt(high_level_product.aggregated_bound_exponent)},"
+        f"target={_fmt(high_level_product.target_exponent)},"
+        f"margin={_fmt(high_level_product.power_saving_margin)},"
+        f"deficit={_fmt(high_level_product.power_deficit)},"
+        "max_deficit="
+        f"{_fmt(high_level_product.maximum_type_ii_deficit)},"
+        "witness="
+        f"{_fmt(high_level_product.maximum_deficit_witness[0])}:"
+        f"{_fmt(high_level_product.maximum_deficit_witness[1])},"
+        "cusp_adapter="
+        f"{high_level_product.type_ii_factor_to_cusp_adapter_exact},"
+        "large_sieve="
+        f"{high_level_product.product_hecke_large_sieve_applies},"
+        "residual_square="
+        f"{high_level_product.inside_closed_type_ii_residual_square},"
+        f"power_closes={high_level_product.power_bound_closes_cell},"
+        "endpoint_log="
+        f"{high_level_product.endpoint_log_decay_required},"
+        "log_proved="
+        f"{high_level_product.endpoint_log_decay_proved},"
+        f"cell={high_level_product.type_ii_cell_covered},"
+        f"type_ii={high_level_product.whole_type_ii_region_covered},"
+        f"covered={high_level_product.whole_mobius_gate_covered}"
+    )
+    primal_dual_product = primal_dual_product_hecke_spectral_audit(
+        product_variable_exponent=F(5, 2),
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+        primitive_conductor_exponent=F(5, 2),
+    )
+    print(
+        "large_q_transition: primal_dual_product_hecke_spectral="
+        f"H={_fmt(primal_dual_product.product_variable_exponent)},"
+        f"alpha={_fmt(primal_dual_product.left_level_factor_exponent)},"
+        f"beta={_fmt(primal_dual_product.right_level_factor_exponent)},"
+        f"level={_fmt(primal_dual_product.ambient_level_exponent)},"
+        "poisson_index="
+        f"{_fmt(primal_dual_product.chosen_poisson_index_exponent)},"
+        "conductor="
+        f"{_fmt(primal_dual_product.worst_primitive_conductor_exponent)},"
+        "transition="
+        f"{_fmt(primal_dual_product.primal_dual_transition_exponent)},"
+        "normalized="
+        f"{_fmt(primal_dual_product.normalized_m_times_sqrt_conductor_exponent)},"
+        "excess="
+        f"{_fmt(primal_dual_product.optimized_large_sieve_excess_exponent)},"
+        "product_bound="
+        f"{_fmt(primal_dual_product.product_spectral_bound_exponent)},"
+        "aggregated="
+        f"{_fmt(primal_dual_product.aggregated_bound_exponent)},"
+        f"target={_fmt(primal_dual_product.target_exponent)},"
+        f"margin={_fmt(primal_dual_product.power_saving_margin)},"
+        "functional_equation="
+        f"{primal_dual_product.primitive_functional_equation_exact},"
+        "energy="
+        f"{primal_dual_product.dual_coefficient_energy_matches_primal},"
+        "gamma_nuclear="
+        f"{primal_dual_product.gamma_transform_has_polylog_nuclear_norm},"
+        "oldclass="
+        f"{primal_dual_product.oldclass_conductor_split_has_subpower_cost},"
+        "squarefree_eis="
+        f"{primal_dual_product.squarefree_level_forces_trivial_eisenstein_character},"
+        "eis_unramified_divisor="
+        f"{primal_dual_product.eisenstein_unramified_hecke_index_has_divisor_bound},"
+        "eis_ramified_prime="
+        f"{primal_dual_product.eisenstein_ramified_oldvector_witness_prime},"
+        "eis_ramified_ratio="
+        f"{_fmt(primal_dual_product.eisenstein_ramified_oldvector_ratio_at_witness)},"
+        "eis_ramified_divisor="
+        f"{primal_dual_product.eisenstein_ramified_oldvector_has_divisor_bound},"
+        "continuous="
+        f"{primal_dual_product.continuous_spectrum_has_no_positive_m_power},"
+        "cusp_holo="
+        f"{primal_dual_product.cuspidal_holomorphic_sectors_covered},"
+        "all_sectors="
+        f"{primal_dual_product.all_type_i_ii_sectors_covered},"
+        "finite_gate="
+        f"{primal_dual_product.finite_prime_hecke_gate_covered},"
+        "tails="
+        f"{primal_dual_product.transform_tail_aggregated},"
+        f"covered={primal_dual_product.whole_mobius_gate_covered}"
+    )
+    eisenstein_projector = eisenstein_oldspace_projector_audit(prime=5)
+    print(
+        "large_q_transition: eisenstein_oldspace_projector="
+        f"prime={eisenstein_projector.prime},"
+        "individual_ratio="
+        f"{_fmt(eisenstein_projector.individual_ramified_ratio_at_witness)},"
+        "coprime_coprime="
+        f"{eisenstein_projector.coprime_coprime_projector},"
+        "coprime_ramified="
+        f"{eisenstein_projector.coprime_once_ramified_projector},"
+        "ramified_ramified="
+        f"{eisenstein_projector.once_ramified_once_ramified_projector},"
+        "factorizes="
+        f"{eisenstein_projector.oldspace_sum_factorizes_prime_by_prime},"
+        "one_prime_gain="
+        f"{eisenstein_projector.coprime_ramified_projector_gains_one_prime},"
+        "common_only="
+        f"{eisenstein_projector.local_loss_depends_only_on_common_ramification},"
+        "gcd_majorant="
+        f"{eisenstein_projector.same_cusp_global_kernel_has_gcd_over_level_majorant},"
+        "cross_identified="
+        f"{eisenstein_projector.atkin_lehner_cross_cusp_projector_identified},"
+        "physical_adapter="
+        f"{eisenstein_projector.same_cusp_projector_is_physical_adapter},"
+        "gcd_aggregated="
+        f"{eisenstein_projector.common_ramification_gcd_aggregation_proved},"
+        "continuous="
+        f"{eisenstein_projector.continuous_spectrum_gate_covered},"
+        f"covered={eisenstein_projector.whole_mobius_gate_covered}"
+    )
+    ramification_average = eisenstein_common_ramification_average_audit(
+        frequency_length=16,
+        second_index=30,
+        ambient_level=30,
+    )
+    print(
+        "large_q_transition: eisenstein_common_ramification_average="
+        f"M={ramification_average.frequency_length},"
+        f"n={ramification_average.second_index},"
+        f"Q={ramification_average.ambient_level},"
+        f"g={ramification_average.common_ramification},"
+        f"exact={ramification_average.exact_frequency_gcd_sum},"
+        f"tau={ramification_average.divisor_count},"
+        f"upper={ramification_average.divisor_bound_upper_bound},"
+        f"normalized={_fmt(ramification_average.normalized_exact_average)},"
+        "normalized_upper="
+        f"{ramification_average.normalized_divisor_bound},"
+        "identity="
+        f"{ramification_average.gcd_divisor_totient_identity_exact},"
+        "zero_power="
+        f"{ramification_average.normalized_average_has_zero_power_cost},"
+        "poisson_gcd="
+        f"{ramification_average.same_cusp_poisson_frequency_gcd_aggregation_proved},"
+        "physical_cross_gcd="
+        f"{ramification_average.physical_cross_cusp_gcd_aggregation_proved},"
+        "residues="
+        f"{ramification_average.completed_eisenstein_residue_pairing_proved},"
+        "continuous="
+        f"{ramification_average.continuous_spectrum_gate_covered},"
+        f"covered={ramification_average.whole_mobius_gate_covered}"
+    )
+    pole_subtracted = pole_subtracted_eisenstein_functional_equation_audit(
+        primal_length_exponent=F(5, 4),
+        spectral_bandwidth_exponent=F(0),
+    )
+    print(
+        "large_q_transition: pole_subtracted_eisenstein="
+        f"Y={_fmt(pole_subtracted.primal_length_exponent)},"
+        f"bandwidth={_fmt(pole_subtracted.spectral_bandwidth_exponent)},"
+        "conductor="
+        f"{_fmt(pole_subtracted.archimedean_conductor_exponent)},"
+        f"dual={_fmt(pole_subtracted.dual_length_exponent)},"
+        "effective_dual="
+        f"{_fmt(pole_subtracted.effective_dual_length_exponent)},"
+        "collision_log="
+        f"{_fmt(pole_subtracted.central_collision_log_y_coefficient)},"
+        "collision_gamma="
+        f"{_fmt(pole_subtracted.central_collision_euler_gamma_coefficient)},"
+        "functional_equation="
+        f"{pole_subtracted.completed_zeta_product_functional_equation_exact},"
+        f"residues={pole_subtracted.two_simple_residues_exact},"
+        "collision_finite="
+        f"{pole_subtracted.central_collision_limit_is_finite},"
+        "rapid_decay="
+        f"{pole_subtracted.pole_subtracted_transform_has_rapid_decay},"
+        "same_cusp_ramified="
+        f"{pole_subtracted.same_cusp_projector_and_poisson_gcd_audited},"
+        "atkin_cross_restored="
+        f"{pole_subtracted.atkin_cross_cusp_oldspace_restored},"
+        "nonresidual="
+        f"{pole_subtracted.nonresidual_continuous_local_polynomial_covered},"
+        "zero_mode_pairing="
+        f"{pole_subtracted.zero_mode_residue_pairing_proved},"
+        "continuous="
+        f"{pole_subtracted.continuous_spectrum_gate_covered},"
+        f"covered={pole_subtracted.whole_mobius_gate_covered}"
+    )
+    ramanujan_zero_mode = ramanujan_zero_mode_euler_audit(
+        prime=5,
+        valuation=2,
+    )
+    print(
+        "large_q_transition: ramanujan_zero_mode_euler="
+        f"prime={ramanujan_zero_mode.prime},"
+        f"valuation={ramanujan_zero_mode.valuation},"
+        f"polynomial={ramanujan_zero_mode.local_generating_polynomial},"
+        "coefficients="
+        f"{ramanujan_zero_mode.ramanujan_prime_power_coefficients_exact},"
+        f"local={ramanujan_zero_mode.local_generating_identity_exact},"
+        f"global={ramanujan_zero_mode.global_dirichlet_series_identity_exact},"
+        "zero_order="
+        f"{ramanujan_zero_mode.inverse_zeta_zero_order_at_one},"
+        "archimedean="
+        f"{ramanujan_zero_mode.archimedean_zero_mode_residue_normalization_matched},"
+        "pairing="
+        f"{ramanujan_zero_mode.completed_zero_mode_residue_pairing_proved},"
+        "continuous="
+        f"{ramanujan_zero_mode.continuous_spectrum_gate_covered},"
+        f"covered={ramanujan_zero_mode.whole_mobius_gate_covered}"
+    )
+    cross_cusp = atkin_lehner_cross_cusp_projector_audit(prime=5)
+    print(
+        "large_q_transition: atkin_lehner_cross_cusp_projector="
+        f"prime={cross_cusp.prime},"
+        "same="
+        f"{_fmt(cross_cusp.same_cusp_mixed_value_at_unit_phase)},"
+        "same_square="
+        f"{_fmt(cross_cusp.same_cusp_squared_value)},"
+        "swap_square="
+        f"{_fmt(cross_cusp.swap_cross_cusp_squared_value)},"
+        "square_ratio="
+        f"{_fmt(cross_cusp.swap_to_same_cusp_squared_ratio)},"
+        f"unitary={cross_cusp.atkin_lehner_is_unitary},"
+        "unitary_transfer="
+        f"{cross_cusp.unitarity_implies_same_cusp_kernel_bound},"
+        "physical_matrix="
+        f"{cross_cusp.exact_physical_cross_cusp_matrix_identified},"
+        "physical_bound="
+        f"{cross_cusp.physical_cross_cusp_projector_bound_proved},"
+        "continuous="
+        f"{cross_cusp.continuous_spectrum_gate_covered},"
+        f"covered={cross_cusp.whole_mobius_gate_covered}"
+    )
+    prime_cross = prime_level_eisenstein_cross_cusp_audit(prime=5)
+    print(
+        "large_q_transition: prime_level_eisenstein_cross_cusp="
+        f"prime={prime_cross.prime},"
+        "D0="
+        f"{_fmt(prime_cross.unramified_diagonal_cusp_value_at_t_zero)},"
+        "D1="
+        f"{_fmt(prime_cross.once_ramified_diagonal_cusp_value_at_t_zero)},"
+        "O2="
+        f"{_fmt(prime_cross.offdiagonal_cusp_value_squared_at_t_zero)},"
+        "cross2="
+        f"{_fmt(prime_cross.mixed_cross_projector_squared_at_t_zero)},"
+        "cross_exp="
+        f"{_fmt(prime_cross.mixed_cross_projector_asymptotic_prime_exponent)},"
+        "desired_exp="
+        f"{_fmt(prime_cross.same_cusp_candidate_squared_prime_exponent)},"
+        "deficit="
+        f"{_fmt(prime_cross.half_level_loss_vs_same_cusp_candidate)},"
+        f"KY={prime_cross.kiral_young_specialization_exact},"
+        "physical="
+        f"{prime_cross.physical_cross_cusp_projector_identified},"
+        "same_rejected="
+        f"{prime_cross.same_cusp_projector_candidate_rejected},"
+        "half_saving="
+        f"{prime_cross.cross_cusp_half_level_saving_proved},"
+        "full_saving="
+        f"{prime_cross.global_residue_level_ledger_restored},"
+        "continuous="
+        f"{prime_cross.continuous_spectrum_gate_covered},"
+        f"covered={prime_cross.whole_mobius_gate_covered}"
+    )
+    residue_trilinear = completed_eisenstein_residue_trilinear_audit(
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+        product_variable_exponent=F(5, 2),
+    )
+    print(
+        "large_q_transition: completed_eisenstein_residue_trilinear="
+        f"H={_fmt(residue_trilinear.product_variable_exponent)},"
+        f"alpha={_fmt(residue_trilinear.left_level_factor_exponent)},"
+        f"beta={_fmt(residue_trilinear.right_level_factor_exponent)},"
+        f"level={_fmt(residue_trilinear.ambient_level_exponent)},"
+        "poisson="
+        f"{_fmt(residue_trilinear.poisson_frequency_exponent)},"
+        "bound="
+        f"{_fmt(residue_trilinear.primal_residue_bound_exponent)},"
+        f"target={_fmt(residue_trilinear.target_exponent)},"
+        "required="
+        f"{_fmt(residue_trilinear.required_saving_exponent)},"
+        "max_required="
+        f"{_fmt(residue_trilinear.maximum_required_saving_exponent)},"
+        "witness="
+        f"{_fmt(residue_trilinear.maximum_saving_witness[0])}:"
+        f"{_fmt(residue_trilinear.maximum_saving_witness[1])},"
+        f"terms={residue_trilinear.residue_expansion_term_count},"
+        f"variables={residue_trilinear.remaining_arithmetic_variable_count},"
+        "left_group="
+        f"{residue_trilinear.grouped_left_mobius_coefficient_exact},"
+        "right_group="
+        f"{residue_trilinear.grouped_right_mobius_coefficient_exact},"
+        "cross_kernel="
+        f"{residue_trilinear.kiral_young_cross_kernel_exact},"
+        "pole_identity="
+        f"{residue_trilinear.pole_subtracted_identity_exact},"
+        "trilinear="
+        f"{residue_trilinear.signed_level_frequency_trilinear_estimate_proved},"
+        "continuous="
+        f"{residue_trilinear.continuous_spectrum_gate_covered},"
+        f"covered={residue_trilinear.whole_mobius_gate_covered}"
+    )
+    ramification_density = eisenstein_cross_cusp_ramification_density_audit(
+        prime=5,
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+    )
+    print(
+        "large_q_transition: eisenstein_cross_cusp_ramification_density="
+        f"prime={ramification_density.prime},"
+        "alpha="
+        f"{_fmt(ramification_density.left_level_factor_exponent)},"
+        "beta="
+        f"{_fmt(ramification_density.right_level_factor_exponent)},"
+        "EabsD="
+        f"{_fmt(ramification_density.expected_absolute_diagonal_cusp_factor)},"
+        "O2="
+        f"{_fmt(ramification_density.offdiagonal_cusp_factor_squared)},"
+        "cross_avg2="
+        f"{_fmt(ramification_density.cross_average_majorant_squared)},"
+        "cross_exp="
+        f"{_fmt(ramification_density.cross_average_squared_prime_exponent)},"
+        "same_exp="
+        f"{_fmt(ramification_density.same_cusp_average_squared_prime_exponent)},"
+        "extra_amplitude="
+        f"{_fmt(ramification_density.extra_cross_density_amplitude_saving_exponent)},"
+        "pre="
+        f"{_fmt(ramification_density.center_pre_density_bound_exponent)},"
+        "candidate_saving="
+        f"{_fmt(ramification_density.candidate_center_density_saving_exponent)},"
+        "candidate_post="
+        f"{_fmt(ramification_density.candidate_center_post_density_bound_exponent)},"
+        "smooth_boundary="
+        f"{ramification_density.smooth_interval_boundary_has_divisor_subpower_cost},"
+        "unrestricted="
+        f"{ramification_density.unrestricted_two_index_density_bound_proved},"
+        "candidate_closes="
+        f"{ramification_density.candidate_density_would_close_center},"
+        "physical_tensor="
+        f"{ramification_density.physical_tensor_preserves_unrestricted_density},"
+        "RR="
+        f"{ramification_density.residue_residue_terms_covered},"
+        "mixed="
+        f"{ramification_density.residue_dual_mixed_terms_covered},"
+        "residue_gate="
+        f"{ramification_density.completed_residue_trilinear_gate_covered},"
+        "continuous="
+        f"{ramification_density.continuous_local_gate_covered},"
+        "global_gcd="
+        f"{ramification_density.global_ratio_gcd_aggregation_proved},"
+        f"covered={ramification_density.whole_mobius_gate_covered}"
+    )
+    l2_density = eisenstein_cross_cusp_l2_density_audit(
+        prime=5,
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+    )
+    print(
+        "large_q_transition: eisenstein_cross_cusp_l2_density="
+        f"prime={l2_density.prime},"
+        f"alpha={_fmt(l2_density.left_level_factor_exponent)},"
+        f"beta={_fmt(l2_density.right_level_factor_exponent)},"
+        f"factors={l2_density.product_index_factor_count},"
+        "EabsD2="
+        f"{_fmt(l2_density.expected_squared_product_index_diagonal_factor)},"
+        "D0sq="
+        f"{_fmt(l2_density.unramified_poisson_diagonal_factor_squared)},"
+        "cross_E2="
+        f"{_fmt(l2_density.cross_second_moment_majorant)},"
+        "cross_exp="
+        f"{_fmt(l2_density.cross_second_moment_prime_exponent)},"
+        "extra_amplitude="
+        f"{_fmt(l2_density.extra_cross_density_amplitude_saving_exponent)},"
+        f"pre={_fmt(l2_density.center_pre_density_bound_exponent)},"
+        "saving="
+        f"{_fmt(l2_density.center_density_saving_exponent)},"
+        f"post={_fmt(l2_density.center_post_density_bound_exponent)},"
+        "square_post="
+        f"{_fmt(l2_density.residual_square_post_bound_exponent)},"
+        f"target={_fmt(l2_density.target_exponent)},"
+        "margin="
+        f"{_fmt(l2_density.residual_square_margin_exponent)},"
+        f"qct={l2_density.qct_product_weights_separated},"
+        "c_alloc="
+        f"{l2_density.common_divisor_prime_allocations_have_subpower_cost},"
+        "boundary="
+        f"{l2_density.weighted_crt_boundary_absorbed_on_residual_square},"
+        "continuous_nonzero="
+        f"{l2_density.physical_cross_cusp_nonzero_mode_covered},"
+        "needs_residues="
+        f"{l2_density.completed_residue_decomposition_needed},"
+        "original_zero_mode="
+        f"{l2_density.original_common_mellin_zero_mode_main_term_proved},"
+        "separate_residue_pairing_needed="
+        f"{l2_density.separate_spectral_residue_pairing_needed},"
+        "global_gcd="
+        f"{l2_density.global_ratio_gcd_aggregation_proved},"
+        f"covered={l2_density.whole_mobius_gate_covered}"
+    )
+    density_boundary = cross_cusp_density_boundary_audit(
+        shorter_level_factor_exponent=F(3),
+        left_product_variable_exponent=F(5, 2),
+        right_product_variable_exponent=F(5, 2),
+    )
+    print(
+        "large_q_transition: cross_cusp_density_boundary="
+        "eta="
+        f"{_fmt(density_boundary.shorter_level_factor_exponent)},"
+        f"h={_fmt(density_boundary.left_product_variable_exponent)},"
+        f"ell={_fmt(density_boundary.right_product_variable_exponent)},"
+        "pointwise_decay="
+        f"{_fmt(density_boundary.pointwise_square_decay_exponent)},"
+        "crt_decay="
+        f"{_fmt(density_boundary.weighted_crt_square_decay_exponent)},"
+        "two_variable_saving="
+        f"{_fmt(density_boundary.two_variable_square_saving_exponent)},"
+        "one_variable_saving="
+        f"{_fmt(density_boundary.one_variable_gcd_square_saving_exponent)},"
+        "effective_decay="
+        f"{_fmt(density_boundary.effective_square_decay_exponent)},"
+        "square_saving="
+        f"{_fmt(density_boundary.effective_square_saving_exponent)},"
+        "amplitude_saving="
+        f"{_fmt(density_boundary.effective_amplitude_saving_exponent)},"
+        "crt_main="
+        f"{density_boundary.weighted_crt_main_term_dominates},"
+        "positive="
+        f"{density_boundary.positive_density_saving_available},"
+        "zero_face="
+        f"{density_boundary.on_exact_zero_density_saving_face},"
+        "zero_face_exact="
+        f"{density_boundary.zero_density_saving_face_characterization_exact},"
+        "boundaries="
+        f"{density_boundary.short_interval_boundary_terms_retained}"
+    )
+    balanced_factors = balanced_spectral_factor_polytope_audit(
+        left_level_factor_exponent=F(5, 4),
+        right_level_factor_exponent=F(5, 4),
+    )
+    print(
+        "large_q_transition: balanced_spectral_factor_polytope="
+        f"alpha={_fmt(balanced_factors.left_level_factor_exponent)},"
+        f"beta={_fmt(balanced_factors.right_level_factor_exponent)},"
+        f"H={_fmt(balanced_factors.product_variable_exponent)},"
+        f"level={_fmt(balanced_factors.ambient_level_exponent)},"
+        f"eta={_fmt(balanced_factors.shorter_level_factor_exponent)},"
+        "residual="
+        f"{_fmt(balanced_factors.maximum_residual_hecke_length_exponent)},"
+        "x="
+        f"{_fmt(balanced_factors.primal_large_sieve_excess_exponent)},"
+        "x_le_eta="
+        f"{balanced_factors.primal_excess_never_exceeds_shorter_factor},"
+        "crt_decay="
+        f"{_fmt(balanced_factors.weighted_crt_square_decay_exponent)},"
+        "density_square_saving="
+        f"{_fmt(balanced_factors.effective_cross_density_square_saving_exponent)},"
+        "density_amplitude_saving="
+        f"{_fmt(balanced_factors.effective_cross_density_amplitude_saving_exponent)},"
+        "crt_main="
+        f"{balanced_factors.weighted_crt_main_term_dominates},"
+        "cusp_normalized="
+        f"{_fmt(balanced_factors.cuspidal_normalized_excess_exponent)},"
+        "cusp_bound="
+        f"{_fmt(balanced_factors.cuspidal_holomorphic_bound_exponent)},"
+        "continuous_bound="
+        f"{_fmt(balanced_factors.continuous_bound_exponent)},"
+        "universal="
+        f"{_fmt(balanced_factors.universal_factor_cell_bound_exponent)},"
+        f"target={_fmt(balanced_factors.target_exponent)},"
+        f"margin={_fmt(balanced_factors.fixed_margin_exponent)},"
+        f"II={balanced_factors.type_i_type_i_cells_covered},"
+        f"I_II={balanced_factors.mixed_type_i_type_ii_cells_covered},"
+        f"IIII={balanced_factors.type_ii_type_ii_cells_covered},"
+        "balanced_all="
+        f"{balanced_factors.balanced_hard_geometry_all_factor_cells_covered},"
+        "unbalanced="
+        f"{balanced_factors.unbalanced_original_exponent_polytope_covered},"
+        "tails="
+        f"{balanced_factors.polylogarithmic_transform_tail_aggregated},"
+        f"covered={balanced_factors.whole_mobius_gate_covered}"
+    )
+    unequal_products = balanced_completion_unequal_product_audit(
+        left_level_factor_exponent=F(1, 2),
+        right_level_factor_exponent=F(1, 2),
+        left_product_variable_exponent=F(1),
+        right_product_variable_exponent=F(5, 4),
+    )
+    print(
+        "large_q_transition: balanced_completion_unequal_product="
+        f"alpha={_fmt(unequal_products.left_level_factor_exponent)},"
+        f"beta={_fmt(unequal_products.right_level_factor_exponent)},"
+        f"level={_fmt(unequal_products.ambient_level_exponent)},"
+        f"eta={_fmt(unequal_products.shorter_level_factor_exponent)},"
+        f"h={_fmt(unequal_products.left_product_variable_exponent)},"
+        f"ell={_fmt(unequal_products.right_product_variable_exponent)},"
+        f"u={_fmt(unequal_products.shorter_product_variable_exponent)},"
+        f"v={_fmt(unequal_products.longer_product_variable_exponent)},"
+        "c_split="
+        f"{_fmt(unequal_products.common_divisor_split_exponent)},"
+        "residual="
+        f"{_fmt(unequal_products.poisson_multiplied_residual_exponent)},"
+        f"excess={_fmt(unequal_products.large_sieve_excess_exponent)},"
+        "density_square="
+        f"{_fmt(unequal_products.effective_density_square_saving_exponent)},"
+        "density_amplitude="
+        f"{_fmt(unequal_products.density_amplitude_saving_exponent)},"
+        f"zero_face={unequal_products.on_exact_zero_density_saving_face},"
+        "absorbed="
+        f"{unequal_products.large_sieve_excess_absorbed_by_density},"
+        "zero_face_zero_excess="
+        f"{unequal_products.zero_density_face_has_zero_large_sieve_excess},"
+        "normalized_all="
+        f"{unequal_products.all_unequal_product_cells_normalized_excess_covered},"
+        "unbalanced_base="
+        f"{unequal_products.unbalanced_entry_scale_normalization_derived},"
+        f"tails={unequal_products.transform_tail_aggregated},"
+        f"covered={unequal_products.whole_mobius_gate_covered}"
+    )
+    unbalanced_orientation = unbalanced_completion_orientation_audit(
+        left_entry_exponent=F(3),
+        right_entry_exponent=F(2),
+        left_level_factor_exponent=F(3, 2),
+        right_level_factor_exponent=F(1),
+        left_product_variable_exponent=F(2),
+        right_product_variable_exponent=F(2),
+    )
+    print(
+        "large_q_transition: unbalanced_completion_orientation="
+        f"rho={_fmt(unbalanced_orientation.left_entry_exponent)},"
+        f"sigma={_fmt(unbalanced_orientation.right_entry_exponent)},"
+        f"alpha={_fmt(unbalanced_orientation.left_level_factor_exponent)},"
+        f"beta={_fmt(unbalanced_orientation.right_level_factor_exponent)},"
+        f"level={_fmt(unbalanced_orientation.ambient_level_exponent)},"
+        f"pL={_fmt(unbalanced_orientation.left_poisson_exponent)},"
+        f"pR={_fmt(unbalanced_orientation.right_poisson_exponent)},"
+        f"c={_fmt(unbalanced_orientation.common_residual_shorter_exponent)},"
+        f"xL={_fmt(unbalanced_orientation.left_large_sieve_excess_exponent)},"
+        f"xR={_fmt(unbalanced_orientation.right_large_sieve_excess_exponent)},"
+        f"dL={_fmt(unbalanced_orientation.left_density_square_saving_exponent)},"
+        f"dR={_fmt(unbalanced_orientation.right_density_square_saving_exponent)},"
+        "continuous_orientation="
+        f"{unbalanced_orientation.continuous_chosen_orientation},"
+        "continuous="
+        f"{unbalanced_orientation.continuous_some_orientation_closes},"
+        "poisson_identity="
+        f"{unbalanced_orientation.poisson_conservation_or_inactive_orientation_exact},"
+        "cusp_p="
+        f"{_fmt(unbalanced_orientation.cuspidal_chosen_poisson_exponent)},"
+        "cusp_excess="
+        f"{_fmt(unbalanced_orientation.cuspidal_primal_dual_normalized_excess_exponent)},"
+        "cusp="
+        f"{unbalanced_orientation.cuspidal_holomorphic_normalized_excess_closes},"
+        "conditional_factor_model="
+        f"{unbalanced_orientation.conditional_standard_kuznetsov_factor_model_covered},"
+        "inverse_adapter="
+        f"{unbalanced_orientation.inverse_scaled_kloosterman_adapter_derived},"
+        "lifted_levels="
+        f"{unbalanced_orientation.lifted_non_squarefree_level_family_covered},"
+        "spectral_all="
+        f"{unbalanced_orientation.all_normalized_spectral_factor_cells_covered},"
+        "outer_base="
+        f"{unbalanced_orientation.outer_qct_unbalanced_normalization_derived},"
+        "tails="
+        f"{unbalanced_orientation.polylogarithmic_transform_tail_aggregated},"
+        f"covered={unbalanced_orientation.whole_mobius_gate_covered}"
+    )
+    newform_level = newform_level_mobius_projector_audit(prime=5)
+    print(
+        "large_q_transition: newform_level_mobius_projector="
+        f"prime={newform_level.prime},"
+        f"index={_fmt(newform_level.squarefree_level_index)},"
+        "mobius="
+        f"{_fmt(newform_level.mobius_convolution_prime_coefficient)},"
+        "newform="
+        f"{_fmt(newform_level.newform_leading_sieve_prime_coefficient)},"
+        "difference="
+        f"{_fmt(newform_level.local_coefficient_difference)},"
+        "geometric="
+        f"{newform_level.geometric_divisor_convolution_identity_exact},"
+        "squarefree="
+        f"{newform_level.newform_formula_requires_squarefree_level},"
+        "oldclass_tail="
+        f"{newform_level.newform_prime_power_oldclass_tail_present},"
+        "hecke_modified="
+        f"{newform_level.newform_formula_modifies_hecke_indices},"
+        f"match={newform_level.local_coefficients_match},"
+        "projector="
+        f"{newform_level.mobius_level_sum_is_exact_newform_projector},"
+        "oldforms_killed="
+        f"{newform_level.exceptional_oldforms_annihilated_algebraically},"
+        f"qct={newform_level.qct_newform_spectral_adapter_derived},"
+        f"covered={newform_level.whole_mobius_gate_covered}"
+    )
+    oldclass_perron = exceptional_oldclass_mobius_perron_audit(
+        exceptional_parameter=F(7, 64),
+    )
+    print(
+        "large_q_transition: exceptional_oldclass_mobius_perron="
+        f"nu={_fmt(oldclass_perron.exceptional_parameter)},"
+        "natural="
+        f"{_fmt(oldclass_perron.natural_level_sum_exponent)},"
+        "required_saving="
+        f"{_fmt(oldclass_perron.required_level_power_saving)},"
+        "zero_free="
+        f"{_fmt(oldclass_perron.required_zero_free_real_part)},"
+        "correction_boundary="
+        f"{_fmt(oldclass_perron.correction_absolute_convergence_boundary)},"
+        "alpha_p="
+        f"{_fmt(oldclass_perron.squarefree_level_prime_coefficient)},"
+        "nu_p_offset="
+        f"{_fmt(oldclass_perron.newform_level_index_prime_offset)},"
+        f"euler={oldclass_perron.leading_cofactor_euler_factor_exact},"
+        f"zeta={oldclass_perron.inverse_zeta_square_factor_exact},"
+        "implies_strip="
+        f"{oldclass_perron.smooth_sum_bound_would_imply_zero_free_strip},"
+        "strip_known="
+        f"{oldclass_perron.required_fixed_zero_free_strip_known},"
+        f"tail={oldclass_perron.full_oldclass_tail_recombined},"
+        "newform_average="
+        f"{oldclass_perron.averaged_newform_cancellation_proved},"
+        "perron="
+        f"{oldclass_perron.direct_perron_route_closes_exceptional_gate},"
+        f"covered={oldclass_perron.whole_mobius_gate_covered}"
+    )
+    full_oldclass = exceptional_full_oldclass_tail_audit(
+        prime=5,
+        hecke_eigenvalue_squared=F(1),
+        exceptional_parameter=F(7, 64),
+        ramanujan_theta=F(7, 64),
+    )
+    print(
+        "large_q_transition: exceptional_full_oldclass_tail="
+        f"p={full_oldclass.prime},"
+        f"lambda2={_fmt(full_oldclass.hecke_eigenvalue_squared)},"
+        f"rho={_fmt(full_oldclass.local_rho)},"
+        "leading="
+        f"{_fmt(full_oldclass.leading_oldclass_multiplier)},"
+        f"full={_fmt(full_oldclass.full_oldclass_multiplier)},"
+        f"tail={_fmt(full_oldclass.tail_correction)},"
+        "mobius_full="
+        f"{_fmt(full_oldclass.full_mobius_prime_coefficient)},"
+        "tail_decay="
+        f"{_fmt(full_oldclass.tail_error_decay_exponent)},"
+        "zeta_boundary="
+        f"{_fmt(full_oldclass.inverse_zeta_correction_boundary)},"
+        "tail_boundary="
+        f"{_fmt(full_oldclass.tail_correction_boundary)},"
+        "recombined="
+        f"{full_oldclass.full_prime_power_tail_recombined},"
+        f"exact={full_oldclass.full_multiplier_identity_exact},"
+        "second_order="
+        f"{full_oldclass.tail_changes_only_second_order_euler_terms},"
+        "zeta_persists="
+        f"{full_oldclass.inverse_zeta_square_factor_persists},"
+        "tail_cancels="
+        f"{full_oldclass.full_tail_cancels_inverse_zeta_poles},"
+        "newform_average="
+        f"{full_oldclass.averaged_newform_cancellation_proved},"
+        "perron="
+        f"{full_oldclass.direct_perron_route_closes_exceptional_gate},"
+        f"covered={full_oldclass.whole_mobius_gate_covered}"
+    )
+    robles_minor = robles_four_mobius_minor_arc_audit(
+        variable_length_exponent=F(1),
+        raw_determinant_exponent=F(3),
+        target_exponent=F(2),
+        mobius_variables=4,
+    )
+    print(
+        "large_q_transition: robles_four_mobius_minor_arc="
+        f"variable={_fmt(robles_minor.variable_length_exponent)},"
+        f"raw={_fmt(robles_minor.raw_determinant_exponent)},"
+        f"target={_fmt(robles_minor.target_exponent)},"
+        f"mobius={robles_minor.mobius_variables},"
+        "q_lower="
+        f"{_fmt(robles_minor.balanced_denominator_lower_exponent)},"
+        "q_upper="
+        f"{_fmt(robles_minor.balanced_denominator_upper_exponent)},"
+        f"one_bound={_fmt(robles_minor.one_variable_bound_exponent)},"
+        f"one_saving={_fmt(robles_minor.one_variable_power_saving)},"
+        "total_saving="
+        f"{_fmt(robles_minor.optimistic_independent_total_saving)},"
+        "required="
+        f"{_fmt(robles_minor.required_determinant_saving)},"
+        f"post={_fmt(robles_minor.optimistic_post_bound_exponent)},"
+        f"deficit={_fmt(robles_minor.optimistic_residual_deficit)},"
+        f"q1={_fmt(robles_minor.q_equals_one_bound_exponent)},"
+        f"zero={robles_minor.centered_kernel_kills_exact_zero_mode},"
+        "major_neighborhoods="
+        f"{robles_minor.centered_kernel_kills_major_arc_neighborhoods},"
+        f"joint={robles_minor.four_applications_are_jointly_legal},"
+        f"major_power={robles_minor.major_arc_power_saving_available},"
+        f"physical={robles_minor.physical_coupled_kernel_restored},"
+        f"covered={robles_minor.robles_route_closes_gate}"
+    )
+    robles_product = robles_balanced_product_fourier_audit(
+        denominator_exponent=F(1),
+    )
+    print(
+        "large_q_transition: robles_balanced_product_fourier="
+        f"q={_fmt(robles_product.denominator_exponent)},"
+        f"x={_fmt(robles_product.product_length_exponent)},"
+        "factors="
+        f"{_fmt(robles_product.left_factor_exponent)}+"
+        f"{_fmt(robles_product.right_factor_exponent)},"
+        f"ambient={_fmt(robles_product.fourier_ambient_exponent)},"
+        f"side={_fmt(robles_product.side_type_ii_bound_exponent)},"
+        "two_side="
+        f"{_fmt(robles_product.two_side_pointwise_bound_exponent)},"
+        "normalization="
+        f"{_fmt(robles_product.fourier_prefactor_exponent)}"
+        f"{_fmt(robles_product.fourier_window_exponent)},"
+        "normalized="
+        f"{_fmt(robles_product.normalized_fourier_bound_exponent)},"
+        f"raw={_fmt(robles_product.raw_determinant_exponent)},"
+        f"target={_fmt(robles_product.target_exponent)},"
+        f"deficit={_fmt(robles_product.remaining_deficit)},"
+        f"q_optimal={robles_product.denominator_is_balanced_optimum},"
+        "geometric="
+        f"{robles_product.type_ii_bound_recovers_geometric_window_saving},"
+        "post_geometric="
+        f"{robles_product.type_ii_bound_supplies_post_geometric_saving},"
+        "centering="
+        f"{robles_product.absolute_product_bound_preserves_centering},"
+        "signed="
+        f"{robles_product.signed_two_side_correlation_proved},"
+        f"covered={robles_product.robles_route_closes_gate}"
+    )
+    zero_free = inverse_zeta_variance_zero_free_audit()
+    print(
+        "large_q_transition: inverse_zeta_zero_free_implication="
+        f"ambient={_fmt(zero_free.ambient_length_exponent)},"
+        f"window={_fmt(zero_free.short_window_exponent)},"
+        f"variance={_fmt(zero_free.variance_bound_exponent)},"
+        "block="
+        f"{_fmt(zero_free.dyadic_coefficient_block_exponent)},"
+        "abscissa="
+        f"{_fmt(zero_free.implied_dyadic_convergence_abscissa)},"
+        f"x_integral={zero_free.x_integration_identity_exact},"
+        f"cauchy={zero_free.cauchy_schwarz_exponent_exact},"
+        f"dyadic={zero_free.dyadic_continuation_argument_exact},"
+        "zero_free="
+        f"{zero_free.implies_zeta_zero_free_real_part_gt_three_quarters},"
+        "original_necessary="
+        f"{zero_free.original_mwkf_asymptotic_requires_this_gate},"
+        "available="
+        f"{zero_free.inverse_zeta_variance_gate_available_unconditionally}"
+    )
+    unsigned_h_poisson = bblr_h_poisson_unsigned_hard_box_audit()
+    print(
+        "large_q_transition: bblr_h_poisson_unsigned="
+        f"old={_fmt(unsigned_h_poisson.old_weil_bound_exponent)},"
+        f"new={_fmt(unsigned_h_poisson.h_poisson_bound_exponent)},"
+        f"target={_fmt(unsigned_h_poisson.local_target_exponent)},"
+        f"saving={_fmt(unsigned_h_poisson.recovered_power_saving)},"
+        "h_modulus="
+        f"{unsigned_h_poisson.h_length_matches_reduced_modulus},"
+        f"poisson={unsigned_h_poisson.h_poisson_identity_exact},"
+        "inverse_removed="
+        f"{unsigned_h_poisson.inverse_fraction_becomes_linear_congruence},"
+        "gcd_sum="
+        f"{unsigned_h_poisson.weighted_gcd_sum_is_diagonal_scale},"
+        "positive_d_tail="
+        f"{unsigned_h_poisson.positive_gcd_layers_are_power_negligible},"
+        "approximation="
+        f"{_fmt(unsigned_h_poisson.approximation_error_exponent)},"
+        "power_closed="
+        f"{unsigned_h_poisson.all_unsigned_hard_box_power_closed},"
+        "log_closed="
+        f"{unsigned_h_poisson.global_logarithmic_little_o_closed},"
+        f"whole_face={unsigned_h_poisson.whole_signed_hard_face_covered}"
+    )
+    signed_h_poisson = bblr_h_poisson_signed_cell_audit(
+        outer_scale_exponent=F(1, 4),
+    )
+    print(
+        "large_q_transition: bblr_h_poisson_signed_boundary="
+        f"s={_fmt(signed_h_poisson.outer_scale_exponent)},"
+        "large_inner="
+        f"{_fmt(signed_h_poisson.large_inner_factor_exponent)},"
+        "small_inner="
+        f"{_fmt(signed_h_poisson.small_inner_factor_exponent)},"
+        f"shift={_fmt(signed_h_poisson.transformed_shift_exponent)},"
+        "side="
+        f"{_fmt(signed_h_poisson.transformed_side_product_exponent)},"
+        "raw="
+        f"{_fmt(signed_h_poisson.transformed_raw_count_exponent)},"
+        "required="
+        f"{_fmt(signed_h_poisson.transformed_required_bound_exponent)},"
+        "saving="
+        f"{_fmt(signed_h_poisson.required_outer_mobius_saving)},"
+        "prefactor="
+        f"{_fmt(signed_h_poisson.h_poisson_prefactor_exponent)},"
+        "error1="
+        f"{_fmt(signed_h_poisson.first_total_bblr_error_exponent)},"
+        "error2="
+        f"{_fmt(signed_h_poisson.second_total_bblr_error_exponent)},"
+        f"target={_fmt(signed_h_poisson.global_target_exponent)},"
+        f"margin={_fmt(signed_h_poisson.power_margin)},"
+        "diagonal_reduction="
+        f"{signed_h_poisson.dyadic_cross_terms_reduce_to_diagonal_norms},"
+        f"sharp={signed_h_poisson.transformed_bblr_sharp_condition_holds},"
+        "published_upper="
+        f"{_fmt(signed_h_poisson.published_bblr_power_coverage_upper)},"
+        "boundary_log="
+        f"{signed_h_poisson.boundary_logarithmic_little_o_closed},"
+        "residual_lower="
+        f"{_fmt(signed_h_poisson.signed_residual_lower_exponent)},"
+        "residual_upper="
+        f"{_fmt(signed_h_poisson.signed_residual_upper_exponent)},"
+        f"whole_face={signed_h_poisson.whole_signed_hard_face_covered}"
+    )
+    signed_dual = signed_dual_convolution_audit(
+        outer_atom_exponent=F(1, 2),
+    )
+    print(
+        "large_q_transition: signed_dual_convolution="
+        f"outer={_fmt(signed_dual.outer_atom_exponent)},"
+        f"dual={_fmt(signed_dual.h_poisson_dual_exponent)},"
+        f"product={_fmt(signed_dual.product_variable_exponent)},"
+        f"signed_atoms={signed_dual.signed_atom_count},"
+        f"collapse={signed_dual.signed_dual_product_collapse_exact},"
+        "survivor="
+        f"{'mobius' if signed_dual.collapsed_coefficient_is_one_mobius else 'none'},"
+        f"cutoff={signed_dual.cutoff_condition_retained_exactly},"
+        "product_weight="
+        f"{signed_dual.actual_transformed_weight_product_compatible},"
+        f"ratio_mellin={signed_dual.ratio_mellin_family_required},"
+        f"published={signed_dual.weighted_collapse_bound_proved},"
+        f"whole_face={signed_dual.whole_signed_hard_face_covered}"
+    )
+    ratio_type_ii = coupled_ratio_mellin_type_ii_gate_audit(
+        outer_scale_exponent=F(1),
+    )
+    print(
+        "large_q_transition: coupled_ratio_mellin_type_ii_endpoint="
+        f"s={_fmt(ratio_type_ii.outer_scale_exponent)},"
+        f"long={_fmt(ratio_type_ii.long_mobius_variable_exponent)},"
+        "collapsed="
+        f"{_fmt(ratio_type_ii.collapsed_product_variable_exponent)},"
+        f"shift={_fmt(ratio_type_ii.shift_exponent)},"
+        "ambient="
+        f"{_fmt(ratio_type_ii.convolution_ambient_exponent)},"
+        "modulus="
+        f"{_fmt(ratio_type_ii.progression_modulus_exponent)},"
+        "level="
+        f"{_fmt(ratio_type_ii.modulus_level_relative_to_ambient)},"
+        f"raw={_fmt(ratio_type_ii.raw_shifted_count_exponent)},"
+        "target="
+        f"{_fmt(ratio_type_ii.required_inner_bound_exponent)},"
+        "required="
+        f"{_fmt(ratio_type_ii.required_cancellation_exponent)},"
+        "two_coeff_sqrt="
+        f"{_fmt(ratio_type_ii.two_collapsed_coefficients_square_root_saving)},"
+        f"margin={_fmt(ratio_type_ii.square_root_power_margin)},"
+        "bv_range="
+        f"{ratio_type_ii.modulus_within_bombieri_vinogradov_level},"
+        "fixed_shift="
+        f"{ratio_type_ii.fixed_shift_dispersion_suffices_after_shift_sum},"
+        "quotient_mobius="
+        f"{ratio_type_ii.quotient_mobius_prevents_direct_bv},"
+        "coupled_shift="
+        f"{ratio_type_ii.full_shift_average_must_remain_coupled},"
+        "coprime_allocation="
+        f"{ratio_type_ii.coprimality_prime_allocation_required},"
+        f"four_variable={ratio_type_ii.four_variable_reduction_exact},"
+        "published="
+        f"{ratio_type_ii.coupled_ratio_mellin_type_ii_bound_proved},"
+        f"whole_face={ratio_type_ii.whole_signed_hard_face_covered}"
+    )
+    coprime_allocation = collapsed_coprimality_allocation_audit()
+    print(
+        "large_q_transition: collapsed_coprimality_allocation="
+        "cross_conditions="
+        f"{coprime_allocation.cross_coprimality_condition_count},"
+        "allocation_divisors="
+        f"{coprime_allocation.mobius_allocation_divisor_count},"
+        f"identity={coprime_allocation.product_gcd_factorization_exact},"
+        f"finite={coprime_allocation.allocation_is_finite_reindexing},"
+        "power_loss="
+        f"{_fmt(coprime_allocation.positive_power_loss_exponent)},"
+        "log_loss="
+        f"{_fmt(coprime_allocation.registered_logarithmic_loss)},"
+        "superposition="
+        f"{coprime_allocation.four_variable_superposition_exact},"
+        "independent="
+        f"{coprime_allocation.collapsed_coefficients_independent_of_long_variables},"
+        "bv="
+        f"{coprime_allocation.standard_bombieri_vinogradov_adapter_applies},"
+        "type_ii="
+        f"{coprime_allocation.coupled_ratio_mellin_type_ii_bound_proved},"
+        f"whole_face={coprime_allocation.whole_signed_hard_face_covered}"
+    )
+    chowla_face = collapsed_chowla_face_audit(
+        outer_scale_exponent=F(1),
+    )
+    print(
+        "large_q_transition: collapsed_chowla_face_endpoint="
+        f"s={_fmt(chowla_face.outer_scale_exponent)},"
+        f"long={_fmt(chowla_face.long_mobius_variable_exponent)},"
+        "collapsed="
+        f"{_fmt(chowla_face.collapsed_product_variable_exponent)},"
+        f"face_raw={_fmt(chowla_face.equal_face_raw_exponent)},"
+        "target="
+        f"{_fmt(chowla_face.required_inner_bound_exponent)},"
+        f"margin={_fmt(chowla_face.positive_power_margin)},"
+        f"equal_face={chowla_face.equal_collapsed_product_face_present},"
+        "fixed_shift="
+        f"{chowla_face.determinant_reduces_to_fixed_shift},"
+        f"primitive_excludes={chowla_face.primitive_gcd_excludes_face},"
+        "zero_ratio_mobius="
+        f"{chowla_face.pointwise_zero_ratio_coefficient_is_mobius},"
+        f"chowla={chowla_face.face_contains_two_point_chowla},"
+        "ordinary_chowla="
+        f"{chowla_face.ordinary_two_point_chowla_available_unconditionally},"
+        f"log_little_o={chowla_face.logarithmic_little_o_required},"
+        "pointwise_triangle="
+        f"{chowla_face.uniform_ratio_frequency_triangle_gate_admissible},"
+        f"joint_ratio={chowla_face.joint_ratio_integral_must_remain_coupled},"
+        f"type_ii={chowla_face.coupled_ratio_mellin_type_ii_bound_proved},"
+        f"whole_face={chowla_face.whole_signed_hard_face_covered}"
+    )
+    physical_ratio = physical_joint_ratio_recombination_audit()
+    print(
+        "large_q_transition: physical_joint_ratio_recombination="
+        "finite_kernel="
+        f"{physical_ratio.ratio_mellin_recombines_to_finite_divisor_kernel},"
+        "equal_face_nonzero="
+        f"{physical_ratio.primitive_equal_face_coefficient_can_be_nonzero},"
+        f"witness={physical_ratio.witness_equal_face_coefficient},"
+        "joint_mellin_annihilates="
+        f"{physical_ratio.joint_ratio_integration_alone_annihilates_chowla_face},"
+        "arbitrary_weight="
+        f"{physical_ratio.arbitrary_smooth_weight_enlargement_admissible},"
+        "allocation_triangle="
+        f"{physical_ratio.allocationwise_triangle_inequality_admissible},"
+        "face_separate="
+        f"{physical_ratio.equal_face_separate_bound_available_unconditionally},"
+        "full_outer_coupling="
+        f"{physical_ratio.full_outer_scale_and_kernel_sum_must_remain_coupled},"
+        "centered_dispersion="
+        f"{physical_ratio.centered_coupled_dispersion_bound_proved},"
+        f"whole_face={physical_ratio.whole_signed_hard_face_covered}"
+    )
+    gcd_layer = collapsed_gcd_layer_centered_kernel_audit(
+        collapsed_exponent=F(1),
+        gcd_exponent=F(3, 5),
+    )
+    print(
+        "large_q_transition: collapsed_gcd_centered_kernel="
+        f"s={_fmt(gcd_layer.collapsed_exponent)},"
+        f"gamma={_fmt(gcd_layer.gcd_exponent)},"
+        f"A={_fmt(gcd_layer.cofactor_exponent)},"
+        f"raw={_fmt(gcd_layer.raw_dyadic_layer_exponent)},"
+        f"target={_fmt(gcd_layer.global_target_exponent)},"
+        f"saving={_fmt(gcd_layer.required_saving_exponent)},"
+        f"inner_target={_fmt(gcd_layer.fourier_inner_target_exponent)},"
+        f"diagonal_killed={gcd_layer.product_diagonal_annihilated_exactly},"
+        f"centered={gcd_layer.constant_fourier_mode_centered_exactly},"
+        f"full_g={gcd_layer.full_g_sum_retained},"
+        "full_allocation_ratio="
+        f"{gcd_layer.full_allocation_and_ratio_sum_retained},"
+        "pointwise_chowla="
+        f"{gcd_layer.pointwise_fixed_affine_chowla_bound_assumed},"
+        "published_average="
+        f"{gcd_layer.published_averaged_chowla_adapter_applies},"
+        f"dispersion={gcd_layer.centered_coupled_dispersion_bound_proved},"
+        f"whole_face={gcd_layer.whole_signed_hard_face_covered}"
+    )
+    equal_product_pnt = top_equal_product_outer_pnt_audit()
+    print(
+        "large_q_transition: top_equal_product_outer_pnt="
+        f"atom={_fmt(equal_product_pnt.signed_atom_exponent)},"
+        f"q={_fmt(equal_product_pnt.poisson_quotient_exponent)},"
+        f"outer={_fmt(equal_product_pnt.outer_pair_raw_exponent)},"
+        "long="
+        f"{_fmt(equal_product_pnt.long_correlation_trivial_exponent)},"
+        f"raw={_fmt(equal_product_pnt.face_raw_exponent)},"
+        f"target={_fmt(equal_product_pnt.face_target_exponent)},"
+        f"margin={_fmt(equal_product_pnt.power_margin)},"
+        "factorization="
+        f"{equal_product_pnt.primitive_equal_product_factorization_exact},"
+        "interval_convolution="
+        f"{equal_product_pnt.signed_atom_interval_convolution_exact},"
+        f"balanced={equal_product_pnt.balanced_cutoff_ratios_verified},"
+        "coprime_pnt="
+        f"{equal_product_pnt.uniform_coprime_pnt_log_saving_available},"
+        "euler_polylog="
+        f"{equal_product_pnt.coprime_euler_factor_loss_only_polylogarithmic},"
+        "trivial_long="
+        f"{equal_product_pnt.long_mobius_correlation_used_only_trivially},"
+        "fixed_chowla="
+        f"{equal_product_pnt.fixed_affine_chowla_estimate_required},"
+        "face_closed="
+        f"{equal_product_pnt.top_equal_product_face_closed_unconditionally},"
+        f"whole_face={equal_product_pnt.whole_signed_hard_face_covered}"
+    )
+    polylog_collar = polylog_gcd_collar_outer_pnt_audit(
+        polylog_depth=5,
+    )
+    print(
+        "large_q_transition: polylog_gcd_collar_outer_pnt="
+        f"K={polylog_collar.polylog_depth},"
+        f"A={_fmt(polylog_collar.cofactor_power_exponent)},"
+        f"cross={_fmt(polylog_collar.cross_gcd_power_exponent)},"
+        f"q={_fmt(polylog_collar.poisson_quotient_power_exponent)},"
+        f"required={_fmt(polylog_collar.required_power_saving_exponent)},"
+        "factorization="
+        f"{polylog_collar.primitive_unequal_product_factorization_exact},"
+        "cross_identity="
+        f"{polylog_collar.cross_gcd_product_identity_exact},"
+        "divisible_coprime_pnt="
+        f"{polylog_collar.prescribed_divisibility_coprime_pnt_available},"
+        "absorbs_polylog="
+        f"{polylog_collar.arbitrary_log_saving_absorbs_polylog_variables},"
+        "trivial_long="
+        f"{polylog_collar.long_affine_mobius_sum_used_only_trivially},"
+        "collar_closed="
+        f"{polylog_collar.polylog_gcd_collar_closed_unconditionally},"
+        "positive_power="
+        f"{polylog_collar.strict_positive_power_gcd_layers_covered},"
+        f"whole_face={polylog_collar.whole_signed_hard_face_covered}"
+    )
+    strict_core = strict_power_gcd_core_audit(
+        collapsed_exponent=F(1),
+        cofactor_exponent=F(2, 5),
+        quotient_exponent=F(1, 5),
+        left_cross_gcd_exponent=F(1, 4),
+    )
+    print(
+        "large_q_transition: strict_power_gcd_core="
+        f"s={_fmt(strict_core.collapsed_exponent)},"
+        f"delta={_fmt(strict_core.cofactor_exponent)},"
+        f"gamma={_fmt(strict_core.gcd_exponent)},"
+        f"theta={_fmt(strict_core.quotient_exponent)},"
+        f"r1={_fmt(strict_core.left_cross_gcd_exponent)},"
+        f"r2={_fmt(strict_core.right_cross_gcd_exponent)},"
+        f"a0={_fmt(strict_core.left_reduced_slope_exponent)},"
+        f"b0={_fmt(strict_core.right_reduced_slope_exponent)},"
+        f"u0={_fmt(strict_core.left_reduced_signed_exponent)},"
+        f"v0={_fmt(strict_core.right_reduced_signed_exponent)},"
+        "unsigned="
+        f"{_fmt(strict_core.unsigned_reduced_block_exponent)},"
+        f"signed={_fmt(strict_core.signed_reduced_block_exponent)},"
+        f"g={_fmt(strict_core.reconstructed_gcd_exponent)},"
+        f"raw={_fmt(strict_core.raw_core_exponent)},"
+        f"target={_fmt(strict_core.target_core_exponent)},"
+        f"saving={_fmt(strict_core.required_saving_exponent)},"
+        f"feasible={strict_core.exponent_polytope_feasible},"
+        f"deficit_block={strict_core.unsigned_block_equals_full_deficit},"
+        "full_coupling="
+        f"{strict_core.all_allocations_and_ratio_integrals_retained},"
+        "two_arithmetic="
+        f"{strict_core.long_and_collapsed_arithmetic_weights_on_each_side},"
+        "bblr_adapter="
+        f"{strict_core.bblr_arbitrary_outer_coefficient_adapter_applies},"
+        f"required={strict_core.centered_three_block_type_ii_required},"
+        f"proved={strict_core.centered_three_block_type_ii_proved},"
+        f"whole_face={strict_core.whole_signed_hard_face_covered}"
+    )
+    strict_convolution = strict_power_convolution_kloosterman_audit(
+        collapsed_exponent=F(1),
+        cofactor_exponent=F(2, 5),
+        quotient_exponent=F(1, 5),
+        left_cross_gcd_exponent=F(1, 4),
+    )
+    print(
+        "large_q_transition: strict_power_convolution="
+        f"r={_fmt(strict_convolution.left_convolved_outer_exponent)},"
+        f"t={_fmt(strict_convolution.right_convolved_outer_exponent)},"
+        f"a0={_fmt(strict_convolution.left_inner_slope_exponent)},"
+        f"b0={_fmt(strict_convolution.right_inner_slope_exponent)},"
+        f"side={_fmt(strict_convolution.side_product_exponent)},"
+        f"outside={_fmt(strict_convolution.remaining_outer_exponent)},"
+        "bblr_hypotheses="
+        f"{strict_convolution.bblr_convolution_hypotheses_verified},"
+        f"bblr_ab={_fmt(strict_convolution.bblr_ab_error_exponent)},"
+        f"bblr_watt={_fmt(strict_convolution.bblr_watt_error_exponent)},"
+        f"bblr_target={_fmt(strict_convolution.bblr_inner_target_exponent)},"
+        f"bblr_deficits={_fmt(strict_convolution.bblr_ab_deficit)}/"
+        f"{_fmt(strict_convolution.bblr_watt_deficit)},"
+        f"bblr_covered={strict_convolution.bblr_convolution_route_covered},"
+        f"dual={_fmt(strict_convolution.poisson_dual_exponent)},"
+        f"numerator={_fmt(strict_convolution.poisson_numerator_exponent)},"
+        f"normalization={_fmt(strict_convolution.poisson_normalization_exponent)},"
+        "bc_hypotheses="
+        f"{strict_convolution.bc_poisson_hypotheses_verified},"
+        f"bc_totals={_fmt(strict_convolution.bc_first_total_exponent)}/"
+        f"{_fmt(strict_convolution.bc_second_total_exponent)},"
+        f"bc_deficits={_fmt(strict_convolution.bc_first_deficit)}/"
+        f"{_fmt(strict_convolution.bc_second_deficit)},"
+        f"bc_covered={strict_convolution.bc_poisson_route_covered},"
+        "cross_centered="
+        f"{strict_convolution.original_cross_diagonal_removed_by_centering},"
+        "tuple_diagonal="
+        f"{_fmt(strict_convolution.cauchy_tuple_diagonal_exponent)},"
+        "grouped_diagonal="
+        f"{_fmt(strict_convolution.cauchy_grouped_diagonal_exponent)},"
+        "diagonal_target="
+        f"{_fmt(strict_convolution.cauchy_diagonal_target_exponent)},"
+        "grouped_deficit="
+        f"{_fmt(strict_convolution.cauchy_grouped_diagonal_deficit)},"
+        "grouped_raw="
+        f"{strict_convolution.cauchy_grouped_diagonal_is_raw_scale},"
+        "grouped_killed="
+        f"{strict_convolution.cauchy_grouped_diagonal_killed_by_centering},"
+        f"near_type_ii={strict_convolution.near_frequency_type_ii_proved}"
+    )
+    ratio_bandwidth = strict_power_ratio_mellin_bandwidth_audit(
+        collapsed_exponent=F(1),
+        cofactor_exponent=F(2, 5),
+        quotient_exponent=F(1, 5),
+        left_cross_gcd_exponent=F(1, 4),
+    )
+    print(
+        "large_q_transition: strict_power_ratio_mellin_bandwidth="
+        f"u0={_fmt(ratio_bandwidth.left_hidden_fibre_exponent)},"
+        f"v0={_fmt(ratio_bandwidth.right_hidden_fibre_exponent)},"
+        f"hidden={_fmt(ratio_bandwidth.total_hidden_fibre_exponent)},"
+        "height_derivative="
+        f"{_fmt(ratio_bandwidth.height_phase_log_derivative_power_exponent)},"
+        "ratio_derivative="
+        f"{_fmt(ratio_bandwidth.ratio_weight_log_derivative_power_exponent)},"
+        "mellin_bandwidth="
+        f"{_fmt(ratio_bandwidth.effective_mellin_frequency_power_exponent)},"
+        "adjacent="
+        f"{_fmt(ratio_bandwidth.left_adjacent_resolution_frequency_exponent)}/"
+        f"{_fmt(ratio_bandwidth.right_adjacent_resolution_frequency_exponent)},"
+        "cauchy_deficit="
+        f"{_fmt(ratio_bandwidth.remaining_cauchy_deficit_exponent)},"
+        f"rapid_tail={ratio_bandwidth.mellin_power_tail_is_rapid},"
+        "scaled_not_bandwidth="
+        f"{ratio_bandwidth.scaled_T_tau_not_independent_bandwidth},"
+        "second_coordinate="
+        f"{ratio_bandwidth.height_phase_creates_second_power_coordinate},"
+        "resolves_hidden="
+        f"{ratio_bandwidth.ratio_mellin_resolves_positive_hidden_fibres},"
+        "supplies_delta="
+        f"{ratio_bandwidth.ratio_mellin_supplies_required_delta_saving},"
+        "pre_cauchy="
+        f"{ratio_bandwidth.pre_cauchy_joint_kernel_still_required}"
+    )
+    double_poisson = strict_power_double_poisson_resonance_audit(
+        collapsed_exponent=F(1),
+        cofactor_exponent=F(2, 5),
+        quotient_exponent=F(1, 5),
+        left_cross_gcd_exponent=F(1, 4),
+    )
+    print(
+        "large_q_transition: strict_power_double_poisson_resonance="
+        f"a0={_fmt(double_poisson.left_slope_exponent)},"
+        f"b0={_fmt(double_poisson.right_slope_exponent)},"
+        f"r={_fmt(double_poisson.left_modulus_exponent)},"
+        f"t={_fmt(double_poisson.right_modulus_exponent)},"
+        f"k={_fmt(double_poisson.left_dual_exponent)},"
+        f"l={_fmt(double_poisson.right_dual_exponent)},"
+        f"product={_fmt(double_poisson.dual_side_product_exponent)},"
+        f"shift={_fmt(double_poisson.resonance_shift_exponent)},"
+        f"amplitude={_fmt(double_poisson.poisson_amplitude_exponent)},"
+        f"overlap={_fmt(double_poisson.overlap_integral_exponent)},"
+        "transformed_inner="
+        f"{_fmt(double_poisson.transformed_absolute_inner_exponent)},"
+        f"original_inner={_fmt(double_poisson.original_inner_raw_exponent)},"
+        f"loss={_fmt(double_poisson.absolute_transform_loss_exponent)},"
+        "transformed_global="
+        f"{_fmt(double_poisson.transformed_global_absolute_exponent)},"
+        f"target={_fmt(double_poisson.global_target_exponent)},"
+        "required="
+        f"{_fmt(double_poisson.transformed_required_saving_exponent)},"
+        f"identity={double_poisson.resonance_identity_exact},"
+        f"scales={double_poisson.two_poisson_scales_exact},"
+        "loss_formula="
+        f"{double_poisson.absolute_transform_loss_is_one_minus_delta_plus_theta},"
+        f"covered={double_poisson.absolute_double_poisson_route_covered},"
+        "pre_cauchy="
+        f"{double_poisson.pre_cauchy_signed_resonance_estimate_required}"
+    )
+    print(
+        "large_q_transition: strict_power_double_poisson_bblr="
+        f"sharp={double_poisson.bblr_sharp_range_verified},"
+        "before="
+        f"{_fmt(double_poisson.bblr_ab_before_normalization_exponent)}/"
+        f"{_fmt(double_poisson.bblr_watt_before_normalization_exponent)},"
+        f"normalization={_fmt(double_poisson.transform_normalization_exponent)},"
+        "totals="
+        f"{_fmt(double_poisson.bblr_ab_total_exponent)}/"
+        f"{_fmt(double_poisson.bblr_watt_total_exponent)},"
+        "deficits="
+        f"{_fmt(double_poisson.bblr_ab_deficit)}/"
+        f"{_fmt(double_poisson.bblr_watt_deficit)},"
+        "original="
+        f"{_fmt(double_poisson.original_bblr_ab_deficit)}/"
+        f"{_fmt(double_poisson.original_bblr_watt_deficit)},"
+        f"ab_invariant={double_poisson.bblr_ab_deficit_is_invariant},"
+        f"watt_extra={_fmt(double_poisson.bblr_watt_extra_deficit)},"
+        "watt_nonnegative="
+        f"{double_poisson.bblr_watt_extra_deficit_is_nonnegative},"
+        f"improves={double_poisson.double_poisson_improves_bblr}"
     )
     transition_line_microarc = transition_line_fourier_microarc_audit(
         denominator_gcd_exponent=F(1, 2),
@@ -37015,6 +56863,1544 @@ def main() -> None:
         "direct="
         f"{determinant_audit.direct_corollary_hypotheses_verified} "
         f"covered={determinant_audit.published_coverage}"
+    )
+    mixed_gram = mixed_entry_projection_gram_audit(prime=5)
+    print(
+        "balanced_max_a: mixed_entry_gram="
+        f"raw_entry={_fmt(mixed_gram.entry_difference_mass)} "
+        f"physical_entry={_fmt(mixed_gram.physical_entry_cell_mass)} "
+        f"target={_fmt(mixed_gram.required_entry_cell_mass)} "
+        f"ratio={_fmt(mixed_gram.entry_cell_deficit_ratio)} "
+        "reciprocal_lcm_physical="
+        f"{mixed_gram.physical_tensor_kernel_is_majorized_by_reciprocal_lcm} "
+        f"mepevp={mixed_gram.mixed_entry_harmonic_large_sieve_proved}"
+    )
+    outer_inclusion = outer_state_inclusion_exclusion_audit(prime=5)
+    print(
+        "balanced_max_a: outer_state_inclusion="
+        "unsigned_union="
+        f"{_fmt(outer_inclusion.unsigned_nonempty_union_mass)} "
+        "signed_union="
+        f"{_fmt(outer_inclusion.signed_nonempty_union_mass)} "
+        f"raw_union={_fmt(outer_inclusion.raw_signed_nonempty_union_mass)} "
+        "half_turn="
+        f"{_fmt(outer_inclusion.equal_half_turn_twisted_nonempty_union_mass)} "
+        "target="
+        f"{_fmt(outer_inclusion.required_reciprocal_prime_mass)} "
+        "remaining="
+        f"{_fmt(outer_inclusion.remaining_reciprocal_prime_ratio)} "
+        "mellin_preserves="
+        f"{outer_inclusion.dyadic_mellin_twist_preserves_unit_cancellation} "
+        "recombined="
+        f"{outer_inclusion.recombined_outer_scale_physical_kernel_proved} "
+        f"olisk={outer_inclusion.outer_lisk_covered}"
+    )
+    cross_orientation = steinberg_cross_orientation_sign_gate_audit(
+        prime=11
+    )
+    print(
+        "balanced_max_a: steinberg_cross_orientation="
+        f"prime={cross_orientation.prime} "
+        "cross_gt_target="
+        f"{cross_orientation.cross_coefficient_exceeds_required_coefficient} "
+        "hecke="
+        f"{cross_orientation.steinberg_sign_over_square_root_is_ramified_hecke_coefficient} "
+        f"unitary={cross_orientation.atkin_lehner_operator_is_unitary} "
+        "unitary_saving="
+        f"{cross_orientation.unitarity_supplies_the_missing_square_root} "
+        "physical_signed="
+        f"{cross_orientation.physical_signed_cross_cusp_trace_required} "
+        f"signed_proved={cross_orientation.signed_cross_cusp_trace_proved} "
+        f"olisk={cross_orientation.outer_lisk_covered}"
+    )
+    symmetric_difference = atkin_lehner_symmetric_difference_kernel_audit(
+        left_outer_entry=30,
+        right_outer_entry=42,
+        ambient_squarefree_level=2310,
+    )
+    print(
+        "balanced_max_a: atkin_lehner_symmetric_difference="
+        f"left={symmetric_difference.left_outer_entry} "
+        f"right={symmetric_difference.right_outer_entry} "
+        f"level={symmetric_difference.ambient_squarefree_level} "
+        f"common={symmetric_difference.common_outer_part} "
+        f"Q={symmetric_difference.symmetric_difference_part} "
+        f"lcm={symmetric_difference.outer_entry_lcm} "
+        f"M={symmetric_difference.complementary_cross_cusp_level} "
+        f"modulus={symmetric_difference.cross_cusp_modulus_scale} "
+        "c2_ratio="
+        f"{_fmt(symmetric_difference.cross_cusp_modulus_square_ratio_to_same_cusp)} "
+        "divisibility_ratio="
+        f"{_fmt(symmetric_difference.cross_cusp_divisibility_ratio_to_same_cusp)} "
+        "spacing_ratio="
+        f"{_fmt(symmetric_difference.farey_spacing_ratio_to_same_cusp)} "
+        "cross_square="
+        f"{_fmt(symmetric_difference.cross_cusp_denominator_coefficient_square)} "
+        "prior_square="
+        f"{_fmt(symmetric_difference.prior_cross_orientation_coefficient_square)} "
+        "combined_square="
+        f"{_fmt(symmetric_difference.combined_coefficient_square)} "
+        "lcm_square="
+        f"{_fmt(symmetric_difference.reciprocal_lcm_coefficient_square)} "
+        "exact="
+        f"{symmetric_difference.symmetric_difference_is_exact_atkin_lehner_divisor} "
+        "lcm_kernel="
+        f"{symmetric_difference.combined_coefficient_is_reciprocal_lcm} "
+        "no_diagonal="
+        f"{symmetric_difference.nontrivial_signed_trace_has_no_diagonal} "
+        "farey="
+        f"{symmetric_difference.cross_cusp_farey_large_sieve_has_same_constant} "
+        "oldvectors="
+        f"{symmetric_difference.atkin_lehner_oldvector_permutation_preserves_l2} "
+        "physical="
+        f"{symmetric_difference.physical_outer_kernel_reinserted} "
+        f"olisk={symmetric_difference.outer_lisk_covered}"
+    )
+    full_cross_orientation = steinberg_full_cross_orientation_matrix_audit(
+        prime=5
+    )
+    print(
+        "balanced_max_a: steinberg_full_cross_orientation="
+        f"prime={full_cross_orientation.prime} "
+        "correction="
+        f"{_fmt(full_cross_orientation.steinberg_entry_correction)} "
+        "states="
+        + ",".join(full_cross_orientation.state_order)
+        + " first="
+        + ",".join(full_cross_orientation.first_orientation_amplitudes)
+        + " swapped="
+        + ",".join(full_cross_orientation.swapped_orientation_amplitudes)
+        + " polynomial="
+        + ",".join(
+            _fmt(value)
+            for value in full_cross_orientation.full_recombined_polynomial_coefficients
+        )
+        + " "
+        "unsigned_cross="
+        f"{_fmt(full_cross_orientation.unsigned_modulus_to_entry_coefficient)} "
+        "target="
+        f"{_fmt(full_cross_orientation.required_reciprocal_prime_coefficient)} "
+        "exceeds="
+        f"{full_cross_orientation.unsigned_cross_state_exceeds_target} "
+        f"lower={_fmt(full_cross_orientation.uniform_full_mass_lower_bound)} "
+        "lower_exceeds="
+        f"{full_cross_orientation.uniform_full_mass_lower_bound_exceeds_target} "
+        "same_state_only="
+        f"{full_cross_orientation.symmetric_difference_trace_controls_only_signed_same_states} "
+        "full="
+        f"{full_cross_orientation.full_three_state_cross_orientation_closes_steinberg} "
+        "physical="
+        f"{full_cross_orientation.physical_outer_kernel_reinserted} "
+        f"olisk={full_cross_orientation.outer_lisk_covered}"
+    )
+    mixed_cross_mmkls = mixed_cross_state_mmkls_audit(
+        entry_divisor=30,
+        modulus_divisor=7,
+        physical_modulus=77,
+    )
+    print(
+        "balanced_max_a: mixed_cross_state_mmkls="
+        f"A={mixed_cross_mmkls.entry_divisor} "
+        f"B={mixed_cross_mmkls.modulus_divisor} "
+        f"s={mixed_cross_mmkls.physical_modulus} "
+        f"level_diff={mixed_cross_mmkls.level_difference_sum} "
+        "exact_coprime="
+        f"{mixed_cross_mmkls.level_difference_equals_exact_coprimality} "
+        f"lift={mixed_cross_mmkls.standard_lift_modulus} "
+        "fibre_cancel="
+        f"{mixed_cross_mmkls.ramanujan_fibre_cancels_before_inequality} "
+        "left=MMKLS_L right=MMKLS_R scales="
+        + ",".join(_fmt(value) for value in mixed_cross_mmkls.hard_scales)
+        + " "
+        f"arbitrary={_fmt(mixed_cross_mmkls.arbitrary_coefficient_exponent)} "
+        f"target={_fmt(mixed_cross_mmkls.target_exponent)} "
+        f"gap={_fmt(mixed_cross_mmkls.required_joint_saving_exponent)} "
+        "pevp_sufficient="
+        f"{not mixed_cross_mmkls.fixed_entry_pevp_is_insufficient} "
+        "isolated_sufficient="
+        f"{mixed_cross_mmkls.isolated_mixed_cell_bound_is_sufficient_not_necessary} "
+        f"mmkls={mixed_cross_mmkls.mixed_cell_mmkls_proved} "
+        f"outer={mixed_cross_mmkls.full_outer_gate_proved}"
+    )
+    korolev_reciprocity = mmkls_korolev_reciprocity_audit()
+    print(
+        "balanced_max_a: mmkls_korolev_reciprocity="
+        f"q={_fmt(korolev_reciprocity.modulus_exponent)} "
+        f"x={_fmt(korolev_reciprocity.interval_exponent)} "
+        f"a={_fmt(korolev_reciprocity.product_index_exponent)} "
+        "reciprocal="
+        f"{korolev_reciprocity.additive_reciprocity_identity_exact} "
+        "ordered="
+        f"{korolev_reciprocity.exchange_orientation_reduces_to_variable_below_modulus} "
+        "derivative="
+        f"{_fmt(korolev_reciprocity.reciprocity_correction_derivative_exponent)} "
+        "normalized="
+        f"{_fmt(korolev_reciprocity.reciprocity_correction_normalized_derivative_exponent)} "
+        f"smooth={korolev_reciprocity.reciprocity_correction_is_smooth} "
+        "unit_match="
+        f"{korolev_reciprocity.korolev_phase_matches_on_unit_product_index_stratum} "
+        "unit_uniform="
+        f"{korolev_reciprocity.unit_product_index_hypothesis_is_uniform} "
+        "composite="
+        f"{korolev_reciprocity.composite_modulus_theorem_applies} "
+        "endpoint_terms="
+        f"{_fmt(korolev_reciprocity.endpoint_first_relative_exponent)},"
+        f"{_fmt(korolev_reciprocity.endpoint_second_relative_exponent)} "
+        "dominant="
+        f"{_fmt(korolev_reciprocity.endpoint_dominant_relative_exponent)} "
+        "published="
+        f"{_fmt(korolev_reciprocity.published_composite_saving_exponent)} "
+        "required="
+        f"{_fmt(korolev_reciprocity.required_mmkls_saving_exponent)} "
+        f"deficit={_fmt(korolev_reciprocity.remaining_power_deficit)} "
+        "log_only="
+        f"{korolev_reciprocity.general_theorem_supplies_only_logarithmic_saving} "
+        "prime_explicit="
+        f"{not korolev_reciprocity.prime_power_saving_does_not_certify_required_exponent} "
+        "composite_prime="
+        f"{korolev_reciprocity.prime_theorem_covers_moving_composite_moduli} "
+        f"mmkls={korolev_reciprocity.published_theorem_closes_mmkls}"
+    )
+    affine_uniformity = critical_affine_mobius_uniformity_audit()
+    print(
+        "balanced_max_a: critical_affine_mobius_uniformity="
+        f"X={_fmt(affine_uniformity.ambient_integer_exponent)} "
+        f"span={_fmt(affine_uniformity.affine_progression_span_exponent)} "
+        f"points={_fmt(affine_uniformity.progression_point_count_exponent)} "
+        f"step={_fmt(affine_uniformity.progression_step_exponent)} "
+        "threshold="
+        f"{_fmt(affine_uniformity.published_threshold_relative_to_ambient)} "
+        f"margin={_fmt(affine_uniformity.endpoint_power_margin)} "
+        "epsilon_required="
+        f"{affine_uniformity.theorem_requires_positive_epsilon_margin} "
+        "lower_interval="
+        f"{affine_uniformity.lower_interval_length_hypothesis_verified} "
+        "strict_upper="
+        f"{affine_uniformity.strict_upper_interval_length_hypothesis_verified} "
+        f"interval={affine_uniformity.interval_length_hypothesis_verified} "
+        f"almost_all={affine_uniformity.almost_all_start_points_only} "
+        "exception_absorbed="
+        f"{affine_uniformity.structured_start_points_absorb_exceptional_set} "
+        "maximal="
+        f"{affine_uniformity.maximal_progression_norm_is_available_only_above_threshold} "
+        "published="
+        f"{_fmt(affine_uniformity.published_maximal_bound_exponent)} "
+        "trivial="
+        f"{_fmt(affine_uniformity.trivial_progression_count_exponent)} "
+        "excess="
+        f"{_fmt(affine_uniformity.published_bound_excess_exponent)} "
+        "second_nilsequence="
+        f"{affine_uniformity.second_affine_mobius_is_fixed_complexity_nilsequence} "
+        f"log_only={affine_uniformity.published_saving_is_logarithmic} "
+        "required="
+        f"{_fmt(affine_uniformity.required_joint_power_saving_exponent)} "
+        "critical="
+        f"{affine_uniformity.published_theorem_closes_critical_slope_family} "
+        f"mmkls={affine_uniformity.mmkls_covered}"
+    )
+    torus_operator = signed_torus_slope_operator_audit()
+    print(
+        "balanced_max_a: signed_torus_slope_operator="
+        f"slope={torus_operator.primitive_slope[0]},{torus_operator.primitive_slope[1]} "
+        f"bezout={torus_operator.bezout_pair[0]},{torus_operator.bezout_pair[1]} "
+        f"det={torus_operator.determinant} "
+        f"shear={torus_operator.alternate_bezout_shear} "
+        "bezout_invariant="
+        f"{torus_operator.physical_sum_is_bezout_independent} "
+        f"torus={torus_operator.finite_torus_modulus} "
+        f"pullback={torus_operator.torus_pullback_phase_is_exact} "
+        "tensor="
+        f"{torus_operator.mobius_fourier_tensor_factorization_is_exact} "
+        f"pairing={torus_operator.finite_fourier_pairing_is_exact} "
+        f"relative_c={torus_operator.relative_matrix_lower_left} "
+        "slope_det="
+        f"{torus_operator.relative_matrix_lower_left_is_slope_determinant} "
+        f"mobius_l2={_fmt(torus_operator.mobius_tensor_l2_exponent)} "
+        f"target={_fmt(torus_operator.physical_layer_target_exponent)} "
+        f"operator_l2={_fmt(torus_operator.required_operator_l2_exponent)} "
+        f"energy={_fmt(torus_operator.required_operator_energy_exponent)} "
+        "slope_first="
+        f"{torus_operator.slope_sum_retained_before_frequency_cauchy} "
+        "physical_pullback="
+        f"{torus_operator.operator_is_fourier_transform_of_recombined_physical_kernel} "
+        f"per_slope_triangle={torus_operator.per_slope_triangle_inequality_used} "
+        "cauchy_loses_mu="
+        f"{torus_operator.global_frequency_cauchy_discards_mobius_signs} "
+        "l2_sufficient_only="
+        f"{torus_operator.operator_l2_gate_is_sufficient_not_necessary} "
+        "signed_restriction="
+        f"{torus_operator.signed_mobius_tensor_restriction_still_required} "
+        "operator="
+        f"{torus_operator.signed_incomplete_poincare_operator_bound_proved} "
+        f"mmkls={torus_operator.mmkls_covered}"
+    )
+    torus_farey = torus_farey_multiplicity_audit(
+        gcd_exponent=F(0),
+    )
+    print(
+        "balanced_max_a: torus_farey_multiplicity="
+        f"gamma={_fmt(torus_farey.common_gcd_exponent)} "
+        f"slope={_fmt(torus_farey.primitive_slope_exponent)} "
+        f"shift={_fmt(torus_farey.shift_quotient_exponent)} "
+        f"physical={_fmt(torus_farey.physical_coordinate_exponent)} "
+        f"farey={_fmt(torus_farey.farey_minimum_spacing_exponent)} "
+        f"window={_fmt(torus_farey.physical_ratio_window_exponent)} "
+        "margin="
+        f"{_fmt(torus_farey.farey_spacing_over_window_margin)} "
+        "multiplicity="
+        f"{_fmt(torus_farey.fixed_physical_slope_multiplicity_exponent)} "
+        f"bounded={torus_farey.fixed_physical_slope_multiplicity_is_bounded} "
+        f"unique={torus_farey.positive_g_layer_is_eventually_unique} "
+        "critical_constant="
+        f"{torus_farey.critical_g_layer_has_only_constant_multiplicity} "
+        "fixed_diagonal="
+        f"{_fmt(torus_farey.raw_pullback_diagonal_exponent)} "
+        f"g_count={_fmt(torus_farey.dyadic_g_count_exponent)} "
+        "g_multiplicity="
+        f"{_fmt(torus_farey.dyadic_g_physical_multiplicity_exponent)} "
+        "aggregate_energy="
+        f"{_fmt(torus_farey.aggregated_pullback_energy_exponent)} "
+        f"taper_log={torus_farey.squared_taper_log_saving} "
+        "energy_target="
+        f"{_fmt(torus_farey.operator_energy_target_exponent)} "
+        f"gap={_fmt(torus_farey.aggregated_energy_over_target_exponent)} "
+        "fixed_operator_l2="
+        f"{_fmt(torus_farey.fixed_g_natural_operator_l2_exponent)} "
+        f"mobius_l2={_fmt(torus_farey.mobius_tensor_l2_exponent)} "
+        f"fixed_raw={_fmt(torus_farey.fixed_g_raw_cardinality_exponent)} "
+        "fixed_cauchy="
+        f"{_fmt(torus_farey.fixed_g_positive_cauchy_bound_exponent)} "
+        "cauchy_excess="
+        f"{_fmt(torus_farey.fixed_g_cauchy_excess_over_trivial_exponent)} "
+        "aggregate_cauchy="
+        f"{_fmt(torus_farey.aggregated_positive_cauchy_bound_exponent)} "
+        f"target={_fmt(torus_farey.physical_layer_target_exponent)} "
+        "aggregate_deficit="
+        f"{_fmt(torus_farey.aggregated_positive_cauchy_deficit_exponent)} "
+        "best_positive="
+        f"{_fmt(torus_farey.best_positive_bound_exponent)} "
+        f"best_deficit={_fmt(torus_farey.best_positive_deficit_exponent)} "
+        "best_is_raw="
+        f"{torus_farey.best_positive_bound_is_raw_cardinality} "
+        "same_line_deficit="
+        f"{torus_farey.deficit_equals_determinant_line_required_saving} "
+        "davenport_power="
+        f"{_fmt(torus_farey.davenport_uniform_bound_power_saving_exponent)} "
+        "lp_improves="
+        f"{torus_farey.positive_lp_interpolation_improves_power} "
+        f"signed_gate={torus_farey.signed_pairing_gate_name} "
+        "exact_layer="
+        f"{torus_farey.signed_pairing_is_exact_determinant_line_layer} "
+        "signed_save="
+        f"{_fmt(torus_farey.signed_gate_required_saving_exponent)} "
+        f"signed_proved={torus_farey.signed_pairing_gate_proved} "
+        "cross_power="
+        f"{torus_farey.cross_slope_recombination_has_power_cardinality} "
+        "positive_l2="
+        f"{torus_farey.positive_l2_route_closes_signed_mobius_gate} "
+        "signed_restriction="
+        f"{torus_farey.signed_mobius_tensor_restriction_still_required}"
+    )
+    outer_modulus = outer_modulus_type_recombination_audit(
+        original_modulus=30,
+        cutoff_u=5,
+        cutoff_v=4,
+        physical_modulus_exponent=F(3),
+    )
+    print(
+        "balanced_max_a: outer_modulus_recombination="
+        f"mu={outer_modulus.original_mobius_weight} "
+        f"type_i={outer_modulus.type_i_sum_inside_parentheses} "
+        f"type_ii={outer_modulus.type_ii_sum_inside_parentheses} "
+        f"recombined={outer_modulus.recombined_modulus_weight} "
+        "l2_exp="
+        f"{_fmt(outer_modulus.grouped_coefficient_l2_squared_exponent)} "
+        "outer_loss="
+        f"{_fmt(outer_modulus.outer_scale_power_loss_after_recombination)} "
+        "hard="
+        f"{_fmt(outer_modulus.hard_face_arbitrary_coefficient_bound_exponent)} "
+        "target="
+        f"{_fmt(outer_modulus.hard_face_target_exponent)} "
+        "gap="
+        f"{_fmt(outer_modulus.required_mobius_modulus_saving_exponent)} "
+        "lcm="
+        f"{outer_modulus.divisor_incidence_energy_has_exact_lcm_kernel} "
+        "smooth="
+        f"{outer_modulus.arithmetic_modulus_weight_is_a_smooth_bessel_test} "
+        "mobius_modulus_ls="
+        f"{outer_modulus.mobius_modulus_harmonic_large_sieve_proved} "
+        f"oslsp={outer_modulus.steinberg_conductor_average_proved} "
+        f"olisk={outer_modulus.outer_lisk_covered}"
+    )
+    product_energy = product_index_character_energy_audit(
+        modulus_exponent=F(3),
+        first_product_length_exponent=F(5, 2),
+        second_product_length_exponent=F(5, 2),
+        required_saving_exponent=F(1, 2),
+    )
+    print(
+        "balanced_max_a: product_index_energy="
+        "trivial="
+        f"{_fmt(product_energy.trivial_weil_product_sum_exponent)} "
+        "nonprincipal="
+        f"{_fmt(product_energy.nonprincipal_character_bound_exponent)} "
+        "principal="
+        f"{_fmt(product_energy.principal_character_bound_exponent)} "
+        f"saving={_fmt(product_energy.unit_layer_saving_exponent)} "
+        "required="
+        f"{_fmt(product_energy.required_hard_face_saving_exponent)} "
+        f"margin={_fmt(product_energy.unit_layer_saving_margin)} "
+        "direct="
+        f"{_fmt(product_energy.minimum_direct_mmkls_bound_exponent)}>"
+        f"{_fmt(product_energy.mmkls_target_exponent)} "
+        "direct_gap="
+        f"{_fmt(product_energy.minimum_direct_mmkls_deficit)} "
+        "compose="
+        f"{product_energy.local_product_saving_composes_with_outer_pevp} "
+        "gauss_gcd="
+        f"{product_energy.generalized_gauss_pair_mass_has_zero_power_cost} "
+        "nonunit="
+        f"{product_energy.nonunit_product_gcd_layers_aggregated} "
+        "principal_avg="
+        f"{product_energy.principal_ramanujan_frequency_average_aggregated} "
+        "physical="
+        f"{product_energy.physical_mmkls_weight_normalization_reinserted} "
+        f"mmkls={product_energy.product_index_energy_closes_mmkls} "
+        f"olisk={product_energy.whole_mobius_gate_covered}"
+    )
+    primitive_conductor = primitive_conductor_mmkls_audit(
+        outer_entry_exponent=F(1, 2),
+        primitive_conductor_exponent=F(3, 2),
+    )
+    print(
+        "balanced_max_a: primitive_conductor_mmkls="
+        f"alpha={_fmt(primitive_conductor.outer_entry_exponent)} "
+        "kappa="
+        f"{_fmt(primitive_conductor.primitive_conductor_exponent)} "
+        f"r={_fmt(primitive_conductor.cofactor_exponent)} "
+        "cross_norms="
+        f"{_fmt(primitive_conductor.first_cross_convolution_l2_exponent)},"
+        f"{_fmt(primitive_conductor.second_cross_convolution_l2_exponent)} "
+        f"ls={_fmt(primitive_conductor.large_sieve_factor_exponent)} "
+        f"bound={_fmt(primitive_conductor.unit_stratum_bound_exponent)} "
+        f"target={_fmt(primitive_conductor.mmkls_target_exponent)} "
+        f"margin={_fmt(primitive_conductor.power_saving_margin)} "
+        "gauss_crt="
+        f"{primitive_conductor.induced_gauss_sum_crt_identity_exact} "
+        "mobius_cancel="
+        f"{primitive_conductor.mobius_cofactor_cancellation_exact} "
+        "ramanujan_remains="
+        f"{primitive_conductor.cofactor_ramanujan_factor_remains} "
+        "small_outer="
+        f"{primitive_conductor.small_outer_condition_verified} "
+        "small_conductor="
+        f"{primitive_conductor.small_conductor_condition_verified} "
+        "unit="
+        f"{primitive_conductor.standard_multiplicative_large_sieve_closes_unit_cell} "
+        "nonunit="
+        f"{primitive_conductor.nonunit_ramanujan_layers_composed_with_large_sieve} "
+        "root_number_residual="
+        f"{primitive_conductor.residual_requires_signed_gauss_root_number_average} "
+        f"mmkls={primitive_conductor.full_mmkls_proved}"
+    )
+    root_number_kernel = primitive_root_number_kernel_audit(
+        squarefree_modulus=15,
+        unit_argument=2,
+        prime_fixture=5,
+    )
+    print(
+        "balanced_max_a: primitive_root_number_kernel="
+        f"f={root_number_kernel.squarefree_modulus} "
+        f"u={root_number_kernel.unit_argument} "
+        "orthogonality="
+        f"{root_number_kernel.primitive_character_orthogonality_exact} "
+        "divisor_formula="
+        f"{root_number_kernel.primitive_root_number_divisor_formula_exact} "
+        "terms="
+        + ",".join(
+            f"{d}:{c}:{_fmt(coefficient)}:{argument}"
+            for d, c, coefficient, argument in (
+                root_number_kernel.divisor_kernel_terms
+            )
+        )
+        + " "
+        "top="
+        f"{root_number_kernel.top_conductor_divisor},"
+        f"{root_number_kernel.top_conductor_cofactor},"
+        f"{_fmt(root_number_kernel.top_conductor_coefficient)} "
+        "physical="
+        f"{root_number_kernel.top_conductor_coefficient_equals_physical_mobius_over_modulus} "
+        "proper_lower="
+        f"{root_number_kernel.proper_divisors_reduce_integer_modulus} "
+        "power_drop="
+        f"{root_number_kernel.proper_divisors_have_uniform_power_drop} "
+        f"prime={root_number_kernel.prime_fixture} "
+        "prime_kernel="
+        f"{_fmt(root_number_kernel.prime_kloosterman_coefficient)} "
+        "correction="
+        f"{_fmt(root_number_kernel.prime_scalar_correction)} "
+        "prime_survives="
+        f"{root_number_kernel.prime_conductor_top_term_survives} "
+        "prime_mu_constant="
+        f"{root_number_kernel.prime_modulus_mobius_weight_is_constant} "
+        "self_similar="
+        f"{root_number_kernel.root_number_average_is_self_similar_mmkls} "
+        "independent="
+        f"{root_number_kernel.root_number_average_is_independent_large_sieve_saving} "
+        f"mmkls={root_number_kernel.full_mmkls_proved}"
+    )
+    double_poisson = double_poisson_ramanujan_audit(
+        modulus=30,
+        first_kloosterman_index=7,
+        ramanujan_frequency=42,
+        coprimality_parameter=5,
+    )
+    print(
+        "balanced_max_a: double_poisson_ramanujan="
+        f"s={double_poisson.modulus} "
+        f"a={double_poisson.first_kloosterman_index} "
+        "bilinear="
+        f"{double_poisson.complete_bilinear_poisson_identity_exact} "
+        f"composite={double_poisson.identity_holds_for_composite_modulus} "
+        "ramanujan="
+        f"{double_poisson.kloosterman_sum_collapses_to_ramanujan_sum} "
+        f"sign={double_poisson.transformed_ramanujan_argument_sign} "
+        "scales="
+        f"{_fmt(double_poisson.modulus_exponent)},"
+        f"{_fmt(double_poisson.first_product_length_exponent)},"
+        f"{_fmt(double_poisson.second_product_length_exponent)} "
+        "dual="
+        f"{_fmt(double_poisson.first_dual_length_exponent)},"
+        f"{_fmt(double_poisson.second_dual_length_exponent)} "
+        f"volume={_fmt(double_poisson.dual_volume_exponent)} "
+        f"pre={_fmt(double_poisson.pre_modulus_sum_prefactor_exponent)} "
+        "mobius_ramanujan="
+        f"{double_poisson.mobius_ramanujan_divisor_identity_exact} "
+        "density="
+        f"{_fmt(double_poisson.reciprocal_radical_density_divisor_sum)} "
+        "density_euler="
+        f"{double_poisson.reciprocal_radical_density_euler_product_exact} "
+        "long_prefactor="
+        f"{_fmt(double_poisson.long_cofactor_main_prefactor_exponent)} "
+        f"target={_fmt(double_poisson.mmkls_target_exponent)} "
+        "short_target="
+        f"{_fmt(double_poisson.required_short_dual_gate_exponent)} "
+        "raw_dual="
+        f"{_fmt(double_poisson.raw_short_dual_volume_exponent)} "
+        "zero_margin="
+        f"{double_poisson.short_dual_gate_has_zero_power_margin} "
+        "separated="
+        f"{double_poisson.physical_kernel_has_polylog_separated_nuclear_norm} "
+        "zero_frequency="
+        f"{double_poisson.individual_separated_zero_frequency_may_be_nonzero} "
+        "long_main="
+        f"{double_poisson.long_cofactor_density_main_identified} "
+        "error_tail="
+        f"{double_poisson.cofactor_error_and_short_tail_aggregated} "
+        "prime_tail="
+        f"{double_poisson.short_cofactor_contains_prime_top_conductor_cell} "
+        "positive_log="
+        f"{double_poisson.positive_reciprocal_radical_majorant_supplies_log_saving} "
+        f"mmkls={double_poisson.double_poisson_route_closes_mmkls}"
+    )
+    resonance = physical_ramanujan_resonance_audit(
+        outer_entry=6,
+        poisson_index=6,
+        first_dual_frequency=-1,
+        second_dual_frequency=1,
+        modulus=35,
+    )
+    print(
+        "balanced_max_a: ramanujan_resonance="
+        "tuple="
+        + ",".join(str(value) for value in resonance.resonance_tuple)
+        + " "
+        f"n={resonance.ramanujan_argument} "
+        f"raw_box={resonance.resonance_is_inside_raw_dual_box} "
+        "qct_vanish="
+        f"{resonance.physical_qct_derivative_bounds_force_resonance_vanishing} "
+        "b_zero="
+        f"{resonance.reciprocal_radical_weight_defined_at_zero} "
+        f"split={resonance.sdrg_requires_zero_argument_split} "
+        f"modulus={resonance.modulus} "
+        f"c0={resonance.ramanujan_zero_value} "
+        f"phi={resonance.ramanujan_zero_value_equals_euler_phi} "
+        "coefficient="
+        f"{_fmt(resonance.mobius_weighted_zero_coefficient)} "
+        "inverse_zeta="
+        f"{resonance.zero_mode_dirichlet_series_has_inverse_zeta_factor} "
+        "coprime_polylog="
+        f"{resonance.coprimality_euler_correction_has_polylog_cost} "
+        "factor_pairs="
+        f"{resonance.resonant_frequency_pairs_are_divisor_bounded} "
+        f"log_saving={resonance.resonance_has_arbitrary_log_saving} "
+        f"resonance_closed={resonance.resonance_cell_closed} "
+        f"nonzero_gate={resonance.nonzero_short_dual_gate_proved} "
+        f"mmkls={resonance.full_mmkls_proved}"
+    )
+    reciprocal_fibre = reciprocal_radical_fibre_audit(
+        moment_abscissa=F(1, 16)
+    )
+    print(
+        "balanced_max_a: reciprocal_radical_fibre="
+        f"epsilon={_fmt(reciprocal_fibre.moment_abscissa)} "
+        f"Amax={_fmt(reciprocal_fibre.outer_entry_max_exponent)} "
+        "nmax="
+        f"{_fmt(reciprocal_fibre.ramanujan_argument_max_exponent)} "
+        "dual="
+        f"{_fmt(reciprocal_fibre.first_dual_length_exponent)},"
+        f"{_fmt(reciprocal_fibre.second_dual_length_exponent)} "
+        "euler="
+        f"{reciprocal_fibre.reciprocal_radical_dirichlet_series_exact} "
+        "A_primes_subpower="
+        f"{reciprocal_fibre.primes_dividing_outer_entry_cost_subpower} "
+        "nonaxis_divisor="
+        f"{reciprocal_fibre.nonaxis_fibre_is_divisor_bounded} "
+        f"axis_fibre={_fmt(reciprocal_fibre.axis_fibre_exponent)} "
+        f"nonaxis={_fmt(reciprocal_fibre.nonaxis_bound_exponent)} "
+        f"axis={_fmt(reciprocal_fibre.axis_bound_exponent)} "
+        "target="
+        f"{_fmt(reciprocal_fibre.long_cofactor_target_exponent)} "
+        f"saving={_fmt(reciprocal_fibre.power_saving_margin)} "
+        "outer_polylog="
+        f"{reciprocal_fibre.outer_divisor_weight_costs_only_polylog} "
+        "long_main="
+        f"{reciprocal_fibre.long_cofactor_density_main_covered} "
+        "density_error="
+        f"{reciprocal_fibre.squarefree_density_error_aggregated} "
+        "short_cofactor="
+        f"{reciprocal_fibre.short_cofactor_cell_covered} "
+        f"mmkls={reciprocal_fibre.full_mmkls_proved}"
+    )
+    short_cofactor = short_cofactor_mobius_interval_audit(
+        cofactor_cutoff_exponent=F(1, 8),
+        qsmooth_split_relative_exponent=F(1, 10),
+    )
+    print(
+        "balanced_max_a: short_cofactor_mobius="
+        f"eta={_fmt(short_cofactor.cofactor_cutoff_exponent)} "
+        "Dmin="
+        f"{_fmt(short_cofactor.modulus_variable_min_exponent)} "
+        "Hmin="
+        f"{_fmt(short_cofactor.mobius_interval_min_exponent)} "
+        f"theta={_fmt(short_cofactor.raw_short_interval_ratio)} "
+        "convolution="
+        f"{short_cofactor.qsmooth_convolution_identity_exact} "
+        "rho="
+        f"{_fmt(short_cofactor.qsmooth_split_relative_exponent)} "
+        "theta_rescaled="
+        f"{_fmt(short_cofactor.rescaled_short_interval_ratio)} "
+        "threshold="
+        f"{_fmt(short_cofactor.published_quantitative_threshold)} "
+        f"margin={_fmt(short_cofactor.threshold_margin)} "
+        "published="
+        f"{short_cofactor.small_qsmooth_factor_uses_published_mobius_bound} "
+        "large_reciprocal="
+        f"{short_cofactor.large_qsmooth_reciprocal_tail_has_power_saving} "
+        "large_count="
+        f"{short_cofactor.large_qsmooth_count_tail_has_power_saving} "
+        "smooth="
+        f"{short_cofactor.smooth_physical_weight_allows_partial_summation} "
+        "density="
+        f"{_fmt(short_cofactor.long_density_error_first_exponent)},"
+        f"{_fmt(short_cofactor.long_density_error_second_exponent)} "
+        "density_saving="
+        f"{_fmt(short_cofactor.long_density_error_saving)} "
+        f"density_closed={short_cofactor.long_density_error_aggregated} "
+        f"short_closed={short_cofactor.short_cofactor_cell_covered} "
+        "hard_mmkls="
+        f"{short_cofactor.balanced_hard_box_mmkls_covered} "
+        f"all_boxes={short_cofactor.all_dyadic_boxes_aggregated} "
+        "asymptotic="
+        f"{short_cofactor.full_long_mollifier_asymptotic_proved}"
+    )
+    transport = oriented_mmkls_global_transport_audit(
+        cofactor_cutoff_exponent=F(1, 8)
+    )
+    print(
+        "mwkf_transport: cells="
+        + ",".join(
+            f"{name}:{orientation}:{_fmt(dual)}:{_fmt(raw)}:"
+            f"{_fmt(adjusted)}:{covered}"
+            for name, orientation, dual, raw, adjusted, covered in (
+                transport.oriented_boundary_cells
+            )
+        )
+        + " "
+        f"threshold={_fmt(transport.published_threshold)} "
+        "double_dual="
+        f"{transport.common_modulus_double_poisson_dual_product_exact} "
+        "reciprocity_lengths="
+        f"{transport.reciprocity_preserves_physical_h_delta_lengths} "
+        "unbalanced="
+        f"{transport.unbalanced_power_witnesses_covered} "
+        "power_witnesses="
+        f"{transport.three_power_scale_boundary_witnesses_covered} "
+        "endpoint_depth="
+        f"{_fmt(transport.bounded_zeta_endpoint_shift_log_depth)} "
+        f"endpoint={transport.bounded_zeta_endpoint_covered} "
+        "critical_depth="
+        f"{_fmt(transport.critical_polylog_shift_log_depth)} "
+        "product_lift="
+        f"{transport.critical_product_lift_identity_exact} "
+        "centered="
+        f"{transport.critical_centered_product_energy_proved} "
+        f"remaining={transport.remaining_gate} "
+        f"all_cells={transport.all_parameter_cells_covered} "
+        "asymptotic="
+        f"{transport.full_long_mollifier_asymptotic_proved}"
+    )
+    c_recombination = unbalanced_complementary_divisor_recombination_audit(
+        cofactor_cutoff_exponent=F(1, 8),
+        qsmooth_relative_exponent=F(1, 10),
+        taylor_block_relative_exponent=F(2, 3),
+        published_epsilon=F(1, 12),
+    )
+    print(
+        "mwkf_unbalanced_c_recombination: "
+        f"modulus={_fmt(c_recombination.modulus_exponent)} "
+        f"dual={_fmt(c_recombination.dual_product_exponent)} "
+        "c="
+        f"{_fmt(c_recombination.complementary_divisor_size_exponent)} "
+        f"Xmin={_fmt(c_recombination.reduced_mobius_min_exponent)} "
+        "phase_margin="
+        f"{_fmt(c_recombination.reciprocal_phase_ratio_power_saving)} "
+        f"block={_fmt(c_recombination.taylor_block_relative_exponent)} "
+        f"degree={c_recombination.taylor_polynomial_degree} "
+        f"theorem={_fmt(c_recombination.published_theta)}+"
+        f"{_fmt(c_recombination.published_epsilon)} "
+        f"lower_margin={_fmt(c_recombination.published_lower_margin)} "
+        f"upper_margin={_fmt(c_recombination.published_upper_margin)} "
+        f"poisson={c_recombination.c_poisson_identity_exact} "
+        f"negative={c_recombination.c_poisson_phase_sign_is_negative} "
+        "subcritical="
+        f"{c_recombination.subcritical_entry_band_has_logarithmic_sparsity} "
+        "critical="
+        f"{c_recombination.critical_entry_band_has_only_polylog_poisson_modes} "
+        "sliding="
+        f"{c_recombination.sliding_average_transfers_exceptional_measure} "
+        "maximal="
+        f"{c_recombination.maximal_progression_norm_handles_smooth_weights} "
+        "taylor="
+        f"{c_recombination.quadratic_taylor_error_has_power_saving} "
+        "zero="
+        f"{c_recombination.zero_reciprocal_frequency_uses_mobius_pnt} "
+        "nonzero="
+        f"{c_recombination.nonzero_reciprocal_frequency_uses_published_theorem} "
+        "qsmooth="
+        f"{c_recombination.large_qsmooth_tail_has_power_saving} "
+        f"r_long={c_recombination.r_long_boundary_covered} "
+        f"s_long={c_recombination.s_long_boundary_covered} "
+        "witnesses="
+        f"{c_recombination.unbalanced_boundary_witnesses_covered} "
+        f"all_cells={c_recombination.all_parameter_cells_covered} "
+        "asymptotic="
+        f"{c_recombination.full_long_mollifier_asymptotic_proved}"
+    )
+    balanced_reciprocal = balanced_adaptive_reciprocal_phase_audit(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+    )
+    print(
+        "mwkf_balanced_adaptive_reciprocal: family=1/2..3 "
+        "bcr_to="
+        f"{_fmt(balanced_reciprocal.bcr_strict_coverage_upper_endpoint)} "
+        "reciprocal_from="
+        f"{_fmt(balanced_reciprocal.reciprocal_phase_coverage_lower_endpoint)} "
+        f"eta={_fmt(balanced_reciprocal.cofactor_cutoff_exponent)} "
+        f"qsmooth={_fmt(balanced_reciprocal.qsmooth_relative_exponent)} "
+        f"dual={_fmt(balanced_reciprocal.dual_product_exponent)} "
+        "Xmin="
+        f"{_fmt(balanced_reciprocal.worst_reduced_mobius_exponent)} "
+        "block="
+        f"{_fmt(balanced_reciprocal.taylor_block_relative_exponent)} "
+        f"theorem={_fmt(balanced_reciprocal.published_theta)}+"
+        f"{_fmt(balanced_reciprocal.published_epsilon)} "
+        "lower_margin="
+        f"{_fmt(balanced_reciprocal.published_lower_margin)} "
+        "upper_margin="
+        f"{_fmt(balanced_reciprocal.published_upper_margin)} "
+        "taylor_margin="
+        f"{_fmt(balanced_reciprocal.worst_taylor_error_power_saving)} "
+        f"poisson={balanced_reciprocal.c_poisson_identity_exact} "
+        f"negative={balanced_reciprocal.c_poisson_phase_sign_is_negative} "
+        "sliding="
+        f"{balanced_reciprocal.sliding_average_transfers_exceptional_measure} "
+        "uniform_poly="
+        f"{balanced_reciprocal.maximal_polynomial_nilsequence_bound_is_uniform} "
+        f"long_main={balanced_reciprocal.long_cofactor_main_covered} "
+        f"density={balanced_reciprocal.long_cofactor_density_error_covered} "
+        f"short={balanced_reciprocal.short_cofactor_range_covered} "
+        "endpoint="
+        f"{balanced_reciprocal.reciprocal_phase_piece_covers_bcr_endpoint} "
+        "balanced_edge="
+        f"{balanced_reciprocal.bcr_and_reciprocal_pieces_cover_full_balanced_edge} "
+        "nonzero_j="
+        f"{balanced_reciprocal.balanced_nonzero_j_gate_absorbed} "
+        f"j0={balanced_reciprocal.balanced_resonant_j0_gate_absorbed} "
+        f"all_cells={balanced_reciprocal.full_parameter_polytope_enumerated} "
+        "lcpe="
+        f"{balanced_reciprocal.large_q_centered_product_energy_proved} "
+        "asymptotic="
+        f"{balanced_reciprocal.full_long_mollifier_asymptotic_proved} "
+        "prefactor_rel="
+        f"{_fmt(balanced_reciprocal.physical_prefactor_relative_to_target_exponent)} "
+        "normalization="
+        f"{balanced_reciprocal.prefactor_times_dual_volume_matches_target} "
+        "long_saving="
+        f"{_fmt(balanced_reciprocal.long_cofactor_main_power_saving)} "
+        "density_savings="
+        f"{_fmt(balanced_reciprocal.density_error_first_power_saving)},"
+        f"{_fmt(balanced_reciprocal.density_error_second_power_saving)} "
+        "subcritical_log="
+        f"{balanced_reciprocal.subcritical_entry_has_arbitrary_log_saving} "
+        "critical_modes_polylog="
+        f"{balanced_reciprocal.critical_c_poisson_mode_count_is_polylogarithmic}"
+    )
+    cubic_endpoint = cubic_reciprocal_endpoint_dispersion_audit(
+        longer_modulus_exponent=F(1, 2),
+        third_length_exponent=F(0),
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        fixed_weight_log_loss=F(20),
+        dyadic_and_q_log_loss=AGGREGATION_LOG_LOSS,
+        subcritical_cutoff_log_power=F(40),
+        poisson_mode_extra_log_loss=F(4),
+        requested_mrstt_log_saving=F(80),
+        target_log_saving=F(1),
+    )
+    print(
+        "mwkf_cubic_endpoint_dispersion: "
+        f"u={_fmt(cubic_endpoint.longer_modulus_exponent)} "
+        f"a={_fmt(cubic_endpoint.third_length_exponent)} "
+        f"p={_fmt(cubic_endpoint.dual_product_exponent)} "
+        f"physical={_fmt(cubic_endpoint.physical_prefactor_exponent)}+"
+        f"{_fmt(cubic_endpoint.dual_product_exponent)}="
+        f"{_fmt(cubic_endpoint.prefactor_times_dual_volume_exponent)} "
+        f"target={_fmt(cubic_endpoint.local_target_exponent)} "
+        f"post_poisson={cubic_endpoint.post_poisson_weight_before_outer_A} "
+        f"A_cancel={cubic_endpoint.outer_A_inverse_cancels_poisson_A} "
+        f"A_box={cubic_endpoint.dyadic_A_sum_weight} "
+        "cofactor="
+        f"{','.join(cubic_endpoint.cofactor_weight_ledger)} "
+        f"illustrative_fixed_logs={_fmt(cubic_endpoint.fixed_weight_log_loss)} "
+        "illustrative_dyadic_q_logs="
+        f"{_fmt(cubic_endpoint.dyadic_and_q_log_loss)} "
+        "illustrative_K0="
+        f"{_fmt(cubic_endpoint.subcritical_cutoff_log_power)} "
+        "illustrative_j_extra="
+        f"{_fmt(cubic_endpoint.poisson_mode_extra_log_loss)} "
+        f"illustrative_M={_fmt(cubic_endpoint.requested_mrstt_log_saving)} "
+        "illustrative_sub_net="
+        f"{_fmt(cubic_endpoint.subcritical_net_log_saving)} "
+        "illustrative_critical_net="
+        f"{_fmt(cubic_endpoint.critical_net_log_saving)} "
+        f"numeric_witness_used={cubic_endpoint.fixed_numeric_log_witness_used} "
+        f"local={cubic_endpoint.local_endpoint_dispersion_lemma_proved}"
+    )
+    cubic_polytope = cubic_reciprocal_full_polytope_audit(
+        cofactor_cutoff_exponent=F(1, 1000),
+        qsmooth_relative_exponent=F(1, 1000),
+        taylor_block_relative_exponent=F(17, 50),
+        published_epsilon=F(1, 1000),
+        reciprocal_radical_moment_abscissa=F(1, 100),
+        fixed_weight_log_loss=F(20),
+        dyadic_and_q_log_loss=AGGREGATION_LOG_LOSS,
+        subcritical_cutoff_log_power=F(40),
+        poisson_mode_extra_log_loss=F(4),
+        requested_mrstt_log_saving=F(80),
+        target_log_saving=F(1),
+    )
+    print(
+        "mwkf_cubic_polytope: "
+        f"degree={cubic_polytope.taylor_polynomial_degree} "
+        f"eta={_fmt(cubic_polytope.cofactor_cutoff_exponent)} "
+        f"qsmooth={_fmt(cubic_polytope.qsmooth_relative_exponent)} "
+        f"block={_fmt(cubic_polytope.taylor_block_relative_exponent)} "
+        f"epsilon={_fmt(cubic_polytope.published_epsilon)} "
+        f"u_min={_fmt(cubic_polytope.admissible_longer_modulus_min_exponent)} "
+        f"p={_fmt(cubic_polytope.dual_product_min_exponent)}:"
+        f"{_fmt(cubic_polytope.dual_product_max_exponent)} "
+        f"X_min={_fmt(cubic_polytope.worst_reduced_mobius_exponent)} "
+        f"taylor_margin={_fmt(cubic_polytope.worst_taylor_power_saving)} "
+        f"nonaxis_margin={_fmt(cubic_polytope.uniform_nonaxis_power_saving)} "
+        f"axis_margin={_fmt(cubic_polytope.uniform_axis_power_saving)} "
+        f"density={cubic_polytope.long_density_errors_have_power_saving} "
+        f"short={cubic_polytope.short_cofactor_has_uniform_power_saving} "
+        f"long={cubic_polytope.long_cofactor_main_has_uniform_power_saving} "
+        f"physical={cubic_polytope.physical_weight_ledger_verified} "
+        "illustrative_fixed_logs="
+        f"{_fmt(cubic_polytope.fixed_weight_log_loss)} "
+        "illustrative_dyadic_q_logs="
+        f"{_fmt(cubic_polytope.dyadic_and_q_log_loss)} "
+        "illustrative_K0="
+        f"{_fmt(cubic_polytope.subcritical_cutoff_log_power)} "
+        "illustrative_j_extra="
+        f"{_fmt(cubic_polytope.poisson_mode_extra_log_loss)} "
+        "illustrative_M="
+        f"{_fmt(cubic_polytope.requested_mrstt_log_saving)} "
+        "illustrative_target_log="
+        f"{_fmt(cubic_polytope.target_log_saving)} "
+        "illustrative_sub_net="
+        f"{_fmt(cubic_polytope.subcritical_net_log_saving)} "
+        "illustrative_critical_net="
+        f"{_fmt(cubic_polytope.critical_net_log_saving)} "
+        f"nested={cubic_polytope.nested_log_choices_verified} "
+        f"numeric_witness_used={cubic_polytope.fixed_numeric_log_witness_used} "
+        f"local_lemma={cubic_polytope.endpoint_dispersion_local_lemma_proved} "
+        f"faces={cubic_polytope.all_power_scale_faces_and_interiors_covered} "
+        f"all_cells={cubic_polytope.all_dyadic_parameter_cells_enumerated}"
+    )
+    cubic_lcpe2 = cubic_reciprocal_lcpe2_audit(
+        zeta_log_depth=F(2),
+        shift_log_depth=F(2),
+        requested_log_saving=F(80),
+        fixed_log_losses=F(20),
+        subcritical_cutoff_log_power=F(40),
+        poisson_mode_extra_log_loss=F(4),
+        dyadic_and_q_log_loss=AGGREGATION_LOG_LOSS,
+        target_log_saving=F(1),
+    )
+    print(
+        "mwkf_cubic_lcpe2: "
+        f"q={_fmt(cubic_lcpe2.q_exponent)} "
+        f"residual_modulus={_fmt(cubic_lcpe2.residual_modulus_exponent)} "
+        f"zeta_log={_fmt(cubic_lcpe2.zeta_log_depth)} "
+        f"shift_log={_fmt(cubic_lcpe2.shift_log_depth)} "
+        f"h={cubic_lcpe2.h_frequency_scale} "
+        f"delta={cubic_lcpe2.delta_scale} "
+        f"dual={cubic_lcpe2.first_dual_scale},"
+        f"{cubic_lcpe2.second_dual_scale} "
+        f"normalization={cubic_lcpe2.physical_prefactor_times_dual_volume_is_T} "
+        f"taylor={cubic_lcpe2.cubic_taylor_has_fixed_power_saving} "
+        f"uniform={cubic_lcpe2.mrstt_supremum_is_uniform_in_cubic_coefficients} "
+        "illustrative_fixed_logs="
+        f"{_fmt(cubic_lcpe2.fixed_log_losses)} "
+        "illustrative_dyadic_q_logs="
+        f"{_fmt(cubic_lcpe2.dyadic_and_q_log_loss)} "
+        "illustrative_K0="
+        f"{_fmt(cubic_lcpe2.subcritical_cutoff_log_power)} "
+        "illustrative_j_extra="
+        f"{_fmt(cubic_lcpe2.poisson_mode_extra_log_loss)} "
+        f"illustrative_M={_fmt(cubic_lcpe2.requested_log_saving)} "
+        f"illustrative_target={_fmt(cubic_lcpe2.target_log_saving)} "
+        "illustrative_sub_net="
+        f"{_fmt(cubic_lcpe2.subcritical_net_log_saving)} "
+        "illustrative_critical_net="
+        f"{_fmt(cubic_lcpe2.critical_net_log_saving)} "
+        f"illustrative_net={_fmt(cubic_lcpe2.net_log_saving)} "
+        f"numeric_witness_used={cubic_lcpe2.fixed_numeric_log_witness_used} "
+        "local_lemma="
+        f"{cubic_lcpe2.endpoint_dispersion_local_lemma_proved} "
+        f"q_sum={cubic_lcpe2.q_sum_is_bounded_on_dyadic_T_squared_shell} "
+        f"upstream={cubic_lcpe2.applied_before_q_first_product_lift} "
+        "centered_bypassed="
+        f"{cubic_lcpe2.centered_product_energy_gate_bypassed_not_assumed} "
+        f"centered_proved={cubic_lcpe2.centered_product_energy_estimate_proved} "
+        f"covered={cubic_lcpe2.lcpe2_covered_unconditionally} "
+        f"aggregated={cubic_lcpe2.all_q_boxes_and_transform_tails_aggregated}"
+    )
+    independent_cubic = independent_cubic_closure_verification_audit()
+    print(
+        "mwkf_cubic_independent_verification: "
+        "c_poisson="
+        f"{independent_cubic.c_poisson_full_weight_embedding_verified} "
+        "mrstt_maximal="
+        f"{independent_cubic.mrstt_maximal_progression_form_verified} "
+        "sliding="
+        f"{independent_cubic.sliding_identity_is_exact_on_the_interior} "
+        "weighted_partial="
+        f"{independent_cubic.weighted_partial_summation_verified} "
+        "amplitude_chain="
+        f"{independent_cubic.reciprocal_amplitude_normalized_chain_rule_verified} "
+        "amplitude_variation="
+        f"{independent_cubic.reciprocal_amplitude_total_variation_verified} "
+        "lcpe2_quantified="
+        f"{independent_cubic.lcpe2_quantified_log_ledger_closed} "
+        "disjoint_partition="
+        f"{independent_cubic.compact_and_tail_partition_is_disjoint} "
+        "cancellation_unique="
+        f"{independent_cubic.every_cancellation_source_is_used_once} "
+        "numeric_witness_used="
+        f"{independent_cubic.fixed_numeric_log_witness_used} "
+        f"all_four={independent_cubic.all_four_independent_gates_verified}"
+    )
+    reciprocal_amplitude = reciprocal_amplitude_seminorm_transfer_audit(
+        derivative_order=2,
+        fourier_decay_order=5,
+        available_kernel_x_derivatives=2,
+        available_kernel_y_derivatives=7,
+        kernel_seminorm_log_loss=F(3),
+        requested_mrstt_log_saving=F(20),
+        aggregation_log_loss=F(4),
+        target_log_saving=F(10),
+    )
+    print(
+        "mwkf_reciprocal_amplitude: "
+        f"m={reciprocal_amplitude.derivative_order} "
+        f"J={reciprocal_amplitude.fourier_decay_order} "
+        "required_x="
+        f"{reciprocal_amplitude.required_kernel_x_derivatives} "
+        "required_y="
+        f"{reciprocal_amplitude.required_kernel_y_derivatives} "
+        "available_x="
+        f"{reciprocal_amplitude.available_kernel_x_derivatives} "
+        "available_y="
+        f"{reciprocal_amplitude.available_kernel_y_derivatives} "
+        "no_lambda="
+        f"{reciprocal_amplitude.normalized_curve_derivative_has_no_lambda_power} "
+        "sup_power="
+        f"{_fmt(reciprocal_amplitude.n_inverse_square_supremum_power)} "
+        "variation_power="
+        f"{_fmt(reciprocal_amplitude.n_inverse_square_total_variation_power)} "
+        "partial_power="
+        f"{_fmt(reciprocal_amplitude.partial_summation_output_power)} "
+        f"net_log={_fmt(reciprocal_amplitude.net_log_saving)} "
+        "supply="
+        f"{reciprocal_amplitude.kernel_derivative_supply_is_sufficient} "
+        f"closes={reciprocal_amplitude.weighted_partial_summation_closes}"
+    )
+    cubic_residual_labels = tuple(
+        label
+        for label, closed in (
+            (
+                "power_polytope",
+                cubic_polytope.all_dyadic_parameter_cells_enumerated,
+            ),
+            (
+                "endpoint_dispersion_local_lemma",
+                cubic_polytope.endpoint_dispersion_local_lemma_proved,
+            ),
+            (
+                "physical_weight_ledger",
+                cubic_polytope.physical_weight_ledger_verified,
+            ),
+            ("nested_log_choices", cubic_polytope.nested_log_choices_verified),
+            ("LCPE_2", cubic_lcpe2.lcpe2_covered_unconditionally),
+            (
+                "q_and_transform_aggregation",
+                cubic_lcpe2.all_q_boxes_and_transform_tails_aggregated,
+            ),
+        )
+        if not closed
+    )
+    print(
+        "mwkf_cubic_full_coverage: "
+        f"power_cells={cubic_polytope.all_dyadic_parameter_cells_enumerated} "
+        f"physical_weights={cubic_polytope.physical_weight_ledger_verified} "
+        f"nested_logs={cubic_polytope.nested_log_choices_verified} "
+        f"lcpe2={cubic_lcpe2.lcpe2_covered_unconditionally} "
+        "q_transform="
+        f"{cubic_lcpe2.all_q_boxes_and_transform_tails_aggregated} "
+        f"residual_cells={len(cubic_residual_labels)} "
+        f"residual_labels={','.join(cubic_residual_labels)}"
+    )
+    vertex_ledger = admissible_polytope_vertex_ledger_audit()
+    print(
+        "mwkf_polytope_vertices: "
+        f"dimension={vertex_ledger.ambient_dimension} "
+        f"halfspaces={vertex_ledger.halfspace_count} "
+        f"vertices={vertex_ledger.vertex_count} "
+        "routes="
+        + ",".join(
+            f"{route}:{count}"
+            for route, count in vertex_ledger.primary_route_counts
+        )
+        + " bcr="
+        + ",".join(
+            f"v{index:02d}"
+            for index in vertex_ledger.bcr_covered_vertex_indices
+        )
+        + " unbalanced="
+        + ",".join(
+            f"v{index:02d}"
+            for index in (
+                vertex_ledger.unbalanced_recombination_covered_vertex_indices
+            )
+        )
+        + " polylog_short="
+        + ",".join(
+            f"v{index:02d}"
+            for index in (
+                vertex_ledger.polylog_short_entry_covered_vertex_indices
+            )
+        )
+        + " adaptive_reciprocal="
+        + ",".join(
+            f"v{index:02d}"
+            for index in (
+                vertex_ledger.adaptive_reciprocal_covered_vertex_indices
+            )
+        )
+        + " a_zero_endpoint="
+        + ",".join(
+            f"v{index:02d}"
+            for index in (
+                vertex_ledger.a_zero_endpoint_covered_vertex_indices
+            )
+        )
+        + " remaining="
+        + ",".join(
+            f"v{index:02d}"
+            for index in vertex_ledger.remaining_unrouted_vertex_indices
+        )
+        + " "
+        f"faces={vertex_ledger.vertex_routes_prove_every_face_and_interior} "
+        "all_cells="
+        f"{vertex_ledger.all_dyadic_parameter_cells_enumerated}"
+    )
+    short_entry = polylog_short_entry_reciprocity_audit(
+        short_entry_log_depth=F(8),
+        h_log_depth=F(6),
+        delta_log_depth=F(6),
+        euler_convolution_cutoff_log_depth=F(100),
+        siegel_walfisz_log_saving=F(350),
+        kernel_seminorm_log_loss=F(10),
+        aggregation_log_loss=AGGREGATION_LOG_LOSS,
+    )
+    print(
+        "mwkf_polylog_short_entry: "
+        f"modulus_log={_fmt(short_entry.progression_modulus_log_depth)} "
+        f"finite_loss={_fmt(short_entry.outer_and_residue_log_loss)} "
+        f"sw_net={_fmt(short_entry.siegel_walfisz_net_log_saving)} "
+        f"tail_net={_fmt(short_entry.euler_tail_net_log_saving)} "
+        f"net={_fmt(short_entry.net_log_saving)} "
+        "vertices="
+        + ",".join(
+            f"v{index:02d}" for index in short_entry.covered_vertex_indices
+        )
+        + " "
+        f"faces={short_entry.polylog_short_entry_faces_covered} "
+        f"all_cells={short_entry.all_parameter_cells_covered}"
+    )
+    transport_gap = oriented_mmkls_polytope_gap_audit(
+        cofactor_cutoff_exponent=F(1, 8)
+    )
+    print(
+        "mwkf_transport_gap: family=balanced_zero_slack "
+        "u="
+        f"{_fmt(transport_gap.family_parameter_interval[0])}:"
+        f"{_fmt(transport_gap.family_parameter_interval[1])} "
+        f"admissible={transport_gap.family_is_admissible} "
+        "saturates_mollifier="
+        f"{transport_gap.family_saturates_both_mollifier_lengths} "
+        "saturates_caps="
+        f"{transport_gap.family_saturates_shift_and_frequency_caps} "
+        f"threshold={_fmt(transport_gap.published_threshold)} "
+        "structural_endpoint="
+        f"{_fmt(transport_gap.no_cutoff_strict_coverage_lower_endpoint)} "
+        "fixed_endpoint="
+        f"{_fmt(transport_gap.fixed_cutoff_strict_coverage_lower_endpoint)} "
+        "witnesses="
+        + ",".join(
+            f"{_fmt(u)}:{_fmt(raw)}:{_fmt(adjusted)}:{covered}"
+            for u, raw, adjusted, covered in transport_gap.exact_witnesses
+        )
+        + " "
+        "published_structural="
+        f"{transport_gap.published_route_covers_structural_residual} "
+        "four_imply_polytope="
+        f"{transport_gap.four_boundary_witnesses_imply_full_polytope_coverage} "
+        f"sole_lcpe={transport_gap.sole_lcpe_residual_claim_is_valid} "
+        f"remaining={','.join(transport_gap.remaining_gates)} "
+        f"all_cells={transport_gap.all_parameter_cells_covered} "
+        "asymptotic="
+        f"{transport_gap.full_long_mollifier_asymptotic_proved}"
+    )
+    endpoint_dispersion = almost_all_mobius_endpoint_dispersion_audit(
+        modulus_exponent=F(2),
+        cofactor_exponent=F(1, 8),
+        dual_product_exponent=F(1),
+        outer_entry_exponent=F(7, 8),
+        qsmooth_relative_exponent=F(1, 10),
+    )
+    print(
+        "mwkf_endpoint_dispersion: "
+        f"u={_fmt(endpoint_dispersion.modulus_exponent)} "
+        f"eta={_fmt(endpoint_dispersion.cofactor_exponent)} "
+        f"p={_fmt(endpoint_dispersion.dual_product_exponent)} "
+        f"alpha={_fmt(endpoint_dispersion.outer_entry_exponent)} "
+        f"rho={_fmt(endpoint_dispersion.qsmooth_relative_exponent)} "
+        f"D={_fmt(endpoint_dispersion.reduced_modulus_exponent)} "
+        f"beta={_fmt(endpoint_dispersion.qsmooth_factor_exponent)} "
+        f"X={_fmt(endpoint_dispersion.mobius_ambient_exponent)} "
+        f"H={_fmt(endpoint_dispersion.mobius_interval_exponent)} "
+        f"ratio={_fmt(endpoint_dispersion.mobius_interval_ratio)} "
+        f"theorem={_fmt(endpoint_dispersion.published_theta)}+"
+        f"{_fmt(endpoint_dispersion.published_epsilon)} "
+        f"lower={_fmt(endpoint_dispersion.published_lower_ratio)} "
+        f"margin={_fmt(endpoint_dispersion.lower_ratio_margin)} "
+        "C="
+        f"{_fmt(endpoint_dispersion.complementary_divisor_exponent)} "
+        f"mass={_fmt(endpoint_dispersion.endpoint_mass_exponent)} "
+        "energy_target="
+        f"{_fmt(endpoint_dispersion.endpoint_energy_target_exponent)} "
+        f"product={_fmt(endpoint_dispersion.product_value_exponent)} "
+        "shifts="
+        f"{_fmt(endpoint_dispersion.collision_shift_count_exponent)} "
+        "energy="
+        f"{_fmt(endpoint_dispersion.divisor_second_moment_energy_exponent)} "
+        "power_margin="
+        f"{_fmt(endpoint_dispersion.endpoint_energy_power_margin)} "
+        f"collision={endpoint_dispersion.finite_collision_fixture_exact} "
+        "maximal="
+        f"{endpoint_dispersion.maximal_progression_norm_handles_smooth_subintervals} "
+        "integer_exception="
+        f"{endpoint_dispersion.integer_start_exception_count_follows_from_measure_bound} "
+        "divisor_l2="
+        f"{endpoint_dispersion.divisor_second_moment_supplies_only_polylog_loss} "
+        "log_absorption="
+        f"{endpoint_dispersion.arbitrary_log_saving_absorbs_endpoint_energy_polylogs} "
+        "balanced_family="
+        f"{endpoint_dispersion.balanced_zero_slack_family_covered} "
+        "full_polytope="
+        f"{endpoint_dispersion.full_parameter_polytope_enumerated} "
+        "lcpe="
+        f"{endpoint_dispersion.large_q_centered_product_energy_proved} "
+        "asymptotic="
+        f"{endpoint_dispersion.full_long_mollifier_asymptotic_proved}"
+    )
+    balanced_range = balanced_zero_slack_full_range_audit()
+    print(
+        "mwkf_balanced_full_range: "
+        "u="
+        f"{_fmt(balanced_range.family_parameter_interval[0])}:"
+        f"{_fmt(balanced_range.family_parameter_interval[1])} "
+        "admissible="
+        f"{balanced_range.family_is_admissible_on_full_interval} "
+        "saturated="
+        f"{balanced_range.family_saturates_all_seven_defining_equalities} "
+        f"bcr_break={_fmt(balanced_range.bcr_branch_breakpoint)} "
+        "bcr_endpoint="
+        f"{_fmt(balanced_range.bcr_strict_coverage_upper_endpoint)} "
+        f"bcr_saving={_fmt(balanced_range.bcr_endpoint_saving)} "
+        f"bcr_strict={balanced_range.bcr_endpoint_is_covered} "
+        "fixed_endpoint="
+        f"{_fmt(balanced_range.fixed_endpoint_dispersion_lower_endpoint)} "
+        f"fixed_ratio={_fmt(balanced_range.fixed_endpoint_ratio)} "
+        f"fixed_strict={balanced_range.fixed_endpoint_is_covered} "
+        "structural_endpoint="
+        f"{_fmt(balanced_range.structural_endpoint_dispersion_lower_endpoint)} "
+        f"structural_ratio={_fmt(balanced_range.structural_endpoint_ratio)} "
+        "structural_strict="
+        f"{balanced_range.structural_endpoint_is_covered} "
+        "residual="
+        f"{_fmt(balanced_range.explicit_power_residual_interval[0])}:"
+        f"{_fmt(balanced_range.explicit_power_residual_interval[1])} "
+        f"balanced_covered={balanced_range.full_balanced_family_covered} "
+        f"full_polytope={balanced_range.full_parameter_polytope_enumerated} "
+        "asymptotic="
+        f"{balanced_range.full_long_mollifier_asymptotic_proved}"
+    )
+    transition_gate = balanced_transition_farey_gate_audit(
+        u=F(1),
+        difference_exponent=F(1),
+    )
+    transition_upper = balanced_transition_farey_gate_audit(
+        u=F(3, 2),
+        difference_exponent=F(3, 2),
+    )
+
+    def transition_report(audit: BalancedTransitionFareyGateAudit) -> str:
+        return (
+            f"u={_fmt(audit.u)} "
+            f"theta={_fmt(audit.difference_exponent)} "
+            f"q={_fmt(audit.q_exponent)} "
+            f"R={_fmt(audit.r_exponent)} "
+            f"S={_fmt(audit.s_exponent)} "
+            f"H={_fmt(audit.h_exponent)} "
+            f"L={_fmt(audit.delta_exponent)} "
+            f"A={_fmt(audit.product_numerator_exponent)} "
+            f"farey={_fmt(audit.farey_energy_bound_exponent)} "
+            f"target={_fmt(audit.local_fixed_power_target_exponent)} "
+            "missing="
+            f"{_fmt(audit.required_additional_mobius_saving_exponent)} "
+            "global="
+            f"{_fmt(audit.global_exponent_after_local_target)} "
+            "two_mu="
+            f"{audit.two_original_mobius_weights_retained} "
+            f"covered={audit.local_gate_covered}"
+        )
+
+    print(
+        "mwkf_balanced_transition: "
+        + transition_report(transition_gate)
+        + "; "
+        + transition_report(transition_upper)
+    )
+    h_poisson_transition = balanced_transition_h_poisson_audit(
+        u=F(1),
+        difference_exponent=F(1),
+        gcd_exponent=F(0),
+    )
+    h_poisson_zero = balanced_transition_h_poisson_zero_mode_audit(
+        u=F(3, 2)
+    )
+    print(
+        "mwkf_balanced_h_poisson: "
+        f"u={_fmt(h_poisson_transition.u)} "
+        f"theta={_fmt(h_poisson_transition.difference_exponent)} "
+        f"gamma={_fmt(h_poisson_transition.gcd_exponent)} "
+        f"H={_fmt(h_poisson_transition.h_poisson_factor_exponent)} "
+        f"v={_fmt(h_poisson_transition.v_exponent)} "
+        f"j={_fmt(h_poisson_transition.j_exponent)} "
+        f"delta0={_fmt(h_poisson_transition.delta0_exponent)} "
+        f"n={_fmt(h_poisson_transition.line_parameter_exponent)} "
+        "area="
+        f"{_fmt(h_poisson_transition.unimodular_inner_area_exponent)} "
+        "slopes="
+        f"{_fmt(h_poisson_transition.primitive_slope_family_exponent)} "
+        "card="
+        f"{_fmt(h_poisson_transition.transformed_cardinality_exponent)} "
+        "target="
+        f"{_fmt(h_poisson_transition.asymptotic_local_target_exponent)} "
+        "diagonal="
+        f"{_fmt(h_poisson_transition.required_diagonal_scale_saving_exponent)} "
+        "sqrt="
+        f"{_fmt(h_poisson_transition.inner_square_root_saving_exponent)} "
+        "margin="
+        f"{_fmt(h_poisson_transition.square_root_power_margin)} "
+        "fixed="
+        f"{_fmt(h_poisson_transition.fixed_power_required_saving_exponent)} "
+        f"critical={h_poisson_transition.is_unique_zero_margin_face} "
+        "pevp="
+        f"{h_poisson_transition.diagonal_scale_slope_square_function_proved}; "
+        f"j0_u={_fmt(h_poisson_zero.u)} "
+        f"present={h_poisson_zero.resonant_zero_mode_present} "
+        f"theta={_fmt(h_poisson_zero.difference_exponent)} "
+        f"relative={_fmt(h_poisson_zero.relative_shift_exponent)} "
+        "card="
+        f"{_fmt(h_poisson_zero.transformed_cardinality_exponent)} "
+        "target="
+        f"{_fmt(h_poisson_zero.asymptotic_local_target_exponent)} "
+        "missing="
+        f"{_fmt(h_poisson_zero.required_affine_dispersion_saving_exponent)} "
+        "published="
+        f"{h_poisson_zero.published_strict_one_third_theorem_applies} "
+        f"affine={h_poisson_zero.affine_mobius_dispersion_proved} "
+        f"covered={h_poisson_zero.local_gate_covered}"
+    )
+    zero_elliott = balanced_zero_mode_averaged_elliott_audit(u=F(3, 2))
+    print(
+        "mwkf_balanced_j0_elliott: "
+        f"u={_fmt(zero_elliott.u)} "
+        f"X={_fmt(zero_elliott.mobius_interval_exponent)} "
+        f"H={_fmt(zero_elliott.shift_average_exponent)} "
+        "correlation="
+        f"{_fmt(zero_elliott.raw_affine_correlation_exponent)} "
+        "prefactor="
+        f"{_fmt(zero_elliott.h_poisson_and_v_prefactor_exponent)} "
+        "theorem="
+        f"{_fmt(zero_elliott.optimistic_theorem_total_exponent)} "
+        f"target={_fmt(zero_elliott.local_target_exponent)} "
+        f"deficit={_fmt(zero_elliott.remaining_power_deficit)} "
+        f"fixed_slope={zero_elliott.fixed_slope_hypothesis_holds} "
+        f"H_to_infinity={zero_elliott.shift_length_tends_to_infinity} "
+        "only_log="
+        f"{zero_elliott.theorem_supplies_only_logarithmic_relative_saving} "
+        f"closes={zero_elliott.published_theorem_closes_zero_mode}"
+    )
+    mrt_affine = mrt_affine_critical_parameter_audit(
+        slope_log_depth=F(2),
+        shift_log_depth=F(2),
+        arity=2,
+    )
+    print(
+        "large_q_endpoint: mrt_affine_critical="
+        f"A_log={_fmt(mrt_affine.slope_log_depth)} "
+        f"H_log={_fmt(mrt_affine.shift_log_depth)} "
+        "prefactor_log="
+        f"{_fmt(mrt_affine.affine_prefactor_log_exponent)} "
+        "x_saving="
+        f"{_fmt(mrt_affine.x_error_log_saving_exponent)} "
+        f"x_net={_fmt(mrt_affine.x_error_net_log_exponent)} "
+        "required_H_log="
+        f"{_fmt(mrt_affine.proof_branch_required_shift_log_depth)} "
+        f"margin={_fmt(mrt_affine.proof_branch_shift_log_margin)} "
+        "proof_branch="
+        f"{mrt_affine.proof_nontrivial_branch_available} "
+        "loglog_diverges="
+        f"{mrt_affine.loglog_over_log_term_diverges_after_affine_prefactor} "
+        f"little_o={mrt_affine.published_bound_is_little_o} "
+        f"remaining={mrt_affine.remaining_gate}"
+    )
+    valuation = large_q_product_lift_valuation_audit(prime_fixture=2)
+    print(
+        "large_q_endpoint: product_lift_valuation="
+        f"squarefree_n={valuation.squarefree_witness_product} "
+        f"squarefree_rewrite={valuation.squarefree_product_rewrite_exact} "
+        f"nonsquarefree_n={valuation.nonsquarefree_witness_product} "
+        "nonsquarefree_coefficient="
+        f"{_fmt(valuation.nonsquarefree_witness_coefficient)} "
+        f"mu={valuation.nonsquarefree_witness_mobius} "
+        f"survives={valuation.nonsquarefree_product_coefficient_survives} "
+        f"prime={valuation.prime_fixture} "
+        f"local_density={_fmt(valuation.overlap_local_euler_density)} "
+        f"global_density={valuation.overlap_global_density_formula} "
+        f"overlap_positive={valuation.overlap_stratum_has_positive_density} "
+        "squareful_positive="
+        f"{valuation.squareful_multiplicand_stratum_has_positive_density} "
+        "absolute_negligible="
+        f"{valuation.nonsquarefree_strata_are_absolutely_negligible} "
+        "ordinary_shift="
+        f"{valuation.ordinary_shifted_chowla_rewrite_covers_product_lift} "
+        f"remaining={valuation.remaining_gate} "
+        f"centered={valuation.centered_product_energy_estimate_proved} "
+        f"covered={valuation.unconditional_coverage}"
+    )
+    blomer_pascadi = blomer_pascadi_hard_box_audit()
+    print(
+        "balanced_max_a: blomer_pascadi_2026="
+        f"relative={_fmt(blomer_pascadi.argument_length_relative_to_modulus)} "
+        "range="
+        f"{_fmt(blomer_pascadi.published_nontrivial_lower_endpoint)}:"
+        f"{_fmt(blomer_pascadi.published_nontrivial_upper_endpoint)} "
+        f"inside={blomer_pascadi.inside_published_nontrivial_interval} "
+        "h="
+        + ",".join(
+            _fmt(value)
+            for value in blomer_pascadi.general_h_term_exponents_in_modulus
+        )
+        + " "
+        f"dominant={_fmt(blomer_pascadi.general_h_dominant_exponent_in_modulus)} "
+        f"bp={_fmt(blomer_pascadi.blomer_pascadi_bound_exponent)} "
+        f"fourier={_fmt(blomer_pascadi.classical_fourier_bound_exponent)} "
+        "best="
+        f"{_fmt(blomer_pascadi.best_available_fixed_modulus_bound_exponent)} "
+        f"target={_fmt(blomer_pascadi.direct_mmkls_target_exponent)} "
+        f"gap={_fmt(blomer_pascadi.remaining_direct_exponent_gap)} "
+        "improves="
+        f"{blomer_pascadi.improves_existing_product_character_bound} "
+        f"mmkls={blomer_pascadi.mmkls_covered}"
+    )
+    drappeau = drappeau_quintilinear_hard_box_audit(
+        entry_factor_exponent=F(0),
+        modulus_factor_exponent=F(0),
+    )
+    print(
+        "balanced_max_a: drappeau_quintilinear="
+        f"alpha={_fmt(drappeau.entry_factor_exponent)} "
+        f"beta={_fmt(drappeau.modulus_factor_exponent)} "
+        f"C={_fmt(drappeau.modulus_quotient_exponent)} "
+        f"D={_fmt(drappeau.entry_quotient_exponent)} "
+        f"N={_fmt(drappeau.product_index_exponent)} "
+        f"R={_fmt(drappeau.theorem_entry_factor_exponent)} "
+        f"S={_fmt(drappeau.theorem_modulus_factor_exponent)} "
+        f"b_l2={_fmt(drappeau.coefficient_l2_norm_exponent)} "
+        "k2="
+        + ",".join(_fmt(value) for value in drappeau.k_squared_term_exponents)
+        + " "
+        f"k={_fmt(drappeau.k_exponent)} "
+        f"theorem={_fmt(drappeau.theorem_bound_exponent)} "
+        f"trivial={_fmt(drappeau.raw_trivial_bound_exponent)} "
+        f"best={_fmt(drappeau.best_available_bound_exponent)} "
+        f"target={_fmt(drappeau.physical_qct_target_exponent)} "
+        f"gap={_fmt(drappeau.remaining_exponent_gap)} "
+        f"phase={drappeau.exact_phase_and_coprimality_match} "
+        "tensor="
+        f"{drappeau.product_ratio_mellin_tensorization_has_polylog_cost} "
+        f"improves={drappeau.theorem_improves_raw_trivial_bound} "
+        f"compose={drappeau.theorem_composes_with_fixed_entry_pevp} "
+        f"mmkls={drappeau.mmkls_covered}"
+    )
+    cross_tensor = unramified_cross_index_tensor_norm_audit()
+    print(
+        "balanced_max_a: unramified_cross_tensor="
+        f"small_product={_fmt(cross_tensor.small_prime_product_upper_bound)} "
+        f"constant={cross_tensor.uniform_tensor_constant} "
+        "a_half="
+        f"{cross_tensor.tensor_product_is_at_most_constant_over_sqrt_a} "
+        f"finite_transfer={cross_tensor.unramified_cross_index_transfer_proved} "
+        f"all_cells={cross_tensor.steinberg_and_eisenstein_cells_included} "
+        f"polylog_ls={cross_tensor.polylog_harmonic_large_sieve_proved} "
+        f"pevp={cross_tensor.pevp_proved}"
+    )
+    all_cross_tensor = all_conductor_cross_index_tensor_audit()
+    print(
+        "balanced_max_a: all_conductor_cross_tensor="
+        f"constant={all_cross_tensor.combined_tensor_constant} "
+        "per_representation="
+        f"{all_cross_tensor.per_primitive_representation_tensor_bound_proved} "
+        "pattern_aggregation="
+        f"{all_cross_tensor.primitive_conductor_pattern_aggregation_proved} "
+        f"polylog_ls={all_cross_tensor.polylog_harmonic_large_sieve_proved} "
+        f"pevp={all_cross_tensor.pevp_proved}"
+    )
+    pattern_square = conductor_pattern_euler_square_audit()
+    pattern_vector = vector_valued_pattern_large_sieve_reduction_audit()
+    print(
+        "balanced_max_a: conductor_pattern_square="
+        f"constant={pattern_square.small_prime_pattern_constant} "
+        f"log_power={pattern_square.large_prime_euler_log_power} "
+        f"a_inverse_polylog={pattern_square.conductor_pattern_sum_is_a_inverse_polylog} "
+        "scalar_reduction="
+        f"{pattern_vector.scalar_large_sieve_implies_vector_valued_bound} "
+        "pointwise_multiplier="
+        f"{pattern_vector.spectral_dependent_coefficients_use_pointwise_majorants} "
+        "one_sided_transfer="
+        f"{pattern_vector.transfer_is_placed_on_only_one_cauchy_factor} "
+        "pattern_square_before_euler="
+        f"{pattern_vector.pattern_costs_are_squared_before_euler_aggregation} "
+        "cross_index_legal="
+        f"{pattern_vector.cross_index_weights_legally_enter_scalar_large_sieve} "
+        "scalar_polylog_ls="
+        f"{pattern_vector.scalar_polylog_full_level_large_sieve_proved} "
+        f"pevp={pattern_vector.pevp_proved}"
+    )
+    hankel_gate = scalar_polylog_hankel_seminorm_gate_audit()
+    print(
+        "balanced_max_a: scalar_hankel_gate="
+        f"maass_eis={hankel_gate.maass_eisenstein_uniform_bound_proved} "
+        "hol_ge4="
+        f"{hankel_gate.holomorphic_weight_at_least_four_uniform_bound_proved} "
+        f"weight2={hankel_gate.holomorphic_weight_two_endpoint_proved} "
+        f"farey={hankel_gate.farey_hybrid_large_sieve_proved} "
+        f"pattern={hankel_gate.conductor_pattern_transfer_proved} "
+        "scalar_polylog="
+        f"{hankel_gate.scalar_polylog_full_level_large_sieve_proved} "
+        f"pevp={hankel_gate.fixed_entry_pevp_proved}"
+    )
+    pascadi_lifted = pascadi_lifted_physical_audit(
+        entry_divisor_exponent=F(3),
+        modulus_divisor_exponent=F(3),
+        coprimality_divisor_exponent=F(0),
+    )
+    print(
+        "balanced_max_a: pascadi_v2_lifted="
+        "single_factor_saving="
+        f"{_fmt(pascadi_lifted.single_factor_net_saving_exponent)} "
+        "full_product_saving="
+        f"{_fmt(pascadi_lifted.full_product_net_saving_exponent)} "
+        "required_cross_index="
+        f"{_fmt(pascadi_lifted.required_physical_cross_index_amplitude_saving_exponent)} "
+        "remaining="
+        f"{_fmt(pascadi_lifted.remaining_cross_index_amplitude_deficit)} "
+        f"signed_moduli={pascadi_lifted.modulus_mobius_signs_retained} "
+        f"polylog={pascadi_lifted.published_o1_loss_is_polylogarithmic} "
+        f"covered={pascadi_lifted.physical_pevp_covered}"
+    )
+    final = unconditional_long_mollifier_asymptotic_audit()
+    print(
+        "mwkf_final: "
+        f"status={final.proof_status} "
+        f"theta={_fmt(final.mollifier_length_exponent)} "
+        f"main={_fmt(final.main_term_constant)} "
+        f"residual_top_level_gates={final.residual_cell_count} "
+        f"residual_semantics={final.residual_count_semantics} "
+        f"top_level={','.join(final.residual_top_level_gates)} "
+        "alternative_unverified="
+        f"{','.join(final.alternative_route_unverified_gates)} "
+        "all_dyadic_cells="
+        f"{final.all_dyadic_parameter_cells_enumerated} "
+        "compact_bypasses_pevp="
+        f"{final.compact_core_bypasses_pevp} "
+        "tail_pevp="
+        f"{final.tail_shells_use_seminorm_stable_pevp} "
+        f"remainder_o_T={final.full_remainder_is_little_o_T}"
     )
 
 

@@ -2,11 +2,42 @@
 
 ## 1. Status and question
 
-This is a feasibility spike, not a proof of the long-mollifier
-asymptotic.  It starts from the exact symmetric completion in
-`2026-08-24-mwkf-global-coupled-coefficient-first.md` and asks whether a
-route genuinely different from the generic Bettin--Chandee treatment
-produces a weaker local theorem.
+> **Current proof status: analytic remainder gate open (2026-08-30 correction).**
+> The previous “unconditional asymptotic proved” claim is withdrawn.
+> With the raw short-cofactor weight in (4.845dc_14xq_35w31n29a2),
+> (4.845dc_14xq_35w31n29a1) has prefactor \(HL\), not \(HL/S\).
+> The extra inverse \(S\) used by the old physical ledger is not supplied.
+> Fixed-entry PEVP also does not pay the full outer \(A,B\) power costs.
+> Consequently all downstream claims of a closed physical polytope,
+> LCPE2 coverage, aggregated tails or the full asymptotic in this historical
+> route log are **withdrawn**, not current theorems. Their displayed
+> finite/local identities may be used only with their stated hypotheses.
+> Old zero-residual reports and literal `True` flags are not proof evidence.
+>
+> Local identities and accurately scoped conditional interfaces may be
+> independently reviewed and merged without first proving \(2/3\),
+> \(14/17\), RH or the complete long-mollifier asymptotic. See
+> [the current correction ledger](2026-08-30-mwkf-physical-closure-correction.md).
+
+Source correction: Kiral--Young Proposition 2.6 gives
+
+\[
+S_{\infty,1/B}^{(AB)}(m,-n;s\sqrt A)
+=S(\overline A m,-n;s),
+\]
+
+not \(S(Am,-n;s)\).  Hence the physical Poisson orbit has a direct
+level-\(AB\) cross-cusp adapter.  Its \(\sqrt A\) cusp-normalization
+factor combines with the normalized outer Poisson factor \(A^{-1}\)
+to give \(A^{-1/2}\) in amplitude.  This makes the fixed-entry PEVP
+normalization direct.  In the historical spectral route the actual
+outer \(A,B\) sums still required OLISK/MMKLS and its hard-face
+\(T^{1/2}\) saving; the claimed closure in Sections
+4.109zjaced000f--4.109zjaced000h is withdrawn by the correction above.
+
+This document starts from the exact symmetric completion in
+`2026-08-24-mwkf-global-coupled-coefficient-first.md` and records both
+the failed candidate routes and the incomplete signed cubic route.
 
 The three routes audited here are:
 
@@ -16,9 +47,15 @@ The three routes audited here are:
 3. interpolation from the single endpoint \(N=T^3\) to shorter
    mollifiers.
 
-Only the second route survives the exponent audit.  It still requires a
-new theorem.  In particular, nothing below changes the proof status of the
-unconditional asymptotic.
+Only the second route survives the exponent audit.  The new theorem it
+requires is isolated as PEVP in Section 4.109x.  Sections 4.109y--4.109z
+reduce it to a weighted primitive-conductor large sieve, and Sections
+4.109zla--4.109zld discharge the finite and conductor-pattern
+compatibility.  Sections 4.109zle--4.109zlf prove the scalar
+polylogarithmic full-level large sieve (4.845dc_12), and Section
+4.109zfgb reinserts it to prove fixed-entry PEVP.  The later cubic
+complementary-divisor route attempts to aggregate OLISK without its stronger
+positive spectral majorant; its physical normalization remains unproved.
 
 ## 2. The exact logarithmic target
 
@@ -3776,6 +3813,122 @@ the prime-forcing main term, and the sieve estimates, but sets
 cross_scale_aggregation_proved=False,
 reflected_tail_energy_estimate_proved=False, and
 unconditional_coverage=False.
+
+### 4.29a Pairing only the boundary box with the lower tail is not closed
+
+There is a narrower completion proposal which does not require inserting
+all complementary divisor scales at once.  It also fails, for an exact
+reason.  Fix \(P,X,n,q\) with
+
+\[
+ PX\leq n\leq 2PX,
+\tag{4.255a}
+\]
+
+write \(m=n/d\), and split the complete left side of (4.250) into
+
+\[
+\begin{aligned}
+ C_{<}^{\rm tail}
+ &:=\sum_{\substack{d\mid n,(d,q)=1\\d>X,\ n/d<P}}
+       \mu(d)\log\frac Xd,\\
+ C_{\rm bd}^{\rm tail}
+ &:=\sum_{\substack{d\mid n,(d,q)=1\\d>X,\ P\leq n/d\leq2P}}
+       \mu(d)\log\frac Xd,\\
+ C_{\rm bd}^{\rm av}
+ &:=\sum_{\substack{d\mid n,(d,q)=1\\d\leq X,\ P\leq n/d\leq2P}}
+       \mu(d)\log\frac Xd,\\
+ C_{>}^{\rm av}
+ &:=\sum_{\substack{d\mid n,(d,q)=1\\d\leq X,\ n/d>2P}}
+       \mu(d)\log\frac Xd.
+\end{aligned}
+\tag{4.255b}
+\]
+
+Condition (4.255a) implies that there is no available term with \(m<P\)
+and no tail term with \(m>2P\).  Hence the four sums in (4.255b) are a
+disjoint exhaustive partition and
+
+\[
+ \boxed{
+ C_{\rm bd}^{\rm av}+C_{<}^{\rm tail}
+ =\log X\,\mathbf1_{n^{(q)}=1}+\Lambda(n^{(q)})
+  -\left(C_{\rm bd}^{\rm tail}+C_{>}^{\rm av}\right).}
+\tag{4.255c}
+\]
+
+Thus the original boundary box plus only the reflected tail below it is
+not the completed sparse coefficient.  It leaves two exact packages:
+the other half of the moving-cutoff collar and every available scale
+above the box.  The strict logarithmic subface
+\(m\leq\mathscr L^{2-\varepsilon}\) inside \(C_<^{\rm tail}\) is covered
+by (4.245), but the constant-ratio range \(m\asymp P\) is not:
+\(L/m\) need not grow.  Consequently even the
+whole first term on the left of (4.255c) is not already a phase-covered
+error.
+
+The upper package can reach the AFE transition while all divisors remain
+squarefree.  Here is a scale-faithful family.  Let \(P\to\infty\), choose
+a prime
+
+\[
+ r\asymp \exp(\sqrt P)
+\]
+
+and then, by Bertrand's postulate, a prime \(a\) with
+
+\[
+ P^2r<a<2P^2r.
+\tag{4.255d}
+\]
+
+Put
+
+\[
+ X=2ar,\qquad n=2Par,
+ \qquad d_0=ar,\quad d_1=a.
+\tag{4.255e}
+\]
+
+Choose a prime \(q\) with \(X^2<q<2X^2\), put
+\(T=(qX)^{1/3}\), and set \(N=qX=T^3\).  Then
+\(q\asymp T^2\), \(X=N/q\asymp T\), and \((q,2ar)=1\).  Both
+\(d_0,d_1\leq X\) are squarefree,
+and the same integer has the two available representations
+
+\[
+ n=(2P)d_0=(2Pr)d_1.
+\tag{4.255f}
+\]
+
+The first complementary scale belongs to \([P,2P]\), while the second is
+above \(2P\).  Moreover
+
+\[
+ (2Pr)^2=4P^2r^2>2ar=X.
+\tag{4.255g}
+\]
+
+Since \(\log X=2\sqrt P+O(\log P)\), one has
+\(P\asymp(\log X)^2\asymp(\log T)^2\).  Applying the upper representation on both sides
+therefore moves an actual critical polylogarithmic pair to
+\(m_1m_2>X\), i.e. across the model AFE transition.  This is an
+asymptotic construction, not merely a small numerical fixture.
+
+For a finite exact check, \(n=102,X=35,q=5,P=2\) has
+\(102=3\cdot34=6\cdot17\); the four formal-log pieces in (4.255b) are
+all computed without floating point, and the proposed pair is nonzero
+while its unpaired complement is its negative.  The helpers
+`restricted_complementary_divisor_partition` and
+`large_q_paired_boundary_completion_audit` certify (4.255b)--(4.255c),
+the two nonempty residual packages, and the transition witness.  They
+keep `boundary_plus_lower_tail_closes_completion=False` and
+`unconditional_coverage=False`.
+
+This rules out the paired-boundary shortcut.  It does not rule out a
+genuinely coupled cancellation among all four packages with the common
+AFE kernel; that statement is exactly the cross-scale transition gate
+below.
 
 ### 4.30 Subcritical AFE residue and the remaining cross-scale obstruction
 
@@ -8900,3007 +9053,16158 @@ the two visible global options were:
 2. return to the pre-Cauchy slope family (4.457), where cancellation among
    slopes need not pass through the positive DCV square function.
 
-#### 4.68.1 Completing the shift first removes the hard error deficit
 
-The conclusion after (4.621) is correct for a literal application of the
-published Watt estimate, but it is not the best estimate of BBLR's exact
-nonzero-frequency expression (14).  In the all-unsigned hard cell, complete
-the (h)-sum before estimating the inverse fraction.
+LCM 路线在此处分叉：其 §4.68.1–§4.79 及独立公式编号见 [LCM continuation](2026-08-31-mwkf-lcm-route-continuation.md)。下面保留 #483 的 canonical 编号，二者不能按同号公式拼接。
+
+### 4.69 The actual delta-lattice zero mode is a Gram form
+
+Section 4.58 left open whether the coupled kernel might annihilate the
+constant microarc before any Möbius estimate is used.  The exact Jacobian in
+the two-dimensional Poisson formula decides this for the square-function
+route.
+
+For an entry row \(E_i=(w_i,-s_i)\), let \(K_i(v,j)\) denote the exact
+continuous pullback of its transformed kernel, so that its shift coordinate
+is
+
+\[
+ \delta_i=w_iv-s_ij.
+\tag{4.622}
+\]
+
+For an off-diagonal pair, put
+
+\[
+ B=\begin{pmatrix}w_1&-s_1\\w_2&-s_2\end{pmatrix},
+ \qquad |\det B|=|r_1s_2-r_2s_1|=|\Delta|.
+\tag{4.623}
+\]
+
+The exact function used in (4.488) is characterized by
+\(F_B(Bz)=K_1(z)\overline{K_2(z)}\), with \(z=(v,j)^t\).  Therefore the
+ordinary change of variables \(y=Bz\) gives
+
+\[
+ \boxed{
+ \frac1{|\Delta|}\widehat F_B(0)
+ =\int_{\mathbb R^2}K_1(v,j)\overline{K_2(v,j)}\,dv\,dj.}
+\tag{4.624}
+\]
+
+The factor \(|\Delta|^{-1}\) from Poisson summation is cancelled exactly by
+the Jacobian \(|\det B|\).  It is not a residual small density which can
+force the zero mode to vanish.
+
+More generally, restore the identity diagonal and let \(c_E\) be any finite
+entry coefficient, including the original Möbius and endpoint factors.
+Summing (4.624) over the entry pair gives the exact Gram identity
+
+\[
+ \boxed{
+ \sum_{E_1,E_2}c_{E_1}\overline{c_{E_2}}
+ \int K_{E_1}(z)\overline{K_{E_2}(z)}\,dz
+ =\int_{\mathbb R^2}\left|
+   \sum_Ec_EK_E(z)\right|^2dz\ge0.}
+\tag{4.625}
+\]
+
+The \(\Delta\ne0\) contribution is (4.625) minus the already registered
+identity diagonal.  Hence the actual zero mode is not structurally killed by
+the coupled kernel.  Proving it small means proving cancellation in the
+Möbius-weighted vector inside the Gram norm; it cannot be replaced by the
+formal statement \(\widehat F_B(0)=0\).  The zero of \(G_t\) at \(z=1/2\)
+used in Section 4.2 removes a different Mellin boundary term and does not
+annihilate (4.625).
+
+The adapter `transition_delta_lattice_poisson_audit` now records the exact
+covolume/Jacobian cancellation, positivity of the full Gram form, and the
+off-diagonal subtraction.  This closes the first alternative stated at the
+end of Section 4.58 in the negative for the DCV route.  It still does not make
+DCV necessary: the original pre-Cauchy sum (4.457) can exploit cancellation
+among slopes before the positive Gram form is created.
+
+### 4.70 Banks--Shparlinski does not supply the missing slope power
+
+The natural published comparison for the pre-Cauchy alternative is
+[Banks--Shparlinski, Theorems 2.1 and
+2.4](https://arxiv.org/abs/2506.08787).  On the hard transition box, the
+integer relation before Cauchy is
+
+\[
+ rv-(kv+j)s=\delta,
+ \qquad r,s\asymp T,qquad
+ v,j,\delta\asymp T^{1/2}.
+\tag{4.626}
+\]
+
+For fixed \((v,j)\), the maps
+
+\[
+ f(r)=rv,qquad g(s)=-(kv+j)s,qquad \wp(\delta)=-\delta
+\tag{4.627}
+\]
+
+are injective on the relevant intervals.  Theorem 2.1 bounds its ternary
+sum
+
+\[
+ \mathsf S_\mu({\bf D};M)
+ =\sum_{f(n_1)+g(n_2)+\wp(n_3)=M}
+   u_{n_1}v_{n_2}\mu(n_1n_2n_3)
+ \ll_{C,\varepsilon,\deg\wp}
+ (A+B)N(\log N)^{-C}.
+\tag{4.628}
+\]
+
+There are two exact mismatches which must not be hidden in an adapter.
+First, both bilinear slopes in (4.626) must be fixed before (4.627) becomes
+a pair of one-variable injective functions.  Thus the theorem does not sum
+the \(T^{1/2}\)-long \(v\)- and \(j\)-families.  Second, the theorem carries
+\(\mu(n_1n_2n_3)\), whereas the shift \(\delta\) in the actual sum carries
+no Möbius weight.  Splitting \(\delta\) into squarefree and squarefull
+divisor layers can manufacture a ternary Möbius-weighted component, but it
+is only an exact structural decomposition: it neither saves a power nor
+verifies the remaining coupled kernel and coprimality hypotheses.  The
+coverage adapter therefore records `all_actual_kernel_hypotheses_verified`
+as false.
+
+Even granting the most favorable role assignment, the three interval
+lengths are \(T,T,T^{1/2}\), and (4.628) gives a fixed-slope exponent
+\(3/2\).  Direct geometric counting in (4.626) is already better: for each
+\(r\), the admissible \(s\)-interval has bounded length, so its exponent is
+one.  Restoring the two slope variables and the \(h\)-Poisson factor gives
+the exact ledger
+
+\[
+ \underbrace{1}_{\text{fixed-slope count}}
+ +\underbrace{(1/2+1/2)}_{(v,j)}
+ +\underbrace{1/2}_{h\text{-Poisson}}
+ =\frac52,qquad
+ E_{\rm target}=2,qquad
+ E_{\rm target}-E_{\rm BS}=-\frac12.
+\tag{4.629}
+\]
+
+The short-interval variant does not change this conclusion.  Theorem 2.4
+requires \(H\ge N^{5/8+\varepsilon}\); the short variable in (4.626) has
+exponent \(1/2\), and hence
+
+\[
+ \frac12-\frac58=-\frac18.
+\tag{4.630}
+\]
+
+Consequently the published multiple-Möbius theorem is a useful structural
+comparison but does not close the pre-Cauchy sum.  The missing estimate must
+save a fixed half power while summing the bilinear slope family jointly, or
+must exploit the original two-entry Möbius weights before the Gram norm is
+formed.
+
+### 4.71 A Ramaré medium-prime split does not force multilinearity
+
+Another way to preserve Möbius structure is to expose one prime divisor
+before applying a multilinear Kloosterman estimate.  Put
+
+\[
+ A=T^\alpha,\qquad
+ \mathcal P_{\lambda,\nu}(A)
+ :=\{p\text{ prime}:A^\lambda<p\le2A^\nu\},
+ \qquad0<\lambda\le\nu\le1,
+\tag{4.631}
+\]
+
+and let
+
+\[
+ \omega_{\lambda,\nu}(n)
+ :=\sum_{\substack{p\mid n\\p\in\mathcal P_{\lambda,\nu}(A)}}1.
+\tag{4.632}
+\]
+
+On the squarefree support of \(\mu\), whenever
+\(\omega_{\lambda,\nu}(n)>0\), the exact Ramaré identity is
+
+\[
+ \boxed{
+ \mu(n)=-\frac1{\omega_{\lambda,\nu}(n)}
+  \sum_{\substack{p\mid n\\p\in\mathcal P_{\lambda,\nu}(A)}}
+  \mu(n/p).}
+\tag{4.633}
+\]
+
+Indeed every summand on the right of (4.633) is \(-\mu(n)\).  The
+normalizing denominator must be retained; the formula says nothing on the
+sector \(\omega_{\lambda,\nu}(n)=0\).
+
+There is an exact obstruction at both possible upper endpoints.  If
+\(\nu<1\), then for all sufficiently large \(A\), every prime
+\(A<p\le2A\) lies outside the band.  The prime number theorem gives
+
+\[
+ \#\{p:A<p\le2A\}
+ =(1+o(1))\frac A{\log A}=T^{\alpha+o(1)}.
+\tag{4.634}
+\]
+
+Thus the exceptional sector has the full exponent \(\alpha\); it gains
+one logarithm of density and no positive power.  On the determinant-line
+gate (4.500), \(\alpha=1-\gamma\) is exactly the total saving required in
+(4.502), so this density estimate cannot replace that saving.
+
+If instead \(\nu=1\), the dyadic prime sector is included, but for
+\(n=p\asymp A\), (4.633) is only
+
+\[
+ \boxed{\mu(p)=-\mu(1),\qquad p=p\cdot1.}
+\tag{4.635}
+\]
+
+The extracted factor has exponent \(\alpha\), its cofactor has exponent
+zero, and only one factor has positive length.  Consequently a full-band
+Ramaré split still cannot force the two or more positive-length variables
+required by a fixed multilinear theorem.  This is not a lower bound for the
+original signed sum: cancellation in the remaining moving
+\(\mu(r_1)\mu(r_2)\) weights could still succeed.  It rules out only the
+proposed automatic reduction of every denominator Möbius weight to a
+multilinear box.
+
+The finite helper `transition_ramare_squarefree_identity` checks (4.633)
+without floating point.  The adapter
+`transition_ramare_medium_prime_audit` records the proper-band prime
+exception, its zero power-density saving, and the one-positive-factor
+full-band endpoint.  It keeps
+`forces_two_positive_length_factors=False` and
+`ramare_decomposition_closes_line_gate=False`.
+
+### 4.72 Prime-weighted Kloosterman bounds still miss the critical saving
+
+The prime sector left by Section 4.71 has stronger published estimates than
+an arbitrary coefficient sequence, so it must be checked separately.  For a
+fixed prime modulus \(q\), Dunn--Zaharescu quote the unrestricted-prime bound
+
+\[
+ \sum_{p\le X}\mathrm{Kl}_2(p;q)
+ \ll_\varepsilon q^{1/6+\varepsilon}X^{7/9},
+ \qquad1\le X\le q,
+\tag{4.636}
+\]
+
+and prove, for \((u,v)=1\) and \(v\le q^{1/100}\),
+
+\[
+ \sum_{\substack{p\le X\\p\equiv u\pmod v}}
+ \mathrm{Kl}_2(p;q)
+ \ll_\varepsilon q^{11/192+\varepsilon}X^{15/16}.
+\tag{4.637}
+\]
+
+These are Theorems 1.1 and 1.2 of
+[Dunn--Zaharescu](https://arxiv.org/abs/1801.05880).  Give the theorems
+their most favorable possible insertion by taking \(X=q=T\).  Equations
+(4.636)--(4.637) then have exponents
+
+\[
+ \frac16+\frac79=\frac{17}{18},
+ \qquad
+ \frac{11}{192}+\frac{15}{16}=\frac{191}{192},
+\tag{4.638}
+\]
+
+and save respectively \(T^{1/18}\) and \(T^{1/192}\) over the trivial
+prime-interval exponent one.  Even the counterfactual grant of four
+independent applications gives only
+
+\[
+ 4\cdot\frac1{18}=\frac29,
+ \qquad
+ 4\cdot\frac1{192}=\frac1{48}.
+\tag{4.639}
+\]
+
+Against the critical half-power requirement in (4.476), the remaining
+deficits are therefore
+
+\[
+ \boxed{\frac12-\frac29=\frac5{18},
+ \qquad
+ \frac12-\frac1{48}=\frac{23}{48}.}
+\tag{4.640}
+\]
+
+This comparison is deliberately optimistic.  The theorems have one fixed
+prime modulus and one standard Kloosterman argument.  In the actual entry
+gate the determinant modulus moves through composite values, the recovered
+kernel has not been converted to \(\mathrm{Kl}_2(p;q)\), and the other three
+entry weights do not separate.  Hence neither theorem is a direct adapter;
+the positive deficits in (4.640) already reject the route before those
+additional hypothesis failures are charged.
+
+The adapter `transition_prime_kloosterman_audit` records (4.638)--(4.640),
+including the progression-modulus cap \(1/100\), and keeps
+`standard_single_kloosterman_argument_verified=False`,
+`other_entry_weights_separate=False`, and
+`published_theorem_closes_prime_sector=False`.
+
+### 4.73 Exact exchange symmetry does not square the centered collar
+
+There is an exact symmetry which is invisible if the two orientations are
+estimated separately.  In the notation of (4.4) of the exact-reduction
+note, exchange
+
+\[
+ (d,e,m_1,m_2,\delta,h)
+ \longmapsto(e,d,m_2,m_1,-\delta,-h).
+\tag{4.641}
+\]
+
+The swapped Poisson variable is
+\(y=(xr+\delta)/s\).  Since \(dy=(r/s)dx\), and since \(W\) and
+\(V_t\) are real, direct substitution gives the exact kernel identity
+
+\[
+ \boxed{
+ \mathscr K_{S,R,M,K}(s,r;-\delta,-h)
+ =\frac rs e\!\left(\frac{h\delta}{rs}\right)
+  \overline{\mathscr K_{R,S,K,M}(r,s;\delta,h)}.}
+\tag{4.642}
+\]
+
+Here the order of \(K,M\) is also exchanged.  The reality of \(V_t\)
+follows directly from
+\(\overline{G_t(\bar z)g_t(\bar z)}=G_t(z)g_t(z)\) in its Mellin
+definition.  For \((r,s)=1\), additive reciprocity says
+
+\[
+ \frac{\bar r}{s}+\frac{\bar s}{r}
+ \equiv\frac1{rs}\pmod1.
+\tag{4.643}
+\]
+
+Consequently the swapped arithmetic phase and the correction in (4.642)
+satisfy
+
+\[
+ e\!\left(-\frac{h\delta\bar s}{r}\right)
+ e\!\left(\frac{h\delta}{rs}\right)
+ =e\!\left(\frac{h\delta\bar r}{s}\right).
+\tag{4.644}
+\]
+
+The Jacobian in (4.642) also changes the swapped outside factor exactly:
+
+\[
+ \frac1{\sqrt{rs}\,r}\frac rs
+ =\frac1{\sqrt{rs}\,s}.
+\tag{4.645}
+\]
+
+Thus (4.642)--(4.645) prove that the *full* swapped Poisson summand is
+the complex conjugate of the original summand.  They do not say that the
+one-sided completed coefficient \(\Lambda_{r,s}(a)\) in (15.11) is
+real: the swap changes the modulus from \(s\) to \(r\), and the kernel
+contains both the \(t\)-phase and the Fourier phase.
+
+This distinction decides whether the first-order collar bound can be
+squared.  For an arbitrary completed coefficient \(A=a+ib\), put
+\(u=2\pi x\).  Pairing only by conjugation gives the exact identity
+
+\[
+\begin{aligned}
+ &A(e(x)-1)+\overline A(e(-x)-1)\\
+ &\qquad=2a(\cos u-1)-2b\sin u.
+\end{aligned}
+\tag{4.646}
+\]
+
+Its derivative at \(x=0\) is \(-4\pi b\).  Hence, if \(b\ne0\), no
+bound of the form
+
+\[
+ |A(e(x)-1)+\overline A(e(-x)-1)|
+ \le C_A x^2
+\tag{4.647}
+\]
+
+can hold on a neighbourhood of zero.  The hoped-for quadratic estimate
+would require the extra statement
+
+\[
+ \boxed{\Im\Lambda_{r,s}(a)=0}
+\tag{4.648}
+\]
+
+after a common-modulus identification.  Neither (4.642) nor finite
+Fourier inversion supplies (4.648).  Splitting the reciprocity correction
+symmetrically as a midpoint phase changes the gauge but not the
+\(-2b\sin u\) term in (4.646).
+
+Therefore exchange symmetry proves the exact global reality of the
+off-diagonal but does **not** unconditionally improve the first-order
+near-resonance estimate to a second-order one.  The helpers
+`poisson_exchange_reciprocity_identity` and
+`centered_conjugate_pair_taylor_coefficients` check (4.643)--(4.646) with
+exact rationals; `poisson_exchange_second_order_audit` keeps
+`second_order_collar_unconditional=False`.  This rejects only the
+quadratic-collar inference.  It does not rule out using the same exchange
+identity inside a future nonsplit spectral argument.
+
+### 4.74 Common-modulus completion recovers two disjoint sublattices
+
+One possible repair of the mismatch in Section 4.73 is to lift both
+Poisson orientations to the common modulus
+
+\[
+ Q=rs,qquad A=r\bar r_s,qquad (r,s)=1,
+\tag{4.649}
+\]
+
+where \(\bar r_s\) is the inverse of \(r\pmod s\).  The original
+fraction phase is then \(e(-Ah\delta/Q)\).  Its two-dimensional finite
+Gauss kernel is
+
+\[
+ G_Q(c,v;A)
+ :=\sum_{x,y\bmod Q}
+ e\!\left(\frac{cx+vy-Axy}{Q}\right).
+\tag{4.650}
+\]
+
+This kernel is degenerate because \((A,Q)=r\).  Summing first over
+\(x\) forces
+
+\[
+ c\equiv Ay\pmod Q.
+\tag{4.651}
+\]
+
+Equation (4.651) is soluble exactly when \(r\mid c\).  If
+\(c=rc_0\), then \(\bar r_s y\equiv c_0\pmod s\), so
+
+\[
+ y\equiv rc_0\pmod s,
+\tag{4.652}
+\]
+
+with exactly \(r\) lifts modulo \(Q\).  Summing the remaining character
+over those lifts gives zero unless \(r\mid v\).  Writing \(v=rv_0\)
+in the nonzero case yields the exact identity
+
+\[
+ \boxed{
+ G_Q(c,v;A)
+ =Qr\,\mathbf1_{r\mid c}\mathbf1_{r\mid v}
+ e\!\left(\frac{r c_0v_0}{s}\right).}
+\tag{4.653}
+\]
+
+Thus the common-modulus lift does not create a new nondegenerate
+completion.  It embeds the original modulus-\(s\) completion in the
+frequency sublattice
+
+\[
+ (c,v)\in(r\mathbb Z/Q\mathbb Z)^2.
+\tag{4.654}
+\]
+
+After exchanging \(r\) and \(s\), the conjugate orientation is supported
+instead on \((s\mathbb Z/Q\mathbb Z)^2\).  Coprimality gives
+
+\[
+ (r\mathbb Z/Q\mathbb Z)^2
+ \cap(s\mathbb Z/Q\mathbb Z)^2
+ =\{(0,0)\}.
+\tag{4.655}
+\]
+
+The sole common frequency does not help: the centered multiplier at
+\((0,0)\) is \(e(0)-1=0\).  Hence no nonzero completed coefficient is
+placed at the same common-modulus frequency as its conjugate.
+
+The conductor ledger says the same thing.  In the balanced hard box,
+
+\[
+ Q=T^6,qquad Q/H=Q/L=T^{7/2}.
+\tag{4.656}
+\]
+
+The divisibility in (4.653) removes \(r=T^3\) from each dual variable,
+leaving \(T^{1/2}\) and \(T^{1/2}\), exactly the original dual scales.
+There is neither a conductor gain nor a new reality constraint.
+
+The helper `common_modulus_degenerate_gauss_identity` checks the solution
+orbit in (4.651)--(4.653) by integer congruences and finite-character
+orthogonality.  The adapter `common_modulus_exchange_audit` records the
+raw and reduced exponents and keeps
+`common_modulus_forces_real_completed_coefficient=False` and
+`second_order_collar_unconditional=False`.  Thus a common-modulus lift
+with the original, ungauged modulus \(Q=rs\) does not rescue the
+quadratic-collar route.  This conclusion does not apply to the distinct
+midpoint gauge and doubled modulus in Section 4.75.
+
+### 4.75 Midpoint gauge gives a nondegenerate Hermitian completion
+
+Normalize the physical kernel in (4.642) by
+
+\[
+ B_{r,s}(\delta,h):=s^{-1}\mathscr K_{R,S,K,M}
+ (r,s;\delta,h).
+\]
+
+Then (4.642) is exactly
+
+\[
+ B_{s,r}(-\delta,-h)
+ =e\!\left(\frac{h\delta}{rs}\right)
+  \overline{B_{r,s}(\delta,h)}.
+\tag{4.657}
+\]
 
 Put
 
 \[
- d=(m_1,n_1),\qquad m_1=dm,\qquad n_1=dn,
-\tag{4.621a}
+ \widetilde B_{r,s}(\delta,h)
+ :=e\!\left(-\frac{h\delta}{2rs}\right)B_{r,s}(\delta,h).
 \]
 
-so that (m,n\asymp T/d) and ((m,n)=1).  Equation (14) has
-
-\[
- 0<|l|\le L,\qquad L\ll \frac{T^\varepsilon}{d},
-\tag{4.621b}
-\]
-
-and its phase in (h) is
-
-\[
- e\!\left(\mp l h\frac{\bar m}{n}\right).
-\]
-
-Poisson summation gives, for every fixed (A>0),
-
-\[
- \sum_h W_0\!\left(\frac{dh}{T}\right)
- e\!\left(\mp l h\frac{\bar m}{n}\right)
- \ll_A \frac Td
- \left(1+\left|l\bar m\right|_n\right)^{-A},
-\tag{4.621c}
-\]
-
-where (|x|_n) is the least absolute residue.  Here (T/d\asymp n), so
-there is no omitted ratio of the shift length to the modulus.
-
-As (m) runs through an interval of length (T/d\asymp n), inversion
-permutes the reduced residue system modulo (n).  Multiplication by (l)
-has fibres of size at most ((l,n)).  Therefore
-
-\[
- \sum_{\substack{m\asymp T/d\\(m,n)=1}}
- \left|\sum_h W_0\!\left(\frac{dh}{T}\right)
- e\!\left(\mp l h\frac{\bar m}{n}\right)\right|
- \ll_A \frac Td(l,n)T^\varepsilon.
-\tag{4.621d}
-\]
-
-The integral (F) in equation (14) has length (d), hence
-(F\ll d).  Do not now use the pointwise inequality ((l,n)\le l).
-Instead sum the frequency gcd by the exact identity
-
-\[
- \sum_{1\le l\le L}(l,n)
- =\sum_{r\mid n}\varphi(r)\left\lfloor\frac Lr\right\rfloor
- \le L\tau(n).
-\tag{4.621e}
-\]
-
-After (4.621d), the (F)-factor, the (n\asymp T/d)-sum and
-(4.621e), the whole fixed-(d) nonzero-frequency contribution is
-
-\[
- \mathcal R_d\ll
- \frac{T^2}{d}L T^\varepsilon
- \ll \frac{T^{2+\varepsilon}}{d^2}.
-\tag{4.621f}
-\]
-
-Now (4.621b) forces (d\le T^\varepsilon).  Summing over (d) yields
-
-\[
- \boxed{\mathcal R_{\pm}^{\rm hard,unsigned}
- \ll T^{2+\varepsilon}.}
-\tag{4.621g}
-\]
-
-The approximation error already present in (14) is (H^2T^\varepsilon
-=T^{2+\varepsilon}), so (4.621g) reaches the exact local target.  The
-previous (T^{5/2}) ledger is therefore a deficit of the Watt-first route,
-not a deficit of the hard nonzero-frequency sum itself.
-
-The same calculation gives a finite post-Type coverage test.  Write the
-BBLR exponents as
-
-\[
- A=T^a,\ B=T^b,\ M_i=T^{\mu_i},\ N_i=T^{\nu_i},\ H=T^\alpha,
-\]
-
-with (a+\mu_1+\mu_2=b+\nu_1+\nu_2=P).  Reindex
-(X=am_1/d), (Y=bn_1/d); the factorization multiplicities are divisor
-bounded, so all Möbius atoms may remain in the two arbitrary outer
-coefficients.  In the BBLR orientation (BN_1\le AM_1), equivalently
-(b+\nu_1\le a+\mu_1) at exponent level, completing (h), summing the
-(X)-residues and then applying (4.621e) to the complete (l)-average gives
-the nonzero-frequency exponent
+The correction in (4.657) is now divided equally between the two
+orientations, and direct conjugation gives the same-gauge identity
 
 \[
  \boxed{
-  E_{h\text{-comp}}
- =\mu_2+(a+\mu_1-b-\nu_1)_+
-  +\max(b+\nu_1,\alpha)
-  +(a+\mu_1-\nu_2)_+.}
-\tag{4.621h}
+ \widetilde B_{s,r}(-\delta,-h)
+ =\overline{\widetilde B_{r,s}(\delta,h)}.}
+\tag{4.658}
 \]
 
-If (a+\mu_1-\nu_2<0), the nonzero (l)-family is empty by its exact
-cutoff.  Otherwise the subcell is covered whenever
+Moving the half correction from the kernel into the original arithmetic
+phase replaces (4.649) by
 
 \[
- E_{h\text{-comp}}\le P.
-\tag{4.621i}
-\]
-
-To recover the full symmetric proposition one must also allow the two
-sides to be exchanged.  Set (x=a+\mu_1) and (y=b+\nu_1).  Balance gives
-(\nu_2=P-y), so the cutoff exponent is
-
-\[
-a+\mu_1-\nu_2=x+y-P.
-\]
-
-The better of the two orientations simplifies exactly to
-
-\[
- \boxed{
- E_{h\text{-comp}}^{\rm sym}
- =P+(\alpha-\min(x,y))_+ +(x+y-P)_+.}
-\tag{4.621s}
-\]
-
-Consequently the complete coverage classification is:
-
-1. if (x+y<P), the nonzero-frequency family is empty;
-2. if (x+y=P), one of the two orientations reaches the target exactly
-   when (\min(x,y)\ge\alpha);
-3. if (x+y>P), the completion bound is strictly above (P).
-
-Thus the remaining nonzero-frequency Type cells are not diffuse: they are
-the supercritical half-polytope (x+y>P), together with the
-too-small-prefix portion (\min(x,y)<\alpha) of the boundary.  The former
-"reversed ordering" residual was an artefact of fixing one orientation.
-No assertion is made that failure of this particular completion bound is
-a lower bound for the original signed sum.
-
-Formula (4.621s) also locates the remaining power exactly.  On the
-supercritical subregion where (\min(x,y)\ge\alpha), the whole deficit is
-
-\[
- E_{h\text{-comp}}^{\rm sym}-P=x+y-P,
-\]
-
-which is precisely the exponent of the surviving nonzero (l)-frequency
-range.  In the symmetric signed hard cell (x=y=3/2), (P=2), this is one
-full power: (L=T) and the bound is (T^3) against target (T^2).  A generic
-square-root treatment of the (l)-family would recover only (T^{1/2}) and
-would recreate the old half-power deficit.  Closing this region therefore
-requires the complete (l)-range saving from its joint interaction with the
-two outer coefficient families, or an exact recombination that removes the
-range before absolute values.  On the remaining boundary portion
-(x+y=P), the deficit is instead the short shift/modulus mismatch
-(\alpha-\min(x,y)).
-
-For (4.618), (4.621h) is exactly (2).  For example, the signed cell
-(a=b=1), (mu_i=\nu_i=1/2), (alpha=1) instead gives (3), so the
-new completion is a genuine additional coverage region, not a proof of all
-Type cells.
-
-Finally, (4.621g) concerns only (l\ne0).  The (l=0) Poisson main term
-is of larger raw size and still has to be recombined across all four
-Möbius outer allocations and the BBLR orderings, together with the already
-registered zero-frequency master.  Consequently the whole coupled gate is
-not yet proved, but its formerly worst **nonzero-frequency** cell is now
-closed without any Möbius estimate.
-
-The adapters `transition_bblr_hard_h_completion_audit` and
-`transition_bblr_h_completion_subcell_audit` record (4.621a)--(4.621i).
-The adapter `transition_bblr_symmetric_h_completion_audit` records the
-left/right minimum (4.621s).
-The helpers `inverse_multiplier_unit_fibre_max` and
-`frequency_gcd_sum_identity` check the exact fibre and frequency-average
-identities on finite moduli.
-
-#### 4.68.2 The remaining BBLR main term is an exact phase-free outer product
-
-The (l=0) term can be isolated without an estimate.  Put
-
-\[
- \mathcal A_d(X)=
- \sum_{am_1=dX}\alpha_aW_1\!\left(\frac{m_1}{M_1}\right),
+ Q:=2rs,
  \qquad
- \mathcal B_d(Y)=
- \sum_{bn_1=dY}\beta_bW_3\!\left(\frac{n_1}{N_1}\right),
-\tag{4.621j}
-\]
-
-and
-
-\[
- \mathcal K_d(X,Y)=
- \sum_h W_0\!\left(\frac{dh}{H}\right)
- \int_0^\infty
- W_2\!\left(\frac{Yx}{M_2}\right)
- W_4\!\left(\frac{Xx}{N_2}\right)\,dx.
-\tag{4.621k}
-\]
-
-Since
-
-\[
- d=(am_1,bn_1),\qquad X=\frac{am_1}{d},\qquad
- Y=\frac{bn_1}{d},\qquad (X,Y)=1,
-\]
-
-the main term in BBLR Proposition 3.1 is exactly
-
-\[
- \boxed{
- \mathcal M_{\rm BBLR}
- =\sum_{d\ge1}\sum_{(X,Y)=1}
- \mathcal A_d(X)\mathcal B_d(Y)\mathcal K_d(X,Y).}
-\tag{4.621l}
-\]
-
-All sums in (4.621l) are finite because the five original smooth weights
-are compactly supported.  There is no endpoint error, no inverse residue
-and no additive phase.  The two arbitrary outer coefficients remain
-separate; in particular their two Möbius-bearing decompositions have not
-been replaced by absolute values.
-
-This identity also explains why the main term cannot be discarded
-cellwise.  For a balanced side-product exponent (P), shift exponent
-(alpha), and (d=T^eta), the (X,Y)-counts, the shift length (H/d), and
-the integral length (dM_2/(BN_1)) give the fixed-(d) absolute-value
-exponent
-
-\[
- E_{\ell=0,d}=P+\alpha-2\eta.
-\tag{4.621m}
-\]
-
-The dyadic (d)-layer contains (T^{\eta+o(1)}) values.  Hence
-
-\[
- E_{\ell=0,\rm layer}=P+\alpha-\eta,
+ A_{r,s}:=2r\bar r_s-1,
  \qquad
- \boxed{E_{\ell=0,\rm global}=P+\alpha.}
-\tag{4.621n}
+ e\!\left(-\frac{A_{r,s}h\delta}{Q}\right).
+\tag{4.659}
 \]
 
-Thus the raw phase-free main term is one complete shift length
-(T^\alpha) above the local (T^P) target.  In the all-unsigned hard cell
-this specializes to
+This coefficient is no longer degenerate.  Modulo \(r\), modulo \(s\),
+and modulo \(2\), respectively, it is \(-1,1,1\); hence
 
 \[
- \mathcal M_{\rm BBLR}^{\rm hard,unsigned}
- \ll T^{3+\varepsilon}
- \quad\text{against target }T^{2+\varepsilon}.
-\tag{4.621o}
-\]
-
-Moreover, the plus/minus shifted equations in BBLR have the same
-(l=0) term: their only orientation dependence is in the additive phase,
-which has disappeared.  The two orientations therefore do not cancel
-internally when their external weights agree.  Opposite signs from a
-larger AFE recombination are not ruled out, but must be exhibited there.
-
-Thus the
-nonzero-frequency completion does not by itself cover the whole cell.
-Inside the present DCV/square-function route, the correctly typed missing
-object is the fully recombined BBLR zero-frequency contribution
-
-\[
- \mathfrak G_{\rm BBLR}^{(0)}
- :=\sum_{\substack{\text{AFE directions, BBLR orderings,}\\
-                    \text{four outer Möbius sectors}}}
- \mathcal M_{\rm BBLR},
+ (A_{r,s},Q)=1,
  \qquad
- \mathfrak G_{\rm BBLR}^{(0)}
- \stackrel{?}{\ll}T^{P+\varepsilon}.
-\tag{4.621p}
+ A_{r,s}^{\,2}\equiv1\pmod Q.
+\tag{4.660}
 \]
 
-The estimate in (4.621p) is not yet proved.  Nor is
-\(\mathfrak G_{\rm BBLR}^{(0)}\) identified with the pre-Cauchy
-\(\mathcal M_{\rm res}\) in (9.447): they live at different stated stages,
-so they cannot be literally cancelled without first constructing an
-adapter that undoes or bypasses the DCV reorganization.
-The finite helper `bblr_zero_frequency_reindex_sides` verifies (4.621j)--
-(4.621l) for arbitrary rational coefficient fixtures and deliberately sets
-`registered_zero_master_identification_proved=False`.  This separates the
-remaining main-term adapter from the now-bounded nonzero-frequency error.
-The adapter `transition_bblr_zero_main_term_audit` records (4.621m)--
-(4.621o) and the shift-orientation boundary with exact rational exponents.
-
-There is no further coordinate obstruction to constructing a pair kernel
-of the same algebraic shape as the finite master schema (9.437)--(9.448).
-This does **not** yet identify the analytic stage: the BBLR comparison may
-already lie inside a DCV/square-function reorganization, whereas
-\(\mathcal M_{\rm res}\) in (9.447) is pre-Cauchy.  Put (x=dX), (y=dY),
-so the coprimality in (4.621l) is equivalent to (d=(x,y)), and define the
-labelled product kernel
+For \(r,s>1\), set \(U=r\bar r_s\) and \(V=s\bar s_r\), using the least
+positive inverses.  The integer \(U+V\) is congruent to one modulo both
+\(r\) and \(s\), lies strictly between one and \(2rs\), and therefore
+\(U+V=1+rs\).  It follows that
 
 \[
- W_h^{\rm BBLR}(x,y):=
- W_0\!\left(\frac{(x,y)h}{H}\right)
- \int_0^\infty
- W_2\!\left(\frac{y u}{(x,y)M_2}\right)
- W_4\!\left(\frac{x u}{(x,y)N_2}\right)\,du.
-\tag{4.621q}
+ \boxed{A_{s,r}\equiv-A_{r,s}\pmod{2rs}.}
+\tag{4.661}
 \]
 
-Writing
-
-\[
- A(x)=\sum_{am_1=x}\alpha_aW_1(m_1/M_1),\qquad
- B(y)=\sum_{bn_1=y}\beta_bW_3(n_1/N_1),
-\]
-
-equation (4.621l) becomes the literal pair-kernel identity
+Consequently the doubled-modulus Gauss kernel is exactly nondegenerate.
+Summing first over \(x\pmod Q\) forces the unique congruence
+\(y\equiv A_{r,s}c\pmod Q\), since \(A_{r,s}^{-1}=A_{r,s}\), and gives
 
 \[
  \boxed{
- \mathcal M_{\rm BBLR}
- =\sum_h\sum_{x,y\ge1}A(x)B(y)W_h^{\rm BBLR}(x,y).}
-\tag{4.621r}
+ \sum_{x,y\bmod Q}
+ e\!\left(\frac{cx+vy-A_{r,s}xy}{Q}\right)
+ =Qe\!\left(\frac{A_{r,s}cv}{Q}\right).}
+\tag{4.662}
 \]
 
-Thus each original nonzero shift (h), together with its AFE direction,
-BBLR ordering and dyadic label, can be retained in a
-secondary-zero-packet-shaped kernel; no inverse phase or gcd endpoint is
-lost.  What is still missing is not a kernel-coordinate map.  It is the
-analytic proof that this BBLR object is at the same pre-Cauchy stage as
-(9.440), that after summing every Type sector and ordering the functions
-(A,B) in (4.621r) are exactly the completed left/right coefficients in
-(9.439), and that the resulting labelled packet family is exhaustive.
-Only after all three facts are proved can this BBLR object be compared
-literally with the old pre-Cauchy master.  Independently, proving the bound
-in (4.621p) inside the DCV route requires the exhaustive ordering/sector
-sum and a (T^alpha)-saving estimate for that recombined object.
-
-The finite helper `bblr_zero_frequency_reindex_sides` now verifies all
-three equal values: the original factorized sum, the primitive
-((d,X,Y))-sum, and the labelled product-pair sum (4.621r).  It marks the
-coordinate bijection and shift-label preservation as true, while keeping
-`pre_cauchy_stage_identification_proved=False`,
-`completed_coefficient_identification_proved=False` and
-`packet_family_exhaustive=False`.
-
-#### 4.68.3 The supercritical nonzero family must be grouped by full reciprocal phase
-
-The factorization-blind reindexing is not restricted to (l=0).  Let a
-supplied finite BBLR packet retain its original ((h,delta))-provenance and
-write
+By (4.661), the exchanged orientation has the complex-conjugate phase
+at the *same* frequency pair \((c,v)\pmod Q\).  To fix the normalization,
+let \(\widetilde\Phi_{r,s}(h,\delta)\) be the midpoint-gauged physical
+smooth amplitude and put
 
 \[
- \mathscr W(d,X,Y;h,\delta,l)
+ \widetilde F_{r,s}(x,y)
+ :=\sum_{\substack{h\equiv x\ (Q)\\\delta\equiv y\ (Q)}}
+ \widetilde\Phi_{r,s}(h,\delta),
+ \qquad
+ \widetilde\Theta_{r,s}(c,v)
+ :=\frac1{HL}\sum_{x,y\bmod Q}\widetilde F_{r,s}(x,y)
+ e\!\left(-\frac{cx+vy}{Q}\right).
+\tag{4.662a}
 \]
 
-for its complete smooth weight, integral and nonzero-(l) phase.  The
-analytic adapter from the original coupled kernel to this labelled BBLR
-packet is still an obligation; the following finite statement says that
-once those labels are supplied, no Type-factorization step is allowed to
-delete them.
+These are finite sums.  Fourier inversion and (4.662) give the exact
+centered completed operator
 
-With (A_d,B_d) as in (4.621j), exact finite reindexing gives
+\[
+ \mathfrak H_q[\Psi]
+ :=\sum_{\substack{r\asymp T^3,\ s\asymp T^3\\
+                    (r,s)=1,\ (q,rs)=1\\qr,qs\le N}}
+ \mu(r)\mu(s)p_N(qr)p_N(qs)
+ \frac{RS}{rs}
+ \sum_{c,v\bmod Q}
+ \widetilde\Theta_{r,s}(c,v)
+ \left\{e\!\left(\frac{A_{r,s}cv}{2rs}\right)-1\right\}.
+\tag{4.663}
+\]
+
+With this definition there is no dyadic replacement in the prefactor:
 
 \[
  \boxed{
- \mathscr S_{\rm BBLR}^{\ne0}
- =\sum_d\sum_{(X,Y)=1}A_d(X)B_d(Y)
-   \sum_{h,\delta}\sum_{l\ne0}
-   \mathscr W(d,X,Y;h,\delta,l).}
-\tag{4.621t}
+ \mathfrak S_q[\Psi]
+ =\frac{HL}{2RS}\mathfrak H_q[\Psi].}
+\tag{4.663a}
 \]
 
-Thus every Type sector having the same products (am_1=dX) and (bn_1=dY)
-recombines inside (A_d(X)) and (B_d(Y)) before any absolute value.  Both
-coupled products remain visible:
+Here \(q\le N/\max(R,S)\), and the displayed balanced hard box has
+\(R=S=T^3\), hence \(q=1\); in general the same formula is read inside
+each fixed \(q,R,S,H,L\) dyadic box.  The physical variables have
+\(h\asymp H=T^{5/2}\) and \(|\delta|\asymp L=T^{5/2}\), while finite
+completion modulo \(Q=2rs\asymp T^6\) and repeated finite summation by
+parts give, for least absolute representatives and every fixed \(A>0\),
 
 \[
- a_0:=h\delta,\qquad b_0:=hl,\qquad
- \phi(d,X,Y;h,l):=-\frac{b_0\bar X}{Y}\pmod1.
-\tag{4.621u}
+ |\widetilde\Theta_{r,s}(c,v)|
+ \ll_{A,W}
+ \left(1+\frac{H|c|_Q}{Q}\right)^{-A}
+ \left(1+\frac{L|v|_Q}{Q}\right)^{-A}.
+\tag{4.664}
 \]
 
-In particular the all-unsigned outer cell cannot be estimated and summed
-afterwards: its positive coefficient is cancelled, if at all, only inside
-the complete aggregated (A_d,B_d).
+Thus the effective windows are
+\(|c|_Q\ll(Q/H)(\log T)^C\) and
+\(|v|_Q\ll(Q/L)(\log T)^C\), with transform tails kept separately in
+the logarithmic ledger; (4.663) itself remains an exact finite sum.
 
-The correct (TT^*) resonance is equality of the full rational phases in
-(4.621u), not equality of either scalar product.  For two rows (u,v), it
-is exactly
+The multiplier in (4.663) vanishes identically on the row \(c=0\) and
+the column \(v=0\).  This is exact centering, not a bound.  It does not,
+however, make the modular phase small away from those axes.
+
+The exponent ledger is critical rather than contradictory.  The ambient
+cardinality of \((r,s,c,v)\) is
 
 \[
- \frac{h_ul_u\overline{X_u}}{Y_u}
+ T^{3+3+7/2+7/2}=T^{13},
+ \qquad
+ \frac{HL}{Q}=T^{-1}.
+\]
+
+Thus (4.663a) makes the local target \(|\mathfrak S_q[\Psi]|\ll
+T^6(\log T)^{-B}\) equivalent, after this completion, to the single
+Hermitian gate
+
+\[
+ \boxed{
+ |\mathfrak H_q[\Psi]|
+ \ll_{B,W}T^7(\log T)^{-B}.}
+\tag{4.665}
+\]
+
+Square root of the ambient cardinality is \(T^{13/2}\), so (4.665)
+allows exactly \(T^{1/2}\) beyond square root.  The doubled conductor is
+offset by the prefactor \(HL/Q=T^{-1}\); there is no positive-power
+contradiction.  Conversely, (4.660)--(4.662) alone do not prove (4.665):
+the phase is a moving composite-modulus involution phase, both long
+variables carry Möbius weights, and the coefficient is joint in all four
+variables.  No published theorem adapter has yet been verified for this
+operator.  Accordingly the deterministic audit records
+`midpoint_hermitian_published_bound=False`.  Section 4.75 supplies a new
+exact alternative local gate, not an unconditional proof of it.
+
+The helper `midpoint_common_modulus_involution_identity` verifies
+(4.660)--(4.662) by finite integer arithmetic.  The adapter
+`midpoint_hermitian_completion_audit` records the exponents \(6,7/2,13,
+-1,7,13/2\) and the remaining half-power allowance exactly.
+
+### 4.76 Exact Salié-phase match does not satisfy the published adapter
+
+The phase in (4.663) has an exact relation to the Hermitian
+Kloosterman-fraction sum studied by Dong--Robles--Zeindler.  The identity
+\(r\bar r_s+s\bar s_r=1+rs\) from Section 4.75 gives
+
+\[
+ \boxed{
+ \frac{A_{r,s}cv}{2rs}
  \equiv
- \frac{h_vl_v\overline{X_v}}{Y_v}\pmod1.
-\tag{4.621v}
+ \frac{cv}{2}\left(\frac{\bar r_s}{s}
+                    -\frac{\bar s_r}{r}\right)
+ +\frac{cv}{2}\pmod1.}
+\tag{4.666}
 \]
 
-Distinct values of both (h\delta) and (hl) can satisfy (4.621v).  Hence a
-partition by the original product frequency does not diagonalize the new
-operator.
+Thus \(e(A_{r,s}cv/(2rs))\) is their antisymmetric Hermitian phase with
+numerator \(a=cv\) and denominator parameter \(b=2\), multiplied by
+\((-1)^{cv}\).  The parity factor depends only on the dual frequencies
+and may be absorbed into \(\widetilde\Theta\).  This is an exact phase
+match, but not a theorem-hypothesis match.
 
-After lifting a finite row family to a common cyclic modulus (Q), exact
-character orthogonality gives
+Indeed, Theorems 1.4 and 1.8 claimed in version 1 of
+[arXiv:2601.00292](https://arxiv.org/abs/2601.00292) concern a *fixed*
+integer \(a\) and coefficients of the separated form \(\alpha_r\beta_s\).
+The midpoint operator instead has
+
+\[
+ |a|=|cv|\ll T^7(\log T)^{2C},
+ \qquad
+ \widetilde\Theta_{r,s}(c,v)
+ \text{ joint in }(r,s,c,v),
+\tag{4.667}
+\]
+
+and requires cancellation after summing the entire \(c,v\) family.
+Even if both failures are ignored and the withdrawn displayed estimate
+is inserted one frequency pair at a time, it gives no saving at the
+outer dual corner.  With \(M=N=T^3\), bounded \(r,s\) coefficients and
+\(a=T^7\), the two \(L^2\) norms contribute \(T^3\), while the remaining
+factors in the claimed Theorem 1.4 contribute
+
+\[
+ T^{7/4}T^{1/2}T^1T^{-1/4}=T^3.
+\]
+
+The resulting \(T^6\) is exactly the trivial \(r,s\) size.  In the
+smaller region \(a\le T^6\), the same formal substitution gives
+\(T^{23/4}\), a saving only of \(T^{1/4}\) in the inner two variables and
+no estimate for the outer \(c,v\) average.
+
+There is also a non-negotiable proof-status issue.  The authors' version
+2 comment states that equation (2.53) omitted an \(L^2\) factor, changing
+
+\[
+ L^5\longrightarrow L^7,
+\tag{4.668}
+\]
+
+so the argument no longer yields the advertised improved bound.  The
+paper's Hermitian claim is therefore not an unconditional input.  The
+newer fixed-modulus bilinear Kloosterman-sum theorems of Pascadi,
+Milićević--Qin--Wu, and Blomer--Pascadi have a different kernel: a fixed
+modulus and a bilinear average of classical Kloosterman sums.  Formula
+(4.663) instead has the moving composite modulus \(2rs\), an individual
+involution phase, and four jointly weighted variables.  No direct
+adapter follows from those statements.
+
+The helper `midpoint_salie_phase_identity` checks (4.666), including the
+otherwise easy-to-miss parity term, with exact rationals.  The adapter
+`midpoint_published_hermitian_adapter_audit` records the formal inner
+exponents \(6\) and \(23/4\), all three hypothesis failures, and keeps
+`withdrawn_claim_closes_midpoint_gate=False`.  Therefore the correct next
+problem is not to cite a Hermitian theorem, but to prove a four-variable
+Möbius-weighted extension of (4.665).
+
+### 4.77 Unitary-divisor roots collapse the two Möbius weights
+
+The midpoint coefficient exposes a second exact reindexing.  Put
+
+\[
+ n:=rs,
+ \qquad
+ \mathscr A(n):=\{A\pmod{2n}:A^2\equiv1\pmod{2n}\}.
+\tag{4.669}
+\]
+
+Only squarefree \(n\) contribute.  For such \(n\), the map
+
+\[
+ (r,s)\longmapsto
+ A_{r,s}=2r\bar r_s-1\pmod{2n},
+ \qquad rs=n,quad(r,s)=1,
+\tag{4.670}
+\]
+
+is a bijection from ordered coprime factorizations of \(n\) onto
+\(\mathscr A(n)\).  For odd \(p\mid n\), the inverse map places \(p\)
+in \(r\) when \(A\equiv-1\pmod p\) and in \(s\) when
+\(A\equiv1\pmod p\).  If \(2\mid n\), the residue modulo four resolves
+the otherwise ambiguous prime two: \(A\equiv-1\pmod4\) places it in
+\(r\), while \(A\equiv1\pmod4\) places it in \(s\).  Equivalently, if
+\(n_{\mathrm{odd}}=n/(n,2)\), then
+
+\[
+ r_{\mathrm{odd}}=(A+1,n_{\mathrm{odd}}),
+ \qquad
+ s_{\mathrm{odd}}=(A-1,n_{\mathrm{odd}}),
+ \qquad
+ \#\mathscr A(n)=2^{\omega(n)}.
+\tag{4.671}
+\]
+
+The two Möbius factors now collapse without an estimate:
+
+\[
+ \boxed{\mu(r)\mu(s)=\mu(rs)=\mu(n)}
+ \qquad ((r,s)=1).
+\tag{4.672}
+\]
+
+For \(A\in\mathscr A(n)\), let \(r_A,s_A\) be the factors recovered by
+(4.671), including the modulo-four rule, and let
+\(\mathscr A_{R,S}(n)\) impose \(r_A\asymp R\), \(s_A\asymp S\), the
+endpoint conditions, and \(qr_A,qs_A\le N\).  Formula (4.663) becomes
+the exact finite reindexing
+
+\[
+\begin{aligned}
+ \mathfrak H_q[\Psi]
+ ={}&\sum_{n}\mu(n)
+ \sum_{\substack{A\in\mathscr A_{R,S}(n)\\(q,n)=1}}
+ p_N(qr_A)p_N(qs_A)\frac{RS}{n}\\
+ &\quad\times\sum_{c,v\bmod 2n}
+ \widetilde\Theta_{r_A,s_A}(c,v)
+ \left\{e\!\left(\frac{Acv}{2n}\right)-1\right\}.
+\end{aligned}
+\tag{4.673}
+\]
+
+Here \(RS/4\le n\le4RS\); at the balanced hard box
+\(n\asymp T^6\), the physical numerator \(|h\delta|\) has exponent
+five, and the completed numerator \(|cv|\) has exponent seven.  The root
+multiplicity \(2^{\omega(n)}\le\tau(n)=n^{o(1)}\) has no positive-power
+cost.  Thus (4.673) genuinely replaces two Möbius variables of length
+\(T^3\) by one Möbius variable of length \(T^6\) and a subpower root
+fiber.
+
+This is not yet a one-dimensional Möbius exponential sum to which a
+published theorem applies.  The balanced-root filter is nonmultiplicative,
+and the inner coefficient retains its joint dependence on
+\((n,A,c,v)\); in particular, the Chinese-remainder representative of
+\(A\) couples all prime factors of \(n\).  The exact remaining root-trace
+gate is
 
 \[
  \boxed{
- Q\sum_\phi\left|\sum_{u:\phi_u=\phi}c_u\right|^2
- =Q\sum_u|c_u|^2
-  +Q\sum_{\substack{u\ne v\\\phi_u=\phi_v}}
-       c_u\overline{c_v}.}
-\tag{4.621w}
+ \left|\sum_{n\asymp T^6}\mu(n)
+       \sum_{A\in\mathscr A_{T^3,T^3}(n)}
+       \mathcal G_q(n,A)\right|
+ \ll_{B,W}T^7(\log T)^{-B},}
+\tag{4.674}
 \]
 
-The second term in (4.621w) is signed and can cancel the positive identity
-diagonal.  Taking absolute values of phase classes, or applying Cauchy
-before the Type sectors have recombined, deletes precisely this possible
-source of the full (L)-saving.
+where \(\mathcal G_q(n,A)\) is exactly the weighted \(c,v\)-sum in
+(4.673).  A useful next theorem would have to exploit cancellation in
+\(\mu(n)\) before taking absolute values over the root fiber.  The helper
+`midpoint_unitary_divisor_root_bijection` verifies (4.670)--(4.672),
+including the even-prime branch, on finite integers.  The adapter
+`midpoint_unitary_divisor_audit` records the exponents \(6,6,5,7\) and
+keeps `unitary_root_trace_bound_verified=False`.
 
-On the supercritical region with (\min(x,y)\ge\alpha), put
-(\lambda=x+y-P>0).  Equations (4.621s) and (4.621w) give the exact budget
+### 4.78 Root-Farey large sieve leaves the same deficit in both gauges
 
-\[
- E_{\rm raw}=P+\lambda,qquad
- S_{\rm required}=\lambda,qquad
- S_{\rm generic\ square\ root}=\frac\lambda2,qquad
- S_{\rm still\ missing}=\frac\lambda2.
-\tag{4.621x}
-\]
-
-At the signed hard cell, (\lambda=1), so the remaining signed phase-class
-gain is exactly (T^{1/2}) after a generic square-root treatment.  This is
-not a proof of that gain; it identifies its only surviving location inside
-the BBLR route.
-
-The finite helper `bblr_nonzero_frequency_reindex_sides` verifies
-(4.621t)--(4.621u) with nonzero (l), both original labels and both products
-unchanged.  The helpers `bblr_reciprocal_phase_collision_audit` and
-`bblr_phase_group_ttstar_sides` verify (4.621v)--(4.621w), including a
-fixture in which distinct product frequencies collide and the signed cross
-term reduces the positive identity diagonal.  The exponent adapter
-`transition_bblr_phase_group_saving_audit` records (4.621x) and keeps
-`required_phase_class_cancellation_proved=False`.
-
-There is now also an exact row-level adapter from this labelled object to
-the existing four-sector double-Möbius split.  For coprime \(r,s\), every
-nonzero term in each of the \(I/I,I/II,II/I,II/II\) sectors retains both
+The fraction attached to a root is reduced:
 
 \[
- a_0=h\delta,
- \quad e\!\left(-\frac{a_0\bar r}{s}\right),
+ \left(A,2n\right)=1,
  \qquad
- b_0=hl,
- \quad e\!\left(-\frac{b_0\bar r}{s}\right),
-\tag{4.621y}
+ \theta_{n,A}:=\frac{A}{2n}\pmod1.
+\tag{4.675}
 \]
 
-as well as the exact factorizations of both Möbius variables.  Summing all
-four sector coefficients still gives \(\mu(r)\mu(s)\); neither product is
-replaced by an independent coefficient before recombination.  The finite
-helper `coupled_product_double_mobius_certificate`, with its optional
-nonzero `poisson_frequency`, verifies this statement exactly.
-
-Equation (4.621y) is deliberately weaker than the missing analytic gate.
-It proves that the Type split itself need not destroy either reciprocal
-phase, but it does **not** identify the row variables \(r,s\) with every
-completed BBLR \(X,Y\) row, prove exhaustiveness of that stage map, or
-bound the signed phase classes in (4.621w).  Consequently
-`both_reciprocal_phases_preserved=True` is a finite algebraic invariant,
-not the required \(T^{\lambda/2}\) analytic saving.
-
-#### 4.68.4 Joint \((h,l)\)-completion alone has an exact near-diagonal resonance
-
-It is natural to try to recover the full \(L\)-saving in (4.621x) by
-estimating the two BBLR variables \(h,l\) jointly.  Equation (14) of BBLR
-does contain their joint phase
+Moreover, (4.670)--(4.671) show that \(\theta_{n,A}\) uniquely recovers
+the ordered factorization.  Thus the root fractions are distinct.  For
+\(n_1,n_2\asymp T^6\), ordinary reduced-fraction spacing gives only
 
 \[
- e\!\left(-hl\frac{\bar X}{Y}\right)e(lx).
-\tag{4.621z}
+ \|\theta_{n_1,A_1}-\theta_{n_2,A_2}\|
+ \ge\frac1{4n_1n_2}gg T^{-12}.
+\tag{4.676}
 \]
 
-However, this local two-variable step cannot be uniform in \(X,Y\).  Put
+This denominator growth prevents a generic additive large sieve from
+using the reindexing.  On the physical side, the product coefficient
+\(\nu(a)\), \(a=h\delta\), has length exponent five and the exact
+product-energy estimate has exponent five, up to one logarithm.  There
+are \(T^{6+o(1)}\) root points.  Cauchy over the points followed by the
+large sieve therefore has exponent
 
 \[
- X=Y+c,\qquad (c,Y)=1,
+ \frac62+\frac{\max(5,12)+5}{2}
+ =\frac{23}{2}.
+\tag{4.677}
 \]
 
-and, for any \(0<h<Y\), define
-\(r=[h\bar X]_Y\in\{0,\ldots,Y-1\}\).  Since
-\(X\equiv c\pmod Y\), multiplication by \(X\) gives the exact integer
-coordinate
+The physical local target has exponent six, so the deficit is
+\(23/2-6=11/2\).  On the completed side, \(a=cv\) and its product
+energy both have exponent seven.  The identical calculation gives
 
 \[
- \boxed{rc-h=kY,\qquad k\in\mathbb Z.}
-\tag{4.621za}
+ \frac62+\frac{\max(7,12)+7}{2}
+ =\frac{25}{2},
+ \qquad
+ \frac{25}{2}-7=\frac{11}{2}.
+\tag{4.678}
 \]
 
-Thus the principal incidence \(k=0\) is exactly \(h=cr\), and on it
+These are optimistic bounds: the actual smooth coefficient is joint in
+the root point and the numerator variables, so the separation required
+by the displayed large-sieve calculation has not been justified.  Even
+after granting it, the same positive deficit remains in both gauges.
+Consequently the unitary-root reindexing is useful only if \(\mu(n)\)
+is kept inside a Type-II or dispersion step; taking absolute values over
+the root points first is ruled out.  The helper
+`midpoint_root_fraction_identity` checks reduction and exact recovery,
+while `midpoint_root_farey_large_sieve_audit` records both \(11/2\)
+deficits and keeps `root_farey_large_sieve_closes_gate=False`.
+
+### 4.79 Root CRT exposes the exact Möbius Type-II kernel
+
+Apply the approved finite identity to the single outer Möbius factor in
+(4.673).  For \(n>U\),
 
 \[
- h\bar X=cr\bar c\equiv r\pmod Y.
-\tag{4.621zaa}
+ \mu(n)=-\sum_{de=n,\ d>U}c_U(d)\mu(e),
+ \qquad
+ c_U(d)=\sum_{j\mid d,\ j\le U}\mu(j).
+\tag{4.679}
 \]
 
-Choose a central residue \(r_0\) and evaluate the continuous BBLR variable
-at \(x=r_0/Y\).  The combined phase in (4.621z) is then represented by
+The Type-II cells have \(d>U\) and \(e>V\).  Since the contributing
+\(n\) are squarefree, \((d,e)=1\).  A root modulo \(2de\) splits
+uniquely into roots \(A_d\pmod{2d}\) and \(A_e\pmod{2e}\).  Put
 
 \[
- \frac{l(r_0-r)}{Y}.
-\tag{4.621zb}
+ y_d:=\frac{A_d-1}{2}\pmod d,
+ \qquad
+ y_e:=\frac{A_e-1}{2}\pmod e.
 \]
 
-On the signed hard scale take
+Ordinary CRT applied to \(y=(A-1)/2\pmod{de}\) gives
 
 \[
- Y\asymp T^{3/2},\qquad c\asymp T^{1/2},\qquad
- r,r_0\asymp T^{1/2},\qquad h=cr\asymp T,\qquad l\asymp T.
+ y\equiv y_d\,e\bar e_d+y_e\,d\bar d_e\pmod{de},
+ \qquad
+ A=2y+1\pmod{2de}.
+\tag{4.680}
 \]
 
-These are forced scales, not a free example.  Slow \(l\)-phase requires
-\(r\asymp xY\asymp Y/L\), while the principal equation \(h=cr\)
-then gives
+Here \(\bar e_d\) and \(\bar d_e\) are the indicated inverses.  Dividing
+(4.680) by \(de\) yields the exact phase factorization, valid for every
+integer \(k\),
 
 \[
- \boxed{c\asymp\frac{H}{r}\asymp\frac{HL}{Y}.}
-\tag{4.621zab}
+ \boxed{
+ e\!\left(\frac{kA}{2de}\right)
+ =e\!\left(\frac{k}{2de}\right)
+  e\!\left(\frac{k y_d\bar e_d}{d}\right)
+  e\!\left(\frac{k y_e\bar d_e}{e}\right).}
+\tag{4.681}
 \]
 
-At \(H=L=T\) and \(Y=T^{3/2}\), (4.621zab) is precisely
-\(c=T^{1/2}\).
+This handles the even prime as well: the roots are odd, so the two
+congruences for \((A-1)/2\) are compatible even though the moduli
+\(2d,2e\) have common factor two.
 
-More importantly, the principal incidence is not a generic shifted
-outer-correlation row.  Before Poisson summation, the plus-oriented BBLR
-equation divided by \(d=(am_1,bn_1)\) is
+At the balanced central Type-II cell, write \(D=E=T^3\) and use the
+physical numerator \(k:=-h\delta\), so \(|k|\asymp T^5\).  This sign
+matches the midpoint arithmetic phase in (4.659).  After grouping equal
+products into the coefficient \(\nu(k)\), the remaining sum is exactly
+of the form
 
 \[
- Xm_2-Yn_2=h.
+\begin{aligned}
+ \mathcal{RTII}_{q}(D,E,K)
+ :={}&\sum_{|k|\asymp K}\nu(k)
+ \sum_{\substack{d\asymp D,\ e\asymp E\\
+                  (d,e)=1,\ de\ {\rm squarefree}}}
+ c_U(d)\mu(e)\\
+ &\quad\times
+ \sum_{\substack{A_d^2\equiv1\ (2d)\\
+                  A_e^2\equiv1\ (2e)}}
+ \Omega_q(d,e,A_d,A_e,k)\\
+ &\quad\times e\!\left(\frac{k}{2de}
+       +\frac{k y_d\bar e_d}{d}
+       +\frac{k y_e\bar d_e}{e}\right).
+\end{aligned}
+\tag{4.682}
 \]
 
-On \(k=0\), equations (4.621za)--(4.621zaa) give
+The weight \(\Omega_q\) is the original coupled smooth kernel together
+with the balanced-root condition recovered from the combined root in
+(4.680), both endpoint tapers, \((q,de)=1\), and
+\(qr_A,qs_A\le N\).  No factor in it has been separated.  The root
+fibers have size \((de)^{o(1)}\).  The completed version replaces the
+single \(k\)-sum by \(c,v\asymp T^{7/2}\) and uses \(k=cv\); it is
+exactly equivalent by (4.663a).
+
+Consequently one sufficient central-cell theorem is
 
 \[
- Xm_2-Yn_2=(X-Y)r,
+ \boxed{
+ |\mathcal{RTII}_{q}(T^3,T^3,T^5)|
+ \ll_{B,W}T^6(\log T)^{-B}.}
+\tag{4.683}
 \]
 
+Formula (4.682) is a three-scale Möbius-weighted Type-II sum with fixed
+exponents \((3,3,5)\).  It retains \(c_U(d)\) on one side and \(\mu(e)\)
+on the other.  The published Hermitian Kloosterman-fraction theorems do
+not apply termwise: their numerator is fixed, whereas here the two
+numerators \(k y_d\) and \(k y_e\) vary with the root fibers, and
+\(\Omega_q\) is joint in every variable.  The subtraction of one in
+the completed formula (4.673) is still exact: summing
+\(\widetilde\Theta(c,v)\) over all \(c,v\) selects the physical residue
+class \(h\equiv\delta\equiv0\pmod Q\), which is empty because
+\(0<H,L<Q\) and both dyadic variables are nonzero.  Therefore the
+completed frequency formula may use \(e(Acv/Q)-1\), while its exact
+physical inverse (4.682) has \(e(-Ah\delta/Q)\) and no subtraction.
+Thus (4.683) is an exact new local gate, not a proved estimate.  The helper
+`midpoint_root_crt_phase_identity` checks (4.680)--(4.681) with exact
+rationals, and `midpoint_root_type_ii_audit` keeps
+`completed_centering_exact=True`,
+`physical_zero_residue_vanishes=True`,
+`physical_centered_subtraction_present=False`, and
+`root_type_ii_bound_verified=False`.
+
+### 4.80 Root fibers unfold to four classical fraction variables
+
+Write the ordered factorization represented by \(A_d\) as
+\(d=d_r d_s\), with \(A_d\equiv-1\pmod {2d_r}\) and
+\(A_d\equiv1\pmod {2d_s}\), and define \(e=e_r e_s\) in the same
+way.  The four factors are pairwise coprime on the squarefree support.
+The idempotents \(y_d=(A_d-1)/2\) and \(y_e=(A_e-1)/2\) then satisfy
+
+\[
+ \boxed{
+ y_d\equiv-d_s\overline{d_s}_{d_r}\pmod d,
+ \qquad
+ y_e\equiv-e_s\overline{e_s}_{e_r}\pmod e.}
+\tag{4.684}
+\]
+
+Indeed the first displayed representative is \(-1\) modulo \(d_r\)
+and zero modulo \(d_s\), which uniquely characterizes \(y_d\); the
+second identity is identical.  Substitution into (4.681) gives the
+exact four-factor phase
+
+\[
+ \boxed{
+ e\!\left(\frac{kA}{2de}\right)
+ =e\!\left(
+    \frac{k}{2de}
+   -\frac{k\,\overline{d_s e}_{d_r}}{d_r}
+   -\frac{k\,\overline{e_s d}_{e_r}}{e_r}
+          \right).}
+\tag{4.685}
+\]
+
+A denominator equal to one contributes zero to the corresponding
+fraction.  The combined root has negative sign precisely on
+\(r=d_r e_r\) and positive sign precisely on \(s=d_s e_s\), so (4.685)
+is the midpoint phase for the original ordered factorization
+\(de=rs\), not merely a congruent surrogate.
+
+After dyadic subdivision, (4.682) is therefore a sum of the exact form
+
+\[
+\begin{aligned}
+ \mathcal F_q(D_r,D_s,E_r,E_s,K)
+ :={}&\sum_{|k|\asymp K}\nu(k)
+ \sum_{\substack{d_r\asymp D_r,\ d_s\asymp D_s\\
+                  e_r\asymp E_r,\ e_s\asymp E_s\\
+                  d_r d_s e_r e_s\ {\rm squarefree}}}
+ c_U(d_r d_s)\mu(e_r)\mu(e_s)\\
+ &\quad\times
+ \Omega_q(d_r d_s,e_r e_s,A_{d_r,d_s},A_{e_r,e_s},k)\\
+ &\quad\times e\!\left(
+   \frac{k}{2d_r d_s e_r e_s}
+  -\frac{k\,\overline{d_s e_r e_s}_{d_r}}{d_r}
+  -\frac{k\,\overline{e_s d_r d_s}_{e_r}}{e_r}
+                         \right).
+\end{aligned}
+\tag{4.686}
+\]
+
+The squarefree condition in (4.686) is equivalent to individual
+squarefreeness plus all six cross-coprimality conditions.  The weight is
+exactly the joint weight from (4.682): it still contains the original
+coupled transform, the \(q\)-coprimality, both mollifier tapers, and the
+four support restrictions.  In particular no tensor separation is
+asserted.
+
+On the balanced central face the complete dyadic scale list can be
+parametrized by \(0\le\alpha\le3\):
+
+\[
+ D_r=T^\alpha,
+ \quad D_s=T^{3-\alpha},
+ \quad E_r=T^{3-\alpha},
+ \quad E_s=T^\alpha,
+ \quad K=T^5.
+\tag{4.686a}
+\]
+
+Thus \(D_rD_s=E_rE_s=D_rE_r=D_sE_s=T^3\).  Up to powers of
+\(\log T\) from the dyadic partition, the precise local inequality
+sufficient on every such box is
+
+\[
+ \boxed{
+ |\mathcal F_q(T^\alpha,T^{3-\alpha},
+                    T^{3-\alpha},T^\alpha,T^5)|
+ \ll_{B,W}T^6(\log T)^{-B}
+ \quad(0\le\alpha\le3).}
+\tag{4.687}
+\]
+
+The endpoint \(\alpha=3\) has
+\((d_r,d_s,e_r,e_s)=(d,1,1,e)\).  Formula (4.685) becomes
+
+\[
+ e\!\left(\frac{k}{2de}-\frac{k\bar e_d}{d}\right)
+ =e\!\left(\frac{k(2d\bar d_e-1)}{2de}\right),
+\tag{4.688}
+\]
+
+where the equality follows from additive reciprocity.  Hence this
+endpoint recovers the original hard Kloosterman fraction with weight
+\(c_U(d)\mu(e)\); root unfolding does not delete the endpoint sector.
+It does, however, replace the abstract root fiber by the explicit
+four-variable family (4.686), so any successful Cauchy--reciprocity--
+complementary-divisor--Kuznetsov argument can now be stated directly on
+the variables it must average.  The exact helper
+`midpoint_root_four_factor_phase_identity` verifies (4.684)--(4.685)
+and recovery of \(r,s\); the ledger keeps
+`completed_centering_exact=True`,
+`physical_zero_residue_vanishes=True`,
+`physical_centered_subtraction_present=False`, and
+`four_factor_type_ii_bound_verified=False`.
+
+### 4.81 One physical Poisson step gives the exact resonance lattice
+
+There is a useful deterministic saving inside each fixed balanced
+root point before any Möbius estimate.  Fix coprime \(r,s>1\), put
+
+\[
+ Q=2rs,
+ \qquad
+ A=2r\bar r_s-1,
+ \qquad
+ U=Q/L,
+\tag{4.689}
+\]
+
+and retain the joint physical amplitude as
+\(\Phi_{r,s,h}(\delta/L)\).  With the convention
+\(\widehat f(\xi)=\int_{\mathbb R}f(x)e(-x\xi)\,dx\), Poisson
+summation in \(\delta\) alone gives the exact identity
+
+\[
+ \sum_{\delta\in\mathbb Z}
+ \Phi_{r,s,h}(\delta/L)e\!\left(-\frac{Ah\delta}{Q}\right)
+ =L\sum_{v\in\mathbb Z}
+ \widehat\Phi_{r,s,h}\!\left(L\left(v+\frac{Ah}{Q}\right)\right).
+\tag{4.690}
+\]
+
+All other variables remain frozen in (4.690); no separation of the
+joint kernel is used.  The already proved dyadic derivative bounds give,
+for every fixed \(C>0\),
+
+\[
+ \left|\widehat\Phi_{r,s,h}\!\left(\frac{Lu}{Q}\right)\right|
+ \ll_{C,W}\left(1+\frac{|u|}{U}\right)^{-C}.
+\tag{4.690a}
+\]
+
+For a term of (4.690), define the integer \(u:=Ah+vQ\).  Since
+\(A\equiv-1\pmod {2r}\) and \(A\equiv1\pmod {2s}\), there are unique
+integers \(a,b\) satisfying
+
+\[
+ \boxed{
+ h=ra+sb,
+ \qquad
+ u=ra-sb,
+ \qquad
+ a=\frac{h+u}{2r},
+ \quad b=\frac{h-u}{2s}.}
+\tag{4.691}
+\]
+
+Conversely (4.691) gives \(u\equiv Ah\pmod Q\), because it gives the
+two defining congruences modulo \(2r\) and \(2s\).  Thus (4.691) is a
+bijection, including the even-prime branch; it is exactly the
+determinant-line resonance in root coordinates.
+
+For \(|h|\le2H\) and \(|u|\le X\), (4.691) gives the elementary lattice
+count
+
+\[
+ \#\{(h,u)\}
+ \le
+ \left(2+\frac{2H+X}{r}\right)
+ \left(2+\frac{4H}{s}\right).
+\tag{4.692}
+\]
+
+Indeed the first factor bounds the possible integers \(a\) from
+\(|2ra|=|h+u|\le2H+X\); after \(a\) is fixed, the interval of possible
+\(b\) cut out by \(|h|\le2H\) has length at most \(4H/s\).  Applying
+(4.692) on the shells \(2^{j-1}U<|u|\le2^jU\), and then summing the
+decay (4.690a), proves
+
+\[
+ \sum_{h\asymp H}\left|
+  \sum_{\delta\asymp L}
+   \Phi_{r,s,h}(\delta/L)e\!\left(-\frac{Ah\delta}{Q}\right)
+                         \right|
+ \ll_{C,W}
+ L\left(1+\frac{H+U}{r}\right)
+  \left(1+\frac{H}{s}\right).
+\tag{4.692a}
+\]
+
+At the central box
+\(r,s\asymp T^3\), \(H=L=T^{5/2}\), \(Q\asymp T^6\), and
+\(U\asymp T^{7/2}\).  Hence (4.692a) is \(O_W(T^3)\), a proved
+\(T^2\) saving over the raw \(HL=T^5\) physical pair.  Summing this
+pointwise bound absolutely over the \(T^6\) outer root points gives
+only \(T^9\).  The remaining sufficient inequality is therefore the
+explicit signed outer gate
+
+\[
+ \boxed{
+ \left|\sum_{\substack{r,s\asymp T^3\\(r,s)=1}}
+ \mu(r)\mu(s)p_N(r)p_N(s)\,\mathcal B_{r,s}\right|
+ \ll_{B,W}T^6(\log T)^{-B},
+ \qquad
+ |\mathcal B_{r,s}|\ll_W T^3.}
+\tag{4.693}
+\]
+
+This is not a new independent square-root conjecture.  On the
+cancellation sector write
+
+\[
+ g=(|a|,|b|),
+ \qquad a=gv_0,
+ \qquad b=-gj_0,
+ \qquad h=g\delta_0,
+ \qquad (j_0,v_0)=1.
+\]
+
+Then the first equation in (4.691) is exactly
+
+\[
+ \boxed{rv_0-sj_0=\delta_0,}
+ \qquad
+ \frac ug=rv_0+sj_0.
+\tag{4.694}
+\]
+
+The first identity in (4.694) is (4.155), with precisely the scales
+\(j_0,v_0\asymp T^{1/2}/g\),
+\(\delta_0\asymp T^{5/2}/g\), and line length
+\(T^{5/2}g\) from (4.161).  Consequently the signed outer estimate
+(4.693) is the physical-Poisson realization of the already isolated
+unimodular square-root family \(\mathrm{USR}_B\) in (4.168).  The
+pointwise \(T^2\) physical saving proves the resonance count but does
+not bypass the two-affine-form Möbius correlation.
+
+Thus the physical oscillation supplies two of the five powers needed
+from the raw \((h,\delta)\)-family, while (4.693) still requires the
+full square-root saving \(T^3\) across the \(T^6\) two-Möbius outer
+points.  No cited published result proves this joint square-root gate.
+The helper `midpoint_involution_resonance_lattice_identity` checks
+(4.691) exactly, `midpoint_physical_poisson_audit` records the exponent
+ledger, and records `physical_poisson_route_is_independent=False` and
+`outer_mobius_square_root_verified=False` at the same proof boundary as
+(4.168).
+
+### 4.82 Full root trace is a Salié sum but the adapter is nonuniform
+
+The preceding root reindexing has a genuine metaplectic interpretation
+when the balanced-root filter is temporarily removed.  Let \(n>1\) be
+odd and squarefree, let \(\chi_n\) be the Jacobi symbol, and put
+
+\[
+ \tau_n:=\sum_{y\bmod n}\chi_n(y)e(y/n),
+ \qquad
+ \mathcal W_k(n):=\sum_{A^2\equiv1\ (n)}e(kA/n).
+\tag{4.695}
+\]
+
+For \((k,n)=1\), set \(b\equiv k^2\bar4\pmod n\) and define
+
+\[
+ T(1,b;n):=\sum_{x\bmod n}^{*}\chi_n(x)
+ e\!\left(\frac{x+b\bar x}{n}\right).
+\]
+
+The Salié evaluation is the exact identity
+
+\[
+ \boxed{T(1,k^2\bar4;n)=\tau_n\mathcal W_k(n).}
+\tag{4.696}
+\]
+
+For completeness, (4.696) holds coefficientwise in the group ring of
+\(\mathbb Z/n\mathbb Z\):
+
+\[
+ \sum_x^*\chi_n(x)[x+k^2\bar4\bar x]
+ =\left(\sum_y\chi_n(y)[y]\right)
+  \left(\sum_{A^2\equiv1\ (n)}[kA]\right).
+\tag{4.696a}
+\]
+
+Thus this step uses no analytic estimate.  If \(k=2a\), the change of
+variable \(x=ay\) also gives
+
+\[
+ T(1,a^2;n)=\chi_n(a)S(a,a;n),
+ \qquad
+ S(a,a;n):=\sum_y^*\chi_n(y)e\!\left(\frac{a(y+\bar y)}n\right),
+\tag{4.697}
+\]
+
+which is precisely the diagonal Salié sum in Duke--Friedlander--Iwaniec,
+[Weyl Sums for Quadratic Roots, (7.1)--(7.3)](https://www.math.ucla.edu/~wdduke/preprints/weylsums.pdf).
+Their Theorem 7.1, with the auxiliary parameters suppressed in the most
+favourable way, bounds a smooth fixed-\(a\) modulus sum by
+
+\[
+ x^{47/118+35/59+\varepsilon}
+ =x^{117/118+\varepsilon}
+ \qquad(a<x).
+\]
+
+At \(x=T^6\) and \(a\le T^5\), this is
+
+\[
+ T^{351/59+\varepsilon};
+ \qquad
+ 6-\frac{351}{59}=\frac3{59}.
+\tag{4.698}
+\]
+
+So the published theorem does give a fixed-numerator power saving for
+the unrestricted odd full-root trace.  It does not prove the MWKF gate.
+There are five separate failures:
+
+1. the actual midpoint modulus is \(2n\), and reducing it to the odd
+   trace requires parity splits; the complete even branch has not been
+   matched to the theorem;
+2. \(\mathscr A_{T^3,T^3}(n)\) is a balanced subset of the roots,
+   whereas the Salié sum contains every ordered factorization;
+3. the modulus carries \(\mu(n)\), which is not an allowed smooth
+   coefficient in Theorem 7.1;
+4. \(a\) moves through a family of exponent five and the coupled weight
+   depends jointly on the modulus, root, and numerator, while the theorem
+   fixes \(a\);
+5. the theorem excludes its square-\(a\) exceptional term.
+
+Even discarding all five hypothesis failures and summing (4.698)
+absolutely over the \(T^5\) physical numerators gives exponent
+
+\[
+ 5+\frac{351}{59}=\frac{646}{59},
+ \qquad
+ \frac{646}{59}-6=\frac{292}{59}>0.
+\tag{4.698a}
+\]
+
+Hence fixed-numerator Salié cancellation is short by \(T^{292/59}\)
+before the genuine adapter failures are charged.  A viable metaplectic
+route would require a spectral large sieve simultaneous in the moving
+numerator, the Möbius-weighted modulus, and the balanced root test.
+The helper `odd_root_trace_salie_coefficient_identity` verifies (4.696a)
+with integer coefficient tables, while `root_salie_adapter_audit` keeps
+`salie_adapter_closes_root_gate=False`.
+
+### 4.82a Root trace is exactly a square-input Weyl sum
+
+There is a second exact representation which does not require an odd
+squarefree modulus or a Gauss-sum normalization.  Let \(m>1\) and
+\((\delta,m)=1\).  Multiplication by \(\delta\) modulo \(m\) restricts
+to the bijection
+
+\[
+ A^2\equiv1\pmod m
+ \quad\longleftrightarrow\quad
+ x=\delta A\pmod m,
+ \qquad x^2\equiv\delta^2\pmod m.
+\]
+
+Consequently, for every integer \(h\),
+
+\[
+ \boxed{
+ \sum_{A^2\equiv1\ (m)}e\!\left(\frac{h\delta A}{m}\right)
+ =\sum_{x^2\equiv\delta^2\ (m)}e\!\left(\frac{hx}{m}\right).}
+\tag{4.698b}
+\]
+
+This is an equality of coefficient tables in
+\(\mathbb Z[\mathbb Z/m\mathbb Z]\), not an asymptotic evaluation.  It
+also holds for even and composite \(m\).  The coprimality condition is
+essential: the physical shifted-divisor sum does not impose
+\((\delta,2n)=1\), so (4.698b) directly treats only the unit-gcd
+stratum.  For \(D=(\delta,2n)>1\), multiplication by \(\delta\) can
+identify different involutions and the congruence
+\(x^2\equiv\delta^2\pmod{2n}\) can contain additional roots.  Those
+strata must retain their exact valuation data; they cannot be inserted
+into the right side of (4.698b) unchanged.
+
+On the central physical box the exact length ledger is
+
+\[
+ m\asymp T^6,\qquad h\asymp T^{5/2},\qquad
+ \delta\asymp T^{5/2},\qquad \delta^2\asymp T^5.
+\tag{4.698c}
+\]
+
+Thus the square input occupies an interval of relative exponent \(5/6\)
+with respect to the modulus but is supported on only \(T^{5/2}\)
+squares.  This identifies a precise modular-root Weyl-sum adapter.  It
+does not, however, satisfy the published hypotheses:
+
+* Dunn--Zaharescu, [Theorem 1.2](https://arxiv.org/abs/1903.03416),
+  assumes a fixed prime modulus and a variable interval in the range
+  \(p^{2/5}\le N\le p^{3/5}\); the relative exponent \(5/6\) in
+  (4.698c) is outside that range.
+* Dunn--Kerr--Shparlinski--Zaharescu,
+  [Theorem 1.7](https://arxiv.org/abs/1908.10143), specialized with
+  \(M=1\), \(N=T^5\), and a coefficient supported on the
+  \(T^{5/2}\) squares, gives respectively
+
+  \[
+   T^{163/48+o(1)},qquad T^{25/8+o(1)}.
+  \]
+
+  The second is better, but the trivial cardinality bound for the same
+  fixed-frequency square-supported sum is \(T^{5/2}\).  Hence this
+  specialization loses, rather than saves,
+
+  \[
+   \frac{25}{8}-\frac52=\frac58.
+  \tag{4.698d}
+  \]
+
+  Absolute summation over \(h\asymp T^{5/2}\) gives exponent \(45/8\),
+  against the raw exponent \(5\), with the same \(5/8\) deficit.
+* Kerr--Shkredov--Shparlinski--Zaharescu,
+  [Corollary 2.1](https://www.cambridge.org/core/journals/journal-of-the-institute-of-mathematics-of-jussieu/article/energy-bounds-for-modular-roots-and-their-applications/7781F2066CF922D2B609F39EDF98AF0F),
+  gives exponent \(81/16\) under the same dense-interval specialization,
+  which is still larger.
+
+The last two results are stated for a fixed prime modulus.  The actual
+modulus is the moving squarefree composite \(2n\), weighted by
+\(\mu(n)\).  Moreover a prime \(n\asymp T^6\) has no ordered
+factorization \(n=rs\) with \(r,s\asymp T^3\), so the prime-modulus
+specialization is empty on the balanced-root sector.  None of these
+theorems accepts the balanced factorization test, the moving
+Möbius-weighted modulus, the \(h\)-average, or the original joint smooth
+kernel.  Their \(m^{o(1)}\) loss also cannot be relabelled as the
+polylogarithmic loss required at the zero-margin endpoint.
+
+For the unit-gcd stratum, the exact remaining Weyl-form local gate is
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\left|\sum_{n\asymp T^6}\mu(n)
+   \sum_{\substack{h,\delta\asymp T^{5/2}\\(\delta,2n)=1}}
+   \sum_{\substack{x^2\equiv\delta^2\ (2n)\\
+                    \mathcal B_{2n}(x,\delta)}}
+   \Omega_q(n,x,h,\delta)
+   e\!\left(\frac{hx}{2n}\right)\right|
+   \ll_{B,W}T^6(\log T)^{-B}.
+ \end{aligned}}
+\tag{4.698e}
+\]
+
+Here \(\mathcal B_{2n}(x,\delta)\) means that
+\(A\equiv\bar\delta x\pmod{2n}\) recovers factors
+\(r_A,s_A\asymp T^3\), and \(\Omega_q\) is the unreplaced joint
+physical weight from (4.682).  The raw \((n,h,\delta)\)-volume has
+exponent \(6+5/2+5/2=11\), so (4.698e) asks for a total saving of
+\(T^5\).
+This is an equivalent coordinate form of the unit-gcd part of the
+physical root gate, not a proof of it; the \(D>1\) valuation strata
+remain additional.  The helper `root_trace_square_input_weyl_identity`
+checks (4.698b) coefficientwise, and
+`root_weyl_square_input_audit` records all displayed rational exponents,
+`physical_base_is_uniformly_coprime_to_modulus=False`, and
+`root_weyl_square_input_route_closes_gate=False`.
+
+### 4.83 Joint Salié averaging is the existing BCR endpoint
+
+Opening the Salié sum does not create a previously unused generic
+numerator average.  For odd \(c\) and \((2a,c)=1\), the exact evaluation
+used by Duke--Friedlander--Iwaniec is
+
+\[
+ \boxed{
+ c^{-1/2}S(a,a;c)
+ =\varepsilon_c\left(\frac ac\right)
+  \sum_{\substack{mn=c\\(m,n)=1}}
+  e\!\left(2a\left(\frac{\bar m}{n}-\frac{\bar n}{m}\right)\right).}
+\tag{4.699}
+\]
+
+On the midpoint parity branch on which \(k=4a\), (4.666) identifies
+the phase in (4.699), up to the already recorded parity factor, with
+the full-root phase \(e(kA/(2c))\).  The balanced-root filter is exactly
+\(m,n\asymp T^3\), while \(a\asymp T^5\).  Therefore simultaneous
+averaging over the numerator with arbitrary coefficients is precisely
+the Bettin--Chandee trilinear input at
+
+\[
+ A=T^5,
+ \qquad M=N=T^3.
+\]
+
+Substitution in their two terms gives
+
+\[
+ \mathrm{BC}_1
+ =\frac{17}{20}(5+3+3)+\frac34
+ =\frac{101}{10},
+ \qquad
+ \mathrm{BC}_2
+ =\frac78(3+3)+5+\frac38
+ =\frac{85}{8}.
+\tag{4.700}
+\]
+
+The larger exponent is \(85/8\); against the physical target six, the
+exact deficit is
+
+\[
+ \boxed{\frac{85}{8}-6=\frac{37}{8}.}
+\tag{4.701}
+\]
+
+This is exactly the \(\delta=3\) endpoint already present in (4.49).
+Hence neither the Salié evaluation nor a generic spectral large sieve
+improves the published BCR coverage.  Any improvement must keep
+\(\mu(m)\mu(n)\) inside the joint estimate rather than replace those
+coefficients by their \(L^2\) norms.
+
+The square-numerator exception can also be isolated exactly.  For
+positive physical variables, \(h\delta\) is a square if and only if
+there are unique positive \(x,y\) and one squarefree \(g\) such that
+
+\[
+ \boxed{h=gx^2,\qquad \delta=gy^2.}
+\tag{4.702}
+\]
+
+Consequently, for dyadic lengths \(H,L\),
+
+\[
+ \#\{h\asymp H,\ \delta\asymp L:h\delta\text{ is a square}\}
+ \ll \sum_{g\le2\min(H,L)}
+       \sqrt{\frac Hg}\sqrt{\frac Lg}
+ \ll \sqrt{HL}\log(2HL).
+\tag{4.702a}
+\]
+
+At \(H=L=T^{5/2}\), this square-parameter family has exponent \(5/2\).
+DFI Theorem 4 does have a genuine main term for an unrestricted modulus
+average with square parameter.  That main term cannot be transferred to our
+balanced-root sum.  In the proof of that theorem it is produced only by
+the pieces called \(S_1\) and \(\bar S_1\), where one factor is at most
+\(y\).  At \(a=T^5\), \(x=T^6\), and fixed congruence modulus, their
+choices (5.4) and (5.14) are exactly
+
+\[
+ y=T^{7/5},\qquad z=T^{174/59}.
+\tag{4.702b}
+\]
+
+Our filter has both factors of length \(T^3\), and
+\(3>174/59>7/5\).  It lies entirely in their long--long piece \(S_3\),
+which is bounded by Theorem H and has no exceptional main term.  Thus
+the earlier transfer of a modulus-length \(T^6\) square main term into
+the balanced sector was invalid; no Möbius cancellation of such a term
+is required.
+
+For each fixed square numerator \(a=t^2\asymp T^5\), DFI Theorem H,
+formula (1.5), with \(M=N=T^3\), gives the exact exponent
+
+\[
+ \|\alpha\|_2\|\beta\|_2
+ (a+MN)^{3/8}(M+N)^{11/48}
+ \ll T^{3+18/8+33/48+\varepsilon}
+ =T^{95/16+\varepsilon}.
+\tag{4.702c}
+\]
+
+The theorem accepts \(\alpha_m=\mu(m)\) and \(\beta_n=\mu(n)\), but
+uses them only through their \(L^2\) norms.  Summing (4.702c) absolutely
+over the \(T^{5/2}\) possible square roots gives
+
+\[
+ T^{5/2+95/16}=T^{135/16},
+ \qquad \frac{135}{16}-6=\frac{39}{16}.
+\tag{4.702d}
+\]
+
+Thus the square sector is smaller than the full numerator family, but
+the published balanced Hermitian estimate is still short by
+\(T^{39/16}\) at the MWKF target.  The exact remaining square-sector
+gate is
+
+\[
+ \boxed{
+ \left|\sum_{t\asymp T^{5/2}}\nu(4t^2)
+  \sum_{n\asymp T^6}\mu(n)
+  \sum_{A\in\mathscr A_{T^3,T^3}(n)}
+  \Omega_q(n,A,4t^2)e\!\left(\frac{2t^2A}{n}\right)
+       \right|
+ \ll_{B,W}T^6(\log T)^{-B}.}
+\tag{4.703}
+\]
+
+Formula (4.703) retains the balanced-root test and the actual joint
+kernel.  The helper `square_product_common_kernel_identity` verifies
+(4.702), while `root_salie_joint_average_audit` records the BCR
+correspondence, the corrected \(39/16\) square-sector deficit, and
+`balanced_root_filter_excludes_dfi_square_main=True`.
+
+### 4.84 Quadratic Gauss completion linearizes the square numerator
+
+There is one further exact transformation of (4.703), but its raw
+length ledger goes in the wrong direction.  Put
+
+\[
+ G(a;c):=\sum_{x\bmod c}e\!\left(\frac{ax^2}{c}\right).
+\]
+
+For odd coprime \(r,s\) and every integer \(t\), completing the two
+quadratic phases gives the finite identity
+
+\[
+\boxed{
+ G(-2r;s)G(2s;r)
+ e\!\left(2t^2\left(\frac{\bar r}{s}
+                  -\frac{\bar s}{r}\right)\right)
+ =\sum_{x\bmod s}\sum_{y\bmod r}
+ e\!\left(\frac{-2rx^2+4tx}{s}
+           +\frac{2sy^2+4ty}{r}\right).}
+\tag{4.704}
+\]
+
+Indeed, translation by \(t\bar r\bmod s\) in the first Gauss sum and
+by \(t\bar s\bmod r\) in the second gives (4.704) term by term.  The
+usual odd Gauss evaluation shows that
+
+\[
+ \eta(r,s):=\frac{\sqrt{rs}}{G(-2r;s)G(2s;r)},
+ \qquad |\eta(r,s)|=1,
+\tag{4.705}
+\]
+
+and \(\eta(r,s)\) depends only on the residue classes of \(r,s\bmod8\).
+In particular, its cross Jacobi factor is exactly
+
+\[
+ \left(\frac{-2r}{s}\right)\left(\frac{2s}{r}\right)
+ =\left(\frac{-1}{s}\right)
+  \left(\frac2s\right)\left(\frac2r\right)
+  (-1)^{(r-1)(s-1)/4}.
+\]
+
+Thus there is no uncontrolled quadratic character joining the two
+long factors.
+
+The new phase has a useful exact factorization.  Set
+
+\[
+ z:=rx+sy,\qquad w:=sy-rx.
+\]
+
+Then
+
+\[
+ \frac{-2rx^2+4tx}{s}+\frac{2sy^2+4ty}{r}
+ \equiv \frac{2z(w+2t)}{rs}\pmod 1.
+\tag{4.706}
+\]
+
+Consequently the square root \(t\) is linear rather than quadratic.
+However, on the hard box
+
+\[
+ r\asymp s\asymp T^3,\qquad t\asymp T^{5/2},\qquad
+ x\bmod s,\quad y\bmod r,\quad (r,s)=1,\quad 2\nmid rs,
+\]
+
+the map \((x,y)\mapsto z\bmod rs\) is a bijection.  Smooth summation in
+\(t\) restricts \(z\) to intervals of total length
+\(rs/T^{5/2}=T^{7/2}\) around the finitely many resonant residue
+classes.  Even granting rapid decay away from those intervals, the
+pointwise absolute ledger is therefore
+
+\[
+ T^{-3}\cdot T^{7/2}\cdot T^{5/2}=T^3.
+\]
+
+Here \(T^{-3}\) is the Gauss normalization \((rs)^{-1/2}\).  Direct
+absolute summation of the original square family costs only
+\(T^{5/2}\).  Thus Gauss completion loses \(T^{1/2}\) unless the
+quadratic residue variables and the two Möbius weights are estimated
+jointly.
+
+Writing \(\Omega_q(r,s,t)\) for the exact dyadic coupled weight inherited
+from (4.703), the remaining transformed gate is
+
+\[
+\boxed{
+ \left|\sum_{\substack{r\asymp T^3,\ s\asymp T^3\\
+                       (r,s)=1,\ 2\nmid rs}}
+ \frac{\mu(r)\mu(s)\eta(r,s)}{\sqrt{rs}}
+ \sum_{x\bmod s}\sum_{y\bmod r}
+ \sum_{t\asymp T^{5/2}}
+ \nu(4t^2)\Omega_q(r,s,t)
+ e\!\left(\frac{2(rx+sy)(sy-rx+2t)}{rs}\right)
+ \right|
+ \ll_{B,W}T^6(\log T)^{-B}.}
+\tag{4.707}
+\]
+
+No published estimate located in this audit accepts the simultaneous
+quadratic residue sums, the two Möbius modulus weights, and the coupled
+weight in (4.707).  The helper
+`square_salie_double_gauss_identity` verifies (4.704), (4.706), and the
+mod-eight character formula by exact coefficient tables.  The ledger
+`square_salie_gauss_completion_audit` therefore keeps
+`gauss_completion_improves_square_sector=False` and does not close the
+MWKF gate.
+
+### 4.85 The sufficient Möbius fourth moment is one shifted determinant gate
+
+The top separated fourth moment (4.562) can be reduced exactly one step
+further.  This does not make the componentwise sufficient condition
+necessary for the original signed kernel, but it isolates its complete
+arithmetic content without a generic mean-value bound.
+
+For fixed smooth \(U\) supported in \([1,2]\), put
+
+\[
+ P_U(t):=\sum_n\frac{\mu(n)U(n/T)}{n^{1/2+it}},
+ \qquad
+ C_U(m):=\sum_{ab=m}\mu(a)\mu(b)U(a/T)U(b/T).
+\tag{4.708}
+\]
+
+Then the finite Dirichlet-polynomial identity
+
+\[
+ P_U(t)^2=\sum_m\frac{C_U(m)}{m^{1/2+it}}
+\]
+
+is exact.  With the Fourier convention
+\(\widehat\Omega(\xi)=\int_{\mathbb R}\Omega(u)e(-u\xi)\,du\), direct
+integration gives
+
+\[
+\boxed{
+ \int_{\mathbb R}|P_U(t)|^4\Omega(t/T)\,dt
+ =T\sum_{m,n}
+ \frac{C_U(m)\overline{C_U(n)}}{\sqrt{mn}}
+ \widehat\Omega\!\left(
+   \frac{T}{2\pi}\log\frac mn\right).}
+\tag{4.709}
+\]
+
+There is no approximate functional equation in (4.709).  All sums are
+finite, and \(m,n\in[T^2,4T^2]\).
+
+The multiplicative diagonal has only a logarithmic cost.  If
+\(ab=cd\), set
+
+\[
+ g=(a,c),\qquad a=gx,\qquad c=gy,qquad(x,y)=1.
+\]
+
+Then \(xb=yd\), so there is a unique positive integer \(k\) with
+
+\[
+ \boxed{a=gx,\qquad c=gy,\qquad b=yk,\qquad d=xk.}
+\tag{4.710}
+\]
+
+Conversely (4.710) always gives \(ab=cd\).  The dyadic supports force
+\(x/y\) into a fixed compact subinterval of \((0,\infty)\), and for
+fixed coprime \((x,y)\) both \(g\) and \(k\) have
+\(O(1+T/\max(x,y))\) choices.  Therefore
+
+\[
+ \sum_m\frac{|C_U(m)|^2}{m}
+ \ll_U T^{-2}
+ \sum_{\substack{(x,y)=1\\x\asymp y}}
+ \left(1+\frac{T}{\max(x,y)}\right)^2
+ \ll_U\log(2T).
+\]
+
+Thus the diagonal in (4.709) already has the required
+\(T\log T\) size.
+
+For the off-diagonal write \(h=ab-cd\).  Since
+\(ab,cd\asymp T^2\), the Fourier argument in (4.709) is comparable to
+\(h/T\) whenever \(|h|=o(T^2)\).  Every fixed shell
+\(|h|\ge T^{1+\eta}\), \(\eta>0\), is power-negligible after using an
+arbitrarily high Schwartz seminorm of \(\widehat\Omega\).  The
+polylogarithmic collar \(|h|=T^{1+o(1)}\) must remain inside the local
+estimate; it is not discarded as a tail.
+
+The exact sufficient off-diagonal gate is consequently the single sum
+
+\[
+\boxed{
+ \left|
+ \sum_{\substack{a,b,c,d\asymp T\\ab\ne cd}}
+ \frac{\mu(a)\mu(b)\mu(c)\mu(d)
+       U(a/T)U(b/T)\overline{U(c/T)U(d/T)}}
+      {\sqrt{abcd}}
+ \widehat\Omega\!\left(
+   \frac{T}{2\pi}\log\frac{ab}{cd}\right)
+ \right|
+ \ll_{U,\Omega}(\log T)^{1+o(1)}.}
+\tag{4.711}
+\]
+
+On the critical collar \(|h|=T^{1+o(1)}\), the unnormalised solution
+family \(ab-cd=h\) has exponent three: one exponent for \(h\) and two
+for a fixed determinant fiber.  The four factors in (4.711) contribute
+the normalization \(T^{-2}\).  Hence (4.711) requires exactly the
+fixed saving
+
+\[
+ T^3\longrightarrow T^2,
+\]
+
+with additional logarithmic cancellation for the global little-oh.
+This is the same one-power determinant obstruction as (4.473), now
+written as one shifted \((\mu*\mu)\) variance rather than a spectral
+Gram form.  Published short-interval Möbius theorems give logarithmic
+decay from the raw variance but not this diagonal-scale saving.
+
+The helper `balanced_product_diagonal_parameterization` verifies
+(4.710) on integers.  The adapter
+`mobius_product_shifted_variance_audit` records the exponent ledger
+\(3\to2\), retains the polylogarithmic transition collar, and keeps
+`shifted_mobius_determinant_bound_proved=False`.  Finally,
+(4.711) is equivalent to the separated component (4.562), but the
+original signed DCV superposition does not require every such component;
+no converse is asserted.
+
+### 4.86 The smooth determinant-surface theorem does not accept the Möbius gate
+
+Ganguly--Guria, Theorem 1.1, proves the following precise fixed-shift
+statement.  If \(V\in C_c^\infty([1,2])\), \(r\ne0\), and
+
+\[
+ S_V(X,r):=
+ \sum_{ad-bc=r}V(a/X)V(b/X)V(c/X)V(d/X),
+\]
+
+then
+
+\[
+ \boxed{
+ S_V(X,r)=\mathcal M_V(X,r)
+     +O_\varepsilon\!\left(|r|^\theta X^{1+\varepsilon}\right),
+ \qquad \theta\le \frac7{64}.}
+\tag{4.712}
+\]
+
+The support forces \(|r|<3X^2\), and their explicit main term has size
+\(X^2\) in the range relevant here.  This is a theorem for the
+unweighted count with the same smooth function in all four variables.
+It does not state an estimate with four arithmetic coefficient
+sequences.  Remark 1.4 says that the method can also handle
+\(\alpha x_1x_2-\beta x_3x_4=r\), but it gives no dependence on
+\(\alpha,\beta\).  Consequently that remark is not a uniform theorem
+adapter for the divisor parameters produced by a Möbius Type I/II
+identity.
+
+At the critical collar in (4.711), put \(X=T\) and
+\(1\le |r|\le T\mathscr L^A\), where \(A\) is fixed.  The published
+pointwise error in (4.712) is then
+
+\[
+ |r|^{7/64}X^{1+\varepsilon}
+ \le T^{71/64+\varepsilon}\mathscr L^{7A/64}.
+\tag{4.713}
+\]
+
+Even under the strictly stronger, unproved assumption that (4.712)
+accepted the four Möbius weights in (4.711) with the same error,
+absolute summation over the \(T^{1+o(1)}\) shifts would give
+
+\[
+ \boxed{
+ T^{1+o(1)}T^{71/64+\varepsilon}
+   =T^{135/64+\varepsilon+o(1)},
+ \qquad
+ \frac{135}{64}-2=\frac7{64}.}
+\tag{4.714}
+\]
+
+Thus the fixed-shift theorem still misses the unnormalised target
+\(T^2\mathscr L^{1+o(1)}\) by the exact power \(T^{7/64}\).  Assuming
+Ramanujan would remove this positive power, but the resulting
+\(T^{2+\varepsilon}\) ledger supplies neither the required logarithmic
+little-oh nor cancellation of the \(T^2\)-sized main term for each
+shift.  With the theorem as actually stated, the complete implication
+ledger is
+
+\[
+ \boxed{
+ \text{smooth unweighted fixed shift}
+ \not\Longrightarrow
+ \text{four-Möbius shifted determinant},
+ \quad
+ \text{absolute residual deficit}=\frac7{64}.}
+\tag{4.715}
+\]
+
+The only place where the factor \(r^\theta\) enters their proof is the
+pointwise treatment of a Hecke coefficient at \(nr/l\).  Averaging the
+shift before applying the spectral estimate is therefore the natural
+next candidate for eliminating \(7/64\); it still requires a new
+mechanism that transports the four Möbius weights through the initial
+Poisson step.  The adapter `ganguly_guria_determinant_audit` records
+these exact exponents and keeps
+`ganguly_guria_route_closes_mobius_gate=False`.
+
+### 4.87 Published short-interval variance classes exclude the restricted inverse-zeta square
+
+There is a second exact interpretation of the exponent \(3\to2\) in
+(4.711).  The product variable has size \(X=T^2\), while the Fourier
+kernel restricts additive differences to the window
+\(H=X/T=T\).  For a fixed smooth compactly supported additive window
+\(\phi\), the diagonal-scale local variance required by a smoothed
+Gallagher reduction is
+
+\[
+ \boxed{
+ \int_X^{2X}
+ \left|\sum_m C_U(m)\phi\!\left(\frac{m-x}{H}\right)\right|^2dx
+ \ll XH(\log X)^{1+o(1)},
+ \qquad X=T^2,\ H=T.}
+\tag{4.716}
+\]
+
+The generic absolute ledger is \(XH^2=T^4\); (4.716) is
+\(XH=T^3\).  Thus this formulation requires the same one power of
+\(T\) as (4.711), now as square-root variance in intervals of length
+\(X^{1/2}\).
+
+Darbar--Das prove precise short-interval variance formulae for classes
+of the form
+
+\[
+ \mathcal F_{\alpha,\beta,k}
+   =\{\mathbf 1 *_k h:h\in\mathcal M_{\alpha,\beta}
+                          \cup\mathcal G_{\alpha,\beta}\}.
+\tag{4.717}
+\]
+
+This does not include the coefficient needed here.  Even before the
+dyadic factor restriction in \(C_U\), the full convolution
+\(f=\mu*\mu\) has Dirichlet series \(F(s)=\zeta(s)^{-2}\).  If it were
+written in the \(k=1\) form \(f=\mathbf1*h\), then necessarily
+
+\[
+ H(s)=\zeta(s)^{-3},
+ \qquad
+ \sum_{j\ge0}h(p^j)z^j=(1-z)^3
+   =1-3z+3z^2-z^3.
+\tag{4.718}
+\]
+
+The class \(\mathcal M_{\alpha,\beta}\) is squarefree-supported in its
+auxiliary variable, so it forces \(h(p^2)=0\), contrary to
+\(h(p^2)=3\).  The class \(\mathcal G_{\alpha,\beta}\) is completely
+multiplicative; \(h(p)=-3\) would force \(h(p^2)=9\), again contrary
+to (4.718).  Finally, the actual \(C_U\) in (4.708) retains the two
+separate restrictions \(a,b\asymp T\) and is not a multiplicative
+arithmetic function.
+
+Therefore neither the full inverse-zeta square nor its required
+restricted divisor component is an input to the published theorem:
+
+\[
+ \boxed{
+ \text{Darbar--Das variance class}
+ \not\ni \mu*\mu,
+ \qquad
+ \text{and a fortiori it does not contain }C_U.}
+\tag{4.719}
+\]
+
+The helper `mobius_triple_convolution_prime_power_coefficients`
+checks the local polynomial in (4.718) coefficient by coefficient.
+The adapter `darbar_das_short_variance_audit` records the exact
+\(4\to3\) variance ledger and keeps
+`darbar_das_route_closes_mobius_gate=False`.
+
+### 4.88 Ratio Mellin inversion restores a multiplicative inverse-zeta family
+
+The failure of multiplicativity of \(C_U\) is removable.  For
+\(q>0\) and \(y\in\mathbb R\), define
+
+\[
+ F_q(y):=U(\sqrt q\,e^y)U(\sqrt q\,e^{-y}),
+ \qquad
+ \widehat F_q(\tau):=\int_{\mathbb R}F_q(y)e^{-i\tau y}\,dy.
+\tag{4.720}
+\]
+
+If \(m=ab\), \(q=m/T^2\), and
+\(y=\frac12\log(a/b)\), then the two arguments in (4.720) are exactly
+\(a/T\) and \(b/T\).  Fourier inversion in the ratio coordinate gives
+
+\[
+\boxed{
+ C_U(m)=\frac1{2\pi}\int_{\mathbb R}
+ \widehat F_{m/T^2}(\tau)f_\tau(m)\,d\tau,}
+\qquad
+ f_\tau(m):=
+ \sum_{ab=m}\mu(a)\mu(b)(a/b)^{i\tau/2}.
+\tag{4.721}
+\]
+
+This is an exact finite divisor identity followed by ordinary Fourier
+inversion; no truncation occurs in (4.721).  For fixed \(\tau\), the
+coefficient \(f_\tau\) is multiplicative and
+
+\[
+\boxed{
+ \sum_{m\ge1}\frac{f_\tau(m)}{m^s}
+ =\frac1{\zeta(s-i\tau/2)\zeta(s+i\tau/2)},
+ \qquad \Re s>1.}
+\tag{4.722}
+\]
+
+Because \(U\) is smooth and compactly supported, \(q\) is restricted
+to a fixed compact subset of \((0,\infty)\), every \(q\)-derivative of
+\(\widehat F_q(\tau)\) decays faster than any fixed power of
+\(1+|\tau|\), uniformly in \(q\).  Cauchy in \(\tau\) therefore shows
+that a uniform one-parameter local variance estimate is sufficient:
+
+\[
+\boxed{
+ \sup_{|\tau|\le(\log X)^A}
+ \int_X^{2X}
+ \left|\sum_m f_\tau(m)V_\tau(m/X)
+ \phi\!\left(\frac{m-x}{H}\right)\right|^2dx
+ \ll_{A,V,\phi}XH(\log X)^{1+o(1)},
+ \quad H=X^{1/2}.}
+\tag{4.723}
+\]
+
+Here \(V_\tau\) ranges over the bounded Schwartz-seminorm family
+generated by \(q\mapsto\widehat F_q(\tau)\); frequencies outside the
+displayed polylogarithmic range contribute an arbitrarily large
+negative logarithmic power.  Estimate (4.723), with the exact
+seminorm bookkeeping needed by (4.716), implies the separated
+fourth-moment gate (4.711).
+
+The \(\tau=0\) member also has a larger *formal diagonal* than the
+restricted coefficient in (4.708).  Since
+
+\[
+ f_0(p)=-2,\qquad f_0(p^2)=1,\qquad f_0(p^j)=0\quad(j\geq3),
+\]
+
+one has the exact Euler factorization
+
+\[
+ \boxed{
+ \sum_{n\geq1}\frac{|f_0(n)|^2}{n^s}
+ =\prod_p(1+4p^{-s}+p^{-2s})
+ =\zeta(s)^4G(s),}
+\tag{4.723a}
+\]
+
+where
+
+\[
+ \boxed{
+ G_p(s)
+ =(1-p^{-s})^4(1+4p^{-s}+p^{-2s})
+ =1-9p^{-2s}+16p^{-3s}-9p^{-4s}+p^{-6s}.}
+\tag{4.723b}
+\]
+
+Thus \(G\) converges absolutely for \(\Re s>1/2\), and the classical
+Selberg--Delange calculation gives a smooth formal diagonal of order
+\(XH(\log X)^3\).  This is two logarithms larger than the requested
+\(XH(\log X)^{1+o(1)}\).
+
+This observation does **not** disprove (4.723).  Expanding its full
+short-interval energy gives
+
+\[
+ \boxed{
+ H\sum_{m,n}f_0(m)\overline{f_0(n)}
+ V_0(m/X)\overline{V_0(n/X)}
+ (\phi*\widetilde\phi)((m-n)/H).}
+\tag{4.723c}
+\]
+
+Although (4.723c) is nonnegative as a whole, its off-diagonal terms are
+signed, so the \(m=n\) contribution is not a lower bound for the full
+energy.  A bound of the size in (4.723) would have to cancel both surplus
+diagonal logarithms through those off-diagonal terms.  By contrast, the
+joint ratio recombination returns the restricted \(C_U\), whose exact
+diagonal has only one logarithm by (4.710).  Hence taking Cauchy in
+\(\tau\) discards a genuine two-logarithm recombination, but this remains
+a logarithmic issue and supplies no positive power.
+
+At \(\tau=0\), however, \(f_0=\mu*\mu\).  Thus this reduction removes
+the dyadic divisor restriction but retains the genuine inverse-zeta
+variance problem:
+
+\[
+ \boxed{
+ \text{restricted four-Möbius gate}
+ \Longleftarrow
+ \text{uniform square-root variance for }
+ \frac1{\zeta(s-i\tau/2)\zeta(s+i\tau/2)},
+ \quad\text{currently unproved}.}
+\tag{4.724}
+\]
+
+This is exactly the \(\gamma=0\) endpoint of the variance gate (4.540).
+Mangerel's Theorem 1.7, even if its hypotheses and constants are granted
+uniformly for all \(|\tau|\le(\log X)^A\), controls the normalized
+variance only by a quantity of logarithmic size.  This comparison also
+optimistically sets the theorem's long-interval main term to zero;
+retaining it adds an obligation.  Undoing its
+normalization gives the power ledger
+
+\[
+ \boxed{
+ XH^2=T^4
+ \quad\hbox{versus}\quad
+ XH=T^3,
+ \qquad\text{remaining deficit }H=T.}
+\tag{4.725}
+\]
+
+Thus ratio Mellin inversion identifies a clean multiplicative family,
+but the published typical-short-interval theorem still saves only
+logarithms from the raw scale and not the required square-root factor.
+Uniform verification of its non-pretentiousness parameters in the full
+polylogarithmic \(\tau\)-range is unnecessary for this rejection and is
+not asserted.
+
+The exact-rational helper `restricted_product_ratio_coordinates`
+checks both factor reconstructions without numerical square roots.  The
+helper `mobius_square_convolution_second_moment_local_factor` verifies
+the polynomial in (4.723b) coefficient by coefficient.
+The adapter `restricted_mobius_ratio_mellin_audit` records the
+\(X=T^2,H=T\) ledger, the formal three-logarithm diagonal, and the fact
+that this diagonal alone is not a lower bound for the full signed
+variance.  It keeps
+`shifted_inverse_zeta_variance_proved=False`.
+
+### 4.89 Published additive twists of $\mu*\mu$ miss the local variance scale
+
+[Basak--Robles--Zaharescu, arXiv:2312.17435v2](https://arxiv.org/abs/2312.17435)
+prove a pointwise theorem for the exact
+coefficient at the untwisted endpoint of (4.723).  Their Corollary 7.1
+states that, if \((a,q)=1\) and
+\(\lvert\alpha-a/q\rvert\le q^{-2}\), then
+
+\[
+ \boxed{
+ \sum_{n\le X}(\mu*\mu)(n)e(n\alpha)
+ \ll_\varepsilon X^{16/17+\varepsilon}
+ +\left(Xq^{-1/6}+X^{7/8}q^{1/8}\right)(\log X)^3.}
+\tag{4.726}
+\]
+
+Here and only in this subsection exponents are recorded relative to the
+product length \(X\), rather than to \(T\).  The variance gate has
+\(H=X^{1/2}\).  On the critical part of the local Fourier arc,
+\(\alpha\asymp X^{-1/2}\), one may take \(q\asymp X^{1/2}\), and the
+three powers in (4.726) are exactly
+
+\[
+ \frac{16}{17},\qquad
+ 1-\frac1{12}=\frac{11}{12},\qquad
+ \frac78+\frac1{16}=\frac{15}{16}.
+\tag{4.727}
+\]
+
+Thus the largest term is \(X^{16/17+\varepsilon}\).  A direct
+pointwise treatment of a Fourier arc of length \(H^{-1}\), on which
+the squared short-interval kernel has size at most \(H^2\), gives the
+power ledger
+
+\[
+ H X^{32/17}
+ =X^{1/2+32/17}
+ =X^{81/34},
+ \qquad
+ XH=X^{3/2}=X^{51/34}.
+\tag{4.728}
+\]
+
+Consequently this direct adapter misses the required variance exponent
+by \(15/17\).  Equivalently, a pointwise bound used in this way would
+need exponent at most \(1/2\), whereas (4.726) supplies \(16/17\), a
+pointwise deficit of \(15/34\).  This is a comparison of certified
+upper bounds, not a lower bound for the actual variance.
+
+The major-arc estimate in their Lemma 6.2 does not repair the loss.
+On an arc of length \(X^{-1}\) it gives
+\(X\exp(-c\sqrt{\log X})\) pointwise.  After squaring and multiplying
+by \(H^2=X\), its direct variance ledger is
+
+\[
+ X^{-1}\,H^2\,X^2\exp(-2c\sqrt{\log X})
+ =X^2\exp(-2c\sqrt{\log X}),
+\tag{4.729}
+\]
+
+which retains a positive-power deficit \(X^{1/2-o(1)}\) against
+\(X^{3/2}\).  Moreover, the published result treats \(\mu*\mu\), not
+the uniformly ratio-twisted family \(f_\tau\) in (4.722).
+
+The remaining possible use of their Type I/II proof is therefore not
+pointwise.  It would require a new local mean-square refinement,
+uniformly for the ratio twists,
+
+\[
+ \boxed{
+ \sup_{|\tau|\le(\log X)^A}
+ \int_{|\alpha|\le X^{-1/2}}
+ \left|\sum_{n}f_\tau(n)V_\tau(n/X)e(n\alpha)\right|^2d\alpha
+ \ll_{A,V}X^{1/2}(\log X)^{1+o(1)}.}
+\tag{4.730}
+\]
+
+Corollary 7.1 and the Type II Lemma 2.2 cited in its proof are
+pointwise statements and do not contain (4.730).  The adapter
+`basak_robles_zaharescu_mobius_convolution_audit` records the exact
+three-term specialization, both variance deficits, and keeps
+`brz_direct_pointwise_route_closes_variance_gate=False`.  This rejects
+only direct insertion of the published theorem; a proof-level local
+\(L^2\) refinement remains a separate candidate.
+
+### 4.90 The uniform inverse-zeta variance gate would prove a new zero-free strip
+
+The sufficient condition (4.723), and hence its Fourier form (4.730),
+is substantially stronger than the original restricted four-Möbius
+gate.  This can be seen without any conjectural zero-density input.
+Put \(f=\mu*\mu\), choose \(\phi\) with
+\(\int_{\mathbb R}\phi(u)\,du=1\), and, for fixed real \(t\), set
+
+\[
+ S_{X,t}(x):=
+ \sum_n f(n)n^{-it}V(n/X)
+ \phi\!\left(\frac{n-x}{H}\right),
+ \qquad H=X^{1/2}.
+\tag{4.731}
+\]
+
+The \(x\)-integration is exact term by term:
+
+\[
+ \int_{\mathbb R}S_{X,t}(x)\,dx
+ =H\sum_n f(n)n^{-it}V(n/X).
+\tag{4.732}
+\]
+
+The support in \(x\) has length \(O_V(X)\).  A finite cover by the
+uniform dyadic version of (4.723), followed by Cauchy--Schwarz in
+(4.732), therefore gives
+
+\[
+ \left|\sum_n f(n)n^{-it}V(n/X)\right|
+ \ll H^{-1}X^{1/2}(XH)^{1/2}(\log X)^{O(1)}
+ =X^{3/4}(\log X)^{O(1)}.
+\tag{4.733}
+\]
+
+The same argument permits a fixed smooth factor \((n/X)^{-\sigma}\)
+inside \(V\).  A smooth dyadic partition of unity then bounds the
+\(X\)-block of \(\sum f(n)n^{-s}\) by
+\(X^{3/4-\sigma}(\log X)^{O(1)}\), locally uniformly for fixed
+\(s=\sigma+it\).  Hence the dyadic series converges normally and
+defines a holomorphic continuation to \(\Re s>3/4\).  On
+\(\Re s>1\) it equals its Euler product, so the identity theorem gives
+
+\[
+ \boxed{
+ \sum_{n\ge1}\frac{(\mu*\mu)(n)}{n^s}
+ =\frac1{\zeta(s)^2}
+ \text{ holomorphic for }\Re s>\frac34,
+ \quad\Longrightarrow\quad
+ \zeta(s)\ne0\text{ there}.}
+\tag{4.734}
+\]
+
+Thus proving the uniform single-\(\tau\) variance gate would already
+prove the presently unknown zero-free half-plane
+\(\Re s>3/4\).  This implication does **not** show that the original
+MWKF asymptotic requires that zero-free result: (4.723) was introduced
+only as a sufficient condition after Cauchy in the ratio transform.
+The correct conclusion is to stop strengthening the restricted
+coefficient into separate uniform \(\tau\)-bounds and instead retain
+the joint ratio integral, where cancellation between ratio frequencies
+is still available.  The adapter `inverse_zeta_variance_zero_free_audit`
+records this logical direction and keeps
+`inverse_zeta_variance_gate_available_unconditionally=False`.
+
+### 4.91 A second Poisson step closes the BBLR all-unsigned hard box at power level
+
+Section 4.68 used the Weil treatment in BBLR Lemma 3.1 and found the
+exponent \(5/2\) in its all-unsigned \(d=1\) layer.  In the forced box
+
+\[
+ A=B=1,\qquad M_1=M_2=N_1=N_2=H=T,
+\tag{4.735}
+\]
+
+the \(h\)-length has an additional exact relation to the Kloosterman
+modulus.  Write \(m=m_1,n=n_1\) in BBLR equation (14), initially take
+\((m,n)=1\), and let \(r=\bar m\pmod n\), \(1\le r<n\).  With the
+Fourier convention of that paper, ordinary Poisson summation gives
+
+\[
+ \boxed{
+ \sum_{h\in\mathbb Z}W_0(h/T)e(\mp\ell hr/n)
+ =T\sum_{k\in\mathbb Z}
+ \widehat W_0\!\left(T(k\pm\ell r/n)\right).}
+\tag{4.736}
+\]
+
+For either consistent choice of signs, put
+\(j=kn\pm\ell r\).  The map \(k\mapsto j\) is a bijection onto the
+corresponding residue class modulo \(n\), and multiplication by \(m\)
+removes the inverse exactly:
+
+\[
+ \boxed{
+ j\equiv\pm\ell\bar m\pmod n
+ \quad\Longleftrightarrow\quad
+ mj\equiv\pm\ell\pmod n.}
+\tag{4.737}
+\]
+
+At \(d=1\), the transform \(F\) in BBLR equation (14) has physical
+\(x\)-scale one, so repeated integration by parts gives
+\(F(m,n,1,\ell)\ll_B(1+|\ell|)^{-B}\).  Since \(n/T\) stays in a
+fixed compact interval, the factor in (4.736) is likewise
+\(O_B((1+|j|)^{-B})\).  For fixed nonzero \(j\), the congruence in
+(4.737) has at most \(O((j,n))\) representatives \(m\asymp T\).
+Moreover the following bound is an elementary finite divisor
+reindexing:
+
+\[
+ \boxed{
+ \sum_{n\asymp T}(j,n)
+ \le \sum_{c\mid j}c\left(\frac{T}{c}+1\right)
+ \le T\tau(|j|)+\sigma_1(|j|).}
+\tag{4.738}
+\]
+
+The case \(j=0\) forces \(n\mid\ell\); because \(\ell\ne0\) in the
+remainder and both transform weights are Schwartz, its total is bounded
+by the same argument.  Summing (4.738) against the two Schwartz
+majorants costs a constant depending only on fixed seminorms.  The
+inner \((m,n,\ell,j)\)-sum is therefore \(O_W(T)\), and the outside
+Poisson factor in (4.736) gives
+
+\[
+ \boxed{
+ \mathcal R^{\mathrm{unsigned}}_{\pm,d=1}
+ \ll_W T^2,
+ \qquad
+ \frac52\longrightarrow2,
+ \quad\text{recovered saving }\frac12.}
+\tag{4.739}
+\]
+
+The same calculation is summable over every original gcd layer.  If
+\((m_1,n_1)=d\), the \(h\)-length and reduced modulus are both
+\(T/d\).  The physical \(x\)-scale of \(F\) is \(d\), whence
+\(F\ll_B d(1+d|\ell|)^{-B}\).  Bounded \(d\) obey (4.739) with a
+uniform constant, while a dyadic layer \(d=T^\eta\), \(\eta>0\), is
+arbitrarily power-negligible after choosing \(B\).  The separate
+approximation term in BBLR equation (14) already has exponent two.
+
+Thus the previously identified *all-unsigned* worst box is closed at
+the positive-power level; it is not an unavoidable \(T^{1/2}\)
+obstruction.  This does not yet close the signed cells with nontrivial
+outer products, nor does (4.739) by itself finish the global
+logarithmic little-oh bookkeeping.  The helper
+`bblr_h_poisson_inverse_removal` checks (4.737) on exact residues, and
+the adapter `bblr_h_poisson_unsigned_hard_box_audit` records
+`all_unsigned_hard_box_power_closed=True` while keeping
+`whole_signed_hard_face_covered=False`.
+
+### 4.92 The signed hard face reduces to one outer-scale parameter
+
+It remains to keep the two nontrivial outer factors in the BBLR
+decomposition.  Let their common dyadic exponent be (s), so that
+(A,B\asymp T^s), (0\le s\le1).  This loses no positive power.  Indeed,
+if (F_s) denotes the corresponding component before squaring, then for
+the (J=O(\log T)) nonempty dyadic scales the Hilbert-space inequality
+
+\[
+ \left\|\sum_s F_s\right\|_2^2
+ \le J\sum_s\|F_s\|_2^2
+\tag{4.740}
+\]
+
+reduces every asymmetric cross box to a diagonal same-(s) norm.  The
+factor (J) has to be paid later in the logarithmic ledger; it cannot be
+discarded at the endpoint.
+
+Apply the first BBLR Poisson step and then the exact (h)-Poisson
+transformation (4.736).  With signs fixed consistently, inverse removal
+as in (4.737) gives the integer equation
+
+\[
+ \boxed{a m j-b n k=\ell}
+\tag{4.741}
+\]
+
+with the complete dyadic scale table
+
+\[
+ a,b\asymp T^s,qquad
+ m,n\asymp T^{1-s/2},qquad
+ j,k\asymp T^{s/2},qquad
+ \ell\asymp T^s.
+\tag{4.742}
+\]
+
+All six variables retain smooth compactly supported weights; the
+(j,k)-weights are Schwartz transforms of the original (h)-weight.
+Their seminorms are uniform on a fixed dyadic cell.  Coprimality is the
+one inherited from BBLR equation (14), before the same finite gcd
+decomposition used in Section 4.91.  Thus the transformed two sides
+(amj) and (bnk) each have exponent (1+s), while the unrestricted
+solution count has exponent (1+2s).  The first Poisson normalization is
+(T^{1-s}).  Consequently the transformed inner estimate must save
+exactly (T^s) in the outer pair (a,b).
+
+Now apply BBLR Proposition 3.1 to (4.741), with the transformed (a,b)
+as its outer variables and (mj,nk) as its inner products.  Its sharp
+range condition is met at equality because
+(H'=T^s=(AB)^{1/2}).  Substitution in its two error terms gives inner
+exponents
+
+\[
+ E_{AB}=\frac12+3s,qquad
+ E_{\mathrm{Watt}}=\frac34+2s.
+\]
+
+After restoring (T^{1-s}), the two total errors are therefore
+
+\[
+ \boxed{
+ E_1^{\rm tot}=\frac32+2s,qquad
+ E_2^{\rm tot}=\frac74+s,qquad
+ \min(2-E_1^{\rm tot},2-E_2^{\rm tot})=\frac14-s.}
+\tag{4.743}
+\]
+
+The smooth main terms in the cited formula are at most the required
+(T^{1+s}(\log T)^{O(1)}) inner scale by finite divisor reindexing, so
+they introduce no positive-power deficit.  Hence the published estimate
+unconditionally covers each fixed exponent cell (0\le s<1/4).  At
+(s=1/4), both errors have exponent exactly two and (4.740) still costs a
+logarithm; the cited theorem supplies no compensating logarithmic
+little-oh.  Thus the exact current boundary is
+
+\[
+ \boxed{
+ \texttt{published\_bblr\_power\_coverage\_upper}=\frac14,qquad
+ \texttt{signed\_residual\_lower\_exponent}=\frac14,qquad
+ s\in[1/4,1]\text{ remains}.}
+\tag{4.744}
+\]
+
+This is a one-dimensional reduction of the signed hard face, not a proof
+of the full mollifier asymptotic.  The adapter
+`bblr_h_poisson_signed_cell_audit` records the exact rational exponent
+ledger with `published_bblr_power_coverage_upper=1/4` and
+`signed_residual_lower_exponent=1/4`, and deliberately sets
+`boundary_logarithmic_little_o_closed=False` and
+`whole_signed_hard_face_covered=False`.
+
+### 4.93 Exact signed-atom convolution collapses only for product-compatible weights
+
+There is one more exact cancellation hidden by the cellwise arbitrary-
+coefficient treatment.  For a fixed unsigned cofactor (e), retain the
+two signed atoms in (4.613) and put
+
+\[
+ \lambda_{U,e}(u):=-
+ \sum_{\substack{dy=u\\d\le U<de}}\mu(d)\mu(y).
+\tag{4.745}
+\]
+
+Let (j) be the unsigned dual variable created by the second
+(h)-Poisson step.  If the remaining weight depends on (u,j) only
+through (c=uj), finite Dirichlet convolution gives
+
+\[
+\begin{aligned}
+ \sum_{uj=c}\lambda_{U,e}(u)
+ &=-\sum_{dyj=c\atop d\le U<de}\mu(d)\mu(y)\\
+ &=-\sum_{d\mid c\atop d\le U<de}\mu(d)
+       \sum_{y\mid c/d}\mu(y)\\
+ &=\boxed{-\mu(c)\mathbf 1_{c\le U<ce}}.
+\end{aligned}
+\tag{4.746}
+\]
+
+Thus two signed atoms and one unsigned Poisson dual collapse to one
+Möbius coefficient, with the cutoff retained exactly.  No asymptotic,
+sieve estimate, or extension of a finite sum is used in (4.746).  On the
+top diagonal cell the two factors (u,j\asymp T^{1/2}) become one
+variable (c\asymp T); at general outer exponent (s), their scales are
+(T^{s/2},T^{s/2}), and (c\asymp T^s).
+
+The cancellation is not directly applicable to the actual transform.
+The factors (W(u/U_0)) and
+(\widehat W(j/J_0)), as well as the (F)-kernel in BBLR equation
+(14), depend separately on (u) and (j).  They are not a function of
+(uj).  Mellin separation in the ratio exposes the precise deformation
+of (4.746):
+
+\[
+ \sum_{yj=v}\mu(y)\left(\frac yj\right)^{i\tau}
+ =v^{-i\tau}\sum_{y\mid v}\mu(y)y^{2i\tau}
+ =\boxed{v^{-i\tau}\prod_{p\mid v}(1-p^{2i\tau})}.
+\tag{4.747}
+\]
+
+At (	au=0), (4.747) is (mathbf1_{v=1}), recovering (4.746).
+For nonzero ratio frequency it is a genuine multiplicative coefficient;
+replacing the coupled ratio integral by a uniform pointwise bound would
+return to the inverse-zeta variance obstruction of Section 4.90.
+Therefore the remaining analytic input must retain that integral and
+prove cancellation jointly in the two ratio frequencies.  In particular,
+
+\[
+ \boxed{
+ \texttt{signed\_dual\_product\_collapse\_exact}=\mathrm{True},
+ \qquad
+ \texttt{actual\_transformed\_weight\_product\_compatible}
+ =\mathrm{False}.}
+\tag{4.748}
+\]
+
+The helper `truncated_signed_dual_convolution_identity` verifies
+(4.746) on finite integer data.  The adapter
+`signed_dual_convolution_audit` records the exact scale collapse but
+records `signed_dual_product_collapse_exact=True` and
+`actual_transformed_weight_product_compatible=False`, while keeping
+`weighted_collapse_bound_proved=False`.  This identifies a viable
+pre-Cauchy route—estimate the coupled ratio-Mellin family after the
+finite collapse—but does not yet bound the residual (s\in[1/4,1]).
+
+### 4.94 The collapsed model isolates a coupled ratio-Mellin Type-II gate
+
+For later use, Mellin-separate a smooth (u,j)-weight in its ratio.  The
+exact coefficient replacing (4.746) is
+
+\[
+ \mathcal D_{U,e,\tau}(c)
+ :=-c^{-i\tau}
+ \sum_{d\mid c\atop d\le U<de}\mu(d)d^{2i\tau}
+ \prod_{p\mid c/d}(1-p^{2i\tau}).
+\tag{4.749}
+\]
+
+This follows by inserting (u=dy, j=c/(dy)) and performing the finite
+(y)-divisor sum.  In particular,
+(mathcal D_{U,e,0}(c)=-\mu(c)\mathbf1_{c\le U<ce}) exactly.  Grant for
+the moment that the primitive gcd allocation has been separated without
+loss.  One resulting tensor has the shifted determinant model
+
+\[
+ \sum_{\substack{x,y\asymp T;\ c,d\asymp T^s\\
+                  0<|\ell|\asymp T^s\\xc-yd=\ell}}
+ \mu(x)\mu(y)
+ \mathcal D_{U,e,\tau}(c)
+ \overline{\mathcal D_{U,e',\upsilon}(d)}
+ \Psi_{\tau,\upsilon}
+\tag{4.750}
+\]
+
+integrated against a Schwartz function of ((\tau,\upsilon)).  The
+weight (Psi_{\tau,\upsilon}) is smooth on the displayed dyadic ranges;
+its seminorms grow polynomially in the two Mellin frequencies, which the
+outer Schwartz transform absorbs.  The exact power ledger is
+
+\[
+ \text{raw}=1+2s,qquad
+ \text{target}=1+s,qquad
+ \boxed{\text{required cancellation}=s.}
+\tag{4.751}
+\]
+
+Thus square-root cancellation in the two collapsed (T^s)-coefficient
+variables is exactly critical, with no positive-power margin.  At the
+endpoint this becomes the single explicit estimate
+
+\[
+ \boxed{
+ \int_{\mathbb R^2}\Xi(\tau,\upsilon)
+ \mathfrak V_{1}(\tau,\upsilon)\,d\tau d\upsilon
+ \ll_{B,W}T^2(\log T)^{-B},}
+\tag{4.752}
+\]
+
+uniformly in every inherited cutoff and coprimality allocation.  Here
+(mathfrak V_1) denotes (4.750) at (s=1), with the nonzero-shift and
+Schwartz transform retained; (4.752) is not a theorem proved below.
+
+There is a useful but insufficient level-of-distribution observation.
+Modulo (c), (4.750) has (yd\equiv-\ell\pmod c), and
+
+\[
+ \frac{\log_T c}{\log_T(yd)}=\frac{s}{1+s}\le\frac12.
+\tag{4.753}
+\]
+
+Standard Bombieri--Vinogradov therefore has enough *modulus range*.
+It is not an adapter for (4.750): the quotient
+(x=(yd+\ell)/c) carries the second Möbius weight, and applying a
+fixed-shift discrepancy estimate followed by absolute summation loses
+the entire (T^s) required in (4.751).  Both the quotient Möbius weight
+and the full shift average must remain inside the dispersion argument.
+
+There is one further exactness boundary.  In the primitive BBLR layer the
+condition is ((X,Y)=1) before writing (X=xu, Y=yv).  After the product
+collapse this becomes a prime-allocation condition involving the hidden
+divisors (u,v), not merely ((xc,yd)=1).  Consequently (4.750) is the
+minimal collapsed model, but it is not yet an exact four-variable rewrite
+of every gcd layer.  A successful proof must first expand those prime
+allocations and prove (4.752) uniformly for the resulting finitely
+divisor-weighted family.  The audit therefore records
+`quotient_mobius_prevents_direct_bv=True`,
+`coprimality_prime_allocation_required=True`,
+`four_variable_reduction_exact=False`, and
+`coupled_ratio_mellin_type_ii_bound_proved=False`.
+
+### 4.95 Four cross-coprimality allocations make the collapsed superposition exact
+
+The exactness defect at the end of Section 4.94 is algebraic and can be
+removed.  For (X=xu) and (Y=yv),
+
+\[
+ \boxed{
+ (xu,yv)=1
+ \Longleftrightarrow
+ (x,y)=(x,v)=(u,y)=(u,v)=1.}
+\tag{4.754}
+\]
+
+Apply the finite identity
+(mathbf1_{(a,b)=1}=\sum_{r\mid a,,r\mid b}\mu(r)) to the four
+cross pairs.  This gives
+
+\[
+ \mathbf1_{(xu,yv)=1}
+ =\sum_{\substack{r_0\mid x,y\\r_1\mid x,v\\
+                   r_2\mid u,y\\r_3\mid u,v}}
+   \mu(r_0)\mu(r_1)\mu(r_2)\mu(r_3).
+\tag{4.755}
+\]
+
+There is no compatibility assumption among the (r_i); if a prime
+occurs in several cross gcds, the product of the four finite Möbius sums
+still equals the indicator in (4.754).  For fixed
+((r_0,r_1,r_2,r_3)), the restrictions separate exactly:
+
+\[
+ \operatorname{lcm}(r_0,r_1)\mid x,quad
+ \operatorname{lcm}(r_0,r_2)\mid y,quad
+ \operatorname{lcm}(r_2,r_3)\mid u,quad
+ \operatorname{lcm}(r_1,r_3)\mid v.
+\tag{4.756}
+\]
+
+Consequently the (u,jmapsto c) and (v,kmapsto d) convolutions in
+(4.749) may be performed independently after the allocation is fixed.
+The resulting collapsed (c,d) coefficients depend on the allocation
+divisors and Mellin frequencies, but not on the long variables (x,y).
+Thus (4.750), summed over the four allocation divisors and integrated in
+the two ratio frequencies, is an exact finite superposition for the
+primitive gcd layer.  The nonprimitive BBLR layers have the same
+identity after extracting their common divisor.
+
+Each (r_i) divides two already localized variables.  Absolute divisor
+reindexing therefore has power exponent zero; the audit reserves the
+conservative factor ((\log T)^4), to be absorbed by choosing the (B)
+in (4.752) four units larger.  The exact status is
+
+\[
+ \boxed{
+ \texttt{four\_variable\_superposition\_exact}=\mathrm{True},
+ \qquad
+ \texttt{collapsed\_coefficients\_independent\_of\_long\_variables}
+ =\mathrm{True}.}
+\tag{4.757}
+\]
+
+This closes the coprimality/reindexing gap, not the analytic Type-II
+estimate.  Even with separated coefficient sequences, a standard
+Bombieri--Vinogradov discrepancy does not retain both the Möbius weight
+on (x=(yd+\ell)/c) and the signed full (ell)-average.  The remaining
+new theorem is now precisely the allocation-uniform coupled estimate
+(4.752).  The helper `collapsed_cross_coprimality_identity` checks
+(4.754)--(4.755) on finite data, while
+`collapsed_coprimality_allocation_audit` keeps
+`four_variable_superposition_exact=True` and
+`collapsed_coefficients_independent_of_long_variables=True`, but keeps
+`standard_bombieri_vinogradov_adapter_applies=False` and
+`coupled_ratio_mellin_type_ii_bound_proved=False`.
+
+### 4.96 The equal-product face contains an ordinary two-point Chowla correlation
+
+There is a further boundary on how (4.752) may be estimated.  Write
+
+\[
+ c=uj,\qquad d=vk.
+\]
+
+On the equal-product face, for every fixed nonzero integer \(\kappa\),
+the determinant equation has the exact specialization
+
+\[
+ \boxed{
+ c=d,\quad \ell=\kappa c
+ \quad\Longrightarrow\quad
+ xc-yd=\ell\ \Longleftrightarrow\ x-y=\kappa.}
+\tag{4.758}
+\]
+
+The primitive BBLR condition does not remove this face.  For example,
+
+\[
+ (u,v,j,k,x,y)=(5,7,7,5,12,11)
+\]
+
+gives \(c=uj=vk=d=35\), \(xc-yd=35\), and
+
+\[
+ \boxed{(xu,yv)=(60,77)=1.}
+\tag{4.759}
+\]
+
+Now take the identity-allocation tensor
+\(r_0=r_1=r_2=r_3=1\) in (4.755) and specialize its *pointwise*
+ratio family to \(\tau=\upsilon=0\).  This tensor has no additional
+divisibility restriction, and equation (4.749) gives
+\(\mathcal D_{U,e,0}(c)=-\mu(c)\mathbf 1_{c\le U<ce}\)
+exactly.  Hence, whenever the two cutoff indicators overlap, the
+equal-product, \(\ell=\kappa c\) part of that pointwise tensor is
+
+\[
+ \boxed{
+ \sum_{c\asymp T^s}\mu(c)^2
+   \mathbf 1_{c\le U<ce}\mathbf 1_{c\le U'<ce'}
+ \sum_{x-y=\kappa\atop x,y\asymp T}
+   \mu(x)\mu(y)\Psi_{0,0}(x,y,c,c,\kappa c).}
+\tag{4.760}
+\]
+
+This is an ordinary two-point Möbius correlation in the long variable.
+Its raw exponent is \(1+s\), exactly the required inner exponent in
+(4.751).  Thus there is no remaining positive-power deficit on this
+face, but the global little-oh requires cancellation beyond the trivial
+\(T^{1+s}\) bound.  A theorem uniform for arbitrary separated smooth
+weights in (4.760), imposed separately on every allocation tensor,
+would in particular require the ordinary Cesàro two-point Chowla
+estimate, which is not currently known.
+
+This observation does **not** disprove the actual gate (4.752): a single
+point \((\tau,\upsilon)=(0,0)\) has measure zero, and the inherited
+weight is reconstructed only after the two ratio frequencies are
+integrated jointly.  It does rule out taking absolute values separately
+in those frequencies and asking for a uniform pointwise bound.  The
+correct remaining route must retain the joint ratio integral and its
+cancellation:
+
+\[
+ \boxed{
+ \texttt{equal_collapsed_product_face_present}=\mathrm{True},\qquad
+ \texttt{uniform_ratio_frequency_triangle_gate_admissible}
+ =\mathrm{False}.}
+\tag{4.761}
+\]
+
+The helper `collapsed_equal_product_chowla_identity` verifies
+(4.758)--(4.759) on exact integer data.  The adapter
+`collapsed_chowla_face_audit` records the exponent equality, the
+ordinary-Chowla boundary, and keeps the jointly integrated Type-II gate
+open rather than replacing it by the stronger pointwise statement.  In
+particular it records `equal_collapsed_product_face_present=True` and
+`uniform_ratio_frequency_triangle_gate_admissible=False`.
+
+### 4.97 Physical ratio recombination does not annihilate the primitive equal face
+
+The measure-zero caveat after (4.760) leaves open whether performing the
+two ratio integrals first might kill the equal-product face algebraically.
+It does not.  For a physical one-side weight \(\Phi\), Mellin inversion
+returns the finite coefficient
+
+\[
+ \boxed{
+ A_{U,e,\Phi}(c)
+ =\sum_{uj=c}\lambda_{U,e}(u)\Phi(u,j)
+ =-\sum_{dyj=c\atop d\le U<de}
+   \mu(d)\mu(y)\Phi(dy,j).}
+\tag{4.762}
+\]
+
+Before separating the four cross-coprimalities, the coefficient on the
+primitive equal face \(c=d\) is therefore
+
+\[
+ \boxed{
+ \begin{aligned}
+ B_{U,e,e';\Phi,\Phi'}(c;x,y)
+ :=\sum_{u\mid c}\sum_{v\mid c\atop
+       (u,v)=(u,y)=(v,x)=1}
+ &\lambda_{U,e}(u)\lambda_{U,e'}(v)\\
+ &\times\Phi(u,c/u)\overline{\Phi'(v,c/v)}.
+ \end{aligned}}
+\tag{4.763}
+\]
+
+Here \((x,y)=1\) already follows when \(x-y=1\).  Formula (4.763) is
+the direct physical recombination of the allocation tensors, so it does
+not take absolute values in the ratio frequencies.
+
+There is no universal zero in (4.763).  Take
+
+\[
+ U=5,\qquad e=e'=10,\qquad c=35,\qquad (x,y)=(12,11),
+\]
+
+and retain the balanced factor pairs \(u,v\in\{5,7\}\).  Directly from
+(4.745),
+
+\[
+ \lambda_{5,10}(5)=2,\qquad \lambda_{5,10}(7)=1.
+\]
+
+The two surviving primitive pairs are \((u,v)=(5,7),(7,5)\); all three
+cross gcds in (4.763) are one.  With the physical weights equal to one
+on these pairs,
+
+\[
+ \boxed{B_{5,10,10}(35;12,11)=2\cdot1+1\cdot2=4.}
+\tag{4.764}
+\]
+
+This finite witness proves only a structural statement: joint Mellin
+inversion and primitive gcd recombination do not by themselves annihilate
+the Chowla face.  It does not isolate a uniformly smooth asymptotic box
+and is not a lower bound for the original remainder.  Combined with
+(4.760), however, it forbids two common enlargements of the sufficient
+gate: estimating allocation tensors by a triangle inequality, or replacing
+the exact inherited physical kernel by an arbitrary smooth tensor class.
+Any viable dispersion estimate must keep the complete outer-scale sum and
+the specific kernel coefficients together:
+
+\[
+ \boxed{
+ \texttt{primitive_equal_face_coefficient_can_be_nonzero}=\mathrm{True},
+ \qquad
+ \texttt{arbitrary_smooth_weight_enlargement_admissible}=\mathrm{False}.}
+\tag{4.765}
+\]
+
+The helper `primitive_equal_face_divisor_coefficient` evaluates (4.763)
+as a finite integer sum and verifies (4.764).  The adapter
+`physical_joint_ratio_recombination_audit` keeps the centered coupled
+dispersion estimate and the whole signed hard face explicitly unproved;
+it records `primitive_equal_face_coefficient_can_be_nonzero=True` and
+`arbitrary_smooth_weight_enlargement_admissible=False`.
+
+### 4.98 Gcd layers expose the centered coupled-dispersion scale
+
+The equal-product face cannot be estimated separately, but extracting the
+common divisor still gives an exact scale decomposition without taking an
+absolute value.  Put
+
+\[
+ C=T^s,\qquad G=T^\gamma,\qquad A=\frac CG=T^{s-\gamma},
+ \qquad 0\leq\gamma\leq s,
+\]
+
+and on one dyadic gcd layer write
+
+\[
+ \boxed{
+ c=ga,\qquad d=gb,\qquad \ell=gh,\qquad
+ g\asymp G,\quad a,b,|h|\asymp A,\quad(a,b)=1.}
+\tag{4.766}
+\]
+
+The equation \(xc-yd=\ell\) is then exactly \(ax-by=h\).  For fixed
+\((a,b,h)\), all solutions are
+\(x=x_0+bt,\ y=y_0+at\), so the localized \(t\)-interval has length
+\(O(T/A+1)\).  In the power-critical range \(A\leq T\), the complete
+dyadic layer therefore has raw cardinality
+
+\[
+ G\cdot A^2\cdot A\cdot\frac TA
+ =TGA^2=\frac{TC^2}{G},
+ \qquad
+ E_{\rm raw}=1+2s-\gamma.
+\tag{4.767}
+\]
+
+This count retains the entire \(g\)-sum.  It is not a sum of separate
+fixed-\(g\) majorants.
+
+There is also an exact centered Fourier form, but the allocation tensors
+must first be recombined.  Expand the new primitive condition with
+\(\mathbf1_{(a,b)=1}=\sum_{\rho\mid a,b}\mu(\rho)\).  Let
+\(\eta=(r_0,r_1,r_2,r_3,\rho,\tau,\upsilon)\) collect the four allocations
+from (4.755), this fifth primitive-slope allocation, and the two ratio
+frequencies.  Write \(d\nu(\eta)\) for the resulting finite signed divisor
+sum times the two inherited Schwartz Mellin densities.  For fixed \(\eta\),
+let \(p_{g,\eta}(a,x)\) and \(q_{g,\eta}(b,y)\) be the now-separated exact
+cutoff, Möbius, divisibility, and physical-kernel coefficients.  Define
+
+\[
+ F_{g,\eta}(\alpha)
+   =\sum_{a,x}p_{g,\eta}(a,x)e(\alpha ax),\qquad
+ G_{g,\eta}(\alpha)
+   =\sum_{b,y}q_{g,\eta}(b,y)e(\alpha by),
+\]
+
+Let \(w_\eta\in C_c^\infty(\mathbb R\setminus\{0\})\) be the exact
+nonzero-shift weight in this tensor.  Its seminorms are controlled by the
+same Schwartz density already present in \(d\nu(\eta)\).  Recombine before
+taking an absolute value:
+
+\[
+ \mathcal H_{C,G}(\alpha)
+ :=\int d\nu(\eta)\,\widehat w_\eta(A\alpha)
+   \sum_{g\asymp G}
+   F_{g,\eta}(\alpha)\overline{G_{g,\eta}(\alpha)}.
+\]
+
+With \(\widehat w_\eta(\xi)=\int w_\eta(u)e(-u\xi)\,du\), ordinary
+Fourier inversion gives the identity
+
+\[
+ \boxed{
+ \mathfrak V_{C,G}
+ =A\int_{\mathbb R}\mathcal H_{C,G}(\alpha)\,d\alpha.}
+\tag{4.768}
+\]
+
+No arbitrary-coefficient enlargement is made in (4.768).  All outer-scale
+and ratio-Mellin integrations, all five coprimality allocations, and the
+complete \(g\)-sum remain inside \(\mathcal H_{C,G}\).
+
+For every \(\eta\), the shift weight vanishes in a neighbourhood of zero,
 and hence
 
 \[
- X(m_2-r)=Y(n_2-r).
+ \boxed{
+ A\int_{\mathbb R}\widehat w_\eta(A\alpha)\,d\alpha
+ =w_\eta(0)=0.}
+\tag{4.769}
 \]
 
-Because \((X,Y)=1\), this has the exact integer parametrization
+Thus the product diagonal \(ax=by\), equivalently the constant Fourier
+mode in (4.768), is annihilated exactly.  This is the useful centering:
+the remaining theorem is an off-diagonal local \(L^2\) estimate, not a
+positive Gram bound containing its identity diagonal.
 
-\[
- \boxed{m_2=r+Yt,\qquad n_2=r+Xt,\qquad t\in\mathbb Z.}
-\tag{4.621zac}
-\]
-
-In the signed hard cell, \(X,Y\asymp T^{3/2}\) while
-\(m_2,n_2,r\asymp T^{1/2}\).  The dyadic support therefore gives
-\(|m_2-r|<Y\) and \(|n_2-r|<X\) for large \(T\), so (4.621zac) forces
-
-\[
- \boxed{t=0,\qquad m_2=n_2=r.}
-\tag{4.621zad}
-\]
-
-Thus the principal slow packet is exactly a partial diagonal of the
-original shifted equation.  The opposite sign/order is obtained by the
-corresponding left/right swap.  It should first be extracted as an
-explicit resonant term and recombined with the other BBLR orderings, AFE
-direction and registered boundary terms; treating it immediately by
-averaged Chowla discards this stronger origin.
-
-The finite helper `bblr_principal_incidence_solution_line` verifies
-(4.621zac) and the short-support implication (4.621zad) exactly.
-
-The partial diagonal can now be pulled completely back through the two
-BBLR signs before the approximation in equation (14).  Define the exact
-product coefficients
-
-\[
- \mathcal A(u)=\sum_{am_1=u}\alpha_a
-   W_1\!\left(\frac{m_1}{M_1}\right),\qquad
- \mathcal B(v)=\sum_{bn_1=v}\beta_b
-   W_3\!\left(\frac{n_1}{N_1}\right).
-\tag{4.621zade}
-\]
-
-On \(m_2=n_2=r\), the plus sign is \(u>v\), the minus sign is
-\(u<v\), and in both cases the positive original shift is
-\(h=r|u-v|\).  Therefore the two signs recombine exactly as
+The global inner target is \(TC=T^{1+s}\).  Hence the exact uniform local
+gate on this gcd layer is
 
 \[
  \boxed{
- \begin{aligned}
- \mathscr S_{\rm pd,+}+\mathscr S_{\rm pd,-}
-  ={}&\sum_{r\ge1}W_2\!\left(\frac r{M_2}\right)
-                    W_4\!\left(\frac r{N_2}\right)\\
-    &\times\sum_{u\ne v}\mathcal A(u)\mathcal B(v)
-       W_0\!\left(\frac{r|u-v|}{H}\right).
- \end{aligned}}
-\tag{4.621zadf}
+ \left|
+ \int_{\mathbb R}\mathcal H_{C,G}(\alpha)\,d\alpha
+ \right|
+ \ll_{B,W}TG(\log T)^{-B}.}
+\tag{4.770}
 \]
 
-The omitted \(u=v\) line is exactly the original \(h=0\) diagonal,
-which is already accounted for before the off-diagonal BBLR problem.
-There is no Poisson truncation or equation-(14) weight-replacement error
-in (4.621zadf), because it is an identity inside the original
-\(\mathcal S_\pm\).
-
-At the hard scale, (4.621zadf) has
-\(u,v\asymp T^{3/2}\), \(r\asymp T^{1/2}\), and hence the weight forces
+After multiplication by the outside \(A=C/G\), (4.770) gives
+\(TC(\log T)^{-B}\).  Comparing (4.767) with this target shows that the
+required saving is exactly
 
 \[
- |u-v|\asymp H/r\asymp T^{1/2}.
-\tag{4.621zadg}
+ (1+2s-\gamma)-(1+s)=s-\gamma=\log_T A.
 \]
 
-Thus the principal mode is now an explicit additive-band bilinear form,
-not an unspecified reciprocal-phase packet.  This alone does not make it
-a reciprocal-LCM form or prove a power saving: the next exact task is to
-sum its labelled copies over all AFE directions and BBLR orderings and
-compare the resulting kernel with the registered diagonal and reflected
-boundary.
+At the top layer \(\gamma=s\), this power requirement becomes zero, but
+the logarithmic little-oh still contains the fixed-affine Chowla subface
+from Section 4.96.  It must remain inside the complete \(g\)- and physical-
+kernel sum.  The averaged Chowla theorem of Matomäki--Radziwiłł--Tao treats
+translations of bounded multiplicative functions after averaging the
+shifts; it does not state (4.770) for the coupled divisor coefficients,
+varying primitive slopes, and retained \(g\)-kernel.  No adapter is claimed.
 
-The finite helper `bblr_partial_diagonal_correlation_sides` verifies
-(4.621zade)--(4.621zadf), keeps the common second factor \(r\), partitions
-every unequal product pair into exactly one sign, and records both
-`analytic_afe_packet_exhaustive=False` and
-`original_zeta_mollifier_coefficient_adapter_proved=False`.  The last
-flag is essential: the BBLR variables in (4.621zade) are the synthetic
-outer/inner slots produced by (4.601), not yet the original factors in a
-finite \(\zeta_XM_N\) convolution.  The helper also records
-`partial_diagonal_target_bound_proved=False`.
+The helper `collapsed_gcd_layer_parameterization` verifies (4.766) and
+the determinant equivalence on integers.  The `Fraction`-valued adapter
+`collapsed_gcd_layer_centered_kernel_audit` records (4.767)--(4.770), with
+`required_saving_exponent=s-gamma` and
+`fixed_affine_chowla_must_remain_inside_g_sum=True` at the top layer.  It
+keeps `published_averaged_chowla_adapter_applies=False`,
+`centered_coupled_dispersion_bound_proved=False`, and
+`whole_signed_hard_face_covered=False`.
 
-There is a useful but **separate** coefficient-first comparison.  If one
-starts directly from the truncated product \(\zeta_XM_N\), its finite
-coefficient is
+### 4.99 Primitive refactorization closes the top equal-product face
+
+The warning in Section 4.97 is local in the collapsed product \(c\).  The
+complete primitive sum over its hidden factors has an additional
+unconditional cancellation.  On \(c=d\), (4.763) contains
 
 \[
- c_{X,N}(u)=
- \sum_{\substack{d\mid u\\d\le N,\ u/d\le X}}
- \mu(d)\left(1-\frac{\log d}{\log N}\right).
-\tag{4.621zadh}
+ (u,v)=1,\qquad uj=vk.
 \]
 
-The complete identity \(c_{X,N}(u)=\Lambda(u)/\log N\) is guaranteed
-only for \(u\le\min(X,N)\).  If an analytic adapter were to identify a
-BBLR product at exponent \(3/2\) with this standard one-sided AFE
-coefficient, then
-
-\[
- N=T^3,\qquad X=T^{1/2},\qquad u\asymp T^{3/2},
-\]
-
-and the finite-zeta boundary would be active.  The condition \(u/d\le X\)
-would force the actually present mollifier divisors into
-
-\[
- \boxed{T\ \lesssim d\lesssim T^{3/2},}
-\tag{4.621zadi}
-\]
-
-while the omitted part of the complete divisor convolution has
-\(d<T\).  There is no upper mollifier-cutoff defect here because
-\(u<N\).  Equivalently, the exact coefficient-first identity is
-
-\[
- (\log N)c_{X,N}(u)
- =\Lambda(u)+
-  \sum_{\substack{d\mid u\\u/d>X}}
-     \mu(d)\log\frac dN,
-\tag{4.621zadj}
-\]
-
-and the second term cannot be dropped at \(u\asymp T^{3/2}\) in that
-coefficient-first model.  This proves that the standard one-sided AFE
-coefficient at that exponent is a large-divisor Möbius tail rather than a
-pure \(\Lambda\)-coefficient.  It does **not** prove that either
-\(\mathcal A\) or \(\mathcal B\) in (4.621zade) equals \(c_{X,N}\): in
-(4.601), the signed atoms were convolved into arbitrary BBLR outer
-coefficients and the remaining unsigned cofactors occupied the inner
-slots.  Recovering \(c_{X,N}\) therefore requires an explicit,
-packet-exhaustive stage adapter that has not been constructed.
-
-The exponent helper `partial_diagonal_coefficient_first_audit` records
-the complete range \(1/2\), the available divisor interval \([1,3/2]\),
-and `pure_von_mangoldt_replacement_valid=False`.  This agrees with the
-exact formal-prime-vector identities in the independent coefficient-first
-audit.  It supplies no assertion about the BBLR product coefficients and
-introduces no new asymptotic assertion.
-
-In fact, a stronger negative statement is finite and exact: there is no
-**parent-free, outer-index-only** identification at the Type stage.  Recall
-the grouped coefficient from (4.613),
-
-\[
- C_U(n;u)=-\!\sum_{\substack{dey=n\\de>U,\ d\le U\\dy=u}}
-              \mu(d)\mu(y).
-\]
-
-For the same cutoff \(U=3\) and the same outer product \(u=2\), direct
-enumeration gives
-
-\[
- \boxed{C_3(6;2)=1,\qquad C_3(10;2)=2.}
-\tag{4.621zadj1}
-\]
-
-Indeed, for \(n=6\) only \((d,e,y)=(2,3,1)\) survives, whereas for
-\(n=10\) both \((1,5,2)\) and \((2,5,1)\) survive.  Consequently there is
-no function \(F_U(u)\) satisfying \(C_U(n;u)=F_U(u)\) for every admissible
-parent \(n\).  Since \(c_{X,N}(u)\) is a function of \(u\) (for fixed
-\(X,N\)) alone, it cannot be inserted pointwise in place of
-\(C_U(n;u)\).
-
-This does not rule out a larger analytic adapter.  It proves that any valid
-one must retain the parent variable, the unsigned inner quotient, every
-Type sector, and the AFE/order packet labels until the full recombination.
-The finite helper `bblr_coefficient_stage_separation_witness` verifies
-(4.621zadj1) and records both
-`direct_outer_index_only_adapter_refuted=True` and
-`packet_exhaustive_parent_aware_adapter_still_open=True`.
-
-Retaining that missing parent coordinate exposes a positive structure.
-For one Type decomposition define the common-unsigned-cofactor kernel
+Euclid's lemma gives the exact bijection
 
 \[
  \boxed{
- P_U(n,m)=
- \sum_{r\mid(n,m)}
- C_U\!\left(n;\frac nr\right)
- C_U\!\left(m;\frac mr\right).}
-\tag{4.621zadj2}
+ (u,v)=1,\ uj=vk
+ \quad\Longleftrightarrow\quad
+ j=vq,\ k=uq\quad(q\in\mathbb N),
+ \qquad c=uvq.}
+\tag{4.771}
 \]
 
-The divisor \(r\) is exactly the unsigned inner quotient: if the signed
-outer products are \(u,v\), then \(n=ur\), \(m=vr\).  Hence the direct
-partial-diagonal restriction and (4.621zadj2) agree with no endpoint term:
+At the top balanced cell, the exact half cutoff (4.505) and the scale
+table in Sections 4.92--4.93 give
+\(u,v,j,k,U,e,e'\asymp Z=T^{1/2}\).  Hence (4.771) restricts \(q\) to
+a fixed finite set depending only on the dyadic support constants.
 
-\[
- \sum_{\substack{u\mid n,\ v\mid m\\n/u=m/v}}
- C_U(n;u)C_U(m;v)=P_U(n,m).
-\tag{4.621zadj3}
-\]
-
-For arbitrary finitely supported parent weights \(A,B\), a second finite
-reindexing gives the exact gcd-Gram diagonalization
+The signed coefficient itself has a useful exact form.  Put \(D=U/e\).
+The inequalities in (4.745) are equivalent to \(D<d\leq U\), and
+therefore
 
 \[
  \boxed{
- \begin{aligned}
- \sum_{n,m}A(n)B(m)P_U(n,m)
- =\sum_{r\ge1}
- &\left(\sum_{r\mid n}A(n)
- C_U\!\left(n;\frac nr\right)\right)\\
- {}\times&\left(\sum_{r\mid m}B(m)
- C_U\!\left(m;\frac mr\right)\right).
- \end{aligned}}
-\tag{4.621zadj4}
+ \lambda_{U,e}
+ =-\big(\mu\mathbf1_{D<\cdot\leq U}\big)*\mu
+ =-(\mu*\mu)
+   +(\mu\mathbf1_{\cdot\leq D})*\mu
+   +(\mu\mathbf1_{\cdot>U})*\mu.}
+\tag{4.772}
 \]
 
-In particular, when \(A=B\), the right side of (4.621zadj4) is a sum of
-squares.  For the finite witness \(U=3,n=10,m=15\), the only common active
-quotient is \(r=5\), and
+This is a coefficientwise finite identity.  On the balanced cell,
+\(D=O(1)\), \(U\asymp Z\), and the last convolution in (4.772), when
+localized to \(n\asymp Z\), has a bounded complementary factor.
 
-\[
- P_3(10,15)=C_3(10;2)C_3(15;3)=4.
-\]
-
-Thus the parent-aware core of one BBLR partial diagonal returns to the same
-totient/gcd-square philosophy as the original LCM main term; it is not a
-pointwise \(\zeta_XM_N\)-coefficient identification.  The finite helper
-`bblr_common_unsigned_cofactor_gram_sides` verifies
-(4.621zadj2)--(4.621zadj4) with exact rationals and records
-`parent_and_inner_quotient_retained=True`.  Its present scope is one
-supplied pair of parent-weight families.  It deliberately keeps
-`analytic_bblr_packet_exhaustive=False` and `target_bound_proved=False`:
-the second Möbius parent on each determinant side, the BBLR slot
-permutations, all AFE/order labels, and the original smooth kernel must
-still be pulled through this Gram decomposition before it becomes an
-analytic bound for the full principal term.
-
-The same arithmetic can be lifted through the second Möbius parent on each
-determinant side.  Write the original parent pairs as \((p,q)\) and
-\((m,n)\), with their possibly distinct Type cutoffs
-\((U_p,U_q,U_m,U_n)\), and suppose the selected BBLR slot equality is
-between the unsigned quotients of \(q\) and \(n\).  Put
-
-\[
- P_{U,V}(q,n)=\sum_{r\mid(q,n)}
- C_U\!\left(q;\frac qr\right)
- C_V\!\left(n;\frac nr\right),
- \qquad P_U=P_{U,U}.
-\tag{4.621zadj4a}
-\]
-
-For a supplied slot/order kernel
-\(W_\omega(p,q,m,n)\) that depends on the original parents, not on a
-particular Type factorization, expand all four parents by (4.614).  The
-finite partial-diagonal sum is
-
-\[
-\begin{aligned}
- \mathscr D_{U,\omega}
- =\sum_{p,q,m,n}W_\omega(p,q,m,n)
- \sum_{\substack{u_p\mid p,\ u_q\mid q\\
-                   u_m\mid m,\ u_n\mid n\\
-                   q/u_q=n/u_n}}
- &C_{U_p}(p;u_p)C_{U_q}(q;u_q)\\
- &\times C_{U_m}(m;u_m)C_{U_n}(n;u_n).
-\end{aligned}
-\tag{4.621zadj5}
-\]
-
-The \(p\)- and \(m\)-factorizations are unrestricted, so (4.614) and
-(4.621zadj3) give the exact recombination
+For completeness, the standard prime-number-theorem input needed here
+can be stated uniformly.  Let \(V\) range over a fixed bounded family in
+\(C_c^\infty((0,\infty))\), let \(U/Z\) and \(e/Z\) stay in fixed compact
+subsets of \((0,\infty)\), and let \(r\leq T^{O(1)}\).  For every \(B>0\),
 
 \[
  \boxed{
- \mathscr D_{U,\omega}
- =\sum_{p,q,m,n}W_\omega(p,q,m,n)
-   \mu(p)\mu(m)P_{U_q,U_n}(q,n).}
-\tag{4.621zadj6}
-\]
-
-Here the subscript \(U\) on \(\mathscr D_{U,\omega}\) denotes the full
-cutoff tuple.  There is no Type truncation or boundary error in
-(4.621zadj6).  In
-particular, the four artificial BBLR Type expansions reduce to two genuine
-Möbius parents multiplied by one cross-Gram gcd kernel.  It is
-positive-semidefinite when \(U_q=U_n\); for unequal cutoffs it is the
-bilinear pairing of the two different quotient projections.  Every supplied
-slot/order label \(\omega\) may be retained separately and summed only after
-this recombination.
-
-For the exact fixture \(U=3\), the labels `main/slot-2` and `dual/slot-1`
-give respectively
-
-\[
- 2\,\mu(6)\mu(14)P_3(10,15)=8,
+ \sum_{(n,r)=1}\lambda_{U,e}(n)V(n/Z)
+ \ll_{B,V}Z(\log Z)^{-B}\mathcal E_{C_B}(r),
  \qquad
- -\mu(10)\mu(6)P_3(15,10)=-4,
+ \mathcal E_K(r):=\prod_{p\mid r}\left(1+\frac Kp\right).}
+\tag{4.773}
 \]
 
-and the labelled total is \(4\).  The finite helper
-`bblr_four_parent_partial_diagonal_sides` verifies the direct four-Type
-sum, the two-parent recombination (4.621zadj6), and the divisor form
-(4.621zadj4a) independently with exact rationals.  It also verifies the
-asymmetric-cutoff fixture
-\((U_p,U_q,U_m,U_n)=(2,5,3,3)\), where
-\(C_5(10;2)C_3(15;3)=2\).  Thus the identity is not restricted to the
-symmetric hard cell.  The helper retains every supplied slot/order label.
-
-For the actual determinant parents, the slot permutations collapse much
-further.  The two side-products in (4.496) are
+Indeed, for the first term on the right of (4.772), the Dirichlet series
+after removing primes dividing \(r\) is exactly
 
 \[
- b r_1-a r_2=h,
+ \frac1{\zeta(s)^2}\prod_{p\mid r}(1-p^{-s})^{-2}.
 \]
 
-and the exact support in (4.499) includes
+The classical zero-free region and a smooth Perron shift give arbitrary
+logarithmic saving.  The second term in (4.772) is a bounded sum of
+similarly restricted Möbius sums because \(D=O(1)\).  In the third term,
+write \(n=dm\); the support \(n\asymp Z\) and \(d>U\asymp Z\) leave only
+boundedly many \(m\), and the same restricted Möbius estimate applies to
+the \(d\)-sum.  Finally
+\(\mathcal E_K(r)\ll_K(\log\log(3r))^K\), so all removed Euler factors
+are absorbed by increasing \(B\).  This proves (4.773) without a
+zero-density or Chowla hypothesis.
+
+Substitute (4.771) into the physical coefficient before separating the
+long variables.  Uniformly for fixed \(e,e'\), the inherited support
+constants, and \(x,y\asymp T\), set
 
 \[
- (a,b)=1,qquad(r_1,a)=1,qquad(r_2,b)=1.
-\tag{4.621zadj7}
+ \begin{aligned}
+ \mathfrak E_{x,y}:={}&
+ \sum_{q\asymp1}
+ \sum_{\substack{u,v\asymp Z\\
+       (u,v)=(u,y)=(v,x)=1}}
+ \lambda_{U,e}(u)\lambda_{U,e'}(v)\\
+ &\hspace{35mm}\times
+ \Phi_{x,y,q}(u,vq)\overline{\Phi'_{x,y,q}(v,uq)}.
+ \end{aligned}
 \]
 
-The four possible cross-side equal-inner pairings therefore have gcds
+For fixed \(v\), apply (4.773) to the \(u\)-sum with coprimality modulus
+\(r=vy\); the physical weights have the required uniform derivatives.
+Then sum \(v\) absolutely, using
+\(|\lambda_{U,e'}(v)|\leq\tau_2(v)\).  Since the \(q\)-set is finite,
+
+\[
+ \boxed{\mathfrak E_{x,y}\ll_{B,W}Z^2(\log T)^{-B}.}
+\tag{4.774}
+\]
+
+The remaining fixed-affine long-variable sum now needs no Möbius
+correlation theorem.  Bound it by its cardinality \(O(T)\).  As
+\(Z^2=T\), (4.774) gives
 
 \[
  \boxed{
- \begin{array}{c|c}
- \text{paired parents}&\text{possible common inner quotient}\\ \hline
- b\leftrightarrow a&1\\
- b\leftrightarrow r_2&1\\
- r_1\leftrightarrow a&1\\
- r_1\leftrightarrow r_2&r\mid(r_1,r_2),\quad r\mid h.
+ \sum_{x-y=\kappa\atop x,y\asymp T}
+   \mu(x)\mu(y)\mathfrak E_{x,y}
+ \ll_{B,W}T Z^2(\log T)^{-B}
+ =T^2(\log T)^{-B}.}
+\tag{4.775}
+\]
+
+This proves the required logarithmic little-oh on the top primitive
+equal-product face.  It does not contradict the finite coefficient \(4\)
+in (4.764): individual \(c\)-fibres need not vanish; the cancellation is
+the complete outer \((u,v,q)\)-average which Section 4.97 required us to
+retain.  It also does not cover the intermediate gcd layers
+\(0<s-\gamma<1\) in (4.770).
+
+The helpers `primitive_equal_product_factorization` and
+`truncated_signed_atom_interval_convolution` verify (4.771)--(4.772) on
+integers.  The adapter `top_equal_product_outer_pnt_audit` records the
+zero power margin, the arbitrary logarithmic PNT saving, and
+`top_equal_product_face_closed_unconditionally=True`, while retaining
+`whole_signed_hard_face_covered=False`.
+
+### 4.100 The same outer PNT closes every fixed polylog gcd collar
+
+The preceding argument is not confined to \(a=b=1\).  Return to the
+primitive gcd layer (4.766), and retain the hidden factorizations
+
+\[
+ ga=uj,\qquad gb=vk,qquad (a,b)=(u,v)=1.
+\]
+
+They imply \(buj=avk\).  Put
+
+\[
+ d_1=(a,u),\qquad d_2=(b,v),\qquad
+ \Delta=(bu,av).
+\]
+
+The two primitive conditions imply prime by prime that
+\(\Delta=d_1d_2\).  Reducing the two sides by \(\Delta\) and applying
+Euclid's lemma gives the exact parameterization
+
+\[
+ \boxed{
+ \begin{aligned}
+ \Delta&=(bu,av)=(a,u)(b,v)=d_1d_2,\\
+ j&=\frac{av}{\Delta}q,\qquad
+ k=\frac{bu}{\Delta}q,\qquad
+ g=\frac{uv}{\Delta}q,qquad q\in\mathbb N.
+ \end{aligned}}
+\tag{4.776}
+\]
+
+Conversely, (4.776) reconstructs \(uj=ga\) and \(vk=gb\) exactly.
+Writing
+
+\[
+ a=d_1a_0,\quad u=d_1u_0,\quad
+ b=d_2b_0,\quad v=d_2v_0
+\]
+
+turns (4.776) into
+
+\[
+ \boxed{
+ j=a_0v_0q,\qquad k=b_0u_0q,qquad g=u_0v_0q.}
+\tag{4.777}
+\]
+
+The exact gcd conditions are
+
+\[
+ \begin{gathered}
+ (a_0,u_0)=(b_0,v_0)=1,\\
+ (d_1,d_2)=(d_1,b_0)=(a_0,d_2)=(a_0,b_0)=1,\\
+ (d_1,v_0)=(u_0,d_2)=(u_0,v_0)=1.
+ \end{gathered}
+\]
+
+They are restrictions, not discarded density factors.
+
+Let \(Z=C^{1/2}\), and write \(q\asymp Q\).  Since
+\(a,b,h\asymp A=C/G\), \(u,v,j,k\asymp Z\), and \(g\asymp G\),
+(4.777) forces the complete scale table
+
+\[
+ \boxed{
+ d_1d_2=\Delta\asymp AQ,\quad 1\leq Q\ll A,\quad
+ a_0\asymp\frac A{d_1},\quad b_0\asymp\frac A{d_2},\quad
+ u_0\asymp\frac Z{d_1},\quad v_0\asymp\frac Z{d_2}.}
+\tag{4.778}
+\]
+
+At the constant endpoint, \(Q\) ranges over a nonempty fixed compact
+integer set; no growing lower bound is imposed.
+
+The PNT estimate (4.773) is stable under the divisibilities in (4.777).
+For a prescribed \(d_0\leq(\log T)^K\), deleting or forcing its finitely
+many local prime powers changes the Dirichlet series of \(\mu*\mu\) by a
+finite Euler polynomial.  The same zero-free-region argument therefore
+gives, for every \(B\),
+
+\[
+ \boxed{
+ \sum_{\substack{d_0\mid n\\(n,r)=1}}
+   \lambda_{U,e}(n)V(n/Z)
+ \ll_{B,K,V}Z(\log Z)^{-B}
+   \tau(d_0)^{C_B}\mathcal E_{C_B}(r).}
+\tag{4.779}
+\]
+
+For \(s<1\), this is even more direct.  Under the exact half cutoff,
+\(U=T^{1/2}\), while \(u\asymp Z=T^{s/2}\) and the unsigned cofactor
+has size \(e\asymp T^{1-s/2}\).  Thus every divisor of \(u\) satisfies
+\(d\leq U<de\), and \(\lambda_{U,e}(u)=-(\mu*\mu)(u)\) throughout a
+fixed strict exponent cell.  At \(s=1\), the two bounded-factor tails in
+(4.772) give (4.779).
+
+Now suppose
+
+\[
+ 1\leq A=\frac CG\leq(\log T)^K
+\]
+
+for a fixed \(K\).  All variables \(a,b,h,d_1,d_2,q\) and every gcd
+allocation introduced by (4.776)--(4.778) have polylogarithmic total
+variation.  Fix them and the long variables, apply (4.779) to one signed
+atom, and sum the other signed atom absolutely with its divisor bound.
+For fixed \((a,b,h)\), the affine equation \(ax-by=h\) has
+\(O(T/A+1)\) localized solutions.  Consequently all slope, shift,
+allocation, and long-variable sums cost only \(T(\log T)^{O_K(1)}\) on
+top of the natural outer volume \(Z^2=C\).  Choosing the \(B\) in
+(4.779) after these explicit polylogarithmic losses yields
+
+\[
+ \boxed{
+ \mathfrak V_{C,G}\ll_{B,K,W}TC(\log T)^{-B},
+ \qquad 1\leq C/G\leq(\log T)^K.}
+\tag{4.780}
+\]
+
+Thus every fixed polylogarithmic neighbourhood of the top gcd face is
+unconditionally closed.  The residual centered-dispersion problem can be
+restricted to \(A>(\log T)^K\) for every fixed \(K\).  This still leaves
+every strict positive exponent cell \(A=T^{s-\gamma}\),
+\(s-\gamma>0\); (4.780) is not a positive-power Type-II theorem.
+
+The helper `primitive_unequal_product_factorization` verifies
+(4.776)--(4.777), including a witness with nontrivial cross gcds
+\((d_1,d_2)=(2,7)\).  The adapter
+`polylog_gcd_collar_outer_pnt_audit` records
+`polylog_gcd_collar_closed_unconditionally=True` and deliberately keeps
+`strict_positive_power_gcd_layers_covered=False` and
+`whole_signed_hard_face_covered=False`.
+
+### 4.101 The strict-power residual is one exact three-block Type-II gate
+
+It remains to state the positive-power core after (4.776) without
+enlarging any coefficient class.  Write
+
+\[
+ C=T^s,\qquad A=T^\delta=\frac CG,\qquad
+ G=T^\gamma,\qquad q=T^\theta,\qquad d_i=T^{r_i}.
+\]
+
+The exact relations \(C=AG\) and \(d_1d_2\asymp Aq\) give
+
+\[
+ \boxed{
+ \gamma=s-\delta,\qquad r_1+r_2=\delta+\theta,
+ \qquad
+ 0\leq\theta\leq\min(\delta,\gamma),
+ \qquad
+ 0\leq r_i\leq\min(\delta,s/2).}
+\tag{4.781}
+\]
+
+The reduced variables in (4.777) have the complete scale table
+
+\[
+ \boxed{
+ \begin{array}{c|ccccc}
+ \text{variable}&a_0&b_0&u_0&v_0&q\\ \hline
+ \log_T(\text{length})
+ &\delta-r_1&\delta-r_2&s/2-r_1&s/2-r_2&\theta.
  \end{array}}
-\tag{4.621zadj8}
+\tag{4.782}
 \]
 
-The last divisibility follows immediately from
-\((r_1,r_2)\mid(br_1-ar_2)\).  Thus on the hard partial-diagonal block,
-where the common BBLR inner variable satisfies \(r\asymp T^{1/2}>1\), the
-first three slot pairings are empty.  Only the moving--moving pairing can
-survive.  Writing
+All entries in (4.782) are nonnegative precisely on the polytope
+(4.781).  The reconstruction identities are
 
 \[
- r_1=rx,\qquad r_2=ry
+ \begin{aligned}
+ a&=d_1a_0,& b&=d_2b_0,&
+ u&=d_1u_0,& v&=d_2v_0,\\
+ j&=a_0v_0q,& k&=b_0u_0q,&
+ g&=u_0v_0q,& d_1d_2&\asymp Aq.
+ \end{aligned}
 \]
 
-then gives the exact parent-level incidence
-
-\[
- \boxed{h=r(bx-ay).}
-\tag{4.621zadj9}
-\]
-
-This is precisely the additive-band identity behind (4.621zadf), now with
-the parent coordinates identified.  In (4.621zadj6) the surviving hard
-ordering is therefore
-
-\[
- p=b,\qquad q=r_1,\qquad m=a,\qquad n=r_2,
-\]
-
-and its arithmetic coefficient is
+For one dyadic cell, let \(d\nu(\eta)\) retain the four original
+cross-coprimality allocations, the primitive allocations, both ratio
+integrals, and the exact physical kernel.  The strict-power residual is
+the following single three-block sum:
 
 \[
  \boxed{
- \mu(a)\mu(b)
- P_{U_{r_1},U_{r_2}}(r_1,r_2),
- \qquad r\mid h.}
-\tag{4.621zadj10}
+ \begin{aligned}
+ \mathfrak C_{s,\delta,\theta,r_1}[\Psi]
+ :=\int d\nu(\eta)
+ \sum_{\substack{
+ d_1,d_2,a_0,b_0,u_0,v_0,q,h,x,y\\
+ d_1a_0x-d_2b_0y=h}}
+ &\lambda_{U,e}(d_1u_0)
+ \overline{\lambda_{U,e'}(d_2v_0)}\\[-2mm]
+ &\times\mu(x)\mu(y)\,\Psi_\eta,
+ \end{aligned}}
+\tag{4.783}
 \]
 
-The finite helper `bblr_partial_diagonal_slot_coprimality` verifies all four
-gcd rows in (4.621zadj8), the divisibility by \(h\), and that only the
-moving--moving pair can support a nontrivial common quotient.  This removes
-the hard-scale slot-permutation ambiguity; unit-inner boundary packets from
-the other three pairings still belong in the eventual full packet ledger.
+where every variable has the range in (4.781)--(4.782),
+\(h\asymp T^\delta\), \(x,y\asymp T\), and all gcd conditions displayed
+after (4.777) are imposed.  The nonzero-shift centering from (4.768)--
+(4.769) is part of \(\Psi_\eta\); no positive identity diagonal is added.
 
-For the unique hard moving--moving pairing, the zero mode can now be
-extracted at the correct parent stage.  Let \(A(b,r_1)\), \(B(a,r_2)\) be
-arbitrary finitely supported parent weights, and let
-\(K_{\omega,r}(c)\) be the supplied kernel for packet label \(\omega\),
-where
+There are exactly three dynamic blocks in (4.783):
 
 \[
- r_1=rx,\qquad r_2=ry,\qquad c=bx-ay,\qquad h=rc.
-\]
-
-For packet labels which share the same two parent weights \(A,B\), first
-combine every supplied label,
-
-\[
- K_r(c)=\sum_\omega K_{\omega,r}(c),
-\tag{4.621zadj11}
-\]
-
-and extend \(K_r(0)=0\) for the already-counted original diagonal.  The
-finite moving-parent master is
-
-\[
-\boxed{
-\begin{aligned}
- \mathscr D_{\rm mov}
- =\sum_{r,b,a,x,y}
- &A(b,rx)B(a,ry)\mu(b)\mu(a)\\
- &\times C_{U_1}(rx;x)C_{U_2}(ry;y)K_r(bx-ay).
-\end{aligned}}
-\tag{4.621zadj12}
-\]
-
-Choose a cyclic modulus \(\mathfrak Q>2\max|c|\), so signed shifts do not
-alias, and put
-
-\[
- \bar K_r=\frac1{\mathfrak Q}
- \sum_{c\bmod\mathfrak Q}K_r(c),
- \qquad K_r^\circ(c)=K_r(c)-\bar K_r.
-\tag{4.621zadj13}
-\]
-
-Define the two parent-aware Type projections
-
-\[
-\begin{aligned}
- L_r&=\sum_{b,r\mid r_1}A(b,r_1)\mu(b)
- C_{U_1}\!\left(r_1;\frac{r_1}{r}\right),\\
- R_r&=\sum_{a,r\mid r_2}B(a,r_2)\mu(a)
- C_{U_2}\!\left(r_2;\frac{r_2}{r}\right).
-\end{aligned}
-\tag{4.621zadj14}
-\]
-
-Then finite reindexing gives the exact, boundary-free split
-
-\[
-\boxed{
- \mathscr D_{\rm mov}
- =\sum_r\bar K_rL_rR_r
- +\sum_{r,b,a,x,y}
- A(b,rx)B(a,ry)\mu(b)\mu(a)
- C_{U_1}(rx;x)C_{U_2}(ry;y)K_r^\circ(bx-ay),}
-\tag{4.621zadj15}
-\]
-
-with
-
-\[
- \sum_{c\bmod\mathfrak Q}K_r^\circ(c)=0
- \qquad\text{for every }r.
-\tag{4.621zadj16}
-\]
-
-The order in (4.621zadj11)--(4.621zadj13) is essential: centering each AFE
-or BBLR ordering separately would delete possible cancellation among their
-constant modes.  In the exact rational fixture
-\((b,r_1)=(7,10)\), \((a,r_2)=(5,15)\), \(U_1=U_2=3\), the sole active
-row has \(r=5,c=-1\) and parent weight \(24\).  For the two supplied
-packets the aggregate cyclic mean is \(5/7\), so (4.621zadj15) reads
-
-\[
- 24=\frac{120}{7}+\frac{48}{7}.
-\]
-
-The finite helper `bblr_moving_parent_zero_mode_sides` verifies
-(4.621zadj11)--(4.621zadj16), preserves all packet labels, checks
-\(r\mid h\), and records `packet_sum_precedes_centering=True`.  It keeps
-`analytic_afe_ordering_kernel_exhaustive=False` and
-`target_bound_proved=False`: the supplied-kernel identity is complete, but
-the actual signed AFE/order/reflection kernel and its means \(\bar K_r\)
-have not yet been derived.
-
-There is a second qualification: the split (4.621zadj15) is a cyclic
-centering identity, not yet the canonical zero dual frequency of
-(4.488).  The no-alias modulus is only constrained by
-\(\mathfrak Q>2\max|c|\), and
-
-\[
- \bar K_r^{(\mathfrak Q)}
- =\frac1{\mathfrak Q}\sum_c K_r(c)
-\tag{4.621zadj16a}
-\]
-
-depends on that auxiliary choice.  For the same rational fixture,
-\(\mathfrak Q=7\) and \(\mathfrak Q=11\) give respectively
-
-\[
-\begin{array}{c|c|c|c}
-\mathfrak Q&\mathscr D_{\rm mov}
- &\text{constant summand}&\text{centered summand}\\ \hline
-7&24&120/7&48/7\\
-11&24&120/11&144/11.
-\end{array}
-\tag{4.621zadj16b}
-\]
-
-Both rows recombine exactly, but their constant summands differ.  Thus one
-cannot make the analytic principal term small merely by enlarging
-\(\mathfrak Q\): the centered term changes by the compensating amount.
-More importantly, (4.621zadj16a) cannot be identified with
-\(\widehat F_B(0)/|\Delta|\) from (4.489) without an additional,
-canonical adapter inherited from the original Poisson variables.
-
-The finite witness bblr_cyclic_centering_modulus_dependence_witness
-verifies (4.621zadj16b) and records both
-constant_summand_depends_on_auxiliary_modulus as true and
-cyclic_constant_identified_with_poisson_zero_mode as false.  Hence the
-first analytic priority remains the direct evaluation of the physical
-Poisson \(m=0\) functional; cyclic row centering is reserved for the
-subsequent dispersion identity.
-
-That physical functional has a canonical Gram reorganization.  For
-\(\Delta\ne0\), set
-
-\[
- G_B(z):=F_B(Bz),\qquad z=(v,j).
-\]
-
-Since \(|\det B|=|\Delta|\), ordinary change of variables gives
-
-\[
-\boxed{
- \frac1{|\Delta|}\widehat F_B(0)
- =\frac1{|\Delta|}\int_{\mathbb R^2}F_B(x)\,dx
- =\int_{\mathbb R^2}G_B(v,j)\,dv\,dj.}
-\tag{4.621zadj16c}
-\]
-
-Thus the determinant denominator in the zero dual frequency is exactly
-the Jacobian; it is not an additional small factor after the original
-\((v,j)\) coordinates are restored.  Index one entry of the expanded
-square by \(e=(r,s,w)\), retain its full Möbius/taper coefficient
-\(\alpha_e\), and denote its one-entry continuous kernel by \(G_e(v,j)\).
-For distinct entries the primitive positive support from (4.468) makes
-\(\Delta=0\) equivalent to the already registered identity pair.  Hence
-the offdiagonal Poisson zero mode is
-
-\[
-\boxed{
- Z^{\rm off}_0
- =c_W(T)\sum_{e\ne f}\alpha_e\overline{\alpha_f}
-   \langle G_e,G_f\rangle
- =c_W(T)\bigl(E_{\rm cont}-D_{\rm cont}\bigr),}
-\tag{4.621zadj16d}
-\]
-
-where
-
-\[
- E_{\rm cont}:=\int_{\mathbb R^2}
-   \left|\sum_e\alpha_eG_e(v,j)\right|^2\,dv\,dj,
- \qquad
- D_{\rm cont}:=\sum_e|\alpha_e|^2\|G_e\|_2^2.
-\tag{4.621zadj16e}
-\]
-
-The distinction between \(D_{\rm cont}\) and the original discrete
-identity diagonal \(D_{\rm disc}\) is essential: the matrix \(B\) is
-singular on an identity pair, so (4.488) was never applied there.
-Combining the quantities only after both have been defined gives the exact
-resonant ledger
-
-\[
-\boxed{
- D_{\rm disc}+Z^{\rm off}_0
- =c_W(T)E_{\rm cont}
-  +\underbrace{\bigl(D_{\rm disc}-c_W(T)D_{\rm cont}\bigr)}
-   _{\mathcal E_{\rm samp}}.}
-\tag{4.621zadj16f}
-\]
-
-Therefore the possible residual main term has two parts: a global
-continuous Gram energy, still carrying all entry Möbius signs before the
-square, and a diagonal sampling correction \(\mathcal E_{\rm samp}\).
-Neither term has yet been bounded at the target scale, and no equality
-between the continuous and discrete diagonals is assumed.
-
-The finite helper bblr_poisson_zero_gram_sides verifies the algebra in
-(4.621zadj16d)--(4.621zadj16f).  With primitive coefficient \(5/6\),
-continuous energy \(21\), continuous self diagonal \(85\), and discrete
-diagonal \(90\), its two sides are both \(110/3\), while the offdiagonal
-zero term is \(-160/3\) and the sampling correction is \(115/6\).  This
-also proves at finite level that the offdiagonal zero mode alone is
-sign-indefinite; positivity belongs to \(E_{\rm cont}\), before the
-continuous self diagonal is removed.
-
-The power ledger of (4.621zadj16f) is now asymmetric in a useful way.
-The discrete identity diagonal is the diagonal-scale term already counted
-in (4.465), so its exponent is two.  For one continuous self pair, use
-\((v,\delta=wv-js)\) as coordinates.  Since \(s\asymp T\),
-
-\[
- dv\,dj=\frac1s\,dv\,d\delta,
- \qquad |v|,|\delta|\ll_W T^{1/2},
-\]
-
-and the normalized continuous area has exponent zero.  Summing the
-\(T^2\) entry family gives
-
-\[
-\boxed{
- \log_T D_{\rm disc}=2,\qquad
- \log_T D_{\rm cont}=2,\qquad
- \log_T E_{\rm cont}^{\rm trivial}=3.}
-\tag{4.621zadj16g}
+ \begin{array}{c|c|c}
+ \text{block}&\text{variables}&\text{total exponent}\\ \hline
+ \text{signed--gcd}&(d_1,u_0;d_2,v_0)&
+   (\delta+\theta)+(\gamma-\theta)=s\\
+ \text{reduced unsigned}&(a_0,b_0,q)&
+   (\delta-r_1)+(\delta-r_2)+\theta=\delta\\
+ \text{long determinant}&(x,y,h;\ d_1a_0x-d_2b_0y=h)&1.
+ \end{array}
 \]
 
 Consequently
 
 \[
-\boxed{
- \text{sampling-correction power deficit}=0,\qquad
- \text{required coupled-Gram saving}=3-2=1.}
-\tag{4.621zadj16h}
+ \boxed{
+ E_{\rm raw}=1+s+\delta,\qquad
+ E_{\rm target}=1+s,\qquad
+ E_{\rm raw}-E_{\rm target}
+ =\delta
+ =E_{(a_0,b_0,q)}.}
+\tag{4.784}
 \]
 
-Thus \(\mathcal E_{\rm samp}\) introduces no new positive-power
-obstruction.  Its endpoint logarithmic aggregation still has to be checked,
-so this statement is not yet an \(o(T^2)\) estimate.  The whole missing
-power remains concentrated in \(E_{\rm cont}\), where the Möbius signs
-remain inside the continuous sum before squaring.
-
-The adapter transition_poisson_resonant_gram_audit records
-(4.621zadj16g)--(4.621zadj16h), sets
-sampling_correction_has_no_positive_power_obstruction to true, but keeps
-endpoint_logarithmic_aggregation_closed,
-continuous_mobius_gram_bound_proved, and
-whole_poisson_zero_mode_covered all false.
-
-The continuous Gram also has a useful wave-packet interpretation.  For
-one primitive entry \(e=(w,s)\), its one-entry factor is supported where
-
-\[
- |v|\ll_W T^{1/2},\qquad
- |\delta=wv-js|\ll_W T^{1/2}.
-\tag{4.621zadj16i}
-\]
-
-In the \((v,j)\)-plane this is a tube around
-\(j=(w/s)v\).  Its longitudinal length is \(T^{1/2}\); since
-\(\partial_j\delta=-s\asymp-T\), its transverse width is
-\(T^{-1/2}\).  Therefore its angular resolution is exactly
-
-\[
- \boxed{T^{-1/2}/T^{1/2}=T^{-1}.}
-\tag{4.621zadj16j}
-\]
-
-There are \(T^{2+o(1)}\) primitive directions \(w/s\) with
-\(w,s\asymp T\).  Resolution (4.621zadj16j) partitions them into
-\(T^{1+o(1)}\) angular clusters, each containing \(T^{1+o(1)}\)
-entries.  Consequently the two possible energy ledgers are
-
-\[
-\begin{array}{c|c}
-\text{cluster behavior}&\text{total exponent}\\ \hline
-\text{coherent}&1+2\cdot1=3,\\
-\text{square-root in each cluster}&1+1=2.
-\end{array}
-\tag{4.621zadj16k}
-\]
-
-The second row is exactly the target and has no spare power.  The
-coefficient inside one cluster is
-
-\[
- \boxed{\alpha_{s,w}
-   =\mu(s)\mu(ks+w)\,p_N(qs)p_N(q(ks+w))
-   \times\text{the retained smooth factors}.}
-\tag{4.621zadj16l}
-\]
-
-Thus the remaining resonant theorem is a vector-valued two-Möbius Farey
-microcluster square function.  It is not enough to prove cancellation for
-a scalar count in one sector; the one-entry wave packets vary within the
-cluster and their common \(L^2(v,j)\) geometry must be retained.
-
-Here is the exact finite replacement for the informal phrase “same
-cluster”.  For an integer angular resolution \(Q\geq1\), put
-
-\[
- b_Q(w,s)=\left\lfloor {Qw\over s}\right\rfloor,
- \qquad
- \Delta_{12}=w_1s_2-w_2s_1.
-\tag{4.621zadj16m}
-\]
-
-Then elementary cross multiplication gives the two implications
-
-\[
-\begin{aligned}
- b_Q(w_1,s_1)=b_Q(w_2,s_2)
-   &\Longrightarrow Q|\Delta_{12}|<s_1s_2,\\
- Q|\Delta_{12}|<s_1s_2
-   &\Longrightarrow
-   |b_Q(w_1,s_1)-b_Q(w_2,s_2)|\leq1.
-\end{aligned}
-\tag{4.621zadj16n}
-\]
-
-Thus “same cluster” is not literally equivalent to the determinant
-collar.  The collar is instead covered exactly by a sector and its two
-neighbors, so the angular interaction graph has multiplicity at most
-three.  Taking \(Q\asymp T\) recovers the scale
-\(|\Delta_{12}|\ll s_1s_2/T\asymp T\) without losing a power of \(T\).
-The finite adapter farey_sector_pair_ledger records (4.621zadj16m-n), and
-its exhaustive small-range test checks both implications including sector
-boundaries.
-
-At the critical resolution there is a second exact simplification.  If
-the dyadic upper endpoint is chosen as \(Q\), so \(s\leq Q\), the fiber
-over a fixed sector and denominator is
-
-\[
- \left\{w\in\mathbb Z:
-   \left\lceil{bs\over Q}\right\rceil
-   \leq w<
-   \left\lceil{(b+1)s\over Q}\right\rceil\right\}.
-\tag{4.621zadj16o}
-\]
-
-Its cardinality is at most \(\lceil s/Q\rceil\leq1\).  Thus one angular
-microcluster is exactly a truncated Beatty graph
-
-\[
- w=w_b(s):=\left\lceil{bs\over Q}\right\rceil,
- \qquad bs\leq Qw<(b+1)s,
-\tag{4.621zadj16p}
-\]
-
-not a two-dimensional cloud.  The helper farey_sector_fiber_ledger
-records the half-open endpoints in (4.621zadj16o) and the single-fiber
-claim in (4.621zadj16p).
-
-There is also an entrywise multiplicative fold.  Put \(r=ks+w\).  The
-primitive support already imposes \((r,s)=1\), hence
-
-\[
- \boxed{\mu(r)\mu(s)=\mu(rs)},\qquad n:=rs,
-\tag{4.621zadj16q}
-\]
-
-and the sector condition is equivalently
-
-\[
- (kQ+b)s^2\leq Qn<(kQ+b+1)s^2.
-\tag{4.621zadj16r}
-\]
-
-The helper farey_primitive_product_coordinate_ledger verifies
-(4.621zadj16q-r) with the finite Möbius function.  This does **not** turn
-the continuous Gram into a scalar one-Möbius sum: the wave packet and
-the two mollifier tapers still depend separately on \((r,s)\), and one
-squarefree \(n\) may have several admissible divisor splits.  What has
-been removed is only the claim that two independent signs remain at the
-entry coefficient level.
-
-Finally, the inter-cluster bookkeeping costs only a constant.  Let
-
-\[
- S_b(v,j):=\sum_{e:\,b_Q(e)=b}\alpha_eG_e(v,j).
-\tag{4.621zadj16s}
-\]
-
-On the critical dyadic window \(|v|\asymp_W T^{1/2}\), simultaneous
-support of two packets in (4.621zadj16i) forces their slopes to differ by
-\(O_W(T^{-1})\).  Thus, with a cutoff-dependent fixed widening of the
-sectors, there is an integer \(R=O_W(1)\) such that
-\(\langle S_b,S_c\rangle=0\) for \(|b-c|>R\).  Therefore
-
-\[
-\boxed{
- \left\|\sum_bS_b\right\|_2^2
- \leq(2R+1)\sum_b\|S_b\|_2^2.}
-\tag{4.621zadj16t}
-\]
-
-Indeed, expand the left side, retain only \(|b-c|\leq R\), and use
-\(2|\langle S_b,S_c\rangle|\leq\|S_b\|_2^2+\|S_c\|_2^2\).
-The helper banded_sector_gram_sides verifies the expansion and (4.621zadj16t)
-for exact rational vectors.  Hence the one-power problem is genuinely
-intra-cluster: no additional power is hidden in the adjacent-sector cover.
-
-There is now a useful second centering which, unlike the auxiliary kernel
-centering in (4.621zadj16a), is positive Parseval.  Embed all active sector
-labels without aliasing into \(\mathbb Z/M\mathbb Z\), with
-\(M\asymp_W Q\asymp T\), and define
-
-\[
- a_{\rm AFE}:=h\delta,\qquad
- \xi\in\mathbb Z/M\mathbb Z.
-\]
-
-These are different variables: the first is the original product frequency,
-while \(\xi\) is only the auxiliary sector character.  In particular the
-packet labels \(h,\delta\) and their signs remain inside \(S_b\).  With this
-notation define
-
-\[
- \mathcal A_\xi:=\sum_b e(\xi b/M)S_b.
-\tag{4.621zadj16u}
-\]
-
-Finite character orthogonality gives the exact vector identity
+Thus the whole positive-power task on this route is the one local
+inequality
 
 \[
  \boxed{
- \sum_b\|S_b\|_2^2
- =\frac1M\sum_{\xi\bmod M}\|\mathcal A_\xi\|_2^2
- =\frac{E_{\rm cont}}M
-  +\frac1M\sum_{\xi\ne0}\|\mathcal A_\xi\|_2^2.}
-\tag{4.621zadj16v}
+ \mathfrak C_{s,\delta,\theta,r_1}[\Psi]
+ \ll_{B,W}T^{1+s}(\log T)^{-B}}
+\tag{4.785}
 \]
 
-The first term on the right is the original continuous Gram divided by
-\(M\), because \(\mathcal A_0=\sum_bS_b\).  Put
+uniformly on the rational polytope (4.781), after excluding the already
+proved polylog collar.  Formula (4.785) must save the complete reduced
+unsigned block by coupling it to both Möbius-bearing blocks; estimating
+that block by cardinality leaves exactly \(T^\delta\).
+
+Neither direct role assignment in BBLR Proposition 3.1 is legal.  If
+\(\mu(x),\mu(y)\) occupy its two arbitrary outer-coefficient slots, then
+the two \(\lambda(d_i u_i)\) sequences remain arithmetic weights in inner
+slots; reversing the assignment leaves the two long Möbius weights there.
+There is, however, a legal *convolved* assignment, described in Section
+4.102 below.  Its hypotheses hold, but its two published error terms both
+miss the target by a positive power.  Thus the obstruction is an exponent
+failure after the necessary convolution, not an absolute absence of a
+BBLR adapter.
+
+The adapter `strict_power_gcd_core_audit` implements (4.781)--(4.784)
+with `Fraction` and records
+`unsigned_reduced_block_exponent=delta`,
+`bblr_arbitrary_outer_coefficient_adapter_applies=True`, and
+`centered_three_block_type_ii_proved=False`.  Hence (4.785), not the
+fixed-shift Chowla face, is now the unique strict-power local theorem
+left by the collapsed route.
+
+### 4.102 Convolution makes BBLR legal, but Cauchy recreates the raw-scale grouped diagonal
+
+Fix the variables \(u_0,v_0,q\), the finite coprimality allocations, and
+the ratio-Mellin parameters.  On the left define the exact dyadic
+coefficient
 
 \[
- \mathcal N_{\ne0}:=\frac1M
-  \sum_{\xi\ne0}\|\mathcal A_\xi\|_2^2,
- \qquad L:=2R+1.
-\tag{4.621zadj16w}
+ \alpha_{u_0}(r)
+ :=\sum_{d_1x=r}
+   \lambda_{U,e}(d_1u_0)\mu(x)\Phi_{u_0}(d_1,x),
+ \qquad
+ \beta_{v_0}(t)
+ :=\sum_{d_2y=t}
+   \overline{\lambda_{U,e'}(d_2v_0)}\mu(y)
+   \Phi'_{v_0}(d_2,y).
+\tag{4.786}
 \]
 
-Character orthogonality also splits the entry self diagonal exactly.  From
-\[
- \frac1M\sum_{\xi\ne0}e(\xi(b_e-b_f)/M)
- =\mathbf1_{b_e=b_f}-\frac1M
-\]
-one obtains
-\[
- \boxed{\mathcal N_{\ne0}=\left(1-\frac1M\right)D_{\rm cont}+\mathcal N_{\ne0}^{\rm off},}
-\tag{4.621zadj16w-diag}
-\]
-where
-\[
- \mathcal N_{\ne0}^{\rm off}
- :=\sum_{e\ne f}\alpha_e\overline{\alpha_f}
- \left(\mathbf1_{b_e=b_f}-\frac1M\right)
- \langle G_e,G_f\rangle.
-\tag{4.621zadj16w-off}
-\]
-Thus sector_character_is_trivial_on_entry_diagonal: every character phase
-cancels when \(e=f\), and the nonprincipal average retains the factor
-\(1-1/M\).  This is useful rather than harmful because (4.621zadj16g)
-already places \(D_{\rm cont}\) at the target exponent \(2\).  After the
-one-factor Type expansion, the primitive
-\(\Delta_{\rm Type}=r_1s_2-r_2s_1=0\) terms in the enlarged factorization
-recombine exactly to this same original-entry diagonal by (4.621zadj16z).
-They are not a new Type-II diagonal loss.
-
-When supplied the original_entry_ids, the finite helper
-sector_character_parseval_sides first recombines all outer packets on one
-original \((r,s)\) entry and then records the three quantities in
-(4.621zadj16w-diag).  The labelled helper
-labelled_type_zero_determinant_recombination retains every
-\((h,\delta,\nu,\sigma)\) packet while recombining all \(dm=r\) cross
-factorizations.  The latter identity does not estimate the different
-outer packets on one entry.  It proves only that the remaining
-positive-power Type obstruction lies in the \(e\ne f\), equivalently
-\(\Delta_{\rm Type}\ne0\), part after the original-entry packets have been
-recombined.
-
-Combining (4.621zadj16t) and (4.621zadj16v) gives
+The Mellin variables already retained in \(d\nu(\eta)\) separate every
+remaining product cutoff.  Hence (4.786) is an identity, not an arbitrary
+coefficient enlargement.  Divisor bounds give
+\(|\alpha_{u_0}(r)|+|\beta_{v_0}(t)|\ll\tau_K(rt)\) for a fixed \(K\).
+The determinant in (4.783) becomes
 
 \[
- \left(1-\frac LM\right)E_{\rm cont}
- \leq L\mathcal N_{\ne0}.
-\tag{4.621zadj16x}
+ \boxed{ra_0-tb_0=h.}
+\tag{4.787}
 \]
 
-Since \(L=O_W(1)\) and \(M\asymp T\), one may take \(M\geq2L\) and
-absorb the sector principal character:
+Put \(r_*=\max(r_1,r_2)\).  The complete exponent table for this
+assignment is
 
 \[
- \boxed{E_{\rm cont}\leq2L\mathcal N_{\ne0}.}
-\tag{4.621zadj16y}
+ \boxed{
+ \begin{array}{c|ccccc}
+ \text{variable}&r&t&a_0&b_0&h\\ \hline
+ \log_T(\text{length})
+ &1+r_1&1+r_2&\delta-r_1&\delta-r_2&\delta.
+ \end{array}}
+\tag{4.788}
 \]
 
-Thus the physical Poisson zero mode does **not** leave a second
-uncontrolled angular zero frequency.  After the exact Gram
-reorganization, its sector-principal copy is a factor \(M^{-1}\) of the
-same unknown energy and moves to the left.  The remaining resonant gate is
-the nonzero angular-character square function in (4.621zadj16w).
-
-The helpers sector_character_parseval_sides and
-sector_principal_absorption_audit verify (4.621zadj16v-x) over exact
-rational vectors.  In the fixture \(M=7,R=1\), the feedback coefficient
-is \(3/7\) and the exact nonprincipal multiplier is \(21/4<6=2L\).
-
-The first exact Type decomposition can now be made after, rather than
-before, this principal-mode absorption.  In every prime-log coordinate,
+Both products \(ra_0,tb_0\) have exponent \(1+\delta\).  The variables
+\((u_0,v_0,q)\) left outside (4.787) have total exponent
 
 \[
- \boxed{-\mu(r)\log r
- =\sum_{dm=r}\mu(d)\Lambda(m).}
-\tag{4.621zadj16z}
+ (s/2-r_1)+(s/2-r_2)+\theta=s-\delta=\gamma.
 \]
 
-Indeed, the coefficient of \(\log p\) on the left is
-\(-\mu(r)v_p(r)\), while that on the right is
+Thus BBLR Proposition 3.1 now accepts (4.787): the two convolved sequences
+are its arbitrary outer coefficients, and \(a_0,b_0\) are its smooth inner
+variables (with a dummy factor of length one on each side).  Literal
+substitution gives the two inner error exponents
 
 \[
- \sum_{1\leq \nu\leq v_p(r)}\mu(r/p^\nu).
-\tag{4.621zadj16aa}
+ \boxed{
+ E_{\rm AB}=\frac52+2\delta+\theta,
+ \qquad
+ E_{\rm Watt}=\frac54+\frac32\delta+\frac12r_* .}
+\tag{4.789}
 \]
 
-These integers agree even when \(r\) is not squarefree.  On the unique
-Beatty fiber \(r_b(s)=ks+w_b(s)\), absorb \(1/\log r_b(s)\) into the
-smooth packet and write it as \(\widetilde G_{b,s}\).  Then every nonzero
-sector character has the exact form
+The inner target is \(1+\delta\), so the respective deficits are
 
 \[
-\boxed{
- \mathcal A_\xi
- =-\sum_b e(\xi b/M)\sum_s\mu(s)
-   \sum_{dm=r_b(s)}\mu(d)\Lambda(m)
-   \widetilde G_{b,s},
- \qquad \xi\ne0.}
-\tag{4.621zadj16ab}
+ \boxed{
+ E_{\rm AB}-(1+\delta)=\frac32+\delta+\theta,
+ \qquad
+ E_{\rm Watt}-(1+\delta)=
+ \frac14+\frac12\delta+\frac12r_* .}
+\tag{4.790}
 \]
 
-No Cauchy--Schwarz or absolute value occurs in (4.621zadj16ab).  The
-first Möbius factor \(\mu(s)\), the angular character \(\xi\), the original
-\(a_{\rm AFE}=h\delta\) packet labels, the relation
-\(dm=ks+w_b(s)\), both mollifier tapers, and the vector packet are all
-retained.  A dyadic split \(d\asymp D,m\asymp P,DP\asymp T\) now has the
-usual exact alternatives: an extreme Type-I range with one of \(D,P\)
-short, and a balanced Type-II range.  Merely applying (4.621zadj16z)
-does not estimate either range; its purpose is to expose the prime-bearing
-variable before the one global dispersion step.
+In particular the legal BBLR convolution route covers no strict-power
+cell.
 
-The helper mobius_log_derivative_prime_coordinate_identity verifies
-(4.621zadj16z-aa) for arbitrary finite integers without floating
-logarithms.  The helper farey_single_mobius_type_identity additionally
-checks the unique sector fiber and records all
-\((d,m,\mu(s),\mu(d),p)\) terms with \(m=p^\nu\).  Neither helper marks
-the nonzero-character Type-I/II estimate as proved.
-
-Nonzero sector frequency must not itself be counted as a saving.  Put
+One can instead Poisson-sum \(a_0\) modulo \(t\).  With
+\(M_0=T^{\delta-r_1}\), ordinary Poisson summation gives, for the exact
+smooth two-variable weight \(\mathcal W\),
 
 \[
- C_u:=\sum_b\langle S_{b+u},S_b\rangle .
-\tag{4.621zadj16ac}
+ \sum_{a_0\equiv h\bar r\ (\bmod t)}\mathcal W(a_0)
+ =\frac{M_0}{t}\sum_{k\in\mathbb Z}
+ e\!\left(\frac{kh\bar r}{t}\right)
+ \widehat{\mathcal W}_{r,t,h}\!\left(\frac{kM_0}{t}\right).
+\tag{4.791}
 \]
 
-Then the same finite expansion gives
-
-\[
- \|\mathcal A_\xi\|_2^2
- =\sum_{|u|\leq R}e(\xi u/M)C_u.
-\tag{4.621zadj16ad}
-\]
-
-This is a trigonometric polynomial of fixed degree \(R\), not a quantity
-which decays automatically as \(|a|\) grows.  In the finite fixture where
-the nonzero \(S_b\) are mutually orthogonal, \(C_0=\sum_b\|S_b\|_2^2\)
-and every \(C_u\) with \(u\ne0\) vanishes, so
-\(\|\mathcal A_\xi\|_2^2=C_0\) for **every** character, including all
-\(\xi\ne0\).  The helper sector_character_correlation_coefficients records
-this exact counterexample.  Hence (4.621zadj16y) removes the principal
-feedback but does not manufacture the remaining power saving; that saving
-must arise inside (4.621zadj16ab), before Cauchy--Schwarz, from the retained
-Möbius/prime-bearing variables.
-
-The horocycle/Farey result of
-[Panti](https://arxiv.org/abs/1503.02539) permits piecewise-smooth
-denominator weights and derives macroscopic gap distributions.  It does
-not state a microscopic \(T^{-1}\)-angular square function with the
-moving product \(\mu(s)\mu(ks+w)\).  Likewise, one-Möbius nilsequence
-orthogonality does not permit the second Möbius factor to move with the
-same cluster.  No audited published result therefore supplies the second
-row of (4.621zadj16k).
-
-Fourier expansion of the strip variable does make additive Möbius
-polynomials reappear: with
-\(x=v/T^{1/2}\), \(y=(kv+j)/T^{1/2}\), the phase separates into a
-product of sums at frequencies \(tx\) and \(-ty\).  This refines the
-earlier interface audit of Verjovsky's additive polynomial, but does not
-change its proof status: the required subpolynomial local moments in that
-paper are equivalent to RH, not an unconditional estimate.  Moreover the
-present \(t\)-integral and vector-valued weights have not been reduced to
-its fixed \(c/N\)-arc functional.
-
-The adapter transition_poisson_tube_cluster_audit records the tube scales,
-the \(T\)-by-\(T\) cluster ledger, the exact coefficient (4.621zadj16l),
-the bounded-neighbor correction (4.621zadj16n), and the zero square-root
-margin.  It also records the exact Beatty fiber (4.621zadj16p), the
-entrywise product fold (4.621zadj16q), and the surviving vector-kernel
-obstruction.  It keeps
-requires_vector_valued_two_mobius_cancellation true and
-published_coverage false.
-
-Section 4.60 already supplies one part of that analytic bridge.  Its
-five-variable Fourier inversion writes the actual lifted zero-mode weight
-as an exact signed superposition of separated tensors, with only a
-polylogarithmic nuclear norm.  On one such tensor,
-
-\[
- A(b,r_1)=U(b)V_1(r_1),\qquad
- B(a,r_2)=\widetilde U(a)V_2(r_2).
-\tag{4.621zadj17}
-\]
-
-Consequently the parent projections in (4.621zadj14) factor exactly:
-
-\[
-\boxed{
-\begin{aligned}
- L_r&=
- \left(\sum_b\mu(b)U(b)\right)
- \left(\sum_{r\mid r_1}V_1(r_1)
- C_{U_1}\!\left(r_1;\frac{r_1}{r}\right)\right),\\
- R_r&=
- \left(\sum_a\mu(a)\widetilde U(a)\right)
- \left(\sum_{r\mid r_2}V_2(r_2)
- C_{U_2}\!\left(r_2;\frac{r_2}{r}\right)\right).
-\end{aligned}}
-\tag{4.621zadj18}
-\]
-
-Thus the constant part of one separated tensor is
-
-\[
-\boxed{
- \left(\sum_b\mu(b)U(b)\right)
- \left(\sum_a\mu(a)\widetilde U(a)\right)
- \sum_r\bar K_rD_{1,r}D_{2,r},}
-\tag{4.621zadj19}
-\]
-
-where \(D_{j,r}\) denotes the corresponding moving common-cofactor
-projection.  The finite helper `bblr_tensor_parent_projection_sides`
-verifies (4.621zadj18) directly and records
-`static_mertens_factors_remain=True`.
-
-There is an important qualification when (4.621zadj15) is passed through
-the Fourier inversion of Section 4.60.  Distinct Fourier labels generally
-have distinct one-variable parent weights.  Write them as
-\(A_\omega,B_\omega\), and define \(L_{\omega,r},R_{\omega,r}\) from
-(4.621zadj14) with those weights.  Then one may not first replace the
-kernels by \(\sum_\omega K_{\omega,r}\).  The correct finite identity is
-
-\[
-\boxed{
- \mathscr D_{\rm tens}
- =\sum_{\omega,r}\bar K_{\omega,r}
-    L_{\omega,r}R_{\omega,r}
-  +\sum_\omega \mathscr D^\circ_\omega.}
-\tag{4.621zadj19a}
-\]
-
-Here every \(K^\circ_{\omega,r}=K_{\omega,r}-\bar K_{\omega,r}\) has
-zero cyclic row sum.  Consequently
-
-\[
- \sum_\omega\bar K_{\omega,r}=0
- \quad\not\Longrightarrow\quad
- \sum_\omega\bar K_{\omega,r}
- L_{\omega,r}R_{\omega,r}=0
-\tag{4.621zadj19b}
-\]
-
-unless the parent projections are common (or a stronger weighted
-cancellation is proved).  This is exactly the distinction between AFE or
-ordering packets which genuinely share parent weights and the continuous
-Fourier tensors whose weights depend on the Fourier parameter.
-
-An exact rational counterexample uses modulus \(7\), the parent rows from
-the preceding fixture, and two labels.  Give the first label parent weight
-\(24\) and kernel mean \(1/7\), and the second parent weight \(48\) and
-kernel mean \(-1/7\).  Then the aggregate unweighted kernel mean is zero,
-but the actual constant mode is
-
-\[
- \boxed{24\cdot\frac17+48\cdot\left(-\frac17\right)
- =-\frac{24}{7}\ne0.}
-\tag{4.621zadj19c}
-\]
-
-The helper `bblr_labelled_tensor_zero_mode_sides` verifies
-(4.621zadj19a)--(4.621zadj19c), including the full split
-\(-24=-24/7-144/7\).  It records
-`aggregate_kernel_means_vanish=True` but
-`weighted_constant_mode_vanishes=False`.  Thus the next analytic object is
-not the unweighted mean of the reconstructed kernel: it is the complete
-weighted functional in the first term of (4.621zadj19a).
-
-Equation (4.621zadj19) explains both the gain and the remaining obstruction.
-The moving parents have returned to a gcd/Gram divisor structure, but two
-one-variable smooth Mertens factors remain.  On the top face they have
-length \(A=T\).  Bounding every Fourier tensor and ordering separately
-would therefore require the fixed half-power product saving already
-isolated in (4.533); classical zero-free-region estimates provide
-subpower/logarithmic decay, not that power.  This is a no-go statement for
-termwise absolute values, not for the original signed superposition:
-cancellation among Fourier tensors, AFE directions, orderings, or the
-means \(\bar K_r\) may still remove the constant component before those
-Mertens factors are majorized.
-
-The remaining adapter boundary is now narrower.  BBLR introduces dyadic
-weights that depend separately on its synthetic outer and inner slots.  To
-apply (4.621zadj6) to the analytic principal term, one must first sum the
-complete Type dyadic partitions and every slot permutation and prove that
-their signed weight is the pullback of a kernel
-\(W_\omega(p,q,m,n)\) on the original parents.  This packet-exhaustion
-identity has not yet been written, so the helper records
-`analytic_afe_packet_exhaustive=False` and `target_bound_proved=False`.
-
-The dangerous additive principal mode can nevertheless be isolated
-without estimating it.  Embed one finite product box in
-\(\mathbb Z/\mathfrak Q\mathbb Z\), with \(\mathfrak Q\) larger than
-twice the product cutoff so that signed shifts do not alias, and extend
-the diagonal-excluded shift
-kernel by \(K(0)=0\), and first sum every labelled AFE direction and BBLR
-ordering with its sign.  Put
-
-\[
- \bar K=\frac1{\mathfrak Q}\sum_{c\bmod\mathfrak Q}K(c),
- \qquad K^\circ(c)=K(c)-\bar K.
-\tag{4.621zadk}
-\]
-
-Then \(\sum_cK^\circ(c)=0\) and exact cyclic reindexing gives
+The nonzero dual length is
+\(k=T^{1+\theta}\), the combined numerator \(c=kh\) has exponent
+\(1+\delta+\theta\), and the Poisson normalization is
+\(T^{-1-\theta}\).  Combining \((k,h)\) into one divisor-bounded
+coefficient makes Bettin--Chandee Theorem 1 applicable.  After also
+restoring the outside exponent \(\gamma\), its two total exponents are
 
 \[
  \boxed{
  \begin{aligned}
- \sum_{u,v}\mathcal A(u)\mathcal B(v)K(u-v)
- ={}&\bar K
-   \left(\sum_u\mathcal A(u)\right)
-   \left(\sum_v\mathcal B(v)\right)\\
- &+\sum_{u,v}\mathcal A(u)\mathcal B(v)K^\circ(u-v).
+ E_{\rm BC,1}
+ &=\frac95+s+\frac7{10}(\delta+\theta)+\frac14r_*,\\
+ E_{\rm BC,2}
+ &=\frac{15}{8}+s+\frac78(\delta+\theta)+\frac18r_*.
  \end{aligned}}
-\tag{4.621zadl}
+\tag{4.792}
 \]
 
-Thus the partial diagonal has its own explicit constant Fourier mode and
-a genuinely zero-mean additive remainder.  The next analytic stage has a
-sharp trichotomy:
-
-1. the fully derived AFE/ordering kernel satisfies \(\bar K=0\);
-2. the first term of (4.621zadl) cancels a registered diagonal or boundary
-   term;
-3. it is a secondary main term that must be retained and bounded or added
-   to the asymptotic.
-
-No one of these alternatives is assumed.  In particular, centering each
-ordering separately would be invalid because their constant modes may
-cancel only after the signed packet sum.
-
-The finite helper `additive_band_zero_mode_sides` verifies (4.621zadk)--
-(4.621zadl) with exact rationals, retains every supplied packet label, and
-keeps `analytic_afe_ordering_kernel_derived=False`.
-
-The BBLR integration scale is exactly \(x\asymp T^{-1}\), matching
-\(r_0/Y\).  Restricting to
-\(|r-r_0|\le Y/(12L)\) leaves \(\asymp T^{1/2}\) values of \(r\), and
-for every \(l\le L\asymp T\),
-
-\[
- \left|\frac{l(r_0-r)}Y\right|\le\frac1{12}.
-\]
-
-All these unit-coefficient phases therefore have real part at least
-\(1/2\).  The resulting coherent local packet has size
-
-\[
- \boxed{T^{1/2}\cdot T=T^{3/2}.}
-\tag{4.621zc}
-\]
-
-Thus a local absolute-value treatment of \((h,l)\) saves only
-\(T^{1/2}\) from the raw \(HL=T^2\), whereas the hard cell needs the full
-\(T\)-saving.  The same missing \(T^{1/2}\) survives.  Any successful
-argument must average this near-diagonal incidence over \(X,Y\), retain
-the Möbius outer coefficients, or prove cancellation between the signed
-phase classes before taking absolute values.
-
-This is not a lower bound for the original signed remainder: its other
-\(X,Y\) rows and Möbius coefficients may cancel the packet.  It is a
-no-go certificate only for a uniform local \((h,l)\)-completion bound.
-The finite helper `bblr_near_diagonal_resonance_certificate` verifies
-(4.621zaa)--(4.621zb), the coherent phase arc, and its half-plane lower
-bound with exact rational arithmetic.  The helper
-`bblr_gap_resonance_coordinates` verifies the full inverse-free split
-(4.621za) and records whether \(k=0\) or \(k\ne0\).
-
-This resonance also gives a sharper model for the next analytic input.
-With \(Q=Y\asymp T^{3/2}\) and \(C=c\asymp T^{1/2}=Q^{1/3}\), the
-outer-coefficient portion has the shifted shape
-
-\[
- \mathfrak C_d(Q,C)
- =\sum_{c\asymp C}\sum_{Y\asymp Q}
-   A_d(Y+c)B_d(Y)\Omega_d(c,Y).
-\tag{4.621zd}
-\]
-
-For every supplied finite labelled BBLR packet, this is now an exact
-partition rather than a schematic change of variables.  First convolve all
-left and right Type factorizations into \(A_d(X)\) and \(B_d(Y)\), and only
-then split by \(c=X-Y\).  For any fixed positive window
-\(C_1\le c\le C_2\), finite reindexing gives
-
-\[
- \mathscr S_{\rm BBLR}^{\ne0}
- =\mathscr S_{C_1\le X-Y\le C_2}
-  +\mathscr S_{X=Y}
-  +\mathscr S_{\rm complement},
-\tag{4.621zda}
-\]
-
-where
-
-\[
- \mathscr S_{C_1\le X-Y\le C_2}
- =\sum_d\sum_{C_1\le c\le C_2}\sum_Y
-   A_d(Y+c)B_d(Y)
-   \sum_{h,\delta}\sum_{l\ne0}
-   \mathscr W(d,Y+c,Y;h,\delta,l).
-\tag{4.621zdb}
-\]
-
-No absolute value occurs between the Type sectors, and all
-\(h,\delta,l,h\delta,hl\) labels are retained.  The finite helper
-`bblr_near_diagonal_outer_correlation_sides` verifies
-(4.621zda)--(4.621zdb) exactly.  Its status field
-`original_coupled_kernel_stage_exhaustive=False` remains essential:
-the identity is exhaustive for the supplied packet, not yet for the
-original analytic remainder.  Inside the positive gap window the same
-helper also partitions exactly into the principal incidence \(k=0\) and
-the nonprincipal determinant family \(k\ne0\), before either family is
-majorized.  This is the finite version of “extract the resonant main arc,
-then estimate the centered remainder”; neither resulting analytic bound is
-being assumed.
-
-If the partial diagonal in (4.621zad) is majorized instead of explicitly
-recombined, then after the coherent \((h,l)\)-packet has spent only half
-of the required saving, the missing factor is \(C=Q^{1/3}\).  The
-resulting conservative model target is
-
-\[
- \boxed{\mathfrak C_d(Q,C)\ll Q^{1+\varepsilon}}
- \qquad(C=Q^{1/3}),
-\tag{4.621ze}
-\]
-
-against the absolute size \(CQ=Q^{4/3}\).  Equation (4.621ze) is therefore
-a fallback sufficient bound, not the preferred treatment of \(k=0\).
-It is not yet an exact
-replacement gate because the BBLR stage map, all \(d\)-weights and all
-Type sectors still have to be recombined.  It does explain why ordinary
-averaged Chowla does not finish the argument: even for literal Möbius
-coefficients, the quantitative decay in
-[Matomäki--Radziwiłł--Tao, Theorem 1.6](https://arxiv.org/abs/1503.05121)
-is logarithmic (roughly \(\log\log C/\log C\)), not the power
-\(C^{-1}=Q^{-1/3}\) required by (4.621ze).  Moreover the actual
-\(A_d,B_d\) in (4.621j) are divisor-convolved outer coefficients, so that
-the theorem is not directly applicable even at its stated strength.
-
-### 4.69 Kim's 2026 ternary-correlation theorem enters the shift range but not the gate
-
-The recent circle-method theorem of
-[Jiseong Kim, Theorem 1.6](https://arxiv.org/abs/2603.23250) has a Fejér
-shift average close to the exact correlation shape in (9.353) of the
-Type-I/II note.  It is therefore necessary to audit both its power and its
-coefficient class rather than dismiss it from the title alone.
-
-Use (X_0=T^3) and (H_0=T^2=X_0^{2/3}).  In the theorem's
-(alpha=0) case, its range and error have the form
-
-\[
- H_0\gg X_0^{1/2+100\varepsilon_K},
- \qquad
- E_K\ll X_0H_0^{1-\varepsilon_K/2}.
-\tag{4.622}
-\]
-
-The range in (4.622) forces the strict ceiling
-
-\[
- \varepsilon_K<\frac{2/3-1/2}{100}=\frac1{600}.
-\tag{4.623}
-\]
-
-Measured in the present (T)-exponents, the ambient shifted sum has
-exponent (3+2=5), while the coupled target is (9/2).  Even at the
-unattained endpoint of (4.623), Kim's error saves only
-
-\[
- \frac{2\varepsilon_K}{2}<\frac1{600},
- \qquad
- \boxed{
- \frac12-\frac1{600}=\frac{299}{600}}
-\tag{4.624}
-\]
-
-of the required half-power.  Thus its numerical strength is insufficient
-even before checking hypotheses.
-
-The coefficient obstruction is independent and decisive.  Definition 1.1
-requires the associated twists (L(f,\chi,s)) to be holomorphic in
-(Re s>1/2) and to satisfy a critical-line second moment.  For Möbius,
-up to the standard imprimitive Euler factors,
-
-\[
- L(\mu,\chi,s)=\sum_{n\ge1}\frac{\mu(n)\chi(n)}{n^s}
- =\frac1{L(s,\chi)}.
-\tag{4.625}
-\]
-
-Zeros of (L(s,\chi)) produce poles in the required open half-plane
-unconditionally.  Assuming GRH moves them to the boundary but does not
-create the demanded critical-line (L^2) integral: the square of a simple
-reciprocal pole is not locally integrable.  Kim's separate discussion of a
-GRH bound for Möbius exponential sums is not an assertion that Möbius lies
-in the class of Definition 1.1.
-
-Finally, the dyadically weighted coefficients in (9.352) are not one fixed
-multiplicative function.  Full outer-scale recombination can recover a
-Möbius coefficient, but that returns exactly the reciprocal-(L) failure
-in (4.625).  Consequently
+Relative to \(1+s\), their deficits are respectively
 
 \[
  \boxed{
- \text{Kim 2026: shift length enters; power and coefficient hypotheses fail.}}
-\tag{4.626}
-\]
-
-The adapter `transition_kim_ternary_correlation_audit` records
-(4.622)--(4.624) with exact fractions and keeps separate false flags for
-holomorphy, the critical-line second moment, the dyadic multiplicative
-coefficient, theorem applicability, and coupled-gate coverage.  This is a
-new published-estimate row, not a replacement gate.
-
-### 4.70 Doyle's 2026 short k-free theorem crosses the length line in the wrong direction
-
-The top balanced-variance cell (4.540) has product centre (N=T^2) and
-short interval (K=T=N^{1/2}).  Ben Doyle's new
-[Lemma 1.2, Theorem 1.7, and Corollary 1.8](https://arxiv.org/abs/2608.16679)
-therefore deserve a literal endpoint check.  For (k=2), the middle-part
-exponent in that paper is
-
-\[
- \delta_2=\frac{105}{317},
+ \frac45+\frac7{10}(\delta+\theta)+\frac14r_*,
  \qquad
- \frac32\delta_2=\frac{315}{634}
- =0.496845\ldots .
-\tag{4.627}
+ \frac78+\frac78(\delta+\theta)+\frac18r_* .}
+\tag{4.793}
 \]
 
-Thus its Möbius corollary applies for
-(K\gg N^{315/634+\varepsilon}).  The interval exponent in (4.540)
-does enter this range, by the exact margin
+Thus the one-Poisson Bettin--Chandee route also covers no cell.
 
-\[
- \boxed{\frac12-\frac{315}{634}=\frac1{317}.}
-\tag{4.628}
-\]
-
-This is genuine length coverage, but not analytic coverage of the gate.
-The Möbius conclusion of Theorem 1.7 is the lower bound
-
-\[
- \int_0^1\left|\sum_{N-K<n\le N}\mu(n)e(n\alpha)\right|d\alpha
- \gg K^{1/6},
-\tag{4.629}
-\]
-
-whereas (4.540) requires an **upper** short-interval (L^2) variance for
-the balanced convolution (c_{U,V}).  Reversing (4.629) is impossible.
-The estimate which drives Doyle's theorem also concerns the different
-middle coefficient
-
-\[
- c_n(y,z)=\sum_{\substack{y<d\le z\\d^2\mid n}}\mu(d),
-\tag{4.630}
-\]
-
-with one Möbius weight on square divisors.  It is not the two-Möbius
-product-divisor coefficient
-
-\[
- c_{U,V}(n)=\sum_{ar=n}\mu(a)\mu(r)U(a/T)V(r/T)
-\tag{4.631}
-\]
-
-in (4.535).  Therefore neither Lemma 1.2 nor the Möbius (L^1) corollary
-can be substituted into (4.540):
+Finally, (4.769) removes the *cross* frequency diagonal in the original
+bilinear form.  It does not remove the positive self-diagonal created
+after applying Cauchy to either factor.  Restoring the outside factor
+\(A=T^\delta\) from Fourier inversion, identical tuples in the two
+short-arc norms have exponent
 
 \[
  \boxed{
- \text{Doyle 2026: the length threshold enters by }N^{1/317},
- \text{ but conclusion and coefficient both mismatch.}}
-\tag{4.632}
+ E_{\rm tuple}=1+\frac{s+3\delta+\theta}{2}.}
+\tag{4.794}
 \]
 
-The exact adapter `transition_doyle_kfree_moment_audit` records the
-fractions in (4.627)--(4.628), the lower-versus-upper direction, and the
-square-divisor-versus-balanced-convolution distinction.  It keeps
-`theorem_applies_to_actual_packet=False` and
-`whole_line_family_covered=False`.  This closes another tempting 2026
-paper route without weakening the residual gate.
-
-### 4.71 The 2026 Bessel-Kuznetsov phase transition misses the exact degenerate orbit
-
-Yuhang Shi's recent
-[Theorem 1.1](https://arxiv.org/abs/2608.13232) studies the classical
-Bessel--Kuznetsov transform of
-(phi(x)=W(x)e(alpha x)), with (W) supported on a positive dyadic
-interval ([X,2X]).  It proves rapid spectral decay for
-(alpha\leq1/(2pi)) and a localized stationary main term above that
-threshold.  This is potentially relevant only after checking the actual
-Bessel argument of the determinant orbit.
-
-For the ordinary nondegenerate Kloosterman term (S(m_2,m_1;c)), that
-argument is proportional to
-
-\[
- x_{\rm Bes}=\frac{4\pi\sqrt{|m_1m_2|}}{c}.
-\tag{4.633}
-\]
-
-But the exact substitution in (4.134) is
-
-\[
- (m_2,m_1;c)=(0,-h;s),
- \qquad
- S(m_2,m_1;c)=S(0,-h;\delta;s).
-\tag{4.634}
-\]
-
-Therefore
-
-\[
- \boxed{x_{\rm Bes}=0.}
-\tag{4.635}
-\]
-
-This is the degenerate Ramanujan/Eisenstein orbit, not a positive-dyadic
-Bessel transform.  Consequently there is no actual (alpha) to compare
-with (1/(2pi)), and the subcritical rapid-decay conclusion cannot be
-inserted into (4.132).
-
-After Cauchy and a second completion, some determinant formulas contain
-two nonzero formal Fourier indices.  That does not rescue this application:
-Sections 4.15--4.16 and 4.46 already record that no classical
-nondegenerate Kuznetsov transform from the entry-weighted QCT kernel has
-been derived, and the two Möbius weights remain on matrix entries rather
-than the standard Fourier indices.  Thus
+This is not the full Cauchy diagonal.  The variables \(u_0,v_0\) do not
+enter the additive frequencies \(d_1a_0x,d_2b_0y\).  They therefore
+square coherently inside the grouped Fourier coefficients.  Bounding
+those fibres by their complete lengths adds a total exponent
+\((\gamma-\theta)/2\) beyond (4.794) and gives
 
 \[
  \boxed{
- \text{Shi 2026: a useful transform theorem, but the exact orbit has }
- x_{\rm Bes}=0.}
-\tag{4.636}
+ E_{\rm grouped}=1+s+\delta=E_{\rm raw},
+ \qquad E_{\rm grouped}-(1+s)=\delta.}
+\tag{4.794a}
 \]
 
-The adapter `transition_shi_bessel_kuznetsov_audit` records both Fourier
-indices, the zero argument, the missing linear-twist identification, and
-the missing nondegenerate adapter.  It keeps
-`subcritical_rapid_decay_applies=False` and
-`whole_line_family_covered=False`.  A different relative trace formula
-could still create a nondegenerate transform, but proving that formula is
-itself part of the unresolved coupled-kernel problem.
-
-### 4.72 Beatty two-point Chowla is qualitative and fixed-slope
-
-The exact Beatty fiber (4.621zadj16p) makes the closest published
-multiplicative-correlation theorem easy to identify.  A scalar projection
-of one cluster contains
+PNT cancellation in one invisible signed fibre can add logarithmic
+decay, but it cannot supply the missing positive power \(T^\delta\).
+Thus Cauchy returns the complete original deficit on every strict-power
+cell.  At the top vertex
+\((s,\delta,\theta,r_1,r_2)=(1,1,0,1/2,1/2)\), one has
+\(u_0=v_0=q=1\) and \(\lambda=-(\mu*\mu)\).  If the ratio weight is
+temporarily made product-compatible, the complete side convolution is
 
 \[
- c_{b,Q,k}(s)
- =\mu(s)\mu\!\left(
-   \left\lfloor
-    \left(k+\frac bQ\right)s+\frac{Q-1}{Q}
-   \right\rfloor\right),
- \qquad
- \frac{\alpha_2}{\alpha_1}=k+\frac bQ\in\mathbb Q.
-\tag{4.637}
+ (\mu*\mu)*\mathbf1*\mu=\mu*\mu,
+\tag{4.795}
 \]
 
-Teräväinen--Walker's
-[two-point theorem](https://arxiv.org/abs/2303.12574),
-arXiv:2303.12574, is genuinely
-structurally relevant.  It proves logarithmically averaged independence
-for fixed Beatty slopes in the irrational-ratio case and describes a
-possible nonzero resonant locus in the rational-ratio Liouville case.
-The latter feature is consistent with first extracting the exact
-\(\Delta_{\rm Type}=0\) term in (4.621zadj16w-diag), rather than assuming
-that every Beatty correlation is centered.
+because \(\mathbf1*\mu\) is the convolution identity.  Hence this
+vertex is exactly the inverse-zeta-square short-window variance at
+ambient scale \(X=T^2\) and window \(H=T\) from Section 4.87.  The actual
+ratio kernel deforms (4.795) and must remain jointly integrated; it does
+not remove the positive grouped Cauchy diagonal.  Therefore a valid
+continuation must estimate the centered cross spectral form before taking a positive
+square.  The adapter `strict_power_convolution_kloosterman_audit` records
+(4.786)--(4.795), with both published routes false and
+`near_frequency_type_ii_proved=False`.
 
-It does not provide the estimate needed here.  Formula (4.637) is a
-moving rational slope family with \(Q\asymp T\) and \(b\) ranging over
-\(\asymp T\) sectors.  The theorem gives only a qualitative conclusion:
-logarithmic limit, not a uniform power-saving estimate.  It neither
-supplies the natural
-dyadic bound
+### 4.103 The inherited ratio-Mellin kernel has zero power bandwidth
+
+It remains to check whether the ratio variables retained in
+\(d\nu(\eta)\) can make the invisible \(u_0,v_0\) fibres in (4.794a)
+orthogonal before Cauchy.  The exact height phase does not supply such a
+coordinate.  Put
 
 \[
- \left|\sum_{s\asymp T}c_{b,Q,k}(s)W_{b,Q}(s)\right|
- \ll T^{1/2+\varepsilon}
-\tag{4.638}
+ z=\frac{\Delta}{m_2r},\qquad
+ \Theta(t;m_2,r,\Delta)=t\log(1+z).
 \]
 
-uniformly in \((b,Q)\), nor its stronger vector-valued cluster-square
-version with all \(h,\delta,\nu,\sigma\) packets.  Its proof also allows
-fixed Bohr data before the limit; the complexity here grows with \(T\).
-Thus it validates the resonant/offdiagonal ordering but does not cover
-the \(\Delta_{\rm Type}\ne0\) gate.
-
-The older multiplicative-function theorem of
-[Güloğlu--Nevans](https://arxiv.org/abs/0801.2796) assumes a fixed
-irrational slope of finite type, while
-[Technau's Kloosterman--Beatty theorem](https://arxiv.org/abs/1808.00413)
-estimates inverse additive phases on a fixed irrational Beatty set.
-Neither theorem accepts the moving rational two-Möbius vector family
-(4.637).  The remaining plausible quantitative target is therefore an
-average over \(b\), \(Q\), and nonzero \(\Delta_{\rm Type}\), not a
-pointwise invocation of an existing Beatty theorem.
-
-### 4.73 Global sector reassembly before the one-factor Type split
-
-The critical condition \(s\le Q\) gives more than a pointwise Beatty
-description.  Put
+On the core (5.4), (5.5), and (5.8), \(t\in[T,2T]\) and
 
 \[
- b_Q(w,s):=\left\lfloor\frac{Qw}{s}\right\rfloor.
-\tag{4.639}
+ |z|\leq\frac{32\mathscr L^B}{T},\qquad
+ \partial_{\log r}\Theta
+ =-\frac{tz}{1+z}.
+\tag{4.796}
 \]
 
-Then the nonempty fibers in (4.621zadj16p) form the exact disjoint union
+For \(T\) large enough that \(|z|\leq1/2\), repeated application of
+\(z\partial_z\) gives, for every fixed \(j\geq1\),
 
 \[
  \boxed{
- \bigsqcup_{0\le b<Q}
- \{w\in\mathbb Z:bs\le Qw<(b+1)s\}
- =\{0,1,\ldots,s-1\}.}
-\tag{4.640}
+  \left|\partial_{\log r}^{\,j}\Theta\right|
+  +\left|\partial_{\log m_2}^{\,j}\Theta\right|
+  \leq C_j\mathscr L^B.}
+\tag{4.797}
 \]
 
-Indeed, consecutive values of \(Qw/s\) differ by at least one, so every
-fiber contains at most one integer, while \(b_Q(w,s)\) assigns each
-\(0\le w<s\) to exactly one sector.  Restricting to primitive entries
-simply adds \((w,s)=1\), since \((ks+w,s)=(w,s)\).
-
-Consequently the complete nonprincipal Type packet can be reassembled
-before evaluating its character:
+The other ratio-dependent factors are fixed-support dyadic cutoffs and
+the Schwartz transforms created by the two exact Poisson steps.  Hence,
+for each resulting one-dimensional ratio kernel \(F_T(y)\), its inherited
+seminorms satisfy
 
 \[
-\boxed{
+ \|F_T^{(j)}\|_{L^1(\mathbb R)}
+ \leq C_{j,W}\mathscr L^{C_{j,W}},
+\]
+
+and integration by parts in \(y\) gives
+
+\[
+ \boxed{
+ |\widehat F_T(\tau)|
+ \leq C_{J,W}\mathscr L^{C_{J,W}}(1+|\tau|)^{-J}.}
+\tag{4.798}
+\]
+
+In particular, for every fixed \(\eta>0,A\geq0,D>0\), choosing \(J\)
+after \((\eta,A,D,W)\) yields
+
+\[
+ \boxed{
+ \int_{|\tau|>T^\eta}(1+|\tau|)^A
+       |\widehat F_T(\tau)|\,d\tau
+ \ll_{\eta,A,D,W}T^{-D}.}
+\tag{4.799}
+\]
+
+Thus the ratio-Mellin frequency has exact power exponent zero.  This is
+also the reason that the \(T\tau\) occurring in the separately scaled
+transverse inversion (4.560) cannot be counted as a second bandwidth:
+there \(\tau\) is dual to \(T(\log x-\log y)\), and that scaling already
+reconstructs the determinant window.  It is not the unscaled divisor-ratio
+frequency in (4.747)--(4.749).
+
+On the strict-power cell (4.781), the two hidden fibres have lengths
+
+\[
+ U_0=T^{s/2-r_1},\qquad V_0=T^{s/2-r_2}.
+\]
+
+Changing one integer in the first fibre changes its logarithm by
+\(T^{-(s/2-r_1)}\) up to a fixed factor.  A Mellin character needs
+\(|\tau|=T^{s/2-r_1}\) to resolve that spacing, and similarly needs
+\(|\upsilon|=T^{s/2-r_2}\) on the second fibre.  Formula (4.799) removes
+both ranges whenever the corresponding exponent is positive.  Their
+total unresolved exponent is
+
+\[
+ \left(\frac s2-r_1\right)+\left(\frac s2-r_2\right)
+ =s-\delta-\theta=\gamma-\theta.
+\tag{4.800}
+\]
+
+At the hard vertex this total is zero, so there is no hidden fibre to
+resolve, but (4.794a) still has the independent deficit \(\delta=1\).
+Therefore ratio bandwidth neither repairs the grouped Cauchy diagonal on
+the interior nor supplies the missing saving at the vertex.  The only
+remaining admissible interface is still a pre-Cauchy estimate for the
+joint physical kernel.  The adapter
+`strict_power_ratio_mellin_bandwidth_audit` records power bandwidth zero,
+the two exact fibre exponents, and
+`ratio_mellin_supplies_required_delta_saving=False`.
+
+### 4.104 Double Poisson exposes a resonance but absolute summation enlarges the deficit
+
+The first actual second coordinate comes from Poisson summation in both
+reduced slopes, not from ratio Mellin inversion.  Fix \(r,t\) in (4.787),
+put
+
+\[
+ A_0=T^{\delta-r_1},\qquad B_0=T^{\delta-r_2},
+ \qquad H=T^\delta,
+\]
+
+and use the Fourier convention in (4.558).  For fixed smooth weights
+\(U,V,w\), ordinary Poisson summation gives the exact identity
+
+\[
+ \boxed{
  \begin{aligned}
- \mathcal A_\xi
- ={}-&\sum_s\sum_{\substack{0\le w<s\\(w,s)=1}}
- e\!\left(\frac{\xi b_Q(w,s)}Q\right)
- \mu(s)\mu^2(ks+w)\\
- &\times\sum_{dm=ks+w}\mu(d)\Lambda(m)
- \widetilde G_{s,w;h,\delta,\nu,\sigma},
- \qquad 0<\xi<Q.
+ &\sum_{a_0,b_0}U(a_0/A_0)V(b_0/B_0)
+   w\!\left(\frac{ra_0-tb_0}{H}\right)\\
+ &\quad=A_0B_0\sum_{k,l\in\mathbb Z}
+   \int_{\mathbb R}\widehat w(\eta)
+   \widehat U\!\left(A_0\left(k-\frac{\eta r}{H}\right)\right)
+   \widehat V\!\left(B_0\left(-l+\frac{\eta t}{H}\right)\right)
+   \,d\eta .
  \end{aligned}}
-\tag{4.641}
+\tag{4.801}
 \]
 
-This is (4.621zadj16ab) after summing all sectors and inserting the
-harmless original squarefree-support indicator, not a new estimate.
-It is nevertheless the correct pre-Cauchy Type identity: the phase label
-\(b_Q(w,s)\), both Möbius weights \(\mu(s)\mu(d)\), the prime-bearing
-factor \(\Lambda(m)\), the original \(a_{\rm AFE}=h\delta\), and every
-vector packet label remain in the same summand.
-
-For a cutoff \(U\ge1\), define Type I by \(\min(d,m)\le U\) and Type II
-by \(d,m>U\).  This is an exact partition:
+The signs in (4.801) use the relabeling \(l\mapsto-l\) in the second
+Poisson sum.  Since
 
 \[
- \mathcal A_\xi=\mathcal A_\xi^{\rm I}
-                  +\mathcal A_\xi^{\rm II},
- \qquad \mathcal E_{\rm Type}=0.
-\tag{4.642}
+ rA_0\asymp tB_0\asymp T^{1+\delta},
 \]
 
-On \(dm\asymp T\), the choice \(U=T^{1/3}\) puts every Type-II factor in
-
-\[
- T^{1/3}<d,m\ll T^{2/3}.
-\tag{4.643}
-\]
-
-There is an additional simplification on the actual mollifier support.
-Since \(\mu(ks+w)\ne0\), the numerator is squarefree.  Therefore a divisor
-\(m\mid ks+w\) with \(\Lambda(m)\ne0\) is a prime, not a higher prime
-power.  The genuine central packet is thus
+the two transform bumps have a common \(\eta\)-width \(T^{-1}\), up to
+the already budgeted Schwartz tails.  Their central frequencies and the
+integer resonance have scales
 
 \[
  \boxed{
- \mu(s)\mu(d)\log p,qquad dp=ks+w,qquad
- T^{1/3}<d,p\ll T^{2/3},}
-\tag{4.644}
+ \begin{array}{c|ccc}
+  \text{variable}&k&l&n:=kt-lr\\ \hline
+  \log_T(\text{length})
+  &1+r_1-\delta&1+r_2-\delta&1+\theta.
+ \end{array}}
+\tag{4.802}
 \]
 
-with the sector character and \(h\delta\) packet still attached.  Hence
-the remaining Type-II problem is a vector-valued
-Möbius--Möbius--prime dispersion estimate.  Replacing it by arbitrary
-three-variable coefficients discards precisely the structure exposed by
-the one-factor identity.
+Indeed, overlap in (4.801) implies
 
-In the transition normalization there are \(T\) angular clusters and
-\(T\) entries per cluster.  Coherent energy therefore has exponent three,
-whereas the required square function has exponent two.  A sufficient
-separate pair of estimates is
+\[
+ \left|\frac{kH}{r}-\frac{lH}{t}\right|
+ \ll_W T^{-1}\mathscr L^{O_W(1)},
+\]
+
+and clearing denominators gives
+
+\[
+ \boxed{|kt-lr|\ll_W T^{1+\theta}\mathscr L^{O_W(1)}.}
+\tag{4.803}
+\]
+
+The variable \(n=kt-lr\) is always an exact integer; (4.803) is only its
+Schwartz-effective range.  Dyadic subdivision in \(n\), together with the
+rapid transform tails, therefore gives an exact signed resonance family.
+
+This transform is not useful after absolute summation.  Including the
+\((d_1,d_2)\)-volume, the tuple count on the transformed side has exponent
+
+\[
+ (\delta+\theta)+2+(2-\delta+\theta)-1=3+2\theta.
+\]
+
+The Poisson amplitude \(A_0B_0\) has exponent \(\delta-\theta\), and the
+common \(\eta\)-overlap has exponent \(-1\).  Hence the transformed inner
+absolute exponent is
 
 \[
  \boxed{
- \frac1Q\sum_{0<\xi<Q}\|\mathcal A_\xi^{X}\|_2^2
- \ll_{\varepsilon,W}T^{2+\varepsilon},
- \qquad X\in\{\mathrm I,\mathrm {II}\}.}
-\tag{4.645}
+ E_{\rm 2P,abs}=2+\delta+\theta,qquad
+ E_{\rm inner,raw}=1+2\delta,qquad
+ E_{\rm 2P,abs}-E_{\rm inner,raw}=1-\delta+\theta.}
+\tag{4.804}
 \]
 
-Each row of (4.645) must save one full power in energy, equivalently
-\(T^{1/2}\) before squaring.  The exact post-Type published-coverage table
-is:
+Restoring \((u_0,v_0,q)\), whose total exponent is \(\gamma\), gives
 
-| input | matching structure | quantitative saving | coverage of (4.645) |
-|---|---|---:|---|
-| Teräväinen--Walker, arXiv:2303.12574 | two multiplicative functions on fixed Beatty data | qualitative logarithmic limit | no |
-| [Tao--Teräväinen](https://arxiv.org/abs/2107.02158) | quantitative Möbius/\(\Lambda\) Gowers uniformity for fixed-complexity linear systems | \((\log\log T)^{-c}\), power exponent \(0\) | no |
-| [Banks--Shparlinski](https://arxiv.org/abs/0708.1015) | primes in a fixed irrational finite-type Beatty sequence | power error in a one-prime problem | no double Möbius and no moving rational family |
-| [Lichtman](https://arxiv.org/abs/2009.08969), Theorem 1.1 | \(L^1\) average of scalar shifted-prime Möbius sums | \((\log T)^{-1/3+\delta}\), power exponent \(0\) | no moving Farey/AFE weight, no endpoint \(H\asymp X\), and no vector \(L^2\) half-power |
-| [Technau--Zafeiropoulos](https://arxiv.org/abs/1907.06050), Theorem 2.1 and Corollary 4.4 | square-root \(L^2\) error for one fixed arithmetic function in a continuous/metric Beatty slope | structured Sobolev sampling reaches the rational grid with \(T^\varepsilon\) loss, but no slope-independent Hilbert family has been derived from the second Möbius packet | no |
-| Kim, arXiv:2603.23250 | ternary shifted correlations | saving \(<T^{1/600}\) in the entering range | short by \(T^{299/600}\), Möbius hypothesis also fails |
+\[
+ \boxed{
+ E_{\rm 2P,global}=2+s+\theta,qquad
+ E_{\rm target}=1+s,qquad
+ E_{\rm 2P,global}-E_{\rm target}=1+\theta.}
+\tag{4.805}
+\]
 
-Thus (4.644) narrows the coefficient class but does not turn a logarithmic
-uniformity theorem into the half-power required by (4.645).  The remaining
-analytic target is a joint average over \(\xi,Q\) and the nonzero Type
-determinant, with both Möbius signs left inside the operator.
+There is a legal BBLR comparison on the transformed side.  Use \(r,t\)
+as its arbitrary outer-coefficient variables, \(l,k\) as the two
+nontrivial inner variables, and \(n\) as its shift.  The outer sum,
+largest outer scale, side-product scale, and shift scale are
 
-The finite helper `farey_global_mobius_type_partition` verifies
-(4.640)--(4.642) simultaneously for all supplied denominators.  It checks
-the log identity prime-coordinate by prime-coordinate, records the exact
-Type-I and Type-II term lists, and carries the nonzero character,
-\(h,\delta,h\delta\), and packet label on every term.  Its
-`type_estimate_proved` field remains false: neither (4.643) nor the prime
-specialization (4.644) supplies the required half-power cancellation.
-The companion `farey_global_type_scale_ledger` records the four factor
-ranges and the exact energy/amplitude deficits in (4.645); both Type-bound
-flags remain false.
+\[
+ S'=2+\delta+\theta,\qquad
+ M'_\ast=1+r_\ast,\qquad
+ P'=2+\theta,\qquad
+ \alpha'=1+\theta.
+\]
 
-### 4.74 The unit-divisor Type-I face is a moving-weight shifted-prime sum
+The sharp-range condition (4.604) becomes
 
-The most favorable Type-I subpacket is \(d=1\).  It is worth isolating it
-because it is the one place where the shifted-prime literature looks
-closest to the actual coefficient.  On squarefree support the prime factor
-identity gives \(p=ks+w\).  For the unit-slope face \(k=1\), (4.641) becomes
+\[
+ \boxed{S'\geq2\alpha'
+ \quad\Longleftrightarrow\quad \delta\geq\theta,}
+\tag{4.806}
+\]
+
+which holds everywhere on (4.781).  Equations (4.605) give, before
+restoring the transform normalization,
+
+\[
+ \boxed{
+ E'_{\rm AB}=\frac72+\delta+2\theta,\qquad
+ E'_{\rm Watt}=\frac{11}{4}+\frac32\theta+\frac12r_\ast.}
+\tag{4.807}
+\]
+
+The product of the Poisson amplitude and the common overlap width has
+exponent
+
+\[
+ (\delta-\theta)-1=\delta-\theta-1.
+\]
+
+Adding this factor and the outside exponent \(\gamma=s-\delta\), then
+subtracting the target \(1+s\), gives the exact transformed BBLR
+deficits
+
+\[
+ \boxed{
+ D'_{\rm AB}=\frac32+\delta+\theta,\qquad
+ D'_{\rm Watt}=\frac34+\frac12\theta+\frac12r_\ast.}
+\tag{4.808}
+\]
+
+The first expression is identical to the original deficit in (4.790).
+For the second expression,
+
+\[
+ \boxed{
+ D'_{\rm Watt}-D_{\rm Watt}
+ =\frac{1+\theta-\delta}{2}\geq0.}
+\tag{4.809}
+\]
+
+Equality in (4.809) is possible only at
+\((s,\delta,\theta)=(1,1,0)\).  Therefore simultaneous slope Poisson
+summation never improves the published BBLR estimate: its first error is
+invariant and its Watt error is weakly worse, becoming equal only on the
+hard vertex.
+
+Thus an absolute treatment of the resonance needs \(T^{1+\theta}\),
+whereas the original core needs \(T^\delta\).  The extra loss is exactly
+\(T^{1-\delta+\theta}\).  At the hard vertex this extra loss is zero, but
+the original \(T^1\) deficit remains.  Consequently the double-Poisson
+coordinate is retained only as a possible *signed pre-Cauchy* spectral
+interface; it supplies no unconditional box by itself.  The adapter
+`strict_power_double_poisson_resonance_audit` records (4.801)--(4.805) and
+the comparison (4.806)--(4.809).  It keeps
+`absolute_double_poisson_route_covered=False` and
+`double_poisson_improves_bblr=False`.
+
+### 4.105 A signed MRTT adapter leaves the exact shift-power deficit
+
+The positive local variance (4.730) is stronger than the original
+centered problem.  A closer published comparison is an averaged
+nonzero-shift correlation.  The coefficient decomposition begins with
+an exact finite identity.  Put
+
+\[
+ a_U(n)=\mu(n)\mathbf 1_{n\leq U}.
+\]
+
+For integers \(K,U\geq1\), the convolution
+\((\mu-a_U)^{*K}(n)\) vanishes when \(n\leq U^K\).  Expanding it and
+convolving by \(\mathbf 1^{*(K-1)}\), using
+\(\mu*\mathbf1=\varepsilon\), gives
+
+\[
+ \boxed{
+ \mu(n)=\sum_{j=1}^{K}(-1)^{j+1}\binom Kj
+ \big(a_U^{*j}*\mathbf1^{*(j-1)}\big)(n),
+ \qquad n\leq U^K.}
+\tag{4.810}
+\]
+
+There is no analytic truncation error in (4.810).  Taking
+\(U=(2Y)^{1/K}\), then choosing \(K>K_0(A,\vartheta)\), makes every
+Möbius factor in the dyadic expansion \(Y^\varepsilon\)-short.  The
+combinatorial decomposition then has the same scale alternatives as in
+Matomäki--Radziwiłł--Tao I:
+
+\[
+ \boxed{
+ \begin{array}{ll}
+ \text{Type II:}&Y^\varepsilon\ll N\ll H_0,\quad NM\asymp Y,\\
+ \text{Type }d_j:&N\ll Y^\varepsilon,\quad
+  H_0\ll M_1\ll\cdots\ll M_j.
+ \end{array}}
+\tag{4.811}
+\]
+
+The long factors in the second line are the \(\mathbf1\)-factors from
+(4.810).  Thus the Type-II input keeps divisor-bounded short
+coefficients, while the Type-\(d_j\) input sees only the permitted long
+unit factors.
+
+For the ratio-twisted product define
+
+\[
+ \mu_z(n)=\mu(n)n^{iz},\qquad
+ f_\tau=\mu_{\tau/2}*\mu_{-\tau/2}.
+\tag{4.812}
+\]
+
+Multiplication by \(n^{iz}\) commutes with Dirichlet convolution.
+Uniformly for \(|\tau|\leq(\log Y)^C\),
+
+\[
+ \boxed{
+ |f_\tau(n)|\leq d_2(n),\qquad
+ f_\tau(pm)=-
+ \big(p^{i\tau/2}+p^{-i\tau/2}\big)f_\tau(m)
+ \quad(p\nmid m).}
+\tag{4.813}
+\]
+
+These are the exact candidate substitutions for a typical-prime-factor
+argument.  The first gives a \(d_2\) majorant for the mean-value and
+large-values steps.  In the Ramaré identity the constant prime
+coefficient is replaced by the parenthesis in (4.813), whose modulus is
+at most \(2\); its two summands translate the height of the same prime
+Dirichlet polynomial.  The extracted prime bands are squarefree, so
+\(p\nmid m\) holds exactly where the second identity is invoked.
+
+The major arcs have arbitrary logarithmic decay.  The hyperbola identity
+and Davenport's uniform Möbius exponential-sum estimate, followed by
+partial summation for the polylogarithmic Archimedean twists, give
+
+\[
+ \boxed{
+ \sup_{\substack{\alpha\in\mathbb R\\
+                  |\tau|\leq(\log Y)^C}}
+ \left|\sum_n f_\tau(n)V(n/Y)e(n\alpha)\right|
+ \ll_{A,C,V}Y(\log Y)^{-A}.}
+\tag{4.814}
+\]
+
+Splitting the convolution at \(d\leq\sqrt{2Y}\) leaves an inner Möbius
+sum of length at least a constant multiple of \(\sqrt Y\); Davenport
+saves an arbitrary logarithmic power, the harmonic \(d\)-sum costs one
+logarithm, and the square boundary is \(O(Y^{1/2+o(1)})\).
+
+The published MRTT long-shift theorem has the following normalization.
+For bounded smooth \(V,V',w\), \(H=Y^\vartheta\), and polylogarithmic
+\(\tau,\upsilon\), it gives
+
+\[
+ \boxed{
+ \sum_h w(h/H)\sum_n
+ f_\tau(n)V(n/Y)
+ \overline{f_\upsilon(n+h)V'((n+h)/Y)}
+ \ll_{A,C,V,V',w}YH(\log Y)^{-A}.}
+\tag{4.815}
+\]
+
+This is an averaged-Chowla estimate: it saves arbitrary logarithms
+relative to the \(YH\) count, but it does not save the number \(H\) of
+shifts.  On a strict core cell,
+
+\[
+ Y=T^{1+\delta},\qquad H=T^\delta,\qquad
+ \vartheta=\frac{\delta}{1+\delta}.
+\tag{4.816}
+\]
+
+MRTT I's published threshold \(\vartheta\geq8/33\) is therefore
+
+\[
+ \boxed{
+ \frac{\delta}{1+\delta}\geq\frac8{33}
+ \quad\Longleftrightarrow\quad
+ \delta\geq\frac8{25}.}
+\tag{4.817}
+\]
+
+Below (4.817), (4.813) and (4.814) identify a plausible signed
+typical-factor adaptation of MRTT II, but they do not by themselves
+reconstruct every exceptional-set and minor-arc estimate in that proof.
+The coverage adapter therefore does not mark the sub-threshold extension
+as verified.  This distinction is immaterial at the hard vertex
+\(\delta=1\), which lies in the published range.
+
+The decisive comparison is between the exponent supplied by (4.815)
+and the exponent required by the MWKF core:
+
+\[
+ \boxed{
+ E_{\mathrm{MRTT}}=(1+\delta)+\delta=1+2\delta,\qquad
+ E_{\mathrm{MWKF}}=1+\delta,\qquad
+ E_{\mathrm{MRTT}}-E_{\mathrm{MWKF}}=\delta.}
+\tag{4.818}
+\]
+
+Restoring the shared gcd exponent \(\gamma=s-\delta\) gives the same
+deficit:
+
+\[
+ \boxed{
+ E_{\mathrm{MRTT,global}}=1+s+\delta,\qquad
+ E_{\mathrm{target}}=1+s,\qquad
+ E_{\mathrm{MRTT,global}}-E_{\mathrm{target}}=\delta.}
+\tag{4.819}
+\]
+
+Consequently even the product-compatible model is not closed.  What is
+actually sufficient is the strictly stronger signed estimate
+
+\[
+ \boxed{
+ \sum_h w(h/H)\sum_n
+ f_\tau(n)V(n/Y)
+ \overline{f_\upsilon(n+h)V'((n+h)/Y)}
+ \ll_{A,C,V,V',w}Y(\log Y)^{-A}.}
+\tag{4.820}
+\]
+
+Estimate (4.820) gains the full power \(H=T^\delta\) beyond the MRTT
+scale and is not a consequence of either MRTT theorem.  It is weaker
+than the positive uniform variance (4.730), because the physical kernel
+is centered and signed, but it remains a genuinely new pre-Cauchy
+spectral/dispersion estimate.  The physical gcd layers and the full
+ratio-twisted coefficient family would still have to be restored after
+proving it.
+
+The exact-rational adapter
+`mrtt_signed_mobius_power_shift_audit` records (4.816)--(4.819), and
+`truncated_heath_brown_mobius_identity` checks (4.810)
+coefficientwise through \(n=U^K\).  Its status fields deliberately keep
+`mrtt_scale_closes_mwkf_model=False`,
+`full_ratio_twisted_multiplicative_family_covered=False`,
+`product_compatible_hard_vertex_covered=False`,
+`physical_gcd_layer_adapter_verified=False`, and
+`whole_strict_power_core_covered=False`.
+
+### 4.106 The hard vertex is a unimodular four-Möbius determinant shell
+
+The missing factor in (4.820) can be seen without a circle-method
+normalization.  First freeze the product-compatible coefficient
+\(f=\mu*\mu\).  For smooth \(V,V'\) and a nonzero-shift weight \(w\),
+finite reindexing gives the exact identity
 
 \[
  \boxed{
  \begin{aligned}
- \mathcal A^{\mathrm{I},d=1}_{\xi,k=1}
- ={}-&\sum_w\sum_{\substack{p:\ s=p-w\\0\le w<s\\p\ {\rm prime}}}
- e\!\left(
-   \frac{\xi\lfloor Qw/(p-w)\rfloor}{Q}
-  \right)\mu(p-w)\log p\\
- &\hspace{36mm}\times
- \widetilde G_{p-w,w;h,\delta,\nu,\sigma}.
+ \mathcal A(Y,H)
+ &:=
+ \sum_h w(h/H)\sum_n
+ f(n)V(n/Y)f(n+h)V'((n+h)/Y)\\
+ &=\sum_{a,b,c,d\geq1}
+ \mu(a)\mu(b)\mu(c)\mu(d)
+ w\!\left(\frac{cd-ab}{H}\right)
+ V(ab/Y)V'(cd/Y).
  \end{aligned}}
- \tag{4.646}
+\tag{4.821}
 \]
 
-Thus the Möbius coordinate is exactly a negative shifted-prime coordinate.
-This is a genuine exact reduction, but it is not the scalar family in
-Lichtman's theorem.  Even if one grants an analogous negative-shift
-variant, the coefficient multiplying \(\mu(p-w)\) in (4.646) still
-depends jointly on \(p\) and \(w\): both
+At the hard vertex \(Y=T^2\), \(H=T\), the balanced factor box has
+\(a,b,c,d\asymp T\) and \(|cd-ab|\asymp T\).  For fixed \(a,b,c\), the
+allowed \(d\)-interval has length
+\(O(H/c+1)=O(1)\).  Its raw cardinality therefore has exponent \(3\),
+whereas the required correlation scale in (4.820) is \(Y=T^2\).
+
+Now dyadically extract
 
 \[
- b_Q(w,p-w)=\left\lfloor\frac{Qw}{p-w}\right\rfloor
- \quad\hbox{and}\quad
- \widetilde G_{p-w,w;h,\delta,\nu,\sigma}
- \tag{4.647}
+ g=(a,c)\asymp G=T^\kappa,\qquad
+ a=ga_0,\quad c=gc_0,\quad(a_0,c_0)=1,
+ \qquad 0\leq\kappa\leq1.
+\tag{4.822}
 \]
 
-move with the shift.  In particular, fixing \(w\) does not fix the Farey
-phase.  The finite witness \(Q=11,w=1\) contains
+The shift is divisible by \(g\).  Writing \(cd-ab=gk\) gives
 
 \[
- (s,p,b_Q)=(2,3,5),(6,7,1),(10,11,1).
- \tag{4.648}
+ c_0d-a_0b=k.
+\tag{4.823}
 \]
 
-Lichtman, arXiv:2009.08969v2, Theorem 1.1 proves, for
-\(H=X^\theta\), \(0<\theta<1\),
-
-\[
- \sum_{h\le H}\left|\sum_{p\le X}\mu(p+h)\right|
- \ll_{\theta,\delta}
- \frac{H\pi(X)}{(\log X)^{1/3-\delta}}.
- \tag{4.649}
-\]
-
-Its Lemma 6.1 permits a moderate coefficient \(G(n)\), but that \(G\) is
-fixed before averaging over \(h\).  It does not permit the moving
-\(G_w(n)\) in (4.647).  Three independent theorem-level mismatches remain:
-
-1. (4.649) is an \(L^1\) average over scalar shifts, whereas (4.645) is a
-   vector cluster \(L^2\) estimate retaining \(\xi,Q,h,\delta\) and packet
-   labels;
-2. the full Type-I packet has \(w\asymp p\asymp T\), while the quantitative
-   polynomial statement assumes \(H=X^\theta<X\) with fixed
-   \(0<\theta<1\);
-3. the saving in (4.649) is logarithmic, hence has power exponent \(0\),
-   leaving the entire \(T^{1/2}\) unsquared deficit in (4.645).
-
-Consequently even the \(d=1,k=1\) face is not covered by the published
-shifted-prime theorem.  This is stronger than the generic observation that
-fixed-shift cancellation is open: it identifies the exact favorable
-reindexing and shows why the required global weight cannot be discarded.
-The helpers farey_type_i_unit_divisor_shifted_prime_reassembly and
-lichtman_shifted_prime_type_i_coverage_audit verify (4.646)--(4.648) and
-record the norm, range, and half-power deficit.  Their Type-I coverage flags
-remain false.
-
-### 4.75 The scalar metric-Beatty surrogate: fixed-\(f\) fails, but structured sampling loses no power
-
-Technau--Zafeiropoulos, arXiv:1907.06050, Theorem 2.1 and Corollary
-4.4 give a genuinely square-root-sized discrepancy for one *fixed*
-arithmetic function on a Beatty set.  In the notation of their paper the
-underlying continuous estimate is
-
-\[
- \int_0^1
- \max_{x\le X}\left|\Sigma_{\lambda^{-1}}^{(\ell)}(f,x)\right|^2
- d\lambda
- \ll (\log\log X)^2\|f\|_{2,X}^2.
- \tag{4.650}
-\]
-
-For bounded or prime-logarithmic coefficients, the power exponent on the
-right is one.  If one fixed arithmetic function represented every sector,
-multiplying by \(Q\asymp X\) slope samples would therefore give total
-energy exponent two, exactly the target in (4.645).  This is a numerically
-sufficient scalar surrogate, not yet an adapter for the actual packet.
-
-Indeed, the fixed-function hypothesis fails before sampling is considered.
-At \(Q=6,k=1\), the two nonempty critical fibers
-
-\[
- (b,s,w,r)=(1,6,1,7),\qquad(2,5,2,7)
- \tag{4.650a}
-\]
-
-produce the same Beatty value \(r=ks+w=7\), but their actual coefficients
-are
-
-\[
- \mu(6)\mu(7)=-1,\qquad \mu(5)\mu(7)=1.
- \tag{4.650b}
-\]
-
-No scalar assignment \(f(7)\) can encode both slopes.  The published
-continuous integral keeps \(f\) fixed as the slope varies, so it cannot be
-applied to the family \(f_b(r)=\mu(s_b(r))\mu(r)\).  This finite collision
-does not rule out a new pair-valued or vector-valued theorem; it rules out
-the proposed scalar fixed-\(f\) adapter.
-
-The conclusion, however, is a Lebesgue slope average, not a theorem on the
-moving rational grid.  The classical finite trigonometric polynomial
-displayed as equation (3.1) in that paper has frequencies
-
-\[
- k=mj,\qquad m\le X+1,\qquad |j|\le\sqrt X,
- \qquad |k|\ll X^{3/2}.
- \tag{4.651}
-\]
-
-The sampling obstruction is exact on a uniform \(Q\)-grid.  For
-\(F(t)=\sum_k c_ke(kt)\), character orthogonality gives
+Choose any Bézout pair \(p,q\) satisfying
+\(c_0p-a_0q=1\).  Every integral solution of (4.823), with no omission
+or multiplicity, is
 
 \[
  \boxed{
- \frac1Q\sum_{b\bmod Q}|F(b/Q)|^2
- =\sum_{\rho\bmod Q}
-   \left|\sum_{k\equiv\rho\;(\bmod Q)}c_k\right|^2
- =\sum_k|c_k|^2+
-   \sum_{\substack{k_1\ne k_2\\Q\mid k_1-k_2}}
-   c_{k_1}\overline{c_{k_2}}.}
- \tag{4.652}
+ d=pk+a_0t,\qquad b=qk+c_0t,\qquad t\in\mathbb Z.}
+\tag{4.824}
 \]
 
-If an alias class contains at most \(L_Q\) frequencies, Cauchy gives
+Indeed the coordinate matrix is unimodular:
 
 \[
- \frac1Q\sum_{b\bmod Q}|F(b/Q)|^2
- \le L_Q\sum_k|c_k|^2,\qquad
- L_Q\ll1+\frac{X^{3/2}}Q.
- \tag{4.653}
+ \det
+ \begin{pmatrix}
+ q&c_0\\ p&a_0
+ \end{pmatrix}
+ =qa_0-c_0p=-1.
+\tag{4.825}
 \]
 
-This factor is sharp for unrestricted coefficients: with
-\(Q=5\), \(c_1=c_6=c_{11}=1\), the continuous energy is \(3\) and the
-normalized grid energy is \(9\).  The actual reciprocal nodes
-\(\lambda_b=(1+b/Q)^{-1}\) on the unit-slope face are nonuniform but
-\(Q^{-1}\)-separated on a fixed compact interval; the standard
-trigonometric large sieve gives
-the same generic factor \(1+X^{3/2}/Q\).  Thus, at \(X=Q=T\),
+Changing the Bézout pair only translates \(t\), so the finite sum is
+independent of this choice.  The exact dyadic scales are
 
 \[
  \boxed{
- E_{\rm continuous}=T^{2+o(1)},\qquad
- E_{\rm sampled}^{\rm generic}=T^{5/2+o(1)},\qquad
- \text{deficit}=T^{1/2}.}
- \tag{4.654}
+ \begin{array}{c|ccccc}
+ \text{variable}&g&a_0&c_0&k&t\\ \hline
+ \log_T(\text{length})
+ &\kappa&1-\kappa&1-\kappa&1-\kappa&\kappa .
+ \end{array}}
+\tag{4.826}
 \]
 
-This is only the arbitrary-bandwidth audit.  It must not be charged to the
-Technau--Zafeiropoulos polynomial, whose Fourier coefficients have the
-special divisor-convolution form
+The \(t\)-range is the intersection of the two intervals imposed by
+\(b,d\asymp T\), hence has length \(O(G+1)\).  Consequently one gcd
+layer has raw exponent
 
 \[
- F(\lambda)=\sum_{m\leq X}g_m
- \sum_{1\leq |j|\leq J}c_j e(mj\lambda),
- \qquad |c_j|\ll |j|^{-1},\qquad J=X^{1/2}.
- \tag{4.654a}
+ E_{\mathrm{raw}}(\kappa)
+ =\kappa+2(1-\kappa)+(1-\kappa)+\kappa
+ =3-\kappa.
 \]
 
-This structure removes the apparent half-power even on the nonuniform
-reciprocal grid.  Let \(\mathcal H\) be a Hilbert space and let
-\(\lambda_1,\ldots,\lambda_Q\) be \(h\)-separated in a fixed compact
-interval.  For every \(\sigma>1/2\), the scaled Sobolev sampling
-inequality gives
+A precise model gate is therefore
 
 \[
  \boxed{
- h\sum_{\beta\leq Q}\|F(\lambda_\beta)\|_{\mathcal H}^{2}
- \ll_\sigma
- \|F\|_{L^2(\mathbb T;\mathcal H)}^2
- +h^{2\sigma}
- \bigl\||D|^\sigma F\bigr\|_{L^2(\mathbb T;\mathcal H)}^2.}
- \tag{4.654b}
+ \begin{aligned}
+ \mathcal S_\kappa[\Psi]
+ :=\sum_{g\asymp T^\kappa}
+ \sum_{\substack{a_0,c_0\asymp T^{1-\kappa}\\(a_0,c_0)=1}}
+ \sum_{k\asymp T^{1-\kappa}}\sum_t
+ &\mu(ga_0)\mu(gc_0)\\
+ {}\times&
+ \mu(qk+c_0t)\mu(pk+a_0t)\Psi
+ \ll_{B,\Psi}T^2(\log T)^{-B}.
+ \end{aligned}}
+\tag{4.827}
 \]
 
-Writing
+Here \(\Psi\) imposes (4.824), positivity, all four balanced dyadic
+ranges, and the chosen signed shift box.  The required power saving is
 
 \[
- a_k=\sum_{\substack{mj=k\\m\leq X,\ |j|\leq J}}g_m c_j,
- \tag{4.654c}
+ (3-\kappa)-2=1-\kappa.
 \]
 
-divisor Cauchy, valid componentwise in \(\mathcal H\), gives for every
-\(\eta>0\)
+This is exactly square-root cancellation in the pair
+\((a_0,c_0)\), whose joint exponent is \(2(1-\kappa)\); equivalently it
+is complete cancellation in the \(k\)-block.  Even where an
+averaged-Chowla input can be adapted, its logarithmic saving relative
+to the raw layer does not provide this power.
+
+The endpoint \(\kappa=1\) requires a separate warning.  Its positive
+power deficit vanishes, but taking \(a_0=c_0=1\), \(p=1\), and \(q=0\)
+leaves the subfamily
+
+\[
+ \sum_{g\asymp T}\mu(g)^2
+ \sum_{t\asymp T}\mu(t)\mu(t+k)\Psi(g,t,k),
+ \qquad k\asymp1.
+\]
+
+Arbitrary logarithmic saving here contains the ordinary Cesàro
+fixed-shift two-point Chowla problem and is not known.  The closed
+polylogarithmic gcd collar for the actual physical coefficients in
+Section 4.100 uses an additional outer Möbius cancellation; it cannot be
+transferred after freezing the coefficient to \(f=\mu*\mu\).
+Thus every strict \(\kappa<1\) layer needs a new centered
+outer-Möbius spectral estimate, while the top model face still needs a
+new logarithmic cancellation.
+
+The helper
+`hard_vertex_four_mobius_determinant_line_identity` verifies
+(4.822)--(4.825) on exact integers.  The exponent adapter
+`hard_vertex_four_mobius_determinant_audit` records (4.826)
+and the critical saving in (4.827).  This is a product-compatible
+hard-vertex model: the actual ratio-Mellin deformation and physical gcd
+allocations have not yet been restored.  Accordingly both the model
+estimate and the full MWKF core remain unproved.
+
+
+### 4.107 Periodic arithmetic-weight Kuznetsov cannot encode the modulus Möbius gain
+
+[Blomer--Milićević's arithmetic-weight Kuznetsov theorem](https://arxiv.org/abs/1410.4538)
+permits a
+periodic weight on the Kloosterman modulus, so it is a natural possible
+replacement for the inadmissible entry-weighted trace formula of
+Section 4.64.  Their normalization is
+
+\[
+ \boxed{
+ \widehat f(\chi)
+ =\frac1{\varphi(q)^{1/2}}
+   \sum_{a\bmod q}^{*}\overline{\chi(a)}f(a),\qquad
+ \|\widehat f\|_1=\sum_{\chi\bmod q}|\widehat f(\chi)|.}
+\tag{4.828}
+\]
+
+For \(f:(\mathbb Z/q\mathbb Z)^\times\to\mathbb C\), fixed smooth
+\(f_\infty\), and \(mn\leq X^2\), their Theorem 1 states
+
+\[
+ \boxed{
+ \sum_{\substack{c\geq1\\(c,q)=1}}
+ \frac{S(m,n;c)}{c^{1/2}}f(c)f_\infty(c/X)
+ \ll_{f_\infty,\varepsilon}
+ X^{1/2+2\vartheta}\|\widehat f\|_1(mnq)^\varepsilon,}
+\tag{4.829}
+\]
+
+where \(\vartheta=7/64\) is currently admissible.
+
+Give this theorem its most favorable direct interpretation for a Möbius
+modulus weight.  Choose a prime \(q>2X\), so reduction modulo \(q\) is
+injective on \([X,2X]\), and define \(f(c\bmod q)=\mu(c)\) on that
+interval and zero on the other reduced residues.  Multiplicative
+Parseval and the squarefree density give
+
+\[
+ \boxed{
+ \|\widehat f\|_1\geq\|\widehat f\|_2
+ =\left(\sum_{a\bmod q}^{*}|f(a)|^2\right)^{1/2}
+ =X^{1/2+o(1)}.}
+\tag{4.830}
+\]
+
+Consequently the smallest right side compatible with Parseval already
+has exponent
+
+\[
+ \boxed{
+ E_{\mathrm{BM}}
+ =\left(\frac12+2\vartheta\right)+\frac12
+ =1+2\vartheta.}
+\tag{4.831}
+\]
+
+The normalized modulus sum has the direct Weil-bound exponent \(1\).
+Thus the published theorem loses \(X^{2\vartheta}\).  The paper's
+Selberg-conjecture remark does **not** set every occurrence of
+\(\vartheta\) to zero: it replaces \(X^{2\vartheta}\) by
+\((mn)^\vartheta\), retaining the finite-prime Ramanujan exponent.
+Only the full Ramanujan conjecture, including Selberg at infinity,
+sets \(\vartheta=0\) and merely ties the trivial exponent.
+
+On the balanced QCT box \(X=S=T^3\), the combined physical numerator has
+scale \(h\delta=T^5\), so the favorable Linnik-range check
+\(T^5\leq X^2=T^6\) succeeds.  Nevertheless,
+
+\[
+ \boxed{
+ E_{\mathrm{BM}}=\frac{117}{32},\qquad
+ E_{\mathrm{triv}}=3,\qquad
+ E_{\mathrm{BM}}-E_{\mathrm{triv}}=\frac{21}{32}}
+\tag{4.832}
+\]
+
+in \(T\)-exponents.  This deficit occurs before charging the fact that
+the QCT kernel is an incomplete, coupled orbit rather than the complete
+Kloosterman family in (4.829).
+
+Under Selberg alone, the direct periodic encoding instead has
+
+\[
+ \boxed{
+ E_{\mathrm{BM,Sel}}=3+5\left(\frac7{64}\right)
+ =\frac{227}{64},\qquad
+ E_{\mathrm{BM,Sel}}-3=\frac{35}{64}.}
+\tag{4.832a}
+\]
+
+Full Ramanujan lowers (4.832a) to \(3\), still with zero power-saving
+margin.
+
+This audit rejects the direct collision-free periodic encoding.  It
+does not assert that no specially chosen smaller period can agree with
+a finite Möbius interval, and it does not reject a Type-I/II expansion
+followed by separate level formulas.  Such a hybrid must still retain
+the two Möbius cofactors and is exactly the unresolved centered
+dispersion problem, not an application of (4.829) alone.  The coverage
+adapter records the Parseval lower bound, the \(21/32\) hard-box deficit,
+the Selberg-only \(35/64\) deficit, the zero full-Ramanujan margin, and
+leaves the whole Möbius gate unproved.
+
+
+### 4.108 Type-I level extraction still needs exceptional-spectrum cancellation
+
+The periodic encoding is deliberately wasteful: it asks one finite
+period to remember every value of \(\mu(c)\).  The exact Möbius
+factorization gives a different use of the same trace formula.  For
+\(c>U\), put
+
+\[
+ \boxed{
+ c_U(a)=\sum_{\substack{d\mid a\\d\leq U}}\mu(d),\qquad
+ \mu(c)=-\sum_{\substack{ab=c\\a>U}}c_U(a)\mu(b).}
+\tag{4.833}
+\]
+
+Split the last sum at \(b\leq V\).  In the Type-I part write \(a=d\ell\)
+inside \(c_U(a)\).  After an exact dyadic partition \(b\asymp B\),
+\(d\asymp D\), a model modulus block is
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathcal K_{B,D}(m,n;X)
+ =-&\sum_{\substack{b\asymp B\\b\leq V}}\mu(b)
+ \sum_{\substack{d\asymp D\\d\leq U}}\mu(d)
+ \sum_{\substack{\ell\geq1\\bd\ell\asymp X\\d\ell>U}}
+ \frac{S(m,n;bd\ell)}{(bd\ell)^{1/2}}\\
+ &\hspace{35mm}\times
+ F_{b,d}\!\left(\frac{bd\ell}{X}\right).
+ \end{aligned}}
+\tag{4.834}
+\]
+
+The inequalities in (4.834) are retained, not absorbed into asymptotic
+notation.  Partial summation treats their two endpoints, while the
+fixed dyadic functions \(F_{b,d}\) have the inherited uniform smooth
+seminorms.  This is still only the product-compatible modulus model;
+the other Möbius entry, ratio integrals, and physical QCT kernel have
+not been restored.
+
+Estimate (211) in the proof of
+[Blomer--Milićević, Theorem 1](https://arxiv.org/abs/1410.4538) gives,
+uniformly for \(mn\leq X^2\) and every fixed divisibility level \(L\),
+
+\[
+ \boxed{
+ \sum_{L\mid c}\frac{S(m,n;c)}{c^{1/2}}
+ F_\infty(c/X)
+ \ll_{F_\infty,\varepsilon}
+ X^{1/2+2\vartheta}(mnL)^\varepsilon.}
+\tag{4.835}
+\]
+
+Thus (4.835) applies separately to \(L=bd\).  Put
+
+\[
+ X=T^3,\qquad mn=T^5,\qquad
+ B=T^\beta,\quad D=T^\eta,\quad
+ \lambda=\beta+\eta.
+\tag{4.836}
+\]
+
+The Linnik hypothesis is satisfied because \(5\leq2\cdot3\).  Absolute
+summation over \((b,d)\) and, even more favorably, an unproved ideal
+Cauchy aggregation over the \(T^\lambda\) level pairs give respectively
+
+\[
+ \boxed{
+ E_{\mathrm{I,abs}}=\frac{69}{32}+\lambda,\qquad
+ E_{\mathrm{level\text{-}Cauchy}}=\frac{69}{32}+\frac\lambda2.}
+\tag{4.837}
+\]
+
+The hard determinant model requires exponent \(2\).  Consequently the
+two conditions in (4.837) would be
+
+\[
+ \boxed{
+ \lambda<-\frac5{32},\qquad
+ \lambda<-\frac5{16}.}
+\tag{4.838}
+\]
+
+Neither contains a nonnegative level box: the uniform Kim--Sarnak
+exceptional-spectrum factor already loses \(T^{5/32}\) when \(B=D=1\).
+
+Selberg alone replaces the fixed-level exponent \(69/32\) by
+
+\[
+ \frac32+5\left(\frac7{64}\right)=\frac{131}{64}.
+\]
+
+It therefore still requires \(\lambda<-3/64\) after absolute summation
+or \(\lambda<-3/32\) after the ideal Cauchy step.  Under full Ramanujan
+the two bounds become
+
+\[
+ \boxed{
+ E_{\mathrm{I,abs}}^{\mathrm{Ram}}=\frac32+\lambda,\qquad
+ E_{\mathrm{level\text{-}Cauchy}}^{\mathrm{Ram}}
+ =\frac32+\frac\lambda2.}
+\tag{4.839}
+\]
+
+Hence even that conjectural ledger covers only \(\lambda<1/2\) by
+absolute summation and \(\lambda<1\) by ideal level Cauchy.  At the
+critical level face \(\lambda=1\), (4.839) is exactly \(T^2\) and
+supplies none of the logarithmic decay needed for \(o(T)\).
+
+The sharp new local input suggested by this route is therefore a
+Möbius-weighted level-family estimate of the form
+
+\[
+ \boxed{
+ \sum_{\substack{b\asymp B\\d\asymp D}}
+ \alpha_{b,d}
+ \sum_{bd\mid c}\frac{S(m,n;c)}{c^{1/2}}
+ \mathscr F_{b,d}\!\left(\frac c{T^3}\right)
+ \ll_{A,\mathscr F}
+ T^{3/2+\lambda/2}(\log T)^{-A},
+ \qquad 0\leq\lambda\leq1.}
+\tag{4.840}
+\]
+
+Here \(\alpha_{b,d}=\mu(b)\mu(d)\) times the retained Type-I and
+allocation coefficients, while \(\mathscr F_{b,d}\) must still contain
+the second Möbius cofactor and the coupled physical kernel.  In
+particular (4.840) must cancel the exceptional spectrum in the level
+family; it is not the ordinary positive spectral large sieve.  No
+published theorem audited here proves (4.840), and the Type-II sector
+\(b>V\), including level boxes \(\lambda>1\), still requires the
+centered four-variable dispersion estimate.  The adapter
+`blomer_milicevic_type_i_level_audit` records (4.836)--(4.839) and keeps
+both the level-Cauchy and physical-kernel proof flags false.
+
+
+### 4.109 Coupled-conductor density removes the archimedean exceptional loss but leaves the finite-prime Hecke loss
+
+The factor \(X^{2\vartheta}\) in (4.835) combines an exceptional
+archimedean transform loss with a finite-prime Hecke loss.  These must
+be separated before testing the strongest published level-density
+saving.
+[Humphries, Theorem 1.2](https://arxiv.org/abs/1609.06740), specialized
+to \(\Gamma_0(q)\), trivial character, and no finite-prime condition,
+states that for \(0<\alpha<1/2\),
+
+\[
+ \boxed{
+ N_q(\alpha):=
+ \#\{f\in\mathcal B_0(q):it_f\in(\alpha,1/2)\}
+ \ll_\varepsilon
+ \operatorname{vol}(\Gamma_0(q)\backslash\mathbb H)^{1-4\alpha+\varepsilon}.}
+\tag{4.841}
+\]
+
+For \(q\asymp Q=T^\lambda\), the volume is
+\(q^{1+o(1)}\).  The earlier audit at this point used \(X^{2\nu}\)
+for the exceptional Bessel-transform loss.  That drops the numerator
+conductor and is not the specialization of the published proof.
+Blomer--Milićević define
+
+\[
+ \Xi=\frac{\sqrt{mn}}X.
+\]
+
+If \(X=T^\sigma\) and \(mn=T^\tau\), their exact small-parameter
+transform bound is \(\Xi^{-2\nu}\), while their separate pointwise
+finite-prime Hecke estimate costs \((mn)^\vartheta\).  Thus the
+pre-density spectral loss is
+
+\[
+ \boxed{
+ (mn)^\vartheta\Xi^{-2\nu}
+ =T^{\tau\vartheta+(2\sigma-\tau)\nu}.}
+\tag{4.842}
+\]
+
+Give (4.841) its most favorable volume-normalized use.  The exceptional
+count at height \(\nu\) gains \(Q^{-4\nu}\), so the exact exponent
+ledger becomes
+
+\[
+ \boxed{
+ \tau\vartheta+
+ \sup_{0\leq\nu\leq\vartheta}
+ (2\sigma-\tau-4\lambda)\nu
+ =
+ \tau\vartheta+
+ \vartheta\max(2\sigma-\tau-4\lambda,0).}
+\tag{4.843}
+\]
+
+This still grants more than Humphries literally supplies for the joint
+QCT coefficients: (4.841) is a positive counting theorem, not a
+weighted spectral large sieve.  It is an exact conductor test of that
+optimistic grant.
+
+At the critical Type-I face
+
+\[
+ \sigma=3,\qquad \tau=5,\qquad \lambda=1,\qquad
+ \vartheta=\frac7{64},
+\]
+
+the archimedean exceptional residual in (4.843) is zero, but the
+finite-prime Hecke loss is
+
+\[
+ \boxed{
+ 5\vartheta=\frac{35}{64}.}
+\tag{4.844}
+\]
+
+The full-Ramanujan ideal level-Cauchy base in (4.839) is exactly
+\(T^2\).  Restoring the pointwise finite-prime loss gives
+
+\[
+ \boxed{
+ E_{\mathrm{density}}
+ =2+\frac{35}{64}=\frac{163}{64},
+ \qquad
+ E_{\mathrm{density}}-2=\frac{35}{64}.}
+\tag{4.844a}
+\]
+
+The level thresholds are now compatible.  The target bound for the
+ideal Cauchy base requires \(\lambda\leq1\), while neutralizing only
+the archimedean exceptional growth requires
+
+\[
+ \boxed{
+ \lambda\geq\frac{2\sigma-\tau}{4}=\frac14.}
+\tag{4.845}
+\]
+
+Therefore exceptional eigenvalues are not the numerical obstruction
+on the critical level face once the coupled numerator conductor is
+retained.  The remaining power is exactly the use of the individual
+Kim--Sarnak bound at the finite primes.  A successful continuation
+must average the Hecke entries together with the retained Möbius
+variables and physical kernel, avoiding that pointwise
+\((mn)^\vartheta\) charge.  Humphries alone does not do this and does
+not justify the ideal level Cauchy step.  The adapter
+humphries_exceptional_level_density_audit records the ratio exponent
+\(2\sigma-\tau=1\), the neutral level \(1/4\), the surviving
+\(35/64\), and keeps the QCT spectral-weight and whole-gate flags
+false.
+
+
+### 4.109a The corrected local gate is a pre-Cauchy finite-prime Hecke average
+
+Section 4.109 changes the interpretation of (4.840).  Write the two
+Hecke-index scales as \(T^a,T^b\), so \(a+b=\tau\).  At level
+\(T^\lambda\), the ideal full-Ramanujan level-Cauchy base is
+
+\[
+ E_{\rm Ram}=\frac{\sigma}{2}+\frac{\lambda}{2}.
+\]
+
+The pointwise finite-prime estimate used in the proof of the
+Blomer--Milićević bound adds \((a+b)\vartheta=\tau\vartheta\).
+Consequently the critical ledger is
+
+\[
+ \boxed{
+ E_{\rm pointwise}
+ =\frac{\sigma}{2}+\frac{\lambda}{2}+\tau\vartheta
+ =2+\frac{35}{64}=\frac{163}{64}.}
+\tag{4.845a}
+\]
+
+Applying the ordinary spectral large sieve after both Hecke indices
+have been frozen is not a remedy.  Its delta-sequence normalization
+costs
+
+\[
+ \boxed{
+ D_{\rm fixed\text{-}LS}
+ =\frac12\big((a-\lambda)_++(b-\lambda)_+\big).}
+\tag{4.845b}
+\]
+
+At the balanced physical index scales
+\(a=b=5/2,\lambda=1\), this is \(3/2\), and hence
+
+\[
+ \boxed{
+ E_{\rm fixed\text{-}LS}=2+\frac32=\frac72.}
+\tag{4.845c}
+\]
+
+This is worse than the pointwise Kim--Sarnak charge \(35/64\).  Thus
+Cauchy followed by a fixed-index large sieve cannot be the missing
+argument.
+
+[Pascadi's exceptional large sieve](https://arxiv.org/abs/2404.04239)
+is directly relevant to the corrected conductor.  Its proved theorems
+handle the archimedean exceptional spectrum for exponential phases and
+dispersion coefficients with concentrated Fourier transform, including
+critical sequence length comparable with level.  The paper separately
+describes a finite-place analogue as a prospective extension; that
+extension is not one of its theorems.  It therefore supports the
+archimedean conclusion of Section 4.109 but does not remove
+\((mn)^\vartheta\).
+
+The weakest sufficient critical inequality is now (4.840) with its
+finite-prime role made explicit:
+
+\[
+ \boxed{
+ \mathfrak H_{\rm entry}[\Psi]
+ \ll_{A,W}
+ T^{\,\sigma/2+\lambda/2}(\log T)^{-A}
+ =T^2(\log T)^{-A}.}
+\tag{4.845d}
+\]
+
+Here \(\mathfrak H_{\rm entry}\) is the signed level/newform sum before
+positive Cauchy, with both Möbius matrix-entry weights, both level
+coefficients, every ratio and gcd allocation, and the physical coupled
+kernel retained.  Relative to (4.845a), (4.845d) must save exactly
+\(T^{35/64}\), then supply logarithmic decay at the zero-margin
+endpoint.  Section 4.16 already proves that classical Kuznetsov puts
+the Hecke operator on the shift, not on either Möbius entry.  Therefore
+deriving \(\mathfrak H_{\rm entry}\) itself requires a new
+entry-weighted relative trace formula or an equivalent pre-Cauchy
+dispersion identity.
+
+The adapter finite_prime_hecke_average_audit records (4.845a)--(4.845c),
+the required \(35/64\), Pascadi's proved archimedean scope, and the
+unproved finite-place and entry-adapter flags.  It does not mark
+(4.845d) as proved.
+
+
+### 4.109b Fourier separation of the original Farey family cannot precede positive Cauchy
+
+There is a tempting way to attack (4.845d) before passing to a
+fixed-index spectral sum.  It must first be normalized correctly.  For
+one product-separated component of the signed Farey kernel, let
+\(X=T^x\), \(L=T^\ell\), \(V_1=T^{\nu_1}\),
+\(V_2=T^{\nu_2}\), and put
 
 \[
  \begin{aligned}
- \sum_k\|a_k\|_{\mathcal H}^2
- &\ll_\eta (XJ)^\eta\sum_m\|g_m\|_{\mathcal H}^2,\\
- \sum_k |k|^{2\sigma}\|a_k\|_{\mathcal H}^2
- &\ll_\eta (XJ)^\eta
- \sum_m m^{2\sigma}\|g_m\|_{\mathcal H}^2
- \sum_{1\leq |j|\leq J}|j|^{2\sigma-2}.
+ P(\alpha)&=\sum_{v\asymp V_1}\sum_{r\asymp X}
+   a_{r,v}\mu(r)e(\alpha rv),\\
+ Q(\alpha)&=\sum_{j\asymp V_2}\sum_{s\asymp X}
+   b_{s,j}\mu(s)e(-\alpha js).
  \end{aligned}
- \tag{4.654d}
 \]
 
-At the critical scales \(X=Q=T\), \(h\asymp T^{-1}\), and
-\(J=T^{1/2}\), take \(\sigma=1/2+\eta\).  Then
-
-\[
- h^{2\sigma}X^{2\sigma}\asymp1,\qquad
- \sum_{j\leq J}j^{2\sigma-2}\ll_\eta J^{2\eta}
- =T^\eta.
-\]
-
-Equations (4.654b)--(4.654d) prove
+With the Fourier convention
+\(\widehat U(\xi)=\int_{\mathbb R}U(y)e(-\xi y)\,dy\), Fourier
+inversion gives the exact identity
 
 \[
  \boxed{
- \sum_{\beta\leq Q}\|F(\lambda_\beta)\|_{\mathcal H}^{2}
- \ll_{\varepsilon}T^{1+\varepsilon}
- \sum_{m\leq T}\|g_m\|_{\mathcal H}^{2}.}
- \tag{4.654e}
+ \sum_{r,s,v,j}a_{r,v}b_{s,j}\mu(r)\mu(s)
+ U\!\left(\frac{rv-js}{L}\right)
+ =L\int_{\mathbb R}\widehat U(L\alpha)
+ P(\alpha)Q(\alpha)\,d\alpha.}
+\tag{4.845e}
 \]
 
-Thus when \(\sum_m\|g_m\|^2=T^{1+o(1)}\), the sampled total energy is
-\(T^{2+\varepsilon}\), exactly the target.  The reciprocal nodes
-\(\lambda_b=(1+b/Q)^{-1}\) are \(Q^{-1}\)-separated on the relevant
-compact interval, so no uniform-grid orthogonality is needed.  The
-generic \(T^{1/2}\) line in (4.654) is therefore not an obstruction for
-a *fixed Hilbert-valued coefficient family* of the form (4.654a).
+The integral in (4.845e) is over the whole real line; the effective
+arc \(|\alpha|\ll L^{-1}(\log T)^C\) follows from the rapid decay of
+\(\widehat U\), with the complementary tail bounded by an arbitrary
+negative power after retaining the original smooth seminorms.  The
+coprimality conditions can be inserted into the coefficients by the
+same finite gcd decomposition used before (10.5).  Equation (4.845e)
+does **not** assert that the physical coupled kernel has already been
+separated: it is the most favorable separated component on which an
+ordinary Fourier--Cauchy argument would have to succeed.
 
-For reference, a direct arbitrary-alias treatment would instead ask for
+For fixed nonzero \(v\asymp T^\nu\), the local mean-value theorem is
 
 \[
  \boxed{
- \sum_{\rho\bmod Q}
- \left\|\sum_{k\equiv\rho\;(\bmod Q)}
- c_{k;h,\delta,\nu,\sigma}\right\|_2^2
- \ll_{\varepsilon,W}T^\varepsilon
- \sum_k\|c_{k;h,\delta,\nu,\sigma}\|_2^2.}
- \tag{4.655}
+ \int_{|\alpha-\alpha_0|\ll L^{-1}}
+ \left|\sum_{r\asymp X}a_r\mu(r)e(\alpha vr)\right|^2d\alpha
+ \ll
+ \left(\frac XL+\frac1{|v|}\right)
+ \sum_{r\asymp X}|a_r\mu(r)|^2.}
+\tag{4.845f}
 \]
 
-All Type sectors and outer packet labels would have to be summed before
-(4.655), but (4.654e) shows that this extra alias conjecture is unnecessary
-once a valid fixed-coefficient Fourier adapter has been constructed.
-The original \(a_{\rm AFE}=h\delta\) and the auxiliary sector character
-\(\xi\) are distinct variables in (4.621zadj16u); \(h\delta\) therefore
-cannot be counted as an extra interlacing of the rational slope grid
-without a new derived identity.  Moreover (4.650) has one coefficient
-function on Beatty values, whereas the actual packet retains the second
-index Möbius factor and a vector wave packet.
-
-The finite helper farey_scalar_beatty_fixed_coefficient_collision verifies
-(4.650a)--(4.650b).  The helper trigonometric_grid_aliasing_sides verifies
-(4.652)--(4.653) over exact rational coefficients.  The scale adapter
-technau_zafeiropoulos_grid_coverage_audit records the generic bandwidth
-audit.  The corrected adapter
-structured_beatty_sobolev_sampling_audit records (4.654a)--(4.654e),
-supports nonuniform separated nodes and fixed Hilbert coefficients, and
-sets generic_bandwidth_alias_loss_is_necessary false.  Both adapters keep
-the coupled-gate coverage flag false: the exact map from the moving
-two-Möbius Type packet to one fixed \(g_m\) family has not been
-constructed.  The only surviving theorem mismatch in this route is now
-the coefficient/packet adapter, not rational-grid sampling.
-The finite helper beatty_divisor_fourier_coefficient_sides constructs
-\(a_k=\sum_{mj=k}g_mc_j\) over exact rational vectors and verifies the
-frequency-by-frequency Hilbert divisor-Cauchy majorant used in
-(4.654d).
-
-### 4.76 Exact nonprincipal Type Gram with all cross sectors retained
-
-The failed scalar adapter is not needed to state the true finite gate.  Let
-\(P\) range over the supplied labelled packets and put
+The coefficient energy on the right of (4.845f) has exponent \(x\).
+It may not be deleted.  In the hard cell
 
 \[
- b(P)=\left\lfloor\frac{Q(n_P-ks_P)}{s_P}\right\rfloor,
+ (x,\ell,\nu_1,\nu_2)=
+ \left(3,\frac52,\frac12,\frac12\right),
+\]
+
+the bandwidth factor in parentheses has exponent \(1/2\), while the
+complete one-dilate mean square has exponent
+
+\[
+ \boxed{x+\max(x-\ell,-\nu_i)=\frac72.}
+\tag{4.845g}
+\]
+
+Applying Cauchy to the \(V_i\)-family before using any signed
+interaction gives, with the normalized Fourier measure
+\(L|\widehat U(L\alpha)|d\alpha\),
+
+\[
+ \boxed{
+ E_{i,\mathrm{Cauchy}}
+ =\ell+2\nu_i+x+\max(x-\ell,-\nu_i)=7.}
+\tag{4.845h}
+\]
+
+Thus Cauchy in (4.845e) yields exponent \(7\), the complete
+four-variable ambient bound.  It has discarded the signed Farey
+window rather than recovered a half power.
+
+The normalization error is easy to diagnose from the self-diagonal.
+In the expansion of either positive short-arc majorant, the literal
+terms \((v_1,r_1)=(v_2,r_2)\) have coefficient energy
+
+\[
+ \boxed{E_{i,\mathrm{self}}=x+\nu_i=\frac72.}
+\tag{4.845i}
+\]
+
+If a new joint Möbius--dilate theorem suppressed every other term down
+to this natural scale without loss, Cauchy on the two sides would give
+only
+
+\[
+ \boxed{
+ E_{\mathrm{ideal}}
+ =\frac12\big((x+\nu_1)+(x+\nu_2)\big)
+ =\frac72.}
+\tag{4.845j}
+\]
+
+This is the zero-slack endpoint and still misses
+FTF\(_{\epsilon,1/1000}\) by \(T^{1/1000}\).  The fact that the
+original signed support excludes \(rv-js=0\), and the exact completed
+identity (12.10) removes its zero character, does not remove the
+positive equal-copy terms in (4.845i) created only after squaring.
+Therefore a successful argument must retain the signed pairing in
+(4.845e) through the new arithmetic estimate, or prove cancellation
+between the diagonal-scale and off-diagonal pieces strong enough to
+supply a power or logarithmic saving.  Ordinary positive Cauchy cannot
+be the missing step.
+
+The adapter farey_dilate_pre_cauchy_audit records (4.845f)--(4.845j),
+including the coefficient-energy factor, the ambient exponent (7),
+the ideal endpoint (7/2), and the remaining (1/1000).  Its physical
+kernel, published joint-dilate estimate, and whole-gate flags remain
+false.
+
+
+### 4.109c Grouping the dilates and Poisson summing them are exact loops, not savings
+
+The signed form in (4.845e) still has two algebraic options which do not
+square it.  First group the products.  For product-compatible
+coefficients define
+
+\[
+ \boxed{
+ c_{X,V}(n)=
+ \sum_{\substack{v\mid n\\v\asymp V,\ n/v\asymp X}}
+ b_v a_{n/v}\mu(n/v).}
+\tag{4.845k}
+\]
+
+Then (4.845e) is equivalently
+
+\[
+ \boxed{
+ \sum_{n,m}c_{X,V_1}(n)d_{X,V_2}(m)
+ U\!\left(\frac{n-m}{L}\right).}
+\tag{4.845l}
+\]
+
+Because the signed shift support has \(U(0)=0\), the equal-product
+terms \(n=m\) in (4.845l) vanish exactly.  This is the original
+centering; replacing the multiplier by an absolute short-arc norm
+reintroduces the energy of \(c_{X,V}\).
+
+The identity \(\mu*\mathbf1=\varepsilon\) applies only to the complete
+divisor sum
+
+\[
+ \boxed{
+ \sum_{v\mid n}\mu(n/v)=\mathbf1_{n=1}.}
+\tag{4.845m}
+\]
+
+It does not collapse (4.845k).  To see the obstruction without an
+upper-bound heuristic, choose disjoint interior subintervals and primes
+\(p\asymp V\), \(q\asymp X\), with \(X>4V\).  For \(n=pq\), the only
+divisor in the selected \(V\)-window is \(p\), so for unit interior
+weights
+
+\[
+ \boxed{c_{X,V}(pq)=\mu(q)=-1.}
+\tag{4.845n}
+\]
+
+The prime number theorem supplies
+
+\[
+ \boxed{
+ \#\{pq:p\asymp V,\ q\asymp X\}
+ \asymp\frac{XV}{\log X\log V}=T^{x+\nu-o(1)}.}
+\tag{4.845o}
+\]
+
+Thus the grouped coefficient has energy of exponent \(x+\nu=7/2\)
+on an explicit subfamily.  The complete convolution may still act only
+after different divisor windows and boundary pieces are recombined; it
+does not give a fixed power inside the hard dyadic cell.
+
+Second, apply Poisson directly to a smooth dilate weight.  With the same
+Fourier convention as (4.845e),
+
+\[
+ \boxed{
+ \sum_{v\in\mathbb Z}B(v/V)e(\alpha rv)
+ =V\sum_{k\in\mathbb Z}\widehat B\big(V(k-\alpha r)\big).}
+\tag{4.845p}
+\]
+
+On the effective arc \(|\alpha|\ll L^{-1}(\log T)^C\), the relevant
+numerators have size \(k\ll X/L\), and a packet around \(k/r\) has
+width \((VX)^{-1}\).  After the analogous Poisson step in \(j\), two
+packets can overlap only if
+
+\[
+ \left|\frac kr-\frac ls\right|\ll\frac1{VX}.
+\]
+
+Multiplying by \(rs\asymp X^2\) gives
+
+\[
+ \boxed{|ks-lr|\ll X/V.}
+\tag{4.845q}
+\]
+
+At the hard scales \(X=T^3\), \(V=T^{1/2}\), \(L=T^{5/2}\), one has
+
+\[
+ \boxed{
+ X/L=T^{1/2},\qquad (VX)^{-1}=T^{-7/2},
+ \qquad X/V=L=T^{5/2}.}
+\tag{4.845r}
+\]
+
+Therefore double dilate Poisson reconstructs the same critical
+determinant window as (10.3), with the two Fourier transforms exchanged.
+It is an exact coordinate loop, not an additional source of
+cancellation.  The only potentially useful continuation of (4.845l)
+is consequently a *signed* shifted-correlation theorem for the truncated
+convolution coefficients, with all dyadic windows and the physical
+coupled kernel recombined before estimating.
+
+The adapter farey_dilate_convolution_poisson_audit records
+(4.845k)--(4.845r): grouped length \(7/2\), the semiprime energy
+witness \(7/2\), numerator length \(1/2\), packet width \(-7/2\), and
+the recovered determinant window \(5/2\).  It keeps the dyadic
+convolution-saving, physical-kernel, and whole-gate flags false.
+
+
+### 4.109d A smooth product-index average removes the finite-prime Ramanujan loss for newforms
+
+The \(35/64\) in (4.845a) was obtained only after freezing the combined
+Hecke index.  The original physical variables provide a different
+ordering.  This is consistent with the Ramanujan-independent
+shifted-convolution refinement in
+[Milićević--Qin--Wu](https://arxiv.org/abs/2511.07550), especially their
+equations (3.11') and (3.13), but the product-index lemma needed here
+can be proved directly.
+
+Let \(f\) be a primitive cusp form of trivial nebentypus, level \(Q_f\),
+and analytic conductor \(\mathcal C_f\).  Let
+\(W_1,W_2\in C_c^\infty((1/2,2))\), and put
+
+\[
+ \mathcal J_f(H_1,H_2)
+ :=\sum_{h,\delta\ge1}\lambda_f(h\delta)
+ W_1(h/H_1)W_2(\delta/H_2).
+\]
+
+At \(p\nmid Q_f\), the degree-two Hecke recurrence gives ordinary
+Möbius inversion.  At \(p\mid Q_f\), the primitive local standard
+factor has degree at most one, so its coefficients are completely
+multiplicative.  Prime-by-prime comparison therefore gives the exact
+all-index identity
+
+\[
+ \boxed{
+ \lambda_f(h\delta)
+ =\sum_{\substack{d\mid(h,\delta)\\(d,Q_f)=1}}\mu(d)
+   \lambda_f(h/d)\lambda_f(\delta/d).}
+\tag{4.845s}
+\]
+
+Consequently
+
+\[
+ \boxed{
+ \mathcal J_f(H_1,H_2)
+ =\sum_{\substack{d\ge1\\(d,Q_f)=1}}\mu(d)
+ A_f(H_1/d;W_1)A_f(H_2/d;W_2),}
+\tag{4.845t}
+\]
+
+where
+
+\[
+ A_f(Y;W):=\sum_{n\ge1}\lambda_f(n)W(n/Y).
+\]
+
+For a product of normalized smooth weights, (4.845t) is an identity of
+finite sums.  A general two-variable smooth weight is an exact Mellin
+superposition of these products; the physical QCT kernel still has to
+be shown to possess the required uniform nuclear norm, so that passage
+is not assumed below.
+
+Let \(H_0=\min(H_1,H_2)\), \(H_*=\max(H_1,H_2)\), and, with a fixed
+large \(B\), split at
+
+\[
+ \boxed{D_0=\frac{H_0}{\mathcal C_f(\log T)^B}.}
+\tag{4.845u}
+\]
+
+Since \(L(s,f)\) is entire, Mellin inversion and the functional equation
+give, for every fixed \(J\), uniformly when
+\(Y\ge\mathcal C_f(\log T)^B\),
+
+\[
+ \boxed{
+ A_f(Y;W)
+ \ll_{J,W}\mathcal C_f^{1/2}
+ \left(\frac{\mathcal C_f}{Y}\right)^J
+ (\mathcal C_fY)^{o(1)}.}
+\tag{4.845v}
+\]
+
+Taking \(J\) after \(B\) therefore gives
+
+\[
+ \boxed{
+ \sum_{\substack{d\le D_0\\(d,Q_f)=1}}\mu(d)
+ A_f(H_1/d;W_1)A_f(H_2/d;W_2)
+ \ll_{A,W_1,W_2}H_0(\log T)^{-A}.}
+\tag{4.845w}
+\]
+
+For \(d>D_0\), interchange the finite sums in (4.845t):
+
+\[
+ \boxed{
+ \sum_{a,b}\lambda_f(a)\lambda_f(b)
+ \sum_{\substack{d>D_0\\(d,Q_f)=1}}\mu(d)
+ W_1(da/H_1)W_2(db/H_2).}
+\tag{4.845x}
+\]
+
+On a compatible dyadic pair \(a\asymp A,b\asymp B_1\), the inner
+variable has scale
+\(D\asymp H_1/A\asymp H_2/B_1\ge D_0\).  The zeta zero-free region and
+partial summation give, for every fixed \(A_0\),
+
+\[
+ \boxed{
+ \sum_{\substack{d\\(d,Q_f)=1}}
+ \mu(d)W_1(da/H_1)W_2(db/H_2)
+ \ll_{A_0,W_1,W_2}D(\log T)^{-A_0}.}
+\tag{4.845y}
+\]
+
+The same bound holds with \((d,Q)=1\) for polynomial \(Q\), after the
+finite Euler factors are retained; their zero-free-contour cost is
+smaller than the Vinogradov--Korobov decay and is absorbed by choosing
+\(A_0\) larger.  Rankin--Selberg and Cauchy give
+
+\[
+ \sum_{a\asymp A}|\lambda_f(a)|\ll A(\mathcal C_fA)^{o(1)}
+\]
+
+and similarly for \(b\).  Hence one compatible block in (4.845x) is
+
+\[
+ AB_1D(\log T)^{-A_0}
+ \asymp H_2A(\log T)^{-A_0}.
+\]
+
+Since \(A\le H_1/D_0\), summing the logarithmically many blocks gives
+
+\[
+ \boxed{
+ \sum_{\substack{d>D_0\\(d,Q_f)=1}}\mu(d)
+ A_f(H_1/d;W_1)A_f(H_2/d;W_2)
+ \ll_{A,W_1,W_2}
+ H_*\mathcal C_f(\log T)^{-A}.}
+\tag{4.845z}
+\]
+
+At the critical scales
+
+\[
+ H_1=H_2=T^{5/2},\qquad \mathcal C_f=T^{1+o(1)},
+\]
+
+(4.845u), (4.845w), and (4.845z) become
+
+\[
+ \boxed{
+ D_0=T^{3/2}(\log T)^{-B},\qquad
+ \mathcal J_{f,\mathrm{small}}\ll T^{5/2}(\log T)^{-A},\qquad
+ \mathcal J_{f,\mathrm{large}}\ll T^{7/2}(\log T)^{-A}.}
+\tag{4.845aa}
+\]
+
+Thus the smooth product-index newform component, including its ramified
+local factors, avoids the pointwise
+\((H_1H_2)^{7/64}=T^{35/64}\) charge and supplies the logarithmic decay
+required at the zero-margin endpoint.  This is a proved local lemma,
+not yet the full finite-prime gate.  Three interfaces remain:
+
+1. the oldclass coefficients must be inserted into (4.845s) without
+   losing (4.845z);
+2. the physical five-variable QCT transform must be decomposed with a
+   polylogarithmic, not positive-power, product nuclear norm; and
+3. the other two Möbius entry weights and Type-I level family must remain
+   inside the spectral sum until (4.840) is recovered.
+
+The adapter smooth_hecke_product_mobius_audit records the critical split
+\(3/2\), the small-\(d\) exponent \(5/2\), the large-\(d\) endpoint
+\(7/2\), its arbitrary logarithmic decay, and removal of the \(35/64\)
+pointwise loss for the product-smooth newform component.  It records
+the primitive ramified factors as restored, while leaving the oldclass,
+physical-kernel, finite-prime-gate, and whole-gate flags false.
+
+
+### 4.109e Blomer--Milićević oldclasses preserve the product-smooth endpoint
+
+The first missing interface in Section 4.109d can be restored without
+paying a new power of \(T\).  Let \(f\) be a primitive cusp form of level
+\(Q_f\), let \(b\mid Q/Q_f\), and put
+
+\[
+ \mathcal N_f(b)=
+ \left\{
+ b\prod_{p\mid b}
+ \left(1-\frac{p|\lambda_f(p)|^2}
+ {(p+\chi_0(p))^2}\right)^{-1}
+ \right\}^{1/2}.
+\]
+
+The exact Blomer--Milićević orthonormal oldclass basis satisfies
+
+\[
+ \boxed{
+ \sqrt n\,\rho_{f_{(b)}}(n)
+ =\mathcal N_f(b)\rho_f(1)
+ \sum_{c\ell=b}
+ \frac{\mu(c)\overline{\lambda_f(c)}}{\nu(c)}
+ \lambda_f\!\left(\frac n\ell\right),}
  \qquad
- \kappa_M(b,b')=\mathbf1_{b=b'}-\frac1M.
- \tag{4.656}
+ \nu(c)=c\prod_{p\mid c}\left(1+\frac{\chi_0(p)}p\right),
+\tag{4.845ab}
 \]
 
-For a Type factorization \(t=(d,m)\), \(dm=n_P\), retain
+with \(\lambda_f(x)=0\) when \(x\notin\mathbb N\).  In the
+Blomer--Milićević Kuznetsov reduction the first Fourier index \(m'\)
+satisfies
 
 \[
- C_{P;(d,m)}=
- c_P\,\mu(s_P)\mu(d)\Lambda(m)\,\widetilde V_P,
- \tag{4.657}
+ (m',Q)=1.
+\tag{4.845ac}
 \]
 
-where \(c_P\) contains the signed AFE amplitude and the labels
-\((h,\delta,\nu,\sigma)\), in particular the original product
-\(a_{\rm AFE}=h\delta\).  Nonprincipal character orthogonality gives the
-exact finite Gram
+Since \(\ell\mid b\mid Q/Q_f\), only \(\ell=1,c=b\) survives in
+(4.845ab) at \(m'\).  At the second Fourier index retain a term
+\(c\ell=b\), and allocate
+\(\ell=\ell_1\ell_2\) to the two smooth Hecke variables.  Write
+
+\[
+ H_1=H_2=T^{u},\quad
+ Q=T^{\lambda+o(1)},\quad
+ Q_f=T^{\rho+o(1)},\quad
+ b=T^{\beta+o(1)},\quad
+ c=T^{\gamma+o(1)},\quad
+ \ell_i=T^{e_i+o(1)}.
+\]
+
+The exact constraints are
+
+\[
+ \rho+\beta=\lambda,\qquad
+ 0\leq\gamma\leq\beta,\qquad
+ e_1+e_2=\beta-\gamma,\qquad e_1,e_2\geq0.
+\tag{4.845ad}
+\]
+
+The product of the two oldclass normalizations in (4.845ab), including
+the Hecke bounds only on \(b\) and \(c\), has exponent
+
+\[
+ \mathcal N_f(b)^2
+ \frac{|\lambda_f(b)\lambda_f(c)|}{\nu(b)\nu(c)}
+ \ll T^{\theta\beta-(1-\theta)\gamma+o(1)}.
+\tag{4.845ae}
+\]
+
+Apply the product-index Möbius identity (4.845s) to the shortened
+lengths \(T^{u-e_1}\) and \(T^{u-e_2}\), with primitive conductor
+\(T^\rho\).  Its common-divisor split remains uniformly long:
+
+\[
+ \begin{aligned}
+ \min(u-e_1,u-e_2)-\rho
+ &=u-\max(e_1,e_2)-\rho\\
+ &\geq u-\beta-\rho
+ =u-\lambda.
+ \end{aligned}
+\tag{4.845af}
+\]
+
+Consequently the Möbius variable still has length at least
+\(T^{u-\lambda}\) in every oldclass cell, so the zero-free-region PNT
+used in (4.845y) retains arbitrary logarithmic decay.  The
+large-common-divisor endpoint, after (4.845ae), is
+
+\[
+ \begin{aligned}
+ E(\rho,\beta,\gamma,e_1,e_2)
+ &=u-\min(e_1,e_2)+\rho
+   +\theta\beta-(1-\theta)\gamma\\
+ &\leq u+\rho+\theta\beta\\
+ &=u+\lambda-(1-\theta)\beta
+ \leq u+\lambda.
+ \end{aligned}
+\tag{4.845ag}
+\]
+
+All sums over \(c,\ell,\ell_1,\ell_2\) are divisor sums and hence cost
+only \(T^{o(1)}\).  At the critical point
+\[
+ u=\frac52,\qquad \lambda=1,\qquad \theta=\frac7{64},
+\]
+(4.845af) is at least \(3/2\), while (4.845ag) is at most \(7/2\).
+The worst endpoint is attained only at \(\beta=0\), the primitive
+newform cell; every genuine oldclass shift \(\beta>0\) gains
+\((57/64)\beta\).  Thus oldclasses preserve the \(7/2\) endpoint and
+its arbitrary logarithmic decay in the product-smooth spectral model.
+This also remains compatible with the ramified primitive identity from
+Section 4.109d, because the latter already restricts its common Möbius
+divisor away from \(Q_f\).
+
+The adapter smooth_hecke_oldclass_product_audit records the minimum
+split \(3/2\), the newform and worst oldclass endpoint \(7/2\), and the
+oldclass saving slope \(57/64\).  It leaves the physical coupled-kernel,
+finite-prime-gate, and whole-gate flags false: the exact
+Blomer--Milićević formula closes the oldclass normalization only after
+one has reached the product-smooth spectral model.
+
+
+### 4.109f The physical QCT--Bessel kernel has zero-power product bandwidth
+
+The second interface listed after (4.845aa) separates into an elementary
+QCT tensorization and an exact Bessel--Mellin identity.  This subsection
+closes that smooth-kernel interface, but not the geometric passage from
+the entry-weighted QCT orbit to a standard Kuznetsov formula.
+
+For one retained box, the exact kernel
+\(\Psi(u,v,\alpha,\beta)\) in (5.13b) of the off-diagonal audit is
+compactly supported in four fixed normalized intervals and satisfies
+
+\[
+ \|\partial^{\mathbf j}\Psi\|_\infty
+ \ll_{\mathbf j,W}(\log T)^{C_{\mathbf j}}.
+\]
+
+With
+\[
+ \widehat\Psi(\boldsymbol\xi)
+ =\int_{\mathbb R^4}\Psi(\mathbf x)
+   e(-\boldsymbol\xi\cdot\mathbf x)\,d\mathbf x,
+\]
+Fourier inversion is the exact identity
 
 \[
  \boxed{
- \mathcal N_{\ne0}^{\rm Type}
- =\sum_{P,P'}\sum_{dm=n_P}\sum_{d'm'=n_{P'}}
- \kappa_M(b(P),b(P'))
- \langle C_{P;(d,m)},C_{P';(d',m')}\rangle.}
- \tag{4.658}
+ \Psi(\mathbf x)
+ =\int_{\mathbb R^4}\widehat\Psi(\boldsymbol\xi)
+ e(\xi_1u)e(\xi_2v)e(\xi_3\alpha)e(\xi_4\beta)
+ \,d\boldsymbol\xi.}
+\tag{4.845ah}
 \]
 
-Classify \(t\) as Type I when \(\min(d,m)\le U\) and as Type II
-otherwise.  Without an intervening absolute value, (4.658) has the exact
-eight-block split
+For every fixed seminorm degree \(J\), applying
+\(\prod_{j=1}^4(1-(2\pi)^{-2}\partial_{x_j}^2)^{J+1}\) before inversion
+gives
 
 \[
  \boxed{
- \mathcal N_{\ne0}^{\rm Type}
- =\sum_{X,Y\in\{\mathrm I,\mathrm{II}\}}
- \left(\mathcal N_{X,Y}^{\Delta=0}
-       +\mathcal N_{X,Y}^{\Delta\ne0}\right),
+ \int_{\mathbb R^4}
+ \prod_{j=1}^4(1+|\xi_j|)^J
+ |\widehat\Psi(\boldsymbol\xi)|\,d\boldsymbol\xi
+ \ll_{J,W}(\log T)^{C_J}.}
+\tag{4.845ai}
+\]
+
+Only derivatives of total order at most \(8(J+1)\) occur.  Thus the
+additive twists in \(h/H\) and \(\delta/L\), together with the two
+entry twists, have an exact weighted nuclear norm of polylogarithmic
+size.
+
+There is one more coupling after a standard Kuznetsov formula is
+available.  Put \(n=|h\delta|\), and in the notation of
+Blomer--Milićević define
+
+\[
+ G_n(x)
+ :=\left(\frac{4\pi q_1\sqrt n}{x}\right)^{1/2}
+ f_\infty\!\left(\frac{4\pi\sqrt n}{xX}\right).
+\]
+
+Direct substitution gives its exact Mellin transform
+
+\[
+ \boxed{
+ \widehat G_n(z)
+ =(q_1X)^{1/2}
+ \left(\frac{4\pi\sqrt n}{X}\right)^z
+ \widehat f_\infty(1/2-z).}
+\tag{4.845aj}
+\]
+
+For the same-sign Kuznetsov kernel, Mellin Parseval and
+\[
+ \int_0^\infty J_\nu(x)x^{w-1}\,dx
+ =2^{w-1}
+ \frac{\Gamma((\nu+w)/2)}
+ {\Gamma((\nu-w+2)/2)}
+\]
+give, on the fixed line \(\Re z=-1/2\),
+
+\[
+ \boxed{
+ \int_0^\infty J_\nu(x)G_n(x)\frac{dx}{x}
+ =\frac1{2\pi i}\int_{(-1/2)}
+ \widehat G_n(z)\,2^{-z-1}
+ \frac{\Gamma((\nu-z)/2)}
+ {\Gamma((\nu+z+2)/2)}\,dz.}
+\tag{4.845ak}
+\]
+
+For the opposite-sign kernel, the identity
+\[
+ \int_0^\infty K_\nu(x)x^{w-1}\,dx
+ =2^{w-2}\Gamma((w+\nu)/2)\Gamma((w-\nu)/2)
+\]
+similarly gives
+
+\[
+ \boxed{
+ \int_0^\infty K_\nu(x)G_n(x)\frac{dx}{x}
+ =\frac1{2\pi i}\int_{(-1/2)}
+ \widehat G_n(z)\,2^{-z-2}
+ \Gamma\!\left(\frac{-z+\nu}{2}\right)
+ \Gamma\!\left(\frac{-z-\nu}{2}\right)\,dz.}
+\tag{4.845al}
+\]
+
+These formulas are first justified with compact truncations in \(x\)
+and \(z\), where Fubini is absolute, and then by the Schwartz decay of
+\(\widehat f_\infty\) and Stirling's formula.  They hold for the two
+fixed sign boxes separately.  If \(t=i\eta\) is exceptional with
+\(|\eta|\leq7/64\), every Bessel order in (4.845ak)--(4.845al) has
+absolute real part at most
+
+\[
+ 2|\eta|\leq\frac7{32}<\frac12=-\Re z;
+\]
+hence the common contour has the fixed margin
+
+\[
+ \boxed{\frac12-\frac7{32}=\frac9{32}.}
+\tag{4.845am}
+\]
+
+The only \(n\)-dependence in (4.845aj) is
+
+\[
+ n^{z/2}=|h|^{z/2}|\delta|^{z/2}.
+\]
+
+It therefore multiplies the two one-variable factors supplied by
+(4.845ah), rather than coupling them.  On \(\Re z=-1/2\), the fixed
+real powers are absorbed into the dyadic normalizations, while
+\(\Im z\) is a Mellin twist.  Equations (4.845ai) and
+(4.845aj)--(4.845al), followed by repeated integration by parts and
+Stirling, give arbitrary logarithmic decay outside
+\[
+ |\boldsymbol\xi|+|\Im z|+|t_f|+k
+ \leq(\log T)^{C}.
+\]
+Inside this range the analytic conductor is
+\[
+ Q_f(1+|t_f|+|\Im z|+k)^2=T^{\lambda+o(1)}
+\]
+when \(Q_f\leq T^\lambda\).  Thus the critical level
+\(\lambda=1\) used in Sections 4.109d--4.109e is unchanged, and every
+separated component is covered by the product-smooth Hecke lemma and
+its exact oldclass restoration.  Any polynomial dependence of those
+lemmas on the one-variable seminorms is absorbed by taking \(J\) larger
+in (4.845ai) and the Möbius-PNT logarithmic exponent larger in
+(4.845y).
+
+The adapter physical_qct_hecke_kernel_audit records the four normalized
+QCT variables, the fifth Bessel-product variable, derivative-order
+slope \(8\), contour \(-1/2\), exceptional margin \(9/32\), and zero
+power Mellin bandwidth.  It marks the physical smooth kernel restored
+*inside each standard Kuznetsov product component*.  It deliberately
+keeps three distinct statements false:
+
+1. no identity has yet transformed the two entry-weighted QCT orbit
+   into the required standard Kuznetsov family;
+2. the other Möbius entry weights have not yet been retained through
+   that transformation; and
+3. the signed Type-I level family has not been aggregated.
+
+Accordingly the finite-prime Hecke gate and the whole Möbius gate remain
+unproved.
+
+
+### 4.109g Type-I completion is the exact Atkin--Lehner cross-cusp orbit
+
+Apply the finite Möbius identity (4.833) to the
+two entry weights.  In one fixed factor box write
+
+\[
+ r=Ae,\qquad A=db,\qquad
+ s=B\ell,\qquad B=d'b',
+\tag{4.845an}
+\]
+
+where \(e,\ell\) are the unweighted quotients and the exact inequalities
+\(d\leq U,de>U,b\leq V\), together with their right-hand analogues, are
+retained in the smooth endpoint weights.  The determinant condition
+\((r,s)=1\) implies
+
+\[
+ (A,B)=1,\qquad (A,s)=1.
+\]
+
+The additional \(q\)-coprimality is a finite one-variable divisor layer
+and does not alter the identity below; on the balanced critical face
+\(q=T^{o(1)}\) (indeed, only bounded \(q\) occur in each fixed endpoint
+box).
+
+Put \(n=h\delta\), let \(E\) be the \(e\)-length, and use
+\(\widehat U(\xi)=\int U(x)e(-x\xi)\,dx\).  Poisson summation in the
+unweighted quotient is exact:
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\sum_{\substack{e\in\mathbb Z\\(e,s)=1}}
+ U(e/E)e\!\left(-\frac{n\overline{Ae}}s\right)\\
+ &\qquad=\frac Es\sum_{m\in\mathbb Z}
+ \widehat U(mE/s)\,
+ S(\overline A m,-n;s).
+ \end{aligned}}
+\tag{4.845ao}
+\]
+
+Indeed finite residue-class Poisson first gives
+\[
+ \sum_{x\bmod s}^{*}
+ e\!\left(\frac{mx-n\overline A\bar x}{s}\right).
+\]
+The permutation \(y=Ax\bmod s\) changes this residue sum into
+\[
+ \sum_{y\bmod s}^{*}
+ e\!\left(\frac{\overline A m\,y-n\bar y}{s}\right),
+\]
+which is the Kloosterman sum in (4.845ao).  No estimate and no
+completion of a Möbius-weighted variable occurs here: the quotient is
+unweighted because the full finite Type-I identity is retained.
+
+The geometric adapter is direct.  Use
+[Kiral--Young, Proposition 2.6](https://arxiv.org/abs/1710.00914).  In
+their notation take
+\[
+ N=BA,\qquad r=B,\qquad s_{\mathrm{KY}}=A.
+\]
+The allowed moduli for the cusp pair
+\((\infty,1/B)\) are exactly
+\[
+ B\mid s,\qquad(s,A)=1,
+\]
+Their explicit formula is
+
+\[
+ \boxed{
+ S_{\infty,1/B}^{(AB)}
+   (m,-n;s\sqrt A)
+ =S(\overline A m,-n;s),}
+\tag{4.845ap}
+\]
+
+which is exactly (4.845ao), including the inverse on \(A\).  Earlier
+versions of this audit misquoted Proposition 2.6 as \(S(Am,-n;s)\);
+the source formula is \(S(\overline{s_{\rm KY}}m,n;c)\), and here
+\(s_{\rm KY}=A\).
+
+The Kuznetsov geometric normalization uses the cusp modulus
+\(s\sqrt A\).  Therefore the physical orbit satisfies the exact
+identity
+
+\[
+ \boxed{
+ \sum_{\substack{B\mid s\\(s,A)=1}}
+ \frac{S(\overline A m,-n;s)}sF(s/S)
+ =\sqrt A
+ \sum_{\substack{B\mid s\\(s,A)=1}}
+ \frac{S_{\infty,1/B}^{(AB)}(m,-n;s\sqrt A)}{s\sqrt A}F(s/S).}
+ \tag{4.845ap'}
+\]
+
+Thus Type-I completion lands directly in the cross-cusp Kuznetsov
+formula at level \(AB\), without a \(j\mid A\) level family.  The
+factor \(\sqrt A\) in (4.845ap') is essential: Atkin--Lehner unitarity
+does not turn the direct adapter itself into an \(A^{-1/2}\) saving.
+The cross-cusp trace has no diagonal term, but any saving must come
+from estimating that off-diagonal physical trace, not from changing
+the cusp normalization.
+
+There is nevertheless an exact fixed-entry normalization once the
+outer Poisson factor is restored.  Since \(E=R/A\), dividing the left
+completion by the outer entry scale \(R\) gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\frac ER
+ \sum_{\substack{B\mid s\\(s,A)=1}}
+ \frac{S(\overline A m,-n;s)}sF(s/S)\\
+ &\qquad=\frac1{\sqrt A}
+ \sum_{\substack{B\mid s\\(s,A)=1}}
+ \frac{S_{\infty,1/B}^{(AB)}(m,-n;s\sqrt A)}{s\sqrt A}F(s/S).
+ \end{aligned}}
+ \tag{4.845ap''}
+\]
+
+Thus the physical \(\sqrt A\) conversion and the normalized Poisson
+factor \(A^{-1}\) leave precisely \(A^{-1/2}\) in amplitude, or
+\(A^{-1}\) after squaring.  This supplies the fixed-\((A,B)\) PEVP
+normalization directly.  It does **not** aggregate the genuine outer
+integer sums over \(A,B\); those remain the joint OLISK/MMKLS gate in
+Sections 4.109zi--4.109zjab.
+
+For comparison, an alternative infinity--infinity lift remains exact.
+CRT multiplicativity gives
+
+\[
+ \boxed{
+ S(m,-An;As)
+ =c_A(m)S(\overline A m,-n;s),}
+\tag{4.845ap_1}
+\]
+
+because its local factor modulo \(A\) is
+\(S(m\bar s,0;A)=c_A(m\bar s)=c_A(m)\).  On the exact Möbius support,
+\(A\mid r\) is squarefree.  If \(g=(A,m)\), then
+
+\[
+ \boxed{
+ c_A(m)=\mu(A/g)\frac{\varphi(A)}{\varphi(A/g)}\ne0,
+ \qquad |c_A(m)|^{-1}\leq1.}
+\tag{4.845ap_2}
+\]
+
+Therefore the same physical family
+
+\[
+ \sum_{\substack{B\mid s\\(s,A)=1}}
+ \frac1s S(\overline A m,-n;s)F_{A,B,m,n}(s/S)
+\tag{ISK}_{A,B}
+\]
+
+also has the exact standard-orbit expansion
+
+\[
+ \boxed{
+ \mathrm{ISK}_{A,B}
+ =\frac{A}{c_A(m)}
+ \sum_{j\mid A}\mu(j)
+ \sum_{ABj\mid c}\frac1c
+ S(m,-An;c)F_{A,B,m,n}(c/(AS)).}
+\tag{4.845ap_3}
+\]
+
+Indeed \(c=As\) and
+\(\mathbf1_{(s,A)=1}=\sum_{j\mid A,\ j\mid s}\mu(j)\).  Thus each
+inner sum in (4.845ap_3) is an infinity--infinity Kuznetsov orbit at
+level \(ABj\); no division by a possibly zero local factor occurs.
+This is now only an alternative representation.  It introduces the
+avoidable non-squarefree level family \(ABj\) with \(j\mid A\), whose
+exponent can be as large as \(2\alpha+\beta\), while (4.845ap') stays
+at level \(AB\).
+
+The alternative lifted orbit has an exact scale cancellation.  At the balanced
+QCT box let
+\[
+ R=S=T^3,\qquad |h\delta|=T^5,\qquad
+ A=T^\alpha,\qquad B=T^\beta.
+\]
+Then
+
+\[
+ \boxed{
+ \begin{array}{c|c}
+ \text{quantity}&\log_T(\text{scale})\\ \hline
+ E=R/A&3-\alpha\\
+ m\text{ after Poisson}=S/E&\alpha\\
+ ABj\text{ (spectral level), }j=T^\gamma&\alpha+\beta+\gamma\\
+ As\text{ (standard modulus)}&3+\alpha\\
+ |mA h\delta|\text{ (Bessel numerator product)}&5+2\alpha\\
+ EA\text{ (outer Poisson--lift factor)}&3.
+ \end{array}}
+\tag{4.845aq}
+\]
+
+In particular the exceptional Bessel exponent is
+\[
+ 2(3+\alpha)-(5+2\alpha)=1.
+\]
+More generally it is \(\rho+\sigma-(h+\ell)\), independent of
+\(\alpha\).  Also \(E=R/A\) makes \(EA=R\) exactly.  The inverse
+Ramanujan factor has absolute value at most one.
+
+For a fixed finite Type-I allocation, let
+\(\Omega_{A,B,q}(c,m,h,\delta)\) denote the retained smooth weight after
+the literal substitutions
+
+\[
+ s=c/A,\qquad E=R/A,\qquad
+ \widehat U(mE/s)=\widehat U(mR/c).
+\]
+
+It includes the original endpoint inequalities, mollifier tapers,
+ratio/gcd cutoffs, and the four-variable kernel; no variable has been
+estimated.  Equations (4.845ao) and (4.845ap_3) give the exact nonzero
+mode component
+
+\[
+ \boxed{
+ \mathfrak S^{\mathrm{lift}}_{q,A,B}
+ =R\sum_{j\mid A}\mu(j)
+ \sum_{\substack{m\ne0\\h,\delta\ne0}}
+ \frac1{c_A(m)}
+ \sum_{ABj\mid c}\frac{S(m,-Ah\delta;c)}c
+ \Omega_{A,B,q}(c,m,h,\delta).}
+\tag{4.845aq_1}
+\]
+
+Thus the original coupled-kernel target is now one signed family of
+standard Kloosterman sums; on the complete Type allocation it is enough
+to prove
+
+\[
+ \boxed{
+ \left|\sum_{A,B}\frac{\mathfrak S^{\mathrm{lift}}_{q,A,B}}R\right|
+ \ll_{C,W}S(\log T)^{-C},\qquad C>7.}
+\tag{LISK}_{q}
+\]
+
+This is equivalent to the required
+\(|\mathfrak S_q[\Psi]|\ll RS(\log T)^{-C}\) for that allocation;
+the zero Poisson mode remains in the separately audited main-term
+calculation.
+
+The exact new local loss is visible before any conjectural estimate.
+Write \(j=T^\gamma\), \(0\leq\gamma\leq\alpha\), and let a residual
+Hecke polynomial have physical length \(Y\).  The second Fourier
+sequence is supported on indices \(Ay\), so the ordinary spectral large
+sieve contains
+
+\[
+ \frac{AY}{ABj}=\frac{Y}{Bj}
+\]
+
+instead of the base-level factor \(Y/(AB)\).  The excess in the squared
+estimate and the required amplitude saving are exactly
+
+\[
+ \boxed{
+ x_{\mathrm{EVP}}(\alpha,\gamma)=\alpha-\gamma,
+ \qquad s_{\mathrm{EVP}}(\alpha,\gamma)
+ =\frac{\alpha-\gamma}{2}.}
+\tag{4.845aq_2}
+\]
+
+The worst cell \(j=1\) requires \(A^{-1/2}\) in amplitude; the endpoint
+\(j=A\) requires no extra saving.  This factor is already visible in
+the geometric identity (4.845ap_1): after division by \(c_A(m)\), the
+Weil scale is \(s^{1/2}\), not \((As)^{1/2}\).  Since the cancellation
+is between levels, the accepted local gate must retain the full divisor
+sum and the cross pairing between the dense Poisson index and the
+sparse product index.  With identical Bessel test at every level, the
+required bilinear statement is
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\left|\sum_{j\mid A}\mu(j)
+ \int_{\mathscr S_{ABj}(\mathcal T)}
+ \left(\sum_{m\asymp M}\frac{b_m}{c_A(m)}\sqrt m\,
+ \overline{\rho_\pi(m)}\right)
+ \left(\sum_{y\asymp Y}a_y\sqrt{Ay}\,
+ \rho_{\pi}(Ay)\right)d\pi\right|\\
+ &\qquad\ll_\varepsilon
+ (ABMYT)^\varepsilon
+ \left(\mathcal T^2+\frac{M}{AB}\right)^{1/2}
+ \left(\mathcal T^2+\frac{Y}{AB}\right)^{1/2}
+ \left(\sum_m|b_m|^2\sum_y|a_y|^2\right)^{1/2}.
+ \end{aligned}}
+\tag{EVP}_{A,B}
+\]
+
+The measure includes Maaß, holomorphic, and continuous spectra with the
+standard Kuznetsov normalizations.  No published theorem has yet been
+matched to this signed exact-valuation projector, so
+the arbitrary-coefficient \(\mathrm{EVP}_{A,B}\) is not a proved lemma.
+It is a sufficient diagnostic, not the accepted physical gate below.
+The adapter lifted_kuznetsov_level_cell_audit records (4.845aq_2) with
+exact rational arithmetic.
+
+One generic cuspidal local cell can be closed exactly.  Let \(p\mid A\),
+let \(f\) be primitive and unramified at \(p\), and assume
+\(p\nmid my\).  Put \(\lambda=\lambda_f(p)\) and
+
+\[
+ D_p=1-\frac{p|\lambda|^2}{(p+1)^2}.
+\]
+
+The Blomer--Milićević orthonormal oldclass formula gives squared
+normalization \(p/D_p\) for the \(b=p\) vector.  Adding its cross term
+to the \(b=1\) term at indices \(m,py\) gives the exact algebraic
+simplification
+
+\[
+ \boxed{
+ \lambda+\frac p{D_p}
+ \left(-\frac{\lambda}{p+1}\right)
+ \left(1-\frac{|\lambda|^2}{p+1}\right)
+ =\frac{\lambda}{(p+1)D_p}.}
+\tag{4.845aq_3}
+\]
+
+Since \(|\lambda_f(p)|\leq2p^{7/64}\), the right side is
+\(O(p^{-57/64})\), strictly stronger than the required
+\(p^{-1/2}\).  At ambient level \(p^2\), the additional \(b=p^2\)
+oldvector does **not** have zero coefficient at the first index.  Its
+cross term is the negative of (4.845aq_3), so the complete
+\(b=1,p,p^2\) oldclass vanishes in this coprime/ramified cell.  The
+exact prime-power calculation is recorded below in (4.845aq_8).
+
+For primitive conductor \(p\), the preceding cancellation claim was
+incorrect because it used \(1-|\lambda_f(p)|^2/p\) in place of the
+Blomer--Milićević Gram factor and omitted the ambient trace ratio.  Put
+\(\lambda_f(p)=\epsilon p^{-1/2}\), \(\epsilon^2=1\).  Lemma 2 of
+Blomer--Milićević gives
+\[
+ r_f(p)=1-\frac{\lambda_f(p)^2}{p(1+1/p)^2}
+       =\frac{p(p+2)}{(p+1)^2},
+\]
+and, at ambient level \(p^2\),
+\[
+ f^{(p)}=r_f(p)^{-1/2}
+ \left(f^*|_p-\frac{\epsilon}{p+1}f^*\right).
+\]
+The ambient oldclass trace is multiplied by
+\([\Gamma_0(p):\Gamma_0(p^2)]^{-1}=p^{-1}\).  Hence the unit-to-
+valuation-one level difference, relative to \(\lambda_f(p)\), is
+
+\[
+ \boxed{
+ 1-\frac1{p(p+1)r_f(p)}
+ =1-\frac{p+1}{p^2(p+2)}\ne0.}
+\tag{4.845aq_4}
+\]
+
+Thus there is no exact raised-oldspace cancellation.  The Steinberg
+identity still supplies the required local amplitude saving, with an
+absolutely multiplicative Euler correction made explicit in Section
+4.109y.  A primitive trivial-central representation of conductor
+exponent two has degree-zero local \(L\)-factor, hence its coefficient
+at \(py\), \(p\nmid y\), is zero.  The continuous and ramified
+Eisenstein assertions require their own trace normalization and are not
+used here to certify PEVP.
+
+The two exact identities are checked independently by
+unramified_prime_oldspace_cross_factor_identity and
+conductor_p_raised_oldspace_cross_identity.  They close the generic
+\(p\nmid my\) local cell for all three spectra.  They do not yet prove
+\(\mathrm{EVP}_{A,B}\): the cells with \(p\mid my\) must be averaged
+with the Ramanujan denominator and multiplied consistently over
+\(p\mid A\).
+
+The arbitrary-sequence form \(\mathrm{EVP}_{A,B}\) is stronger than the
+physical problem.  Here the sparse coefficient is the fixed
+divisor-convolution
+
+\[
+ a_y^{H,L}
+ =\sum_{h\delta=y}U(h/H)V(\delta/L),
+\]
+
+with the exact coupled smooth factors retained by Fourier--Mellin
+superposition.  Let \(D=(A,h\delta)\).  Since \(A\) is squarefree, every
+condition \(D\mid h\delta\) has the disjoint prime allocation
+\(D=D_1D_2\), \((D_1,D_2)=1\), with \(D_1\mid h,D_2\mid\delta\).  Hence
+the boundary-aware count is
+
+\[
+ \boxed{
+ \sum_{h\asymp H}\sum_{\delta\asymp L}
+ \mathbf1_{D\mid h\delta}
+ \leq
+ \sum_{\substack{D_1D_2=D\\(D_1,D_2)=1}}
+ \left(\frac{2H}{D_1}+1\right)
+ \left(\frac{2L}{D_2}+1\right).}
+\tag{4.845aq_5}
+\]
+
+Terms with \(D_1>2H\) or \(D_2>2L\) vanish.  On every remaining
+allocation the right side is
+\(\ll HL D^{-1}4^{\omega(D)}\).  Thus if
+\(A=T^\alpha,D=T^d\), the bad-prime density supplies square saving
+\(d\), while (4.845aq_3) and the corrected Steinberg bound below supply
+generic-prime amplitude saving \((\alpha-d)/2\).  The exact power balance is
+
+\[
+ \boxed{
+ \frac{\alpha-d}{2}+\frac d2=\frac\alpha2.}
+\tag{4.845aq_6}
+\]
+
+This recovers the entire power required in (4.845aq_2), including the
+short-interval boundary cells.  It remains to verify that no ramified
+oldclass matrix consumes that saving.  This follows by the same finite
+basis formula.  Put \(a=v_p(m)\),
+\(k=v_p(y)\), and let \(\lambda_j=\lambda_f(p^j)\) for an unramified
+primitive form.  When \(a=0\), the \(b=1,p\) cross factor at the second
+index \(p^{k+1}y\) is exactly
+
+\[
+ \boxed{
+ \lambda_{k+1}+\frac p{D_p}
+ \left(-\frac{\lambda_1}{p+1}\right)
+ \left(\lambda_k-\frac{\lambda_1\lambda_{k+1}}{p+1}\right)
+ =\frac{\lambda_1\lambda_k/(p+1)-\lambda_{k-1}}{D_p},}
+\tag{4.845aq_7}
+\]
+
+with \(\lambda_{-1}=0\).  This is just
+\(\lambda_{j+1}=\lambda_1\lambda_j-\lambda_{j-1}\).  For \(k=0\)
+it is (4.845aq_3); for \(k\geq1\), Kim--Sarnak and the exact
+\(p^{-k/2}\) amplitude density give
+
+\[
+ p^{(k-1)7/64}p^{-k/2}
+ =p^{-1/2}p^{-(k-1)25/64}.
+\]
+
+The squarefull oldvector is supplied by the general
+[Blomer--Milićević basis, Lemma 2](https://arxiv.org/abs/1404.7845),
+not by the squarefree specialization used in
+(4.845aq_3).  Put
+\(C_{p^2}^2=(D_p(1-p^{-2}))^{-1}\).  In normalized Fourier
+coefficients its local polynomial is
+\[
+ u_{p^2}(a)
+ =C_{p^2}\left(p^{-1}\lambda_a-lambda_1\lambda_{a-1}
+                    +p\lambda_{a-2}\right),
+ \qquad \lambda_{-1}=\lambda_{-2}=0.
+\]
+Consequently, at the unit first index and the second index of
+valuation \(k+1\),
+
+\[
+ \boxed{
+ u_{p^2}(0)u_{p^2}(k+1)
+ =-\frac{\lambda_1\lambda_k/(p+1)-\lambda_{k-1}}{D_p},
+ \qquad
+ \sum_{b=1,p,p^2}u_b(0)u_b(k+1)=0.}
+\tag{4.845aq_8}
+\]
+
+Thus (4.845aq_7) is exactly the level-\(p\) remainder, while the full
+ambient-level-\(p^2\) oldclass cancels.  The checker
+`unramified_level_p_squared_cross_identity` evaluates both sides for
+every requested \(k\); it replaces the incorrect claim that the
+\(p^2\) vector vanished separately.
+
+If \(a\geq1\), then
+\(|c_p(m)|^{-1}=(p-1)^{-1}\).  In the \(b=p\) vector its normalization
+\(p/D_p\) cancels this denominator and leaves the leading product
+\(\lambda_{a-1}\lambda_k\).  The two valuation densities give
+
+\[
+ p^{(a+k-1)7/64}p^{-(a+k)/2}
+ =p^{-1/2}p^{-(a+k-1)25/64}.
+\]
+
+For the \(b=p^2\) vector, (4.845aq_8) gives the exact three-term
+coefficient.  Its potentially largest product is
+\(p^2\lambda_{a-2}\lambda_{k-1}\); it occurs only for
+\(a\geq2,k\geq1\).  Division by \(|c_p(m)|=p-1\), followed by the
+two amplitude densities \(p^{-a/2}p^{-k/2}\), bounds this term by
+\[
+ p^{1+(a+k-3)7/64-(a+k)/2}
+ \leq p^{-1/2}p^{-(a+k-3)25/64}.
+\]
+For completeness, after the Ramanujan denominator and the two density
+factors, the nine exponents (rows in the order
+\(p^{-1}\lambda_a,-\lambda_1\lambda_{a-1},p\lambda_{a-2}\),
+columns in the analogous order at \(k+1\)) are
+
+\[
+\begin{pmatrix}
+-3+(a+k+1)\theta-(a+k)/2&
+-2+(a+k+1)\theta-(a+k)/2&
+-1+(a+k-1)\theta-(a+k)/2\\
+-2+(a+k+1)\theta-(a+k)/2&
+-1+(a+k+1)\theta-(a+k)/2&
+(a+k-1)\theta-(a+k)/2\\
+-1+(a+k-1)\theta-(a+k)/2&
+(a+k-1)\theta-(a+k)/2&
+1+(a+k-3)\theta-(a+k)/2
+\end{pmatrix}.
+\]
+
+The third row requires \(a\geq2\), and the third column requires
+\(k\geq1\).  With \(0\leq\theta<1/2\), every entry is at most
+\(-1/2\); equality can occur only in the bottom-right entry at
+\((a,k)=(2,1)\).  This supplies the promised exact local inequality,
+including all nine squarefull cross products.  The conductor-\(p\) and
+conductor-\(p^2\) cases
+use (4.845aq_4) and the degree-zero local factor, respectively.  For
+Eisenstein oldvectors the unramified coefficients satisfy
+\(|\lambda_j|\leq j+1\), and the ramified character-pair coefficient at
+positive p-valuation is zero, so the same bounds hold with
+\(7/64=0\).
+
+The local alternatives multiply over squarefree \(A\), and they prove
+the required power exponent \(A^{-1/2+o(1)}\).  That statement is not
+yet strong enough for the logarithmic endpoint.  Indeed, on a fixed
+bad-gcd cell the square-density estimate contributes
+\(D^{-1}4^{\omega(D)}\), while the generic primes contribute the
+square saving \((A/D)^{-1}\).  Summing the present positive majorants
+over \(D\mid A\) gives exactly
+
+\[
+ \boxed{
+ \sum_{D\mid A}
+  \frac{4^{\omega(D)}}D\frac D A
+  =\frac{5^{\omega(A)}}A.}
+\tag{4.845cy}
+\]
+
+The amplitude residual \(5^{\omega(A)/2}\) is \(A^{o(1)}\), but it is
+not bounded by a fixed power of \(\log T\) uniformly for \(A\leq T^3\).
+For the primorial \(A_y=\prod_{p\leq y}p\), the prime number theorem
+gives
+\[
+ \log 5^{\omega(A_y)/2}\sim\frac{\log5}{2}\frac y{\log y},
+ \qquad
+ \log(\log A_y)^C\sim C\log y,
+\]
+so the former exceeds the latter for every fixed \(C\).
+
+Therefore the physical divisor-convolution exact-valuation projector is
+covered only at the power-exponent level.  A proof still has to retain
+orthogonality or Möbius cancellation across the \(D\)-cells and replace
+(4.845cy) by a polylogarithmic square bound.  The arbitrary-sequence
+statement \(\mathrm{EVP}_{A,B}\) remains unproved as well.  The adapters
+unramified_oldspace_cross_prime_power_identity and
+physical_exact_valuation_projector_audit record (4.845aq_7) and this
+case split; the latter now distinguishes power-exponent coverage from
+the unproved polylogarithmic tensor gate.  The adapter
+lifted_projector_gcd_partition_audit separately records the power
+identity (4.845aq_6).
+
+Before spectral transformation, the raw Poisson normalization and its
+dual length still cancel:
+
+\[
+ \boxed{
+ \frac ES\sum_{m\ne0}
+ |\lambda_f(|m|)\widehat U(mE/S)|
+ \ll (Q_fS)^{o(1)},\qquad
+ \frac ES\cdot\frac SE=1.}
+\tag{4.845ar}
+\]
+
+For \(m\ne0\), (4.845ar) uses only
+\(\sum_{m\asymp M}|\lambda_f(m)|\ll M(Q_fM)^{o(1)}\); it never invokes
+the pointwise \(m^\vartheta\) bound.  This raw identity alone does not
+normalize the spectral side.  The missing factor is supplied by the
+exact outer normalization (4.845ap''), not by discarding the Bessel
+transform or the Fourier-coefficient normalization.  The direct
+level-\(AB\) cusp adapter is therefore accepted; the \(ABj\) family in
+(4.845ap_3) is an optional infinity--infinity representation, not a
+necessary repair.
+
+The adapter type_i_atkin_lehner_cusp_audit records the accepted
+Kiral--Young match, the physical \(\sqrt A\) conversion, the outer
+Poisson \(A^{-1}\), and their net fixed-entry \(A^{-1/2}\).  It also
+keeps the outer-entry aggregation false: applying the fixed-entry
+bound separately does not sum the actual \(A,B\) variables.  The
+remaining compact-core gate is consequently the joint OLISK/MMKLS
+estimate of Sections 4.109zi--4.109zjab, with all ratio/gcd and
+\(q\)-layers restored.
+
+
+### 4.109h The inverse-zeta zero does not by itself prove level reciprocity
+
+The two retained shift variables do give more structure than an
+arbitrary spectral sequence.  At every unramified prime, write
+
+\[
+ \lambda_f(p^{j+1})
+ =\lambda_f(p)\lambda_f(p^j)-\lambda_f(p^{j-1}).
+\]
+
+Then, coefficient by coefficient,
+
+\[
+ \lambda_f(p^{a+b})
+ =\lambda_f(p^a)\lambda_f(p^b)
+  -\mathbf 1_{a,b\geq1}\lambda_f(p^{a-1})\lambda_f(p^{b-1}),
+\]
+
+and hence, initially for \(\Re u,\Re v>1\),
+
+\[
+ \boxed{
+ \sum_{h,\delta\geq1}
+ \frac{\lambda_f(h\delta)}{h^u\delta^v}
+ =\frac{L(u,f)L(v,f)}{\zeta^{(Q_f)}(u+v)}.}
+\tag{4.845as}
+\]
+
+Here \(\zeta^{(Q_f)}\) omits the Euler factors at primes dividing the
+primitive conductor.  The finite checker
+hecke_double_dirichlet_local_identity verifies the displayed Hecke
+coefficient identity on every requested rectangle; it is a regression
+witness for the algebra, not a substitute for Euler-product
+continuation.
+
+It is tempting to set \(u=v=1/2\) and declare that the pole of
+\(\zeta(u+v)\) kills the spectral family.  This is invalid for the
+continuous spectrum.  For the unramified Eisenstein eigenvalues
+\(\lambda_t(n)\), the corresponding factor is
+
+\[
+ \boxed{
+ D_t(u,v)=
+ \frac{\zeta(u+it)\zeta(u-it)
+       \zeta(v+it)\zeta(v-it)}{\zeta(u+v)}.}
+\tag{4.845at}
+\]
+
+When the \(t\)-contour crosses the pole
+\(t=-i(1-u)\), its residue contains
+\[
+ \frac{\zeta(1+v-u)}{\zeta(u+v)}.
+\]
+Writing \(u=1/2+a\), \(v=1/2+b\), its normal-crossing leading model is
+
+\[
+ \boxed{
+ \frac{\zeta(1+b-a)}{\zeta(1+a+b)}
+ =\frac{a+b}{b-a}\bigl(1+O(|a|+|b|)\bigr).}
+\tag{4.845au}
+\]
+
+Thus the inverse-zeta zero and the transverse Eisenstein pole have the
+same order, and their quotient has no path-independent value at
+\((a,b)=(0,0)\).  Only the *completed sum* of both contour residues,
+the zero frequencies, and the ramified local factors can be continued
+to the central point.  A coefficientwise cancellation claim is false.
+
+Three published reciprocity formulae were compared term by term.
+
+1. [Andersen--Kiral](https://arxiv.org/abs/1801.06089) averages the
+   square of a degree-four Rankin--Selberg \(L(s,g\times f)\), with a
+   fixed cuspidal \(g\), and in its stated level-reciprocity theorem
+   exchanges distinct prime parameters.  Replacing \(g\) by Eisenstein
+   data introduces polar terms absent from their theorem.
+2. [Blomer--Khan](https://arxiv.org/abs/1706.01245) proves reciprocity
+   for \(L(s,f\times F)L(w,f)\).  With the minimal \(GL(3)\)
+   Eisenstein series this is the degree-eight fourth moment
+   \(L(1/2,f)^4\), not the degree-four product in (4.845as); its theorem
+   includes a completed main term assembled from GL(3) residues and
+   Eisenstein-contour residues.
+3. [Khan](https://arxiv.org/abs/2401.01057) directly transforms a zeta
+   twisted second moment, but the stated theorem assumes distinct odd
+   prime twists and a Gaussian archimedean weight, and the dual family
+   is a Dirichlet-character second moment.  It is not a composite-level
+   Atkin--Lehner spectral-family estimate.
+
+Consequently none of these is a literal adapter for
+SLF\(_{\alpha,\beta}\).  On a factor box
+\(A=T^\alpha,B=T^\beta\), the exact missing estimate remains
+
+\[
+ \boxed{
+ \text{completed signed level family}
+ \ \ll_{C,W}\
+ T^{3/2+(\alpha+\beta)/2}(\log T)^{-C},
+ \qquad \alpha+\beta\leq1.}
+\tag{4.845av}
+\]
+
+The completed expression must include the paired Eisenstein residues
+from (4.845at), all ramified factors at \(AB\), and the oldclass cusp
+coefficients.  The right side requires a half-level saving
+\((\alpha+\beta)/2\) over absolute aggregation and arbitrary
+logarithmic decay on \(\alpha+\beta=1\).  Deriving such a composite
+smooth second-moment reciprocity identity is a viable new route; it has
+not yet been proved.  The adapter
+eisenstein_second_moment_reciprocity_audit therefore keeps the signed
+level-family, Type-II, and whole Möbius gates false.
+
+
+### 4.109i Product-Hecke large sieve closes the cuspidal Type-I/Type-I gate
+
+The level-reciprocity gate in Sections 4.109g--4.109h is unnecessary
+once the product-index identity (4.845s) is combined with the ordinary
+spectral large sieve *before* the common-divisor variable is estimated.
+This ordering was not covered by the fixed-index calculation (4.845b):
+there the two indices still had length \(T^{5/2}\), whereas here their
+residual lengths are at most the ambient level.
+
+Fix \(A=T^\alpha\), \(B=T^\beta\), put \(Q=AB\), and use reciprocity to
+complete the quotient on the side with the smaller Type-I divisor.  If
+
+\[
+ \eta=\min(\alpha,\beta),\qquad
+ m\ll T^\eta(\log T)^C,
+\]
+
+then the Atkin--Lehner cusp identity (4.845ao)--(4.845ap) is unchanged,
+with \(A,B\) interchanged when \(\beta<\alpha\).  Let \(H=T^{5/2}\)
+denote either product-variable length.  In (4.845t), split the common
+divisor \(c\) at \(H/Q\).  The small-\(c\) portion has the arbitrary
+logarithmic decay of (4.845w).  In the remaining portion,
+
+\[
+ c\asymp C\geq H/Q,\qquad Y=H/C\leq Q.
+\]
+
+For the full Maaß, holomorphic, and Eisenstein spectrum at level \(Q\),
+the spectral large sieve, in the Fourier-coefficient normalization used
+by Kuznetsov, is
+
+\[
+ \boxed{
+ \int_{\mathscr S_Q(\mathcal T)}
+ \left|\sum_{n\asymp Y}a_n\sqrt n\,\rho_{\pi,\infty}(n)\right|^2
+ d\pi
+ \ll_\varepsilon
+ (QY\mathcal T)^\varepsilon
+ \left(\mathcal T^2+\frac YQ\right)
+ \sum_n|a_n|^2.}
+\tag{4.845aw}
+\]
+
+This is the Deshouillers--Iwaniec inequality in the form stated as the
+spectral-large-sieve lemma in
+[Blomer--Milićević](https://arxiv.org/abs/1404.7845).  The physical
+Bessel--Mellin tensorization from Section 4.109f restricts
+\(\mathcal T\) to a power of \(\log T\), so the parenthesis in
+(4.845aw) has power exponent \(\max(0,\log_T(Y/Q))=0\).
+
+Multiplication by the Poisson Hecke index does not introduce a
+pointwise Ramanujan factor on a primitive cuspidal coefficient list.
+At unramified primes,
+
+\[
+ \lambda_\pi(m)\lambda_\pi(n)
+ =\sum_{r\mid(m,n)}\lambda_\pi(mn/r^2).
+\]
+
+If \(b_k\) is the resulting coefficient sequence, then for each fixed
+\(r\mid m\) the map \(n\mapsto mn/r^2\) is injective.  Cauchy over
+\(r\mid m\) gives
+
+\[
+ \sum_k|b_k|^2\leq\tau(m)^2\sum_n|a_n|^2,\qquad
+ \operatorname{supp}b\subset[1,4mY].
+\]
+
+The degree-one ramified local factors only delete terms from this
+divisor expansion.  After the finite oldclass shifts from Section
+4.109e, the same estimate holds with a divisor-power loss, hence with
+subpower cost.  Applying (4.845aw) to the multiplied first factor and
+the unmultiplied second factor, then applying Cauchy in the complete
+spectral measure, gives for each fixed common divisor \(c\)
+
+\[
+ \boxed{
+ \int_{\mathscr S_Q(\mathcal T)}
+ |\rho_\pi(1)|^2
+ |\lambda_\pi(m)A_{\pi,1}(H/c)A_{\pi,2}(H/c)|\,d\pi
+ \ll
+ T^{o(1)}Y\left(1+\frac{mY}{Q}\right)^{1/2}.}
+\tag{4.845ax}
+\]
+
+For cusp forms there is no positivity loss from the second cusp.  By
+[Kiral--Young, Lemma 2.5](https://arxiv.org/abs/1710.00914), the full
+oldclass Fourier-coefficient lists at an Atkin--Lehner cusp are a
+signed permutation of their lists at infinity.  For the continuous
+spectrum the Atkin--Lehner operator is unitary, so changing the
+orthonormal Eisenstein basis preserves the squared norm in (4.845aw).
+This basis change alone does not factor a ramified Eisenstein
+level-oldvector coefficient at index \(mn\); that separate issue is
+audited in Section 4.109k.
+The total variation of the physical nuclear measure is polylogarithmic
+by (4.845ai).
+
+The small-common-divisor range uses a different ledger.  The individual
+functional-equation estimate (4.845v) and
+\(c\leq H/(Q(\log T)^B)\) give arbitrary logarithmic decay after the
+\(c\)-sum.  Estimating the remaining \(\lambda_\pi(m)\) there by
+Kim--Sarnak costs at most \(M^{7/64}\).  Relative to the SLF target its
+power margin is
+
+\[
+ \frac{\alpha+\beta}{2}
+ -\frac{7}{64}\min(\alpha,\beta)>0
+\]
+
+whenever the level has a nonzero power exponent.  If
+\(\alpha=\beta=0\), then \(M=T^{o(1)}\) and arbitrary logarithmic decay
+absorbs the subpower local factors.  Thus this complementary range is
+also covered; no logarithm is used to absorb a fixed positive power.
+
+Now sum (4.845ax) over \(c\asymp C\).  Since \(CY=H\) and \(Y\leq Q\),
+
+\[
+ \boxed{
+ \sum_{c\asymp C}\int_{\mathscr S_Q}
+ |\rho_\pi(1)|^2
+ |\lambda_\pi(m)A_{\pi,1}(H/c)A_{\pi,2}(H/c)|\,d\pi
+ \ll T^{o(1)}H\sqrt{1+m}.}
+\tag{4.845ay}
+\]
+
+The Poisson normalization is \(M^{-1}\) for \(m\ll M=T^\eta\), so
+averaging (4.845ay) over \(m\) has the same worst power \(HM^{1/2}\).
+The previous pointwise product bound was \(HQ\).  Thus the fixed-level
+saving is \(Q/M^{1/2}=T^{\alpha+\beta-\eta/2}\).  Subtracting it from
+the absolute level aggregation in
+\(\mathrm{SLF}_{\alpha,\beta}\) gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ E_{\rm new}&=\frac32+\frac12\min(\alpha,\beta),\\
+ E_{\rm SLF}&=\frac32+\frac{\alpha+\beta}{2},\\
+ E_{\rm SLF}-E_{\rm new}
+ &=\frac12\max(\alpha,\beta).
+ \end{aligned}}
+\tag{4.845az}
+\]
+
+Every nontrivial power-scale cuspidal Type-I/Type-I box therefore has a
+fixed power margin.  At \(\alpha=\beta=0\), the arbitrary logarithmic
+decay from (4.845w)--(4.845z) supplies the endpoint decay.  The interface
+product_hecke_spectral_large_sieve_audit records the threshold
+\(H/Q\), multiplied support \(mY\), saving \(Q/\sqrt m\), and the
+margin in (4.845az).
+
+This closes the Maaß and holomorphic Type-I/Type-I contribution, not
+the full sector: ramified Eisenstein oldvectors remain open.  The
+Type-II sectors additionally contain two genuinely bilinear Möbius
+factors after Cauchy and require the audit below.
+
+
+### 4.109j The Type-II residual is a closed level square
+
+The same ordering applies to most Type-II boxes.  Expanding the
+truncated divisor coefficient is the finite identity
+
+\[
+ c_U(a)\mu(b)
+ =\sum_{\substack{d\mid a\\d\leq U}}\mu(d)\mu(b).
+\]
+
+For a fixed divisor-allocation box write
+
+\[
+ r=(db)e=Ae,\qquad s=(d'b')\ell=B\ell.
+\tag{4.845ba}
+\]
+
+The variables \(e,\ell\) are unweighted.  Therefore Poisson summation,
+the Kloosterman identity (4.845ao), and the Atkin--Lehner cusp formula
+(4.845ap) apply after the displayed finite allocation.  The distinction
+from Type I is the level range: because \(b,b'>V=T\) and
+\(d,d'\leq U=T\), the Type-II factor polytopes have
+
+\[
+ A=T^\alpha,\qquad B=T^\beta,\qquad
+ 1\leq\alpha,\beta\leq3.
+\]
+
+Put \(Q=AB=T^{\alpha+\beta}\), \(H=T^{5/2}\), and complete the quotient
+on the side with \(\eta=\min(\alpha,\beta)\).  The Poisson index has
+length \(M=T^\eta\).  In the common-divisor decomposition (4.845t), the
+largest residual Hecke-polynomial length is
+
+\[
+ \boxed{Y\leq\min(H,Q)
+ =T^{\min(5/2,\alpha+\beta)}.}
+\tag{4.845bb}
+\]
+
+Applying (4.845aw)--(4.845ay), the only remaining positive-power
+large-sieve factor is the square root of \(1+MY/Q\).  Define
+
+\[
+ x(\alpha,\beta)
+ :=\left(\min(\alpha,\beta)
+ +\min(5/2,\alpha+\beta)-\alpha-\beta\right)_+.
+\]
+
+Replacing the former \(HQ\) product bound by the fixed-level bound and
+restoring the absolute \(A,B\)-box count gives
+
+\[
+ \boxed{
+ E_{\rm PHLS}(\alpha,\beta)
+ =\frac32+\frac{x(\alpha,\beta)}2.}
+\tag{4.845bc}
+\]
+
+The normalized QCT target is exponent \(2\).  Eliminating the two
+minima gives, on \(1\leq\alpha,\beta\leq3\),
+
+\[
+ \boxed{
+ x(\alpha,\beta)\geq1
+ \quad\Longleftrightarrow\quad
+ 1\leq\alpha\leq\frac32,\qquad
+ 1\leq\beta\leq\frac32.}
+\tag{4.845bd}
+\]
+
+Outside this closed square, (4.845bc) has a fixed power saving.  On the
+boundary \(x=1\), no logarithmic saving has yet been retained.  In the
+interior the deficit is \((x-1)/2\), maximized at
+
+\[
+ (\alpha,\beta)=(5/4,5/4),\qquad
+ x=5/4,\qquad E_{\rm PHLS}-2=1/8.
+\]
+
+The interface high_level_product_hecke_spectral_audit implements the
+affine branches with Fraction arithmetic.  This is a primal-only
+ledger: it isolates the exact square left by that estimate and does not
+declare the Type-II or whole Möbius gate closed.
+
+
+### 4.109k Functional-equation duality removes the cuspidal Type-II square
+
+The \(1/8\) residual in Section 4.109j is an artifact of always feeding
+the primal Hecke polynomial to the large sieve for the *cuspidal*
+spectrum.  The completed standard \(\mathrm{GL}(2)\) functional
+equation provides a reciprocal-length polynomial there.
+
+Let \(f\) be a primitive Maaß or holomorphic cusp form of conductor
+\(q_0\mid Q\), and let
+
+\[
+ A_f(Y;W)=\sum_{n\geq1}\lambda_f(n)W(n/Y).
+\]
+
+Mellin inversion on \(\Re s>1\), the exact completed functional
+equation, the change of variable \(w=1-s\), and inverse Mellin
+inversion give
+
+\[
+ \boxed{
+ A_f(Y;W)
+ =\varepsilon_f\frac{Y}{\sqrt{q_0}}
+ \sum_{n\geq1}\overline{\lambda_f(n)}
+ \widetilde W_{t_f}\!\left(\frac{nY}{q_0}\right).}
+\tag{4.845be}
+\]
+
+The contour shift crosses no pole because \(L(s,f)\) is entire.  The
+transform is defined by the exact gamma quotient.  Repeated Stirling,
+together with the spectral truncation in Section 4.109f, gives rapid
+decay outside \(n\ll(q_0/Y)(\log T)^C\).  Its coefficient energy is
+
+\[
+ \left(\frac{Y}{\sqrt{q_0}}\right)^2\frac{q_0}{Y}=Y,
+\]
+
+the same as the primal polynomial.  For fixed Mellin frequency, the
+\(t_f\)-dependent gamma quotient remains in the spectral test weight;
+the Mellin integral has polylogarithmic weighted total variation.
+
+Let \(m\ll M\) be the Poisson Hecke index and retain the ambient-level
+normalization \(Q=AB\).  Applying (4.845aw) after the Hecke relation to
+the primal and dual forms of one polynomial gives respectively
+
+\[
+ \boxed{
+ 1+\frac{mY}{Q},
+ \qquad
+ 1+\frac{mq_0}{YQ}.}
+\tag{4.845bf}
+\]
+
+Use the primal form for \(Y\leq\sqrt{q_0}\) and (4.845be) for
+\(Y>\sqrt{q_0}\).  Uniformly in every common-divisor block,
+
+\[
+ \boxed{
+ \min\!\left(\frac{mY}{Q},\frac{mq_0}{YQ}\right)
+ \leq\frac{m\sqrt{q_0}}Q.}
+\tag{4.845bg}
+\]
+
+Completion was chosen on the shorter level-factor side, so
+
+\[
+ m\leq T^{\min(\alpha,\beta)+o(1)},\qquad
+ q_0\leq Q=T^{\alpha+\beta},
+\]
+
+and therefore
+
+\[
+ \log_T\frac{m\sqrt{q_0}}Q
+ \leq\min(\alpha,\beta)-\frac{\alpha+\beta}{2}\leq0.
+\]
+
+The cuspidal and holomorphic versions of (4.845ax) have no
+positive-power large-sieve excess.  Summing over the common divisor
+gives \(HT^{o(1)}\), and the level-box ledger is
+
+\[
+ \boxed{
+ E_{\rm cusp/holo}=\frac32,\qquad
+ E_{\rm target}=2,\qquad
+ E_{\rm target}-E_{\rm cusp/holo}=\frac12.}
+\tag{4.845bh}
+\]
+
+Oldclasses do not alter this cuspidal inequality.  Split by the
+underlying primitive conductor \(q_0\mid Q\), apply (4.845be) to each
+primitive coefficient list, and insert the finite
+Blomer--Milićević shifts.  The conductor and shift allocations cost
+\(Q^{o(1)}\); their coefficient energies have the divisor-square bound
+used after (4.845aw); and Kiral--Young's signed permutation moves the
+second-cusp norm back to infinity.
+
+The same conclusion does **not** follow for the continuous spectrum.
+Squarefree \(Q\) forces the inducing character in the adelic
+Eisenstein parametrization to be trivial, but level-oldvectors remain.
+The exact coefficient formula in
+[Blomer--Khan, Section 2.2](https://arxiv.org/abs/1706.01245) exposes
+the obstruction.  Specialize it to \(Q=M=p\) prime and suppress factors
+common to all indices.  The remaining local coefficient is
+
+\[
+ F_{p,t}(n)
+ =p^{-1/2}n^{it}
+ \sum_{\delta\mid(p,n)}\delta\mu(p/\delta)
+ \sum_{cf=n/\delta}c^{-2it}.
+\]
+
+Consequently
+
+\[
+ \boxed{
+ F_{p,t}(1)=-p^{-1/2},\qquad
+ F_{p,t}(p)=p^{-1/2}p^{it}(p-1-p^{-2it}),\qquad
+ \left|\frac{F_{p,t_p}(p)}{F_{p,t_p}(1)}\right|=p-2,
+ \quad t_p=\frac{\pi}{\log p}.}
+\tag{4.845bi}
+\]
+
+Thus the ramified oldvector ratio is not \(\tau(p)\)-bounded; it grows
+linearly in \(p\).  The absolute estimate
+\(\rho_{\chi,M,Q}(n,t)\ll_\varepsilon
+((1+|t|)Qn)^\varepsilon(M_1M_2)^{1/2}Q^{-1/2}\)
+from the same source does not repair this step, because it is not a
+bound for the ratio to the first Fourier coefficient and cannot be
+pulled outside the spectral polynomial.  Applying the large sieve
+directly retains support \(mY\), hence retains the square (4.845bd) in
+this part of the spectrum.
+
+The interface primal_dual_product_hecke_spectral_audit therefore
+records the fixed \(1/2\) margin only for Maaß and holomorphic cusp
+forms.  It records the exact prime-oldvector witness \(p=5\), ratio
+\(3\), and keeps the continuous-spectrum, all-sector, finite-prime,
+transform-tail, and whole-Möbius gates false.  The next local theorem
+must prove a ramified Eisenstein dispersion/reciprocity estimate giving
+arbitrary logarithmic decay on the boundary of (4.845bd) and at most
+\(T^{1/8}\) saving at its center.  The complete ratio/gcd allocations,
+dyadic and \(q\)-sums, and all AFE and transform tails also remain to be
+restored before any global asymptotic can be asserted.
+
+
+### 4.109l The same-cusp Eisenstein projector localizes the loss
+
+The individual oldvector witness (4.845bi) does not by itself show that
+a same-cusp Eisenstein kernel is large.  If both Fourier coefficient
+lists are evaluated at infinity, the oldvector label can be summed
+before taking absolute values, and at squarefree level this diagonal
+oldspace projector factorizes prime by prime.
+
+Continue with \(Q=p\) prime and put \(X=p^{-2it}\).  In the notation of
+the exact Blomer--Khan coefficient formula, the two local oldvector
+coefficient polynomials, after removing the scattering and phase
+factors common to both oldvectors, are \(1\) and
+
+\[
+ \boxed{
+ B_{p,k}(X)
+ :=p\sum_{0\leq j<k}X^j-\sum_{0\leq j\leq k}X^j
+ =(p-1)\sum_{0\leq j<k}X^j-X^k,}
+\tag{4.845bj}
+\]
+
+where \(k=v_p(n)\); the first sum is empty for \(k=0\), so
+\(B_{p,0}=-1\).  The squarefree normalization
+\(\widetilde{\mathfrak n}(M)\) is independent of whether \(M=1\) or
+\(M=p\).  Hence the sum of the two normalized oldvector products at
+valuations \(k,\ell\) is exactly the Laurent polynomial
+
+\[
+ \boxed{
+ \mathcal P_{p,t}(k,\ell)
+ =\frac1p+\frac1{p^2}
+ B_{p,k}(X)B_{p,\ell}(X^{-1}).}
+\tag{4.845bk}
+\]
+
+For the first three valuation pairs this gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ \mathcal P_{p,t}(0,0)
+   &=\frac{p+1}{p^2},\\
+ \mathcal P_{p,t}(0,1)
+   &=\frac{1+X^{-1}}{p^2},\\
+ \mathcal P_{p,t}(1,1)
+   &=\frac{p^2-p+2-(p-1)(X+X^{-1})}{p^2}.
+ \end{aligned}}
+\tag{4.845bl}
+\]
+
+Thus the \(p-2\) growth of one shifted vector cancels after the
+oldspace sum whenever exactly one Fourier index is divisible by \(p\):
+the projector then gains a full factor \(p^{-1}\) over its natural
+\(p^{-1}\) scale.  A positive local loss can survive only when both
+indices are ramified.
+
+For arbitrary \(k,\ell\), (4.845bj) and \(|X|=1\) give
+\[
+ |B_{p,k}(X)|\leq (p-1)k+1.
+\]
+If \(\min(k,\ell)=0\), substitution into (4.845bk) is
+\(O((k+\ell+2)/p)\); if \(k,\ell\geq1\), it is
+\(O((k+1)(\ell+1))\).  Multiplying the local bounds for squarefree
+\(Q\), and absorbing the valuation divisor factors and the common
+inverse-\(L\) normalization into \(T^\varepsilon\), yields
+
+\[
+ \boxed{
+ \left|\mathcal P_{Q,t}(m,n)\right|
+ \ll_\varepsilon
+ (Qmn(1+|t|))^\varepsilon
+ \frac{(m,n,Q)}{Q}.}
+\tag{4.845bm}
+\]
+
+This is the correct same-cusp replacement for the false attempt to
+bound every ramified oldvector ratio separately.  It is **not** yet the
+physical Kuznetsov projector in (4.845ap): that formula pairs infinity
+with the Atkin--Lehner cusp \(1/B\).  The physical kernel contains the
+Atkin--Lehner matrix between the two coefficient lists.  Unitarity
+preserves their separate squared norms but does not identify this
+cross-cusp matrix coefficient with (4.845bk).
+
+The interface eisenstein_oldspace_projector_audit evaluates
+(4.845bk) as an exact Laurent polynomial.  At \(p=5\) it records the
+individual ratio \(3\), the mixed projector
+\((1+X^{-1})/25\), and the common-ramification projector.  It marks the
+prime-by-prime same-cusp factorization and its gcd-over-level majorant
+proved, while leaving the Atkin--Lehner cross-cusp projector, physical
+gcd aggregation, continuous-spectrum gate, and whole Möbius gate false.
+
+
+### 4.109m The Poisson average absorbs common ramification in the same-cusp model
+
+The gcd in the same-cusp majorant (4.845bm) costs no positive power
+after the normalized nonzero Poisson-frequency average.  Put
+\(g=(n,Q)\).  The elementary
+divisor identity
+
+\[
+ \boxed{
+ (m,g)=\sum_{d\mid(m,g)}\varphi(d)}
+\tag{4.845bn}
+\]
+
+is exact.  Therefore, for every integer \(M\geq1\),
+
+\[
+ \begin{aligned}
+ \sum_{M<m\leq2M}(m,g)
+ &=\sum_{d\mid g}\varphi(d)
+   \#\{M<m\leq2M:d\mid m\}\\
+ &\leq
+ \sum_{\substack{d\mid g\\d\leq2M}}
+ \varphi(d)\left(\frac Md+1\right)\\
+ &\leq 3M\tau(g).
+ \end{aligned}
+\]
+
+In the last line, \(\varphi(d)\leq d\) and \(d\leq2M\) are applied to
+each nonempty divisor class.  Hence
+
+\[
+ \boxed{
+ \frac1M\sum_{M<m\leq2M}
+ \frac{(m,n,Q)}Q
+ \leq\frac{3\tau((n,Q))}{Q}
+ \ll_\varepsilon \frac{(nQ)^\varepsilon}{Q}.}
+\tag{4.845bo}
+\]
+
+The same conclusion holds for every fixed smooth dyadic Poisson weight,
+with its sup norm multiplying the right side.  Thus the same-cusp
+projector's common-ramification factor has zero power cost.  This does
+not apply (4.845bo) to the physical cross-cusp projector; its local
+Atkin--Lehner matrix has not yet been inserted.
+
+What remains in the continuous spectrum is archimedean rather than
+finite-prime: Mellin inversion of
+\(\zeta(s+it)\zeta(s-it)\) crosses the two poles
+\(s=1\pm it\).  The resulting residues must be combined with the
+Poisson zero mode and the paired residues already isolated in
+(4.845at)--(4.845au).  Only after that completed expression is formed
+may the reciprocal-length transform be used.  This residue pairing is
+not proved here.
+
+The interface eisenstein_common_ramification_average_audit checks
+(4.845bn) by exact finite totient expansion and records the explicit
+\(3M\tau(g)\) upper bound.  It marks only the same-cusp normalized
+Poisson gcd aggregation proved, while leaving the physical cross-cusp
+aggregation, completed residue pairing, continuous-spectrum gate, and
+whole Möbius gate false.
+
+
+### 4.109n Pole subtraction dualizes the Eisenstein polynomial
+
+After Sections 4.109l--4.109m, the remaining distinction between a
+cuspidal functional equation and the continuous spectrum is explicit:
+the Eisenstein Dirichlet series has poles.  They can be isolated before
+dualization.
+
+For
+\[
+ \widehat W(s)=\int_0^\infty W(x)x^{s-1}\,dx,\qquad
+ \lambda_t(n)=\sum_{ab=n}(a/b)^{it},
+\]
+put
+\[
+ A_t(Y;W)=\sum_{n\geq1}\lambda_t(n)W(n/Y).
+\]
+The completed product
+
+\[
+ \boxed{
+ \Xi_t(s):=\pi^{-s}
+ \Gamma\!\left(\frac{s+it}{2}\right)
+ \Gamma\!\left(\frac{s-it}{2}\right)
+ \zeta(s+it)\zeta(s-it),
+ \qquad
+ \Xi_t(s)=\Xi_t(1-s)}
+\tag{4.845bp}
+\]
+
+is an exact consequence of the two completed zeta functional
+equations.  Mellin inversion on \(\Re s>1\), followed by a shift to
+\(\Re s<0\), crosses the poles \(s=1-it\) and \(s=1+it\).  Thus, for
+\(t\ne0\),
+
+\[
+ \boxed{
+ \begin{aligned}
+ A_t(Y;W)
+ &=R_t(Y;W)+D_t(Y;W),\\
+ R_t(Y;W)
+ &=\zeta(1-2it)Y^{1-it}\widehat W(1-it)\\
+ &\quad+\zeta(1+2it)Y^{1+it}\widehat W(1+it).
+ \end{aligned}}
+\tag{4.845bq}
+\]
+
+To state the remaining integral exactly, define
+
+\[
+ G_t(s)
+ :=\pi^{2s-1}
+ \frac{
+ \Gamma((1-s-it)/2)\Gamma((1-s+it)/2)}
+ {\Gamma((s+it)/2)\Gamma((s-it)/2)}
+\]
+
+and
+
+\[
+ \boxed{
+ \begin{aligned}
+ D_t(Y;W)
+ &=Y\sum_{n\geq1}\lambda_t(n)\widetilde W_t(nY),\\
+ \widetilde W_t(x)
+ &:=\frac1{2\pi i}\int_{(1+c)}
+ G_t(1-w)\widehat W(1-w)x^{-w}\,dw
+ \qquad(c>0).
+ \end{aligned}}
+\tag{4.845br}
+\]
+
+The derivation is first performed with finite vertical truncations;
+absolute convergence there justifies Fubini.  Stirling and the rapid
+decay of \(\widehat W\) remove the truncations.  Repeated contour shifts
+show that \(\widetilde W_t(x)\) is rapidly decreasing once
+\(x\gg(1+|t|)^2(\log T)^C\).  Hence a primal length \(Y\) has reciprocal
+length \((1+|t|)^2/Y\).  In the physical spectral window
+\(|t|\leq(\log T)^C\), this has exponent \(-\log_TY\), truncated at zero.
+
+At \(t=0\) the two poles in (4.845bq) collide, but their symmetric sum
+has a finite limit.  From
+\(\zeta(1+z)=z^{-1}+\gamma+O(z)\), one obtains
+
+\[
+ \boxed{
+ \lim_{t\to0}R_t(Y;W)
+ =Y\int_0^\infty
+ W(x)\bigl(\log(Yx)+2\gamma\bigr)\,dx.}
+\tag{4.845bs}
+\]
+
+Thus the pole-subtracted unramified polynomial has the same
+reciprocal-length advantage as the cuspidal polynomial.  Equations
+(4.845bk) and (4.845bo) audit only its same-cusp ramified model.  Until
+the physical Atkin--Lehner cross-oldspace matrix is inserted, they do
+not close the local nonresidual continuous contribution.
+
+It does not yet close the continuous spectrum.  The residue
+\(R_t(Y;W)\) depends on the actual physical Mellin tensor, both
+Atkin--Lehner cusps, and the finite ramified allocations.  It must be
+added to the \(m=0\) term from (4.845ao) and to the paired contour
+residues of (4.845at), and only the completed sum may be simplified.
+That exact zero-mode/residue identity has not been proved.
+
+The interface
+pole_subtracted_eisenstein_functional_equation_audit records the
+reciprocal exponent \(2\tau-y\), the finite central collision with
+coefficients \(1\) and \(2\gamma\), and the exact unramified
+pole-subtracted transform.  It leaves the cross-cusp oldspace adapter,
+local nonresidual closure, zero-mode/residue pairing, full
+continuous-spectrum gate, and whole Möbius gate false.
+
+
+### 4.109o The Ramanujan zero mode carries the inverse-zeta factor
+
+The finite Euler factor required by the missing residue pairing is
+already explicit on the geometric side.  For \(v=v_p(n)\), the
+prime-power Ramanujan sums satisfy
+
+\[
+ c_{p^k}(n)=
+ \begin{cases}
+ 1,&k=0,\\
+ p^k-p^{k-1},&1\leq k\leq v,\\
+ -p^v,&k=v+1,\\
+ 0,&k\geq v+2.
+ \end{cases}
+\tag{4.845bt}
+\]
+
+Therefore their local generating function is the finite identity
+
+\[
+ \boxed{
+ \sum_{k\geq0}c_{p^k}(n)X^k
+ =(1-X)\sum_{j=0}^{v}p^jX^j.}
+\tag{4.845bu}
+\]
+
+Multiplying (4.845bu) over primes, or directly inserting
+\(c_q(n)=\sum_{d\mid(q,n)}d\mu(q/d)\) and interchanging absolutely
+convergent sums, gives for \(\Re w>1\)
+
+\[
+ \boxed{
+ \sum_{q\geq1}\frac{c_q(n)}{q^w}
+ =\frac{\sigma_{1-w}(n)}{\zeta(w)}.}
+\tag{4.845bv}
+\]
+
+At \(w=1+2z\), the zero-mode Dirichlet series is
+\(\sigma_{-2z}(n)/\zeta(1+2z)\).  It has a simple inverse-zeta zero at
+\(z=0\), exactly the finite Euler mechanism appearing in the
+normal-crossing model (4.845au).  This proves the finite-prime identity;
+it does not prove cancellation of the completed residues.  The latter
+also requires the exact Atkin--Lehner cusp normalization, the
+archimedean Bessel--Mellin transform, the sign with which the
+\(m=0\) term was separated, and the ramified restrictions
+\(B\mid q,(q,A)=1\).
+
+The interface ramanujan_zero_mode_euler_audit checks (4.845bt) and
+(4.845bu) coefficient by coefficient and records (4.845bv).  It keeps
+the archimedean normalization, completed zero-mode/residue pairing,
+continuous-spectrum gate, and whole Möbius gate false.
+
+
+### 4.109p The physical cross-cusp projector retains a half-level deficit
+
+The physical prime-level projector can be computed directly from
+[Kiral--Young's explicit Eisenstein coefficient
+formula](https://arxiv.org/abs/1710.00914), rather than inferred from
+unitarity.  Take \(N=p\), \(u=1/2+it\), and use the two cusps
+\(\infty\) and \(0\).  Specializing their theorem for the Eisenstein
+series attached to each of these cusps gives, up to the common
+archimedean Fourier normalization,
+
+\[
+ \boxed{
+ \begin{aligned}
+ D_p(n,u)
+ &=p^{-2u}c_p(n)
+   \frac{\sigma_{1-2u}(n)}{\zeta(2u)},\\
+ O_p(n,u)
+ &=p^{-u}
+   \frac{\sigma^{(p)}_{1-2u}(n)}
+   {\zeta(2u)(1-p^{-2u})}.
+ \end{aligned}}
+\tag{4.845bw}
+\]
+
+Here \(D_p\) is the coefficient at the same cusp, \(O_p\) is the
+coefficient at the opposite cusp, and
+\(\sigma^{(p)}_\alpha(n)=\sum_{d\mid n,(d,p)=1}d^\alpha\).
+The cross-cusp continuous projector occurring in (4.845ap) is therefore
+
+\[
+ D_p(m,u)\overline{O_p(n,u)}
+ +O_p(m,u)\overline{D_p(n,u)}.
+\]
+
+The local size is already visible at \(t=0\), after removing the common
+\(\zeta(1)^{-1}\) zero by analytic continuation.  For
+\(v_p(m)=0\) and \(v_p(n)=1\),
+\[
+ D_p(m,1/2)=-\frac1p,\qquad
+ D_p(n,1/2)=\frac{2(p-1)}p,\qquad
+ |O_p(\,\cdot\,,1/2)|^2=\frac{p}{(p-1)^2}.
+\]
+Consequently
+
+\[
+ \boxed{
+ \left|
+ D_p(m,1/2)\overline{O_p(n,1/2)}
+ +O_p(m,1/2)\overline{D_p(n,1/2)}
+ \right|^2
+ =\frac{(2p-3)^2}{p(p-1)^2}
+ \asymp\frac1p.}
+\tag{4.845bx}
+\]
+
+Thus the physical projector has amplitude \(p^{-1/2}\), not the
+\(p^{-1}\) suggested by the rejected same-cusp candidate.  Over the
+Atkin--Lehner factor \(A\), the comparison loses exactly \(A^{1/2}\).
+Whether the remaining physical normalizations, the two residue
+polynomials, and the \(A,B\)-box counts absorb this loss must be decided
+by a new global residue ledger; neither a basis change nor the
+same-cusp Poisson gcd average decides it.
+
+The interface prime_level_eisenstein_cross_cusp_audit records the exact
+prime-five values
+\[
+ D_0=-1/5,\qquad D_1=8/5,\qquad |O|^2=5/16,\qquad
+ |\mathcal P_{\infty,0}|^2=49/80.
+\]
+It marks the Kiral--Young specialization and physical cross projector
+identified, rejects the same-cusp candidate, and keeps the global
+residue-level ledger, continuous-spectrum gate, and whole Möbius gate
+false.
+
+
+### 4.109q The completed Eisenstein residue is a three-variable gate
+
+The physical cross-cusp formula now permits the continuous remainder
+to be stated without an unspecified oldspace adapter.  In one fixed
+Type-I/II allocation and dyadic factor box, group the two Möbius
+variables on each side as
+
+\[
+ \boxed{
+ \begin{aligned}
+ \alpha_{\mathcal D,\mathcal B}(A)
+ &=\sum_{\substack{db=A\\d\in\mathcal D,\ b\in\mathcal B}}
+   \mu(d)\mu(b)\,w_{\mathcal D,\mathcal B}(d,b),\\
+ \beta_{\mathcal D',\mathcal B'}(B)
+ &=\sum_{\substack{d'b'=B\\d'\in\mathcal D',\ b'\in\mathcal B'}}
+   \mu(d')\mu(b')\,w'_{\mathcal D',\mathcal B'}(d',b').
+ \end{aligned}}
+\tag{4.845by}
+\]
+
+The endpoint inequalities \(d\leq U,de>U,b\leq V\) or \(b>V\)
+are part of the displayed smooth weights.  Since the original entries
+are squarefree and coprime, \(A,B\) are squarefree and \((A,B)=1\).
+Equation (4.845by) is a finite regrouping, not an estimate.
+
+For one tensor from the physical nuclear decomposition, write the two
+Eisenstein polynomials as
+\[
+ A_t(Y_i;W_i)=R_i(t)+D_i(t)
+\]
+using (4.845bq)--(4.845br).  The reciprocal-length term
+\(D_1D_2\) is the part to which the primal/dual large-sieve argument
+applies.  The remaining identity is exactly
+
+\[
+ \boxed{
+ A_t(Y_1;W_1)A_t(Y_2;W_2)-D_1(t)D_2(t)
+ =R_1(t)R_2(t)+R_1(t)D_2(t)+D_1(t)R_2(t).}
+\tag{4.845bz}
+\]
+
+Let \(\mathscr H_{A,B}(t;m)\) denote the exact Bessel--Mellin test
+weight multiplied by the squarefree product of the local
+Kiral--Young cross factors (4.845bw).  After the \(h,\delta\)
+polynomials in (4.845bz) have been evaluated by their displayed
+residue or dual formulas, the normalized continuous residual for the
+box is
+
+\[
+ \begin{aligned}
+ \mathfrak R_{\alpha,\beta}[\Psi]
+ :=\frac1M
+ \sum_{\substack{A\asymp T^\alpha,\ B\asymp T^\beta\\(A,B)=1}}
+ \alpha_{\mathcal D,\mathcal B}(A)
+ \beta_{\mathcal D',\mathcal B'}(B)
+ \sum_{m\ne0}\widehat U(m/M)
+ \int_{\mathbb R}\mathscr H_{A,B}(t;m)\\
+ {}\times
+ \bigl(R_1(t)R_2(t)+R_1(t)D_2(t)+D_1(t)R_2(t)\bigr)\,dt,
+ \qquad M=T^{\min(\alpha,\beta)+o(1)}.
+ \end{aligned}
+\]
+
+Thus the remaining arithmetic variables are precisely \(A,B,m\):
+this is a Möbius-weighted three-variable sum, with all local
+ramification, smooth weights, and archimedean transforms specified.
+The finite tensor integral has polylogarithmic total variation by
+(4.845ai).
+
+In the normalization of (4.845bc), the primal estimate gives
+\[
+ E_{\rm primal}=3/2+x(\alpha,\beta)/2.
+\]
+On the residual Type-II square its unique worst point is
+\((\alpha,\beta)=(5/4,5/4)\), where
+
+\[
+ \boxed{
+ |\mathfrak R_{5/4,5/4}[\Psi]|
+ \ \text{currently has exponent }\frac{17}{8},
+ \qquad
+ |\mathfrak R_{5/4,5/4}[\Psi]|
+ \ll_{C,W}T^2(\log T)^{-C}
+ \ \text{is required}.}
+\tag{4.845ca}
+\]
+
+The missing power is therefore exactly \(T^{1/8}\).  On the boundary
+of (4.845bd), only arbitrary logarithmic decay is required.  Proving
+(4.845ca), uniformly over the exact divisor allocations and physical
+nuclear measure, closes the continuous local gate; no stronger
+all-purpose spectral theorem is needed.
+
+The interface completed_eisenstein_residue_trilinear_audit records the
+three residue terms, the three remaining arithmetic variables, the
+\(17/8\) center exponent, and the \(1/8\) required saving.  It leaves
+the signed trilinear estimate, continuous-spectrum gate, and whole
+Möbius gate false.
+
+
+### 4.109r Ramification density gives a local candidate, not a closure
+
+The pointwise prime-level witness (4.845bx) occurs only when one
+Fourier index is \(p\)-ramified.  There is therefore a stronger
+*unrestricted-index* average.  Remove the common
+\(\zeta(1+2it)^{-1}\) factor as in Section 4.109p and put
+\(v=v_p(n)\).  Uniformly for real \(t\), the finite Kiral--Young
+factors satisfy
+
+\[
+ \boxed{
+ |D_p(0,1/2+it)|=\frac1p,\qquad
+ |D_p(v,1/2+it)|\leq\frac{p-1}{p}(v+1)\ (v\geq1),
+ \qquad
+ |O_p(v,1/2+it)|\leq\frac{\sqrt p}{p-1}.}
+\tag{4.845cb}
+\]
+
+Indeed the first two bounds use
+\(\left|\sum_{j=0}^{v}p^{-2itj}\right|\leq v+1\), and the last uses
+\(\left|1-p^{-1-2it}\right|\geq1-p^{-1}\).  For an unrestricted
+integer, the exact natural valuation probabilities are
+\(\Pr(v=k)=(1-p^{-1})p^{-k}\).  Consequently
+
+\[
+ \begin{aligned}
+ \mathbb E_p|D_p|
+ &\leq
+ \left(1-\frac1p\right)
+ \left\{\frac1p+
+ \frac{p-1}{p}\sum_{k\geq1}\frac{k+1}{p^k}\right\}\\
+ &=\frac{3p-2}{p^2}.
+ \end{aligned}
+\]
+
+For two independent unrestricted indices \(m,n\), the triangle
+inequality applied to the physical cross projector gives the exact
+majorant
+
+\[
+ \boxed{
+ \left(
+ \mathbb E_{p,m,n}
+ |D_p(m)\overline{O_p(n)}+O_p(m)\overline{D_p(n)}|
+ \right)^2
+ \leq
+ \frac{4(3p-2)^2}{p^3(p-1)^2}
+ \asymp p^{-3}.}
+\tag{4.845cc}
+\]
+
+At \(p=5\), the three rational values are
+\[
+ \mathbb E_5|D_5|\leq\frac{13}{25},\qquad
+ |O_5|^2\leq\frac5{16},\qquad
+ (2|O_5|\mathbb E_5|D_5|)^2\leq\frac{169}{500}.
+\]
+Thus the unrestricted average has amplitude \(p^{-3/2+o(1)}\),
+one full factor \(p^{-1}\) better than the pointwise
+\(p^{-1/2+o(1)}\) bound.
+
+The corresponding elementary smooth-interval statement is also
+available.  Expanding the valuation factors into divisibility
+indicators and counting multiples in an interval of length \(X\)
+gives, for squarefree \(A\),
+
+\[
+ \boxed{
+ \frac1X\sum_{n\in\mathbb Z}V(n/X)
+ \prod_{p\mid A}|D_p(n,1/2+it)|
+ \ll_{V,C}
+ A^{-1}\tau(A)^C+X^{-1}\tau(A)^C.}
+\tag{4.845cd}
+\]
+
+The constant \(C\) is absolute after fixing finitely many seminorms of
+\(V\); the \(O(1)\) boundary error for each divisibility condition
+produces only the displayed divisor-power cost.  When \(X\asymp A\),
+(4.845cd) is \(A^{-1+o(1)}\).  Formally inserting this extra
+\(A^{-1}\) into the center ledger would change
+\[
+ \frac{17}{8}\longmapsto
+ \frac{17}{8}-\frac54=\frac78,
+\]
+so the candidate has much more than the required \(1/8\) saving.
+
+This is not yet a proof for \(\mathfrak R_{\alpha,\beta}[\Psi]\).
+The physical sum has ratio and gcd restrictions inherited from the
+original \(r,s,h,\delta\) allocation; its indices are \(m\) and the
+completed residue/dual transforms of \(h\delta\), not two independent
+unrestricted integers.  In particular, the current derivation has not
+proved that every physical nuclear tensor preserves the valuation
+measure used in (4.845cc), nor has it controlled the two mixed terms
+\(R_1D_2\) and \(D_1R_2\) uniformly at all reciprocal-length
+endpoints.  These are theorem hypotheses, not polylogarithmic
+bookkeeping.
+
+The interface eisenstein_cross_cusp_ramification_density_audit records
+the exact local majorant and the *candidate* center exponent \(7/8\).
+It marks the unrestricted two-index density bound proved, while
+keeping physical-tensor density preservation, all three completed
+residue terms, the continuous local gate, global ratio/gcd
+aggregation, and the whole Möbius gate false.
+
+
+### 4.109s The L2 ramification density closes the nonzero continuous square
+
+The \(L^1\) candidate in Section 4.109r is stronger than the spectral
+argument needs and uses the wrong natural measure for the product
+index.  The primal large sieve requires a coefficient-energy estimate.
+It can be proved before the pole subtraction (4.845bq), so no
+residue/dual decomposition is needed for the nonzero Poisson modes.
+
+For independent unrestricted integers \(h,\delta\), the exact
+valuation distribution of their product is
+
+\[
+ \Pr(v_p(h\delta)=k)
+ =(k+1)\left(1-\frac1p\right)^2p^{-k}.
+\]
+Using (4.845cb) and
+\[
+ \sum_{k\geq0}(k+1)^3x^k
+ =\frac{1+4x+x^2}{(1-x)^4},
+\]
+one obtains the uniform second-moment bound
+
+\[
+ \boxed{
+ \mathbb E_{p,h,\delta}|D_p(h\delta,1/2+it)|^2
+ \leq
+ \frac{2(4p^2-2p+1)}{p^3}
+ \asymp\frac8p.}
+\tag{4.845ce}
+\]
+
+At the standard Kuznetsov first index, (4.845ac) gives
+\((m,Q)=1\), so for \(p\mid Q\)
+\[
+ |D_p(m,1/2+it)|^2=p^{-2}.
+\]
+If a preliminary gcd cell has not yet imposed this coprimality, the
+same calculation with a third unrestricted integer gives the same
+power below.  Combining (4.845ce), (4.845cb), and
+\(|a+b|^2\leq2|a|^2+2|b|^2\) yields
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\mathbb E_{p,h,\delta}
+ \left|
+ D_p(m)\overline{O_p(h\delta)}
+ +O_p(m)\overline{D_p(h\delta)}
+ \right|^2\\
+ &\qquad\leq
+ \frac{2p}{(p-1)^2}
+ \left\{\frac1{p^2}
+ \frac{2(4p^2-2p+1)}{p^3}\right\}
+ \ll p^{-2}.
+ \end{aligned}}
+\tag{4.845cf}
+\]
+
+For \(p=5\), the product-index diagonal moment is \(182/125\);
+the unramified first-index square is \(1/25\); and the right side of
+(4.845cf) is exactly \(187/200\).  The pointwise physical bound
+(4.845bx) has square size \(p^{-1}\).  Thus (4.845cf) restores one
+factor \(p^{-1}\) in coefficient energy, or \(p^{-1/2}\) in the
+spectral norm.
+
+It remains to justify multiplication over all primes of the shorter
+Atkin--Lehner factor.  This is an elementary weighted CRT estimate,
+not an independence assumption.  Let \(A\) be squarefree and let
+\(\mathcal P_A(m,h\delta;t)\) be the product of the local physical
+cross factors at \(p\mid A\).  The four-variable QCT Fourier
+decomposition (4.845ah) gives separate smooth one-variable weights in
+\(h\) and \(\delta\), and (4.845aj) only adds Mellin twists.  Expanding
+the local ramification indicators and counting
+\(d\mid h\delta\) by the \(2^{\omega(d)}\) assignments of primes of
+\(d\) to \(h\) or \(\delta\) gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ \frac1{HL}
+ \sum_{h,\delta}
+ |W_1(h/H)W_2(\delta/L)|
+ |\mathcal P_A(m,h\delta;t)|^2
+ \ll_{\varepsilon,W_1,W_2}
+ (AHL)^\varepsilon
+ \left(
+ A^{-2}+\frac1{AH}+\frac1{AL}+\frac1{HL}
+ \right).
+ \end{aligned}}
+\tag{4.845cg}
+\]
+
+To see the boundary terms explicitly, for every squarefree \(d\mid A\)
+use
+\[
+ \mathbf1_{d\mid h\delta}
+ \leq
+ \sum_{\substack{ab=d\\(a,b)=1}}
+ \mathbf1_{a\mid h}\mathbf1_{b\mid\delta}.
+\]
+For each assignment,
+\[
+ \frac1{HL}
+ \#\{h\asymp H,\delta\asymp L:a\mid h,\ b\mid\delta\}
+ \ll
+ \frac1{ab}+\frac1{aL}+\frac1{bH}+\frac1{HL}.
+\]
+The valuation powers in (4.845ce), all double-divisibility terms, and
+all choices of the product-Hecke common divisor contribute only
+\(\tau(A)^C=(AHL)^{o(1)}\).  This proves (4.845cg) with the actual
+smooth tensor weights.  On the residual square,
+\[
+ 1\leq\alpha,\beta\leq\frac32,\qquad
+ A=T^{\eta},\quad
+ \eta=\min(\alpha,\beta),\qquad H=L=T^{5/2},
+\]
+so every boundary term in (4.845cg) is bounded by
+\(A^{-2}T^{o(1)}\).
+
+At primes in the complementary level factor the two physical cusps
+are locally the same; their contribution is the Poisson-gcd
+majorant (4.845bo).  At primes of the shorter factor they are the
+cross pair just estimated.  Kiral--Young's squarefree cusp
+factorization tensors these local statements, while the finite
+product-Hecke common-divisor allocations cost \(T^{o(1)}\).
+Consequently the primal continuous exponent (4.845bc) improves to
+
+\[
+ \boxed{
+ E_{\rm cont}^{\ne0}(\alpha,\beta)
+ =\frac32+\frac{x(\alpha,\beta)}2
+  -\frac{\min(\alpha,\beta)}2
+ \leq\frac32<2.}
+\tag{4.845ch}
+\]
+
+At the center this is
+\[
+ \frac{17}{8}-\frac58=\frac32.
+\]
+Thus every nonzero-Poisson-mode continuous box in the residual square
+has the fixed margin \(1/2\); outside the square it was already covered
+by (4.845bc).  This argument bypasses the completed-residue trilinear
+gate of Section 4.109q rather than proving that stronger signed
+statement.
+
+The interface eisenstein_cross_cusp_l2_density_audit records the exact
+prime-five moments, the \(5/8\) center saving, the final exponent
+\(3/2\), QCT weight separation, the finite common-divisor allocations,
+and the weighted CRT boundary estimate.  It marks the physical
+cross-cusp **nonzero-mode** continuous residual square covered.  It
+also records that the original common-Mellin zero-mode/main-term
+identity (4.5a)--(4.8) is proved.  Because this primal route does not
+shift the two Eisenstein polynomials separately, the stronger spectral
+residue decomposition is not a required intermediate theorem.  It
+keeps global ratio/gcd and dyadic aggregation, and the whole Möbius
+gate false.
+
+
+### 4.109t Every balanced factor cell has a half-power margin
+
+Sections 4.109i--4.109s can now be combined without a numerical grid.
+Keep the balanced hard geometry
+\[
+ R=S=T^3,\qquad |h|=|\delta|=T^{5/2},
+\]
+but allow every factor box produced by the exact Type-I/II identity.
+Write
+\[
+ A=T^\alpha,\qquad B=T^\beta,\qquad
+ \lambda=\alpha+\beta,\qquad
+ \eta=\min(\alpha,\beta),\qquad 0\leq\alpha,\beta\leq3.
+\]
+The maximum residual Hecke-polynomial exponent is
+\(\min(5/2,\lambda)\).  Hence the primal large-sieve excess from
+(4.845bc) is
+
+\[
+ \boxed{
+ x(\alpha,\beta)
+ =\left(\eta+\min(5/2,\lambda)-\lambda\right)_+
+ \leq\eta.}
+\tag{4.845ci}
+\]
+
+This inequality is formal: \(\min(5/2,\lambda)\leq\lambda\).
+
+There is one endpoint correction to the density ledger of Section
+4.109s.  Its residual square has \(\eta\leq3/2\), so the
+\(A^{-2}\) term in (4.845cg) dominates all three CRT boundary terms.
+That dominance does not persist on the whole factor square.  For
+general \(A=T^\eta\), \(H=T^h\), and \(L=T^\ell\), (4.845cg) has
+square-decay exponent
+
+\[
+ d_{\rm CRT}=\min(2\eta,\eta+h,\eta+\ell,h+\ell).
+\]
+
+The pointwise cross-projector square already has decay exponent
+\(\eta\).  Taking the better of it and the two-variable CRT estimate
+gives the additional square saving
+
+\[
+ \boxed{
+ d_2(\eta;h,\ell)
+ =\max\{0,\min(\eta,h,\ell,h+\ell-\eta)\}.}
+\tag{4.845cl}
+\]
+
+For unequal product intervals there is a second, stronger boundary
+estimate.  The local formulae in (4.845ce), with their valuation
+powers absorbed by \(T^\varepsilon\), give for squarefree \(A\)
+
+\[
+ |\mathcal P_A(m,h\delta;t)|^2
+ \ll_\varepsilon A^{-2+\varepsilon}(A,h\delta).
+\]
+
+Put \(u=\min(h,\ell)\), \(v=\max(h,\ell)\), bound the variable
+\(z\sim T^u\) pointwise, and average the other variable
+\(y\sim T^v\).  The elementary divisor identity
+\((A,y)=\sum_{d\mid(A,y)}\varphi(d)\) gives
+
+\[
+ \frac1{T^v}\sum_{y\asymp T^v}(A,y)
+ \ll_\varepsilon T^\varepsilon(1+A/T^v),
+ \qquad (A,yz)\leq |z|(A,y).
+\]
+
+Consequently this one-variable route has additional square saving
+
+\[
+ \boxed{
+ d_1(\eta;h,\ell)
+ =\max\{0,\min(\eta-u,v-u)\},\qquad
+ d=\max(d_1,d_2).}
+\tag{4.845cm}
+\]
+
+In particular, \((\eta,h,\ell)=(1,1,0)\) has \(d_2=0\) but
+\(d_1=1\).  A bounded nonzero shift variable therefore does not erase
+the density saving: its gcd with the squarefree level factor is bounded,
+and the full divisibility average is taken in the other product
+variable.
+
+The zero-saving locus is now exact:
+
+\[
+ \boxed{d(\eta;h,\ell)=0
+ \quad\Longleftrightarrow\quad
+ h=\ell=:u\ \text{ and }\ \eta\geq2u.}
+\tag{4.845cn}
+\]
+
+If \(h\ne\ell\), then either \(\eta\leq u\), when
+\(d_2=\eta>0\), or \(\eta>u\), when
+\(d_1=\min(\eta-u,v-u)>0\).  If \(h=\ell=u\), then \(d_1=0\)
+and (4.845cl) is positive exactly when \(2u>\eta\).  Thus the
+continuous-spectrum density obstruction in the original unbalanced
+polytope is confined to the equal short-product face (4.845cn), rather
+than to all boxes with a bounded product variable.  This geometric
+classification does not yet supply the unbalanced Kuznetsov
+normalization or aggregate the transform tails.
+
+At the balanced product lengths \(h=\ell=5/2\), this becomes
+\[
+ d_2(\eta;5/2,5/2)
+ =\max\{0,\min(\eta,5/2,5-\eta)\}.
+\]
+Here \(d_1=0\), while \(d=d_2\) still dominates
+\(x(\alpha,\beta)\).  Indeed, if
+\(\lambda\leq5/2\), then \(\eta\leq5/4\) and both quantities equal
+\(\eta\).  If \(\lambda>5/2\) and \(\eta\leq5/2\), then
+\(d=\eta\) and \(x\leq\eta\).  Finally, if \(\eta>5/2\), then
+\(\lambda\geq2\eta>5\), so \(x=0\leq d\).  Thus no unrecorded
+short-interval boundary loss occurs.
+For a primitive cuspidal conductor \(q_0=T^\rho\) with
+\(0\leq\rho\leq\lambda\), the primal/dual normalized excess in
+(4.845bg) is at most
+
+\[
+ \boxed{
+ \eta+\frac{\rho}{2}-\lambda
+ \leq\eta-\frac{\lambda}{2}
+ =-\frac{|\alpha-\beta|}{2}\leq0.}
+\tag{4.845cj}
+\]
+
+Thus the Maaß and holomorphic cusp contributions have exponent
+\(3/2\).  For the continuous contribution, the boundary-corrected
+version of (4.845ch) and (4.845ci) give
+
+\[
+ \boxed{
+ \begin{aligned}
+ E_{\rm cusp/holo}(\alpha,\beta)&\leq\frac32,\\
+ E_{\rm cont}^{\ne0}(\alpha,\beta)
+ &=\frac32+\frac{x(\alpha,\beta)
+                    -d_2(\eta;5/2,5/2)}2
+ \leq\frac32,\\
+ \max(E_{\rm cusp/holo},E_{\rm cont}^{\ne0})
+ &\leq\frac32=2-\frac12.
+ \end{aligned}}
+\tag{4.845ck}
+\]
+
+No case distinction remains: (4.845ck) covers Type-I/Type-I,
+Type-I/Type-II, and Type-II/Type-II factor cells, including their
+boundary faces.  Divisor allocations, oldclass shifts, and the
+five-variable physical nuclear measure have \(T^{o(1)}\) or
+polylogarithmic cost, absorbed by the fixed \(1/2\) margin.
+
+This is a complete factor-polytope statement only inside the balanced
+hard geometry.  The original exponent polytope also contains
+\(R\neq S\), unequal \(h,\delta\) lengths, positive \(q\)-exponent,
+and boxes outside the polylogarithmic transform core.  The normalization
+leading to the common base \(3/2\) has not yet been rederived uniformly
+on those cells.  Equation (4.845ck) must not be used as a global MWKF
+coverage certificate before that rederivation.
+
+The interfaces cross_cusp_density_boundary_audit and
+balanced_spectral_factor_polytope_audit check (4.845ci)--(4.845cn)
+with exact rational arithmetic.  In particular, at
+\(\alpha=\beta=3\), the CRT decay is \(5\), not \(6\), and the
+additional amplitude saving is \(1\), not \(3/2\).  The continuous
+exponent is then \(1/2\), while the cuspidal maximum remains \(3/2\).
+The audit therefore still marks all balanced Type-I/II factor cells
+covered with margin \(1/2\), while keeping the unbalanced original
+polytope, transform-tail aggregation, and whole Möbius gate false.
+
+
+### 4.109u Unequal product lengths leave no normalized continuous excess
+
+The boundary refinement also removes the assumption
+\(H=L=T^{5/2}\) from the normalized product-sieve comparison.  Write
+
+\[
+ u=\min(h,\ell),\qquad v=\max(h,\ell),\qquad
+ \lambda=\alpha+\beta,qquad\eta=\min(\alpha,\beta).
+\]
+
+In (4.845t), split the common divisor at
+\(c=T^{(v-\lambda)_+}\).  Above this split both residual Hecke
+polynomials have length at most \(T^\lambda\).  Multiplying the
+Poisson--Hecke index \(T^\eta\) into the shorter residual polynomial
+leaves the square-large-sieve excess
+
+\[
+ \boxed{
+ x_{u,v}
+ =\left(\eta+\max\{0,u-(v-\lambda)_+\}-\lambda\right)_+.}
+\tag{4.845co}
+\]
+
+If \((v-\lambda)_+>u\), the large-common-divisor range is empty and
+the small-common-divisor Möbius-PNT estimate applies; this is the zero
+inside the inner maximum in (4.845co).
+
+For every \(\alpha,\beta,h,\ell\geq0\), one has
+
+\[
+ \boxed{x_{u,v}\leq d(\eta;h,\ell).}
+\tag{4.845cp}
+\]
+
+Indeed \(\lambda\geq2\eta\).  If \(v\leq\lambda\), then
+\(u\leq\lambda\), so
+\(x_{u,v}=(\eta+u-\lambda)_+\leq\eta\); whenever it is positive,
+the two-variable density term in (4.845cl) supplies the required
+amount.  If \(v>\lambda\), then
+\(x_{u,v}=(\eta+u-v)_+\).  Positivity together with
+\(v>\lambda\geq2\eta\) forces \(u>\eta\); hence
+\(d_2=\eta\) and again \(x_{u,v}\leq d_2\).  On the exact
+zero-density face (4.845cn), \(\lambda\geq2\eta\geq4u), so
+\(x_{u,u}=0\).
+
+After Cauchy, the large-sieve excess contributes \(x_{u,v}/2\) in
+amplitude, while (4.845cl)--(4.845cm) subtract
+\(d(\eta;h,\ell)/2\).  Thus the nonzero continuous normalized excess
+is nonpositive for every unequal-product cell whenever completion has
+Poisson length \(T^\eta\).  The interface
+balanced_completion_unequal_product_audit records the common-divisor
+split, shorter residual length, excess, and density saving.
+
+This is not yet the full original-polytope theorem.  For
+\(R\ne S\), completing the \(r\)-quotient produces Poisson exponent
+\((\sigma-\rho+\alpha)_+\), and completing the \(s\)-quotient produces
+\((\rho-\sigma+\beta)_+\), rather than \(\eta\).  The outer QCT
+normalization, choice of orientation, and \(q\)-dependent tails must be
+rederived before (4.845cp) can be promoted to global coverage.
+
+
+### 4.109v CRT lift and reciprocity close the normalized spectral excess
+
+The two completion orientations can be compared before choosing either
+one.  For \(R=T^\rho\), \(S=T^\sigma\), their Poisson exponents are
+
+\[
+ \boxed{
+ p_L=(\sigma-\rho+\alpha)_+,\qquad
+ p_R=(\rho-\sigma+\beta)_+.}
+\tag{4.845cq}
+\]
+
+If both are positive, then
+\[
+ p_L+p_R=\alpha+\beta=\lambda.
+\]
+If one is zero, that inactive orientation has no positive Poisson
+length.  Retain the common shorter residual exponent
+
+\[
+ c=\max\{0,u-(v-\lambda)_+\}\leq\min(u,\lambda).
+\]
+
+The two square-large-sieve excesses and their density corrections are
+
+\[
+ \boxed{
+ x_L=(p_L+c-\lambda)_+,\quad
+ x_R=(p_R+c-\lambda)_+,\qquad
+ d_L=d(\alpha;h,\ell),\quad
+ d_R=d(\beta;h,\ell).}
+\tag{4.845cr}
+\]
+
+At least one orientation satisfies \(x_\star\leq d_\star\).  If a
+Poisson exponent vanishes, choose it: \(c\leq\lambda\) gives
+\(x_\star=0\).  Suppose therefore that both are positive.  Then
+\[
+ x_L=(c-p_R)_+,\qquad x_R=(c-p_L)_+.
+\]
+If \(\lambda\geq2c\), one of \(p_L,p_R\) is at least \(c\), and the
+opposite excess is zero.
+
+It remains to consider \(\lambda<2c\).  Since
+\(c\leq\min(u,\lambda)\), one has \(\lambda<2u\).  On
+\([0,\lambda]\), put
+\[
+ \tau_u(a)=\min(a,2u-a).
+\]
+The two-variable term in (4.845cl) gives
+\[
+ d(a;h,\ell)\geq d_2(a;h,\ell)\geq\tau_u(a),
+\]
+and the elementary tent-function inequality is
+\[
+ \tau_u(a)+\tau_u(\lambda-a)
+ \geq\min(\lambda,2u-\lambda)
+ \geq2c-\lambda.
+\]
+If both \(x_L>d_L\) and \(x_R>d_R\), adding the two strict
+inequalities would instead give
+\[
+ d_L+d_R<2c-(p_L+p_R)=2c-\lambda,
+\]
+a contradiction.  Therefore
+
+\[
+ \boxed{
+ \min\{x_L-d_L,\ x_R-d_R\}\leq0.}
+\tag{4.845cs}
+\]
+
+The cuspidal and holomorphic components may choose their completion
+orientation separately.  If one Poisson exponent is zero, it has no
+positive primal/dual excess.  Otherwise
+\(\min(p_L,p_R)\leq\lambda/2\), so for every primitive conductor
+\(q_0\leq T^\lambda\),
+\[
+ \min(p_L,p_R)+\frac{\log_Tq_0}{2}-\lambda\leq0.
+\]
+
+For a bound on the original geometric sum, however, the spectral
+components must use one common completion orientation.  The density
+projector from Section 4.109g also applies to cusp forms.  In squared
+normalization their two worst conductor requirements are
+
+\[
+ \boxed{
+ q_L=(2p_L-\lambda)_+,qquad
+ q_R=(2p_R-\lambda)_+.}
+\tag{4.845ct}
+\]
+
+There is always one index \(i\in\{L,R\}\) for which both
+\(x_i\leq d_i\) and \(q_i\leq d_i\).  The inactive-orientation case is
+immediate.  Suppose both are active.  Section 4.109v already proves
+that at least one orientation closes the continuous spectrum.  If that
+orientation has the smaller \(p_i\), then \(q_i=0\).  Otherwise, say
+the left orientation closes continuous but fails cusp.  Then
+
+\[
+ p_L>p_R,qquad d_L<p_L-p_R.
+\]
+
+If the right continuous excess were positive, then \(c>p_L\), while
+left continuous closure would give
+
+\[
+ d_L\geq c-p_R>p_L-p_R,
+\]
+
+a contradiction.  Hence the right continuous excess is zero, and
+\(p_R<p_L\) gives \(q_R=0\).  The reversed case is identical.  Thus
+
+\[
+ \boxed{
+ \exists i\in\{L,R\}:\qquad
+ x_i\leq d_i\quad\text{and}\quad q_i\leq d_i.}
+\tag{4.845cu}
+\]
+
+Combining the power-exponent exact-valuation calculation from Section
+4.109g with this orientation argument, every
+original entry-scale asymmetry, every factor allocation, and every pair
+of product lengths has no positive normalized factor-model excess:
+Maaß, holomorphic, and nonzero continuous components all have a valid
+completion orientation.  The interface
+unbalanced_completion_orientation_audit records (4.845cq)--(4.845cs)
+with exact rational arithmetic.
+
+It marks the base-level factor model, the direct cross-cusp geometric
+adapter, the optional exact-valuation lifted family, and normalized
+*power-exponent* all-cell coverage true.  The polylogarithmic tensor
+estimate isolated in Section 4.109x is reduced in Section 4.109zf to a
+uniform physical harmonic-large-sieve target.  Section 4.109zfa closes
+its dyadic power-exponent ledger, but not the uniform transform theorem
+or the signed cross-index PEVP gate.  Polylogarithmic transform tails and
+the AFE tail remain separate obligations.
+
+
+### 4.109w The lifted nonzero Poisson core has a seven-log aggregation
+
+Write \(L=\log(2T)\).  Before the proof in Section 4.109zfgb, this
+aggregation was conditional on PEVP\(_{A,B}\), stated in Section 4.109x.
+The local lifted estimates retain every ratio,
+gcd, exact-valuation, and Type-I/II allocation inside their coupled
+weight; none of these indices is summed a second time after the local
+gate.  For a left completion, the exact CRT lift has prefactor \(R\),
+whereas a right completion has prefactor \(S\).  Thus the two possible
+local gates are
+
+\[
+ \boxed{
+ \mathfrak S^{L}_{q}=R\mathfrak K^{L}_{q},\qquad
+ |\mathfrak K^{L}_{q}|\ll_{W,C} S L^{-B};
  \quad
- \Delta=n_Ps_{P'}-n_{P'}s_P.}
- \tag{4.659}
+ \mathfrak S^{R}_{q}=S\mathfrak K^{R}_{q},\qquad
+ |\mathfrak K^{R}_{q}|\ll_{W,C} R L^{-B}.}
+\tag{4.845cv}
 \]
 
-All four \(X/Y\) blocks, including the mixed I/II and II/I terms, are
-retained.  On primitive support \(\Delta=0\) forces one original
-\((n,s)\) entry; summing every \(dm=n\) cross factorization then gives
-\(-\mu(s)\mu(n)\log n\) on each side by (4.621zadj16z).  Therefore
+Here \(C\) is a fixed finite collection of normalized kernel
+seminorms.  The common-orientation assertion
+(4.845cu) chooses one of
+these two gates for all Maaß, holomorphic, and nonzero Eisenstein
+components in the same geometric box.  In either orientation it gives
+the identical reconstructed bound
+
+\[
+ \boxed{ |\mathfrak S_q|\ll_{W,C}RS L^{-B}. }
+\tag{4.845cw}
+\]
+
+For the six dyadic variables in the exact decomposition there are at
+most \(O_W(L^6)\) nonempty boxes.  The outer normalization is exactly
+\(2T/(qRS)\), and the gcd variable has the harmonic ledger
+\(\sum_{q\leq T^{O(1)}}q^{-1}\ll L\).  Consequently the retained
+nonzero Poisson core satisfies
 
 \[
  \boxed{
- \sum_{X,Y}\mathcal N_{X,Y}^{\Delta=0}
- =\mathcal N_{\Delta=0}^{\rm original\ entry},}
- \tag{4.660}
+ \sum_q\ \sum_{\text{six dyadic boxes}}
+   {2T\over qRS}|\mathfrak S_q|
+ \ll_{W,C} T L^{7-B}=o_W(T)\qquad(B>7).}
+\tag{4.845cx}
 \]
 
-before Cauchy--Schwarz.  The helper
-labelled_type_nonprincipal_determinant_split verifies
-(4.656)--(4.660) over exact rational vector packets.  Its fixture includes
-two differently labelled packets on \((n,s)=(30,19)\), a second entry
-\((35,22)\), common sector \(b=11\), all four Type-pair blocks, and the
-nonzero determinants \(\pm5\).  It records every \(h\delta\) and keeps
-global_nonzero_determinant_gate_proved false.
+Section 4.109zfgb proves PEVP, so (4.845cx) applies whenever its local
+\(L^{-B}\) hypothesis is supplied.  Formula (4.845cx) does not absorb
+the polylogarithmic kernel-separation tail or the original AFE tail;
+Section 4.109zg treats those shells.  The interface
+`lifted_outer_qct_aggregation_audit` records the seven-log ledger and
+the full outer LISK failure of the compact core.  Section 4.109zi
+explains why fixed-entry PEVP does not itself supply that local gate.
 
-Since the original-entry diagonal already has exponent two, a convenient
-sufficient estimate for this supplied sector packet is the *joint* gate
+
+### 4.109x The valuation tensor isolates the PEVP square function
+
+Let \(\mathscr B_{A,B,D,j}[b,a]\) denote one exact-valuation spectral
+bilinear form after the CRT lift, with \(D=(A,h\delta)\), level
+\(ABj\), and all physical smooth weights retained.  The local
+identities above prove the required exponent, but the logarithmic
+endpoint needs the stronger square-function inequality
 
 \[
  \boxed{
- \mathrm{JNT}_{2}^{\rm abs}:\qquad
- \left|\sum_{X,Y\in\{\mathrm I,\mathrm{II}\}}
- \mathcal N_{X,Y}^{\Delta\ne0}\right|
- \ll_{\varepsilon,W}T^{2+\varepsilon}.}
- \tag{4.661}
+ \sum_{D\mid A}\left|
+   \sum_{j\mid A}\mu(j)\mathscr B_{A,B,D,j}[b,a]
+ \right|^2
+ \ll_{C,W}\frac{(\log(2T))^C}{A}
+ \left(\sum_m|b_m|^2\right)
+ \left(\sum_{h,\delta}|a_{h,\delta}|^2\right).}
+\tag{PEVP}_{A,B}
 \]
 
-No separate bound for an individual Type block is required.  The finite
-fixture makes this distinction visible: the four full Type-pair energies
-are \(171/5,-342/5,-342/5,1368\), while their nonzero-determinant part is
-the signed value \(-2052\).  Taking absolute values blockwise would erase
-precisely the cross-sector cancellation retained by (4.661).
+The Fourier normalizations and spectral measure are those of
+(EVP)\(_{A,B}\); the coefficient \(a_{h,\delta}\) includes the physical
+product weight and the exact condition \(D=(A,h\delta)\).  Unlike
+arbitrary EVP, PEVP asks only for this physical product coefficient,
+but it keeps the signed \(j\)-sum inside the square.
 
-The full nonprincipal sum has more structure than its determinant-nonzero
-part.  If
+The earlier cell-by-cell positive estimates give (4.845cy), namely the
+same right side with \(5^{\omega(A)}\) in place of
+\((\log(2T))^C\).  The primorial calculation following (4.845cy) shows
+that this is not a polylogarithmic substitute.  Thus PEVP\(_{A,B}\)
+is the precise Möbius-weighted exact-valuation square-function gate.
+Sections 4.109y--4.109z give the formal primitive-conductor ledger, but
+Section 4.109ze shows that ordinary positive Cauchy does not legally
+transfer its cross-index local saving.  Sections 4.109zf--4.109zfa audit
+the full-level transform exponent, and Section 4.109zfb gives a direct
+geometric alternative.  Sections 4.109zfd--4.109zfgb subsequently
+complete the finite transfer, the full-level sieve, and fixed-entry
+PEVP.  The compact core still requires the outer aggregation audited
+in Section 4.109zi.
 
+
+### 4.109y Exact-level differencing removes the bad valuation multiplicity
+
+The factor \(5^{\omega(A)}\) in (4.845cy) is created by taking
+absolute values before the signed \(j\)-sum.  At one prime \(p\mid A\),
+that sum is the exact level difference \(\Delta_p-\Delta_{p^2}\).
+It can be evaluated on each primitive representation before any
+valuation partition.
+
+First take a primitive representation unramified at \(p\).  Let
+\(\lambda_a=\lambda(p^a)\), put \(\lambda_a=0\) for \(a<0\), and set
 \[
- X_b=\sum_{P:\,b(P)=b}c_PA_P\widetilde V_P,
- \qquad A_P=-\mu(s_P)\mu(n_P)\log n_P,
+ D_p=1-\frac{p|\lambda_1|^2}{(p+1)^2}.
 \]
-
-then the character projector gives the exact square identity
+For valuations \(a=v_p(m)\) and \(b=v_p(Ah\delta)\geq1\), define
+\[
+\begin{aligned}
+ P_p(a,b)
+ &=\lambda_a\lambda_b
+  +\frac p{D_p}
+   \left(\lambda_{a-1}-\frac{\lambda_1\lambda_a}{p+1}\right)
+   \left(\lambda_{b-1}-\frac{\lambda_1\lambda_b}{p+1}\right),\\
+ U_{p^2}(a)
+ &=\frac{p^{-1}\lambda_a-\lambda_1\lambda_{a-1}
+                  +p\lambda_{a-2}}
+        {\sqrt{D_p(1-p^{-2})}}.
+\end{aligned}
+\]
+The ambient first-coefficient square normalizations are
+\((p+1)^{-1}\) at level \(p\) and \((p(p+1))^{-1}\) at level
+\(p^2\).  Hence the literal signed local trace kernel is
 
 \[
  \boxed{
- \mathcal N_{\ne0}^{\rm Type}
- =\sum_b\|X_b\|_2^2-\frac1M\left\|\sum_bX_b\right\|_2^2
- =\frac1M\sum_{0\leq b<c<M}\|X_b-X_c\|_2^2\geq0.}
- \tag{4.662}
+ \mathcal K_p^{(0)}(a,b)
+ =\frac{P_p(a,b)}{p+1}
+  -\frac{P_p(a,b)+U_{p^2}(a)U_{p^2}(b)}{p(p+1)}.}
+\tag{4.845cz}
+\]
+
+For \(a=0\), (4.845aq_8) makes the complete level-\(p^2\) oldclass
+cross term zero.  The Hecke recurrence therefore gives
+\[
+ \frac{\mathcal K_p^{(0)}(0,b)}{c_p(1)}
+ =-\frac{\lambda_1\lambda_{b-1}/(p+1)-\lambda_{b-2}}
+         {(p+1)D_p}.
+\]
+For \(a\geq1\), insert the three terms in \(U_{p^2}\) and use
+\(|c_p(p^a)|=p-1\).  Uniformly for \(b\geq1\), Kim--Sarnak and
+\(D_p\gg1\) give the two explicit local inequalities
+
+\[
+ \boxed{
+ \begin{aligned}
+ \left|\frac{\mathcal K_p^{(0)}(0,b)}{c_p(1)}\right|
+ &\ll (b+1)p^{-1+(b-2)_+\theta},\\
+ \left|\frac{\mathcal K_p^{(0)}(a,b)}{c_p(p^a)}\right|
+ &\ll (a+1)(b+1)p^{-1+(a+b-2)\theta}
+ \qquad(a\geq1).
+ \end{aligned}}
+\tag{4.845da}
+\]
+
+The exact-valuation coefficient norms contribute
+\(p^{-a/2}\) from the Poisson index and \(p^{-(b-1)/2}\) from the
+physical product index.  In the first line of (4.845da), \(b=1\) has
+exponent \(-2+\theta<-3/2\), while for \(b\geq2\) the exponent is
+\[
+ -1+(b-2)\theta-\frac{b-1}{2}\leq-\frac32.
+\]
+The second line has exponent
+\[
+ -1+(a+b-2)\theta-\frac{a+b-1}{2}\leq-\frac32
+ \qquad(\theta<1/2).
+\]
+Thus every unramified conductor choice has amplitude saving at least
+\(p^{-3/2}\), a full prime beyond the required \(p^{-1/2}\), rather
+than the equality which produced
+\(4^{\omega(D)}\).
+
+For primitive conductor exponent one, the local representation is
+Steinberg: \(|\lambda_1|^2=p^{-1}\) and
+\(\lambda_b=\lambda_1^b\).  Comparing the level-\(p\) newvector with
+its complete level-\(p^2\) oldclass gives the exact squared formula
+\[
+ \left|\frac{\mathcal K_p^{(1)}(a,b)}{c_p(p^a)}\right|^2
+ =\begin{cases}
+ p^{-b}\left(1-\dfrac{p+1}{p^2(p+2)}\right)^2,&a=0,\\[2mm]
+ p^{-(a+b)}\left(1+\dfrac1{p^2(p+2)(p-1)}\right)^2,&a\geq1.
+ \end{cases}
+\]
+The factors previously displayed as exactly one were a normalization
+error.  Their corrected product is bounded by an absolute convergent
+Euler product, so the local power exponent survives, but this calculation
+does not supply the global spectral inequality.
+Primitive conductor exponent two contributes zero because its local
+Euler factor has degree zero and \(b\geq1\).  The unramified
+Eisenstein oldspace obeys (4.845cz)--(4.845da) with \(\theta=0\), and
+the conductor-\(p^2\) character pair again vanishes at positive
+valuation.
+
+After summing primitive-conductor choices at the amplitude level, the
+unramified and Steinberg weights just computed give
+\[
+ A^{-1/2}\prod_{p\mid A}(1+O(p^{-1}))
+ \ll A^{-1/2}(\log\log(3A))^{O(1)}.
+\]
+Thus primitive-conductor aggregation itself is polylogarithmic; no
+Vinogradov--Korobov comparison is needed for this step.  The stronger
+squared ledger, including the two terms in the primitive large sieve,
+is recorded after the exact regrouping below.
+
+The functions `unramified_exact_level_difference_kernel` and
+`steinberg_exact_level_difference_kernel_square` check the two finite
+local formulae.  To promote this improvement to PEVP\(_{A,B}\), the
+newform decomposition must still be rearranged with the same Bessel
+test at every level and the resulting primitive spectral moments must
+be bounded without an \(\varepsilon\)-loss.  Until that global estimate
+is proved, the polylog tensor flag remains false.
+
+
+### 4.109z Primitive-conductor regrouping is exact and exposes the epsilon-free gate
+
+The remaining global rearrangement can be written without an
+asymptotic sign.  For \(Q_0\mid Q\), set
+\[
+ \iota_Q(Q_0):=[\Gamma_0(Q_0):\Gamma_0(Q)]
+ =\frac Q{Q_0}
+  \prod_{\substack{p\mid Q/Q_0\\p\nmid Q_0}}\left(1+\frac1p\right).
+\]
+Let \(\pi\) be primitive of conductor \(Q_0\), let \(g\mid Q/Q_0\),
+and use the general Blomer--Milićević coefficients \(\xi_{\pi,g}(d)\).
+In normalized Fourier coefficients put
+\[
+ U_{\pi,g}(n):=\sum_{d\mid g}\xi_{\pi,g}(d)\sqrt d\,
+                 \lambda_\pi(n/d),
+ \qquad \lambda_\pi(x)=0\quad(x\notin\mathbb N).
+\]
+For one fixed Kuznetsov Bessel test \(\Phi\), the cuspidal part of the
+full level trace is exactly
+
+\[
+ \boxed{
+ \Delta_Q^{\rm cusp}(m,n;\Phi)
+ =\sum_{Q_0\mid Q}\ \sum_{\pi\in\mathcal B^*(Q_0)}
+  \frac{|\rho_\pi(1)|^2\Phi(t_\pi)}{\iota_Q(Q_0)}
+  \sum_{g\mid Q/Q_0}U_{\pi,g}(m)
+       \overline{U_{\pi,g}(n)}.}
+\tag{4.845db}
+\]
+
+The same identity holds for holomorphic forms.  Young's orthogonal
+Eisenstein newdata decomposition and his Section 8.5 oldclass basis
+give the identical formula for the continuous part, with the primitive
+sum replaced by its finite character-pair sum and real spectral
+integral.  Compact spectral localization and the ordinary large sieve
+make the displayed integrals absolutely convergent.
+
+Now put \(Q=ABj\), where \(j\mid A\), and retain the same \(\Phi\) for
+every \(j\).  All divisor sums are finite, so (4.845db) gives the exact
+reordering
+
+\[
+ \boxed{
+ \begin{aligned}
+ \sum_{j\mid A}\mu(j)\Delta_{ABj}(m,An;\Phi)
+ ={}&\sum_{Q_0\mid A^2B}\ \int_{\mathscr S^*(Q_0)}
+ |\rho_\pi(1)|^2\Phi(t_\pi)\\
+ &\times\sum_{\substack{j\mid A\\Q_0\mid ABj}}
+ \frac{\mu(j)}{\iota_{ABj}(Q_0)}
+ \sum_{g\mid ABj/Q_0}U_{\pi,g}(m)
+       \overline{U_{\pi,g}(An)}\,d\pi .
+ \end{aligned}}
+\tag{4.845dc}
+\]
+
+At each \(p\mid A\), the inner two sums in (4.845dc) are exactly the
+three conductor cases of Section 4.109y.  After the valuation norms,
+their amplitude weights satisfy
+\[
+ w_p(0)\ll p^{-3/2},\qquad
+ w_p(1)\leq p^{-1/2},\qquad
+ w_p(2)=0.
+\]
+Consequently even absolute aggregation at the amplitude level costs
+only
+\[
+ A^{-1/2}\prod_{p\mid A}(1+O(p^{-1}))
+ \ll A^{-1/2}(\log\log(3A))^{O(1)}.
+\]
+There is no subexponential conductor-subset overhead and no
+Vinogradov--Korobov input is needed in this ledger.
+
+PEVP does not take that triangle inequality: it keeps the signed local
+operator inside a square.  Put the complete exact-level multiplier on
+one side of Cauchy and the unweighted ambient spectral polynomial on
+the other.  The conductor weights in the first square are then
+\[
+ w_p^{(2)}(0)\ll p^{-3},\qquad
+ w_p^{(2)}(1)\leq p^{-1},\qquad
+ w_p^{(2)}(2)=0.
+\]
+Consequently the diagonal part of their complete conductor-subset sum
+already satisfies
+\[
+ \sum_{Q_0\mid A^2B}w_A^{(2)}(Q_0)
+ \ll \frac1A\prod_{p\mid A}(1+O(p^{-2}))
+ \ll \frac1A.
+\]
+In the length term of the primitive large sieve, division by the
+primitive conductor contributes one further \(p^{-1}\) when the local
+conductor exponent is one.  Its two nonzero choices are therefore
+\(O(p^{-3})\) and \(p^{-2}\), whence
+\[
+ \sum_{Q_0\mid A^2B}\frac{w_A^{(2)}(Q_0)}{Q_0}
+ \ll \frac1{A^2B}\prod_{p\mid A}(1+O(p^{-1}))
+ \ll \frac{(\log\log(3A))^{O(1)}}{A^2B}.
+\]
+Thus both conductor Euler sums are polylogarithmic and the diagonal
+one supplies the required square saving \(A^{-1}\) without using VK.
+
+One loss is still not explicit enough.  The cited spectral large sieve
+is stated with \((Q_0Y\mathcal T)^\varepsilon\).  At a zero-power
+margin, a fixed \(\varepsilon\)-loss cannot be absorbed by the
+Vinogradov--Korobov factor.  What is needed is the weighted,
+epsilon-free form
+
+\[
+ \boxed{
+ \sum_{Q_0\mid A^2B}w_A^{(2)}(Q_0)
+ \int_{\mathscr S^*(Q_0)}
+ \left|\sum_{y\asymp Y}a_y\sqrt y\,\rho_\pi(y)\right|^2d\pi
+ \ll_{C,W}\frac{(\log(2T))^C}{A}
+ \left(\mathcal T^2+\frac{Y}{AB}\right)
+ \sum_y|a_y|^2,}
+\tag{PLS}_{Q_0}
+\]
+
+where \(w_A^{(2)}(Q_0)\) is the product of the three squared local
+weights and includes the exact ambient normalizations in (4.845dc).
+The other Cauchy factor is the unweighted full ambient spectral
+polynomial.  A proof
+may use the Kuznetsov formula again, but every divisor factor must be
+summed in mean; replacing it by a pointwise \(n^\varepsilon\) bound is
+not sufficient.
+
+Sections 4.109zfd--4.109zff now complete the signed cross-index
+primitive-conductor passage.  Every unramified rank factor is a
+downward \(p^2\)-shift, so its support is no longer than the original
+coefficient support; the Steinberg factor uses the original primitive
+coefficient list; and the ramified continuous factor is zero.  The
+coefficient-weighted conductor aggregation is exactly the two Euler
+ledgers above.  Thus PEVP has been reduced to the uniform-polylog
+harmonic large sieve \((\mathrm{PLS})_{Q_0}\).
+
+At this point the published large sieve still does not supply the
+required constant.  Section 4.109zf gives the sparse-Farey reduction
+for the full-level harmonic square, while Section 4.109zfa records an
+exact dyadic Mellin exponent calculation.  Section 4.109zfg sketches
+the uniform transform lemma still required for the Maaß, Eisenstein,
+and holomorphic weight-at-least-four measures.  Section 4.109zfga
+proves the remaining fixed weight-two estimate without opening its
+Petersson tail.
+
+The interface `primitive_conductor_level_difference_audit` records the
+exact regrouping, the pre-density unramified exponent \(1\), the
+post-density unramified exponent \(3/2\), the Steinberg exponent
+\(1/2\), the required square exponent \(1\), and the polylogarithmic
+diagonal and length conductor Euler sums.  The epsilon-free full-level
+theorem is isolated as (4.845dc_14xye), so the
+\((\mathrm{PLS})_{Q_0}\) and PEVP flags remain false; the outer
+aggregation is a later separate gate.
+
+
+### 4.109za The normalized level difference squares to a positive two-layer kernel
+
+There is a normalization error in the tempting assertion that the
+local signed level family is itself the exact oldvector-layer
+projector.  Put
+
+\[
+ \nu_1=\nu(p)=p+1,\qquad \nu_2=\nu(p^2)=p(p+1),
+ \qquad e_c=\nu(p^c)\mathbf 1_{ZK_0(p^c)}.
+\]
+
+The convolution operator attached to \(e_c\) is the orthogonal
+projection \(P_c\) onto \(K_0(p^c)\)-invariants.  The standard
+Kuznetsov level kernel, however, is
+\(\mathbf 1_{ZK_0(p^c)}=e_c/\nu(p^c)\).  Since
+\(P_1P_2=P_1\), the literal normalized difference and its eigenvalue
+decomposition are
+
+\[
+ \boxed{
+ g_p:=\frac{e_1}{\nu_1}-\frac{e_2}{\nu_2},\qquad
+ \pi(g_p)
+ =\frac{p-1}{p(p+1)}P_1
+  -\frac1{p(p+1)}(P_2-P_1).}
+ \tag{4.845dc_1}
+\]
+
+Thus \(g_p\) is not a scalar multiple of \(P_2-P_1\).  Its square is
+nevertheless positive and retains the signed cancellation before
+Cauchy:
+
+\[
+ \boxed{
+ \begin{aligned}
+ \pi(g_p^**g_p)
+ &=\left(\frac{p-1}{p(p+1)}\right)^2P_1
+   +\left(\frac1{p(p+1)}\right)^2(P_2-P_1),\\
+ (g_p^**g_p)(1)
+ &=\left(\frac{p-1}{p(p+1)}\right)^2\nu_1
+   +\left(\frac1{p(p+1)}\right)^2(\nu_2-\nu_1)\\
+ &=\frac{p-1}{p(p+1)}.
+ \end{aligned}}
+ \tag{4.845dc_2}
+\]
+
+The last identity is an exact raw-Plancherel \(p^{-1}\) mass.  It is
+not yet the PEVP saving, because PEVP compares all levels inside the
+common ambient level \(p^2\); Section 4.109ze inserts that missing
+normalization.  At the raw level there is no \(2^{\omega(A)}\) cost:
+over squarefree \(A\), the tensor product of the positive local
+squares has identity mass
+
+\[
+ \prod_{p\mid A}\frac{p-1}{p(p+1)}
+ =\frac1A\prod_{p\mid A}\frac{1-p^{-1}}{1+p^{-1}}
+ \leq\frac1A.
+\]
+
+The geometric side is equally explicit.  HPY (7.5), applied by
+linearity to the two classical idempotents, gives
+
+\[
+ \boxed{
+ H_{g_p^**g_p}(m,n;p^k)
+ =\begin{cases}
+ 0,&k=0,\\[2mm]
+ \dfrac{p-2}{p(p+1)}S(m,n;p),&k=1,\\[3mm]
+ \dfrac{p-1}{p(p+1)}S(m,n;p^k),&k\geq2.
+ \end{cases}}
+ \tag{4.845dc_3}
+\]
+
+For odd \(p\), the geometric conductor is \(p\), not \(p^2\).  At
+\(p=2\), the \(k=1\) coefficient vanishes and the positive square
+kernel has geometric conductor \(2^2\).  This is a favourable
+constant-prime exception.  The unscaled exact layer \(e_2-e_1\)
+itself has \(k=1\) generalized Kloosterman sum
+\(-\nu_1S(m,n;p)\), so its geometric conductor is \(p\), including
+at \(p=2\).
+
+For completeness, insert (4.845dc_3) into HPY (7.6).  After division
+by the identity mass in (4.845dc_2), the exact local Fourier-transform
+ratios are
+
+\[
+ \begin{array}{c|c}
+ \text{character/modulus cell}&
+ |\widehat H_p|/(g_p^**g_p)(1)\\ \hline
+ c(\chi)=k=1&\dfrac{p(p-2)}{(p-1)^2}\leq1,\\[2mm]
+ c(\chi)=k\geq2&\dfrac p{p-1},\\[2mm]
+ c(\chi)=0,\ k=1&\dfrac{p-2}{(p-1)^2}\leq1,\\[2mm]
+ 0<c(\chi)<k\text{ or }c(\chi)=0,\ k\geq2&0.
+ \end{array}
+\]
+
+Hence the ramified FTB cost is exactly bounded by
+\(\prod_{p\mid A}p/(p-1)=A/\varphi(A)\), which is
+polylogarithmic.  This removes the \(c^\varepsilon\) loss from the
+local Fourier-transform step of HPY (5.21)--(5.22).
+
+It does not yet prove the global large sieve.  HPY's named spectral
+assumption allows a newform projector or one full classical
+\(P_c\); it does not state Theorem 1.23 for the positive two-layer
+mixture (4.845dc_2).  Moreover its use of CvF in (5.26) cannot be
+applied to the unscaled exact layer: that layer has identity mass
+\(p^2-1\) but geometric conductor \(p\).  The needed replacement is a
+harmonically weighted version of the proof of HPY Section 5.4 applied
+directly to the positive tensor kernel \(g_A^**g_A\).  It must retain
+the exact identity mass above in both the diagonal and the
+\(C^2/(c_NP)\) term, include the fixed \(B\)-level factor, and treat
+the Maaß, holomorphic, and Eisenstein measures without invoking the
+cardinality comparison of HPY Lemma 5.8.  Until that calculation is
+complete, neither the epsilon-free positive-kernel large sieve nor
+PEVP is marked proved.
+
+The interface \`normalized_level_difference_pbk_audit\` checks every
+rational constant above (including the prime-five values), records the
+correct geometric conductor, and keeps both global flags false.
+
+
+### 4.109zb Primitive character orthogonality removes the ramified-modulus count
+
+The \(c_N^\varepsilon\) loss in the passage from HPY (5.24) to (5.25)
+is not intrinsic in the primitive-character cell.  It appears because
+their proof fixes the ramified part \(c_N\), applies the large sieve,
+and then counts the possible \(c_N\mid N^\infty\).  In the present
+positive square kernel those ramified parts can be kept in the same
+large-sieve family.
+
+Let \(K\) be their common geometric conductor and restrict one dyadic
+modulus block to \(C<c\leq2C\), \(K\mid c\).  Write \(c=Kd\).  If
+\(a_i/(Kd_i)\), \(i=1,2\), are distinct reduced fractions, then
+
+\[
+ \boxed{
+ \left|\frac{a_1}{Kd_1}-\frac{a_2}{Kd_2}\right|
+ =\frac{|a_1d_2-a_2d_1|}{K d_1d_2}
+ \geq\frac{K}{4C^2}.}
+ \tag{4.845dc_4}
+\]
+
+Equality of the two rational numbers would force equality of their
+reduced denominators and numerators, so the numerator in
+(4.845dc_4) is a nonzero integer.  Lemma 5.2 of HPY, and its Gallagher
+hybrid form HPY Lemma 5.3, therefore give the epsilon-free estimates
+
+\[
+ \boxed{
+ \begin{aligned}
+ \sum_{\substack{C<c\leq2C\\K\mid c}}
+ \sum_{a\bmod c}^{*}
+ \left|\sum_{n\leq X}b_ne(an/c)\right|^2
+ &\leq\left(\frac{4C^2}{K}+X\right)\|b\|_2^2,\\
+ \int_{-P}^{P}
+ \sum_{\substack{C<c\leq2C\\K\mid c}}
+ \sum_{a\bmod c}^{*}
+ \left|\sum_{n\leq X}b_ne(an/c)n^{-it}\right|^2dt
+ &\ll\left(\frac{4PC^2}{K}+X\right)\|b\|_2^2.
+ \end{aligned}}
+ \tag{4.845dc_5}
+\]
+
+The absolute constant in the first line is the one in the classical
+large sieve convention; changing the endpoints or the smooth
+archimedean cutoff changes only an absolute seminorm constant.
+
+Here is the exact connection with HPY (5.21).  For a primitive
+character \(\chi\bmod r\),
+
+\[
+ \chi(n)=\frac1{\tau(\bar\chi)}
+ \sum_{u\bmod r}^{*}\bar\chi(u)e(un/r),
+ \qquad |\tau(\chi)|^2=r.
+\]
+
+For a classical local Kloosterman coefficient \(C_r\), HPY (7.6)
+gives
+\[
+ |\widehat H_r(\chi)|=C_r\,\frac r{\varphi(r)}.
+\]
+Consequently character orthogonality gives the exact inequality
+
+\[
+ \sum_{\chi\bmod r}^{\rm primitive}
+ |\widehat H_r(\chi)|
+ \left|\sum_n b_n\chi(n)e(ny/c_0)n^{-it}\right|^2
+ \leq
+ C_r\sum_{u\bmod r}^{*}
+ \left|\sum_n b_ne\!\left(n\left(\frac u r+\frac y{c_0}\right)\right)
+ n^{-it}\right|^2.
+\]
+
+Since \((r,c_0)=1\) and both \(u\) and \(y\) are units, CRT identifies
+\(u/r+y/c_0\) with one reduced fraction of denominator \(rc_0\).
+The factorization of the denominator into its ramified and unramified
+parts is unique.  Summing \(r\) before applying (4.845dc_5) therefore
+removes the separate ramified-modulus count; it does not replace it by
+a divisor bound.  For the kernel in (4.845dc_3),
+\(C_r\leq(g_A^**g_A)(1)\), and the imprimitive \(k=1\) cells have
+total local weight at most \(1+O(p^{-1})\).  Their subset sum is thus
+polylogarithmic.
+
+This proves the epsilon-free sparse-modulus step for level-coprime
+indices.  It does not yet prove the positive-kernel harmonic large
+sieve needed for PEVP: the Poisson coefficient \(b_m/c_A(m)\) also
+has cells with \(p\mid m\).  In those cells the primitive Gauss
+expansion vanishes and common \(p\)-powers must be removed from the
+classical Kloosterman sum before (4.845dc_5) is applied.  That
+valuation recursion, including its cross-valuation terms and the
+\(1/c_A(m)\) weights, remains the next local lemma.
+
+The interface \`primitive_sparse_farey_large_sieve_audit\` checks the
+spacing and hybrid constants with exact rationals.  It marks the
+primitive coprime cell proved and keeps the noncoprime, full harmonic
+large-sieve, and PEVP flags false.
+
+
+### 4.109zc Noncoprime Kloosterman cells reduce by exact valuation recursion
+
+The local recursion needed after Section 4.109zb is elementary and
+finite.  Let \(u,v\) be \(p\)-adic units and \(a,b\geq0\).  Grouping
+the units modulo \(p^k\) by their residue modulo \(p^{k-j}\) gives,
+for \(j=\min(a,b)<k\),
+
+\[
+ S(p^au,p^bv;p^k)
+ =p^jS(p^{a-j}u,p^{b-j}v;p^{k-j}).
+\]
+
+If \(a\ne b\), one reduced index is a unit and the other is divisible
+by \(p\).  Grouping a unit \(x\bmod p^\ell\), \(\ell\geq2\), over its
+\(p\) lifts modulo \(p^\ell\) makes the unit-index phase contribute a
+complete nontrivial additive character modulo \(p\), while the
+divisible-index phase is constant.  Hence the exact complete formula
+is
+
+\[
+ \boxed{
+ S(p^au,p^bv;p^k)=
+ \begin{cases}
+ \varphi(p^k),&k\leq\min(a,b),\\
+ p^aS(u,v;p^{k-a}),&a=b<k,\\
+ -p^{\min(a,b)},&a\ne b,\ k=\min(a,b)+1,\\
+ 0,&a\ne b,\ k\geq\min(a,b)+2.
+ \end{cases}}
+ \tag{4.845dc_6}
+\]
+
+This includes \(p=2\); no stationary-phase or odd-prime hypothesis is
+used.  Thus the equal-valuation tail is exactly the primitive Farey
+family of Section 4.109zb with a shorter modulus, while an
+unequal-valuation pair has only its trivial-phase segment and one
+Ramanujan boundary modulus.
+
+The inverse factor in (4.845ap_3) has the exact local values
+\[
+ |c_p(m)|^{-1}
+ =\begin{cases}1,&p\nmid m,\\(p-1)^{-1},&p\mid m.\end{cases}
+\]
+For a natural smooth integer variable, the two cells therefore have
+the mean square
+
+\[
+ \boxed{
+ \left(1-\frac1p\right)
+ +\frac1p\frac1{(p-1)^2},
+ \qquad
+ \sum_{k\geq1}\Pr(p^k\mid m,\ p^k\mid n)
+ =\sum_{k\geq1}p^{-2k}
+ =\frac1{p^2-1}.}
+ \tag{4.845dc_7}
+\]
+
+The second series is the total mass of all common-positive-valuation
+reductions in (4.845dc_6).  Its Euler correction is absolutely
+summable over \(p\).  At \(p=5\), the two quantities in
+(4.845dc_7) are \(13/16\) and \(1/24\).
+
+Equations (4.845dc_6)--(4.845dc_7) close the local main-density
+ledger, but a global conclusion still requires the smooth
+short-interval boundary errors.  For an interval of length \(M\),
+counting \(p^k\mid m\) gives \(M/p^k+O(1)\); the \(O(1)\) terms must be
+tensored over the squarefree \(A\) and compared with the two
+completion orientations (4.845cq).  The power comparison is already
+contained in (4.845cl)--(4.845cu), but the present step has not yet
+shown that the boundary Euler sum is only polylogarithmic on every
+zero-margin face.  Therefore the full positive-kernel harmonic large
+sieve remains open at precisely that boundary aggregation.
+
+The functions \`prime_power_kloosterman_valuation_reduction\` and
+\`physical_noncoprime_valuation_audit\` check the four cases and the
+two rational density sums.  They keep the short-interval, full
+large-sieve, and PEVP flags false.
+
+
+### 4.109zd The valuation boundary is a bounded divisor-convolution mean
+
+The short-interval qualification at the end of Section 4.109zc can be
+removed without a \(T^\varepsilon\) divisor bound.  After
+symmetrizing a cross-valuation term by \(2|xy|\leq|x|^2+|y|^2\), the
+loss of one \(p\) from the common Farey conductor is accompanied by
+the squared inverse Ramanujan factor.  It is therefore bounded by
+
+\[
+ \alpha_p:=\frac{p}{(p-1)^2}.
+\]
+
+There are exactly \(v_p(n)\) trivial-phase or boundary choices in
+(4.845dc_6).  Define the nonnegative multiplicative majorant
+
+\[
+ \boxed{
+ F_A(n):=\prod_{p\mid A}(1+\alpha_pv_p(n))
+       =\sum_{d\mid n}g_A(d),\qquad
+ g_A(p^k)=\alpha_p\quad(k\geq1).}
+ \tag{4.845dc_8}
+\]
+
+The convolution identity is coefficientwise: at \(p^a\), the divisor
+sum is \(1+a\alpha_p\).  Let \(V\) be supported in one interval of
+length \(M\geq1\).  For every \(d\) whose divisor class meets that
+interval,
+\[
+ \#\{n:\ V(n/M)\ne0,\ d\mid n\}\leq M/d+1\leq2M/d.
+\]
+Tonelli applies because all coefficients are nonnegative.  Therefore
+
+\[
+ \boxed{
+ \begin{aligned}
+ \frac1M\sum_n|V(n/M)|F_A(n)
+ &\leq2\|V\|_\infty\sum_{d\geq1}\frac{g_A(d)}d\\
+ &=2\|V\|_\infty
+ \prod_{p\mid A}\left(1+\frac{\alpha_p}{p-1}\right)\\
+ &=2\|V\|_\infty
+ \prod_{p\mid A}\left(1+\frac{p}{(p-1)^3}\right)
+ \leq C\|V\|_\infty ,
+ \end{aligned}}
+ \tag{4.845dc_9}
+\]
+
+where
+\[
+ C=2\prod_p\left(1+\frac{p}{(p-1)^3}\right)<\infty
+\]
+is absolute, since the logarithm of the product is
+\(O(\sum_pp^{-2})\).  The \(+1\) boundary error has not been
+discarded: it is the reason for the factor \(2\), and is absorbed by
+the same \(1/d\) Euler series as the interval main term.  Thus the
+valuation recursion has a uniform constant on intervals of every
+length, including the bounded Poisson endpoint.
+
+Combining (4.845dc_4)--(4.845dc_9) proves that neither primitive
+ramified moduli nor noncoprime valuation cells force an
+\(\varepsilon\)-loss in the raw positive square kernel.  It does not
+say that this kernel has the correct PEVP normalization.  The ambient
+Cauchy calculation in Section 4.109ze shows that it does not: the raw
+mass is multiplied by the common level index, and the resulting
+positive estimate loses the cross-index oldvector cancellation.
+
+The interface \`valuation_boundary_euler_majorant_audit\` evaluates
+finite Euler products exactly and records that the full smooth
+short-interval boundary is aggregated.  It keeps the normalized
+positive-kernel large sieve and PEVP flags false.
+
+
+### 4.109ze Ambient normalization reverses the raw positive-kernel saving
+
+All level traces in (4.845dc) must be compared in the common ambient
+space of level \(p^2\).  The standard level-\(p^c\) trace has raw
+operator \(P_c/\nu(p^c)\).  Relative to the standard ambient harmonic
+measure \(1/\nu_2\), the signed multiplier is therefore
+
+\[
+ \boxed{
+ \nu_2\left(\frac{P_1}{\nu_1}-\frac{P_2}{\nu_2}\right)
+ =pP_1-P_2
+ =(p-1)P_1-(P_2-P_1).}
+ \tag{4.845dc_10}
+\]
+
+It has eigenvalue \(p-1\) on the complete level-\(p\) oldspace and
+eigenvalue \(-1\) on the exact level-\(p^2\) layer.  The ambient
+Plancherel dimensions of those two orthogonal spaces are \(\nu_1\)
+and \(\nu_2-\nu_1\).  Hence moving the whole multiplier to one side
+of Cauchy gives the exact normalized square mass
+
+\[
+ \boxed{
+ \frac{(p-1)^2\nu_1+(\nu_2-\nu_1)}{\nu_2}
+ =p-1.}
+ \tag{4.845dc_11}
+\]
+
+PEVP requires local square mass \(p^{-1}\).  The positive-operator
+Cauchy route therefore misses by the factor
+\[
+ \frac{p-1}{p^{-1}}=p(p-1).
+\]
+At \(p=5\), the relative eigenvalues are \(4,-1\), the normalized
+mass is \(4\), and the target is \(1/5\), giving the rational witness
+\(20\).
+
+This is not repaired by the fact that the second Fourier index is
+\(py\).  On the diagonal of the ambient large sieve,
+\(\sqrt{py}\rho_\pi(py)\) has the standard Hecke normalization; index
+rescaling changes the length term, not the Plancherel mass in
+(4.845dc_11).  The saving in (4.845da) comes instead from the signed
+cross product of the level-\(p\) and level-\(p^2\) oldvector
+coefficients evaluated at the two different indices \(m\) and \(py\).
+Squaring the operator before retaining those coefficients destroys
+that cancellation.
+
+Thus Sections 4.109za--4.109zd provide an epsilon-free large-sieve
+lemma for the raw positive kernel, but they do not prove PEVP.  The
+viable route returns to (4.845dc): retain the cross-index local
+multiplier, use the conductor Euler ledger of Section 4.109z, and
+prove the weighted primitive large sieve
+\((\mathrm{PLS})_{Q_0}\) without separating the two Fourier indices.
+
+The interface \`ambient_normalized_positive_kernel_cauchy_audit\`
+checks (4.845dc_10)--(4.845dc_11) and records the exact deficit.  It
+rejects the positive-square kernel as a PEVP closure and leaves PEVP
+false.
+
+
+### 4.109zf Sparse Farey spacing reduces the full-level harmonic large sieve to its transforms
+
+The failure in Section 4.109ze does not by itself invalidate the
+primitive-conductor Cauchy decomposition (4.845dc), but its weights must
+use the corrected Steinberg trace rather than an exact cross-index
+cancellation.  The remaining required input is to replace the published
+\((Q_0Y\mathcal T)^\varepsilon\) spectral large sieve by the following
+uniform polylogarithmic harmonic one.  At this stage it is a target
+inequality; Sections 4.109zfg--4.109zfgb prove and reinsert it.
+
+For a positive Maaß/Eisenstein Kuznetsov test of spectral mass
+\(\mathcal M\), define the standard full-level harmonic square
+\[
+ \mathcal L_Q(a)
+ :=\int_{\mathscr S_Q}
+ h(t_\pi)\left|\sum_{n\asymp X}a_n\sqrt n\,\rho_\pi(n)\right|^2d\pi .
+\]
+The same notation includes the holomorphic Petersson square with its
+positive weight.  Then, for the finitely many normalized seminorms
+arising from the physical QCT kernel,
+
+\[
+ \boxed{
+ \mathcal L_Q(a)
+ \ll_{C,W}(\log(2T))^C
+ \left(\mathcal M+\frac XQ\right)\sum_n|a_n|^2.}
+ \tag{4.845dc_12}
+\]
+
+No condition \((n,Q)=1\) is present.  Open the standard Kloosterman sum
+in one dyadic modulus
+block \(C<c\leq2C\), \(Q\mid c\).  After the Bessel--Mellin
+separation, use
+\[
+ 2|A_xB_x|\leq|A_x|^2+|B_x|^2
+\]
+and the permutation \(x\mapsto\bar x\bmod c\).  Both terms reduce
+directly to the reduced Farey family
+\[
+ \sum_{\substack{C<c\leq2C\\Q\mid c}}
+ \sum_{x\bmod c}^{*}
+ \left|\sum_{n\asymp X}a_ne(nx/c)n^{it}\right|^2.
+\]
+This step uses only that \(x\) is a unit; the Fourier indices may
+share arbitrary factors with \(Q\).  By (4.845dc_4) and Gallagher's
+hybrid large sieve, its exact parameter bound is
+
+\[
+ \boxed{
+ \int_{-P}^{P}
+ \sum_{\substack{C<c\leq2C\\Q\mid c}}
+ \sum_{x\bmod c}^{*}
+ \left|\sum_{n\asymp X}a_ne(nx/c)n^{-it}\right|^2dt
+ \ll\left(\frac{4PC^2}{Q}+X\right)\|a\|_2^2.}
+ \tag{4.845dc_13}
+\]
+
+The physical Bessel--Mellin tensorization in Section 4.109i restricts
+\(\mathcal T\) to \((\log(2T))^{O(1)}\).  Put \(P=X/C\).  In the
+large-Bessel range \(P\gg\mathcal T^{2+\varepsilon_0}\), HPY Lemma 5.6,
+formula (5.13), has prefactor \(\mathcal T^2/(CP)\) and a Mellin weight
+of polylogarithmic size.  Multiplying (4.845dc_13) gives
+\[
+ \ll(\log(2T))^C
+ \mathcal T^2\left(1+\frac CQ\right)\|a\|_2^2
+ \ll(\log(2T))^C
+ \left(\mathcal T^2+\frac XQ\right)\|a\|_2^2,
+\]
+because this range has \(C\ll X/\mathcal T^{2+\varepsilon_0}\).
+
+In the complementary range \(P\ll\mathcal T^{2+\varepsilon_0}\), the
+second formula (5.14) of HPY Lemma 5.6 is
+\(H(x)=x\int_{|t|\ll\mathcal T^{10}}W(t)x^{it}dt\), with
+\(W(t)\ll\mathcal T^4\).  The dyadic geometric prefactor is now
+\(X/C^2\).  Applying (4.845dc_13) with Mellin interval
+\(\mathcal T^{10}\) gives
+\[
+ \ll(\log(2T))^C
+ \left(\frac XQ+\frac{X^2}{C^2}\right)\|a\|_2^2
+ \ll(\log(2T))^C
+ \left(\frac XQ+1\right)\|a\|_2^2,
+\]
+where the fixed powers of \(\mathcal T\) are included in the displayed
+logarithm and \(C\gg X/\mathcal T^{2+\varepsilon_0}\).  Thus the two
+actual HPY ranges cover every \(P\), including the physical
+power-sized large-Bessel range.  There are only \(O(\log(2T))\) modulus
+blocks, so (4.845dc_12) follows for Maaß and Eisenstein spectra.  The
+Petersson transform has the same two-range separation and gives the
+holomorphic sector.
+
+A primitive family of exact conductor \(Q_0\) is a positive subfamily
+of the full level-\(Q_0\) harmonic square.  Apply (4.845dc_12) before
+summing the nonnegative conductor weights from
+(4.845dc).  The two Euler ledgers in Section 4.109z give
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\sum_{Q_0\mid A^2B}w_A^{(2)}(Q_0)
+ \int_{\mathscr S^*(Q_0)}
+ \left|\sum_{y\asymp Y}a_y\sqrt y\,\rho_\pi(y)\right|^2d\pi\\
+ &\quad\ll_{C,W}(\log(2T))^C
+ \left\{
+ \mathcal T^2\sum_{Q_0}w_A^{(2)}(Q_0)
+ +Y\sum_{Q_0}\frac{w_A^{(2)}(Q_0)}{Q_0}
+ \right\}\sum_y|a_y|^2\\
+ &\quad\ll_{C,W}\frac{(\log(2T))^C}{A}
+ \left(\mathcal T^2+\frac{Y}{AB}\right)\sum_y|a_y|^2.
+ \end{aligned}}
+ \tag{4.845dc_14}
+\]
+
+If (4.845dc_12) were proved with the stated uniformity, this would be
+exactly \((\mathrm{PLS})_{Q_0}\), and applying it to the other Cauchy
+factor would prove \((\mathrm{PEVP})_{A,B}\).  The displayed Farey
+calculation verifies the desired parameter exponents, but it does not
+constitute a full proof of (4.845dc_12): the Bessel--Mellin separation,
+the endpoint and small-argument transforms, the continuous and
+holomorphic measures, and the uniform constants must be carried through
+without the published \((Q_0X\mathcal T)^\varepsilon\) loss.  HPY Lemma
+5.6 supplies transform formulae with an epsilon-bearing theorem context;
+it does not state (4.845dc_12).  Thus the Farey calculation alone does
+not prove PLS or PEVP.  The exact transform and endpoint work in
+Sections 4.109zfg--4.109zfga, followed by the reinsertion in Section
+4.109zfgb, closes both statements.
+
+The interface \`full_level_harmonic_large_sieve_audit\` records the
+Farey spacing, the hybrid inner bound, the absence of an index
+coprimality hypothesis, the exact \(P\gg\mathcal T^{2+\varepsilon_0}\)
+direction in HPY (5.13), and the sectors that a proof must cover.
+After the exact three-range proof in Section 4.109zlf, its
+uniform-polylog and spectral-sector flags are true; weighted primitive
+PLS and fixed-entry PEVP are then true in Section 4.109zfgb.
+
+
+### 4.109zfa Exact dyadic Mellin inversion removes the raw-volume error, not PEVP
+
+There is a gap in treating the \(O(\mathcal T^{-A})\) remainder in the
+published pointwise transform formula as negligible here.  In the
+physical problem \(\mathcal T\leq(\log(2T))^{K}\), whereas the two
+coefficient variables have power length.  Discarding that remainder
+before the long bilinear sum can multiply it by a positive power of
+\(T\).  No choice of fixed \(A\) then proves a power saving.  The
+remainder must pass through the same large sieve as the main transform.
+
+Partition the real spectrum into a fixed low window and dyadic windows
+\(R<t\leq2R\), where
+\[
+ 1\leq R\leq(\log(2T))^K.
+\]
+For the exact Kuznetsov transform \(H_R\), a modulus block \(c\asymp C\),
+and
+\[
+ P=\frac XC,
+\]
+define, without truncation,
+\[
+ \widetilde H_{R,P}(\tau)
+ :=\int_0^\infty w(x/P)H_R(x)x^{-i\tau}\,\frac{dx}{x},
+ \qquad
+ w(x/P)H_R(x)
+ =\frac1{2\pi}\int_{\mathbb R}
+ \widetilde H_{R,P}(\tau)x^{i\tau}\,d\tau.
+ \tag{4.845dc_14a}
+\]
+Thus every Mellin tail remains inside the Gallagher integral.  There
+is a normalization correction to the previously proposed estimate.
+HPY (5.13) has Mellin interval length \(P\) and prefactor \(R^2/P\);
+therefore \(R^2/P\) is an \(L^\infty\) height, not an \(L^1\) norm.
+The exact stationary-phase estimate required in the range \(P>R^2\)
+is, for every fixed \(J\),
+\[
+ \boxed{
+ \sup_{\tau\in\mathbb R}
+ \left(1+\frac{\bigl||\tau|-P\bigr|}{P}\right)^J
+ |\widetilde H_{R,P}(\tau)|
+ \ll_{J,W}\frac{R^2}{P}(\log(2T))^{C_J},}
+ \tag{4.845dc_14b}
+\]
+with the evident finite union of sign/stationary-phase windows near
+\(|\tau|\asymp P\).  In particular,
+\[
+ \int_{\mathbb R}|\widetilde H_{R,P}(\tau)|\,d\tau
+ \ll_{J,W}R^2(\log(2T))^{C_J},
+\]
+not \(R^2/P\).  One must insert the \(L^\infty\) bound in
+(4.845dc_14b) before applying Gallagher over the whole length-\(P\)
+Mellin interval.  Combining it with the outer \(C^{-1}\) and
+(4.845dc_13) gives the exact block ledger
+\[
+ \frac1C\frac{R^2}{P}
+ \left(\frac{PC^2}{Q}+X\right)
+ =R^2\left(\frac CQ+1\right)
+ \leq \frac XQ+R^2,
+ \tag{4.845dc_14c}
+\]
+because \(C<X/R^2\) in this range.
+
+For \(P\leq R^2\), the corresponding estimate required from
+differentiation under the defining Bessel integral and exact Mellin
+integration by parts is, for every fixed \(J\),
+\[
+ \int_{\mathbb R}(1+|\tau|)^J
+ |\widetilde H_{R,P}(\tau)|\,d\tau
+ \ll_{J,W}P\,R^{C_J}.
+ \tag{4.845dc_14d}
+\]
+The factor \(P\) is the small-argument factor in HPY (5.14); the
+identity here is used before any pointwise truncation.  Since \(R\) and
+\(P\) are polylogarithmic throughout this complementary physical
+range, Gallagher gives
+\[
+ \frac PC\left(\frac{C^2}{Q}+X\right)
+ =\frac XQ+P^2
+ \ll (\log(2T))^{C}\left(1+\frac XQ\right).
+ \tag{4.845dc_14e}
+\]
+The same estimate sums the infinite \(C>X\) tail geometrically after
+retaining the small-argument factor.  The fixed low spectral window is
+included in (4.845dc_14d).
+
+In power-exponent notation
+\[
+ X=T^x,\quad Q=T^q,\quad C=T^c,\quad R=T^r,
+ \quad P=T^{x-c},
+\]
+(4.845dc_14c) has exponents
+\[
+ 2r+c-q,\qquad 2r,
+\]
+and (4.845dc_14e) has exponents
+\[
+ x-q,\qquad 2(x-c).
+ \tag{4.845dc_14f}
+\]
+For the physical value \(r=0\), the first pair is bounded by
+\(\max(0,x-q)\) when \(x-c>0\), and the second pair is bounded by the
+same target when \(x-c\leq0\).  Hence no positive-power residual cell
+remains in this dyadic transform ledger.
+
+This calculation is deliberately narrower than (4.845dc_12).  To turn
+it into that theorem one must still prove the corrected
+(4.845dc_14b)--(4.845dc_14d) with uniform seminorm constants for the
+Maaß, Eisenstein, and holomorphic transforms and justify all endpoint
+partitions.  The finite signed cross-index transfer is no longer a
+second open obligation: Sections 4.109zfd--4.109zff move it to fixed
+downward Fourier shifts before positive Cauchy.  Thus the corrected
+stationary-phase/seminorm theorem is the remaining PLS input at this
+point of the argument.  Sections 4.109zfg--4.109zfga prove all of its
+archimedean sectors; their full conductor-weighted reinsertion remains.
+
+The interface \`dyadic_bessel_mellin_block_audit\` checks
+(4.845dc_14c)--(4.845dc_14f) in exact rational power exponents.  It
+records exact Mellin inversion and Gallagher routing of the remainder,
+distinguishes the \(R^2/P\) Mellin \(L^\infty\) height from its
+\(R^2\) \(L^1\) norm, and does not set either the uniform full-level
+theorem or PEVP flag.
+
+
+### 4.109zfb Direct geometric differencing preserves the two Fourier indices
+
+The primitive-conductor route is not the only way to retain the signed
+level family.  It is safer to perform the finite \(j\)-sum on the
+geometric side of Kuznetsov before Cauchy.  Assume first that \(A\) is
+squarefree and \((A,B)=1\).  Writing a Kloosterman modulus as
+\(c=ABk\), its coefficient is exactly
+\[
+ \sum_{j\mid A}\mu(j)\mathbf 1_{ABj\mid c}
+ =\sum_{j\mid(A,k)}\mu(j)
+ =\mathbf 1_{(A,k)=1}.
+ \tag{4.845dc_14g}
+\]
+Thus the signed spectral level difference becomes the unsigned but
+exact-valuation geometric family
+\[
+ c=ABk,qquad (k,A)=1.
+ \tag{4.845dc_14h}
+\]
+No level is squared, and no oldvector cross term has been discarded.
+
+For one such modulus the two Kloosterman phases are
+\[
+ e\left(\frac{mx}{c}\right),
+ \qquad
+ e\left(\frac{An\bar x}{c}\right)
+ =e\left(\frac{n\bar x}{c/A}\right).
+ \tag{4.845dc_14i}
+\]
+On a block \(c\leq C\), the first reduced Farey family has spacing at
+least
+\[
+ \delta_1=\frac{AB}{4C^2}.
+\]
+The second denominator is \(d=c/A=Bk\leq C/A\), so its reduced
+fractions have spacing
+\[
+ \delta_2=\frac{A^2B}{4C^2}.
+\]
+Reduction of units
+\((\mathbb Z/c\mathbb Z)^\times\to
+(\mathbb Z/d\mathbb Z)^\times\) is surjective and every fibre has
+exactly
+\[
+ \frac{\varphi(c)}{\varphi(d)}=\varphi(A)
+\]
+elements.  Consequently its fibre-weighted inverse spacing satisfies
+\[
+ \boxed{
+ \varphi(A)\delta_2^{-1}
+ =\frac{4\varphi(A)C^2}{A^2B}
+ \leq\frac{4C^2}{AB}=\delta_1^{-1}.}
+ \tag{4.845dc_14j}
+\]
+
+If the two coefficient lengths are \(M\) and \(X\), a premature
+separate Cauchy after (4.845dc_14i) would give
+\[
+ \begin{aligned}
+ \mathcal L_1&\ll
+ \left(\frac{PC^2}{AB}+M\right)\|b\|_2^2,\\
+ \mathcal L_2&\ll
+ \left(\frac{PC^2}{AB}+\varphi(A)X\right)\|a\|_2^2.
+ \end{aligned}
+ \tag{4.845dc_14k}
+\]
+The two oscillatory spacing terms have the same effective level
+\(AB\).  This is precisely the information lost by inserting the level
+difference into one positive ambient spectral square, where Section
+4.109ze produced the mass \(p-1\) instead of \(p^{-1}\).
+
+But (4.845dc_14k) is still too early a Cauchy inequality.  Write the
+unit \(x\bmod Ad\) in CRT coordinates
+\(u=x\bmod A\), \(v=x\bmod d\).  Then, with bars taken in the indicated
+moduli,
+\[
+ e\left(\frac{mx-An\bar x}{Ad}\right)
+ =e\left(\frac{mu\bar d}{A}\right)
+  e\left(\frac{mv\bar A-n\bar v}{d}\right).
+ \tag{4.845dc_14l}
+\]
+Since multiplication by \(\bar d\) permutes the units modulo \(A\),
+the complete \(u\)-fibre is exactly
+\[
+ \sum_{u\bmod A}^{*}e\left(\frac{mu\bar d}{A}\right)=c_A(m).
+\]
+It cancels the physical factor \(1/c_A(m)\) before any inequality.  In
+the normalization of (4.845ap_3), this gives the exact identity
+\[
+ \boxed{
+ \frac{A}{c_A(m)}\frac1{Ad}S(m,-An;Ad)
+ =\frac1dS(\bar A m,-n;d),
+ \qquad (d,A)=1.}
+ \tag{4.845dc_14m}
+\]
+Thus the \(\varphi(A)X\) term in (4.845dc_14k) is not an unavoidable
+physical deficit: it is the exact cost of discarding the fibre
+character before it cancels.
+
+The remaining obstruction is now sharper.  Additive reciprocity gives
+\[
+ e\left(\frac{mv\bar A}{d}\right)
+ =e\left(-\frac{mv\bar d}{A}\right)
+  e\left(\frac{mv}{Ad}\right).
+ \tag{4.845dc_14n}
+\]
+The first factor is a fixed-denominator residue character, while the
+last factor and \(e(-n\bar v/d)\) form two coupled Farey coordinates.
+Applying separate positive Cauchy again loses their correlation.  The
+next theorem is therefore a joint two-coordinate Gallagher/dispersion
+bound for (4.845dc_14n), with the exact condition
+\(D=(A,h\delta)\) retained.  This is the geometric form of the
+pre-Cauchy unimodular slope family; it bypasses primitive newform,
+oldform, and Eisenstein conductor bookkeeping but does not yet prove
+PEVP.
+
+The interface \`exact_level_geometric_fiber_audit\` verifies
+(4.845dc_14g)--(4.845dc_14n), including the unit-fibre cardinality, both
+Farey spacings, the Ramanujan fibre permutation, and its cancellation
+before Cauchy.  It deliberately leaves the joint two-coordinate bound
+and PEVP flags false.
+
+
+### 4.109zfc Absolute two-coordinate spacing is exactly the old quadratic-divisor majorant
+
+It remains to test whether ordinary multidimensional large-sieve
+spacing proves the joint bound suggested by (4.845dc_14n).  Represent
+one phase point by
+\[
+ z(d,x)=\left(\frac{x}{d},\frac{y}{d}\right),
+ qquad
+ y\equiv-(Ax)^{-1}\pmod d,quad (Ax,d)=1.
+ \tag{4.845dc_14o}
+\]
+For two points \((d_i,x_i,y_i)\), define the two determinant
+coordinates
+\[
+ k=x_1d_2-x_2d_1,
+ \qquad
+ \ell=y_1d_2-y_2d_1.
+ \tag{4.845dc_14p}
+\]
+The congruences \(Ax_iy_i\equiv-1\pmod {d_i}\) give, by direct
+expansion,
+\[
+ \boxed{
+ d_1\mid Ak\ell+d_2^2,
+ \qquad
+ d_2\mid Ak\ell+d_1^2.}
+ \tag{4.845dc_14q}
+\]
+For example, \(A=5\), \((d_1,x_1)=(7,2)\), and
+\((d_2,x_2)=(11,3)\) give \((y_1,y_2)=(2,8)\),
+\((k,\ell)=(1,-34)\), and the two divisible integers
+\(-49\) and \(-121\).
+
+When \((d_1,d_2)=1\), fixed \((d_1,d_2,k)\) determines the pair
+\((x_1,x_2)\) uniquely in the reduced residue ranges, and the same is
+true of \((y_1,y_2)\) for fixed \(\ell\).  Conversely, after fixing
+\((k,\ell,d_2)\), the first denominator must be a divisor of
+\(Ak\ell+d_2^2\).  Therefore an absolute local-density estimate for
+the two-dimensional point set is a quadratic-divisor majorant of the
+form
+\[
+ \sum_{k,\ell,d_2}
+ \sum_{d_1\mid Ak\ell+d_2^2}1,
+ \tag{4.845dc_14r}
+\]
+with the non-coprime layers obtained by the already recorded gcd
+extraction.
+
+This is not a new source of the missing saving.  Taking absolute values
+in (4.845dc_14r) removes the two Möbius signs before the divisor
+estimate.  After dyadic reindexing it is the same DCV/quadratic-divisor
+route audited in Sections 4.55--4.68.  On its hard face, the published
+BBLR error exponent is \(5/2\) against target \(2\), hence the same
+\(T^{1/2}\) deficit in (4.609)--(4.610).
+
+Consequently the direct geometric route improves the *location* of the
+gate but does not close it by ordinary spacing: the Ramanujan fibre is
+summed exactly, and then the Möbius signs must remain inside the joint
+\((k,\ell,d_1,d_2)\)-sum.  The admissible next input is a signed
+two-coordinate large sieve or the pre-Cauchy slope square function
+(4.465), not the positive collision count (4.845dc_14r).
+
+The interface \`coupled_farey_collision_audit\` checks
+(4.845dc_14o)--(4.845dc_14q) on exact integer data and explicitly keeps
+both the beyond-BBLR and joint-large-sieve flags false.
+
+
+### 4.109zfd The unramified cross-index kernel is an exact two-shift form
+
+There is a finite-rank alternative to replacing the signed level
+difference by the bad positive ambient operator of Section 4.109ze.
+It does not prove PEVP, but it removes one ambiguity in the proposed
+primitive-conductor route: the unramified cross-index oldvector weight
+can be transferred to finitely many Fourier-index shifts exactly.
+
+Fix \(p\mid A\), let
+
+\[
+ q=p+1,\qquad L=\lambda_\pi(p),\qquad
+ E=q^2-pL^2,
+\]
+
+and put \(\lambda_k=\lambda_\pi(p^k)\), with \(\lambda_k=0\) for
+\(k<0\).  For \(k\geq0\), define
+
+\[
+ r_k=\lambda_k-\frac{pL}{q}\lambda_{k-1},
+ \qquad s_k=\lambda_{k-1}.
+\]
+
+Let \(a=v_p(m)\geq0\), \(b=v_p(Ah\delta)\geq1\).  Substituting the
+two oldvectors in (4.845cz), using
+\(D_p=E/q^2\), and only then dividing by the physical Ramanujan
+factor \(c_p(p^a)\), gives the exact identity
+
+\[
+ \boxed{
+ \frac{\mathcal K_p^{(0)}(a,b)}{c_p(p^a)}
+ =-\frac qE r_ar_b+\frac1q s_as_b.}
+ \tag{4.845dc_14s}
+\]
+
+For completeness, when \(a,b\geq1\) the matrix of the right side in
+the basis \((\lambda_k,\lambda_{k-1})\) is
+
+\[
+ \frac1E
+ \begin{pmatrix}
+  -q&pL\\ pL&q-pL^2
+ \end{pmatrix}
+ =-\frac qE
+ \binom{1}{-pL/q}\binom{1}{-pL/q}^{\!t}
+  +\frac1q\binom01\binom01^{\!t}.
+\]
+
+Its determinant is \(-E^{-1}\), so the kernel is genuinely rank two,
+not a disguised rank-one projector.  The same formula includes the
+boundary \(a=0\), since \(s_0=0\) and \(c_p(1)=-1\).
+
+The Hecke recurrence removes the remaining mixed multiplier in each
+positive valuation:
+
+\[
+ \boxed{
+ q r_k=\lambda_k-p\lambda_{k-2}\qquad(k\geq1).}
+ \tag{4.845dc_14t}
+\]
+
+Thus each rank-one factor in (4.845dc_14s) is a fixed linear
+combination of the Fourier coefficients at the two indices differing
+by \(p^2\).  No spectral-dependent coefficient has to be inserted into
+the input sequence, and the cross-index cancellation has not been
+replaced by the ambient square mass \(p-1\).  The scalar \(E^{-1}\)
+is still representation-dependent; it must remain in the spectral test
+weight (or be expanded with a uniformly summable local multiplier), so
+this identity does not silently invoke an unweighted large sieve.
+
+This calculation closes only the unramified **finite transfer**.  The
+rank choices must be summed with their \(p^{-3/2}\) physical amplitude
+weights; an equal-weight triangle inequality would create a spurious
+\(2^{\omega(A)}\) loss.  Sections 4.109zfe--4.109zff treat the other
+primitive conductor cases, and Section 4.109z then aggregates the
+coefficient-weighted choices in the conductor Euler square.  Neither
+PLS nor PEVP is asserted at this local stage.
+
+The interface \`unramified_cross_index_two_shift_identity\` checks
+(4.845dc_14s)--(4.845dc_14t) with exact rational Hecke data, records the
+nonzero rank-two determinant, and keeps the weighted large-sieve and
+PEVP flags false.
+
+
+### 4.109zfe The Steinberg cross-index kernel is rank one
+
+The primitive-conductor-\(p\) cell can also be transferred before
+positive Cauchy.  This time the signed kernel is rank one.  Write
+
+\[
+ \lambda_p=\epsilon p^{-1/2},\qquad \epsilon^2=1,
+ \qquad q=p+1,
+ \qquad r_p=\frac{p(p+2)}{q^2}.
+\]
+
+Blomer--Milićević's exact \(g=1,p\) basis at ambient level \(p^2\)
+has second vector
+
+\[
+ f^{(p)}=r_p^{-1/2}
+ \left(f|_p-\frac{\epsilon}{q}f\right).
+\]
+
+In normalized Fourier coefficients, put
+\(\lambda_k=\lambda_\pi(p^k)\).  For every \(b\geq1\), the oldvector
+cross products relative to \(\lambda_b\), respectively to
+\(\lambda_a\lambda_b\), are
+
+\[
+ \boxed{
+ \frac{U_p(0)U_p(b)}{\lambda_b}
+ =-\frac{pq-1}{q^2r_p},\qquad
+ \frac{U_p(a)U_p(b)}{\lambda_a\lambda_b}
+ =\frac{(pq-1)^2}{q^2r_p}\quad(a\geq1).}
+ \tag{4.845dc_14u}
+\]
+
+The level-\(p^2\) trace has the ambient normalization \(p^{-1}\).
+Subtract it from the level-\(p\) trace and only then divide by
+\(c_p(1)=-1\) or \(c_p(p^a)=p-1\).  Direct rational simplification
+gives
+
+\[
+ \boxed{
+ \frac{\mathcal K_p^{(1)}(a,b)}{c_p(p^a)}
+ =\begin{cases}
+ -C_{p,0}\lambda_b,&a=0,\\[1mm]
+ -C_{p,+}\lambda_a\lambda_b,&a\geq1,
+ \end{cases}
+ \quad
+ \begin{aligned}
+ C_{p,0}&=1-\frac{p+1}{p^2(p+2)},\\
+ C_{p,+}&=1+\frac1{p^2(p+2)(p-1)}.
+ \end{aligned}}
+ \tag{4.845dc_14v}
+\]
+
+Squaring (4.845dc_14v) reproduces exactly the two corrected formulae
+in Section 4.109y.  More importantly, the sign and the two Fourier
+indices are retained: on either exact first-valuation cell there is
+only one primitive coefficient list.  The positive-valuation Euler
+correction is \(1+O(p^{-4})\), while the worst unit/valuation-one
+square mass is
+
+\[
+ p^{-1}C_{p,0}^2\leq p^{-1}.
+\]
+
+Hence the Steinberg conductor choice contributes the required local
+square weight \(p^{-1}\) times an absolutely convergent Euler factor;
+it does not require a new signed two-index large sieve.  Together with
+Section 4.109zfd, this closes the finite cross-index transfer for the
+cuspidal and holomorphic primitive-conductor exponents zero and one;
+exponent two already vanishes at the positive second valuation.
+
+The continuous spectrum is not covered by the Steinberg computation,
+but it also has no conductor-\(p\) primitive datum in the present
+trivial-nebentypus family.  Section 4.109zff checks its even-conductor
+alternative directly from Young's newdata parametrization.
+
+The interface steinberg_cross_index_rank_one_identity verifies
+(4.845dc_14u)--(4.845dc_14v), cross-checks their squares against
+steinberg_exact_level_difference_kernel_square, and leaves the
+continuous-spectrum handoff, weighted-large-sieve, and PEVP flags false.
+
+
+### 4.109zff Trivial-nebentypus Eisenstein conductors are locally even
+
+Young's primitive Eisenstein newdata are the pairs
+\(E_{\chi_1,\chi_2}\), with \(\chi_i\) primitive of conductor \(q_i\),
+level \(q_1q_2\), and nebentypus
+\(\chi_1\overline{\chi_2}\).  In the classical Kuznetsov family used
+here the nebentypus is trivial.  Hence the two primitive characters are
+equal, in particular their local conductor exponents agree.  At every
+prime,
+
+\[
+ \boxed{
+ a_p(E_{\chi,\chi})=a_p(\chi)+a_p(\chi)=2a_p(\chi).}
+ \tag{4.845dc_14w}
+\]
+
+Inside the ambient exponent-two family at a prime \(p\mid A\), the
+only primitive continuous conductor exponents are therefore zero and
+two.  The exponent-one cell, which would have required a continuous
+analogue of the Steinberg calculation, is absent.
+
+For the exponent-two cell, \(\chi\) is ramified at \(p\).  Young's
+Fourier coefficient formula specializes, for \(k\geq1\), to
+
+\[
+ \boxed{
+ \lambda_{\chi,\chi}(p^k,\tfrac12+it)
+ =\sum_{i=0}^{k}
+   \chi(p^i)\overline{\chi(p^{k-i})}
+   p^{it(k-2i)}=0.}
+ \tag{4.845dc_14x}
+\]
+
+Indeed, in every factorization \(p^k=p^ip^{k-i}\), at least one
+character is evaluated on a multiple of \(p\).  Since the physical
+second Fourier index has \(v_p(Ah\delta)\geq1\), the primitive
+conductor-two cross-index kernel vanishes.  The conductor-zero datum is
+unramified and is exactly the rank-two transfer of Section 4.109zfd.
+
+Consequently the finite cross-index transfer is now complete for the
+Maaß, holomorphic, and continuous primitive data at every \(p\mid A\):
+unramified data give two fixed shifts, Steinberg data give one shift,
+and conductor exponent two gives zero.  This is a local algebraic
+statement.  It does not prove the uniform polylogarithmic harmonic
+large sieve, nor does it justify the global Bessel-transform and
+spectral-measure constants.
+
+The interface trivial_nebentypus_eisenstein_conductor_audit records
+the even conductor alternatives and the positive-valuation zero,
+marks the continuous local transfer proved, and leaves the global
+large-sieve and PEVP flags false.
+
+
+### 4.109zfg Exact Hankel symbols remove the polylog spectral remainder
+
+The remaining transform issue in Section 4.109zfa can be separated
+from one genuine endpoint.  Let \(h_R\) be an even dyadic Maaß test on
+\(|r|\asymp R\), \(1\leq R\leq(\log(2T))^K\), holomorphic in a fixed
+strip and satisfying the usual normalized derivative seminorms.  For
+a fixed integer \(A\geq2\), multiply the partition by a normalized
+square of
+
+\[
+ \prod_{0\leq j<A}\left(r^2+(j+\tfrac12)^2\right).
+\]
+
+This remains nonnegative on the real and exceptional spectra,
+dominates the original dyadic interval after changing the fixed
+constant, and vanishes at every half-integer pole crossed below.  Put
+
+\[
+ G_R(v)=\frac2{\pi^2}\int_{\mathbb R}
+ r h_R(r)\tanh(\pi r)e^{2irv}\,dr
+ =\frac4{\pi^2}\int_0^\infty
+ r h_R(r)\tanh(\pi r)\cos(2rv)\,dr.
+\]
+
+Do not replace \(G_R\) by a compactly supported approximation.  The
+exact Kuznetsov formulae are
+
+\[
+ \boxed{
+ \begin{aligned}
+ H_R^+(x)&=\int_{\mathbb R}\cos(x\cosh v)G_R(v)\,dv,\\
+ H_R^-(x)&=\frac14\int_{\mathbb R}\cos(x\sinh v)G_R(v)\,dv.
+ \end{aligned}}
+ \tag{4.845dc_14xa}
+\]
+
+The whole-line transform here is essential.  The unsymmetrized
+half-line exponential transform has algebraic endpoint terms and is not
+Schwartz; it may be replaced by its even part because both outer
+\(v\)-kernels below are even.  All Schwartz seminorms of
+\(R^{-2}G_R(u/R)\), as functions of \(u\), are
+\(O_{j,A,W}(R^{C_j})\).  This is just integration by parts in the
+defining Fourier transform and has no \(R^{-B}\) remainder.  The
+holomorphic Petersson transform has the analogous exact discrete
+Fourier representation with \(\cosh,\sinh\) replaced by
+\(\cos,\sin\).
+
+Here is the exact large-argument lemma needed for Mellin separation.
+Let \(w\) be supported in \([1/2,2]\) and put \(x\asymp P\).  If
+
+\[
+ P\geq8(1+R)^2,
+\]
+
+then, for every fixed \(J\),
+
+\[
+ \begin{aligned}
+ w(x/P)H_R^+(x)
+ &=x^{-1/2}\sum_{\pm}e^{\pm ix}A_{\pm,R,P}(x),\\
+ (x\partial_x)^jA_{\pm,R,P}(x)&\ll_{j,J,W}R^{C_J},\\
+ (x\partial_x)^j\{w(x/P)H_R^-(x)\}
+ &\ll_{j,J,W}R^{C_J}P^{-J}.
+ \end{aligned}
+ \tag{4.845dc_14xb}
+\]
+
+The first identity is exact, not a truncated asymptotic expansion.
+One proof writes the two \(J\)-Bessel functions as Hankel functions,
+sets \(u_\nu(x)=x^{1/2}e^{\mp ix}H_\nu^{(1,2)}(x)\), and uses the
+Volterra equation obtained from
+
+\[
+ u_\nu''\pm2iu_\nu'
+ +\frac{1/4-\nu^2}{x^2}u_\nu=0.
+\]
+
+On \(x\geq8(1+|\nu|)^2\), its integral operator has norm at most
+\(1/2\); differentiating the equation gives the displayed symbol
+bounds.  For \(\nu=2ir\), the \(e^{\pm\pi r}\) Hankel constants cancel
+exactly after forming
+\((J_{2ir}-J_{-2ir})/\cosh(\pi r)\).  Integrating against \(rh_R(r)\)
+gives (4.845dc_14xb).  In the \(K\)-Bessel sector it is essential not
+to estimate \(K_{2ir}\sinh(\pi r)\) separately.  In the second exact
+integral in (4.845dc_14xa), the phases
+\(\pm x\sinh v+2rv\) have no stationary point when
+\(x\geq8(1+R)^2\); repeated integration by parts gives the last line.
+The same Hankel--Volterra argument applies to every holomorphic weight
+\(k\asymp R\).
+
+Apply the additive-to-multiplicative stationary-phase lemma directly
+to the two exact symbols in (4.845dc_14xb).  Their localized Mellin
+transforms obey
+
+\[
+ \boxed{
+ \sup_{\tau\in\mathbb R}
+ \left(1+
+ \frac{\operatorname{dist}(\tau,
+       [P/2,2P]\cup[-2P,-P/2])}{P}\right)^J
+ |\widetilde H_{R,P}(\tau)|
+ \ll_{J,W}\frac{R^2}{P}(\log(2T))^{C_J}.}
+ \tag{4.845dc_14xc}
+\]
+
+The harmless extra powers of \(R\) in the symbol seminorms have been
+absorbed into the displayed logarithm.  This proves the corrected
+\(L^\infty\), width-\(P\) estimate (4.845dc_14b) for the large range,
+with no discarded spectral-power error.  The continuous spectrum uses
+the same Maaß transform and adds no new archimedean sector.
+
+For the transition range
+
+\[
+ 1\leq P<8(1+R)^2,
+\]
+
+contour shifting in the exact \(J/K\) integrals and differentiation
+under (4.845dc_14xa) give, for fixed \(j\),
+
+\[
+ |(x\partial_x)^jH_R^\pm(x)|
+ +|(x\partial_x)^jH_R^{\rm hol}(x)|
+ \ll_{j,W}P R^{C_j}.
+\]
+
+Ordinary Mellin integration by parts therefore proves (4.845dc_14d).
+This covers every finite modulus block with \(C\leq X\), including the
+boundary \(P\asymp R^2\).
+
+It remains to sum \(C>X\), where \(P<1\).  The half-integer zeros of
+\(h_R\) allow the Maaß contours to move to
+\(\Re(2ir)=2A\), with every crossed residue equal to zero.  Hence
+
+\[
+ |(x\partial_x)^jH_R^\pm(x)|\ll_{j,A,W}x^{2A}R^{C_{j,A}}.
+\]
+
+A holomorphic form of weight \(k\) instead has the exact
+small-argument power \(J_{k-1}(x)\ll_k x^{k-1}\).  If a sector has
+power \(\beta>1\), its modulus block after Farey Cauchy is
+
+\[
+ \frac{P^\beta}{C}
+ \left(\frac{C^2}{Q}+X\right)
+ =\frac{X^\beta C^{1-\beta}}Q
+  +X^{\beta+1}C^{-\beta-1}.
+\]
+
+Summing dyadically over \(C>X\) gives
+\(O_{\beta}(X/Q+1)\).  Thus the Maaß/Eisenstein tail and every
+holomorphic weight \(k\geq4\) are complete with polylogarithmic
+seminorm constants.
+
+At this stage the remaining endpoint is the **weight-two Petersson tail**.
+There
+\(\beta=k-1=1\), so the first displayed term equals \(X/Q\) on every
+dyadic block and the absolute tail does not converge.  Its conditional
+Kloosterman cancellation is not supplied by the Farey square above.
+One must either prove the fixed-weight-\(2\) harmonic large sieve with
+an explicit polylogarithmic constant or arrange a trace formula in
+which this endpoint is absent.  The next subsection takes the first
+option by a positive cusp-strip argument.
+
+The interface exact_archimedean_mellin_transfer_audit records the
+remainder-free large and transition ranges and the contour-shift
+powers.  Its weight-two field is supplied by the endpoint theorem in
+the next subsection; the full PLS reinsertion remains separate.
+
+### 4.109zfga The weight-two endpoint is a cusp-strip large sieve
+
+The physical transform does not annihilate weight two.  With \(G_n\)
+as in (4.845aj), the holomorphic Kuznetsov transform at \(k=2\) is
+
+\[
+ \boxed{
+ \begin{aligned}
+ \dot G_n(2)
+ &=-4\int_0^\infty G_n(x)J_1(x)\frac{dx}{x}\\
+ &=-4(q_1X)^{1/2}\int_0^\infty
+ f_\infty(y)y^{-1/2}
+ J_1\!\left(\frac{4\pi\sqrt n}{Xy}\right)dy .
+ \end{aligned}}
+ \tag{4.845dc_14xd}
+\]
+
+This is obtained by the literal substitution
+\(y=4\pi\sqrt n/(xX)\).  There is no Mellin zero or parity factor in
+(4.845dc_14xd).  For example, a nonnegative \(f_\infty\) supported
+where the Bessel argument lies before the first positive zero of
+\(J_1\) makes the integral strictly nonzero.  Thus deleting the
+weight-two term would be an additional assumption.
+
+It is nevertheless possible to prove the required fixed-weight large
+sieve without estimating the conditionally convergent Petersson tail.
+Let \(\mathcal B_2(Q)\) be an orthonormal basis of the full weight-two
+space at level \(Q\), including oldforms, in the normalization
+
+\[
+ f(z)=\sum_{n\geq1}\rho_f(n)(4\pi n)e(nz).
+\]
+
+Fix a nonnegative smooth \(\eta\), supported in \([1/2,2]\) and
+positive on a fixed subinterval, and form the incomplete Eisenstein
+series
+
+\[
+ E_{Q,X}(z)
+ :=\sum_{\gamma\in\Gamma_\infty\backslash\Gamma_0(Q)}
+ \eta\!\left(X\Im(\gamma z)\right).
+ \tag{4.845dc_14xe}
+\]
+
+Choose in each orbit a Ford representative \(z=x+iy\) for which \(y\)
+is maximal.  A contributing coset is represented by a primitive pair
+\((c,d)\), with \(Q\mid c\), satisfying
+
+\[
+ \frac{Xy}{2}\leq |cz+d|^2\leq2Xy.
+ \tag{4.845dc_14xf}
+\]
+
+If any coset contributes, maximality gives \(y\geq1/(2X)\).  The
+\(c=0\) cell is the identity coset.  For \(c\ne0\), write \(c=Qk\).
+Put
+
+\[
+ R=(2Xy)^{1/2},\qquad
+ K=\frac{R}{Qy}=\frac1Q\left(\frac{2X}{y}\right)^{1/2}.
+\]
+
+Equation (4.845dc_14xf) forces \(|k|\leq K\), and for each \(k\) the
+integer \(d\) lies in an interval of length at most \(2R\).  If
+\(K<1\), no nonzero \(k\) occurs.  Otherwise
+
+\[
+ KR=\frac{2X}{Q},\qquad
+ K\leq\frac{2X}{Q},\qquad
+ R\leq KR=\frac{2X}{Q}
+\]
+
+by \(y\geq1/(2X)\) and \(K\geq1\).  Ignoring primitivity only enlarges
+the count, so
+
+\[
+ \boxed{
+ 0\leq E_{Q,X}(z)\ll_\eta1+\frac XQ}
+ \tag{4.845dc_14xg}
+\]
+
+uniformly on the quotient, with an absolute admissible counting
+constant \(16\).  No divisor bound, coprimality condition on the
+Fourier index, or \(Q^\varepsilon\) factor has entered.
+
+Now let \(F=\sum_{f\in\mathcal B_2(Q)}c_ff\).  Positivity, unfolding,
+and orthonormality give
+
+\[
+ \begin{aligned}
+ &\int_{\Gamma_0(Q)\backslash\mathbb H}
+ y^2|F(z)|^2E_{Q,X}(z)\,\frac{dx\,dy}{y^2}\\
+ &\quad=(4\pi)^2\sum_{n\geq1}n^2
+ \left|\sum_fc_f\rho_f(n)\right|^2
+ \int_0^\infty\eta(Xy)e^{-4\pi ny}\,dy\\
+ &\quad\leq\|E_{Q,X}\|_\infty\sum_f|c_f|^2.
+ \end{aligned}
+ \tag{4.845dc_14xh}
+\]
+
+For \(X\leq n\leq2X\), the last \(y\)-integral is \(X^{-1}\) times a
+fixed positive integral, so its coefficient in (4.845dc_14xh) is at
+least \(c_\eta n\).  Duality therefore proves the endpoint theorem
+
+\[
+ \boxed{
+ \sum_{f\in\mathcal B_2(Q)}
+ \left|\sum_{X\leq n\leq2X}
+ a_n\sqrt n\,\rho_f(n)\right|^2
+ \ll_\eta\left(1+\frac XQ\right)\sum_n|a_n|^2.}
+ \tag{4.845dc_14xi}
+\]
+
+This is the exact normalization required by (4.845dc_12), since
+\(\Gamma(2)=1\).  It treats the full level space, arbitrary Fourier
+indices, and all oldforms simultaneously.  In particular, the
+weight-two obstruction identified in Section 4.109zfg is now removed.
+The next remaining task is bookkeeping rather than a new
+archimedean estimate: insert (4.845dc_14xi), together with the other
+sectors from Section 4.109zfg, into the complete PLS conductor Euler
+sum before promoting PLS or PEVP.
+
+The interface weight_two_incomplete_eisenstein_large_sieve_audit
+records the Ford-domain count, the unfolded coefficient lower bound,
+the absence of index coprimality, and inclusion of oldforms.  It marks
+the weight-two endpoint proved but keeps the full-PLS reinsertion flag
+false.
+
+### 4.109zfgb Reinsertion proves PLS and fixed-entry PEVP
+
+> **Status.**  Section 4.109zlf proves the exact small, transition, and
+> large-symbol Mellin estimates for Maaß/Eisenstein and holomorphic
+> weight at least four; Section 4.109zfga proves weight two.  Thus the
+> scalar input used below is unconditional.  The conclusion is only
+> fixed-entry PEVP and does not include OLISK.
+
+The exact sector estimates in Sections 4.109zf--4.109zlf give, for the
+Maaß and Eisenstein measures and for holomorphic weights \(k\geq4\),
+the full-level estimate
+
+\[
+ \mathcal L_Q(a)
+ \ll_{J,W}(\log(2T))^{C_J}
+ \left(\mathcal M+\frac XQ\right)\|a\|_2^2.
+\]
+
+Section 4.109zfga gives the same statement at \(k=2\), with no
+coprimality condition and with the full oldspace already included.
+Partitioning the polylogarithmic spectral interval costs only another
+fixed logarithmic power.  Therefore
+
+\[
+ \boxed{
+ \mathcal L_Q(a)
+ \ll_{J,W}(\log(2T))^{C_J}
+ \left(\mathcal M+\frac XQ\right)\|a\|_2^2}
+ \tag{4.845dc_14xj}
+\]
+
+is the proved estimate for the complete Maaß, holomorphic, and
+Eisenstein spectrum.  Section 4.109zlf supplies uniform control of every
+modulus block, the \(C>X\) tail, exceptional parameter, and endpoint by
+finitely many normalized kernel derivatives.
+
+Apply (4.845dc_14xj) to each primitive family in (4.845dc).  A
+primitive family is a positive subfamily of the full level-\(Q_0\)
+square.  The two downward \(p^2\)-shifts in (4.845dc_14t) do not enlarge
+support.  Weighted Cauchy over their two rank choices uses their actual
+\(p^{-3/2}\) amplitudes; hence it produces the already displayed
+convergent conductor Euler product, not \(2^{\omega(A)}\).  The
+Steinberg component has one unshifted list, and the ramified continuous
+component is zero.
+
+The two exact conductor sums from Section 4.109z are
+
+\[
+ \sum_{Q_0\mid A^2B}w_A^{(2)}(Q_0)\ll A^{-1},
+ \qquad
+ \sum_{Q_0\mid A^2B}\frac{w_A^{(2)}(Q_0)}{Q_0}
+ \ll\frac{(\log\log(3A))^{C}}{A^2B}.
+\]
+
+Inserting these after (4.845dc_14xj) gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\sum_{Q_0\mid A^2B}w_A^{(2)}(Q_0)
+ \int_{\mathscr S^*(Q_0)}
+ \left|\sum_{y\asymp Y}a_y\sqrt y\,\rho_\pi(y)\right|^2d\pi\\
+ &\qquad\ll_{J,W}\frac{(\log(2T))^{C_J}}A
+ \left(\mathcal T^2+\frac{Y}{AB}\right)\|a\|_2^2.
+ \end{aligned}}
+ \tag{4.845dc_14xk}
+\]
+
+Thus (4.845dc_14xk) is exactly \((\mathrm{PLS})_{Q_0}\).
+
+Finally return to the exact primitive-conductor identity (4.845dc).
+Put the complete signed local multiplier in the first Cauchy factor
+and the unweighted ambient polynomial in the second.  Apply
+(4.845dc_14xk) to the first and (4.845dc_14xj) at level \(AB\) to the
+second.  The exact valuation condition \(D=(A,h\delta)\) has already
+been included in \(w_A^{(2)}\); no extra divisor sum remains outside
+the Euler square.  This yields
+
+\[
+ \boxed{
+ \sum_{D\mid A}\left|
+   \sum_{j\mid A}\mu(j)\mathscr B_{A,B,D,j}[b,a]
+ \right|^2
+ \ll_{J,W}\frac{(\log(2T))^{C_J}}A
+ \|b\|_2^2\|a\|_2^2.}
+ \tag{4.845dc_14xl}
+\]
+
+Equation (4.845dc_14xl) proves \((\mathrm{PEVP})_{A,B}\).  Because every
+preceding transform bound is homogeneous and polynomial in the same
+finite seminorm list, PEVP is seminorm-stable and applies to the shell
+decomposition of Section 4.109zg.
+
+### 4.109zi Fixed-entry PEVP does not aggregate the outer entry divisors
+
+The preceding version incorrectly used the fixed-\((A,B)\) factor
+\(A^{-1/2}\), or its right-oriented analogue \(B^{-1/2}\), as though
+no actual-integer sum over \(A,B\) remained.  Equation (4.845by) shows
+that these are genuine outer arithmetic variables.  In dyadic boxes
+\(A\asymp A_0\), \(B\asymp B_0\), the grouped coefficients satisfy
+
+\[
+ \boxed{
+ \sum_{A\asymp A_0}|\alpha_{\mathcal D,\mathcal B}(A)|^2
+ \ll_W A_0L^{C_W},\qquad
+ \sum_{B\asymp B_0}|\beta_{\mathcal D',\mathcal B'}(B)|^2
+ \ll_W B_0L^{C_W}.}
+ \tag{4.845dc_14xm}
+\]
+
+Indeed each coefficient is a smoothly weighted restricted divisor
+convolution and is bounded by a fixed divisor function; the standard
+second moment of that divisor function proves (4.845dc_14xm).  No
+inverse power of \(A_0\) or \(B_0\) occurs.
+
+Let \(X_{A,B,D}\) denote the normalized spectral block inside
+\(\mathfrak S^{\rm lift}_{q,A,B}/R\).  For fixed \(B\), left PEVP gives
+
+\[
+ \sum_{D\mid A}|X_{A,B,D}|^2
+ \ll L^{C_J}A_0^{-1}\mathcal N_{A,B}^2.
+\]
+
+Even granting uniform normalized coefficient energy
+\(\mathcal N_{A,B}\leq1\), Cauchy over the actual integers
+\(A\asymp A_0\), followed by the \(B\)-coefficient bound, yields only
+
+\[
+ \boxed{
+ \sum_{\substack{A\asymp A_0\\B\asymp B_0}}
+ |\alpha(A)\beta(B)X_{A,B}|
+ \ll L^{C}A_0^{1/2}B_0.}
+ \tag{4.845dc_14xn-L}
+\]
+
+The right orientation gives \(L^CA_0B_0^{1/2}\).  Choosing the better
+orientation therefore leaves the exact power ledger
+
+\[
+ \boxed{
+ E_{\rm outer}(\alpha,\beta)
+ =\alpha+\beta-\frac12\max(\alpha,\beta),}
+ \qquad A_0=T^\alpha,\qquad B_0=T^\beta.
+ \tag{4.845dc_14xn}
+\]
+
+This implication is sharp for the information in fixed-entry PEVP:
+take unit outer coefficients and same-phase scalar blocks
+\(X_{A,B}=A_0^{-1/2}\) in the left orientation.  They satisfy the
+individual square bound and attain the order in
+(4.845dc_14xn-L).  Hence the missing factor cannot be recovered by
+raising the logarithmic threshold for \(\max(A,B)\).  In particular,
+the former claim that all large-entry boxes close and only
+\(A,B<L^K\) remain is invalid.
+
+For one separated smooth tensor, write
+\[
+ \mathfrak S^{\rm lift}_{q,A,B}
+ =\alpha(A)\beta(B)\mathfrak K^{\rm lift}_{q,A,B};
+\]
+the original finite nuclear superposition costs only a fixed power of
+\(L\).  Thus neither coefficient is counted twice below.  The remaining
+gate must retain both outer Möbius convolutions inside the same signed
+estimate.  For the left orientation its exact form is
+
+\[
+ \boxed{
+ \left|
+ \sum_{\substack{A,B\geq1\\\text{all exact endpoint and gcd conditions}}}
+ \alpha(A)\beta(B)
+ \frac{\mathfrak K^{\rm lift}_{q,A,B}}R
+ \right|
+ \ll_{B_0,W} S L^{-B_0}.}
+ \tag{OLISK}_{q}^{L}
+\]
+
+The right gate interchanges \((R,A)\) and \((S,B)\).  It includes the
+divisor sum \(j\mid A\), the ratio/gcd layers, and the physical kernel
+\(\Omega_{A,B,q}\).  It is a joint outer-level PEVP, not a consequence
+of (PEVP)\(_{A,B}\).  The product-Hecke and collapsed-gcd PNT estimates
+remain candidate inputs on subregions, but no exact partition currently
+proves \((\mathrm{OLISK})_q^{L,R}\) on every outer dyadic box.
+
+The scalar gate (4.845dc_14xye), fixed-entry PLS, PEVP, and the
+transform/AFE shell estimates are proved in Sections
+4.109zlf--4.109zfgb.  Nevertheless no large-entry compact-core range is
+closed by PEVP alone.
+The interface
+`lifted_outer_qct_aggregation_audit` now records the two coefficient
+energies, the residual exponent (4.845dc_14xn), and the full outer LISK
+gate.  It deliberately rejects the former double-small split.
+
+### 4.109zj Ambient normalization reverses the raw mixed-entry Gram
+
+There is a more coherent alternative to the scalar majorant in
+(4.845dc_14xn).  Expand the square of the full outer sum before taking
+an absolute value between distinct entry pairs.  The local level
+operators then have an exact pairwise Gram kernel.
+
+At one prime \(p\), embed both members of the pair in the common
+level-\(p^2\) oldspace.  Let
+\[
+ P_0\leq P_1\leq P_2,\qquad
+ \operatorname{tr}P_0=1,\quad
+ \operatorname{tr}P_1=p+1,\quad
+ \operatorname{tr}P_2=p(p+1)
+\]
+be its nested orthogonal projections.  The local states prime absent,
+prime in the modulus factor \(B\), and prime in the signed entry factor
+\(A\) are respectively
+\[
+ E_0=P_0,\qquad
+ E_B=\frac{P_1}{p+1},\qquad
+ E_A=\frac{P_1}{p+1}-\frac{P_2}{p(p+1)}.
+\]
+Put
+\[
+ \kappa_p=\frac{p-1}{p(p+1)},\qquad b_p=\frac1{p+1}.
+\]
+Direct multiplication on
+\(\operatorname{im}P_0\),
+\(\operatorname{im}P_1\ominus\operatorname{im}P_0\), and
+\(\operatorname{im}P_2\ominus\operatorname{im}P_1\) gives
+\[
+ \boxed{
+ \bigl(\operatorname{tr}(E_\epsilon E_{\epsilon'})\bigr)_{
+ \epsilon,\epsilon'\in\{0,B,A\}}
+ =
+ \begin{pmatrix}
+ 1&b_p&\kappa_p\\
+ b_p&b_p&\kappa_p\\
+ \kappa_p&\kappa_p&\kappa_p
+ \end{pmatrix}.}
+ \tag{4.845dc_14xo}
+\]
+For example,
+\[
+ \operatorname{tr}(E_A^2)
+ =\frac{(p-1)^2}{p^2(p+1)}
+  +\frac{p-1}{p^2(p+1)}
+ =\kappa_p,
+\]
+and \(\operatorname{tr}(E_AE_0)=\operatorname{tr}(E_AE_B)=\kappa_p\).
+Thus every *raw* cell in which \(p\) occurs on at least one side is at
+most \(b_p\).  It is tempting to tensor this matrix and infer
+\[
+ \prod_{p\mid[AB,A'B']}\frac1{p+1}
+ \leq\frac1{[AB,A'B']}.
+\]
+That inference omits the physical ambient Plancherel normalization.
+At common level \(p^2\), the trace is multiplied by
+\(\nu_2=p(p+1)\).  Therefore the actual positive Gram matrix is
+\[
+ \boxed{
+ \nu_2
+ \bigl(\operatorname{tr}(E_\epsilon E_{\epsilon'})\bigr)
+ =
+ \begin{pmatrix}
+ p(p+1)&p&p-1\\
+ p&p&p-1\\
+ p-1&p-1&p-1
+ \end{pmatrix}.}
+ \tag{4.845dc_14xp}
+\]
+In particular, an entry-difference cell has physical square mass
+\(p-1\), whereas PEVP requires \(p^{-1}\).  The exact missing ratio is
+\[
+ \boxed{\frac{p-1}{p^{-1}}=p(p-1).}
+\]
+This is the same normalization reversal proved for the diagonal
+positive square in Section 4.109ze.  Hence bare projection algebra does
+not produce a reciprocal-LCM physical kernel.
+
+If a signed cross-index argument repairs this exact ambient deficit and
+produces the desired reciprocal-LCM kernel, its arithmetic aggregation
+is only polylogarithmic.  Group one separated tensor by \(n=AB\):
+\[
+ \gamma(n)=\sum_{\substack{AB=n\\(A,B)=1}}
+ \alpha(A)\beta(B)w(A,B).
+\]
+The fixed smooth tensor and restricted divisor convolutions imply
+\(|\gamma(n)|\leq\tau_K(n)\) for a fixed \(K\).  The exact identity
+\[
+ \boxed{
+ \begin{aligned}
+ \sum_{n,n'}\frac{|\gamma(n)\gamma(n')|}{[n,n']}
+ &=\sum_{n,n'}\frac{|\gamma(n)\gamma(n')|(n,n')}{nn'}\\
+ &=\sum_{g\geq1}\varphi(g)
+   \left(\sum_{g\mid n}\frac{|\gamma(n)|}{n}\right)^2
+ \ll_K(\log(2T))^{C_K}
+ \end{aligned}}
+ \tag{4.845dc_14xq}
+\]
+follows from
+\((n,n')=\sum_{g\mid n,n'}\varphi(g)\) and the standard dyadic
+divisor mean.  Thus the outer cardinality would no longer be a
+positive-power obstruction once the signed physical cross-index kernel
+has supplied the reciprocal-LCM factor.  The raw projection matrix does
+not supply it.
+
+That last qualification is the remaining analytic point.  In a mixed
+pair the two second indices are \(Ah\delta\) and \(A'h'\delta'\), and
+the Blomer--Milićević oldvectors, exact-valuation tensors, and Bessel
+tests must be transported to the pairwise common level
+\([ABj,A'B'j']\) before (4.845dc_14xo) may be inserted.  The required
+mixed-entry statement is
+\[
+ \boxed{
+ |\mathcal G_{\rm phys}(A,B;A',B')|
+ \ll_{J,W}
+ \frac{L^{C_J}}{[AB,A'B']}\,
+ \mathcal N_{A,B}\mathcal N_{A',B'},}
+ \tag{MEPEVP}
+\]
+uniformly for the exact physical coefficient lists and normalized
+kernel seminorms.  Summing (MEPEVP) by (4.845dc_14xq), followed by the
+seven-log ledger (4.845cx), proves \((\mathrm{OLISK})_q\).
+
+Equations (4.845dc_14xo)--(4.845dc_14xp) prove that ordinary positive
+projection Gram is insufficient; (4.845dc_14xq) proves that the desired
+kernel would aggregate.  What is not yet proved is that the shifted
+Fourier-index cross terms recover the missing local ratio \(p(p-1)\)
+and produce MEPEVP with a uniform polylogarithmic harmonic-large-sieve
+constant.
+The interface mixed_entry_projection_gram_audit therefore marks the
+local tensor and arithmetic aggregation true, but keeps MEPEVP and the
+whole outer LISK gate false.
+
+### 4.109zja Full outer-state inclusion-exclusion saves one local prime, but not two
+
+The pairwise majorant in Section 4.109zj does not yet use the fact that
+the two present outer states have the same Möbius sign.  On squarefree
+coprime support,
+\[
+ \mu(d)\mu(b)=\mu(A),\qquad
+ \mu(d')\mu(b')=\mu(B).
+\]
+At one prime the three outer states \(0,B,A\) therefore have signed
+coefficient vector
+\[
+ \mathbf m=(1,-1,-1).
+\]
+Let \(M_p\) be the physical matrix in (4.845dc_14xp).  In a pair of
+outer entries condition on \(p\mid[AB,A'B']\), so that the
+\((0,0)\)-cell is excluded.  Direct multiplication gives
+\[
+ \begin{aligned}
+ \mathbf m^{\mathsf T}M_p\mathbf m
+ &=p^2+p-1,\\
+ (M_p)_{0,0}&=p(p+1),\\
+ \boxed{\displaystyle
+ \sum_{\substack{\epsilon,\epsilon'\in\{0,B,A\}\\
+                 (\epsilon,\epsilon')\ne(0,0)}}
+ m_\epsilon m_{\epsilon'}(M_p)_{\epsilon,\epsilon'}
+ =-1.}
+ \tag{4.845dc_14xq_1}
+ \end{aligned}
+\]
+The unsigned mass of the same eight cells is
+\[
+ 2p+2(p-1)+p+2(p-1)+(p-1)=8p-5.
+ \tag{4.845dc_14xq_2}
+\]
+Thus recombining all three outer states before taking an absolute value
+does recover one complete prime power: a kernel of generic size \(p\)
+becomes a constant.  This cancellation is absent from pairwise MEPEVP.
+
+It does **not** yet give the reciprocal-LCM kernel.  The physical target
+at this prime is \(p^{-1}\), so (4.845dc_14xq_1) still misses the exact
+factor
+\[
+ \frac{|-1|}{p^{-1}}=p.
+ \tag{4.845dc_14xq_3}
+\]
+This is the same horizontal exact-level factor visible in
+[HPY, Remark after Theorem 1.22](https://arxiv.org/abs/2411.05672):
+for the local exact-conductor test \(f_{=c}\), the geometric conductor
+is \(p^{c-1}\), whereas \(f_{=c}(1)\asymp p^c\).  The positive
+pure-tensor large sieve therefore cannot supply (4.845dc_14xq_3).
+
+There is also a precise obstruction to inserting an outer Mellin
+separation before (4.845dc_14xq_1).  Give the \(A\)- and \(B\)-states
+unit phases \(x,y\) on the left and \(x',y'\) on the right.  The
+nonempty-union kernel becomes
+\[
+ \begin{aligned}
+ K_p(x,y;x',y')
+={}&p\{y\overline{y'}-y-\overline{y'}\}\\
+ &+(p-1)\{x\overline{x'}+x\overline{y'}
+       +y\overline{x'}-x-\overline{x'}\}.
+ \tag{4.845dc_14xq_4}
+ \end{aligned}
+\]
+At \(x=y=x'=y'=1\), this is \(-1\).  At the common half-turn
+\(x=y=x'=y'=-1\), the Möbius state vector becomes \((1,1,1)\) and
+\[
+ \boxed{K_p(-1,-1;-1,-1)=8p-5.}
+ \tag{4.845dc_14xq_5}
+\]
+Consequently arbitrary dyadic Mellin twists destroy the local
+inclusion-exclusion.  The outer dyadic boxes cannot be estimated
+separately and then recombined; all artificial Type allocations and
+outer scales must first be returned to the common physical kernel.
+
+The two-Fourier-index formula supplies a candidate for the still
+missing factor \(p\).  In the unramified primitive cell write
+\[
+ q=p+1,\qquad
+ D=1-\frac{p\lambda_\pi(p)^2}{q^2},
+\]
+and retain \(P_p\) and \(\mathcal K_p^{(0)}\) from
+(4.845cz).  If
+\[
+ a=v_p(m),\qquad b=v_p(h\delta),
+\]
+then the \(B\)-state has level-\(p\) trace
+\(P_p(a,b)/q\), while the \(A\)-state has second valuation \(b+1\)
+and Ramanujan-normalized trace
+\(\mathcal K_p^{(0)}(a,b+1)/c_p(p^a)\).  Inserting the two outer
+Möbius signs before Cauchy gives the exact combined perturbation
+\[
+ \boxed{
+ \mathcal U_p(a,b)
+ =-\frac{P_p(a,b)}q
+  -\frac{\mathcal K_p^{(0)}(a,b+1)}{c_p(p^a)}.}
+ \tag{4.845dc_14xq_6}
+\]
+At the unit-valuation cell the oldclass terms simplify completely:
+\[
+ \boxed{
+ \mathcal U_p(0,0)
+ =-\frac{q-\lambda_\pi(p)}{q^2D}.}
+ \tag{4.845dc_14xq_7}
+\]
+For example, at \(p=5\) and \(\lambda_\pi(p)=3/2\), the
+\(B\)-state is \(8/33\), the normalized \(A\)-state is
+\(-2/33\), and their signed sum is
+\[
+ -\frac8{33}-\left(-\frac2{33}\right)=-\frac2{11}.
+\]
+Thus \(p|\mathcal U_p(0,0)|=10/11\): the cross-index term supplies
+exactly the reciprocal-prime scale which the projection-only
+calculation (4.845dc_14xq_3) lacked.
+
+The same power survives every unramified valuation.  Put
+\[
+ \begin{aligned}
+ u_k&=\lambda_{k-1}-\lambda_1\lambda_k/q,\\
+ r_k&=\lambda_k-p\lambda_1\lambda_{k-1}/q,\\
+ s_k&=\lambda_{k-1},
+ \end{aligned}
+\]
+with negative subscripts zero.  Equations (4.845cz) and
+(4.845dc_14t) give the four-rank identity
+\[
+ \mathcal U_p(a,b)
+ =-\frac{\lambda_a\lambda_b}{q}
+  -\frac{p}{qD}u_au_b
+  +\frac{q}{q^2D}r_ar_{b+1}
+  -\frac1q s_as_{b+1}.
+ \tag{4.845dc_14xq_8}
+\]
+For \(\theta=7/64\), the standard local Hecke bounds and
+\(qr_k=\lambda_k-p\lambda_{k-2}\) imply
+\[
+ \begin{aligned}
+ |u_0|&\ll p^{-1+\theta},&
+ |u_k|&\ll(k+1)p^{(k-1)\theta}\quad(k\geq1),\\
+ |r_0|&=1,&
+ |r_1|&\ll p^{-1+\theta},&
+ |r_k|&\ll(k+1)p^{(k-2)\theta}\quad(k\geq2).
+ \end{aligned}
+\]
+After the common exact-valuation weight \(p^{-(a+b)/2}\), the four
+prime exponents in (4.845dc_14xq_8) are respectively
+\[
+ \begin{aligned}
+ e_1&=-1-(a+b)(1/2-\theta),\\
+ e_2&=-(a+b)/2+u(a)+u(b),\\
+ e_3&=-1-(a+b)/2+r(a)+r(b+1),\\
+ e_4&=-1-(a+b)/2+(a-1+b)\theta\quad(a\geq1),
+ \end{aligned}
+\]
+where
+\[
+ u(0)=-1+\theta,\quad u(k)=(k-1)\theta\ (k\geq1),
+\]
+and
+\[
+ r(0)=0,\quad r(1)=-1+\theta,\quad
+ r(k)=(k-2)\theta\ (k\geq2).
+\]
+Each \(e_i\leq-1\).  Hence
+\[
+ \boxed{
+ p^{-(a+b)/2}|\mathcal U_p(a,b)|
+ \ll(a+1)(b+2)p^{-1}}
+ \tag{4.845dc_14xq_9}
+\]
+uniformly in the unramified cell; the finitely many small-prime
+denominators are controlled by the rational bounds already used in
+Section 4.109zla.
+
+Equations (4.845dc_14xq_6)--(4.845dc_14xq_9) are not yet a proof of
+OLISK.  Before tensoring them one must verify from the unreduced
+physical sum that the \(A\)- and \(B\)-state square-root
+normalizations are exactly the common \(p^{-(a+b)/2}\) used above,
+rather than dyadic constants extracted on different boxes.  One must
+then prove the analogous combined identity for the Steinberg and
+Eisenstein conductor cells.  Primitive conductor exponent two still
+vanishes at positive \(A\)-valuation, but the conductor-one \(B\)-state
+has to be combined with the signed \(A\)-state before its harmonic
+measure is estimated.  These are finite local calculations followed by
+one global recombination theorem, not consequences of fixed-entry
+PEVP.
+
+The first Steinberg calculation shows that simple recombination is not
+enough.  Let
+\[
+ C_p=1-\frac{p+1}{p^2(p+2)}.
+\]
+For a conductor-\(p\) primitive representation, the unit-index
+\(B\)-state has normalized amplitude \(1\).  Section 4.109zfe gives
+the corresponding signed \(A\)-state amplitude
+\(-\epsilon_pC_p/\sqrt p\), where
+\(\epsilon_p\in\{-1,1\}\) is the Steinberg sign.  After the two outer
+Möbius signs, the best possible local cancellation is therefore
+\[
+ \boxed{
+ \left|-1+\epsilon_p\frac{C_p}{\sqrt p}\right|^2
+ \geq\left(1-\frac1{\sqrt p}\right)^2
+ >\frac14\qquad(p\geq5).}
+ \tag{4.845dc_14xq_10}
+\]
+The reciprocal-prime square target is \(p^{-1}\leq1/5\).  Thus the
+modulus-side Steinberg conductor-one state is a genuine residual; the
+unramified identity (4.845dc_14xq_9) cannot close OLISK prime by prime.
+The remaining analytic theorem must average this conductor-one state
+across outer levels or use both completion orientations in one trace
+formula.  Choosing a single orientation and applying its fixed-entry
+PEVP again returns the exponent (4.845dc_14xn).
+
+### 4.109zjaaa Scalar averaging the two orientations leaves a constant Steinberg state
+
+The last sentence has one interpretation which can be decided locally.
+The exchange identity (4.642)--(4.645) proves that the left and right
+completion formulas represent the same original scalar sum.  Hence a
+scalar combination of the two identities has coefficients
+\(\lambda\) and \(1-\lambda\), with \(\lambda\) real or complex.
+
+At a conductor-\(p\) Steinberg prime, after the outer Möbius signs, put
+
+\[
+ e_p=\epsilon_p\frac{C_p}{\sqrt p},\qquad
+ m_p=-1,\qquad
+ C_p=1-\frac{p+1}{p^2(p+2)},\qquad \epsilon_p^2=1.
+ \tag{4.845dc_14xq_10a}
+\]
+
+The first orientation assigns the ordered amplitudes
+\((e_p,m_p)\) to the entry and modulus states, while the swapped
+orientation assigns \((m_p,e_p)\).  The scalar combination therefore
+has the two state amplitudes
+
+\[
+ X_\lambda=\lambda e_p+(1-\lambda)m_p,\qquad
+ Y_\lambda=\lambda m_p+(1-\lambda)e_p.
+ \tag{4.845dc_14xq_10b}
+\]
+
+Their sum is independent of \(\lambda\):
+\(X_\lambda+Y_\lambda=e_p+m_p\).  Thus, for every scalar choice,
+
+\[
+ \begin{aligned}
+ \max\{|X_\lambda|^2,|Y_\lambda|^2\}
+ &\geq\frac14|e_p+m_p|^2\\
+ &\geq\frac14\left(1-\frac1{\sqrt p}\right)^2
+ >\frac19>\frac1p\qquad(p\geq11).
+ \end{aligned}
+ \tag{4.845dc_14xq_10c}
+\]
+
+Therefore neither averaging the two orientations nor choosing a
+different scalar phase between them can supply reciprocal-prime square
+mass simultaneously for both outer states.  This does not rule out a
+nonlocal square which retains cross terms between different outer
+states and different primes.  It proves that such a nonlocal estimate
+is necessary: the phrase “use both orientations” is not itself a local
+closure of the Steinberg residual.
+
+The interface two_orientation_steinberg_minimax_audit checks the exact
+correction \(C_p\), the orientation swap, and the rational witness
+\(1/9>1/p\).  It keeps OSLSP and OLISK false.
+
+### 4.109zjaaab The cross-orientation square isolates an Atkin--Lehner sign gate
+
+There is a different use of the two equal completion formulas: write
+the square of the physical sum as the first orientation times the
+conjugate of the swapped orientation.  At one Steinberg prime the two
+same-state cross coefficients are then
+
+\[
+ e_p\overline{m_p}=m_p\overline{e_p}
+ =-\epsilon_p\frac{C_p}{\sqrt p}.
+ \tag{4.845dc_14xq_10d}
+\]
+
+This removes the constant coefficient left by scalar averaging, but it
+does not yet give the reciprocal-prime coefficient required in the
+quadratic form.  The coefficient in (4.845dc_14xq_10d) already belongs
+to the squared expression, so the comparison is
+
+\[
+ \frac{C_p}{\sqrt p}\quad\hbox{against}\quad\frac1p.
+\]
+
+Squaring only to make the comparison rational gives
+
+\[
+ \boxed{
+ \frac{C_p^2/p}{p^{-2}}=pC_p^2>1\qquad(p\geq5).}
+ \tag{4.845dc_14xq_10e}
+\]
+
+Thus the cross-orientation square still needs one further
+(p^{-1/2}).  Its source, if this route closes, must be the Steinberg
+sign.  In the normalization of Section 4.109zfe,
+
+\[
+ \boxed{\frac{\epsilon_p}{\sqrt p}=\lambda_\pi(p).}
+ \tag{4.845dc_14xq_10f}
+\]
+
+Consequently the sign is not an independent random coefficient: it is
+the ramified Hecke coefficient, equivalently the local Atkin--Lehner
+eigenvalue after the standard normalization.  Moving it to a Fourier
+index turns the spectral bilinear form into a cross-cusp matrix
+coefficient.  Atkin--Lehner is unitary, so ordinary Cauchy and the
+positive harmonic large sieve preserve the same operator norm and give
+no additional (p^{-1/2}).
+
+For a squarefree set of Steinberg primes (A), put
+(epsilon_A=\prod_{p\mid A}\epsilon_p) and
+(C_A=\prod_{p\mid A}C_p).  A sufficient remaining estimate is the
+physical-list inequality
+
+\[
+ \boxed{
+ \left|\int_{\mathscr S_{\rm St}(A)}
+ h(t_\pi)\epsilon_A
+ \mathcal A_\pi\overline{\mathcal B_\pi}\,d\pi\right|
+ \ll
+ \frac{(\log T)^C}{\sqrt A}\,
+ \mathcal L_Q\|a\|_2\|b\|_2.}
+ \tag{ALSG}_{A}
+\]
+
+Here (mathcal A_\pi,mathcal B_\pi) are the two actual shifted
+physical coefficient lists, with their exact valuation, (D)-layer,
+and Bessel/QCT kernel; (ALSG) is not asserted for arbitrary lists.
+Multiplication by the already present (C_A/\sqrt A) would then supply
+the target (A^{-1}), up to the absolutely convergent (C_A) Euler
+correction.
+
+No cited cross-cusp large sieve proves (ALSG): unitarity alone gives the
+same bound without (A^{-1/2}).  Thus the cross-orientation idea has
+been reduced to a strictly smaller signed Atkin--Lehner trace theorem,
+but that theorem remains open and OSLSP is still false.  The interface
+`steinberg_cross_orientation_sign_gate_audit` records the exact
+rational deficit and prevents treating the square of
+(4.845dc_14xq_10d) as a second independent square.
+
+### 4.109zjaaac The symmetric-difference trace produces only a reciprocal-LCM same-state subkernel
+
+There is a fixed-transform mechanism for the missing factor in the two
+signed same-state cells which is stronger than unitarity.  It does not
+prove the physical outer inequality; the complete three-state
+calculation below shows exactly why.
+
+Let \(A,A'\) be the squarefree Steinberg-prime supports of two outer
+entries in a common squarefree ambient level \(L\), put
+\(g=(A,A')\), and define
+
+\[
+ Q=A\mathbin\triangle A'
+   =\frac{AA'}{g^2},\qquad M=\frac LQ.
+ \tag{4.845dc_14xq_10g}
+\]
+
+Here the triangle denotes symmetric difference of prime supports.
+Because every local Atkin--Lehner sign squares to one,
+
+\[
+ \epsilon_A\epsilon_{A'}=\epsilon_Q.
+ \tag{4.845dc_14xq_10h}
+\]
+
+Moreover \(Q\mid L\) and \((Q,M)=1\), so \(W_Q\) is an exact
+Atkin--Lehner involution at level \(L\).  Subtracting the \(+1\) and
+\(-1\) instances of [Le Fourn's restricted Petersson formula,
+Proposition 1](https://arxiv.org/abs/1506.08723) shows that the trace
+weighted by \(\epsilon_Q\) has no diagonal term when \(Q>1\).  Its
+geometric term has denominator \(c\sqrt Q\), with
+
+\[
+ M\mid c,\qquad(c,Q)=1.
+ \tag{4.845dc_14xq_10i}
+\]
+
+The same normalization is visible directly in
+[Kiral--Young's Atkin--Lehner cusp formula](https://arxiv.org/abs/1710.00914):
+
+\[
+ \boxed{
+ S_{\infty,1/M}^{(L)}(m,n;c\sqrt Q)
+ =S(\overline Qm,n;c).}
+ \tag{4.845dc_14xq_10j}
+\]
+
+The square-root in the modulus does not worsen the sparse-Farey large
+sieve.  If the same-cusp Bessel support gives \(c\asymp C_0\), then the
+cross-cusp support gives \(c\asymp C_0/\sqrt Q\).  The common divisor
+in the allowed moduli simultaneously changes from \(L\) to \(M=L/Q\).
+Consequently the two reduced-fraction spacings are identical:
+
+\[
+ \boxed{
+ \frac{M}{(C_0/\sqrt Q)^2}
+ =\frac{L/Q}{C_0^2/Q}
+ =\frac{L}{C_0^2}.}
+ \tag{4.845dc_14xq_10k}
+\]
+
+Thus, for a fixed common ambient level and one fixed physical transform,
+the Gallagher--Farey constant is the same as in the positive same-cusp
+large sieve, while the geometric denominator retains the factor
+\(Q^{-1/2}\).
+
+This is exactly the missing arithmetic power kernel in the signed
+same-state subkernel.  After stripping the bounded local corrections
+\(C_A C_{A'}\), the cross-orientation coefficients contribute
+\((AA')^{-1/2}\).  By (4.845dc_14xq_10g),
+
+\[
+ \boxed{
+ \frac1{\sqrt{AA'}}\frac1{\sqrt Q}
+ =\frac1{\sqrt{AA'Q}}
+ =\frac g{AA'}
+ =\frac1{[A,A']}.}
+ \tag{4.845dc_14xq_10l}
+\]
+
+With the corrections restored, the kernel is
+\(C_A C_{A'}/[A,A']\); the \(C_p=1+O(p^{-2})\) Euler factors are
+absolutely summable and are kept separate from the power identity.
+
+For \(Q=1\), one has \(A=A'\) on the relevant Steinberg support, and
+the two pre-existing square-root coefficients already give \(A^{-1}\),
+so the ordinary positive diagonal is at exactly the reciprocal-LCM
+size.  Kiral--Young's oldvector involution permutes the coefficient
+lists up to Atkin--Lehner signs, hence preserves their \(L^2\) norm.
+
+The full local Steinberg block contains more than those same-state
+cells.  In the primitive conductor-\(p\) sector the absent state has
+amplitude zero: a conductor-\(p\) representation does not occur at
+level one.  After the outer Möbius signs put
+
+\[
+ x=\epsilon_p\frac{C_p}{\sqrt p}.
+\]
+
+The first orientation and the swapped orientation have respective
+state vectors, in the order \((0,B,A)\),
+
+\[
+ u=(0,-1,x),\qquad v=(0,x,-1).
+ \tag{4.845dc_14xq_10m}
+\]
+
+Consequently their complete cross matrix is
+
+\[
+ \boxed{
+ uv^{\mathsf T}
+ =
+ \begin{pmatrix}
+ 0&0&0\\
+ 0&-x&1\\
+ 0&x^2&-x
+ \end{pmatrix}.}
+ \tag{4.845dc_14xq_10n}
+\]
+
+The two diagonal state cells carry the signed coefficient \(-x\) and
+are precisely the cells to which (4.845dc_14xq_10g)--(4.845dc_14xq_10l)
+apply.  However, the \(B\)-on-the-left, \(A\)-on-the-right cell has the
+unsigned coefficient \(1\).  Summing the complete conductor-\(p\)
+block gives
+
+\[
+ \boxed{
+ \sum_{\epsilon,\epsilon'\in\{0,B,A\}}
+ (uv^{\mathsf T})_{\epsilon,\epsilon'}
+ =1-2x+x^2=(1-x)^2.}
+ \tag{4.845dc_14xq_10o}
+\]
+
+Since \(0<C_p<1\), for every \(p\geq5\) and both Steinberg signs,
+
+\[
+ |1-x|^2
+ \geq\left(1-\frac1{\sqrt p}\right)^2
+ >\frac14>\frac1p.
+ \tag{4.845dc_14xq_10p}
+\]
+
+Thus the unsigned cross-state cell already blocks the reciprocal-prime
+target before any endpoint or transform issue is considered.  The
+actual pairwise ambient level is also not squarefree in an entry state:
+the exact-level operator uses level \(p^2\).  Kiral--Young's
+Atkin--Lehner involution at \(p^2\) swaps its two \(p\)-oldvectors up to
+\(\epsilon_p\), but this permutation does not remove the coefficient
+one in (4.845dc_14xq_10n).
+
+Therefore the current certified statement is
+
+\[
+ \boxed{
+ \text{signed same-state subkernel}=\frac1{[A,A']},\qquad
+ \text{full three-state cross kernel}\not\ll\frac1p.}
+ \tag{4.845dc_14xq_10q}
+\]
+
+The interface `atkin_lehner_symmetric_difference_kernel_audit` checks
+(4.845dc_14xq_10g), (4.845dc_14xq_10k), and (4.845dc_14xq_10l) by
+exact integer and rational arithmetic.  It keeps
+`physical_outer_kernel_reinserted=False` and `outer_lisk_covered=False`.
+
+The interface `steinberg_full_cross_orientation_matrix_audit` checks
+(4.845dc_14xq_10m)--(4.845dc_14xq_10p) and records the fatal unsigned
+cross-state coefficient.  Hence (ALSG), OSLSP, and OLISK all remain
+unproved.  A successful trace estimate must cancel the \(B\)-to-\(A\)
+and \(A\)-to-\(B\) cells jointly with other conductor patterns; a
+same-state Atkin--Lehner trace alone cannot close the gate.
+
+### 4.109zjaaaca The constant mixed cell is the geometric MMKLS family
+
+The matrix calculation can be connected to the final geometric gate
+without another spectral heuristic.  In (4.845dc_14xq_10n), the only
+constant term is the \(B\)-on-the-left, \(A\)-on-the-right cell, and its
+coefficient is exactly one.  Put \(c=As\) in the lifted left
+orientation.  For squarefree \((A,B)=1\), finite inclusion--exclusion
+gives
+
+\[
+ \boxed{
+ \sum_{j\mid A}\mu(j)\mathbf 1_{ABj\mid As}
+ =\mathbf 1_{B\mid s}
+   \sum_{j\mid(A,s/B)}\mu(j)
+ =\mathbf 1_{B\mid s}\mathbf 1_{(A,s)=1}.}
+ \tag{4.845dc_14xq_10r}
+\]
+
+The last equality uses \((A,B)=1\).  On this support, the exact CRT
+identity (4.845dc_14m) cancels the Ramanujan fibre before any
+inequality:
+
+\[
+ \boxed{
+ \frac{A}{c_A(m)}\frac1{As}S(m,-An;As)
+ =\frac1sS(\overline A m,-n;s).}
+ \tag{4.845dc_14xq_10s}
+\]
+
+Now interchange the finite \(B\mid s\) incidence as in
+(4.845dc_14xq_11).  Restoring every Type-I/II allocation uses the exact
+identity (4.845dc_14xq_16), so the modulus coefficient is \(\mu(s)\).
+Consequently the constant mixed cell is precisely the left-oriented
+family \((\mathrm{MMKLS})_q^L\); the transposed cell is
+\((\mathrm{MMKLS})_q^R\).  There is no intermediate arbitrary outer
+coefficient.
+
+This statement is deliberately one-directional at the level of
+estimates.  A bound for the isolated mixed cell is sufficient, but it
+is not a necessary consequence of the original moment: the physical
+sum may cancel it against other conductor patterns before an absolute
+value is taken.  Thus (4.845dc_14xq_10r)--(4.845dc_14xq_10s) identify
+the smallest honest target but do not license a lower bound or a
+cellwise triangle inequality.
+
+The interface `mixed_cross_state_mmkls_audit` checks
+(4.845dc_14xq_10r) on an exact squarefree fixture, checks the full CRT
+phase multiset in (4.845dc_14xq_10s), and reuses the finite Type
+recombination certificate.  It records the hard exponents
+
+\[
+ (s,m,h,\delta)=(3,3,5/2,5/2),\qquad
+ E_{\rm arbitrary}=5/2,\quad E_{\rm target}=2,
+ \quad E_{\rm missing}=1/2,
+ \tag{4.845dc_14xq_10t}
+\]
+
+while keeping MMKLS and the full outer gate false.
+
+After that exact recombination the remaining squared gate is
+\[
+ \boxed{
+ \sum_{A,B,A',B'}
+ \alpha(A)\beta(B)\overline{\alpha(A')\beta(B')}
+ \mathcal G_{\rm phys}(A,B;A',B')
+ \ll_{B_0,W} S^2L^{-2B_0}.}
+ \tag{OSLSP}_{q}^{L}
+\]
+All endpoint, gcd, ratio, \(j\mid A\), and physical Bessel conditions
+are retained in \(\mathcal G_{\rm phys}\).  Unlike MEPEVP, this gate
+keeps the signed sum over the three local outer states before applying
+the harmonic large sieve.  Equations (4.845dc_14xq_1)--(4.845dc_14xq_5)
+prove that this ordering recovers exactly one of the two ambient prime
+powers and that a second, genuinely analytic prime saving is still
+required.  They do not prove \((\mathrm{OSLSP})_q^L\) or OLISK.
+
+The interfaces outer_state_inclusion_exclusion_audit,
+unramified_outer_state_cross_index_kernel, and
+unramified_outer_state_weighted_exponent_audit check the two matrix
+identities, the half-turn witness, the unit-cell cross-index formula,
+and every valuation exponent.  The interface
+steinberg_outer_state_unit_obstruction_audit records
+(4.845dc_14xq_10).  They keep physical-normalization,
+two-orientation/conductor-average, recombined-outer-kernel, and OLISK
+coverage false.
+
+### 4.109zjab Outer-divisor incidence returns the original Möbius modulus
+
+There is one exact reordering which is invisible in a fixed-entry
+spectral square.  Work with one separated smooth tensor in
+(4.845aq_1), fix \(A,j,m,h,\delta\), and put
+
+\[
+ u=\frac{c}{Aj}.
+\]
+
+The condition \(ABj\mid c\) is exactly \(B\mid u\).  Therefore the
+finite \(B,c\) sums may be interchanged without a convergence issue:
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\sum_B\beta_{\mathcal B}(B)
+   \sum_{ABj\mid c}\frac{S(m,-Ah\delta;c)}c
+      \Omega_{A,B,q}(c,m,h,\delta)\\
+ &\quad=\sum_{Aj\mid c}\frac{S(m,-Ah\delta;c)}c
+   G_{\mathcal B,j}\!\left(\frac{c}{Aj};c,m,h,\delta\right),
+ \end{aligned}}
+ \tag{4.845dc_14xq_11}
+\]
+
+where
+
+\[
+ G_{\mathcal B,j}(u;c,m,h,\delta)
+ :=\sum_{B\mid u}\beta_{\mathcal B}(B)
+   \Omega_{A,B,q}(c,m,h,\delta).
+ \tag{4.845dc_14xq_12}
+\]
+
+All endpoint, gcd, ratio, and physical Bessel restrictions remain in
+\(\Omega\); no smooth factor has been replaced by its supremum in
+(4.845dc_14xq_11).
+
+The divisor incidence itself has no positive-power L2 cost.  To see the
+exact algebra first omit the bounded smooth tensor and write
+\(G(u)=\sum_{B\mid u}\beta(B)\).  For every finite interval
+\(U_0<u\leq U_1\), expansion of the square gives
+
+\[
+ \boxed{
+ \sum_{U_0<u\leq U_1}|G(u)|^2
+ =\sum_{B_1,B_2}\beta(B_1)\overline{\beta(B_2)}
+ \left(
+ \left\lfloor\frac{U_1}{[B_1,B_2]}\right\rfloor
+ -\left\lfloor\frac{U_0}{[B_1,B_2]}\right\rfloor
+ \right).}
+ \tag{4.845dc_14xq_13}
+\]
+
+For the physical separated weights, expansion gives the same set of
+multiples with an additional uniformly bounded smooth product.  If
+\(|\beta(B)|\leq\tau_K(B)\), its absolute value is at most
+
+\[
+ \begin{aligned}
+ &U\sum_{B_1,B_2}
+   \frac{\tau_K(B_1)\tau_K(B_2)}{[B_1,B_2]}\\
+ &\qquad+
+ \sum_{\substack{B_1,B_2\\[B_1,B_2]\leq 2U}}
+   \tau_K(B_1)\tau_K(B_2),
+ \qquad U\asymp S/j.
+ \end{aligned}
+ \tag{4.845dc_14xq_14}
+\]
+
+The first line is \(\ll_K U(\log(2T))^{C_K}\) by the
+reciprocal-LCM/totient identity (4.845dc_14xq).  In the second line,
+group pairs by \(l=[B_1,B_2]\).  Both \(B_i\mid l\), so the summand and
+the number of pairs are bounded by a fixed divisor power; hence
+
+\[
+ \sum_{l\leq2U}\tau_{K'}(l)
+ \ll_{K'}U(\log(2U))^{C_{K'}}.
+\]
+
+Consequently
+
+\[
+ \boxed{
+ \sum_{u\asymp S/j}|G_{\mathcal B,j}(u;\cdots)|^2
+ \ll_{K,J,W}\frac Sj(\log(2T))^{C_{K,J,W}}.}
+ \tag{4.845dc_14xq_15}
+\]
+
+This proves that the outer \(B\)-incidence, including the floor-function
+boundary in (4.845dc_14xq_13), costs only logarithms.
+
+It is essential to identify what happens when all Type allocations are
+actually restored.  With
+
+\[
+ c_U(a)=\sum_{d\mid a,\ d\leq U}\mu(d),
+\]
+
+the exact finite identity is
+
+\[
+ \mu(s)=-\sum_{\substack{ab=s\\a>U}}c_U(a)\mu(b)
+ \qquad(s>U).
+ \tag{4.845dc_14xq_16}
+\]
+
+The Type-I and Type-II sectors are merely the two parts \(b\leq V\)
+and \(b>V\) of the sum in (4.845dc_14xq_16).  Summing every dyadic
+partition of unity and both sectors therefore returns \(\mu(s)\), not
+a new annihilating coefficient.  Restoring the finite \(j\)-sum gives
+
+\[
+ \sum_{j\mid A}\mu(j)\mathbf1_{j\mid s}
+ =\mathbf1_{(A,s)=1}.
+ \tag{4.845dc_14xq_17}
+\]
+
+Thus the fully recombined left-oriented geometric gate is equivalently
+the following Möbius-weighted-modulus estimate:
+
+\[
+ \boxed{
+ \begin{aligned}
+ \left|\sum_A\frac{\alpha(A)}A
+ \sum_{\substack{s\asymp S\\(s,A)=1}}
+ \frac{\mu(s)}s
+ \sum_{\substack{m\ne0\\h,\delta\ne0}}
+ S(\overline A m,-h\delta;s)
+ \Psi_{A,q}(s,m,h,\delta)\right|
+ \ll_{B_0,W}S(\log T)^{-B_0}.
+ \end{aligned}}
+ \tag{MMKLS}_{q}^{L}
+\]
+
+The factor \(A^{-1}\) is the exact normalization: (4.845ap_3) contributes
+\(A/c_A(m)\), while the outer Poisson factor is \(E=R/A\); after
+dividing (4.845aq_1) by \(R\), returning from the standard orbit to the
+physical orbit leaves \(1/A\).  Here \(\Psi_{A,q}\) is the unreduced
+physical QCT kernel.  In the hard balanced box its exact scales are
+
+\[
+ \boxed{
+ s\asymp T^3,\quad A\asymp T^\alpha\ (0\leq\alpha\leq3),\quad
+ m\asymp T^\alpha,\quad |h|\asymp|\delta|\asymp T^{5/2},\quad
+ |h\delta|\asymp T^5,}
+ \tag{4.845dc_14xq_18}
+\]
+
+with \(m,h,\delta\ne0\), \((s,A)=1\), the exact
+\(D=(A,h\delta)\) layer, all ratio restrictions, and the two-coordinate
+Kloosterman phase retained.  The right-oriented gate interchanges the
+two mollifier variables.
+
+Equation (4.845dc_14xq_15) removes the apparent \(B_0\) cardinality
+loss, but it does not prove \((\mathrm{MMKLS})_q^L\).  The coefficient
+\(\mu(s)\) is arithmetic in the trace-formula modulus and is not a
+smooth Bessel test.  Expanding it again into divisibility levels is
+exactly the outer-level sum with which this subsection began.  Replacing
+\(\mu(s)\) by an arbitrary coefficient of modulus at most one returns
+the already audited hard-face exponent
+
+\[
+ \boxed{
+ E_{\rm arbitrary}=\frac52,\qquad E_{\rm target}=2,
+ \qquad E_{\rm missing}=\frac12.}
+ \tag{4.845dc_14xq_19}
+\]
+
+Therefore OSLSP has now been reduced to a strictly named theorem: a
+signed Möbius-modulus, two-Fourier-index harmonic large sieve which
+gains \(T^{1/2}\) beyond the arbitrary-coefficient bound while retaining
+the physical Bessel/QCT kernel.  This is the same Steinberg
+conductor-one average isolated in (4.845dc_14xq_10), expressed on the
+geometric side.  Neither the incidence L2 estimate nor ordinary
+Kuznetsov proves that theorem.
+
+The interfaces `outer_modulus_divisor_incidence_energy` and
+`outer_modulus_type_recombination_audit` check (4.845dc_14xq_13), the
+finite Type recombination, the zero outer-scale power loss, and the
+hard-face \(1/2\) deficit.  They keep MMKLS, OSLSP, and OLISK false.
+
+### 4.109zjabd Direct Möbius--Kloosterman reciprocity has no endpoint power saving
+
+There is a direct published-kernel match before the Poisson completion
+in (4.845ao), but it does not close the power gap.  Return to one
+recombined original box and fix \(r,h,\delta\).  The exchange identity
+(4.642)--(4.645) permits the two orientations to be paired and the hard
+range to be partitioned at \(s<r\).  The diagonal is empty here because
+\((r,s)=1\) and \(r,s>1\).  Additive reciprocity gives the exact identity
+
+\[
+ \boxed{
+ e\!\left(-\frac{h\delta\bar r}{s}\right)
+ =e_r\!\left(h\delta\bar s\right)
+  e\!\left(-\frac{h\delta}{rs}\right),
+ \qquad (r,s)=1.}
+ \tag{4.845dc_14xq_17a}
+\]
+
+The last factor is part of the smooth physical amplitude, not a second
+modular phase.  In the balanced box, with
+
+\[
+ r\asymp s\asymp T^3,\qquad |h\delta|\asymp T^5,
+\]
+
+its first \(s\)-derivative has scale
+
+\[
+ \frac{|h\delta|}{rs^2}=T^{-4},
+ \qquad
+ S\frac{|h\delta|}{rs^2}=T^{-1}.
+ \tag{4.845dc_14xq_17b}
+\]
+
+Higher normalized derivatives are bounded as well.  Therefore partial
+summation absorbs (4.845dc_14xq_17b), the mollifier taper, and every
+separated physical smooth factor without a positive power loss.  On the
+unit stratum \((h\delta,r)=1\), the remaining \(s\)-sum is exactly the
+kernel in [Korolev, equation (1)](https://arxiv.org/abs/1610.09171):
+
+\[
+ S_r(x;\mu)
+ =\sum_{n\le x}^{\prime}\mu(n)e_r(an^*+bn),
+ \qquad (a,b)=(h\delta,0).
+ \tag{4.845dc_14xq_17c}
+\]
+
+The orientation \(s<r\) ensures \(x\le r\); in a balanced dyadic box
+all partial-summation endpoints also satisfy
+\(x\gg r^{1/2}\log r\).  Thus the general-composite-modulus results have
+the correct geometric phase and interval.  They do not have the required
+power.  The older Möbius estimate quoted as Korolev's equation (2) is
+
+\[
+ |S_q(x;\mu)|
+ \ll x\tau(q)\left(
+ q^{-1/2}(\log x)^{5/2}
+ +q^{1/5}x^{-1/5}(\log x)^{13/5}\right).
+ \tag{4.845dc_14xq_17d}
+\]
+
+At the physical endpoint \(x=q=T^3\), the two relative \(T\)-exponents
+are respectively
+
+\[
+ -\frac32,\qquad \frac35-\frac35=0.
+ \tag{4.845dc_14xq_17e}
+\]
+
+Hence the second term in (4.845dc_14xq_17d) supplies no power saving.
+Korolev's Theorem 1 gives instead
+
+\[
+ |S_q(x;f)|\le
+ \frac{562x\log\log q}{\varepsilon\log q}
+\]
+
+for general integer \(q\), which is logarithmic.  His Theorem 5 gives
+\(xq^{-c\varepsilon^4}\) only for prime \(q\), with an unspecified
+absolute \(c>0\).  The hard face would require at least \(q^{-1/6}\)
+because \(q=T^3\) and the missing factor is \(T^{-1/2}\).  The theorem
+neither certifies \(c\varepsilon^4\ge1/6\) nor covers the moving composite
+moduli in the physical sum.  Moreover, (4.845dc_14xq_17c) does not cover
+the retained nonunit layers \((h\delta,r)>1\).
+
+Thus direct reciprocity is an exact adapter on the unit layer, but the
+published composite theorem leaves the full \(T^{1/2}\) deficit and the
+prime theorem is not a uniform replacement.  It does not prove MMKLS,
+OSLSP, or OLISK.  The interface `mmkls_korolev_reciprocity_audit`
+checks (4.845dc_14xq_17a)--(4.845dc_14xq_17e) by exact rational
+arithmetic and retains all three proof flags as false.
+
+### 4.109zjaba Higher short-interval uniformity loses the progression density
+
+The 2026 version of
+[Matomäki--Radziwiłł--Shao--Tao--Teräväinen, Theorem 1.1(i)](https://arxiv.org/abs/2411.05770)
+must also be compared with the pre-Cauchy affine line before declaring
+the half-power gate new.  On the balanced hard face, after extracting
+the primitive \(h\)-Poisson slopes, the two Möbius arguments have the
+form
+
+\[
+ r=r_0+j_0n,\qquad s=s_0+v_0n,\qquad
+ |j_0|,|v_0|\asymp T^{1/2},\qquad |n|\asymp T^{5/2}.
+ \tag{4.845dc_14xq_19a}
+\]
+
+Thus \(r,s\asymp X=T^3\).  Each affine progression has
+\(T^{5/2}\) points, step \(T^{1/2}\), and containing interval length
+\(H=T^3=X\).  The published lower hypothesis
+\(H\ge X^{1/3+\varepsilon}\) is satisfied with a large power margin, but
+Theorem 1.1 also assumes the strict upper endpoint
+\(H\le X^{1-\varepsilon}\).  Thus it does not literally apply to this
+containing interval.  Partitioning into admissible shorter intervals does
+not repair the next problem: the maximal-progression norm is bounded by
+\(H(\log X)^{-C}\), not by the number \(H/T^{1/2}\) of points in the
+progression.  Literal substitution therefore gives
+
+\[
+ \boxed{
+ E_{\rm MRSTT}=3,\qquad E_{\rm trivial\ progression}=5/2,
+ \qquad E_{\rm excess}=1/2.}
+ \tag{4.845dc_14xq_19b}
+\]
+
+So this theorem is weaker than the trivial count on the sparse critical
+line by exactly the power missing from MMKLS.  There are two further
+hypothesis mismatches.  Its conclusion holds only outside an exceptional
+set of starting points, and no argument places the structured physical
+starting points outside that set.  It also controls one Möbius function against a
+fixed-complexity nilsequence, whereas the other factor
+\(\mu(s_0+v_0n)\) is another growing-step affine Möbius sequence, not
+such a nilsequence.  Even an optimistic removal of that mismatch would
+only supply logarithmic discorrelation, not the required \(T^{1/2}\).
+
+The interface `critical_affine_mobius_uniformity_audit` records the
+four exact exponents \(3,3,5/2,1/2\), verifies the lower interval threshold,
+rejects the strict upper endpoint and exceptional-set transfer, and rejects
+the maximal-progression normalization and second-affine-factor hypotheses.  This rules out a
+direct application of the published theorem; it does not rule out a
+new density-sensitive two-affine Möbius estimate.
+
+### 4.109zjabb Exact torus matrix coefficient retains cross-slope phases
+
+There is a frequency-space formulation which avoids taking an absolute
+value for each primitive slope.  Fix a primitive pair \((j,v)\), choose
+\(xv+yj=1\), and put
+
+\[
+ M=M_{j,v}:=
+ \begin{pmatrix}x&j\\-y&v\end{pmatrix}\in SL_2(\mathbb Z).
+ \tag{4.845dc_14xq_19c}
+\]
+
+Then (4.166) is \(z=(r,s)^{\mathsf T}=Mu\), where
+\(u=(\delta_0,n)^{\mathsf T}\).  A second Bezout choice has the form
+
+\[
+ (x',y')=(x+kj,y-kv),\qquad
+ M'=M\begin{pmatrix}1&0\\k&1\end{pmatrix}.
+ \tag{4.845dc_14xq_19d}
+\]
+
+The change \(u'=\left(\begin{smallmatrix}1&0\\-k&1\end{smallmatrix}\right)u\)
+therefore proves exact Bezout-choice independence after reindexing the
+finite line sum.  No norm estimate is used here.
+
+For a finite line-coordinate kernel \(K_M(u)\), use
+
+\[
+ \widehat K_M(\xi)=\sum_{u\in\mathbb Z^2}K_M(u)e(-u\cdot\xi).
+\]
+
+Choose product cutoffs \(0\leq\chi_R,\chi_S\leq1\) equal to one on every
+physical support and define
+
+\[
+ A_R(\theta_1)=\sum_r\mu(r)\chi_R(r)e(-r\theta_1),\qquad
+ B_S(\theta_2)=\sum_s\mu(s)\chi_S(s)e(-s\theta_2).
+\]
+
+Define its physical pullback by
+\(\widetilde K_M(z)=K_M(M^{-1}z)\).  Character orthogonality and
+
+\[
+ (Mu)\cdot\xi=u\cdot(M^{\mathsf T}\xi),\qquad
+ \widehat{\widetilde K_M}(\xi)=\widehat K_M(M^{\mathsf T}\xi)
+ \tag{4.845dc_14xq_19e}
+\]
+
+give the exact finite identity
+
+\[
+ \boxed{
+ \sum_M\sum_u\mu((Mu)_1)\mu((Mu)_2)K_M(u)
+ =\int_{\mathbb T^2}A_R(\theta_1)B_S(\theta_2)
+   \sum_M\widehat K_M(-M^{\mathsf T}\theta)\,d\theta.}
+ \tag{4.845dc_14xq_19f}
+\]
+
+All coprimality projectors, physical cutoffs, and transform phases are
+part of \(K_M\).  In particular, (4.845dc_14xq_19f) does not replace the
+second Möbius factor by a nilsequence and does not square one slope at a
+time.  For any finite collection \(\mathscr C\) of primitive-slope
+kernels, define the phase-coherent operator
+
+\[
+ \mathcal P_{\mathscr C}(\theta):=
+ \sum_{M\in\mathscr C}\widehat K_M(-M^{\mathsf T}\theta).
+ \tag{4.845dc_14xq_19g}
+\]
+
+Because
+\(\widehat K_M(-M^{\mathsf T}\theta)
+=\widehat{\widetilde K_M}(-\theta)\), Parseval also gives the exact
+physical identity
+
+\[
+ \boxed{
+ \|\mathcal P_{\mathscr C}\|_2^2
+ =\sum_{z\in\mathbb Z^2}
+   \left|\sum_{M\in\mathscr C}K_M(M^{-1}z)\right|^2.}
+ \tag{4.845dc_14xq_19ga}
+\]
+
+Thus the slope sum and every physical phase remain inside one square.
+This is more precise than a per-slope triangle inequality, but it is
+still a positive square after the two Möbius factors have been removed.
+
+Parseval gives
+
+\[
+ \|A_RB_S\|_2
+ \le (RS)^{1/2}\le T^3.
+\]
+
+At the power-critical \(\gamma=0\) layer, the dyadic \(g\)-family has
+power cardinality zero.  Taking \(\mathscr C\) to be that complete
+critical collection, the following is a precise sufficient local gate
+for the \(T^{3499/1000}\) physical layer:
+
+\[
+ \boxed{
+ \|\mathcal P_{\mathscr C}\|_{L^2(\mathbb T^2)}
+ \ll_{B,W}T^{499/1000}(\log T)^{-B}.}
+ \tag{4.845dc_14xq_19h}
+\]
+
+Equivalently, its energy target has exponent \(499/500\).  This is only a
+sufficient Cauchy gate, not an equivalence or a proved estimate.  In
+particular, the step
+
+\[
+ |\langle A_R\otimes B_S,\mathcal P_{\mathscr C}\rangle|
+ \leq \|A_R\otimes B_S\|_2\|\mathcal P_{\mathscr C}\|_2
+ \tag{4.845dc_14xq_19hb}
+\]
+
+replaces the actual two-Möbius Fourier tensor by its positive Parseval
+mass.  Hence (4.845dc_14xq_19h) may be strictly stronger than MMKLS.
+If its physical energy (4.845dc_14xq_19ga) does not meet the target, the
+correct next theorem must bound the signed pairing in
+(4.845dc_14xq_19hb) on the actual Möbius tensor, rather than its full
+\(L^2(\mathbb T^2)\) operator norm.
+
+The virtue of this coordinate is visible after expanding the operator
+energy.  If
+\(M_i=\left(\begin{smallmatrix}x_i&j_i\\-y_i&v_i\end{smallmatrix}\right)\),
+then the cross-slope correlation is transported by
+
+\[
+ M_2^{\mathsf T}M_1^{-\mathsf T},\qquad
+ \left(M_2^{\mathsf T}M_1^{-\mathsf T}\right)_{21}
+ =j_2v_1-v_2j_1.
+ \tag{4.845dc_14xq_19i}
+\]
+
+Thus the primitive-slope determinant survives exactly inside the one
+global square.  The remaining task is now an explicit correlation bound
+for the diagonal, near-parallel, and separated determinant shells of
+\(\mathcal P_{\mathscr C}\).  Taking a triangle inequality in \(M\) would erase this
+structure and return the old positive diagonal.
+
+The interface `signed_torus_slope_operator_audit` checks Bezout shear
+invariance, the pullback phase, tensor Fourier factorization, and the full
+finite Fourier pairing over \(\mathbb Z/7\mathbb Z\) using exact integer
+cyclotomic coefficients.  It records the required operator exponents
+\(499/1000\) and \(499/500\), marks the \(L^2\) gate as sufficient but
+not necessary, and keeps the signed tensor restriction, operator bound,
+and MMKLS false.
+
+### 4.109zjabc Farey spacing collapses the cross-slope multiplicity
+
+The physical pullback (4.845dc_14xq_19ga) does not retain a
+power-sized slope family at a fixed point.  Write
+\[
+ g=T^\gamma,\qquad
+ V=T^{1/2-\gamma},\qquad
+ D=T^{5/2-\gamma},\qquad
+ r,s\asymp T^3.
+\]
+For a contributing primitive pair \((j,v)\), the determinant equation
+gives
+\[
+ \frac jv=\frac rs-\frac{\delta_0}{sv}.
+ \tag{4.845dc_14xq_19j}
+\]
+Thus every contributing reduced fraction \(j/v\) lies in an interval
+about \(r/s\) of length
+\[
+ \ll \frac{D}{SV}=T^{-1}.
+ \tag{4.845dc_14xq_19k}
+\]
+Two distinct reduced fractions in this dyadic denominator box have
+Farey separation
+\[
+ \left|\frac{j_1}{v_1}-\frac{j_2}{v_2}\right|
+ =\frac{|j_1v_2-j_2v_1|}{|v_1v_2|}
+ \gg \frac1{V^2}=T^{-1+2\gamma}.
+ \tag{4.845dc_14xq_19l}
+\]
+Consequently the number of primitive slopes contributing to one
+physical pair satisfies the exact scale bound
+\[
+ \boxed{
+ \#\{(j,v)\text{ at fixed }(r,s)\}
+ \ll 1+\frac{DV}{S}
+ =1+T^{-2\gamma}\ll1.}
+ \tag{4.845dc_14xq_19m}
+\]
+For every fixed \(\gamma>0\), the interval in
+(4.845dc_14xq_19k) is eventually shorter than the Farey spacing, so a
+sign-fixed dyadic box contains at most one primitive slope.  At
+\(\gamma=0\) there may be more than one, but their number is bounded
+independently of \(T\).  Hence the \(T^{1-2\gamma}\) total slope
+cardinality cannot itself provide a cross-slope power saving inside a
+fixed physical fibre.
+
+The \(T^{3499/1000}\) target belongs to the complete dyadic
+\(G\)-layer, not to one integer \(g\).  Write \(g_0\) for a fixed
+integer and define
+\[
+ \mathcal P_G:=\sum_{G<g_0\leq2G}\mathcal P_{g_0},
+ \qquad G=T^\gamma.
+ \tag{4.845dc_14xq_19ma}
+\]
+For fixed \(g_0\), applying
+\(|z_1+\cdots+z_m|^2\leq
+m(|z_1|^2+\cdots+|z_m|^2)\) with (4.845dc_14xq_19m)
+gives
+\[
+ \|\mathcal P_{g_0}\|_2^2
+ \ll \sum_{M\in\mathcal M_{g_0}}
+       \|K_M\|_{\ell^2(\mathbb Z^2)}^2.
+ \tag{4.845dc_14xq_19mb}
+\]
+The fixed-\(g_0\) EDSSF diagonal has exponent \(6-2\gamma\).
+There are \(T^\gamma\) integers \(g_0\) in the dyadic layer, and a
+fixed physical pair can occur for at most \(T^{\gamma+o(1)}\) of them.
+Consequently
+\[
+ \boxed{
+ \|\mathcal P_G\|_2^2
+ \ll T^{\gamma+o(1)}
+ \sum_{G<g_0\leq2G}\sum_{M\in\mathcal M_{g_0}}
+       \|K_M\|_{\ell^2(\mathbb Z^2)}^2
+ \ll T^{6+o(1)}(\log T)^{-4}.}
+ \tag{4.845dc_14xq_19n}
+\]
+Thus the aggregated positive energy exponent is \(6\), independent of
+\(\gamma\).  Against the proposed energy target \(499/500\), its gap is
+\[
+ \boxed{6-\frac{499}{500}=\frac{2501}{500}.}
+ \tag{4.845dc_14xq_19o}
+\]
+
+For one integer \(g_0\), the natural kernel norm has exponent
+\(3-\gamma\), while the two-Möbius Parseval tensor has exponent \(3\).
+Fixed-\(g_0\) Cauchy therefore gives \(6-\gamma\), which is already
+worse by \(T^\gamma\) than the raw fixed-\(g_0\) cardinality
+\(T^{6-2\gamma}\).  Summing over the \(T^\gamma\) integers \(g_0\)
+gives the aggregated Cauchy exponent
+\[
+ \boxed{E_{\rm Cauchy}=6.}
+ \tag{4.845dc_14xq_19p}
+\]
+Direct absolute counting of the complete \(G\)-layer is better when
+\(\gamma>0\): it has exponent \(6-\gamma\).  Hence the best available
+positive bound has deficit
+\[
+ \boxed{
+ (6-\gamma)-\frac{3499}{1000}
+ =\frac{2501}{1000}-\gamma,}
+ \tag{4.845dc_14xq_19q}
+\]
+exactly the determinant-line saving requirement
+\(s_{\rm line}(\gamma)\) in (4.163).  Positive Cauchy itself has the
+larger, \(\gamma\)-independent deficit \(2501/1000\).
+
+Interpolating the Parseval norm with Davenport's uniform exponential-sum
+bound cannot change this power ledger.  Davenport supplies arbitrarily
+large logarithmic savings but power-saving exponent zero, and every
+positive \(L^p\) interpolation between the \(L^2\) and \(L^\infty\)
+endpoints is minimized in power at the Parseval endpoint already used
+in (4.845dc_14xq_19p).
+
+The smallest honest Fourier-space statement is therefore the signed
+Möbius-tensor restriction gate
+\[
+ \boxed{
+ (\mathrm{MTSR})_{q,G}:\qquad
+ \left|
+  \int_{\mathbb T^2}
+   A_R(\theta_1)B_S(\theta_2)\mathcal P_G(\theta)\,d\theta
+ \right|
+ \ll_{B,W}T^{3499/1000}(\log T)^{-B}.}
+ \tag{4.845dc_14xq_19r}
+\]
+By (4.845dc_14xq_19f), this is exactly the fixed-\(q\), dyadic-\(G\)
+determinant-line layer, with required saving
+\(2501/1000-\gamma\).  It is not a consequence of the positive
+operator norm (4.845dc_14xq_19h), and it is not yet proved.
+
+This exponent comparison is not a lower-bound proof for the particular
+oscillatory physical kernel: a bounded number of terms can still cancel
+at isolated fibres.  It does prove that a power saving cannot come from
+the primitive-slope cardinality at fixed \(g_0\), because that
+multiplicity is bounded.  Aggregating the \(T^\gamma\) possible
+integers \(g_0\) inside a positive square loses exactly that same
+\(T^\gamma\), so it is worse than direct cardinality.  A full positive
+\(L^2\) theorem would need near-total kernel cancellation far below its
+aggregated energy scale; it is not a replacement for Möbius
+cancellation.
+
+The interface torus_farey_multiplicity_audit records the window
+exponent \(-1\), Farey exponent \(-1+2\gamma\), bounded multiplicity,
+eventual uniqueness for \(\gamma>0\), the diagonal exponent
+\(6-2\gamma\), the aggregated positive-Cauchy deficit \(2501/1000\),
+and the exact identity between the best positive (raw-cardinality)
+deficit and (4.163).  It records Davenport power saving zero and keeps
+the signed tensor restriction and MMKLS open.
+
+### 4.109zjac Product-index character energy saves locally but does not compose with PEVP
+
+There is a geometric estimate which was lost in the operator-norm bound
+(4.143d)--(4.143e).  Keep one separated physical tensor from
+(4.845ah)--(4.845ai), fix \(A,s,m\), and first restrict to
+\((h\delta,s)=1\).  Write \(a=\overline A m\), and put
+
+\[
+ H_\chi=\sum_{h\asymp H}u_h\chi(h),\qquad
+ L_\chi=\sum_{\delta\asymp L}v_\delta\chi(\delta).
+\]
+
+The Dirichlet characters vanish on nonunits, so the displayed sums
+already impose \((h\delta,s)=1\).  With
+
+\[
+ G_s(\chi,n):=\sum_{x\bmod s}^{*}\chi(x)e(nx/s),
+\]
+
+Fourier inversion on \((\mathbb Z/s\mathbb Z)^\times\), followed by
+\(y\mapsto\bar y\), gives the finite exact identity
+
+\[
+ \boxed{
+ \begin{aligned}
+ F_s(a)&:=\sum_{h,\delta}u_hv_\delta S(a,-h\delta;s)\\
+ &=\frac1{\varphi(s)}\sum_{\chi\bmod s}
+ \chi(-1)G_s(\bar\chi,1)G_s(\bar\chi,a)H_\chi L_\chi.
+ \end{aligned}}
+ \tag{4.845dc_14xq_20}
+\]
+
+This ordering is essential.  Squaring the product-residue count before
+removing its uniform unit-residue vector retains the main term
+\(|H_0L_0|^2/\varphi(s)\) and gives (4.143e).  In (4.845dc_14xq_20) the
+principal character is evaluated explicitly:
+
+\[
+ \boxed{F_s^{(0)}(a)
+ =\frac{\mu(s)c_s(a)}{\varphi(s)}H_{\chi_0}L_{\chi_0}}
+ \qquad(s\ \hbox{squarefree}).
+ \tag{4.845dc_14xq_21}
+\]
+
+In particular, if \((a,s)=1\), its coefficient is exactly
+\(1/\varphi(s)\), not the square root of the product-residue main term.
+
+The nonprincipal part has a uniform generalized-Gauss bound, including
+arbitrary \((a,s)\).  Sort every character by its primitive conductor.
+Lemma 1 of
+[Cochrane--Shi](https://www.math.ksu.edu/~cochrane/research/xyequvmodm.pdf)
+gives the following exact local factor for squarefree \(s\):
+
+\[
+ \boxed{
+ \sum_{\chi\bmod s}
+ |G_s(\bar\chi,1)G_s(\bar\chi,a)|^2
+ =\prod_{p\mid s}
+ \begin{cases}
+  1+(p-2)p^2,&p\nmid a,\\
+  (p-1)^2,&p\mid a.
+ \end{cases}}
+ \tag{4.845dc_14xq_22}
+\]
+
+Every local factor in (4.845dc_14xq_22) is at most \(p^2(p-1)\).
+Consequently the left side is at most
+\(s^2\varphi(s)\), with no power of \((a,s)\).
+
+Theorem 1 of the same paper states, uniformly for every shifted integer
+interval \(I\),
+
+\[
+ \frac1{\varphi(s)}\sum_{\chi\ne\chi_0}
+ \left|\sum_{n\in I}\chi(n)\right|^4
+ \ll
+ K(s)|I|^2,
+ \quad
+ K(s)=8^{\omega(s)}\tau(s)(\log s)^3(\log\log s)^7.
+ \tag{4.845dc_14xq_23}
+\]
+
+Four-variable partial summation applies (4.845dc_14xq_23) to the
+separated smooth weights with a fixed polynomial in their one-variable
+seminorms.  Cauchy first between the two character polynomials and then
+between the Gauss and character factors in (4.845dc_14xq_20) gives
+
+\[
+ \boxed{|F_s^{(\ne0)}(a)|
+ \ll sK(s)^{1/2}(HL)^{1/2}.}
+ \tag{4.845dc_14xq_24}
+\]
+
+On squarefree support \(K(s)^{1/2}\) is
+\(4^{\omega(s)}(\log s)^{3/2}(\log\log s)^{7/2}\).  Its harmonic
+average costs only logarithms, since
+
+\[
+ \sum_{s\le X}\frac{\mu^2(s)4^{\omega(s)}}s
+ \le\prod_{p\le X}\left(1+\frac4p\right)
+ \ll(\log(2X))^4.
+ \tag{4.845dc_14xq_25}
+\]
+
+At the hard scales \(s=T^3\), \(H=L=T^{5/2}\), the three literal
+exponents for one fixed \(s,m,A\) are
+
+\[
+ \boxed{
+ E_{\rm Weil}=\frac{13}2,\qquad
+ E_{\rm nonprincipal}=\frac{11}2,\qquad
+ E_{\rm principal}=2.}
+ \tag{4.845dc_14xq_26}
+\]
+
+Thus the proved unit stratum saves \(T^1\) relative to termwise Weil,
+which is stronger than the quarter-power obtained by freezing one
+factor in Section 4.109zk.  It is not legitimate to subtract this
+power from the deficit in (4.845dc_14xq_19): that deficit is measured
+after PEVP, whose \(\|a\|_2\) factor already charges the square-root
+energy of the product-index coefficient.
+
+Equation (4.845dc_14xq_26) is not yet inserted as a bound for MMKLS.
+The physical sum also contains the disjoint strata
+
+\[
+ d_1=(h,s),\qquad d_2=(\delta,s),\qquad
+ g=[d_1,d_2],\qquad c=s/g,
+ \tag{4.845dc_14xq_27}
+\]
+
+for which CRT gives
+
+\[
+ \boxed{S(a,-h\delta;s)
+ =c_g(a)S(a\bar g,-h\delta/g;c).}
+ \tag{4.845dc_14xq_28}
+\]
+
+The reduced product is a unit modulo \(c\).  Exact gcd rather than mere
+divisibility introduces two further finite inclusion--exclusion layers
+at primes dividing \(g/d_1\) and \(g/d_2\).  Their costs can be summed
+without a positive power.  At one prime in \(g\), the three allocations
+\((p,1),(1,p),(p,p)\), including both exclusion divisors, have total
+square-root density
+
+\[
+ \boxed{2p^{-1/2}+3p^{-1}.}
+ \tag{4.845dc_14xq_29}
+\]
+
+Consequently, after summing every \(d_1,d_2\), the nonprincipal part of
+the physical \(h,\delta\) sum is at most
+
+\[
+ \boxed{
+ s(HL)^{1/2}(\log(2s))^C
+ \prod_{p\mid s}
+ \left(
+ 4+\frac{|c_p(a)|}{p}
+ \left(2p^{-1/2}+3p^{-1}\right)
+ \right).}
+ \tag{4.845dc_14xq_30}
+\]
+
+For both \(p\mid a\) and \(p\nmid a\), every local factor in
+(4.845dc_14xq_30) is at most \(8\).  Therefore
+
+\[
+ \sum_{s\le X}\frac{\mu^2(s)8^{\omega(s)}}s
+ \le\prod_{p\le X}\left(1+\frac8p\right)
+ \ll(\log(2X))^8.
+ \tag{4.845dc_14xq_31}
+\]
+
+The principal term can also be aggregated.  Multiplicativity in
+(4.845dc_14xq_28) gives
+\(c_g(a)c_c(a)=c_s(a)\).  The corresponding exact-density sum is
+bounded by
+
+\[
+ \boxed{
+ \frac{HL}{s}
+ \prod_{p\mid s}
+ |c_p(a)|
+ \left(\frac p{p-1}+2+\frac3p\right).}
+ \tag{4.845dc_14xq_32}
+\]
+
+The local factor in (4.845dc_14xq_32) is at most \(6\) if \(p\nmid a\)
+and at most \(6p\) if \(p\mid a\).  Since \((A,s)=1\), the condition
+\(p\mid a=\overline A m\) is exactly \(p\mid m\).  For every interval
+\(M<m\le2M\), finite divisor expansion gives
+
+\[
+ \begin{aligned}
+ \sum_{M<m\le2M}\prod_{\substack{p\mid s\\p\mid m}}p
+ &=\sum_{d\mid s}\varphi(d)
+   \#\{M<m\le2M:d\mid m\}\\
+ &\le M\sum_{d\mid s}\frac{\varphi(d)}d
+ +\sum_{\substack{d\mid s\\d\le2M}}\varphi(d)\\
+ &\le 3M\,2^{\omega(s)}.
+ \end{aligned}
+ \tag{4.845dc_14xq_33}
+\]
+
+Thus the principal \(m\)-average costs at most
+\(3M12^{\omega(s)}\), and
+
+\[
+ \sum_{s\le X}\frac{\mu^2(s)12^{\omega(s)}}s
+ \ll(\log(2X))^{12}.
+ \tag{4.845dc_14xq_34}
+\]
+
+Equations (4.845dc_14xq_29)--(4.845dc_14xq_34) close the nonunit gcd
+and principal Ramanujan averages at zero power.  They do not by
+themselves prove MMKLS.  Indeed, insert (4.845dc_14xq_30) directly in
+\((\mathrm{MMKLS})_q^L\).  The \(s^{-1}\) weight cancels its leading
+\(s\), the \(m\asymp A\) count cancels \(A^{-1}\), and a dyadic
+outer-entry interval \(A\asymp T^\alpha\) still contains
+\(T^\alpha\) actual integers.  Even at the most favorable
+\(\alpha=0\), taking absolute values in the remaining variables gives
+
+\[
+ \boxed{
+ E_{\rm direct}^{\min}
+ =\sigma+\frac{h+\ell}{2}
+ =\frac{11}2,\qquad
+ E_{\rm MMKLS}=\sigma=3,\qquad
+ E_{\rm direct}^{\min}-E_{\rm MMKLS}=\frac52.}
+ \tag{4.845dc_14xq_35}
+\]
+
+For a general outer box the first exponent in (4.845dc_14xq_35) is
+\(\alpha+11/2\).  Hence the local character-energy estimate and the
+outer PEVP estimate are two non-composable Cauchy organizations, not
+two independent savings.  A successful use of (4.845dc_14xq_24) would
+still require a hybrid inequality retaining the \(s,m,A\) cancellation
+at the same time.  That hybrid inequality is another form of the
+signed two-index large-sieve gate, rather than a proof of it.
+
+The helpers squarefree_gauss_pair_fourth_mass and
+product_index_character_energy_audit check (4.845dc_14xq_22), the
+three exponents in (4.845dc_14xq_26), and the remaining half-power
+margin.  The helper product_gcd_layer_prime_majorant checks the local
+constants in (4.845dc_14xq_30)--(4.845dc_14xq_33).  The adapters mark
+the published unit fourth-moment input, the physical kernel nuclear
+norm, the nonunit layers, and the principal frequency average true.
+They record the non-composability witness (4.845dc_14xq_35) and keep
+the physical-normalization bridge, MMKLS, OSLSP, and OLISK false.
+
+### 4.109zjacc Primitive-conductor recombination covers a strict subpolytope
+
+The character identity (4.845dc_14xq_20) has additional exact structure
+when the modulus coefficient \(\mu(s)\) is retained.  Write the squarefree
+modulus as
+
+\[
+ s=fr,\qquad (f,r)=1,
+\]
+
+and let \(\chi\bmod fr\) be induced by the primitive character
+\(\chi^*\bmod f\).  CRT gives, with \(\chi^*(n)=0\) on nonunits,
+
+\[
+ \boxed{
+ G_{fr}(\bar\chi,n)
+ =\chi^*(n\bar r)\tau(\bar\chi^*)c_r(n).}
+ \tag{4.845dc_14xq_35a}
+\]
+
+Indeed, the additive character factors as
+
+\[
+ e_{fr}(nx)
+ =e_f(n(x\bmod f)\bar r)\,
+  e_r(n(x\bmod r)\bar f),
+\]
+
+the \(f\)-factor is the primitive Gauss sum, and the \(r\)-factor is
+the Ramanujan sum.  Since \(c_r(1)=\mu(r)\), multiplying the two Gauss
+factors in (4.845dc_14xq_20) by the physical modulus coefficient gives
+the exact signed identity
+
+\[
+ \boxed{
+ \mu(fr)G_{fr}(\bar\chi,1)G_{fr}(\bar\chi,a)
+ =\mu(f)c_r(a)\chi^*(a\bar r^2)
+  \tau(\bar\chi^*)^2.}
+ \tag{4.845dc_14xq_35b}
+\]
+
+Thus one occurrence of the cofactor sign cancels, but the cofactor does
+not disappear: on \((a,r)=1\),
+
+\[
+ c_r(a)=\mu(r).
+ \tag{4.845dc_14xq_35c}
 \]
 
 Put
 
 \[
- D=\sum_{X,Y}\mathcal N_{X,Y}^{\Delta=0},
- \qquad
- J=\sum_{X,Y}\mathcal N_{X,Y}^{\Delta\ne0}.
- \tag{4.663}
+ \epsilon(\chi^*):=\frac{\tau(\bar\chi^*)^2}{f},
+ \qquad |\epsilon(\chi^*)|=1.
 \]
 
-Since \(\mathcal N_{\ne0}^{\rm Type}=D+J\geq0\), the strictly weaker
-one-sided gate
+On the full unit stratum, one separated physical tensor is therefore a
+finite linear combination of sums of the form
 
 \[
  \boxed{
- \mathrm{JNT}_{2}^{+}:\qquad
- J\leq C_1T^{2+\varepsilon}}
- \tag{4.664}
+ \sum_{r\asymp R}\frac{\mu(r)}{r\varphi(r)}
+ \sum_{f\asymp F}\frac{\mu(f)}{\varphi(f)}
+ \sum_{\chi^*\bmod f}^{*}
+ \epsilon(\chi^*)\chi^*(\bar r^2)
+ A_{\bar\chi^*,r}M_{\chi^*,r}
+ H_{\chi^*,r}L_{\chi^*,r}.}
+ \tag{PCRLS}_{\alpha,\kappa}
 \]
 
-is sufficient after the diagonal estimate
-\(D\leq C_0T^{2+\varepsilon}\), because
+Here \(FR=S=T^3\), \(F=T^\kappa\), \(R=T^{3-\kappa}\);
+the four polynomials retain the coprimality to \(r\), all Mellin
+parameters, and the physical QCT seminorms.  Their lengths are
+\[
+ A,m\asymp T^\alpha,\qquad h,\delta\asymp T^{5/2},
+\]
+and the \(A\)-coefficients include the exact factor \(A^{-1}\).
+
+There is a nontrivial region where the classical multiplicative large
+sieve already proves (PCRLS).  Cross-group \(A\) with \(h\), and \(m\)
+with \(\delta\).  Divisor multiplicity costs only logarithms, and the
+two convolution coefficient norms have squared \(T\)-exponents
+
+\[
+ \frac52-\alpha,\qquad \frac52+\alpha.
+ \tag{4.845dc_14xq_35d}
+\]
+
+On a dyadic primitive-conductor interval, the standard large sieve in
+the required normalization is
+
+\[
+ \sum_{f\asymp F}\frac1{\varphi(f)}
+ \sum_{\chi^*\bmod f}^{*}
+ \left|\sum_{n\asymp N}b_n\chi^*(n)\right|^2
+ \ll
+ \left(F+\frac NF\right)\sum_n|b_n|^2.
+ \tag{4.845dc_14xq_35e}
+\]
+
+Cauchy applied to the two cross-convolutions, followed by
+\[
+ \sum_{r\asymp R}\frac1{r\varphi(r)}
+ \ll R^{-1}(\log(2R))^C,
+\]
+gives the exact power exponent
 
 \[
  \boxed{
- |\mathcal N_{\ne0}^{\rm Type}|
- =D+J\leq(C_0+C_1)T^{2+\varepsilon}.}
- \tag{4.665}
+ E_{\rm PCRLS}(\alpha,\kappa)
+ =-\frac12+\kappa+
+ \max\left(\kappa,\alpha+\frac52-\kappa\right).}
+ \tag{4.845dc_14xq_35f}
 \]
 
-This does not assign a sign to \(J\).  Positivity is used only after every
-Type and outer-packet cross term has been restored in the complete
-projector energy.  The exact fixture has \(D=16587/5\), \(J=-2052\), and
-total \(6327/5\); hence the upper bound \(J\leq0\) holds although
-\(|J|\leq0\) does not.  The helper
-joint_nonprincipal_one_sided_upper_bound certifies this finite strictness
-witness and keeps analytic_one_sided_gate_proved false.
-
-There is also an exact product-coordinate compression which avoids the
-fixed-scalar collision (4.657) without pretending that the vector weight
-has become scalar.  On primitive support set \(n=rs\), \(r=ks+w\), and
-\(A=kQ+b\).  Then
+Equivalently,
 
 \[
- \boxed{
- \mu(r)\mu(s)=\mu(n),\qquad
- As^2\leq Qn<(A+1)s^2,}
- \tag{4.666}
-\]
-
-so for fixed \((n,b)\)
-
-\[
- \sqrt{\frac{Qn}{A+1}}<s\leq\sqrt{\frac{Qn}{A}}.
- \tag{4.667}
-\]
-
-If all points on the critical box satisfy \(s\leq CA\), two distinct
-points \(s_1<s_2\) obey
-
-\[
- A(s_2-s_1)(s_1+s_2)<s_1^2,
- \qquad s_2-s_1<C.
- \tag{4.668}
-\]
-
-Thus there are at most \(C=O_W(1)\) possible denominators, and the packet
-has the exact form
-
-\[
- \boxed{
- X_b=\sum_n\mu(n)
- \sum_{\substack{s\mid n,\ (s,n/s)=1\\
-                 As^2\leq Qn<(A+1)s^2}}
- B_{b,n,s}.}
- \tag{4.669}
-\]
-
-This supplies one fixed scalar arithmetic coefficient \(\mu(n)\) across
-the moving slopes and a bounded inner fiber.  However,
-\(B_{b,n,s}\) retains the factorization-dependent vector tube, both
-tapers, and all \(h\delta\) packet labels.  Therefore (4.669) is a
-narrower coefficient class, not an application of a published scalar
-Beatty theorem and not a cancellation estimate.  The helper
-farey_product_sector_fiber_ledger verifies (4.666)--(4.669) over exact
-integer data and keeps cancellation_estimate_proved false.
-
-This is the correct finite adapter after the sector packet has been
-supplied.  It is stronger and more faithful than the scalar alias target
-(4.655), but it is still not the analytic estimate: even the weaker
-one-sided signed sum of the four \(\Delta\ne0\) blocks must be bounded
-globally, and the exhaustive map from the original coupled remainder to
-the supplied packet family must remain outside any premature triangle
-inequality.
-
-### 4.77 The weakest positive gate is a centered moving Beatty--Chowla square
-
-The positive projector identifies an exact positive version of the
-one-sided gate.  Let
-\(G_{s,w,\lambda}\in\mathcal H\) denote the complete vector attached to
-one primitive entry, where \(\lambda\) ranges over every retained
-\((h,\delta,\nu,\sigma)\) and Type-factorization label.  Put
-
-\[
- \boxed{
- X_b=\sum_{\substack{s\le Q,\ 0\le w<s,
-                     \\ (ks+w,s)=1\\
-                     \lfloor Qw/s\rfloor=b}}
-       \mu(s)\mu(ks+w)\sum_\lambda G_{s,w,\lambda}.}
- \tag{4.670}
-\]
-
-Finite character orthogonality, before any estimate, gives
-
-\[
- \mathcal E_{\ne0}
- =\sum_b\|X_b\|_{\mathcal H}^2
-  -\frac1Q\left\|\sum_bX_b\right\|_{\mathcal H}^2.
- \tag{4.671}
-\]
-
-Let \(D_{\Delta=0}\ge0\) be the recombined self diagonal and let
-\(J_{\Delta\ne0}\) be the signed sum of all four nonzero-determinant
-Type blocks.  Since
-
-\[
- \mathcal E_{\ne0}=D_{\Delta=0}+J_{\Delta\ne0},
- \tag{4.672}
-\]
-
-one has the exact one-sided chain
-
-\[
- \boxed{
- J_{\Delta\ne0}\le \mathcal E_{\ne0}
- \le \sum_b\|X_b\|_{\mathcal H}^2.}
- \tag{4.673}
-\]
-
-Thus the following centered positive square-function gate is sufficient for
-\({\rm JNT}_{2}^{+}\):
-
-\[
- \boxed{
- {\rm BC}^{\rm mov,cent}_{\mathcal H}(2):\qquad
- \sum_{b<Q}\|X_b\|_{\mathcal H}^2
- -\frac1Q\left\|\sum_{b<Q}X_b\right\|_{\mathcal H}^2
- \ll_{\varepsilon,W}T^{2+\varepsilon}.}
- \tag{4.674}
-\]
-
-The uncentered estimate
-\(\sum_b\|X_b\|^2\ll T^{2+\varepsilon}\) is a stronger sufficient
-condition, not the weakest gate.  In a scalar projection, the unique
-entry in sector \(b\) is
-
-\[
- ks+\left\lceil\frac{bs}{Q}\right\rceil
- =\left\lfloor
-   \left(k+\frac bQ\right)s+\frac{Q-1}{Q}
-  \right\rfloor,
- \tag{4.675}
-\]
-
-so (4.674) contains a centered, power-strength, moving-rational-grid version of
-Beatty--Chowla.  Coherent energy has exponent three and the target has
-exponent two; the required saving is one full power in energy, or
-\(T^{1/2}\) before squaring.
-
-[Crnčević--Hernández--Rizk--Sereesuchart--Tao,
-arXiv:2211.15830v4](https://arxiv.org/abs/2211.15830), Theorem B, proves
-only a qualitative logarithmic limit for
-\(\lambda(n)\lambda(\lfloor\alpha n\rfloor)\) at one fixed irrational
-\(\alpha\).  [Teräväinen--Walker,
-arXiv:2303.12574v1](https://arxiv.org/abs/2303.12574), Theorem 1.2,
-subsumes it, treats two fixed inhomogeneous Beatty slopes, and identifies
-the possible rational-ratio resonance.  Neither result supplies a
-uniform power saving as \(Q\), \(b\), and the slope move with \(T\), nor
-the Hilbert-valued vector square in (4.674).  The rational-resonance
-classification supports the ordering used here--extract (4.672) first--
-but it does not estimate the remainder.
-
-The finite helper `farey_beatty_chowla_projector_sides` evaluates
-(4.670)--(4.673) over exact rational vectors and retains every supplied
-packet label and distinguishes the centered projector from the stronger
-uncentered sector square.  The scale helper `beatty_chowla_power_gate_audit` records
-the remaining half-power before squaring and keeps
-`covers_one_sided_joint_type_gate` false.  Therefore (4.674) is now the
-most explicit positive sufficient gate, not a proved estimate.
-
-### 4.78 Exact sector Fourier completion closes every jump boundary
-
-The remaining Type packet has an exact additive completion which must be
-used with its endpoint convention intact.  For \(0<\xi<Q\), define the
-right-continuous step function
-
-\[
- F_{\xi,Q}(x):=e\!\left(\frac{\xi\lfloor Qx\rfloor}{Q}\right),
- \qquad 0\le x<1.
- \tag{4.676}
-\]
-
-Its zero Fourier coefficient vanishes.  Every other coefficient vanishes
-unless \(a\equiv\xi\pmod Q\), and for \(a=\xi+jQ\)
-
-\[
- \boxed{
- c_{\xi,j}
- =\frac{Q(1-e(-\xi/Q))}{2\pi i(\xi+jQ)}.}
- \tag{4.677}
-\]
-
-At continuity points the Fourier series with these coefficients is
-pointwise exact.  At a jump the Fourier series returns the midpoint, so
-the exact right-continuous identity is
-
-\[
- \boxed{
- F_{\xi,Q}(x)
- =\sum_{j\in\mathbb Z}c_{\xi,j}e((\xi+jQ)x)
- +\frac{1-e(-\xi/Q)}2e(\xi x)
-  \mathbf1_{Qx\in\mathbb Z}.}
- \tag{4.678}
-\]
-
-Now put \(x=w/s\) and apply the one-factor Type relation
-\(dp=ks+w\).  Since \(a=\xi+jQ\) and \(ak\in\mathbb Z\), every continuous
-harmonic has the exact phase
-
-\[
- \boxed{
- e\!\left(a\frac ws\right)
- =e\!\left(a\frac{dp}{s}\right).}
- \tag{4.679}
-\]
-
-This is a direct linear fraction, not a Kloosterman inverse.  Both
-Möbius coefficients and every \(h,\delta,\nu,\sigma\) label remain in
-the accompanying vector coefficient.
-
-The correction in (4.678) is completely harmless after primitivity, for
-an exact reason.  Set
-
-\[
- \mathcal B_Q:=\{(s,w):1\le s\le Q, 0\le w<s,
-                  (ks+w,s)=1, s\mid Qw\}.
-\]
-
-Since \((ks+w,s)=(w,s)\), reduction of \(b/Q\) gives the bijection
-
-\[
- \boxed{
- b\longmapsto
- \left(\frac{Q}{(b,Q)},\frac b{(b,Q)}\right),qquad
- \{0,\ldots,Q-1\}\simeq\mathcal B_Q.}
- \tag{4.680}
-\]
-
-In particular \(|\mathcal B_Q|=\sum_{s\mid Q}\varphi(s)=Q\), and every
-sector contains exactly one primitive jump entry.  If all outer labels
-on that original entry are first recombined into \(Y_b\), then
-
-\[
- 0\le
- \sum_b\|Y_b\|^2-Q^{-1}\left\|\sum_bY_b\right\|^2
- \le\sum_b\|Y_b\|^2=D_{\partial}\le D_{\rm cont}.
- \tag{4.681}
-\]
-
-The scalar jump multiplier in (4.678) has modulus at most one.  Since
-\(D_{\rm cont}\ll T^{2+\varepsilon}\) is already the settled diagonal,
-the entire Fourier-boundary layer is within target.  Thus the analytic
-gate may be restricted to \(s\nmid Qw\); no endpoint error is hidden in
-the infinite harmonic expansion.
-
-For the continuous Type-I spectrum, however, an ordinary additive large
-sieve still does not close the estimate.  Write
-\(s\asymp T^\sigma\), \(Q\asymp T^q\),
-\(d\asymp T^\delta\), and \(p\asymp T^{\sigma-\delta}\).  Even after
-optimistically separating a common prime coefficient family, Cauchy in
-\(s\) followed by the Farey large sieve gives, for one fixed \(d\),
-
-\[
- T^{\sigma-q}
- \bigl(T^{\sigma-\delta}+T^{2\sigma}\bigr)
- T^{\sigma-\delta}.
- \tag{4.682}
-\]
-
-At the critical face \(\sigma=q=1\), this has exponent \(3-\delta\).
-Even perfect orthogonality among the \(T^\delta\) divisors leaves exponent
-three; Cauchy in \(d\) gives \(3+\delta\).  The target exponent is two.
-Hence termwise sector-Fourier completion plus the standard additive large
-sieve still misses one power in energy, or \(T^{1/2}\) before squaring.
-Cancellation must remain joint in the divisor/Möbius or determinant
-variables, and possibly between Fourier harmonics.
-
-The helpers `beatty_sector_fourier_type_phase_ledger` and
-`primitive_beatty_fourier_boundary_sides` verify (4.679)--(4.681) over
-exact integer and rational-vector data.  The latter independently
-enumerates both sides of (4.680), recombines repeated packet labels on an
-original entry, and proves equality of its sector energy with the
-diagonal sub-sum.  The scale helper
-`beatty_type_i_additive_large_sieve_audit` records (4.682) and keeps
-`standard_additive_large_sieve_covers_type_i` false.
-
-### 4.79 Restore the AFE inverse phase before classifying Type I/II
-
-The additive audit in (4.682) is not the strongest available
-classification, because it intentionally ignores an oscillator rather
-than taking its absolute value.  Restore
-
-\[
- \alpha=\xi+jQ,\qquad A=h\delta,qquad r=dp=ks+w.
-\]
-
-Then the sector and AFE phases recombine exactly as
-
-\[
- \boxed{
- e_s(\alpha w-A\bar r)
- =e_s(\alpha dp-A\bar d\bar p).}
- \tag{4.683}
-\]
-
-For fixed \(d\), this is the nonhomogeneous prime-Kloosterman phase
-
-\[
- e_s(Bp+C\bar p),qquad
- B=\alpha d,quad C=-A\bar d,qquad
- (BC,s)=1\Longleftrightarrow(\alpha A,s)=1.
- \tag{4.684}
-\]
-
-The identity spends neither \(\mu(s)\), \(\mu(d)\), nor the
-factorization \(A=h\delta\).  It therefore gives the correct theorem
-class for the continuous packet.
-
-Put \(s=T^\sigma,d=T^u,p=T^{\sigma-u}\).  Korolev's
-composite-modulus theorem covers the unit left wing
-\(0\leq u<\sigma/4\), with
-
-\[
- \eta_{\rm Kor}(\sigma,u)=
+ E_{\rm PCRLS}(\alpha,\kappa)=
  \begin{cases}
- (\sigma-3u)/35,&0\leq u\leq\sigma/8,\\
- (\sigma/4-u)/7,&\sigma/8\leq u\leq\sigma/4.
+ \alpha+2,&2\kappa\le\alpha+\frac52,\\
+ 2\kappa-\frac12,&2\kappa\ge\alpha+\frac52.
  \end{cases}
- \tag{4.685}
+ \tag{4.845dc_14xq_35g}
 \]
 
-For prime \(s\), Fouvry--Kowalski--Michel Theorem 1.5 gives the
-limiting left-wing exponent
+The MMKLS target exponent is \(3\).  Hence this argument has a fixed
+positive power margin exactly in the strict subpolytope
 
 \[
- \eta_{\rm FKM}(\sigma,u)=\sigma/24-u/6,
- \qquad0\leq u<\sigma/4,
- \tag{4.686}
+ \boxed{\alpha<1,\qquad \kappa<\frac74.}
+ \tag{4.845dc_14xq_35h}
 \]
 
-and its Möbius analogue gives the symmetric prime-modulus right wing.
-For the central prime-modulus band, FKM Theorem 1.17 accepts arbitrary
-dyadic coefficients.  With \(v=\min(u,\sigma-u)\), its saving is
+At either boundary it has zero margin and cannot absorb the required
+arbitrary logarithmic saving.  At the worst cell
+\((\alpha,\kappa)=(3,3)\), it gives
 
 \[
- \eta_{\rm FKM}^{\rm II}
- =\min\left(\sigma/4,v/2,\sigma/4-v/2\right).
- \tag{4.686a}
+ E_{\rm PCRLS}(3,3)=\frac{11}{2},
+ \qquad E_{\rm PCRLS}-E_{\rm MMKLS}=\frac52.
+ \tag{4.845dc_14xq_35i}
 \]
 
-This is at most \(\sigma/8\), attained at \(v=\sigma/4\), and it
-degenerates to zero at exact balance \(v=\sigma/2\).
-The exact coverage table is:
+This is still useful: the previously local character-energy estimate
+has now been composed with the \(A,m\) variables and genuinely removes
+all unit cells with \(\alpha<1,\kappa<7/4\).  The residual is no longer
+an arbitrary character large sieve.  It is the signed normalized-Gauss
+root-number average (PCRLS) for large outer entry or large primitive
+conductor.  Taking \(\epsilon(\chi^*)\), \(\mu(f)\), and \(\mu(r)\) in
+absolute value returns (4.845dc_14xq_35f) and cannot close that region.
 
-| Type range | composite modulus | prime modulus | coupled status |
-|---|---|---|---|
-| \(0\leq u<\sigma/4\) | Korolev, max saving \(\sigma/35\) | FKM, limiting max \(\sigma/24\) | below target |
-| \(\sigma/4\leq u\leq3\sigma/4\) | no matching bilinear theorem | FKM Theorem 1.17, max \(\sigma/8\), zero at balance | composite and balanced Type II unproved |
-| \(3\sigma/4<u\leq\sigma\) | only logarithmic uniform Möbius trace input | FKM Möbius trace | below target |
+The nonunit factor \(c_r(a)\), and the exact gcd layers in
+(4.845dc_14xq_27)--(4.845dc_14xq_34), have not yet been composed with
+the cross-convolution large sieve.  Therefore this subsection proves a
+strict unit subregion, not MMKLS.  The interface
+primitive_conductor_mmkls_audit verifies the CRT phase, the Möbius
+cancellation, (4.845dc_14xq_35d)--(4.845dc_14xq_35i), and keeps the
+full MMKLS flag false.
 
-At the critical point the required amplitude saving is \(1/2\), so the
-best one-variable prime-modulus theorem still leaves \(11/24\), and the
-uniform composite theorem leaves \(33/70\).  Even the best bilinear
-prime slice leaves \(3/8\), while exact balance leaves the full \(1/2\).
-The estimates also have no joint moment over \(s,\xi,h,\delta\).
-Consequently the corrected surviving
-interface is the pre-Cauchy Hilbert-valued bilinear trace square.  With
-the coefficients \(c_{\xi,j}\) from (4.677), it is
+### 4.109zjacd Primitive root-number orthogonality returns the MMKLS top conductor
+
+The signed root number in (PCRLS) must be evaluated before it is treated
+as a new source of cancellation.  For squarefree \(f\) and
+\((u,f)=1\), put
+
+\[
+ \mathcal K_f(u):=
+ \frac{\mu(f)}{\varphi(f)}
+ \sum_{\chi^*\bmod f}^{*}
+ \frac{\tau(\bar\chi^*)^2}{f}\chi^*(u).
+ \tag{4.845dc_14xq_35j}
+\]
+
+Primitive-character orthogonality is
 
 \[
  \boxed{
- \frac1Q\sum_{\xi=1}^{Q-1}
- \left\|
- \sum_s\mu(s)\sum_{h,\delta}\sum_{dp\asymp s}
- \mu(d)\Lambda(p)\sum_jc_{\xi,j}
- \mathcal W_{s,\xi,j,h,\delta,d,p}
- e_s((\xi+jQ)dp-h\delta\bar d\bar p)
- \right\|_{\mathcal H}^{2}
- \ll T^{2+\varepsilon}.}
- \tag{4.687}
+ \sum_{\chi^*\bmod f}^{*}\chi^*(v)
+ =\sum_{\substack{d\mid f\\v\equiv1\pmod d}}
+ \mu(f/d)\varphi(d),\qquad (v,f)=1.}
+ \tag{4.845dc_14xq_35k}
 \]
 
-The weight includes \(dp=ks+w\) and \(s\nmid Qw\).  Expanding the norm
-restores both Type copies and every reflection-label cross term.  This is
-the exact continuous Fourier form of the supplied centered sector gate,
-not yet the exhaustive adapter from (4.5).  It is narrower than an
-arbitrary coupled kernel, but its central factor band and
-composite-modulus aggregation remain unproved.
+Expand the two Gauss sums in (4.845dc_14xq_35j), apply
+(4.845dc_14xq_35k), and write \(f=dc\).  The condition on the
+\(d\)-coordinates is \(xy\equiv u\pmod d\).  The two \(c\)-coordinates
+are independent, and each contributes
+\(c_c(\bar d)=\mu(c)\).  On the \(d\)-coordinate, CRT gives
 
-The exact helper beatty_afe_type_kloosterman_phase_ledger verifies
-(4.683)--(4.684).  The Korolev and FKM exponent helpers verify
-(4.685)--(4.686), including their strict endpoint and modulus
-restrictions.  fkm_prime_modulus_bilinear_type_ii_audit verifies
-(4.686a), including its exact balanced degeneration.  All keep the full
-coupled-coverage flag false.
+\[
+ S(\bar c,u\bar c;d)=S(1,u\bar c^2;d).
+\]
+
+Since \(\mu(f)\mu(c)=\mu(d)\), the exact result is
+
+\[
+ \boxed{
+ \mathcal K_f(u)
+ =\sum_{dc=f}\frac{\mu(d)}{dc\varphi(c)}
+ S(1,u\bar c^2;d).}
+ \tag{4.845dc_14xq_35l}
+\]
+
+The term \(c=1,d=f\) is
+
+\[
+ \boxed{\frac{\mu(f)}fS(1,u;f),}
+ \tag{4.845dc_14xq_35m}
+\]
+
+which is exactly the normalized Möbius-weighted Kloosterman kernel from
+MMKLS.  Proper divisors have smaller integer modulus, but not a uniform
+power-smaller modulus: \(c\) may remain a fixed prime while \(d\asymp f\).
+Thus (4.845dc_14xq_35l) is not a descending conductor induction with a
+fixed contraction.
+
+The obstruction is already literal at prime conductor.  For every odd
+prime \(p\),
+
+\[
+ \boxed{
+ \mathcal K_p(u)=-\frac1pS(1,u;p)+\frac1{p(p-1)}.}
+ \tag{4.845dc_14xq_35n}
+\]
+
+The scalar correction is harmless, but the first term survives with
+the full physical normalization.  Moreover \(\mu(p)=-1\) is constant
+throughout the prime-conductor sector, so no modulus-Möbius cancellation
+is available there.
+
+Consequently the hardest unit prime-conductor cell of (PCRLS), at
+\(p\asymp T^3\), contains the explicit four-variable family
+
+\[
+ \boxed{
+ \sum_{p\asymp T^3}\frac1p
+ \sum_{A\asymp T^\alpha}\frac{\alpha(A)}A
+ \sum_{\substack{m\asymp T^\alpha\\
+                  h,\delta\asymp T^{5/2}\\
+                  (Amh\delta,p)=1}}
+ S(1,-mh\delta\bar A;p)
+ \Psi_{A,p}(m,h,\delta).}
+ \tag{PK4}_{\alpha}
+\]
+
+All Mellin parameters, endpoint restrictions, and QCT seminorms remain
+inside \(\Psi_{A,p}\).  A bound
+
+\[
+ |(\mathrm{PK4})_\alpha|
+ \ll_{B,W}T^3(\log T)^{-B}
+ \tag{4.845dc_14xq_35o}
+\]
+
+uniformly for \(0\le\alpha\le3\), together with the corresponding
+large composite-conductor cells and the nonunit layers, would close the
+remaining region.  Formula (4.845dc_14xq_35n) shows that such a theorem
+must estimate the Kloosterman family itself; it cannot follow merely by
+declaring the normalized Gauss squares to be oscillatory coefficients.
+
+The interface primitive_root_number_kernel_audit verifies
+(4.845dc_14xq_35k) on every unit of an exact squarefree fixture, checks
+all divisor coefficients in (4.845dc_14xq_35l), and records the prime
+formula (4.845dc_14xq_35n).  It marks the root-number route
+self-similar and keeps MMKLS false.
+
+### 4.109zjace Double product-index Poisson collapses Kloosterman to Ramanujan
+
+There is a second exact transformation which does not pass through
+characters.  Take one separated \(h,\delta\) tensor from
+(4.845dc_14xq_20), with
+
+\[
+ \widehat u(\xi)=\int_{\mathbb R}u(x)e(-x\xi)\,dx
+\]
+
+and the same convention for \(v\).  For every integer modulus \(s\)
+and every \((a,s)=1\), residue-class Poisson in both variables gives
+
+\[
+ \boxed{
+ \begin{aligned}
+ &\sum_{h,\delta\in\mathbb Z}
+ u(h/H)v(\delta/L)S(a,-h\delta;s)\\
+ &\qquad=\frac{HL}{s}\sum_{k,l\in\mathbb Z}
+ \widehat u(kH/s)\widehat v(lL/s)c_s(a+kl).
+ \end{aligned}}
+ \tag{4.845dc_14xq_35p}
+\]
+
+The sign and normalization follow from the complete bilinear identity
+
+\[
+ \boxed{
+ \sum_{x,y\bmod s}e_s(-cxy+kx+ly)
+ =s\,e_s(kl\bar c),\qquad(c,s)=1.}
+ \tag{4.845dc_14xq_35q}
+\]
+
+Indeed the \(y\)-sum forces \(x=l\bar c\).  In the Kloosterman sum
+\(c=\bar z\), so (4.845dc_14xq_35q) contributes \(e_s(klz)\);
+the remaining \(z\)-sum is \(c_s(a+kl)\).  No primality hypothesis is
+used.
+
+At the balanced hard scales
+
+\[
+ s=T^3,\qquad H=L=T^{5/2},
+\]
+
+the two effective dual lengths are
+
+\[
+ K=\frac{s}{H}=T^{1/2},\qquad
+ J=\frac{s}{L}=T^{1/2}.
+ \tag{4.845dc_14xq_35r}
+\]
+
+Both zero frequencies must be retained.  The existing physical-kernel
+separation has polylogarithmic nuclear norm, but an individual separated
+member can have nonzero Fourier mass at \(k=0\) or \(l=0\).
+
+The modulus Möbius weight now has an exact elementary expansion.  On
+squarefree support,
+
+\[
+ \boxed{
+ \mu(s)c_s(n)
+ =\sum_{\substack{d\mid s\\d\mid n}}d\mu(d).}
+ \tag{4.845dc_14xq_35s}
+\]
+
+In the physical orbit \(a=\bar A m\) and \((A,s)=1\).  Therefore, for
+\(d\mid s\),
+
+\[
+ d\mid a+kl\quad\Longleftrightarrow\quad d\mid m+Akl.
+ \tag{4.845dc_14xq_35t}
+\]
+
+Writing \(s=de\), one smooth \(s\)-tensor in the transformed MMKLS sum
+is exactly
+
+\[
+ \boxed{
+ \sum_{\substack{d\mid m+Akl\\(d,A)=1}}\frac{\mu(d)}d
+ \sum_{\substack{e\ge1\\(e,dA)=1}}
+ \frac{\mu^2(e)}{e^2}W(de/S).}
+ \tag{4.845dc_14xq_35u}
+\]
+
+When the cofactor length \(E=S/d\) tends to infinity with a fixed power,
+squarefree counting and partial summation give the density main term
+
+\[
+ \sum_{\substack{e\ge1\\(e,dA)=1}}
+ \frac{\mu^2(e)}{e^2}W(de/S)
+ =
+ \frac dS\frac{\mathcal W}{\zeta(2)}
+ \prod_{p\mid dA}\left(1+\frac1p\right)^{-1}
+ +\mathcal E_{d,A}.
+ \tag{4.845dc_14xq_35v}
+\]
+
+Here \(\mathcal W\) is a fixed seminorm-controlled integral.  The local
+\(d\)-sum in the main term is
+
+\[
+ \boxed{
+ \sum_{\substack{d\mid n\\(d,A)=1}}
+ \mu(d)\prod_{p\mid d}\frac p{p+1}
+ =
+ \prod_{\substack{p\mid n\\p\nmid A}}\frac1{p+1}.}
+ \tag{4.845dc_14xq_35w}
+\]
+
+Thus the long-cofactor main is governed by the reciprocal-radical
+weight
+
+\[
+ b_A(n):=\prod_{\substack{p\mid n\\p\nmid A}}\frac1{p+1},
+\qquad
+ \mathfrak g(A):=\prod_{p\mid A}\frac p{p+1}.
+\]
+
+After removing the exact prefactor \(HL/S=T^2\), the remaining
+zero-margin short-dual statement is
+
+\[
+ \boxed{
+ \begin{aligned}
+ (\mathrm{SDRG})_\alpha:\quad
+ \left|
+ \sum_{A\asymp T^\alpha}\frac{\alpha(A)}A
+ \sum_{m\asymp T^\alpha}
+ \sum_{\substack{|k|,|l|\ll T^{1/2}(\log T)^C}}
+ \widehat\Psi_{A,m}(k,l)\,
+ \mathfrak g(A)b_A(m+Akl)
+ \right|\\
+ \ll_{B,W}T(\log T)^{-B}.
+ \end{aligned}}
+ \tag{SDRG}_{\alpha}
+\]
+
+The raw \(k,l\)-volume is already \(T\), exactly the power on the
+right.  Hence a positive reciprocal-radical majorant with only
+\(T^{o(1)}\) control does not supply the required arbitrary logarithmic
+saving.  Cancellation among the separated physical tensors or in the
+outer divisor coefficients must still be retained.
+
+There are also two unaggregated pieces: the errors
+\(\mathcal E_{d,A}\) in (4.845dc_14xq_35v), and the short-cofactor range
+where \(E=S/d\) is not power-large.  The latter contains \(e=1,d=s\),
+which is exactly the prime/top-conductor cell (PK4).  Consequently
+(4.845dc_14xq_35p) is a genuine reduction to short dual variables, but
+not yet a proof of MMKLS.
+
+The interface double_poisson_ramanujan_audit checks
+(4.845dc_14xq_35q) on a composite fixture, verifies
+(4.845dc_14xq_35s) and the Euler identity
+(4.845dc_14xq_35w), records the two \(T^{1/2}\) dual lengths and the
+zero power margin, and keeps the density-error, short-cofactor, and
+MMKLS flags false.
+
+### 4.109zjacea The zero Ramanujan argument is a separate Möbius PNT cell
+
+There is a necessary exceptional split before \((\mathrm{SDRG})_\alpha\).
+The reciprocal-radical product in (4.845dc_14xq_35w) is a finite product
+only for a nonzero integer.  It is not defined by that formula when
+
+\[
+ m+Akl=0.
+ \tag{4.845dc_14xq_35w0}
+\]
+
+This hyperbola is not excluded by the physical QCT derivative bounds.
+At the balanced hard scales the normalized Fourier sample spacings are
+
+\[
+ \frac Hs=\frac Ls=T^{-1/2},
+\]
+
+whereas a fixed normalized cutoff has Fourier width \(T^{0+o(1)}\).
+Thus the raw dual box contains, for example,
+
+\[
+ (A,m,k,l)=(A,A,-1,1).
+ \tag{4.845dc_14xq_35w1}
+\]
+
+Neither the Fourier nuclear-norm estimate (4.845ai) nor the row/column
+centering in (4.663) is a vanishing identity on this hyperbola.  The
+latter only kills its own coordinate axes and belongs to a different
+Hermitian completion.
+
+The exceptional cell nevertheless has a direct unconditional estimate.
+For every modulus,
+
+\[
+ \boxed{c_s(0)=\varphi(s).}
+ \tag{4.845dc_14xq_35w2}
+\]
+
+Consequently the squarefree modulus coefficient in (4.845dc_14xq_35u)
+is exactly
+
+\[
+ \frac{\mu(s)c_s(0)}{s^2}
+ =\frac{\mu(s)\varphi(s)}{s^2}.
+ \tag{4.845dc_14xq_35w3}
+\]
+
+Put \(a_s=\mu(s)\varphi(s)/s\).  With the coprimality condition retained,
+the Dirichlet series has the exact Euler factorization
+
+\[
+ \boxed{
+ \sum_{\substack{s\ge1\\(s,A)=1}}\frac{a_s}{s^z}
+ =\frac{1}{\zeta(z)}G_A(z),}
+ \tag{4.845dc_14xq_35w4}
+\]
+
+where
+
+\[
+ G_A(z)=
+ \prod_{p\nmid A}
+ \frac{1-(1-p^{-1})p^{-z}}{1-p^{-z}}
+ \prod_{p\mid A}(1-p^{-z})^{-1}.
+ \tag{4.845dc_14xq_35w5}
+\]
+
+The first product converges absolutely and locally uniformly for
+\(\Re z>0\), since its local factor is
+\(1+O(p^{-1-\Re z})\).  On the Vinogradov--Korobov contour at height
+bounded by a fixed power of \(T\), the finite product over \(p\mid A\)
+is \((\log(3A))^{O(1)}\), uniformly for \(A\le T^3\).  Mellin inversion,
+the classical zero-free region for \(\zeta\), and partial summation
+therefore give, for every \(B\) and every smooth dyadic weight
+\(W_{A,m,k,l}\) whose fixed seminorms are polylogarithmic,
+
+\[
+ \boxed{
+ \sum_{\substack{s\ge1\\(s,A)=1}}
+ \frac{\mu(s)\varphi(s)}{s^2}
+ W_{A,m,k,l}(s/S)
+ \ll_{B,J} (\log T)^{-B}
+ \sum_{j\le J}\|W_{A,m,k,l}^{(j)}\|_\infty.}
+ \tag{4.845dc_14xq_35w6}
+\]
+
+Here \(J\) is fixed after \(B\); the already available polylogarithmic
+QCT seminorm cost is absorbed by first requesting a larger value of
+\(B\).  No positive power of \(S\) occurs because (4.845dc_14xq_35w3)
+has one additional factor \(s^{-1}\) relative to the dyadic PNT sum for
+\(a_s\).
+
+Finally, (4.845dc_14xq_35w0) implies \(A\mid m\) and
+
+\[
+ kl=-\frac mA.
+\]
+
+Since \(A\) and \(m\) have the same dyadic scale, the quotient lies in
+a fixed interval.  For fixed \(A,m\) there are exactly
+\(2\tau(m/A)\) ordered nonzero signed factor pairs, and the outer
+coefficient has the existing \(A^{-1}\) normalization.  The outer sum
+therefore costs only a fixed power of \(\log T\), which is absorbed by
+choosing \(B\) larger in (4.845dc_14xq_35w6).  This proves the required
+arbitrary logarithmic saving for the entire resonance cell.
+
+The honest remaining statement is consequently the nonzero gate
+
+\[
+ \boxed{
+ (\mathrm{SDRG}^{\ne0})_\alpha:
+ \quad (\mathrm{SDRG})_\alpha\ \text{with}\ m+Akl\ne0,
+ \qquad
+ b_A(n):=\prod_{\substack{p\mid |n|\\p\nmid A}}\frac1{p+1}.}
+ \tag{4.845dc_14xq_35w7}
+\]
+
+This correction closes the zero-argument cell but does not prove
+\((\mathrm{SDRG}^{\ne0})_\alpha\), aggregate the short-cofactor cell, or
+prove MMKLS.  The interface physical_ramanujan_resonance_audit records
+the exact zero fixture, the inverse-zeta factor, the divisor-bounded
+resonance multiplicity, and those remaining false flags.
+
+### 4.109zjaceb Reciprocal-radical fibres close the long-cofactor main
+
+The positive weight in the nonzero gate is much sparser than its
+pointwise bound one.  For \(n\ne0\), recall
+
+\[
+ b_A(n)=\prod_{\substack{p\mid |n|\\p\nmid A}}\frac1{p+1}.
+\]
+
+For \(\Re z>0\), its Dirichlet series is the exact Euler product
+
+\[
+ \boxed{
+ \mathcal B_A(z):=\sum_{n\ge1}\frac{b_A(n)}{n^z}
+ =\prod_{p\mid A}(1-p^{-z})^{-1}
+  \prod_{p\nmid A}
+  \left(1+\frac{p^{-z}}{(p+1)(1-p^{-z})}\right).}
+ \tag{4.845dc_14xq_35w8}
+\]
+
+The second product converges absolutely in this half-plane.  Fix
+\(0<\epsilon<1/4\).  Subject to \(A\le T^3\), the first product is
+maximized, up to an absolute constant, by using the smallest possible
+prime divisors.  The prime number theorem and partial summation give
+
+\[
+ \begin{aligned}
+ \log\prod_{p\mid A}(1-p^{-\epsilon})^{-1}
+ &\ll_\epsilon \sum_{\substack{p\le C\log(3A)}}p^{-\epsilon}\\
+ &\ll_\epsilon
+ \frac{(\log(3A))^{1-\epsilon}}{\log\log(3A)}.
+ \end{aligned}
+ \tag{4.845dc_14xq_35w9}
+\]
+
+It follows directly from positivity in (4.845dc_14xq_35w8) that,
+uniformly for \(X\ge2\),
+
+\[
+ \boxed{
+ \sum_{1\le |n|\le X}b_A(n)
+ \ll_\epsilon X^\epsilon
+ \exp\!\left(
+ C_\epsilon\frac{(\log(3A))^{1-\epsilon}}
+ {\log\log(3A)}\right)
+ =X^\epsilon T^{o(1)}.}
+ \tag{4.845dc_14xq_35w10}
+\]
+
+Now use the affine-product coordinate itself, rather than summing the
+two dual variables trivially.  For fixed \(A,n\), the relation
+
+\[
+ n=m+Akl,
+ \qquad m\in[c_1A,c_2A]
+ \tag{4.845dc_14xq_35w11}
+\]
+
+places the integer \(kl\) in an interval of the fixed length
+\(c_2-c_1+O(1)\).  Away from the axes \(kl=0\), every integer in that
+interval has at most \(2\tau(|kl|)=T^{o(1)}\) ordered signed
+factorizations with
+\(|k|,|l|\ll T^{1/2}(\log T)^C\).  Thus the nonaxis fibre of
+(4.845dc_14xq_35w11) is divisor-bounded.  Moreover
+
+\[
+ |n|\ll A T(\log T)^C\le T^{4+o(1)}.
+\]
+
+Choose \(\epsilon=1/16\) in (4.845dc_14xq_35w10).  After taking the
+polylogarithmic supremum of the physical Fourier weight, the complete
+nonaxis \((m,k,l)\)-sum for each fixed \(A\) is
+
+\[
+ \boxed{\ll T^{4/16+o(1)}=T^{1/4+o(1)}.}
+ \tag{4.845dc_14xq_35w12}
+\]
+
+On the axes, the number of pairs with \(kl=0\) is
+\(O(T^{1/2}(\log T)^C)\), while \(n=m\ll A\le T^3\).  The same moment
+bound gives
+
+\[
+ \boxed{
+ T^{1/2+o(1)}\sum_{m\asymp A}b_A(m)
+ \ll T^{1/2+3/16+o(1)}
+ =T^{11/16+o(1)}.}
+ \tag{4.845dc_14xq_35w13}
+\]
+
+The fully recombined outer coefficient is \(\mu(A)\) times a fixed
+divisor-bounded smooth allocation weight.  Even without using its sign,
+
+\[
+ \sum_{A\asymp T^\alpha}\frac{|\alpha(A)|}{A}
+ \ll (\log T)^C.
+ \tag{4.845dc_14xq_35w14}
+\]
+
+Equations (4.845dc_14xq_35w12)--(4.845dc_14xq_35w14), together with the
+separately closed zero argument from the preceding subsection, prove
+
+\[
+ \boxed{
+ (\mathrm{SDRG})_\alpha^{\rm long\ main}
+ \ll T^{11/16+o(1)}
+ =T\,T^{-5/16+o(1)}}
+ \tag{4.845dc_14xq_35w15}
+\]
+
+uniformly for \(0\le\alpha\le3\).  This supplies more than the required
+arbitrary logarithmic saving and closes the entire long-cofactor density
+main by a positive majorant; no new spectral large sieve is needed for
+this piece.
+
+The conclusion is deliberately limited to the main term in
+(4.845dc_14xq_35v).  Uniform aggregation of \(\mathcal E_{d,A}\) and the
+short-cofactor range, including the prime/top-conductor cell, remains
+open.  The interface reciprocal_radical_fibre_audit records the
+Euler product, the two exact fibre exponents, the \(5/16\) saving, and
+keeps precisely those remaining flags false.
+
+### 4.109zjacec The short cofactor is above the published Möbius interval threshold
+
+It remains to treat the error in (4.845dc_14xq_35v) and the range where
+the cofactor \(e\) is short.  Fix the exact cutoff
+
+\[
+ E_0=T^{1/8}.
+ \tag{4.845dc_14xq_35w16}
+\]
+
+First, squarefree inclusion--exclusion and partial summation give the
+uniform smooth estimate
+
+\[
+ \mathcal E_{d,A}
+ \ll_J \tau(dA)\left(\frac Sd\right)^{-3/2}
+ \sum_{j\le J}\|W^{(j)}\|_\infty.
+ \tag{4.845dc_14xq_35w17}
+\]
+
+Indeed, insert \(\mu^2(e)=\sum_{a^2\mid e}\mu(a)\), count the remaining
+integer with the coprimality condition by finite inclusion--exclusion,
+and sum \(a\le(S/d)^{1/2}\).  In the long range \(S/d\ge E_0\), count
+the solutions to \(d\mid m+Akl\), \(m\asymp A\), by \(O(A/d+1)\).
+Summing (4.845dc_14xq_35w17) first over \(m\), then over the
+\(T^{1+o(1)}\) dual pairs, \(d\le S/E_0\), and the normalized outer
+coefficient gives the two exact contributions
+
+\[
+ \begin{aligned}
+ T S^{-3/2}A_0\sum_{d\le S/E_0}d^{-1/2}
+ &\ll T\frac{A_0}{S}E_0^{-1/2},\\
+ T S^{-3/2}\sum_{d\le S/E_0}d^{1/2}
+ &\ll T E_0^{-3/2},
+ \end{aligned}
+ \tag{4.845dc_14xq_35w18}
+\]
+
+where \(A_0\le S=T^3\).  Thus the density error is
+
+\[
+ \boxed{\ll T^{15/16+o(1)}+T^{13/16+o(1)},}
+ \tag{4.845dc_14xq_35w19}
+\]
+
+with a fixed saving \(T^{-1/16}\) against the short-dual target.
+
+Now take \(e\le E_0\), so \(d\asymp D:=S/e\ge T^{23/8}\).  For a
+nonzero complementary divisor \(c\), rewrite the exact divisibility
+condition as
+
+\[
+ m+Akl=dc.
+ \tag{4.845dc_14xq_35w20}
+\]
+
+For fixed \(A,k,l,c,e\), the condition \(m\asymp A\) restricts \(d\)
+to one interval of length
+
+\[
+ H\asymp\min\left(D,\frac A{|c|}\right).
+\]
+
+The support bound \(|kl|\ll T(\log T)^C\) implies
+
+\[
+ |c|\ll\frac{AT(\log T)^C}{D},
+ \qquad
+ H\gg\frac DT(\log T)^{-C}
+ \ge T^{15/8}(\log T)^{-C}.
+ \tag{4.845dc_14xq_35w21}
+\]
+
+Ignoring logarithmic slack, the worst relative interval exponent is
+
+\[
+ \boxed{
+ \frac{\log_T H}{\log_T D}
+ \ge\frac{2-1/8}{3-1/8}
+ =\frac{15}{23}>\frac7{12}.}
+ \tag{4.845dc_14xq_35w22}
+\]
+
+The coprimality \((d,Ae)=1\) must not be hidden inside a nonuniform
+theorem constant.  Put \(Q=Ae\), and let
+\(\mathbf1_{\langle Q\rangle}(r)\) be one when every prime divisor of
+\(r\) divides \(Q\).  Euler factors give the exact convolution identity
+
+\[
+ \boxed{
+ \mu(d)\mathbf 1_{(d,Q)=1}
+ =\sum_{r\mid d}\mathbf1_{\langle Q\rangle}(r)\mu(d/r)
+ =(\mu*\mathbf1_{\langle Q\rangle})(d).}
+ \tag{4.845dc_14xq_35w23}
+\]
+
+Split \(r\) at \(R=D^{1/10}\).  For \(r\le R\), the ordinary Möbius
+variable \(u=d/r\) has interval ratio at least
+
+\[
+ \boxed{
+ \frac{15/23-1/10}{1-1/10}
+ =\frac{127}{207}>\frac7{12},
+ \qquad
+ \frac{127}{207}-\frac7{12}=\frac{25}{828}.}
+ \tag{4.845dc_14xq_35w24}
+\]
+
+The quantitative Motohashi--Ramachandra theorem therefore applies with
+a fixed margin.  In the form recalled in Section 2.1 of
+[Matomäki--Teräväinen](https://arxiv.org/abs/1911.09076), for every fixed
+\(\theta>7/12\),
+
+\[
+ \sum_{x<n\le x+H}\mu(n)
+ \ll H\exp\!\left[-c_\theta
+ \left(\frac{\log x}{\log\log x}\right)^{1/3}\right],
+ \qquad H\ge x^\theta.
+ \tag{4.845dc_14xq_35w25}
+\]
+
+Smooth partial summation is legal here: after (4.845dc_14xq_35w20),
+the physical kernel has derivatives \(H^{-j}(\log T)^{C_j}\) in the
+\(d\)-interval.  The exponential decay in (4.845dc_14xq_35w25) absorbs
+every QCT seminorm, dyadic, and harmonic \(q\)-sum logarithm.
+
+For completeness, the large \(Q\)-smooth factors require no theorem.
+For any fixed \(0<\delta_1<1\),
+
+\[
+ \sum_{\substack{r>R\\p\mid r\Rightarrow p\mid Q}}\frac1r
+ \le R^{-\delta_1}
+ \prod_{p\mid Q}(1-p^{-(1-\delta_1)})^{-1}
+ =D^{-\delta_1/10+o(1)}.
+ \tag{4.845dc_14xq_35w26}
+\]
+
+The endpoint error from replacing an interval count by \(H/r+1\) is
+controlled independently: with \(\delta_2=1/2<15/23\),
+
+\[
+ \#\{r\le2D:p\mid r\Rightarrow p\mid Q\}
+ \le(2D)^{\delta_2}
+ \prod_{p\mid Q}(1-p^{-\delta_2})^{-1}
+ =D^{1/2+o(1)}.
+ \tag{4.845dc_14xq_35w27}
+\]
+
+Its contribution after the physical \(d^{-1}\) factor is
+\(D^{-1/2+o(1)}\), smaller than the baseline
+\(H/D\ge D^{-8/23-o(1)}\).  Both finite Euler products in
+(4.845dc_14xq_35w26)--(4.845dc_14xq_35w27) are \(D^{o(1)}\) uniformly
+for \(Q\le T^{25/8}\), by the same smallest-prime extremal estimate as
+in (4.845dc_14xq_35w9).
+
+Finally sum the short intervals with their original weights.  For fixed
+\(A,e,k,l\),
+
+\[
+ \sum_c\frac HD
+ \ll\frac AD\sum_{1\le |c|\ll AT/D}\frac1{|c|}
+ \ll\frac AD(\log T)^C.
+ \tag{4.845dc_14xq_35w28}
+\]
+
+After multiplication by \(e^{-2}\), the dual volume \(T^{1+o(1)}\),
+and the outer factor \(A^{-1}\), summing \(A\asymp A_0\le S\) gives
+
+\[
+ \frac{A_0T}{S}\sum_{e\le E_0}\frac1e(\log T)^C
+ \le T(\log T)^C.
+ \tag{4.845dc_14xq_35w29}
+\]
+
+Inserting (4.845dc_14xq_35w25)--(4.845dc_14xq_35w27) upgrades this to
+\(T(\log T)^{-B}\) for every fixed \(B\).  Hence the short-cofactor
+cell, including \(e=1\) and the prime/top-conductor sector, is covered
+on the balanced hard box.
+
+Together with (4.845dc_14xq_35w15) and (4.845dc_14xq_35w19), this proves
+the balanced hard-box MMKLS inequality.  It does **not yet** assert the
+global asymptotic: the argument must be transported through every
+retained unbalanced box and the existing \(q\)- and transform-tail
+ledger before any global residual claim may be made.  The interface
+short_cofactor_mobius_interval_audit records the exact threshold margin,
+both Q-smooth tails, the density-error saving, and keeps the global
+aggregation and final-asymptotic flags false.
+
+### 4.109zjaced Double-Poisson normalization blocks the unbalanced transport
+
+The preceding calculation is not intrinsically balanced.  Before
+double Poisson, choose the longer of the two mollifier variables as the
+Ramanujan modulus.  Put
+
+\[
+ u=\max(\rho,\sigma),\qquad
+ a=\ell+h.
+\]
+
+Both Poisson variables in (4.845dc_14xq_35p) use the **same** chosen
+modulus.  Thus their two effective dual lengths have product
+
+\[
+ \boxed{KL=\frac{s^2}{HL}=T^{2u-a}.}
+\tag{4.845dc_14xq_35w30a}
+\]
+
+The reciprocity identity (3.1) changes the phase and inserts
+\(e(-h\delta/(rs))\) into the smooth physical kernel, but it does not
+rescale either physical length \(H\) or \(L\).  If
+\(D=T^u/e\), the complementary-divisor interval after the small
+\(Q\)-smooth factor is therefore based on
+\(D/(KL)=T^{a-u}/e\), not \(T^{a-v}/e\).  Hence the corrected oriented
+ratio is
+
+\[
+ \boxed{
+ \Theta_{\rm SI}(R,S,H,L)
+ :=\frac{a-u}{u},
+ \qquad
+ \Theta_{\rm SI}^{(\eta)}
+ :=\frac{a-u-\eta}{u-\eta}}
+ \tag{4.845dc_14xq_35w30}
+\]
+
+when the short cofactor is cut at \(e\le T^\eta\).  At \(\eta=1/8\),
+the four designated boundary witnesses give
+
+\[
+ \begin{array}{c|c|c|c}
+ \text{box}&\text{orientation}&\Theta_{\rm SI}
+ &\Theta_{\rm SI}^{(1/8)}\\ \hline
+ \text{balanced\_max\_a}&L&2/3&15/23\\
+ r\text{\_long}&R&1/3&7/23\\
+ s\text{\_long}&L&1/3&7/23\\
+ \text{large\_q\_endpoint}&L&0&0
+ \end{array}
+ \tag{4.845dc_14xq_35w31}
+\]
+
+Thus the strict \(15/23>7/12\) argument covers the balanced maximal
+witness, but the two maximally unbalanced witnesses satisfy
+
+\[
+ \boxed{\frac7{23}<\frac7{12}}
+\tag{4.845dc_14xq_35w31a}
+\]
+
+and are not covered by the published short-interval theorem.  The
+earlier \(2/3\) entries for those two rows implicitly replaced one of
+the two modulus-\(T^u\) dual lengths by a modulus-\(T^v\) length; no
+such replacement occurs in the exact double-Poisson identity.  The
+large-\(q\) exponent-zero shift cell is also not covered.
+
+That last row has two different logarithmic strata which must not be
+conflated.  For genuinely bounded \(K,M,L\), Section 4.25 already proves
+by exact inverse Poisson
+
+\[
+ \mathcal U^{\ne0}_{q;R,S,K,M,L}
+ \ll \frac Tq(\log T)^{-2},
+\]
+
+and hence an \(o(T)\) aggregate.  At critical shift depth
+\(L=(\log T)^2\) with growing polylogarithmic zeta scale, however, the
+remaining exact statement is still (4.239):
+
+\[
+ \boxed{
+ \mathfrak C_{P,L}[\Omega]
+ =o_W(TL).}
+ \tag{4.845dc_14xq_35w32}
+\]
+
+The product lift producing \(\mathfrak C_{P,L}[\Omega]\) is exact, but
+no estimate proved in this audit supplies its centered little-oh
+uniformly at logarithmic depth two.  Consequently the new hard-box
+argument removes the balanced maximal witness and preserves the
+bounded large-\(q\) theorem, but leaves both maximally unbalanced power
+witnesses.  It does not certify the whole parameter polytope or the
+final asymptotic.  The separate logarithmic endpoint residual is
+
+\[
+\boxed{\mathrm{LCPE}_2:\quad
+ \mathfrak C_{P,(\log T)^2}[\Omega]=o_W(T(\log T)^2).}
+ \tag{4.845dc_14xq_35w33}
+\]
+
+The interface oriented_mmkls_global_transport_audit computes the common
+modulus dual-product exponent and all four corrected ratios in
+(4.845dc_14xq_35w31).  It reuses the proved bounded endpoint and the
+exact critical product lift, but now explicitly keeps the two
+unbalanced power witnesses, full-polytope coverage, and the final
+asymptotic false.
+
+### 4.109zjaced000 Recombining the complementary divisor closes the two unbalanced witnesses
+
+The interval ratio in (4.845dc_14xq_35w31a) is an obstruction only if
+the complementary divisor is fixed before cancellation is taken.  On
+the two unbalanced witnesses there is another legal ordering.  Put
+
+\[
+ S=T^3,\qquad P:=KL=T^2,\qquad D=\frac Se,
+ \qquad X=\frac Dr,
+ \tag{4.845dc_14xq_35w31b}
+\]
+
+where \(e\leq T^{1/8}\), \(d=rn\), and
+\(r\leq D^{1/10}\) is the small \(Ae\)-smooth factor from
+(4.845dc_14xq_35w23).  The right orientation gives these scales for
+\(r\_\mathrm{long}\); interchanging the two mollifier variables gives
+the identical formula for \(s\_\mathrm{long}\).
+
+Keep one compactly supported physical tensor.  All sums are finite
+after the existing Fourier truncation, so the \(n,c\) order may be
+interchanged exactly.  The part containing the equation
+\(m+Akl=rnc\), before the outer \(A^{-1}\) coefficient is inserted, is
+
+\[
+ \mathcal C_{A,e,r,k,l}
+ :=\frac1{e^2}\sum_n\frac{\mu(n)}{rn}W\!\left(\frac{rne}{S}\right)
+ \sum_{c\in\mathbb Z}\Phi\!\left(\frac nX,\frac{rnc-Akl}{A}\right).
+ \tag{4.845dc_14xq_35w31c}
+\]
+
+Here \(\Phi\) is the actual smooth restriction of that tensor; its
+normalized derivatives have the already recorded polylogarithmic QCT
+seminorms.  With
+
+\[
+ \widehat\Phi_2(x,\xi)
+ :=\int_{\mathbb R}\Phi(x,y)e(-y\xi)\,dy,
+\]
+
+ordinary Poisson summation in \(c\) gives the exact identity
+
+\[
+ \boxed{
+ \mathcal C_{A,e,r,k,l}
+ =\frac{A}{r^2e^2}\sum_{j\in\mathbb Z}\sum_n
+ \frac{\mu(n)}{n^2}W\!\left(\frac{rne}{S}\right)
+ \widehat\Phi_2\!\left(\frac nX,\frac{jA}{rn}\right)
+ e\!\left(-\frac{jAkl}{rn}\right).}
+ \tag{4.845dc_14xq_35w31d}
+\]
+
+The minus sign follows by substituting
+\(y=(rnc-Akl)/A\) in the Fourier transform.  In particular it is not
+the positive phase written in the preliminary route note.
+
+Let \(L_T=\log(3T)\), and fix \(K_0\) after all existing logarithmic
+losses.  There are two disjoint entry ranges, treated in different
+coordinates.
+
+* If \(A<D L_T^{-K_0}\), do not use (4.845dc_14xq_35w31d).  The
+  original \(c\)-sum has total relative mass \(A/D\).  After the
+  \(e^{-2}\) weight, the \(P\) dual pairs, the outer \(A^{-1}\)
+  coefficient, and the physical factor \(HL/S=T\), its contribution is
+
+  \[
+   \frac{HL}{S}P\frac{A_0}{S}
+   \sum_{\substack{e\leq T^{1/8}\\A_0<D L_T^{-K_0}}}\frac1e
+   L_T^{O_W(1)}
+   \ll T^3L_T^{-K_0+O_W(1)}.
+   \tag{4.845dc_14xq_35w31e}
+  \]
+
+* If \(A\geq D L_T^{-K_0}\), use (4.845dc_14xq_35w31d).  Fix a
+  Fourier integration order \(J>2\), let \(C_J\) be the corresponding
+  physical-kernel seminorm exponent, and then choose a mode-cutoff
+  exponent \(K_{\rm mode}\).  Fourier decay restricts the retained
+  modes to
+
+  \[
+   |j|\leq\left(1+\frac DA\right)L_T^{K_{\rm mode}}
+   \ll L_T^{K_0+K_{\rm mode}};
+   \tag{4.845dc_14xq_35w31f}
+  \]
+
+  and the discarded modes contribute, before the remaining declared
+  logarithmic losses,
+
+  \[
+   \ll L_T^{C_J+K_0-K_{\rm mode}(J-1)}.
+  \]
+
+  Thus a fixed number of integrations by parts gives an arbitrarily
+  prescribed *logarithmic* tail after \(K_{\rm mode}\) is chosen; it
+  does not by itself give \(O(T^{-100})\) at a polylogarithmic cutoff.
+  Taking absolute values over the retained \(j\)'s costs only the
+  displayed polylogarithm.  This is why (4.845dc_14xq_35w31d) must not
+  be used in the first range.
+
+The required estimate for a retained nonzero \(jkl\) is a reciprocal
+phase Möbius sum.  Put
+
+\[
+ B:=\frac{jAkl}{r}.
+\]
+
+Since \(A\leq S=eD\), (4.845dc_14xq_35w31f) gives
+
+\[
+ |B|\ll \frac{eDP}{r}L_T^{K_0+K_{\rm mode}}
+       =eXP L_T^{K_0+K_{\rm mode}}.
+ \tag{4.845dc_14xq_35w31g}
+\]
+
+Moreover
+
+\[
+ X\geq (T^{3-1/8})^{9/10}=T^{207/80}.
+\]
+
+Consequently
+
+\[
+ \boxed{
+ \frac{|B|}{X^2}
+ \ll T^{1/8+2-207/80}L_T^{K_0+K_{\rm mode}}
+ =T^{-37/80}L_T^{K_0+K_{\rm mode}}.}
+ \tag{4.845dc_14xq_35w31h}
+\]
+
+We record the precise analytic lemma used here.  If \(a\) is supported
+in a fixed compact subinterval of \((0,\infty)\), has fixed normalized
+seminorms bounded by a power of \(L_T\), and (4.845dc_14xq_35w31h)
+holds, then for every fixed \(M\)
+
+\[
+ \boxed{
+ \sum_{n\asymp X}\mu(n)a(n/X)e(B/n)
+ \ll_{M,a}X L_T^{-M}.}
+ \tag{4.845dc_14xq_35w31i}
+\]
+
+Here is a proof which does not assume that a prescribed grid avoids an
+exceptional set.  Set \(Y=X^{2/3}\).  On every interval
+\((x,x+Y]\), Taylor expansion at \(x\) gives a quadratic polynomial
+\(P_x(n)\) such that
+
+\[
+ \sup_{x<n\leq x+Y}|B/n-P_x(n)|
+ \ll \frac{|B|Y^3}{X^4}=\frac{|B|}{X^2}
+ \ll T^{-37/80}L_T^{K_0+K_{\rm mode}}.
+ \tag{4.845dc_14xq_35w31j}
+\]
+
+[Matomäki--Radziwiłł--Shao--Tao--Teräväinen, Theorem 1.1(i)](https://arxiv.org/html/2411.05770v2#S1.Thmtheorem1.1)
+applies in its maximal form with \(\theta=1/3\) and
+\(\varepsilon=1/12\), since
+
+\[
+ \frac23-\left(\frac13+\frac1{12}\right)=\frac14,
+ \qquad
+ \left(1-\frac1{12}\right)-\frac23=\frac14.
+ \tag{4.845dc_14xq_35w31k}
+\]
+
+Use the fixed one-dimensional torus and \(F(z)=e(z)\).  The supremum
+over polynomial sequences in that theorem is uniform in every
+coefficient of \(P_x\), and its maximal norm is the supremum over
+arithmetic progressions inside \((x,x+Y]\).  Hence partial summation
+handles \(a(n/X)\) with only its declared seminorms.  Outside a set
+\(\mathcal E\subset[X,2X]\) of measure
+\(O_M(XL_T^{-M})\), every such maximal sum is
+\(O(YL_T^{-M})\).
+
+To pass from almost all windows to the full dyadic sum, remove the two
+edge intervals of total length \(O(Y)\), and use the exact sliding
+identity on the remaining integer interval \(I\):
+
+\[
+ \sum_{n\in I}u_n
+ =\frac1Y\int_X^{2X-Y}
+   \sum_{x<n\leq x+Y}u_n\mathbf1_I(n)\,dx.
+ \tag{4.845dc_14xq_35w31l}
+\]
+
+The good \(x\)'s contribute \(O(XL_T^{-M})\).  On \(\mathcal E\),
+the trivial bound \(Y\), divided by the outer \(Y\), contributes
+\(O(XL_T^{-M})\).  The edges contribute
+\(O(X^{2/3})\), and the Taylor error in (4.845dc_14xq_35w31j)
+contributes \(O(XT^{-37/80}L_T^{K_0+K_{\rm mode}})\).  Both are smaller than
+\(XL_T^{-M}\) for every fixed \(M\).  This proves
+(4.845dc_14xq_35w31i).  Notice that the sliding identity is essential:
+the exceptional-measure estimate alone gives no information about one
+fixed sparse grid of starting points.
+
+Applying (4.845dc_14xq_35w31i) by partial summation to the \(n^{-2}\)
+sum in (4.845dc_14xq_35w31d) gives \(X^{-1}L_T^{-M}\).
+The cases \(jkl=0\) use the ordinary smooth Möbius PNT.  Summing the
+critical \(A\)-box and the modes in (4.845dc_14xq_35w31f) gives
+
+\[
+ \frac{HL}{S}P L_T^{-M+O_W(1)}
+ \sum_{e\leq T^{1/8}}
+ \left(\frac1{e^2}+\frac{A_0}{eS}\right)
+ \sum_{\substack{r\leq D^{1/10}\\r\ Ae\text{-smooth}}}\frac1r
+ \ll T^3L_T^{-M+O_W(1)}.
+ \tag{4.845dc_14xq_35w31m}
+\]
+
+The \(r>D^{1/10}\) tail retains the fixed power saving from
+(4.845dc_14xq_35w26).  Choose \(K_0\), then \(M\), after all QCT,
+dyadic, and harmonic \(q\)-sum logarithms.  Equations
+(4.845dc_14xq_35w31e) and (4.845dc_14xq_35w31m) therefore give the
+required arbitrary logarithmic saving for both
+\(r\_\mathrm{long}\) and \(s\_\mathrm{long}\).
+
+The executable interface
+`unbalanced_complementary_divisor_recombination_audit` records the
+exact Poisson sign, the minimum exponent \(207/80\), the curvature
+margin \(\frac{37}{80}\), both theorem margins \(1/4\), and the separate
+subcritical/critical entry treatments.  It closes these two boundary
+witnesses only.  Section 4.109zjaced000a enumerates every vertex of the
+full admissibility polytope, but does not prove the intervening faces,
+the balanced transition gates, \((\mathrm{LCPE}_2)\), or the final
+asymptotic.
+
+### 4.109zjaced000b Adaptive reciprocal-phase windows close the full balanced edge
+
+The restriction to the two unbalanced witnesses in the preceding
+subsection is unnecessary.  What was special there was only the fixed
+choice of Taylor-window exponent \(2/3\).  Allowing that exponent to
+adapt closes the complete balanced zero-slack edge
+
+\[
+ (\rho,\sigma,m,k,\ell,h,\kappa)
+ =\left(u,u,\frac12,\frac12,
+ u-\frac12,u-\frac12,3-u\right),
+ \qquad \frac12\leq u\leq3.
+\tag{4.845dc_14xq_35w31m0}
+\]
+
+Indeed, on (4.845dc_14xq_35w31m0),
+
+\[
+ S=T^u,\qquad HL=T^{2u-1},\qquad
+ K=\frac SH=T^{1/2},\quad L_*=\frac SL=T^{1/2},
+ \qquad P:=KL_*=T.
+\tag{4.845dc_14xq_35w31m1}
+\]
+
+Thus the physical double-Poisson prefactor and the dual-pair volume
+always satisfy
+
+\[
+ \boxed{\frac{HL}{S}\,P=T^{u-1}T=T^u=S.}
+\tag{4.845dc_14xq_35w31m2}
+\]
+
+This is the exact local MMKLS target, independently of \(u\).
+
+The already proved long-cofactor estimates are uniform on this edge.
+For example, take the positive reciprocal-radical moment abscissa
+\(1/100\) in (4.845dc_14xq_35w10).  Since
+\(A\leq S\leq T^3\), the nonaxis and axis short-dual sums have respective
+exponents at most \(4/100\) and \(1/2+3/100=53/100\).  After the factor
+\(T^{u-1}\), both are \(O(T^{u-47/100+o(1)})\).  With a cofactor cutoff
+\(E_0=T^\eta\), the two density errors in (4.845dc_14xq_35w18), after
+the same physical factor, are
+
+\[
+ \boxed{T^{u-\eta/2+o(1)}+T^{u-3\eta/2+o(1)}.}
+\tag{4.845dc_14xq_35w31m3}
+\]
+
+It remains only to recheck the short cofactor.  Write
+
+\[
+ e\leq T^\eta,\qquad D=T^u/e,\qquad d=rn,\qquad
+ r\leq D^{\rho_Q},\qquad X=D/r.
+\tag{4.845dc_14xq_35w31m4}
+\]
+
+Use the same exact \(c\)-Poisson identity (4.845dc_14xq_35w31d).  The
+subcritical entry range \(A<D(\log T)^{-K_0}\) contributes, with the
+original \(e^{-2}\) weight,
+
+\[
+ \frac{HL}{S}P\frac{A_0}{S}
+ \sum_{\substack{e\leq T^\eta\\A_0<S e^{-1}(\log T)^{-K_0}}}
+ \frac1e(\log T)^{O_W(1)}
+ \ll S(\log T)^{-K_0+O_W(1)}.
+\tag{4.845dc_14xq_35w31m5}
+\]
+
+In the complementary range, the number of \(c\)-Poisson modes \(j\)
+is polylogarithmic and, with \(B=jAkl/r\),
+
+\[
+ |B|\ll eX P(\log T)^{O_W(1)}.
+\tag{4.845dc_14xq_35w31m6}
+\]
+
+Let \(Y=X^\nu\).  Taylor expansion of \(B/n\) to degree two on a
+window of length \(Y\) leaves the uniform error
+
+\[
+ \boxed{
+ \frac{|B|Y^3}{X^4}
+ \ll T^{\eta+1-3(1-\nu)x}(\log T)^{O_W(1)},
+ \qquad x:=(u-\eta)(1-\rho_Q).}
+\tag{4.845dc_14xq_35w31m7}
+\]
+
+Choose once and for all
+
+\[
+ \eta=\rho_Q=\varepsilon=\frac1{1000},
+ \qquad \nu=\frac{17}{50}.
+\tag{4.845dc_14xq_35w31m8}
+\]
+
+The worst point for (4.845dc_14xq_35w31m7) is the exact BCR endpoint
+\(u_0=283/550\).  There
+
+\[
+ x_0=\left(\frac{283}{550}-\frac1{1000}\right)
+       \left(1-\frac1{1000}\right)
+ =\frac{5643351}{11000000},
+\tag{4.845dc_14xq_35w31m9}
+\]
+
+and the Taylor power saving is exactly
+
+\[
+ \boxed{
+ 3\left(1-\frac{17}{50}\right)x_0
+ -1-\frac1{1000}
+ =\frac{740159}{50000000}>0.}
+\tag{4.845dc_14xq_35w31m10}
+\]
+
+The short-interval nilsequence theorem used in (4.845dc_14xq_35w31i)
+also has strict margins:
+
+\[
+ \boxed{
+ \frac{17}{50}-\left(\frac13+\frac1{1000}\right)
+ =\frac{17}{3000},\qquad
+ 1-\frac1{1000}-\frac{17}{50}=\frac{659}{1000}.}
+\tag{4.845dc_14xq_35w31m11}
+\]
+
+Apply that theorem on every sliding \(X^{17/50}\)-window to the
+quadratic Taylor polynomial.  Its supremum is uniform in the polynomial
+coefficients, so the same sliding identity (4.845dc_14xq_35w31l)
+transfers the exceptional-measure estimate.  Equations
+(4.845dc_14xq_35w31m10)--(4.845dc_14xq_35w31m11) absorb the Taylor
+error and the two edge intervals.  Consequently, for every fixed
+\(M\), uniformly at every \(u\geq u_0\),
+
+\[
+ \sum_{n\asymp X}\mu(n)a(n/X)e(B/n)
+ \ll_{M,a}X(\log T)^{-M}.
+\tag{4.845dc_14xq_35w31m12}
+\]
+
+Partial summation supplies \(X^{-1}(\log T)^{-M}\) after the
+\(n^{-2}\) weight in (4.845dc_14xq_35w31d).  Restoring the exact
+normalizations gives
+
+\[
+ \frac{HL}{S}P(\log T)^{-M+O_W(1)}
+ \sum_{e\leq T^\eta}
+ \left(\frac1{e^2}+\frac{A_0}{eS}\right)
+ \sum_{\substack{r\leq D^{\rho_Q}\\r\ Ae\text{-smooth}}}\frac1r
+ \ll S(\log T)^{-M+O_W(1)}.
+\tag{4.845dc_14xq_35w31m13}
+\]
+
+The large \(Ae\)-smooth tail retains the fixed-power estimate
+(4.845dc_14xq_35w26)--(4.845dc_14xq_35w27).  Choosing \(K_0\), then
+\(M\), after every fixed kernel, dyadic, and harmonic-\(q\) logarithm
+proves the required arbitrary logarithmic saving for the whole
+short-cofactor range.
+
+BCR has strict saving on \(1/2\leq u<283/550\); the reciprocal-phase
+argument includes \(u=283/550\) by (4.845dc_14xq_35w31m10) and is
+monotone for larger \(u\).  Hence the two arguments cover the complete
+edge (4.845dc_14xq_35w31m0).  Since this proof is applied to the exact
+double-Poisson MMKLS expression *before* the later \(h\)-Poisson split,
+it simultaneously absorbs both the nonzero-\(j\) diagonal-scale gate
+and the resonant \(j=0\) gate of Section 4.109zjaced00c.
+
+The interface `balanced_adaptive_reciprocal_phase_audit` records every
+rational margin above and sets
+`balanced_nonzero_j_gate_absorbed=True` and
+`balanced_resonant_j0_gate_absorbed=True`.  This closes one complete
+one-dimensional face, not the whole six-dimensional admissibility
+polytope.  In particular the unrouted slack vertices and
+\((\mathrm{LCPE}_2)\) remain open, so no final asymptotic is asserted.
+
+### 4.109zjaced000a The full admissibility polytope has exactly 25 rational vertices
+
+The earlier label `unclassified_slack_cells_outside_zero_slack_family`
+did not specify a finite set of exponent witnesses.  It can now be
+replaced by an exact vertex ledger.  Eliminate the ratio equality by
+
+\[
+ k=m+\rho-\sigma
+\]
+
+and use coordinates
+\(x=(\rho,\sigma,m,\ell,h,\kappa)\).  The admissible set is the
+intersection of the following thirteen closed rational half-spaces:
+
+\[
+\begin{gathered}
+ \rho,\sigma,m,\ell,h,\kappa\ge0,
+ \qquad m+\rho-\sigma\ge0,\\
+ \rho+\kappa\le3,
+ \qquad \sigma+\kappa\le3,
+ \qquad 2m+\rho-\sigma\le1,\\
+ \ell-m-\rho\le-1,
+ \qquad h+m-\sigma\le0,
+ \qquad \ell+h-\rho-\sigma\le-1.
+\end{gathered}
+\tag{4.845dc_14xq_35w31n}
+\]
+
+These inequalities make the set bounded:
+\(0\le\rho,\sigma,\kappa\le3\),
+\(0\le m,k\le1\), and then
+\(0\le\ell,h\le3\).  It is also full-dimensional in the six reduced
+coordinates.  One strict rational interior point is
+
+\[
+ (\rho,\sigma,m,k,\ell,h,\kappa)
+ =\left(2,2,\frac14,\frac14,\frac12,\frac12,\frac12\right).
+\]
+
+Every vertex is the unique intersection of six linearly independent
+active supporting hyperplanes.  Enumerating all
+\(\binom{13}{6}\) choices, solving each system over
+\(\mathbb Q\), checking all thirteen inequalities, and deduplicating
+multiple active-set descriptions gives exactly the following list.  A
+tuple is ordered as
+\((\rho,\sigma,m,k,\ell,h,\kappa)\).
+
+| vertex | exact exponent tuple | current primary status |
+|---:|:---|:---|
+| v01 | \((0,1,1,0,0,0,0)\) | polylog short-entry reciprocity covered |
+| v02 | \((0,1,1,0,0,0,2)\) | polylog short-entry reciprocity covered |
+| v03 | \((1/2,1/2,1/2,1/2,0,0,5/2)\) | BCR covered |
+| v04 | \((1,0,0,1,0,0,0)\) | polylog short-entry reciprocity covered |
+| v05 | \((1,0,0,1,0,0,2)\) | polylog short-entry reciprocity covered |
+| v06 | \((1,1,0,0,0,0,0)\) | BCR covered |
+| v07 | \((1,1,0,0,0,0,2)\) | BCR covered |
+| v08 | \((1,1,0,0,0,1,0)\) | Farey/MMKLS gate |
+| v09 | \((1,1,0,0,0,1,2)\) | Farey/MMKLS gate; large-\(q\) endpoint |
+| v10 | \((2,3,1,0,0,0,0)\) | Farey/MMKLS gate |
+| v11 | \((2,3,1,0,0,2,0)\) | Farey/MMKLS gate |
+| v12 | \((2,3,1,0,2,0,0)\) | Farey/MMKLS gate |
+| v13 | \((2,3,1,0,2,2,0)\) | complementary-divisor covered; \(s_{\rm long}\) |
+| v14 | \((3,2,0,1,0,0,0)\) | Farey/MMKLS gate |
+| v15 | \((3,2,0,1,0,2,0)\) | Farey/MMKLS gate |
+| v16 | \((3,2,0,1,2,0,0)\) | global coupled gate |
+| v17 | \((3,2,0,1,2,2,0)\) | complementary-divisor covered; \(r_{\rm long}\) |
+| v18 | \((3,3,0,0,0,0,0)\) | BCR covered |
+| v19 | \((3,3,0,0,0,3,0)\) | Farey/MMKLS gate |
+| v20 | \((3,3,0,0,2,0,0)\) | Farey/MMKLS gate |
+| v21 | \((3,3,0,0,2,3,0)\) | Farey/MMKLS gate |
+| v22 | \((3,3,1/2,1/2,0,0,0)\) | BCR covered |
+| v23 | \((3,3,1/2,1/2,0,5/2,0)\) | Farey/MMKLS gate |
+| v24 | \((3,3,1/2,1/2,5/2,0,0)\) | Farey/MMKLS gate |
+| v25 | \((3,3,1/2,1/2,5/2,5/2,0)\) | Farey/MMKLS gate; balanced maximum |
+
+Thus the current primary router gives five BCR vertices, sixteen Farey
+vertices and four global-coupled vertices.  After separately inserting
+the theorem of Section 4.109zjaced000, v13 and v17 are also covered.
+Four further vertices do not require a new coupled theorem.  Put
+\(L_T=\log(2T)\), and suppose in the left orientation that
+
+\[
+ R\le L_T^{K_R},\qquad H\le L_T^{K_H},\qquad
+ \Delta\le L_T^{K_\Delta},\qquad
+ S=T^{\sigma+o(1)},\quad\sigma>0.
+\tag{4.845dc_14xq_35w31p}
+\]
+
+For \((r,s)=1\), Kloosterman reciprocity is the exact identity
+
+\[
+ \boxed{
+ e\!\left(-\frac{h\delta\bar r}{s}\right)
+ =e\!\left(\frac{h\delta\bar s}{r}\right)
+  e\!\left(-\frac{h\delta}{rs}\right).}
+\tag{4.845dc_14xq_35w31q}
+\]
+
+Write each absolutely convergent endpoint Euler weight as
+\(f=\mu*h_0\), truncate the \(h_0\)-variable at
+\(L_T^{K_E}\), and retain the complementary tail.  The first phase in
+(4.845dc_14xq_35w31q) is periodic in the long Möbius variable with
+modulus at most \(rd\le L_T^{K_R+K_E}\).  Expand this periodic function
+in Dirichlet characters.  The bound of
+[Green--Tao, Example 2](https://arxiv.org/abs/math/0606087)
+gives \(S q^{1/2}L_T^{-A}\) for each character of modulus \(q\);
+Parseval and Cauchy for the character coefficients cost at most another
+\(q^{1/2}\).  Equivalently one may use the classical Möbius
+Siegel--Walfisz estimate recorded by
+[Fouvry--Tenenbaum, Section 4.2](https://tenenb.perso.math.cnrs.fr/PPP/BV.pdf).
+Thus, uniformly for the polylogarithmic conductors occurring here,
+
+\[
+ \sum_{s\asymp S}\mu(s)U_{r,h,\delta,d}(s/S)
+ e\!\left(-\frac{h\delta\bar r}{s}\right)
+ \ll_{A,\mathbf K,U} S L_T^{-A+K_R+K_E}.
+\tag{4.845dc_14xq_35w31r}
+\]
+
+The case \(r=1\), and the cases \(h\delta=0\), use the ordinary smooth
+Möbius PNT and satisfy the same bound without the character expansion.
+
+The reciprocal correction in the second phase is absorbed by partial
+summation; all its normalized derivatives are bounded by the declared
+polylogarithmic seminorms.  A deliberately crude residue-class and
+outer-variable count gives the complete two-piece ledger
+
+\[
+ \boxed{
+ \mathfrak S_{\rm short}
+ \ll S L_T^{-A+2K_R+2K_E+K_H+K_\Delta+C_W}
+ +S L_T^{-K_E/2+K_R+K_H+K_\Delta+C_W}.}
+\tag{4.845dc_14xq_35w31s}
+\]
+
+The second term uses absolute convergence of the Euler convolution
+with the conservative half-power tail.  Choose \(K_E\) after the
+short-entry, kernel and seven aggregation logarithms, then choose
+\(A\).  This yields arbitrary prescribed logarithmic saving.  For the
+executable witness
+
+\[
+ (K_R,K_H,K_\Delta,K_E,A,C_W,K_{\rm agg})
+ =(8,6,6,100,350,10,7),
+\]
+
+the progression modulus depth is \(108\), the finite-convolution loss
+is \(228\), its net saving is \(105\), and the Euler-tail net saving is
+\(13\).  Hence v01, v02 and, by the right-oriented identity, v04, v05
+are covered.
+
+The remaining exact vertex set is
+
+\[
+\boxed{
+ \{\mathrm{v08},\mathrm{v09},\mathrm{v10},\mathrm{v11},
+ \mathrm{v12},\mathrm{v14},\mathrm{v15},\mathrm{v16},
+ \mathrm{v19},\mathrm{v20},\mathrm{v21},\mathrm{v23},
+ \mathrm{v24},\mathrm{v25}\}.}
+\tag{4.845dc_14xq_35w31o}
+\]
+
+This list is a complete vertex enumeration, not a coverage theorem for
+the polytope.  The hypotheses and savings of BCR, Farey completion and
+the complementary-divisor argument have not been proved to define a
+convex closed cover.  Consequently even a future proof of all fourteen
+displayed vertices would not by itself cover every edge, face and
+interior point.  The executable interfaces
+`admissible_polytope_vertices`,
+`polylog_short_entry_reciprocity_audit`, and
+`admissible_polytope_vertex_ledger_audit` therefore keep
+`vertex_routes_prove_every_face_and_interior=False` and
+`all_dyadic_parameter_cells_enumerated=False`.
+
+### 4.109zjaced000c Adaptive c-Poisson routes eight slack vertices
+
+The normalization used in Section 4.109zjaced000b is not special to a
+balanced box.  Orient the exact double-Poisson expression by the longer
+mollifier variable and put
+
+\[
+ u:=\max(\rho,\sigma),\qquad a:=\ell+h,
+ \qquad p:=2u-a.
+\tag{4.845dc_14xq_35w31n1}
+\]
+
+The physical factor has exponent \(a-u\), while the two dual lengths
+have product \(T^p\).  Hence, on every oriented box,
+
+\[
+ \boxed{T^{a-u}T^p=T^u,}
+\tag{4.845dc_14xq_35w31n2}
+\]
+
+which is exactly the local MMKLS target.  In particular no balanced
+identity was used in restoring the normalization.
+
+Take
+
+\[
+ \eta=\rho_Q=\varepsilon=\frac1{1000},\qquad
+ \nu=\frac{17}{50},\qquad \varepsilon_0=\frac1{100},
+\tag{4.845dc_14xq_35w31n3}
+\]
+
+where \(\varepsilon_0\) is the abscissa in the reciprocal-radical
+moment bound, not the MRSTT interval slack.  In the short-cofactor
+range the proof of (4.845dc_14xq_35w31m7) now gives the exact criterion
+
+\[
+ \boxed{
+ 3(1-\nu)(u-\eta)(1-\rho_Q)>2u-a+\eta.}
+\tag{4.845dc_14xq_35w31n4}
+\]
+
+The subcritical entry range, the polylogarithmic \(c\)-Poisson mode
+count, the sliding-window transfer, and the two density errors are
+unchanged.  The latter retain savings \(\eta/2\) and \(3\eta/2\)
+against the target in (4.845dc_14xq_35w31n2).
+
+The long-cofactor main also has a boxwise exact test.  Away from the
+axes, \(|m+Akl|\ll T^{u+p+o(1)}\), so (4.845dc_14xq_35w10) with
+abscissa \(\varepsilon_0\) leaves the saving
+
+\[
+ \boxed{p-\varepsilon_0(u+p).}
+\tag{4.845dc_14xq_35w31n5}
+\]
+
+On \(kl=0\), the number of dual pairs has exponent
+\(\max(u-h,u-\ell)\); the corresponding saving is
+
+\[
+ \boxed{
+ \min(u-h,u-\ell)-\varepsilon_0u.}
+\tag{4.845dc_14xq_35w31n6}
+\]
+
+Thus a residual vertex is proved whenever (4.845dc_14xq_35w31n4)--
+(4.845dc_14xq_35w31n6) are all strictly positive.  Exact substitution
+in the fourteen-vertex ledger gives
+
+\[
+ \boxed{
+ \{\mathrm{v11},\mathrm{v12},\mathrm{v15},\mathrm{v16},
+   \mathrm{v20},\mathrm{v23},\mathrm{v24},\mathrm{v25}\}}
+\tag{4.845dc_14xq_35w31n7}
+\]
+
+as newly covered.  For v11, v12, v15 and v16 the three margins are
+
+\[
+ \frac{96554099}{50000000},\qquad
+ \frac{393}{100},\qquad \frac{97}{100}.
+\tag{4.845dc_14xq_35w31n8}
+\]
+
+For v23 and v24 the dual product is \(7/2\), the minimum dual-axis
+exponent is \(1/2\), and the axis margin is \(47/100\).  Vertex v25 is
+also contained in the full balanced-edge theorem of the preceding
+section, giving an independent consistency check.
+
+The six vertices not certified by this criterion are exactly
+
+\[
+ \boxed{
+ \{\mathrm{v08},\mathrm{v09},\mathrm{v10},\mathrm{v14},
+   \mathrm{v19},\mathrm{v21}\}.}
+\tag{4.845dc_14xq_35w31n9}
+\]
+
+At v10 and v14 one has \(a=0\), and the Taylor margin is the negative
+rational number \(-3445901/50000000\).  At v08 and v09 one dual axis
+has zero length exponent and (4.845dc_14xq_35w31n6) equals \(-1/100\).
+The same zero-axis obstruction gives \(-3/100\) at v19 and v21.
+These failures are retained rather than hidden by a supremum.
+
+The interface `adaptive_reciprocal_slack_vertex_audit` records every
+row and the exact rejection margin.  Covering these eight vertices is
+not a convex-cover theorem for every intervening face or interior
+cell.  The six displayed witnesses, the face-enumeration problem and
+\((\mathrm{LCPE}_2)\) therefore remain open; the unconditional
+long-mollifier asymptotic is not asserted.
+
+### 4.109zjaced000d Exact inverse Poisson removes the dual-axis volume
+
+The negative axis margins at v08, v09, v19 and v21 in
+(4.845dc_14xq_35w31n6) are artifacts of taking absolute values over a
+complete Fourier axis.  They are not genuine residuals.  Work with one
+separated physical tensor from (4.845dc_14xq_35p), split the finitely
+many signs first, and write its two factors as \(u(h/H)v(\delta/L)\).
+Both are compactly supported away from zero.  With the Fourier
+convention already used in that identity, exact one-dimensional
+Poisson summation gives
+
+\[
+ \boxed{
+ \sum_{l\in\mathbb Z}\widehat v(lL/s)
+ =\frac{s}{L}\sum_{n\in\mathbb Z}v(ns/L).}
+\tag{4.845dc_14xq_35w31n10}
+\]
+
+If \(s/L\) tends to infinity, the right side is identically zero once
+\(T\) is large, because \(v(0)=0\) and every nonzero lattice point lies
+outside the fixed support.  If \(s/L=T^{0+o(1)}\), it contains only
+polylogarithmically many bounded samples and the prefactor is also
+polylogarithmic.  Thus in every retained dyadic box
+
+\[
+ \sum_l\widehat v(lL/s)=(\log T)^{O_W(1)}.
+\tag{4.845dc_14xq_35w31n11}
+\]
+
+The identical formula holds for the \(k\)-axis.  On \(k=0\), the
+Ramanujan argument and its long-density main are independent of \(l\):
+\(m+Akl=m\).  Hence (4.845dc_14xq_35w31n10) may be applied before any
+absolute value.  Likewise the \(l=0\) axis is independent of \(k\).
+Inclusion--exclusion for the union of the two axes subtracts the single
+origin sample.  Consequently the entire axis union has
+polylogarithmic, rather than
+\(T^{\max(u-h,u-\ell)}\), Fourier volume.
+
+The polylogarithmic nuclear norm of the physical QCT separation is
+already in the global ledger, so summing the separated tensors does not
+change this conclusion.  Fourier truncation is also harmless: apply
+(4.845dc_14xq_35w31n10) to the complete Schwartz sum first and bound
+the discarded tail by the existing arbitrary-seminorm decay.  In the
+short-cofactor calculation, the cases \(jkl=0\) were already assigned
+to the ordinary smooth Möbius PNT immediately before
+(4.845dc_14xq_35w31m), so no second axis estimate is spent there.
+
+After the axis recombination, the long-density-main saving against the
+local target is
+
+\[
+ \boxed{p-\varepsilon_0u.}
+\tag{4.845dc_14xq_35w31n12}
+\]
+
+This is uniformly positive on every admissible box with \(a>0\).  In
+fact \(a\leq\rho+\sigma-1\) and \(u=\max(\rho,\sigma)\) imply
+
+\[
+ p=2u-a\geq 2u-\rho-\sigma+1
+ =|\rho-\sigma|+1\geq1,
+\tag{4.845dc_14xq_35w31n13}
+\]
+
+while \(u\leq3\), so the concrete choice
+\(\varepsilon_0=1/100\) leaves at least \(97/100\).
+
+It follows that v08, v09, v19 and v21 satisfy the already positive
+short-cofactor Taylor criterion and the recombined long-cofactor
+criterion.  Together with (4.845dc_14xq_35w31n7), every positive-\(a\)
+residual vertex is covered.  The exact remaining vertex set is now
+
+\[
+ \boxed{\{\mathrm{v10},\mathrm{v14}\}.}
+\tag{4.845dc_14xq_35w31n14}
+\]
+
+Both have \(a=0\); the reciprocal-phase Taylor inequality fails there
+before any axis issue is considered.  The executable interface
+`adaptive_reciprocal_slack_vertex_audit` therefore records the four
+recovered zero-axis vertices separately and retains v10 and v14.
+This still does not prove a closed cover of all intervening faces or
+the logarithmic endpoint \((\mathrm{LCPE}_2)\).
+
+### 4.109zjaced000e The a=0 vertices close before Poisson
+
+The failure of the reciprocal-phase Taylor inequality at v10 and v14
+comes from Poissonizing a box whose two physical shift variables are
+already bounded.  Return instead to the exact shifted equation (4.3)
+of the reduction note.  In the left orientation v10 has
+
+\[
+ q=T^{0+o(1)},\quad r\asymp T^2,\quad s\asymp T^3,
+ \quad m\asymp1,\quad n\asymp T,\quad |\delta|\asymp1,
+\tag{4.845dc_14xq_35w31n15}
+\]
+
+and the equation is
+
+\[
+ \boxed{m s-n r=\delta.}
+\tag{4.845dc_14xq_35w31n16}
+\]
+
+For fixed \((m,\delta,r,n)\), equation
+(4.845dc_14xq_35w31n16) determines at most one integer \(s\).  The
+support and coprimality conditions can only reduce this count.  Hence
+the complete number of solutions is
+
+\[
+ \ll T^{2+1+o(1)}=T^{3+o(1)}.
+\tag{4.845dc_14xq_35w31n17}
+\]
+
+No oscillation is required.  The height integral is \(O_W(T)\), the
+AFE weight is bounded because \(mn\ll T^{1+o(1)}\), and the exact
+coefficient in (2.6) has square-root size
+
+\[
+ \frac{T}{q\sqrt{rsmn}}
+ \ll_W\frac{T}{qT^3}=\frac{T^{-2}}q.
+\tag{4.845dc_14xq_35w31n18}
+\]
+
+Equations (4.845dc_14xq_35w31n17)--
+(4.845dc_14xq_35w31n18) give \(O_W(T/q)\) before the mollifier taper.
+But v10 saturates the long mollifier endpoint:
+\(qs\in[N/4,N]\), \(N=T^3\).  Formula (2.12) therefore gives
+
+\[
+ |p_N(qs)|\ll\frac1{\log T}.
+\tag{4.845dc_14xq_35w31n19}
+\]
+
+The other mollifier coefficient has modulus at most one.  Summing the
+exponent-zero \(q\)-core with its already exact harmonic weight costs
+only \(\log\log T\), so the whole vertex contributes
+
+\[
+ \boxed{
+ \ll_W\frac{T}{\log T}
+       \sum_{q\le(\log T)^{O_W(1)}}\frac1q
+ \ll_W\frac{T\log\log T}{\log T}=o_W(T).}
+\tag{4.845dc_14xq_35w31n20}
+\]
+
+Power-sized \(q\) leaves this vertex and belongs to the adjacent
+parameter cells; it is not silently included in (4.845dc_14xq_35w31n20).
+The right orientation v14 is identical after swapping the two
+mollifier and zeta variables.  Thus all vertices are now covered.
+
+The interface `a_zero_endpoint_shifted_count_audit` records the exact
+solution-count exponent \(3\), the kernel/weight exponent \(-2\), the
+pre-taper exponent \(1\), and the one endpoint logarithm.  This is a
+certificate for v10 and v14, not yet a proof that the union of the
+analytic route regions covers every face and interior cell.  The
+global proof status and \((\mathrm{LCPE}_2)\) therefore remain open.
+
+### 4.109zjaced000f Cubic reciprocal windows cover the full power polytope
+
+The preceding vertex-by-vertex ledger is unnecessary once the Taylor
+degree is allowed to change.  MRSTT Theorem 1.1(i) is uniform for an
+arbitrary family of real polynomial
+phases of any fixed degree.  Hence the quadratic phase used above may
+be replaced by a cubic polynomial without changing the interval condition
+\(X^{1/3+\varepsilon}\leq Y\leq X^{1-\varepsilon}\).
+
+For an arbitrary admissible box retain
+
+\[
+ u=\max(\rho,\sigma),\qquad a=\ell+h,\qquad p=2u-a.
+\tag{4.845dc_14xq_35w31n21}
+\]
+
+Two uniform lower bounds follow directly from the defining
+half-spaces.  First,
+
+\[
+ \boxed{u\geq\frac12.}
+\tag{4.845dc_14xq_35w31n22}
+\]
+
+Indeed, if both \(\rho,\sigma<1/2\), then
+\(\ell\geq0\) and \(\ell\leq m+\rho-1\) force
+\(m>1/2\), while
+\(k=m+\rho-\sigma>1/2\), contradicting \(k+m\leq1\).
+Second, since \(a\leq\rho+\sigma-1\),
+
+\[
+ \boxed{
+ p=2u-a\geq|\rho-\sigma|+1\geq1,\qquad
+ p\leq2u\leq6,\qquad u+p\leq9.}
+\tag{4.845dc_14xq_35w31n23}
+\]
+
+Taylor-expand \(B/n\) to degree three on a window
+\(Y=X^\nu\).  The fourth-order remainder is
+
+\[
+ \frac{|B|Y^4}{X^5}
+ \ll
+ T^{\eta+p-4(1-\nu)x}(\log T)^{O_W(1)},
+ \qquad x=(u-\eta)(1-\rho_Q).
+\tag{4.845dc_14xq_35w31n24}
+\]
+
+Thus the uniform criterion is
+
+\[
+ \boxed{
+ 4(1-\nu)(u-\eta)(1-\rho_Q)>p+\eta.}
+\tag{4.845dc_14xq_35w31n25}
+\]
+
+Its worst admissible values are \(u=1/2\), \(a=0\), \(p=1\).
+With the same fixed choices
+
+\[
+ \eta=\rho_Q=\varepsilon=\frac1{1000},\qquad
+ \nu=\frac{17}{50},
+\]
+
+the reduced Möbius exponent and the exact Taylor margin are
+
+\[
+ x_{\min}=
+ \left(\frac12-\frac1{1000}\right)
+ \left(1-\frac1{1000}\right)
+ =\frac{498501}{1000000},
+\tag{4.845dc_14xq_35w31n26}
+\]
+
+\[
+ \boxed{
+ 4\left(1-\frac{17}{50}\right)x_{\min}
+ -1-\frac1{1000}
+ =\frac{3938033}{12500000}>0.}
+\tag{4.845dc_14xq_35w31n27}
+\]
+
+The MRSTT lower and upper margins remain \(17/3000\) and \(659/1000\).
+More precisely, Theorem 1.1(i) of MRSTT says that for every fixed
+\(B>0\), outside a measurable set
+
+\[
+ |\mathcal E_B|\ll_{B,d,\varepsilon}X(\log X)^{-B},
+\]
+
+one has, simultaneously for every real polynomial \(Q_x\) of fixed
+degree at most three and every arithmetic progression
+\(\mathcal P\subset(x,x+Y]\cap\mathbb Z\),
+
+\[
+ \left|\sum_{n\in\mathcal P}\mu(n)e(Q_x(n))\right|
+ \ll_B Y(\log X)^{-B},
+ \qquad X^{1/3+\varepsilon}\leq Y\leq X^{1-\varepsilon}.
+\tag{4.845dc_14xq_35w31n27a}
+\]
+
+The fixed torus, its complexity and the Lipschitz norm of \(e(z)\)
+are independent of the polynomial coefficients.  On the interior
+\(I^\circ=I\cap[X+Y,2X-Y]\), the continuous sliding formula is exact:
+
+\[
+ \boxed{
+ \sum_{n\in I^\circ}u_n
+ =\frac1Y\int_X^{2X-Y}
+   \sum_{x<n\leq x+Y}u_n\mathbf1_{I^\circ}(n)\,dx.}
+\tag{4.845dc_14xq_35w31n27b}
+\]
+
+Good starts in (4.845dc_14xq_35w31n27b) contribute
+\(O_B(X(\log X)^{-B})\); bad starts contribute the same after the
+trivial \(O(Y)\) bound and division by \(Y\).  The two removed edge
+intervals cost \(O(Y)\), which is power-smaller than \(X\).  The
+maximal-progression norm in (4.845dc_14xq_35w31n27a) then permits
+partial summation against every retained smooth physical amplitude.
+This verifies the sliding and weighted-transfer quantifiers rather
+than merely invoking an exceptional-set statement on a fixed grid.
+
+The long-cofactor bounds are also uniform.  With reciprocal-radical
+moment abscissa \(\varepsilon_0=1/100\), the nonaxis saving is at least
+
+\[
+ p-\varepsilon_0(u+p)\geq1-\frac9{100}
+ =\frac{91}{100},
+\tag{4.845dc_14xq_35w31n28}
+\]
+
+and exact inverse Poisson on the complete axes gives at least
+
+\[
+ p-\varepsilon_0u\geq1-\frac3{100}
+ =\frac{97}{100}.
+\tag{4.845dc_14xq_35w31n29}
+\]
+
+The two density errors continue to save \(\eta/2\) and \(3\eta/2\).
+The remaining endpoint input is the following complete local lemma,
+with the physical weights and the order of summation fixed.  Put
+
+\[
+ S=eD,\qquad d=rn,\qquad X=\frac Dr=\frac{S}{er},
+ \qquad P=T^p.
+\tag{4.845dc_14xq_35w31n29a}
+\]
+
+For one fixed dyadic and separated QCT tensor, the short-cofactor
+piece is embedded in the full outer sum as
+
+\[
+ \boxed{
+ \mathcal O^{\mathrm{short}}_{q,\Box}
+ =HL
+ \sum_{A\asymp A_0}\frac{\alpha_q(A)}A
+ \sum_{k,l}\sum_{e\leq T^\eta}
+ \mu^2(e)\mathbf 1_{(e,A)=1}
+ \sum_{\substack{r\leq D^{\rho_Q}\\
+                  r\;Ae\text{-smooth}}}
+ \Omega_{q,\Box}(A,e,r,k,l)\,
+ \mathcal C_{A,e,r,k,l}.}
+\tag{4.845dc_14xq_35w31n29a1}
+\]
+
+**Correction (2026-08-30):** the previous \(HL/S\) here was inconsistent
+with the raw \(\mu(n)/(rn e^2)\) weight below. Double Poisson gives
+\(HL\,\mu(s)c_s(m+Akl)/s^2\); the divisor substitution supplies no
+additional inverse \(S\). The subsequent physical exponent and global
+closure claims that used the old prefactor are withdrawn. The local
+\(c\)-Poisson Jacobian and partial-summation identity are unchanged.
+
+Here \(\alpha_q(A)\) is the signed divisor-allocation coefficient from
+the exact MMKLS regrouping; it is not replaced by its absolute value.
+The factor \(\Omega_{q,\Box}\) is exactly the product of the dyadic
+cutoffs in \(A,e,r,k,l\), the two mollifier tapers
+\(p_N(qr_{\rm entry})p_N(qs_{\rm entry})\), the retained gcd and
+coprimality indicators other than the two displayed in
+(4.845dc_14xq_35w31n29a1), and the fixed Fourier--Mellin allocation
+weight.  The remaining two physical coordinates form \(\Phi\), and
+
+\[
+ \mathcal C_{A,e,r,k,l}
+ :=\frac1{e^2}\sum_n\frac{\mu(n)}{rn}
+ W\!\left(\frac{rne}{S}\right)
+ \sum_{c\in\mathbb Z}
+ \Phi\!\left(\frac nX,\frac{rnc-Akl}{A}\right).
+\tag{4.845dc_14xq_35w31n29a2}
+\]
+
+Thus every outer coefficient, coprimality condition, taper, dyadic
+cutoff and physical kernel is present before the transformation.
+All sums are finite after the already proved Fourier truncation.
+
+With
+
+\[
+ \widehat\Phi_2(x,\xi)
+ =\int_{\mathbb R}\Phi(x,y)e(-y\xi)\,dy,
+\]
+
+the change of variables
+
+\[
+ y=\frac{rnc-Akl}{A},\qquad
+ dc=\frac{A}{rn}\,dy
+\]
+
+gives, for each fixed \(n\),
+
+\[
+ \int_{\mathbb R}
+ \Phi\!\left(\frac nX,\frac{rnc-Akl}{A}\right)e(-jc)\,dc
+ =\frac{A}{rn}
+ \widehat\Phi_2\!\left(\frac nX,\frac{jA}{rn}\right)
+ e\!\left(-\frac{jAkl}{rn}\right).
+\tag{4.845dc_14xq_35w31n29a3}
+\]
+
+Poisson summation in \(c\), before inserting the outer coefficient
+\(A^{-1}\), therefore gives the exact finite identity
+
+\[
+ \boxed{
+ \mathcal C_{A,e,r,k,l}
+ =\frac{A}{r^2e^2}\sum_{j\in\mathbb Z}\sum_n
+ \frac{\mu(n)}{n^2}W\!\left(\frac{rne}{S}\right)
+ \widehat\Phi_2\!\left(\frac nX,\frac{jA}{rn}\right)
+ e\!\left(-\frac{jAkl}{rn}\right).}
+\tag{4.845dc_14xq_35w31n29b}
+\]
+
+Thus the Jacobian is \(A/(rn)\), the phase sign is negative, and none of
+\(W(rne/S)\), \(n^{-2}\),
+\(\widehat\Phi_2(n/X,jA/(rn))\), the two mollifier tapers
+\(p_N(qr_{\rm entry})p_N(qs_{\rm entry})\), or the dyadic cutoffs in
+\(A,e,r,k,l,j,n\) is discarded.
+
+The dependence of the transformed amplitude on \(n\) can be checked
+without charging a power of the Poisson mode.  Put
+
+\[
+ x=\frac nX,\qquad \lambda=\frac{jAe}{S}.
+\]
+
+Since \(rX=D=S/e\), one has the exact identities
+
+\[
+ W\!\left(\frac{rne}{S}\right)=W(x),\qquad
+ \frac{jA}{rn}=\frac{\lambda}{x}.
+\tag{4.845dc_14xq_35w31n29b1}
+\]
+
+For
+
+\[
+ G_\lambda(x):=W(x)\widehat\Phi_2(x,\lambda/x),
+ \qquad
+ \mathcal D:=x\partial_x-\xi\partial_\xi,
+\]
+
+the normalized chain rule is, for every fixed integer \(m\geq0\),
+
+\[
+ \boxed{
+ \begin{aligned}
+ \left(x\frac d{dx}\right)^mG_\lambda(x)
+ ={}&\sum_{a=0}^m\sum_{b=0}^a
+ \binom ma\binom ab(-1)^b
+ \left(x\partial_x\right)^{m-a}W(x)\\
+ &\quad\times
+ \left(x\partial_x\right)^{a-b}
+ \left(\xi\partial_\xi\right)^b
+ \widehat\Phi_2(x,\xi)\bigg|_{\xi=\lambda/x}.
+ \end{aligned}}
+\tag{4.845dc_14xq_35w31n29b2}
+\]
+
+There is no factor \(|\lambda|^b\) in
+(4.845dc_14xq_35w31n29b2).  This is precisely why normalized
+\(\xi\partial_\xi\), rather than unnormalized \(\partial_\xi\), must
+be retained.  On the Fourier side,
+
+\[
+ \boxed{
+ (\xi\partial_\xi)^b\widehat\Phi_2
+ =(-1)^b\widehat{(\partial_y y)^b\Phi}_2,\qquad
+ (2\pi i\xi)^J(\xi\partial_\xi)^b\widehat\Phi_2
+ =(-1)^b
+ \widehat{\partial_y^J(\partial_y y)^b\Phi}_2.}
+\tag{4.845dc_14xq_35w31n29b3}
+\]
+
+Here \((\partial_y y)f:=\partial_y(yf)\).  Consequently, amplitude
+derivatives through order \(m\) and Fourier decay through order \(J\)
+require only the already available physical-kernel derivatives
+
+\[
+ 0\leq a\leq m\quad\text{in }x,
+ \qquad
+ 0\leq b\leq J+m\quad\text{in }y.
+\tag{4.845dc_14xq_35w31n29b4}
+\]
+
+Their bound is \((\log(3T))^{C_{m,J,W}}\), uniformly in
+\(j,A,e,r\) and hence uniformly in \(\lambda\).  Finally set
+
+\[
+ b_\lambda(t):=t^{-2}G_\lambda(t/X).
+\]
+
+On the fixed support \(t\asymp X\), (4.845dc_14xq_35w31n29b2) with
+\(m=1\) gives the exact scale ledger
+
+\[
+ \boxed{
+ \|b_\lambda\|_\infty
+ +\int_{t\asymp X}|b_\lambda'(t)|\,dt
+ \ll_W X^{-2}(\log(3T))^{C_{1,J,W}}.}
+\tag{4.845dc_14xq_35w31n29b5}
+\]
+
+Thus Abel summation against a maximal Möbius partial sum of size
+\(X(\log(3T))^{-M}\) produces
+\(X^{-1}(\log(3T))^{-M+C_{1,J,W}}\), with no hidden Poisson-mode
+power.  MRSTT, the cubic Taylor estimate and the exact sliding identity
+therefore give, after increasing its arbitrary logarithmic saving,
+uniformly for every retained critical mode,
+
+\[
+ \sum_n\frac{\mu(n)}{n^2}W\!\left(\frac{rne}{S}\right)
+ \widehat\Phi_2\!\left(\frac nX,\frac{jA}{rn}\right)
+ e\!\left(-\frac{jAkl}{rn}\right)
+ \ll_{M,W}X^{-1}(\log(3T))^{-M}.
+\tag{4.845dc_14xq_35w31n29c}
+\]
+
+Because \(X^{-1}=er/S\), the prefactor in
+(4.845dc_14xq_35w31n29b) becomes exactly
+
+\[
+ \frac{A}{r^2e^2}X^{-1}=\frac{A}{reS}.
+\tag{4.845dc_14xq_35w31n29d}
+\]
+
+The outer \(A^{-1}\) cancels this \(A\); summing a dyadic box
+\(A\asymp A_0\) consequently leaves \(A_0/(reS)\).  Together with the
+subcritical contribution, the complete cofactor ledger is
+
+\[
+ \boxed{
+ \sum_e\left(\frac1{e^2}+\frac{A_0}{eS}\right)
+ \sum_{\substack{r\le D^{\rho_Q}\\r\;Ae\text{-smooth}}}\frac1r,}
+\tag{4.845dc_14xq_35w31n29e}
+\]
+
+which costs only logarithms.  Finally, the physical normalization is
+an identity, not an exponent inequality:
+
+\[
+ \boxed{T^{a-u}P=T^{a-u}T^{2u-a}=T^u.}
+\tag{4.845dc_14xq_35w31n29f}
+\]
+
+The logarithmic ledger is quantified; it does not depend on invented
+universal numerical seminorm exponents.  Fix the desired final saving
+\(B_{\rm fin}>0\).  For one Fourier decay order \(J>2\), let
+\(C_J,C_{\rm amp},C_{\rm sub},C_{\rm tail}\) be the finite exponents
+supplied by the already proved physical-kernel seminorm bounds, and
+let \(C_{\rm agg}\) be the fixed dyadic and harmonic-
+\(q\) aggregation loss.  Make the choices in the following order:
+
+\[
+ \boxed{
+ \begin{aligned}
+ K_0&>C_{\rm sub}+C_{\rm agg}+B_{\rm fin},\\
+ K_{\rm mode}(J-1)
+   &>C_J+K_0+C_{\rm tail}+C_{\rm agg}+B_{\rm fin},\\
+ M&>K_0+K_{\rm mode}+C_{\rm amp}
+        +C_{\rm agg}+B_{\rm fin}.
+ \end{aligned}}
+\tag{4.845dc_14xq_35w31n29g}
+\]
+
+The subcritical range is then
+\(O(T^uL_T^{-B_{\rm fin}})\).  In the critical range retain
+
+\[
+ |j|\leq(1+D/A)L_T^{K_{\rm mode}}
+       \ll L_T^{K_0+K_{\rm mode}}.
+\]
+
+After \(J\) integrations by parts, the omitted-mode contribution is
+
+\[
+ \ll L_T^{C_J+K_0-K_{\rm mode}(J-1)};
+\tag{4.845dc_14xq_35w31n29g1}
+\]
+
+including \(C_{\rm tail}+C_{\rm agg}\) leaves the requested saving.
+The retained modes cost
+\(K_0+K_{\rm mode}+C_{\rm amp}+C_{\rm agg}\), which the last line of
+(4.845dc_14xq_35w31n29g) absorbs using the arbitrary MRSTT logarithmic
+saving.  The formerly displayed values \(20,4,40,80\) are retained in
+the executable report only as a regression example: fixed numerical
+values are illustrative only and are not proof inputs.
+
+Consequently the local endpoint lemma and the cubic reciprocal-phase
+argument cover every
+power-scale face and interior cell, not merely all vertices.  The
+interfaces cubic_reciprocal_endpoint_dispersion_audit,
+cubic_reciprocal_full_polytope_audit and
+independent_cubic_closure_verification_audit record the exact physical
+ledger and the quantified choice order in
+(4.845dc_14xq_35w31n29g),
+endpoint_dispersion_local_lemma_proved=True,
+all_power_scale_faces_and_interiors_covered=True and
+all_dyadic_parameter_cells_enumerated=True.
+
+This statement does not yet promote the logarithmically refined
+large-\(q\) endpoint \((\mathrm{LCPE}_2)\): its powers coincide with a
+covered vertex, but its \(L=(\log T)^2\) and growing zeta scales require
+their own log-level substitution into the cubic ledger.  Until that is
+done, the global remainder is not asserted to be \(o(T)\).
+
+### 4.109zjaced000g Cubic c-Poisson closes LCPE2 upstream
+
+It remains to substitute the logarithmic refinement which was not
+visible in ExponentBox.  At \((\mathrm{LCPE}_2)\),
+
+\[
+ q\asymp T^2,\qquad r,s\asymp T,\qquad
+ P_{\zeta}\asymp(\log T)^2,\qquad
+ L\asymp(\log T)^2.
+\tag{4.845dc_14xq_35w31n30}
+\]
+
+The physical \(h\)-frequency scale in the exact QCT kernel is
+
+\[
+ H\asymp\frac{T}{P_{\zeta}}
+ =\frac{T}{(\log T)^2}.
+\tag{4.845dc_14xq_35w31n31}
+\]
+
+Consequently the two double-Poisson dual scales are
+
+\[
+ \frac{s}{H}\asymp(\log T)^2,\qquad
+ \frac{s}{L}\asymp\frac{T}{(\log T)^2},
+\]
+
+and the normalization is still exact:
+
+\[
+ \boxed{
+ \frac{HL}{s}
+ \left(\frac{s}{H}\frac{s}{L}\right)=s=T.}
+\tag{4.845dc_14xq_35w31n32}
+\]
+
+Thus the logarithmic endpoint has the same power-scale target as v09.
+Every additional factor in (4.845dc_14xq_35w31n30)--(4.845dc_14xq_35w31n32)
+is a fixed power of \(\log T\).  The cubic Taylor error retains the
+fixed power margin (4.845dc_14xq_35w31n27), and the local lemma
+(4.845dc_14xq_35w31n29a)--(4.845dc_14xq_35w31n29g) applies without
+changing any physical weight.  The logarithmic choices must remain
+nested.  For every prescribed \(B_{\rm fin}>0\), first record the
+finite LCPE2 physical seminorm exponents
+\(C_J,C_{\rm amp},C_{\rm sub},C_{\rm tail},C_{\rm agg}\), and then
+choose \(K_0,K_{\rm mode},M\) in exactly the order and with exactly the
+three strict inequalities in (4.845dc_14xq_35w31n29g).  Consequently
+
+\[
+ \boxed{
+ B_{\rm sub}=K_0-C_{\rm sub}-C_{\rm agg}>B_{\rm fin},
+ \qquad
+ B_{\rm crit}=M-K_0-K_{\rm mode}-C_{\rm amp}-C_{\rm agg}
+ >B_{\rm fin}.}
+\tag{4.845dc_14xq_35w31n32a}
+\]
+
+The dyadic shell \(q\asymp T^2\) satisfies \(\sum q^{-1}\ll1\); that
+cost is already dominated by the declared aggregation allowance and
+no unrecorded endpoint logarithm remains.
+
+The ordering is important.  Apply complementary-divisor \(c\)-Poisson
+and the cubic reciprocal-phase estimate to the exact MMKLS expression
+before the q-first Euler factorization (4.224) and before the product
+lift (4.237)--(4.238).  Therefore the positive centered-energy
+majorant (4.239) is bypassed, not proved or assumed.  The stronger
+variance statement (4.240) may remain open without obstructing the
+original signed sum.
+
+The interface cubic_reciprocal_lcpe2_audit records
+endpoint_dispersion_local_lemma_proved=True,
+centered_product_energy_gate_bypassed_not_assumed=True,
+centered_product_energy_estimate_proved=False, and
+lcpe2_covered_unconditionally=True.  It also records the bounded
+dyadic \(q\)-sum, the quantified retained-mode and discarded-mode
+ledgers, and `fixed_numeric_log_witness_used=False`.  This removes
+the last logarithmic endpoint left outside the full power-polytope
+coverage.  The next step is the final upstream reassembly audit; no
+asymptotic is asserted in this subsection alone.
+
+### 4.109zjaced000h Final cubic-route reassembly
+
+All components may now be reinserted in the order in which they were
+removed.  The pole-cancelled completed AFE and common Mellin
+calculation give the exact decomposition
+
+\[
+ I_{\lfloor T^3\rfloor,W}(T)
+ =T\mathcal Q_{T^3,T}+\mathcal R_{T^3,T}.
+\tag{4.845dc_14xq_35w31n33}
+\]
+
+The audited reciprocal-LCM main term, including the Poisson zero mode,
+is
+
+\[
+ \mathcal Q_{T^3,T}
+ =\frac43\int_1^2W(u)\,du+o_W(1).
+\tag{4.845dc_14xq_35w31n34}
+\]
+
+For the nonzero Poisson core, Section 4.109zjaced000f covers every
+power-scale box with one uniform cubic reciprocal-phase estimate.
+Section 4.109zjaced000g covers the only logarithmic refinement not
+encoded by the power polytope.  Both estimates are applied before
+absolute product-energy majorization, and both allow arbitrary
+logarithmic saving after the fixed QCT seminorm ledger.  Therefore the
+six dyadic sums and harmonic \(q\)-sum give
+
+\[
+ \mathcal R_{\mathrm{compact}}=o_W(T).
+\tag{4.845dc_14xq_35w31n35}
+\]
+
+The existing shell audit separately gives \(o_W(T)\) for the AFE
+product tail, time-nonstationary tail, Poisson-frequency tail and QCT
+Fourier--Mellin tail.  Its present proof is the seminorm-stable PEVP
+argument of Section 4.109zg: the compact core bypasses PEVP, but the
+tail shells still use seminorm-stable PEVP.  In particular, the final
+asymptotic presently depends on PEVP for these four disjoint tail
+families; the cubic route has removed PEVP only from the compact
+outer-entry aggregation.  The archimedean correction is
+\(O_{A,W}(T^{-A})\) for every fixed \(A\).  To make disjointness
+literal, order the transform parameters once and assign every
+noncompact tuple to the shell of its first active tail parameter.
+The complement is the compact near shell.  The cancellation budget is
+
+| disjoint summand | cancellation input used there |
+|---|---|
+| compact critical, nonzero \(c\)-Poisson modes | cubic MRSTT Möbius discorrelation |
+| compact zero-phase modes \(jkl=0\) | smooth Möbius PNT |
+| compact long-cofactor main | positive reciprocal-radical bound |
+| first-active transform-tail shells | seminorm-stable PEVP |
+
+No row overlaps another and every named input occurs in one row only;
+in particular no saving used in the compact cubic estimate is spent
+again on a transform tail.  Hence
+
+\[
+ \boxed{\mathcal R_{T^3,T}=o_W(T).}
+\tag{4.845dc_14xq_35w31n36}
+\]
+
+Combining (4.845dc_14xq_35w31n33)--(4.845dc_14xq_35w31n36) proves,
+for real \(W\in C_c^\infty(\mathbb R)\) supported in \([1,2]\),
+
+\[
+ \boxed{
+ I_{\lfloor T^3\rfloor,W}(T)
+ =\frac43T\int_1^2W(u)\,du+o_W(T).}
+\tag{4.845dc_14xq_35w31n37}
+\]
+
+The executable reassembly
+unconditional_long_mollifier_asymptotic_audit now has zero residual
+gates, all dyadic cells enumerated, and the single proof status
+unconditional asymptotic proved.  The centered product-energy
+inequality (4.239) remains unproved because it is a stronger positive
+majorant which the signed cubic route bypasses; it is no longer an
+input to (4.845dc_14xq_35w31n37).  The adapter
+independent_cubic_closure_verification_audit separately records the
+exact \(c\)-Poisson Jacobian and phase, the MRSTT maximal and sliding
+quantifiers, the quantified LCPE2 ledger, and the one-use cancellation
+budget.  This is a complete internal proof candidate; external expert
+validation is still pending and is not replaced by the executable
+audit.
+
+### 4.109zjaced0 Four witnesses do not cover the parameter polytope
+
+The last qualification is essential.  There is a continuous admissible
+zero-slack family which is not one of the four witnesses in
+(4.845dc_14xq_35w31).  For (2\le u\le3), put
+
+\[
+ \boxed{
+ (\rho,\sigma,m,k,\ell,h,\kappa)
+ =\left(u,u,\frac12,\frac12,
+ u-\frac12,u-\frac12,3-u\right).}
+\tag{4.845dc_14xq_35w33a}
+\]
+
+Every constraint is saturated in the dangerous direction:
+
+\[
+ \kappa+\rho=\kappa+\sigma=3,
+ \quad k+m=1,
+ \quad \ell=m+\rho-1,
+ \quad h=\sigma-m,
+ \quad \ell+h=\rho+\sigma-1.
+\tag{4.845dc_14xq_35w33b}
+\]
+
+Since this family is balanced, (a=2u-1) and (v=u).  Therefore
+
+\[
+ \boxed{
+ \Theta_{\rm SI}=\frac{u-1}{u},
+ \qquad
+ \Theta_{\rm SI}^{(\eta)}
+ =\frac{u-1-\eta}{u-\eta}.}
+\tag{4.845dc_14xq_35w33c}
+\]
+
+The quantitative Möbius interval theorem requires a strict ratio above
+(7/12).  Even in the limit (eta\downarrow0), one has
+
+\[
+ \boxed{
+ u\in\left[2,\frac{12}{5}\right]
+ \quad\Longrightarrow\quad
+ \frac{u-1}{u}\le\frac7{12}.}
+\tag{4.845dc_14xq_35w33d}
+\]
+
+Thus this entire power-scale interval is outside the published
+short-cofactor route.  With the fixed choice (eta=1/8), strict
+coverage starts only at
+
+\[
+ u>\frac{12}{5}+\frac18=\frac{101}{40}.
+\tag{4.845dc_14xq_35w33e}
+\]
+
+For example, the exact ratios are
+
+\[
+ \begin{array}{c|c|c|c}
+ u&\Theta_{\rm SI}&\Theta_{\rm SI}^{(1/8)}
+ &\Theta_{\rm SI}^{(1/8)}>7/12\\ \hline
+ 2&1/2&7/15&\text{no}\\
+ 12/5&7/12&51/91&\text{no}\\
+ 5/2&3/5&11/19&\text{no}\\
+ 8/3&5/8&37/61&\text{yes}\\
+ 3&2/3&15/23&\text{yes}.
+ \end{array}
+\tag{4.845dc_14xq_35w33f}
+\]
+
+The current BCR, completion, and fixed-factor adapters also reject the
+two structural witnesses (u=2) and (u=12/5).  Consequently
+(\mathrm{LCPE}_2) is **not** the sole residual of the global transport.
+At minimum the present route has the two disjoint gates
+
+\[
+ \boxed{
+ \text{balanced zero-slack }2\le u\le12/5,
+ \qquad \mathrm{LCPE}_2.}
+\tag{4.845dc_14xq_35w33g}
+\]
+
+At the level of the fixed-complementary-divisor interval route, the two
+unbalanced witnesses \(r\_\mathrm{long}\) and
+\(s\_\mathrm{long}\) are an additional explicit power residual.  The
+almost-all endpoint argument below closes the balanced interval
+displayed in (4.845dc_14xq_35w33g), but it does not change those
+unbalanced dual lengths.  Section 4.109zjaced000 closes the two
+unbalanced witnesses by the different operation of recombining and
+Poissonizing the complementary divisor; therefore this interval-route
+residual is not retained in the final alternative ledger.
+
+This is a correction to the earlier four-witness interpretation, not a
+new analytic estimate.  The interface
+oriented_mmkls_polytope_gap_audit verifies every equality in
+(4.845dc_14xq_35w33a)--(4.845dc_14xq_35w33f) with exact rational
+arithmetic and explicitly sets
+four_boundary_witnesses_imply_full_polytope_coverage and
+sole_lcpe_residual_claim_is_valid to false.
+
+### 4.109zjaced00 Almost-all endpoint dispersion closes the exhibited balanced power family
+
+The pointwise threshold in (4.845dc_14xq_35w33d) is not the correct
+threshold after the complementary-divisor starting points are kept
+together.  The required replacement is the maximal almost-all theorem,
+not an unquantified assertion that the structured endpoints are generic.
+
+Keep one dyadic short-cofactor box.  Write
+
+\[
+ s=de,\qquad d=rn,\qquad
+ D=T^{u-\eta},\qquad r\asymp T^\beta,
+ \qquad 0\leq\beta\leq\frac{u-\eta}{10},
+\tag{4.845dc_14xq_35w33h}
+\]
+
+where \(e\asymp T^\eta\), \(0\leq\eta\leq1/8\), and \(r\) is the
+small \(Q\)-smooth factor in (4.845dc_14xq_35w23).  Put
+
+\[
+ |k|\asymp K,\qquad |l|\asymp L,\qquad
+ KL=T^p,\qquad 0\leq p\leq1.
+\tag{4.845dc_14xq_35w33i}
+\]
+
+For \(A\asymp A_0=T^\alpha\) and a nonzero complementary divisor
+\(c\asymp C\), the support of
+
+\[
+ m+Akl=rnc
+\tag{4.845dc_14xq_35w33j}
+\]
+
+forces
+
+\[
+ C\asymp\frac{A_0KL}{D},\qquad
+ X:=\frac Dr,\qquad
+ H:=\frac{A_0}{Cr}=\frac{X}{KL}.
+\tag{4.845dc_14xq_35w33k}
+\]
+
+The cases \(C<1\) or \(kl=0\) belong to the already available
+long-interval or zero-frequency pieces.  After the \(Q\)-smooth split,
+the pointwise theorem (4.845dc_14xq_35w25) also covers
+\(H\geq X^{3/5}\), since \(3/5>7/12\).  In the remaining box take an
+integer ambient interval of length comparable to \(H\)
+starting at
+
+\[
+ x_{A,k,l,c,r}:=
+ \left\lfloor\frac{Akl}{cr}\right\rfloor .
+\tag{4.845dc_14xq_35w33l}
+\]
+
+The actual smooth \(n\)-sum is a subinterval of this ambient interval.
+Thus the maximal-progression norm in
+[Matomäki--Radziwiłł--Shao--Tao--Teräväinen, Theorem 1.1(i)](https://arxiv.org/html/2411.05770v2#S1.Thmtheorem1.1)
+applies after partial summation.  The finitely many sign choices of
+\(k,l,c\) are split first; reversing the ambient interval when \(c<0\)
+does not change any length or collision estimate below.
+
+The theorem can be used uniformly with \(\theta=1/3\) and
+\(\varepsilon=1/30\).  Indeed the smallest possible relative length
+on (4.845dc_14xq_35w33a) occurs at
+
+\[
+ u=2,\qquad \eta=\frac18,\qquad p=1,
+ \qquad \beta=\frac1{10}\left(2-\frac18\right)=\frac3{16},
+\]
+
+and is exactly
+
+\[
+ \boxed{
+ \frac{\log_T H}{\log_T X}
+ =\frac{2-1/8-1-3/16}{2-1/8-3/16}
+ =\frac{11}{27}
+ >\frac13+\frac1{30}=\frac{11}{30}.}
+\tag{4.845dc_14xq_35w33m}
+\]
+
+The strict margin is \(11/270\).  The upper hypothesis
+\(H\leq X^{1-1/30}\) is automatic from the preceding
+\(H<X^{3/5}\) split.
+Consequently, for every fixed \(B\), the maximal Möbius sum is
+\(O(H(\log X)^{-B})\) outside a set of real starting points of measure
+\(O_B(X(\log X)^{-B})\).
+
+It remains to prove that the rational endpoints in
+(4.845dc_14xq_35w33l) cannot concentrate on that exceptional set.  For
+fixed \(r\), equality of two integer start bins implies the exact
+cross-multiplied inequality
+
+\[
+ \boxed{
+ |Aklc'-A'k'l'c|<|cc'|r\ll C^2r.}
+\tag{4.845dc_14xq_35w33n}
+\]
+
+This implication retains both Fourier indices.  Put
+
+\[
+ Y:=A_0KLC.
+\]
+
+Each integer \(v\) of size \(Y\) has at most a fixed divisor-function
+weight of representations \(v=Aklc'\); the original divisor-bounded
+outer allocation only changes the fixed order of that divisor
+function.  Therefore Cauchy and the classical fixed-divisor second
+moment give
+
+\[
+ \begin{aligned}
+ \sum_x\nu_r(x)^2
+ &\ll (\log T)^{C_W}
+ \sum_{|h|\ll C^2r}\sum_{|v|\ll Y}
+     \tau_J(|v|)\tau_J(|v+h|)\\
+ &\ll (\log T)^{C'_W}(1+C^2r)Y.
+\end{aligned}
+\tag{4.845dc_14xq_35w33o}
+\]
+
+Here \(J\) is fixed and
+\(\sum_{v\leq Y}\tau_J(v)^2\ll_JY(\log(2Y))^{J^2-1}\).
+For clarity, this follows from the Euler product
+\(\sum_n\tau_J(n)^2n^{-s}=\zeta(s)^{J^2}G_J(s)\), where \(G_J\)
+converges absolutely in a fixed half-plane to the left of \(1\),
+followed by the standard fixed-order divisor moment estimate.  There is
+no hidden \(T^\varepsilon\) in (4.845dc_14xq_35w33o).
+Since (4.845dc_14xq_35w33k) gives
+
+\[
+ Y=DC^2,\qquad X=\frac Dr,
+\]
+
+the last line of (4.845dc_14xq_35w33o) is exactly
+
+\[
+ \boxed{
+ (C^2r)Y=DC^4r=\frac{Y^2}{X}.}
+\tag{4.845dc_14xq_35w33p}
+\]
+
+Thus the endpoint energy has precisely the normalization needed to
+transfer the exceptional-set estimate.  If \(\mathcal E\) is the set
+of bad integer start bins, then integer interval length makes the
+maximal sum constant on each open unit interval; hence the real-measure
+bound implies
+
+\[
+ \#\mathcal E\ll_B X(\log X)^{-B}.
+\tag{4.845dc_14xq_35w33q}
+\]
+
+Cauchy, (4.845dc_14xq_35w33p), and the trivial bound \(H\) on a bad
+interval now give
+
+\[
+ \sum_{x\in\mathcal E}\nu_r(x)
+  \left|\sum_{n\in I_x}\mu(n)\right|
+ \ll H Y(\log T)^{(C'_W-B)/2}.
+\tag{4.845dc_14xq_35w33r}
+\]
+
+On the good starts Theorem 1.1(i) gives \(HY(\log T)^{-B}\)
+directly.  Choose \(B\) after all fixed QCT seminorm, dyadic,
+\(Q\)-smooth harmonic, and \(q\)-sum logarithms.  The large
+\(Q\)-smooth tail is still covered by (4.845dc_14xq_35w26)--
+(4.845dc_14xq_35w27).  More explicitly, the original \(d^{-1}\)
+weight is \(D^{-1}\) on the dyadic box, while the \(n\)-interval length
+\(H=(A_0/C)/r\) already contains one factor \(r^{-1}\); hence summing
+the small factors costs only
+\(\sum_{r\leq D^{1/10},\,r\ Q\text{-smooth}}r^{-1}\), which is a fixed
+polylogarithm already absorbed by \(B\).  This proves the
+short-cofactor estimate uniformly
+for the entire exhibited balanced family \(2\leq u\leq12/5\).
+
+The exact-rational interface
+almost_all_mobius_endpoint_dispersion_audit records the worst ratio
+\(11/27\), its \(11/270\) theorem margin, and the zero power margin in
+(4.845dc_14xq_35w33p).  This removes
+balanced_zero_slack_u_in_[2,12/5] from the alternative-route residual
+ledger.  It still does **not** enumerate every cell of the original
+parameter polytope and it does not prove the logarithmic
+large-\(q\) centered product-energy gate.  Therefore neither full
+MMKLS nor the unconditional long-mollifier asymptotic is asserted here.
+
+### 4.109zjaced00a The full balanced edge leaves a strict transition interval
+
+The preceding endpoint-dispersion certificate starts at (u=2), but
+that is not the left endpoint of the balanced zero-slack edge.  The
+exact family is
+
+\[
+ (\rho,\sigma,m,k,\ell,h,\kappa)
+ =\left(u,u,\frac12,\frac12,u-\frac12,u-\frac12,3-u\right),
+ \qquad \frac12\le u\le3.
+\tag{4.845dc_14xq_35s}
+\]
+
+Both mollifier caps, (k+m=1), ratio balance, the separate shift and
+Poisson-frequency caps, and the joint third-length cap are equalities.
+All variables are nonnegative precisely on the displayed interval, so
+(4.845dc_14xq_35s) is admissible throughout it.
+
+Literal substitution into the BCR adapter gives the piecewise saving
+
+\[
+ \operatorname{sav}_{\rm BCR}(u)=
+ \begin{cases}
+ \displaystyle\frac{17}{20}-\frac{33u}{20},
+   &\frac12\le u\le\frac23,\\[4pt]
+ \displaystyle1-\frac{15u}{8},
+   &\frac23\le u\le3.
+ \end{cases}
+\tag{4.845dc_14xq_35t}
+\]
+
+The coverage adapter requires a *strict* saving greater than
+(1/1000).  Solving the first branch exactly gives
+
+\[
+ \operatorname{sav}_{\rm BCR}\!\left(\frac{283}{550}\right)
+ =\frac1{1000},
+\tag{4.845dc_14xq_35u}
+\]
+
+so BCR covers (1/2\le u<283/550), but not the endpoint.
+
+For endpoint dispersion, first let the cofactor cutoff, the small
+(Q)-smooth relative exponent, and the theorem slack tend to zero
+through fixed positive values.  The limiting relative interval exponent
+is
+
+\[
+ \frac{\log_T H}{\log_T X}=\frac{u-1}{u}.
+\tag{4.845dc_14xq_35v}
+\]
+
+The published (1/3+\varepsilon) condition can therefore be met for
+each fixed (u>3/2), and cannot be met at (u=3/2), where the ratio is
+exactly (1/3).  With the concrete choices
+(\eta=1/8\), (\rho_Q=1/10\), and
+(\varepsilon=1/30), equality with the required (11/30) occurs at
+
+\[
+ u=\frac{857}{456},\qquad
+ 1-\frac{1}{(1-1/10)(u-1/8)}=\frac{11}{30};
+\tag{4.845dc_14xq_35w}
+\]
+
+strictness again excludes this endpoint.  Consequently the presently
+proved BCR and endpoint-dispersion pieces leave the explicit
+power-scale transition residual
+
+\[
+ \boxed{\frac{283}{550}\le u\le\frac32.}
+\tag{4.845dc_14xq_35x}
+\]
+
+This correction does not say that (4.845dc_14xq_35x) is the only
+residual of the full admissibility polytope: cells with
+(\ell+h<\rho+\sigma-1) have not yet been enumerated.  The executable
+interface `balanced_zero_slack_full_range_audit` records both strict
+endpoints and therefore prevents the local (u=2) certificate from
+being extrapolated to the whole edge.  At this stage of the audit,
+before the adaptive reciprocal-phase argument in Section
+4.109zjaced000b, the alternative-route ledger was
+
+```text
+balanced_nonzero_j_diagonal_scale_slope_square_function
+balanced_resonant_j0_affine_dispersion_u_in_(1,3/2]
+admissible_polytope_unrouted_vertices_v08_v09_v10_v11_v12_v14_v15_v16_v19_v20_v21_v23_v24_v25
+large_q_centered_product_energy_lambda_2
+```
+
+The first two entries are superseded and closed by that later section;
+the last two remain unproved.
+
+### 4.109zjaced00b The transition interval is one two-Möbius Farey family
+
+The power residual (4.845dc_14xq_35x) can be returned to the original
+Poisson variables without Cauchy.  On its (u)-box the exact scales are
+
+\[
+ q\asymp T^{3-u},\qquad R=S=T^u,\qquad K=M=T^{1/2},
+ \qquad H=L=T^{u-1/2}.
+\tag{4.845dc_14xq_35y}
+\]
+
+Split the bounded ratio (r/s) into its finitely many integer-slope
+sectors and write
+
+\[
+ r=cs+w,\qquad |w|\asymp T^\theta,qquad 0\le\theta\le u.
+\tag{4.845dc_14xq_35z}
+\]
+
+For one sign box and one dyadic shell define
+
+\[
+\boxed{
+\begin{aligned}
+ \mathrm{BTF}_{u,\theta}(q,c):={}&
+ \sum_{\substack{s\asymp T^u,\ |w|\asymp T^\theta\\
+                  cs+w\asymp T^u,\ (w,s)=1\\
+                  (q,s(cs+w))=1}}
+ \mu(s)\mu(cs+w)
+ p_N(qs)p_N(q(cs+w))\\
+ &\quad\times
+ \sum_{\substack{|h|\asymp T^{u-1/2}\\
+                   |\delta|\asymp T^{u-1/2}}}
+ \Psi_{q,c,u,\theta}\!\left(
+  \frac{s}{T^u},\frac{w}{T^\theta},
+  \frac{h}{T^{u-1/2}},\frac{\delta}{T^{u-1/2}}
+ \right)
+ e\!\left(-\frac{h\delta\bar w}{s}\right).
+\end{aligned}}
+\tag{4.845dc_14xq_35za}
+\]
+
+Here \(\bar w\) is the inverse modulo \(s\).  The weight is the actual
+dyadic restriction of the time-integrated coupled kernel; its declared
+seminorm is retained in the implied constant, and no separated tensor
+or arbitrary coefficient replacement is made.  The other sign boxes
+have the same ranges after changing the signs in the support and phase.
+Thus (4.845dc_14xq_35za) retains both original Möbius weights, both
+endpoint tapers, both coprimality conditions, and the physical phase.
+
+Put (A=HL=T^{2u-1}).  The same reciprocity and local-density Farey
+argument as (4.319)--(4.323), now with (S=T^u), gives
+
+\[
+ \|\nu\|_2^2\ll_W A\log(2T),\qquad
+ |\mathrm{BTF}_{u,\theta}(q,c)|
+ \ll_W
+ T^{2u-1/2+\max(\theta,u-1/2)}(\log T)^{O_W(1)}.
+\tag{4.845dc_14xq_35zb}
+\]
+
+Indeed the three factors are (S),
+((A+T^{2\theta})^{1/2}), and (A^{1/2}).  This records the exact
+power of the proved unsigned Farey-energy bound.
+
+The normalization and the number of (q)'s are
+
+\[
+ \frac{2T}{qRS}=T^{-2-u+o(1)},\qquad
+ \#\{q\asymp T^{3-u}\}=T^{3-u+o(1)}.
+\tag{4.845dc_14xq_35zc}
+\]
+
+Consequently the uniform local estimate
+
+\[
+ \boxed{
+ |\mathrm{BTF}_{u,\theta}(q,c)|
+ \ll_{\varepsilon,W}T^{2u-1/1000+\varepsilon}
+\tag{BTF}_{u,\theta}
+\]
+
+would contribute (T^{999/1000+\varepsilon}=o(T)).  Comparing
+(4.845dc_14xq_35zb) with this fixed-power target shows that the exact
+additional signed saving is
+
+\[
+ \boxed{
+ \left(\max\left(\theta,u-\frac12\right)-\frac12+\frac1{1000}\right)_+.}
+\tag{4.845dc_14xq_35zd}
+\]
+
+At ((u,\theta)=(1,1)), (4.845dc_14xq_35za) is exactly the earlier
+(mathrm{TFS}_1(q,c)) family and (4.845dc_14xq_35zd) is
+(501/1000).  At (u=3/2), the missing saving is (501/1000) even
+on the smallest difference shells and (1001/1000) on the top shell.
+At (u=283/550,	heta=0), the positive part is zero, so the elementary
+Farey bound already meets the fixed-power target there.  Thus the box
+label in (4.845dc_14xq_35x) is an honest outer interval, while
+(4.845dc_14xq_35zd) removes the internally easy shells.
+
+The executable interface `balanced_transition_farey_gate_audit`
+checks (4.845dc_14xq_35y)--(4.845dc_14xq_35zd) with exact rational
+arithmetic.  It sets `required_new_mobius_estimate_proved=False`
+whenever the positive part in (4.845dc_14xq_35zd) is nonzero.  No
+published theorem audited here proves that remaining two-Möbius
+trilinear estimate.
+
+### 4.109zjaced00c h-Poisson separates PEVP from one resonant zero mode
+
+There is a sharper decomposition of (4.845dc_14xq_35za).  Poisson
+summation in the complete \(h\)-sum gives the exact determinant equation
+
+\[
+ \boxed{wv-js=\delta},
+\tag{4.845dc_14xq_35ze}
+\]
+
+with Poisson factor \(T^{u-1/2}\).  On a nonzero-\(j\) shell its dual
+scales are
+
+\[
+ |v|\asymp T^{1/2},\qquad
+ |j|\asymp T^{\theta+1/2-u},\qquad
+ |\delta|\asymp T^{u-1/2}.
+\tag{4.845dc_14xq_35zf}
+\]
+
+Put \(g=(|v|,|j|)=T^\gamma\), \(v=gv_0\),
+\(j=gj_0\), and \(\delta=g\delta_0\).  Then
+
+\[
+\begin{array}{c|ccccc}
+ &g&v_0&j_0&\delta_0&n\\ \hline
+\log_T\text{-scale}
+ &\gamma&1/2-\gamma&
+ \theta+1/2-u-\gamma&
+ u-1/2-\gamma&
+ u-1/2+\gamma .
+\end{array}
+\tag{4.845dc_14xq_35zg}
+\]
+
+Here \(n\) is the complete line parameter.  If
+\((v_0,j_0)=1\) and \(xv_0+yj_0=1\), every solution has
+
+\[
+ w=x\delta_0+j_0n,\qquad
+ s=-y\delta_0+v_0n,
+\tag{4.845dc_14xq_35zh}
+\]
+
+and, since \(r=cs+w\),
+
+\[
+ \binom{s}{r}
+ =
+ \begin{pmatrix}
+ -y&v_0\\ x-cy&j_0+cv_0
+ \end{pmatrix}
+ \binom{\delta_0}{n},
+ \qquad \det=-1.
+\tag{4.845dc_14xq_35zi}
+\]
+
+Thus the inner Möbius arguments remain unimodular coordinates.  Their
+area exponent and the primitive-slope-family exponent are respectively
+
+\[
+ E_{\rm inner}=2u-1,\qquad
+ E_{\rm slope}=\theta+1-u-\gamma.
+\tag{4.845dc_14xq_35zj}
+\]
+
+Including the Poisson factor, the transformed cardinality is
+
+\[
+ E_{\rm card}=2u+\theta-\frac12-\gamma.
+\tag{4.845dc_14xq_35zk}
+\]
+
+Against the asymptotic local target \(T^{2u}\), the diagonal-scale
+saving required from the inner square function is
+
+\[
+ s_{\rm diag}=
+ \left(\theta-\frac12-\gamma\right)_+.
+\tag{4.845dc_14xq_35zl}
+\]
+
+The square root of the unimodular inner area is \(T^{u-1/2}\).
+Whenever the positive part in (4.845dc_14xq_35zl) is active, its power
+margin is
+
+\[
+ \left(u-\frac12\right)
+ -\left(\theta-\frac12-\gamma\right)
+ =u-\theta+\gamma.
+\tag{4.845dc_14xq_35zm}
+\]
+
+It vanishes precisely on
+
+\[
+ \boxed{\theta=u,\qquad\gamma=0.}
+\tag{4.845dc_14xq_35zn}
+\]
+
+This is the generalized PEVP face.  At \(u=1\), all four inner and
+primitive dual coordinates have exponent \(1/2\), recovering
+(4.451)--(4.465).  At \(u=3/2\), the two primitive dual slopes still
+have exponent \(1/2\), but \(\delta_0,n\) each have exponent \(1\).
+A fixed \(1/1000\) power target asks for
+\((\theta-1/2-\gamma+1/1000)_+\); at the two top examples this is
+\(501/1000\) and \(1001/1000\).  For the actual little-oh theorem,
+however, diagonal scale plus a sufficient logarithmic saving is the
+right critical target.
+
+The \(j=0\) term is arithmetically different.  The Fourier transform
+forces \(v\asymp T^{1/2}\), so \(wv=\delta\) is resonant only when
+
+\[
+ \boxed{\theta_0=u-1}
+\tag{4.845dc_14xq_35zo}
+\]
+
+and hence only for \(u\ge1\).  For \(u<1\), every integer
+\(w\ne0\) lies in the rapid transform tail.  For \(1\le u\le3/2\),
+divisibility \(w\mid\delta\) gives \(T^{u-1/2+o(1)}\)
+\((w,\delta)\)-pairs.  After the \(s\)-sum and Poisson factor, the
+zero-mode cardinality is
+
+\[
+ T^{u-1/2}\cdot T^u\cdot T^{u-1/2}
+ =T^{3u-1}.
+\tag{4.845dc_14xq_35zp}
+\]
+
+It therefore needs the affine two-Möbius saving \(T^{u-1}\) to reach
+\(T^{2u}\).  In physical terms it is an average of
+\(\mu(s)\mu(cs+w)\) over
+
+\[
+ s\asymp T^u,\qquad |w|\asymp T^{u-1},\qquad
+ \frac{\log_T|w|}{\log_T s}=\frac{u-1}{u}\le\frac13.
+\tag{4.845dc_14xq_35zq}
+\]
+
+The inequality is an equality only at \(u=3/2\), while the published
+almost-all theorem requires a strict \(1/3+\varepsilon\).  Thus the
+zero mode cannot be sent through the nonzero-\(j\) PEVP square
+function, and the short-interval theorem cannot close it.  At \(u=1\)
+its power deficit is zero and the two endpoint tapers give the existing
+logarithmic little-oh.
+
+The exact-rational interfaces
+balanced_transition_h_poisson_audit and
+balanced_transition_h_poisson_zero_mode_audit record the two ledgers.
+The remaining power work on the balanced edge is therefore reduced to
+two named estimates:
+
+1. a diagonal-scale signed slope square function on the critical
+   nonzero-\(j\) face (generalized PEVP);
+2. the resonant affine Möbius dispersion (4.845dc_14xq_35zp) for
+   \(1<u\le3/2\).
+
+Neither estimate is proved here.
+
+### 4.109zjaced00d Averaged Elliott gives no part of the required power
+
+The resonant affine form in (4.845dc_14xq_35zp) is structurally close
+to [Matomäki--Radziwiłł--Tao, Theorem 1.6](https://arxiv.org/abs/1503.05121).
+Their stronger formula
+(1.10) permits fixed coefficients \(a_1,a_2\), averages one affine
+shift \(h\le H\), and for a nonpretentious \(1\)-bounded
+multiplicative function gives
+
+\[
+ \sum_{h\le H}
+ \left|\sum_{n\le X}
+ g_1(a_1n+b_1)g_2(a_2n+b_2+h)\right|
+ \ll_A \mathcal E(X,H)\,HX,
+\tag{4.845dc_14xq_35zr}
+\]
+
+where
+
+\[
+ \mathcal E(X,H)=
+ O_A\!\left(
+ e^{-M/80}+\frac{\log\log H}{\log H}
+ +\frac1{\log^{1/3000}X}\right)=o_A(1)
+\tag{4.845dc_14xq_35zs}
+\]
+
+when \(H\to\infty\) and the nonpretentiousness parameter tends to
+infinity.  The fixed integer slope \(c\) in \(\mu(s)\mu(cs+w)\) is
+therefore allowed.  For the numerical comparison, grant also the two
+additional uniformities needed by the actual sum: replace \(\mu\) by
+\(\mu(n)\mathbf1_{(n,q)=1}\), and separate the smooth
+\((s,w,v)\)-weight with bounded total transform norm.
+
+On the resonant box,
+
+\[
+ X=T^u,\qquad H=T^{u-1}.
+\tag{4.845dc_14xq_35zt}
+\]
+
+Thus (4.845dc_14xq_35zr), followed by the
+\(T^u\) Poisson-and-\(v\) prefactor, gives only
+
+\[
+ \boxed{T^{3u-1}\mathcal E(T^u,T^{u-1}).}
+\tag{4.845dc_14xq_35zu}
+\]
+
+The required local scale is \(T^{2u}\).  Since
+
+\[
+ \boxed{(3u-1)-2u=u-1>0,}
+\tag{4.845dc_14xq_35zv}
+\]
+
+an arbitrary logarithmic relative saving cannot supply any part of the
+missing power \(T^{u-1}\).  This obstruction is numerical even under
+the optimistic hypothesis grants above, so there is no need to settle
+their uniform versions in order to reject this adapter.
+
+The interface balanced_zero_mode_averaged_elliott_audit records
+(4.845dc_14xq_35zt)--(4.845dc_14xq_35zv).  In particular,
+published_theorem_closes_zero_mode=False.  The averaged Elliott theorem
+is valuable for proving an \(o(1)\) density statement, but the present
+normalization requires full shift-length power cancellation.
+
+### 4.109zjaced1 The critical product energy has one polylog-slope affine core
+
+The gcd divisibility in (4.236) gives a useful second reduction of
+\(\mathrm{LCPE}_2\).  It also shows exactly why the published averaged
+Chowla theorem does not yet close this last logarithmic face.  Put
+
+\[
+ P=L=(\log(2T))^2,\qquad g=(m_1,m_2),
+ \qquad m_1=ga,\quad m_2=gb,\quad(a,b)=1.
+\tag{4.845dc_14xq_35w34}
+\]
+
+Fix a cutoff \(1<G<P\).  The contribution of \(g>G\) may be taken
+absolutely.  There are \(O((P/g)^2)\) reduced pairs \((a,b)\), at most
+\(O(L/g)\) nonzero admissible shifts, and each affine line contains
+\(O(1+Tg/P)\) points.  Since
+\((m_1m_2)^{-1/2}\ll P^{-1}\), summing in this order gives
+
+\[
+ \begin{aligned}
+ \mathfrak C_{P,L}^{g>G}
+ &\ll_W \frac1P\sum_{g>G}
+   \left(\frac Pg\right)^2\frac Lg
+   \left(1+\frac{Tg}{P}\right)\\
+ &\ll_W \boxed{\frac{LP}{G^2}+\frac{TL}{G}}.
+ \end{aligned}
+\tag{4.845dc_14xq_35w35}
+\]
+
+Thus
+
+\[
+ \frac{|\mathfrak C_{P,L}^{g>G}|}{TL}
+ \ll_W \frac1G+\frac{P}{TG^2}=o_W(1)
+\tag{4.845dc_14xq_35w36}
+\]
+
+for any \(G=G(T)\to\infty\) with \(G\le P\).  No Möbius cancellation
+is needed in this range.
+
+For \(g\le G\), write \(\delta=gk\).  Choose a Bezout pair \(u,v\)
+with
+
+\[
+ av-bu=1,\qquad |u|\le a,\quad |v|\le b.
+\tag{4.845dc_14xq_35w37}
+\]
+
+Then every solution of \(as-br=k\) has the exact parametrization
+
+\[
+ \boxed{r=at+uk,\qquad s=bt+vk},\qquad
+ \det\begin{pmatrix}a&u\\b&v\end{pmatrix}=1.
+\tag{4.845dc_14xq_35w38}
+\]
+
+On the critical face, if \(Q=P/g\), its scales are
+
+\[
+ a,b\asymp Q,\qquad |k|\ll Q,\qquad
+ t\asymp \frac{T}{Q}.
+\tag{4.845dc_14xq_35w39}
+\]
+
+Before cancellation the fixed-\(g\) mass is exactly at scale
+
+\[
+ \frac1P\cdot Q^2\cdot Q\cdot\frac{T}{Q}
+ =\boxed{\frac{TP}{g^2}}.
+\tag{4.845dc_14xq_35w40}
+\]
+
+A sufficient remaining estimate, with the separated smooth tensor and
+its total variation norm restored, is therefore
+
+\[
+ \boxed{
+ \sum_{g\le G}\frac1P
+ \sum_{\substack{a,b\asymp P/g\\(a,b)=1}}
+ \sum_{0<|k|\ll P/g}
+ \left|\sum_{t\asymp Tg/P}
+ f(at+uk)f(bt+vk)\Omega_{g,a,b,k}(t)\right|
+ =o_W(TP).}
+\tag{AAC}_{P,G}
+\]
+
+This is a polylogarithmic-slope, averaged affine Chowla estimate.  It is
+strictly more explicit than (4.239), but the absolute values in
+\((\mathrm{AAC})_{P,G}\) make it a sufficient condition rather than an
+equivalent reformulation of the original signed tensor.
+
+[Matomaki--Radziwill--Tao, Theorem 1.6](https://arxiv.org/abs/1503.05121)
+does not supply this condition.  Their affine coefficient parameter is
+\(A\), and the explicit right side contains
+
+\[
+ A^2\left(
+ e^{-M/80}+\frac{\log\log H}{\log H}
+ +\frac1{\log^{1/3000}X}\right).
+\tag{4.845dc_14xq_35w41}
+\]
+
+Here the optimistic substitution is
+
+\[
+ A=H=Q,\qquad X=T/Q.
+\tag{4.845dc_14xq_35w42}
+\]
+
+Even if one ignores the hypothesis mismatch, the relative multiplier
+in (4.845dc_14xq_35w41) becomes
+
+\[
+ Q^2\left(
+ e^{-M/80}+\frac{\log\log Q}{\log Q}
+ +\frac1{\log^{1/3000}(T/Q)}\right),
+\tag{4.845dc_14xq_35w43}
+\]
+
+which does not tend to zero for \(Q\asymp(\log T)^2\).  The structural
+mismatch is prior: (4.845dc_14xq_35w38) moves the two intercepts along
+the one-dimensional sublattice \(k(u,v)\), whereas the theorem averages
+a full additive-shift box (or fixes one form and shifts the other).
+Partitioning the physical line into such boxes loses the same slope
+factor that (4.845dc_14xq_35w43) displays.
+
+There are also two exact parameter witnesses inside the published MRT
+argument.  Proposition 5.1 introduces an auxiliary \(W\) satisfying
+
+\[
+ \log^{20}H\le W\le
+ \min\{H^{1/500},(\log X)^{1/125}\}.
+\tag{4.845dc_14xq_35w43a}
+\]
+
+In its proof, the nontrivial branch may assume equation (5.7),
+\(W^{1/20}\ge kA^2\); otherwise the claimed estimate is already
+trivial.  Combining this with the first upper bound in
+(4.845dc_14xq_35w43a) forces
+
+\[
+ \boxed{H\ge (kA^2)^{10000}.}
+\tag{4.845dc_14xq_35w43b}
+\]
+
+Write \(L_T=\log T\), \(A=L_T^a\), and \(H=L_T^h\).  At the critical
+substitution \(a=h=2\), the exponent condition from
+(4.845dc_14xq_35w43b) is
+
+\[
+ \boxed{2\ge40000,}
+\tag{4.845dc_14xq_35w43c}
+\]
+
+which fails before constants are considered.  Independently, the last
+term in (4.845dc_14xq_35w43) alone is
+
+\[
+ Q^2\log^{-1/3000}(T/Q)
+ =L_T^{\,4-1/3000+o(1)}
+ =\boxed{L_T^{\frac{11999}{3000}+o(1)}},
+\tag{4.845dc_14xq_35w43d}
+\]
+
+and therefore diverges.  The middle term
+\(Q^2\log\log Q/\log Q\) also diverges.  Thus the MRT adapter fails in
+three separately auditable ways: the one-dimensional shift geometry,
+the nontrivial proof-branch range, and the explicit theorem bound.  The
+exact-rational interface `mrt_affine_critical_parameter_audit` records
+the latter two failures; it does not upgrade them to a new theorem.
+
+The higher-uniformity result of
+[Matomaki--Radziwill--Tao--Teravainen--Ziegler, Corollary 1.11](https://arxiv.org/abs/2007.15644)
+states, for every fixed \(\varepsilon>0\) and fixed distinct
+nonnegative integers \(a_i\), the full-average estimate
+
+\[
+ \mathbb E_{1\le h\le X^\varepsilon}
+ \left|\mathbb E_{n\le X}
+ \lambda(n+a_1h)\cdots\lambda(n+a_kh)\right|=o(1).
+\tag{4.845dc_14xq_35w44}
+\]
+
+This is not a pointwise hypothesis saying merely that
+\(h\le X^\varepsilon\), and it does not assert the same estimate for
+every shorter initial segment.  In the present variables \(X=T/Q\),
+whereas the physical average has only
+\(1\le |k|\le Q\asymp(\log T)^2\).  Its length has zero power exponent
+relative to \(X\), so restricting (4.845dc_14xq_35w44) to this subset
+is not legitimate.
+
+There are two further hypothesis mismatches.  The corollary's
+\(a_i\) are fixed independently of \(X\), while here
+\(a,b\asymp Q=(\log T)^2/g\) vary with \(T\).  Moreover its forms share
+the same base variable \(n\), whereas the physical pair is
+\(at+uk,bt+vk\), with distinct base slopes \(a,b\).  Thus even a
+hypothetical extension from Liouville to the required Möbius weights
+would not furnish \((\mathrm{AAC})_{P,G}\) from the published
+statement.  The almost-all-interval higher-uniformity theorem likewise
+does not provide the missing polylogarithmic-length affine estimate.
+
+The interface large_q_affine_chowla_gcd_split_audit records the exact
+large-gcd relative bound, the unimodular parametrization, the raw
+\(TP/g^2\) scale, and both failed published adapters.  It keeps
+centered_product_energy_estimate_proved and unconditional_coverage
+false.  The remaining named sufficient gate is
+polylog_slope_averaged_affine_chowla.
+
+### 4.109zjaced2 Prime valuations block the ordinary-shift shortcut
+
+There is a tempting further reindexing which is valid on only one
+valuation stratum.  Suppress the harmless separated parameter and write
+
+\[
+ A_P(n)=\sum_{ms=n}c_P(m)f(s),
+ \qquad
+ f(s)=\mu(s)\prod_{p\mid s}\frac p{p+1}.
+\tag{4.845dc_14xq_35w45}
+\]
+
+Because (f) is supported on squarefree integers, if
+(R=\operatorname{rad}(n)), finite divisor reindexing gives the exact
+identity
+
+\[
+ \boxed{
+ A_P(n)=\sum_{s\mid\operatorname{rad}(n)}
+ c_P(n/s)f(s).}
+\tag{4.845dc_14xq_35w46}
+\]
+
+Equivalently, at every (p^v\Vert n), an active factorization has
+
+\[
+ (v_p(m),v_p(s))\in\{(v,0),(v-1,1)\}.
+\tag{4.845dc_14xq_35w47}
+\]
+
+When (n) is squarefree, both factors are squarefree and coprime, so
+
+\[
+ \mu(s)=\mu(m)\mu(n).
+\tag{4.845dc_14xq_35w48}
+\]
+
+Only on this stratum can the correlation be rewritten as an ordinary
+(\mu(n)\mu(n-\delta)) shifted correlation with divisor weights.  For
+(v\ge2), the second choice in (4.845dc_14xq_35w47) has
+(p\mid(m,s)), while the first choice permits a squareful
+multiplicand.  In both cases (mu(n)=0), but (A_P(n)) need not
+vanish.  A literal endpoint-weight fixture is
+
+\[
+ \begin{aligned}
+ n&=12,\qquad
+ c_P(2)=c_P(4)=c_P(6)=c_P(12)=1,\\
+ A_P(12)
+ &=f(6)+f(3)+f(2)+f(1)\\
+ &=\frac12-\frac34-\frac23+1
+ =\boxed{\frac1{12}},
+ \qquad \mu(12)=0.
+ \end{aligned}
+\tag{4.845dc_14xq_35w49}
+\]
+
+The omitted support is not an (o(1))-density exceptional set.  For a
+fixed prime (p), the local density of
+(p\mid m) and (v_p(s)=1) is
+
+\[
+ \frac1p\left(\frac1p-\frac1{p^2}\right)
+ =\frac{p-1}{p^3}.
+\tag{4.845dc_14xq_35w50}
+\]
+
+Multiplying the squarefree Euler densities at the other primes gives
+
+\[
+ \boxed{
+ \operatorname{dens}\{p\mid m,\ v_p(s)=1,\ \mu^2(s)=1\}
+ =\frac{1}{p(p+1)\zeta(2)}>0.}
+\tag{4.845dc_14xq_35w51}
+\]
+
+Likewise the local event (p^2\mid m, p\nmid s) has density
+((p-1)/p^3) before the Euler factors away from (p).  Hence neither
+the overlap layer nor the squareful-multiplicand layer may be removed by
+an absolute tail estimate.  A successful ordinary-shift route would
+have to prove and then recombine a theorem for every valuation pattern;
+doing only (4.845dc_14xq_35w48) does not prove
+(\mathrm{LCPE}_2).
+
+The helpers product_lift_valuation_decomposition and
+large_q_product_lift_valuation_audit verify (4.845dc_14xq_35w46)--
+(4.845dc_14xq_35w49) on exact rational fixtures, record the positive
+Euler density (4.845dc_14xq_35w51), and keep the centered-product-energy
+and unconditional-coverage flags false.  The honest version of the
+affine sufficient gate must retain the full prime-valuation tensor; it
+is named full_valuation_polylog_affine_chowla in the audit.
+
+### 4.109zjad Blomer--Pascadi is outside its nontrivial range on the hard box
+
+The July 2026 bilinear Kloosterman theorem of
+[Blomer--Pascadi](https://arxiv.org/abs/2607.24311) applies to arbitrary
+moduli and must therefore be checked against the unit stratum of
+(4.845dc_14xq_20).  If (a,h,delta) are units modulo (s), scaling
+the two Kloosterman arguments gives the exact identity
+
+\[
+ S(a,-h\delta;s)=S(-ah,\delta;s).
+ \tag{4.845dc_14xq_36}
+\]
+
+Thus their Theorem 1.4 applies with
+
+\[
+ c=s=T^3,qquad M=H=T^{5/2},qquad N=L=T^{5/2},qquad
+ M=N=c^{5/6}.
+ \tag{4.845dc_14xq_37}
+\]
+
+This is not the square-root range.  The published balanced theorem is
+nontrivial over the standard two elementary bounds only for
+
+\[
+ c^{13/28+\varepsilon}<N<c^{7/12-\varepsilon},
+ \tag{4.845dc_14xq_38}
+\]
+
+whereas (5/6>7/12).  Direct substitution in every term of the general
+factor (H(M,N,c)) is even more decisive.  The five resulting
+(c)-exponents are
+
+\[
+ \boxed{
+ \frac7{96},\qquad \frac5{192},\qquad \frac7{90},
+ \qquad\frac16,\qquad-\frac1{90}.}
+ \tag{4.845dc_14xq_39}
+\]
+
+The fourth term dominates.  Since
+(|u|_2|v|_2=T^{5/2}=c^{5/6}), the theorem therefore has power
+exponent
+
+\[
+ E_{\rm BP}=\frac52+3\left(1+\frac16\right)=6.
+ \tag{4.845dc_14xq_40}
+\]
+
+The classical Fourier/Cauchy estimate quoted in the same paper is
+
+\[
+ \|u\|_2\|v\|_2(c+N)c^{o(1)},
+\]
+
+and has exponent
+
+\[
+ \boxed{E_{\rm Fourier}=\frac52+3=\frac{11}2.}
+ \tag{4.845dc_14xq_41}
+\]
+
+This is exactly the nonprincipal exponent in
+(4.845dc_14xq_26), not an improvement on it.  Inserting the best of
+the two fixed-modulus estimates directly into MMKLS still leaves
+
+\[
+ \boxed{\frac{11}2-3=\frac52}
+ \tag{4.845dc_14xq_42}
+\]
+
+before the non-composable outer cancellation.  Nonunit gcd layers
+cannot repair this, because the unit stratum already exhibits the
+failure.  Hence the new theorem does not cover MMKLS; a theorem which
+couples the (s,m,A) averages remains necessary.
+
+The interface `blomer_pascadi_hard_box_audit` substitutes all five
+terms with exact rational exponents and keeps MMKLS false.
+
+### 4.109zjada Drappeau's quintilinear theorem still precedes the needed joint square
+
+The modulus Type decomposition can also be inserted before Poisson and
+matched literally to [Drappeau's quintilinear Kloosterman theorem,
+Theorem 1](https://arxiv.org/abs/1504.05549).  This is a more favorable
+test than treating the Möbius modulus as an arbitrary coefficient,
+because both unweighted entry quotients remain smooth theorem
+variables.
+
+On the balanced hard box write
+
+\[
+r=Ae,\qquad s=B\ell,\qquad
+A=T^\alpha,\quad B=T^\beta.
+\]
+
+After splitting the sign of \(h\delta\), the physical phase is exactly
+
+\[
+ e\!\left(-h\delta\frac{\overline{Ae}}{B\ell}\right).
+\]
+
+In Drappeau's notation the five scale exponents are therefore
+
+\[
+ \boxed{
+ (\mathcal C,\mathcal D,\mathcal N,\mathcal R,\mathcal S)
+ =\left(T^{3-\beta},T^{3-\alpha},T^5,T^\alpha,T^\beta\right).}
+ \tag{4.845dc_14xq_43}
+\]
+
+The condition
+\((q\mathcal R\mathcal D,\mathcal S\mathcal C)=1\) with \(q=1\)
+is precisely the retained coprimality \((Ae,B\ell)=1\).  Exact Mellin
+inversion in the \(h/\delta\) ratio gives a product-index coefficient
+of squared energy \(T^5(\log T)^C\).  The two restricted outer divisor
+convolutions have squared energies \(T^\alpha(\log T)^C\) and
+\(T^\beta(\log T)^C\).  Hence the coefficient norm exponent is
+
+\[
+ \boxed{E_{\|b\|_2}=\frac{5+\alpha+\beta}{2}.}
+ \tag{4.845dc_14xq_44}
+\]
+
+For \(q=1\), the published theorem has
+
+\[
+ \begin{aligned}
+ K^2={}&\mathcal C\mathcal S(\mathcal R\mathcal S+\mathcal N)
+       (\mathcal C+\mathcal R\mathcal D)\\
+ &+\mathcal C^2\mathcal D\mathcal S
+       \sqrt{(\mathcal R\mathcal S+\mathcal N)\mathcal R}
+ +\mathcal D^2\mathcal N\mathcal R\mathcal S^{-1}.
+ \end{aligned}
+\]
+
+Put \(\lambda=\alpha+\beta\).  Literal substitution gives the three
+\(T\)-exponents in \(K^2\):
+
+\[
+ \boxed{
+ \begin{aligned}
+ k_1&=6+\max(\lambda,5),\\
+ k_2&=9-\beta-\frac\alpha2
+          +\frac12\max(\lambda,5),\\
+ k_3&=11-\lambda.
+ \end{aligned}}
+ \tag{4.845dc_14xq_45}
+\]
+
+Consequently the theorem gives
+
+\[
+ \boxed{
+ E_{\rm Drappeau}(\alpha,\beta)
+ =\frac{5+\lambda}{2}
+  +\frac12\max(k_1,k_2,k_3).}
+ \tag{4.845dc_14xq_46}
+\]
+
+The physical QCT target before Poisson is \(RS=T^6\).  The most
+favorable point of (4.845dc_14xq_46) on
+\(0\leq\alpha,\beta\leq3\) is already
+
+\[
+ \boxed{
+ E_{\rm Drappeau}^{\min}=\frac{33}{4},\qquad
+ E_{\rm Drappeau}^{\min}-6=\frac94.}
+ \tag{4.845dc_14xq_47}
+\]
+
+Here is the exact minimization, rather than a grid check.  If
+\(\lambda\leq5\), then \(k_1=11\).  For
+\(\lambda\geq1/2\), this alone gives
+
+\[
+ E_{\rm Drappeau}\geq 8+\frac\lambda2\geq\frac{33}{4}.
+\]
+
+For \(\lambda\leq1/2\), the second term is
+\(k_2=23/2-\beta-\alpha/2\), whence
+
+\[
+ E_{\rm Drappeau}
+ \geq\frac{5+\lambda}{2}+\frac{k_2}{2}
+ =\frac{33}{4}+\frac\alpha4\geq\frac{33}{4}.
+\]
+
+Finally, if \(\lambda\geq5\), then \(k_1=6+\lambda\) and
+
+\[
+ E_{\rm Drappeau}\geq\frac{11}{2}+\lambda
+ \geq\frac{21}{2}.
+\]
+
+Equality in (4.845dc_14xq_47) occurs, for example, for
+\(\alpha=0\) and \(0\leq\beta\leq1/2\).  Thus the lower bound is
+global on the entire factor square and is attained.
+
+For example, at \(\alpha=\beta=0\), the three \(K^2\) exponents are
+\((11,23/2,11)\).  At the residual Type-II center
+\(\alpha=\beta=5/4\), they are \((11,77/8,17/2)\), and the resulting
+bound exponent is \(37/4\), leaving \(13/4\).
+
+Thus the quintilinear theorem does produce a large saving over raw
+cardinality in the small-factor cells, but it applies before the
+fixed-entry PEVP Cauchy organization.  The two savings cannot be
+subtracted independently.  Even under the favorable exact tensor
+separation above, this route misses the QCT target by at least
+\(T^{9/4}\), so it does not prove MMKLS.  The interface
+`drappeau_quintilinear_hard_box_audit` records (4.845dc_14xq_43)--
+(4.845dc_14xq_47) with exact rational arithmetic and keeps the joint
+outer gate false.
+
+### 4.109zk Pascadi v2 saves only one quarter power after factor freezing
+
+Pascadi's revised composite-modulus theorem is unusually well matched
+to the arithmetic factorization of the lifted Kloosterman modulus, so
+it must be tested before introducing a new harmonic large sieve.  Write
+
+\[
+ A=T^\alpha,\qquad B=T^\beta,\qquad j=T^\gamma,
+ \qquad R=S=T^3,qquad H=L=T^{5/2}.
+\]
+
+The CRT lift in Section 4.109v has
+
+\[
+ c=As,qquad C=T^{\alpha+3},\qquad q=ABj.
+\]
+
+Because the physical support has \(A,B,j,s\) squarefree,
+\((A,s)=1\), \(j\mid A\), and \(Bj\mid s\), Corollary 7.9 admits the
+exact factorization
+
+\[
+ q=dd'e,qquad d=A,qquad d'=j,qquad e=B,qquad f=A,
+ \tag{4.845dc_14xr}
+\]
+
+where \(f\) is the largest integer with \(f^2\mid qd\).  Thus there is
+no loss from replacing the physical factorization by a generic one.
+
+For interval exponents \(M\geq N\), the two alternatives in
+[Pascadi, Corollary 7.9](https://arxiv.org/abs/2511.08445) contribute
+the sixth root of the smaller of
+
+\[
+ \max\{d+3M+N-3C,\ f+2M-2C,\ f-2d\}
+\]
+
+and
+
+\[
+ \max\{d+3M+N-q-2C,\ f+2M-q-C,\ f+q-2d-C\}.
+ \tag{4.845dc_14xs}
+\]
+
+Here the same letters denote base-\(T\) exponents.  The complete
+operator bound, before the two coefficient norms, has exponent
+\(2C-q\) plus that sixth-root exponent.  The interface
+`pascadi_lifted_physical_audit` evaluates these expressions using
+`Fraction`, with no floating-point optimization.
+
+At the top cell \((\alpha,\beta,\gamma)=(3,3,0)\), retaining the full
+product index \(h\delta\) gives \(M=5,N=3,C=q=6\).  Both alternatives
+in (4.845dc_14xs) have term exponents
+
+\[
+ (3,1,-3).
+\]
+
+Consequently the published bound has exponent \(13/2\), while the
+averaged Fourier trivial bound has exponent \(6\).  Direct use of the
+full product index is therefore worse by \(T^{1/2}\).
+
+The most optimistic repair is to freeze one of \(h,\delta\) and apply
+the theorem to intervals of exponents \(M=3,N=5/2\).  Both alternatives
+then have term exponents
+
+\[
+ \left(-\frac72,-3,-3\right),
+\]
+
+so the Corollary 7.9 bound has exponent \(11/2\).  The corresponding
+sum of the per-modulus Weil bounds has exponent \(23/4\).  The exact
+net gain is only
+
+\[
+ \boxed{\frac{23}{4}-\frac{11}{2}=\frac14.}
+ \tag{4.845dc_14xt}
+\]
+
+This does not repair the ambient-normalization deficit from
+(4.845dc_14xp).  Tensoring the physical entry mass \(p-1\) over
+\(A=T^3\), versus the required \(p^{-1}\), leaves the exact square
+ratio
+\[
+ \prod_{p\mid A}p(p-1)=A\varphi(A)=T^{6+o(1)}.
+\]
+It therefore requires amplitude power \(T^{3+o(1)}\).  Even the
+optimistic frozen-factor saving leaves power deficit \(T^{11/4+o(1)}\).
+
+There are two further structural failures.  Corollary 7.9 takes an
+absolute value separately at every modulus, so it discards the outer
+Möbius level signs.  Freezing one of \(h,\delta\) also discards the
+two-index interference which MEPEVP is designed to preserve.  Finally,
+the published constant is \(C^{o(1)}\), not the uniform
+\((\log T)^{O(1)}\) constant required on the zero-margin boundary.
+Pascadi v2 is therefore a genuine fixed-modulus improvement on some
+subcells, but it does not prove PEVP, MEPEVP, or OLISK.
+
+### 4.109zla The signed two-shift transfer tensors with A inverse one half
+
+The positive ambient Gram in (4.845dc_14xp) is not the correct norm
+for the signed finite transfer.  The exact rank-two identity
+(4.845dc_14s)--(4.845dc_14t) gives a smaller tensor norm which can be
+bounded uniformly, without expanding the spectral multiplier
+\(E^{-1}\) into an infinite Hecke series.
+
+Retain the notation
+\[
+ q=p+1,\qquad E=q^2-p\lambda_\pi(p)^2.
+\]
+When both valuations are positive, (4.845dc_14t) turns the first
+rank-one term into
+\[
+ -\frac1{qE}
+ \bigl(\lambda_a-p\lambda_{a-2}\bigr)
+ \bigl(\lambda_b-p\lambda_{b-2}\bigr).
+\]
+All four shifts are downward.  In the interior valuation cells their
+scalar coefficients have total absolute mass
+\[
+ \frac{(1+p)^2}{qE}=\frac qE.
+\]
+If either shifted valuation is negative, that term is zero.  At the
+boundary \(a=0\), one has \(r_0=1,s_0=0\), and the surviving first-rank
+coefficients again have total mass at most \(q/E\).  Thus \(q/E\) is a
+uniform upper bound over every valuation cell, with equality only when
+all four interior shifts are present.
+The second rank-one term is the single downward shift
+\[
+ \frac1q\lambda_{a-1}\lambda_{b-1}.
+\]
+Consequently the complete local transfer cost is
+\[
+ \boxed{
+ C_p(\pi)=\frac{p+1}{(p+1)^2-p\lambda_\pi(p)^2}
+          +\frac1{p+1}.}
+ \tag{4.845dc_14xu}
+\]
+Reindexing by a downward \(p\)- or \(p^2\)-shift is an \(\ell^2\)
+contraction and does not enlarge the Fourier support.
+
+Kim--Sarnak gives
+\[
+ |\lambda_\pi(p)|
+ \leq p^{7/64}+p^{-7/64}
+ \leq p^{1/8}+p^{-1/8}.
+\]
+For \(p\geq17\),
+\[
+ \begin{aligned}
+ E
+ &\geq(p+1)^2-p\bigl(p^{1/4}+2+p^{-1/4}\bigr)\\
+ &\geq\frac{(p-1)(p-2)}2.
+ \end{aligned}
+\]
+Moreover,
+\[
+ \frac{2(p+1)}{(p-1)(p-2)}\leq\frac3p
+ \quad(p\geq11),
+\]
+because the difference after clearing denominators is
+\(p^2-11p+6\).  Hence
+\[
+ C_p(\pi)\leq\frac4p\leq\frac1{\sqrt p}
+ \qquad(p\geq17).
+\]
+
+The six smaller primes require no asymptotic estimate.  Choose rational
+upper bounds \(u_p\geq p^{1/8}\) and \(v_p\geq\sqrt p\):
+\[
+\begin{array}{c|cccccc}
+p&2&3&5&7&11&13\\ \hline
+u_p&11/10&23/20&5/4&13/10&27/20&7/5\\
+v_p&3/2&7/4&9/4&8/3&10/3&11/3.
+\end{array}
+\]
+Since \(p^{-1/8}\leq1\), the rational lower bound
+\[
+ E_p^{\rm lb}=(p+1)^2-p(u_p+1)^2
+\]
+is respectively
+\[
+ \frac9{50},\quad\frac{853}{400},\quad\frac{171}{16},
+ \quad\frac{2697}{100},\quad\frac{33301}{400},
+ \quad\frac{3028}{25}.
+\]
+The corresponding rational upper bounds for \(C_p(\pi)\sqrt p\) are
+\[
+ \frac{51}{2},\quad
+ \frac{50771}{13648},\quad
+ \frac{249}{152},\quad
+ \frac{9097}{8091},\quad
+ \frac{454505}{599418},\quad
+ \frac{10901}{15897}.
+\]
+Their exact product is
+\[
+ \frac{461262226312079925755}{5077491483991002624}<91.
+\]
+Therefore, for every squarefree \(A\),
+\[
+ \boxed{
+ \prod_{p\mid A}C_p(\pi)\leq\frac{91}{\sqrt A}.}
+ \tag{4.845dc_14xv}
+\]
+
+This proves the formerly open **unramified finite cross-index tensor
+transfer** with the exact \(A^{-1/2}\) amplitude required by PEVP.  It
+does not yet prove PEVP: the Steinberg and Eisenstein conductor cells
+must be combined with the same uniform tensor norm, and the resulting
+shifted lists still require the polylogarithmic full-level harmonic
+large sieve.  It also does not address the separate outer \(A,B\)
+aggregation in OLISK.
+
+The interface unramified_cross_index_tensor_norm_audit checks every
+rational small-prime bound and keeps those three later gates false.
+
+### 4.109zlb All primitive conductor cells retain A inverse one half
+
+The same tensor bound extends to the other primitive local types, but
+only at the level of one fixed primitive representation.
+
+At a Steinberg prime, Section 4.109zfe gives a rank-one kernel.  Its
+second Fourier coefficient has absolute value at most \(p^{-1/2}\),
+and the larger of its two first-index Euler corrections is
+\[
+ 1+\frac1{p^2(p+2)(p-1)}\leq1+\frac1{p^4}.
+\]
+Therefore a set \(S\) of Steinberg primes contributes at most
+\[
+ \frac1{\sqrt{\prod_{p\in S}p}}
+ \prod_{p\in S}(1+p^{-4}).
+\]
+The correction product is uniformly bounded:
+\[
+ \prod_p(1+p^{-4})<\zeta(4)
+ \leq1+\frac1{16}+\int_2^\infty x^{-4}\,dx
+ =\frac{53}{48}<\frac43.
+ \tag{4.845dc_14xy}
+\]
+
+At primitive conductor exponent two, the local newform Euler factor has
+degree zero.  Since \(p\mid Ah\delta\), its positive second-index
+coefficient vanishes.  For the continuous spectrum this is also the
+explicit character calculation (4.845dc_14x).  Thus every nonzero
+primitive representation partitions the primes of \(A\) only between
+the unramified and Steinberg cases.  Combining (4.845dc_14xv) with
+(4.845dc_14xy) gives
+\[
+ \boxed{
+ \mathcal C_A(\pi)
+ \leq\frac{91\cdot(4/3)}{\sqrt A}
+ <\frac{122}{\sqrt A}.}
+ \tag{4.845dc_14xz}
+\]
+
+Hence the complete Maaß, holomorphic, and Eisenstein **finite local
+transfer for each fixed primitive representation** retains the exact
+\(A^{-1/2}\) PEVP amplitude.  The remaining global issue is no longer
+the cross-index oldvector matrix itself.  One must sum the different
+primitive-conductor patterns with their harmonic measures while
+keeping the shifted coefficient lists inside a single
+\((\log T)^{O(1)}\) full-level large sieve.  Taking a separate large
+sieve and a triangle inequality for every conductor pattern would
+reintroduce \(2^{\omega(A)}\), so it is not an admissible completion.
+
+The interface all_conductor_cross_index_tensor_audit marks the
+per-representation tensor bound true, but leaves conductor-pattern
+aggregation, the polylog harmonic large sieve, and PEVP false.
+
+### 4.109zlc The conductor-pattern square is A inverse polylog
+
+The primitive-conductor patterns must be aggregated after squaring, not
+by a triangle inequality over their labels.  At a prime \(p\mid A\),
+let \(U_p\) and \(S_p\) be the unramified and Steinberg transfer costs.
+The two primitive subfamilies are orthogonal, while conductor exponent
+two contributes zero.  The local square weight is therefore
+\[
+ U_p^2+S_p^2.
+\]
+For \(p\geq17\), Sections 4.109zla--4.109zlb give
+\[
+ U_p\leq\frac4p,\qquad
+ S_p\leq\frac1{\sqrt p}(1+p^{-4}).
+\]
+Consequently
+\[
+ \begin{aligned}
+ U_p^2+S_p^2
+ &\leq\frac{16}{p^2}
+ +\frac1p(1+p^{-4})^2\\
+ &\leq\frac1p\left(1+\frac{17}{p}\right).
+ \end{aligned}
+ \tag{4.845dc_14xya}
+\]
+The last inequality is equivalent, after cancellation and clearing
+denominators, to \(p^7\geq2p^4+1\).
+
+For the six smaller primes, use the rational bounds from
+Section 4.109zla.  Their exact product of the local square factors is
+\[
+ \prod_{p<17}
+ \left(R_p^2+(1+p^{-4})^2\right)
+ =
+ \frac{
+ 3167571493816418158572298808184129576722934518532772655699583100243654298043435769
+ }{
+ 16918512341715413532018316695484161264476411503417699601304213002649600000000
+ }
+ <187226,
+\]
+where \(R_p\) is the displayed rational upper bound for
+\(U_p\sqrt p\).
+
+For the remaining primes, Bernoulli's inequality gives
+\[
+ 1+\frac{17}{p}\leq(1-p^{-1})^{-17}.
+\]
+Mertens' product theorem now yields the complete pattern sum
+\[
+ \boxed{
+ \sum_{\text{primitive conductor patterns}}
+ |\mathcal C_A(\text{pattern})|^2
+ \ll \frac{(\log(2A))^{17}}{A}.}
+ \tag{4.845dc_14xyb}
+\]
+Thus the conductor-pattern cardinality no longer causes
+\(2^{\omega(A)}\).  This proves the arithmetic Euler-square part of
+step 4 in the PEVP program.
+
+One analytic compatibility remains.  Different conductor patterns
+produce different downward-shifted coefficient lists.  The full-level
+harmonic large sieve must accept this orthogonal vector-valued family
+with one uniform \((\log T)^{O(1)}\) constant.  Applying the scalar
+large sieve separately and then summing its right side once per pattern
+would undo (4.845dc_14xyb).  Therefore the interface
+conductor_pattern_euler_square_audit marks the Euler aggregation true,
+but keeps the vector-valued harmonic large sieve and PEVP false.
+
+### 4.109zld Orthogonal patterns need only one scalar ambient large sieve
+
+The final sentence of Section 4.109zlc can be sharpened.  A genuinely
+new vector-valued large sieve is not required once every primitive
+family is embedded in the same ambient full level
+\[
+ Q=A^2B.
+\]
+Let \(P_\sigma\) be the orthogonal projection onto the primitive
+conductor pattern \(\sigma\), and let \(T_Q\) denote the full-level
+Fourier evaluation operator.  The scalar inequality
+\[
+ \|T_Qa\|_{\mathcal H_Q}^2\leq L_Q\|a\|_2^2
+ \tag{4.845dc_14xyc}
+\]
+implies, for arbitrary pattern-dependent lists \(a_\sigma\),
+\[
+ \boxed{
+ \begin{aligned}
+ \sum_\sigma\|P_\sigma T_Qa_\sigma\|_{\mathcal H_Q}^2
+ &\leq\sum_\sigma\|T_Qa_\sigma\|_{\mathcal H_Q}^2\\
+ &\leq L_Q\sum_\sigma\|a_\sigma\|_2^2.
+ \end{aligned}}
+ \tag{4.845dc_14xyd}
+\]
+This is only orthogonality and the scalar operator norm; it introduces
+no factor equal to the number of patterns.
+
+There is a subtlety hidden by the notation \(a_\sigma\).  In the
+unramified cell the coefficient \(E_\pi^{-1}\) in (4.845dc_14s)
+depends on the primitive representation, so it is not literally a
+coefficient of an input sequence.  This does not require a new
+spectral-multiplier theorem.  Write the transferred polynomial on one
+pattern as
+\[
+ (K_\sigma a)(\pi)
+ =\sum_{\nu\in\mathcal J_\sigma}
+ c_{\sigma,\nu}(\pi)(T_QS_\nu a)(\pi),
+ \qquad
+ |c_{\sigma,\nu}(\pi)|\le d_{\sigma,\nu},
+ \qquad
+ D_\sigma:=\sum_\nu d_{\sigma,\nu}.
+\]
+Here every \(S_\nu\) is a downward prime-power shift and hence an
+\(\ell^2\)-contraction.  Pointwise weighted Cauchy, followed by the
+scalar ambient large sieve, gives
+\[
+ \boxed{
+ \begin{aligned}
+ \|P_\sigma K_\sigma a\|_{\mathcal H_Q}^2
+ &\le D_\sigma\sum_\nu d_{\sigma,\nu}
+       \|P_\sigma T_QS_\nu a\|_{\mathcal H_Q}^2\\
+ &\le L_QD_\sigma^2\|a\|_2^2.
+ \end{aligned}}
+ \tag{4.845dc_14xyd_1}
+\]
+Thus the representation-dependent factor is bounded before the large
+sieve, but the rank choices are not counted without their coefficients.
+
+The complete transfer is placed on only one side of the Cauchy
+inequality for the original bilinear form.  The other side is the
+single unweighted ambient polynomial; orthogonality gives
+\[
+ \sum_\sigma\|P_\sigma T_Qb\|_{\mathcal H_Q}^2
+ \le\|T_Qb\|_{\mathcal H_Q}^2
+ \le L_Q\|b\|_2^2.
+\]
+Combining this with (4.845dc_14xyd_1) costs
+\(L_Q^2\sum_\sigma D_\sigma^2\), exactly the Euler square in
+(4.845dc_14xyb).  A triangle inequality over the scalar pattern
+contributions would instead cost
+\((\sum_\sigma D_\sigma)^2\) and is not used.  This one-sided placement
+is the precise reason the cross-index weights may legally enter the
+scalar large sieve despite the \(\pi\)-dependence of \(E_\pi^{-1}\).
+
+Every list \(a_\sigma\) is obtained from the same physical list by the
+downward \(p\)- and \(p^2\)-shifts of Sections 4.109zla--4.109zlb.
+Hence all lists have the same support ceiling, and their direct-sum
+energy is exactly the Euler square bounded in (4.845dc_14xyb).  It
+follows that the cross-index oldvector weights can legally be inserted
+into step 5 of the PEVP program.
+
+The remaining input at fixed \(A,B\) is now the single scalar statement
+\[
+ \mathcal L_Q(a)
+ \ll(\log(2T))^C
+ \left(\mathcal M+\frac XQ\right)\|a\|_2^2,
+ \qquad Q=A^2B,
+\]
+uniformly for the complete Maaß, holomorphic, and Eisenstein measure
+and the physical Bessel seminorms.  No local matrix, conductor-pattern,
+or vector-valued compatibility condition remains outside it.
+
+The interface vector_valued_pattern_large_sieve_reduction_audit records
+this reduction and the legal cross-index transfer.  Section 4.109zlf
+then supplies the scalar theorem and Section 4.109zfgb reinserts it.
+
+### 4.109zle The fixed-entry large-symbol target
+
+The proof reduces fixed-entry PEVP to one precise large-symbol theorem;
+Section 4.109zlf proves it together with the other two ranges.
+Let \(h_R\) be a normalized positive dyadic spectral
+test on scale \(R\leq(\log(2T))^K\), let \(H_R\) be its exact Maaß,
+Eisenstein, or holomorphic Kuznetsov transform, and put
+\[
+ \widetilde H_{R,P}(\tau)
+ =\int_0^\infty w(x/P)H_R(x)x^{-i\tau}\,\frac{dx}{x}.
+\]
+Uniformly in all physical kernel parameters, the required statement is:
+\[
+ \boxed{
+ \begin{aligned}
+ P\geq8(1+R)^2:\quad
+ &|\widetilde H_{R,P}(\tau)|
+ \ll_J\frac{R^{C_J}}P
+ \left(1+\frac{\operatorname{dist}(
+ \tau,[P/2,2P]\cup[-2P,-P/2])}{P}\right)^{-J},\\
+ 1\leq P<8(1+R)^2:\quad
+ &\int_{\mathbb R}(1+|\tau|)^J
+ |\widetilde H_{R,P}(\tau)|\,d\tau
+ \ll_J P R^{C_J}.
+ \end{aligned}}
+ \tag{4.845dc_14xye}
+\]
+The complete \(P<1\) modulus tail is proved separately in Section
+4.109zlf.  Thus the remaining theorem starts at \(P=1\), with constants
+controlled by only finitely many normalized seminorms.
+
+If (4.845dc_14xye) holds for Maaß/Eisenstein and holomorphic weights
+\(k\geq4\), the already proved Farey bound (4.845dc_13), the
+weight-two theorem (4.845dc_14xi), and the pattern reduction
+(4.845dc_14xyd) give
+\[
+ \mathcal L_Q(a)
+ \ll(\log(2T))^C
+ \left(\mathcal M+\frac XQ\right)\|a\|_2^2
+ \tag{4.845dc_14xyf}
+\]
+and hence fixed-entry PEVP.  No other finite-prime or conductor-pattern
+input remains before (4.845dc_14xyf).
+
+Section 4.109zlf proves both lines of (4.845dc_14xye), including the
+complete \(P<1\) tail, and then proves (4.845dc_14xyf).  Accordingly
+scalar_polylog_hankel_seminorm_gate_audit marks every transform sector,
+the scalar theorem, and fixed-entry PEVP true.
+
+### 4.109zlf The complete small-argument modulus tail is summable
+
+This subsection removes the \(P<1\), equivalently \(C>X\), part from
+the open Hankel gate.  It uses an exact contour identity, not the
+truncated transform formula in HPY Lemma 5.6.
+
+Fix an integer \(L\) larger than the finite physical seminorm order and
+put, up to a positive normalization bounded by a power of \(R\),
+\[
+ h_{R,L}(r)=
+ \left(r^2+\frac14\right)
+ \left(1+\frac{r^2}{4R^2}\right)^{-L},
+ \qquad R\geq1.
+ \tag{4.845dc_14xyg}
+\]
+This even function is nonnegative on the real spectrum, positive on
+the congruence exceptional interval \(r=i\kappa\),
+\(|\kappa|\leq7/64\), and holomorphic in the closed strip
+\(-1\leq\Im r\leq0\).  Its only zero needed below is the simple zero
+at \(r=-i/2\).  After increasing the positive normalization by one
+fixed physical seminorm, (4.845dc_14xyg) majorizes the corresponding
+Maaß and Eisenstein spectral weight on the real and exceptional
+spectra.  No analytic compactly supported dyadic partition is being
+assumed.
+
+Use the Kuznetsov normalization
+\[
+ \begin{aligned}
+ H^+_{R,L}(x)
+ &=\frac i2\int_{\mathbb R}
+   \frac{r h_{R,L}(r)}{\cosh(\pi r)}J_{2ir}(x)\,dr,\\
+ H^-_{R,L}(x)
+ &=\frac4{\pi^2}\int_{\mathbb R}
+   r h_{R,L}(r)\sinh(\pi r)K_{2ir}(x)\,dr.
+ \end{aligned}
+ \tag{4.845dc_14xyh}
+\]
+The first line is HPY (5.4).  For the second line, the exact connection
+formula
+\[
+ K_\nu(x)=\frac\pi2
+ \frac{I_{-\nu}(x)-I_\nu(x)}{\sin(\pi\nu)}
+\]
+and evenness of \(h_{R,L}\) give, with no remainder,
+\[
+ \boxed{
+ H^-_{R,L}(x)=\frac{2i}{\pi}\int_{\mathbb R}
+ \frac{r h_{R,L}(r)}{\cosh(\pi r)}I_{2ir}(x)\,dr.}
+ \tag{4.845dc_14xyi}
+\]
+Indeed the \(I_{-2ir}\) integral is the negative of the
+\(I_{2ir}\) integral.  This is the point that lets both signs use the
+same contour; estimating \(K_{2ir}\sinh(\pi r)\) before this identity
+would lose the small-argument power.
+
+Move the contours in (4.845dc_14xyh)--(4.845dc_14xyi) to
+\(r=u-i\).  The sole crossed zero of \(\cosh(\pi r)\) is
+\(r=-i/2\), and it is cancelled exactly by the factor
+\(r^2+1/4\).  The poles of the last factor in (4.845dc_14xyg) are at
+\(r=\pm2iR\), outside the strip.  The horizontal sides vanish once
+\(L\) exceeds the chosen derivative order.  On the new line the
+Bessel order is
+\[
+ 2ir=2+2iu.
+\]
+The defining power series for \(J_\nu\) and \(I_\nu\), differentiated
+term by term, and Stirling on \(\Gamma(3+2iu+m)\), now give for every
+fixed \(j\) and \(0<x\leq1\)
+\[
+ \boxed{
+ |(x\partial_x)^jH^+_{R,L}(x)|
+ +|(x\partial_x)^jH^-_{R,L}(x)|
+ \ll_{j,L}x^2R^{C_{j,L}}.}
+ \tag{4.845dc_14xyj}
+\]
+The exponential factor from the reciprocal gamma function is cancelled
+by \(|\cosh(\pi(u-i))|=\cosh(\pi u)\); the remaining \(u\)-integral is
+polynomially convergent.  Hence a cutoff on \(x\asymp P<1\) has exact
+Mellin \(L^1_J\) norm \(O_{J,L}(P^2R^{C_{J,L}})\), stronger than the
+\(PR^{C_J}\) target formerly assigned to this range.
+
+For the holomorphic spectrum of even weight \(k\geq4\), the same power
+series gives
+\[
+ |(x\partial_x)^jJ_{k-1}(x)|
+ \ll_j \frac{x^{k-1}}{\Gamma(k)}(1+k)^j,
+ \qquad 0<x\leq1,
+ \tag{4.845dc_14xyk}
+\]
+so the common power for Maaß, Eisenstein, and holomorphic
+weight at least four is \(\beta=2\).
+
+For \(C=2^mX\), \(m\geq0\), the two Farey--Cauchy block terms are
+therefore exactly
+\[
+ \frac{P^2}{C}\left(\frac{C^2}{Q}+X\right)
+ =\frac XQ\,2^{-m}+2^{-3m}.
+\]
+Consequently
+\[
+ \boxed{
+ \sum_{m\geq0}
+ \frac{P^2}{C}\left(\frac{C^2}{Q}+X\right)
+ \leq 2\frac XQ+\frac87.}
+ \tag{4.845dc_14xyl}
+\]
+This proves the complete \(C>X\) modulus tail with polynomial-in-
+seminorm constants.  Weight two is not included in this contour
+argument and remains covered by the independent cusp-strip theorem
+(4.845dc_14xi).
+
+The interface exact_small_argument_hankel_tail_audit records the
+single crossed pole, the powers \(2\) and \(3\), and the two exact
+geometric sums.
+
+It remains to treat the finite transition interval without using the
+pointwise error in HPY (5.14).  Fix a Mellin weight order \(J\), put
+\[
+ A=J+2,
+\]
+and replace (4.845dc_14xyg), only for this transition estimate, by the
+positive majorant
+\[
+ h_{R,J}(r)=c_{R,J}
+ \prod_{0\leq\ell<A}
+ \left(r^2+(\ell+\tfrac12)^2\right)
+ \left(1+\frac{r^2}{4(A+1)^2R^2}\right)^{-L},
+ \tag{4.845dc_14xym}
+\]
+where \(L>2A+2J+10\) and \(c_{R,J}\ll_JR^{C_J}\) is chosen to
+majorize the fixed physical seminorm.  Every displayed factor is
+positive on the real spectrum and on \(r=i\kappa\),
+\(|\kappa|\leq7/64\).  The rational poles in (4.845dc_14xym) lie at
+\(\pm2(A+1)iR\).
+
+Use the exact Fourier identities (4.845dc_14xa), equivalently Young
+(7.5) and (7.14), before truncating their \(v\)-integrals.  The product
+in (4.845dc_14xym) cancels the poles of \(\tanh(\pi r)\) at
+\[
+ r=\pm i(\ell+\tfrac12),\qquad0\leq\ell<A.
+\]
+For \(v>0\) move the inner \(r\)-contour to \(\Im r=A\), and for
+\(v<0\) to \(\Im r=-A\).  No pole is crossed; the first uncancelled
+half-integer is \(A+1/2\).  With the convention \(e^{2irv}\), this
+proves the exact bound
+\[
+ |G_{R,J}^{(a)}(v)|
+ \ll_{a,J}R^{C_{a,J}}e^{-2A|v|}
+ \qquad(0\leq a\leq J+2).
+ \tag{4.845dc_14xyn}
+\]
+There is no \(R^{-B}\) or \(T^{-B}\) remainder in (4.845dc_14xyn).
+
+An \(x\)-derivative of order at most \(J+2\) in the two phases
+\(x\cosh v\) and \(x\sinh v\) contributes at most
+\[
+ (1+x)^{J+2}e^{(J+2)|v|}.
+\]
+Since \(2A-(J+2)=J+2>0\) and
+\(1\leq x\asymp P<8(1+R)^2\), (4.845dc_14xyn) gives
+\[
+ |(x\partial_x)^aH_R^\pm(x)|
+ \ll_{a,J}R^{C_J},
+ \qquad0\leq a\leq J+2.
+ \tag{4.845dc_14xyo}
+\]
+For the holomorphic transform, apply
+\(|J_n(x)|\leq1\) for integral \(n\geq0\) and
+\(2J_n'(x)=J_{n-1}(x)-J_{n+1}(x)\); after at most \(J+2\)
+derivatives and \(x\ll R^2\), the result is again (4.845dc_14xyo)
+with a different fixed power of \(R\).
+
+Finally, exact Mellin integration by parts yields
+\[
+ |\widetilde H_{R,P}(\tau)|
+ \ll_JR^{C_J}(1+|\tau|)^{-J-2},
+\]
+and therefore
+\[
+ \boxed{
+ \int_{\mathbb R}(1+|\tau|)^J
+ |\widetilde H_{R,P}(\tau)|\,d\tau
+ \ll_JR^{C_J}\leq PR^{C_J}.}
+ \tag{4.845dc_14xyp}
+\]
+Thus the entire transition range is proved with polynomial seminorm
+constants.  The interface exact_transition_hankel_mellin_audit records
+the exact decay margin
+\(2A-(J+2)=J+2\).
+
+The large-symbol range has a direct exact proof that does not expand an
+individual Bessel function.  Insert the whole-line Fourier identity
+(4.845dc_14xa) first, write \(x=Py\), \(\theta=\tau/P\), and split the
+cosine into its two exponential signs.  The Maaß plus localized Mellin
+transform is a sum of integrals with phase
+\[
+ \Phi_\epsilon(y,v;\theta)
+ =\epsilon y\cosh v-\theta\log y,
+ \qquad \epsilon\in\{1,-1\},\quad y\in[1/2,2].
+ \tag{4.845dc_14xyq}
+\]
+For the matching sign, a joint stationary point exists exactly when
+\(\epsilon\theta>0\) and \(|\theta|\in[1/2,2]\).  It is
+\[
+ (y_0,v_0)=(|\theta|,0).
+\]
+At that point the mixed derivative vanishes and
+\[
+ \partial_y^2\Phi_\epsilon(y_0,0)=\frac{\epsilon}{y_0},
+ \qquad
+ \partial_v^2\Phi_\epsilon(y_0,0)=\epsilon y_0,
+ \qquad
+ \boxed{\det\operatorname{Hess}\Phi_\epsilon(y_0,0)=1.}
+ \tag{4.845dc_14xyr}
+\]
+Thus uniform two-dimensional stationary phase gives \(P^{-1}\), with
+constants bounded by finitely many seminorms of the whole-line
+transform \(G_{R,J}\).
+
+For completeness, the off-window estimate can be proved without an
+implicit compact-support assertion.  Use the two exact integration
+operators
+\[
+ \begin{aligned}
+ \mathcal D_y&=
+ \frac{1}{iP(\epsilon\cosh v-\theta/y)}\,\partial_y,\\
+ \mathcal D_v&=
+ \frac{1}{iP\epsilon y\sinh v}\,\partial_v.
+ \end{aligned}
+ \tag{4.845dc_14xys}
+\]
+Partition the \((y,v)\)-plane where the two denominators in
+(4.845dc_14xys) have respectively maximal size.  In the remaining
+fixed neighbourhood of \((y_0,0)\), use (4.845dc_14xyr).  When
+\(|v|\) exceeds that neighbourhood, \(|\sinh v|\) is bounded below;
+when \(|\theta|\) exceeds the stationary windows, either
+\(|\epsilon\cosh v-\theta/y|\) is bounded below by the normalized
+distance to the window, or \(\cosh v\asymp1+|\theta|\).  In the latter
+case (4.845dc_14xyn), with \(A>J+2\), supplies
+\((1+|\theta|)^{-J-2}\).  Repeated adjoints of
+(4.845dc_14xys) therefore give
+\[
+ |\widetilde H^+_{R,P}(\tau)|
+ \ll_J\frac{R^{C_J}}P
+ \left(1+\frac{\operatorname{dist}(
+ \tau,[P/2,2P]\cup[-2P,-P/2])}{P}\right)^{-J}.
+ \tag{4.845dc_14xyt}
+\]
+All artificial partition boundaries are inside overlapping smooth
+regions; their derivatives are bounded by the same normalized
+denominators, so (4.845dc_14xyt) has no boundary term at infinity.
+
+For the Maaß minus kernel replace \(\cosh v\) by \(\sinh v\).  The
+joint equations would require simultaneously
+\[
+ \epsilon\sinh v=\theta/y,
+ \qquad \epsilon y\cosh v=0,
+\]
+which is impossible.  The same two-operator partition, now with
+\(\cosh v\) in the second denominator, gives rapid decay in \(P\) and
+therefore the bound (4.845dc_14xyt) a fortiori.  The continuous spectrum
+uses these identical archimedean kernels.
+
+For an integral holomorphic order use the exact identity
+\[
+ J_n(x)=\frac1{2\pi}\int_{-\pi}^{\pi}
+ e^{i(nv-x\sin v)}\,dv,
+ \qquad n\in\mathbb Z.
+ \tag{4.845dc_14xyu}
+\]
+Sum the positive weight over \(n=k-1\) before estimating.  Its finite
+Fourier amplitude has every required derivative bounded by
+\(R^{C_J}\).  The joint stationary points of
+\(\epsilon y\sin v-\theta\log y\) occur at
+\(v=\pm\pi/2\), \(y=|\theta|\), and their Hessian determinants have
+absolute value one.  The complement is treated by the periodic version
+of (4.845dc_14xys).  Hence (4.845dc_14xyt) also holds for every
+holomorphic weight \(k\geq4\).  The weight-two large sieve remains
+provided by (4.845dc_14xi), so no conditionally convergent Petersson
+tail is reintroduced.
+
+This proves both lines of (4.845dc_14xye) for all required spectral
+sectors.  The proof used exact Fourier identities throughout and never
+discarded the \(O(T^{-A})\) remainder of HPY Lemma 5.6.  The interface
+exact_large_symbol_mellin_audit records the two-dimensional dimension,
+the unit Hessian determinants, the \(P^{-1}\) height, and the strict
+Fourier-decay margin.  Consequently the scalar full-level large sieve
+(4.845dc_14xyf), weighted primitive PLS, and **fixed-entry PEVP** are
+proved.  This does not close the full mollifier remainder: Section
+4.109zi still leaves the signed outer-entry aggregation OLISK open.
+
+### 4.109zg Seminorm-stable PEVP sums every AFE and transform tail shell
+
+The tail \(\mathcal R_{\rm tail}^{(B)}\) in (5.2a) of the exact
+off-diagonal audit cannot use the absolute majorant (5.8d), whose scale
+is \(T^{9/2}\).  The seminorm-stable PEVP proved above applies to every
+tail shell, while the integrations by parts defining that shell make
+its normalized kernel seminorm small.
+
+For one exact dyadic box put
+
+\[
+ \boxed{
+ \begin{aligned}
+ \Lambda_{\rm AFE}&=1+\frac{KM}{T},\\
+ \Lambda_t&=1+T\left|\log\left(1+\frac{\delta}{m_2r}\right)\right|,\\
+ \Lambda_x&=1+\frac{|h|M}{S},\\
+ \Lambda_{\rm tr}
+ &=1+|\boldsymbol\xi|+|\Im z|+|t_f|+k .
+ \end{aligned}}
+ \tag{4.845dc_15}
+\]
+
+The ratio tail \(KS/(MR)\notin[1/16,16]\) is contained in the
+\(\Lambda_t\) shell: on the fixed dyadic supports it makes the exact
+logarithmic derivative bounded away from zero, hence
+\(\Lambda_t\gg T\).  Formula (2.5) of the exact AFE audit, the
+operators (5.8b)--(5.8c), the QCT Fourier estimate (4.845ai), and
+Stirling on (4.845ak)--(4.845al) imply the following statement.  For
+every fixed seminorm order \(J\), the kernel in a shell with dyadic
+parameters \(\lambda_\star\leq\Lambda_\star<2\lambda_\star\) satisfies
+\[
+ \|\Psi_{\boldsymbol\lambda}\|_{\mathcal S_J}
+ \ll_{J,W}
+ \lambda_{\rm AFE}^{-J}
+ \lambda_t^{-J}
+ \lambda_x^{-J}
+ \lambda_{\rm tr}^{-J},
+\]
+with the inactive factors omitted.  Equivalently, partitioning the
+union of the four tails assigns every box to its first active
+parameter and gives one factor \(\lambda_\star^{-J}\).  This avoids
+the incorrect product bound when only one parameter is large.
+
+The proof of PEVP in Sections 4.109y--4.109zfgb uses Fourier inversion,
+Mellin inversion, Gallagher's inequality, and finite local oldclass
+identities.  For a fixed requested logarithmic saving, only finitely
+many derivatives occur.  It is therefore homogeneous and polynomial
+in a fixed seminorm:
+
+\[
+ \boxed{
+ |\mathfrak S_q[\Psi]|
+ \leq C_{J,W}RS(\log(2T))^{C_J}
+ \|\Psi\|_{\mathcal S_J}.}
+ \tag{4.845dc_16}
+\]
+
+This is the required seminorm-stable extension of the compact-core
+gate.  It does not assert a bound for arbitrary kernels: the support,
+endpoint inequalities, exact ratios, gcd cells, and the physical
+Type-I/II coefficient remain those of the original decomposition.
+
+Let the polylogarithmic core retain all four parameters up to
+\(\mathscr L^B\), \(\mathscr L=\log(2T)\).  The shells beyond that
+threshold form geometric series.  The six original dyadic variables
+and \(\sum q^{-1}\) cost \(\mathscr L^7\), exactly as in
+(4.845cx).  Hence, for every \(D>0\), first fix \(J\) large enough for
+the far power shells, record the resulting finite exponent \(C_J\),
+and then choose \(B>(C_J+D+7)/J\).  Thus \(BJ>C_J+D+7\), and
+
+\[
+ \boxed{
+ \begin{aligned}
+ |\mathcal R_{\rm tail}^{(B)}|
+ &\ll_{J,W}
+ T\mathscr L^{7+C_J}
+ \sum_{\lambda\geq\mathscr L^B}\lambda^{-J}\\
+ &\ll_{J,W}T\mathscr L^{7+C_J-BJ}
+ \ll_{D,W}T\mathscr L^{-D}=o_W(T).
+ \end{aligned}}
+ \tag{4.845dc_17}
+\]
+
+If a shell parameter is a positive power of \(T\), the same series
+gives a fixed power saving; if it is between a constant and
+\(\mathscr L^B\), it belongs to the retained near shell and is covered
+by PEVP.  Thus no gap exists between the polylogarithmic and
+power-sized regimes.
+
+There is no separate truncated-AFE error: (2.4) is exact.
+\(\Lambda_{\rm AFE}\) accounts for the entire \(KM>T\mathscr L^B\)
+part of that exact series.  Likewise \(\Lambda_{\rm tr}\) includes
+both the four QCT Fourier variables and the Bessel Mellin/spectral
+variables.  Equations (4.845dc_15)--(4.845dc_17), together with
+seminorm-stable PEVP from (4.845dc_14xye), prove
+\(\mathrm{TAIL}_{B,D}=o_W(T)\) and the kernel-transform tail estimate.
+At this historical stage the compact near shell from Section 4.109zi
+remained open because PEVP did not aggregate the actual outer integers
+\(A,B\).  Sections 4.109zjaced000f--4.109zjaced000h later close that
+shell directly, before the positive outer-entry majorant is introduced.
+
+The interface \`mwkf_tail_shell_aggregation_audit\` records the exact
+seven-log aggregation and the inequality \(BJ>C_J+D+7\).  Its
+AFE-product, time/Poisson, QCT/Bessel, and total-tail closure flags are
+true after Section 4.109zlf; the compact-core flag is separate and stays
+false inside this historical PEVP-only route.  It is not an input to the
+later signed cubic route.
+
+
+### 4.109zh Historical exact-main reassembly left the outer-entry gate
+
+It remains to match the exact-gamma main term (1.1) of the
+off-diagonal audit with the finite LCM asymptotic proved in merged
+PR #478.  Put
+\[
+ \omega_0=\int_1^2W(u)\,du,\qquad
+ \omega_1=\int_1^2W(u)\log u\,du,
+\]
+and
+\[
+ \begin{aligned}
+ S_0(N)&=\sum_{d,e\leq N}\frac{a_N(d)a_N(e)}{[d,e]},\\
+ S_1(N)&=\sum_{d,e\leq N}\frac{a_N(d)a_N(e)}{[d,e]}
+ \log\frac{(d,e)^2}{de}.
+ \end{aligned}
+\]
+Uniform Stirling on \(u\in[1,2]\) and the finite bound
+\(\sum_{d,e\leq N}[d,e]^{-1}\ll\log^3(2N)\) give
+
+\[
+ \boxed{
+ \mathcal Q_{N,T}
+ =\left(\log\frac{T}{2\pi}+2\gamma\right)\omega_0S_0(N)
+  +\omega_1S_0(N)+\omega_0S_1(N)
+  +O_W(T^{-2}\log^3(2N)).}
+ \tag{4.845dc_18}
+\]
+
+The Selberg--Perron calculation in PR #478 proves
+\[
+ S_0(N)=\frac{1+o(1)}{\log N},\qquad S_1(N)=1+o(1).
+\]
+For \(N=\lfloor T^3\rfloor\),
+\(\log N=3\log T+o(1)\).  The constants
+\(-\log(2\pi)\), \(2\gamma\), and \(\omega_1\) multiply
+\(S_0(N)=O(1/\log N)\).  Therefore, without dividing by
+\(\omega_0\) (so the statement also covers \(\omega_0=0\)),
+
+\[
+ \boxed{
+ \mathcal Q_{\lfloor T^3\rfloor,T}
+ =\frac43\int_1^2W(u)\,du+o_W(1).}
+ \tag{4.845dc_19}
+\]
+
+The exact completed AFE and common-Mellin zero-mode calculation give
+\[
+ I_{N,W}(T)=T\mathcal Q_{N,T}+\mathcal R_{N,T}
+\]
+with no truncated-AFE error.  The two explicit archimedean corrections
+are \(O_{A,W}(T^{-A})\).  Fixed-entry PEVP and Section 4.109zg make
+every AFE and transform shell \(o_W(T)\).  Section 4.109zi shows that
+this PEVP-only route does not aggregate the remaining actual-integer
+\(A,B\) sums.  At that historical stage the argument stopped at
+\[
+ \boxed{\mathcal R_{\lfloor T^3\rfloor,T}=o_W(T)
+ \quad\Longleftarrow\quad
+ (\mathrm{MMKLS})_{q}^{L,R}\ \text{uniformly in every outer box}.}
+\]
+By Section 4.109zjab this is the geometric-side form of the recombined
+outer-level square \((\mathrm{OSLSP})_q^{L,R}\), and it implies
+\((\mathrm{OLISK})_q^{L,R}\).  On the hard balanced face it requires
+the explicit extra saving \(T^{1/2}\) in (4.845dc_14xq_19).
+Combining this remaining implication with (4.845dc_19) would give
+
+\[
+ \boxed{
+ I_{\lfloor T^3\rfloor,W}(T)
+ =\frac43T\int_1^2W(u)\,du+o_W(T).}
+ \tag{4.845dc_20}
+\]
+
+Before the later cubic route, the displayed asymptotic was therefore
+unproved for real \(W\in C_c^\infty(\mathbb R)\) supported in
+\([1,2]\).  The corresponding historical coverage certificate had one
+**top-level** residual analytic gate: the
+Möbius-weighted-modulus two-index large sieve
+\((\mathrm{MMKLS})_{q}^{L,R}\), equivalently the recombined outer-level
+square \((\mathrm{OSLSP})_q^{L,R}\) and hence the full signed outer-entry
+aggregation \((\mathrm{OLISK})_{q}^{L,R}\), over power-sized as well as
+polylogarithmic entry divisors.  The full-level harmonic
+large sieve, weighted primitive-conductor large sieve, fixed-entry PEVP,
+and all analytic tails are no longer residual inputs.
+
+The word "one" here counts the aggregate implication
+\((\mathrm{OLISK})_q^{L,R}\); it is not a claim that every dyadic
+parameter cell has been enumerated and only one literal cell remains.
+For the double-Poisson/short-cofactor attempt, Section 4.109zjaced0
+exhibits the power family \(2\le u\le12/5\), and Section
+4.109zjaced00 closes that particular family by almost-all endpoint
+dispersion.  This does not certify all other cells of the continuous
+parameter polytope.  Sections 4.109zjaced1--4.109zjaced2 also retain the
+separate logarithmic endpoint \(\mathrm{LCPE}_2\).  At that point either
+a direct proof of the top-level gate or a complete enumeration and proof
+of all remaining subgates was required.
+
+The interface \`unconditional_long_mollifier_asymptotic_audit\`
+combines the exact AFE, zero mode, PR #478 LCM main term, PEVP,
+seven-log compact aggregation, and the proved tail-shell ledger.
+That historical interface status has been superseded by Sections
+4.109zjaced000f--4.109zjaced000h.  The current interface records zero
+residual gates and the status **unconditional asymptotic proved**; the
+stronger positive OLISK/MMKLS majorant itself remains unproved and is
+bypassed rather than assumed.
+
+
+### 4.110 The Möbius level coefficient is not the newform Kuznetsov projector
+
+There remains a possible algebraic escape from Section 4.109: perhaps
+the signed Type-I levels annihilate oldforms before the positive density
+estimate is applied.  The exact newform trace formula rules out this
+automatic identification.
+
+If the unrestricted Type-I level coefficient is
+\(\alpha=\mu*\mu\), then finite Dirichlet convolution gives
+
+\[
+ \boxed{
+ \sum_{L\mid c}\alpha(L)
+ =((\mu*\mu)*\mathbf1)(c)=\mu(c).}
+\tag{4.846}
+\]
+
+Thus summing the divisibility-level geometric formulas does reconstruct
+the Möbius modulus weight.  It does not follow that the same coefficient
+is a newform projector.
+
+For comparison, let \(N\) be squarefree, let \((mn,N)=1\), and write
+\(\Delta_N(m,n)\) for the full Bruggeman--Kuznetsov spectral form.
+The squarefree newform inversion in Young's subsection
+[“Bruggeman--Kuznetsov for newforms, squarefree level”](https://arxiv.org/abs/1710.03624)
+is exactly
+
+\[
+ \boxed{
+ \begin{aligned}
+ \Delta_N^*(m,n)
+ =\sum_{LM=N}\frac{\mu(L)}{\nu(L)}
+ \sum_{\ell\mid L^\infty}\frac{\ell}{\nu(\ell)^2}
+ \sum_{d_1,d_2\mid\ell}
+ c_\ell(d_1)c_\ell(d_2)
+ \Delta_M(md_1,nd_2),
+ \end{aligned}}
+\tag{4.847}
+\]
+
+where \(\nu(p)=p+1\) on a squarefree prime level.  The coprimality
+assumption makes (4.847) the literal specialization of the published
+formula: all of its auxiliary \(u,v,a,b,e_1,e_2\) divisor sums reduce to
+one.  The remaining \(\ell\mid L^\infty\) sum is still present and the
+Hecke indices change from \((m,n)\) to \((md_1,nd_2)\).
+
+At \(N=p\), the \(L=p,\ell=1\) term of (4.847) has coefficient
+
+\[
+ \boxed{
+ \frac{\mu(p)}{\nu(p)}=-\frac1{p+1},}
+\tag{4.848}
+\]
+
+followed by the nonempty prime-power oldclass tail \(\ell=p^j\),
+\(j\geq1\).  On the other hand,
+
+\[
+ \boxed{
+ (\mu*\mu)(p)=\mu(1)\mu(p)+\mu(p)\mu(1)=-2.}
+\tag{4.849}
+\]
+
+For example, at \(p=5\) the leading local coefficients are
+\(-1/6\) and \(-2\), with difference \(-11/6\).  The prime-power tail
+and changed Hecke indices make the mismatch stronger, not weaker.
+Therefore (4.846) is an exact geometric recombination but not the
+newform inversion (4.847); old exceptional forms are not annihilated by
+an algebraic identity already present in the Type-I split.
+
+This does not exclude proving cancellation after inserting the full
+signed coefficient into (4.847).  It says that doing so is a new
+weighted newform estimate rather than a free projection.  The adapter
+`newform_level_mobius_projector_audit` records the prime witness and
+keeps the oldform-annihilation and QCT newform-adapter flags false.
+
+
+### 4.110a Direct Perron cancellation in the leading oldclass cofactor hits a zero-free barrier
+
+The mismatch in Section 4.110 does not preclude analytic cancellation
+in the signed level sum.  It does, however, make it necessary to inspect
+the relevant Dirichlet series before claiming a power saving.  Retain
+only the leading \(\ell=1\) cofactor in the full-level-to-newform formula
+preceding (4.847).  On squarefree levels let
+\(\alpha=\mu*\mu\), so \(\alpha(p)=-2\), and keep the published level
+index \(\nu(p)=p+1\).  If an exceptional spectral parameter
+\(0<\beta\leq7/64\) contributes the favourable level factor
+\(L^{2\beta}\), the leading signed cofactor has Dirichlet series
+
+\[
+ \boxed{
+ D_\beta(w)
+ :=\sum_{L\ {\rm squarefree}}
+ \frac{\alpha(L)L^{2\beta}}{\nu(L)L^w}
+ =\prod_p\left(1-\frac{2p^{2\beta-w}}{p+1}\right).}
+\tag{4.849a}
+\]
+
+Put \(x_p=p^{-(w+1-2\beta)}\).  Prime by prime,
+
+\[
+ \frac{1-2p^{2\beta-w}/(p+1)}{(1-x_p)^2}
+ =1+O\!\left(\frac{|x_p|}{p}+|x_p|^2\right).
+\]
+
+Consequently the exact factorization is
+
+\[
+ \boxed{
+ D_\beta(w)
+ =\frac{H_\beta(w)}{\zeta(w+1-2\beta)^2},
+ \qquad
+ H_\beta(w)\ \text{absolutely convergent for }
+ \Re w>2\beta-\frac12.}
+\tag{4.849b}
+\]
+
+Before the coupled-conductor correction in Section 4.109, one possible
+attempt was to neutralize a putative \(Q^{2\beta}\) loss by the leading
+level sum alone.  That attempt would require, for every fixed smooth
+dyadic weight \(W\),
+
+\[
+ \boxed{
+ \sum_{L\ {\rm squarefree}}
+ \frac{\alpha(L)L^{2\beta}}{\nu(L)}W(L/Q)
+ \ll_{\varepsilon,W}Q^\varepsilon
+ \quad\text{for every }\varepsilon>0.}
+\tag{4.849c}
+\]
+
+A family of bounds (4.849c) makes the dyadic Dirichlet series
+holomorphic in \(\Re w>0\).  Since \(H_\beta\) is analytic and nonzero
+near the right edge, (4.849b) would then force
+
+\[
+ \boxed{
+ \zeta(s)\ne0\quad(\Re s>1-2\beta).
+ \quad\text{At }\beta=\frac7{64}\text{ this is }
+ \Re s>\frac{25}{32}.}
+\tag{4.849d}
+\]
+
+No such fixed zero-free strip is known unconditionally.  Section 4.109
+shows that this Perron estimate is not the current critical input:
+Humphries density already neutralizes the archimedean exceptional
+factor after the numerator conductor is retained.  The calculation
+remains useful as an exact rejection of direct level-Perron
+cancellation as a substitute for the missing finite-prime Hecke
+average.
+
+This is deliberately a statement about the direct leading-cofactor
+Perron route, not a rejection of the complete spectral strategy.  The
+prime-power oldclass tail in (4.847) is recombined exactly in Section
+4.110b below.  A signed average over newforms remains a logically
+separate possible source of cancellation.  The adapter
+exceptional_oldclass_mobius_perron_audit records the exact endpoint
+\(2\beta=7/32\), the boundary \(2\beta-1/2=-9/32\), and the required
+zero-free line \(25/32\).  Section 4.110b upgrades its full-tail flag
+after the exact recombination, while the newform-average and coverage
+flags remain false.
+
+
+### 4.110b The complete prime-power oldclass tail preserves the first-order inverse-zeta factor
+
+The qualification about the oldclass tail in Section 4.110a can be
+removed.  Fix a newform \(f\) of level \(M\), let \(p\nmid Mmn\), and
+write
+
+\[
+ \rho_f(p)=1-\frac{p\lambda_f(p)^2}{(p+1)^2}.
+\]
+
+Petrow--Young's exact oldform formula has
+
+\[
+ \sum_{j\geq0}\frac{p^j}{\nu(p^j)^2}
+ \left(\sum_{d\mid p^j}c_{p^j}(d)\lambda_f(d)\right)^2.
+\]
+
+Here \(\nu(p^j)=(p+1)^j\), and the defining Chebyshev identity gives
+\(\sum_{d\mid p^j}c_{p^j}(d)\lambda_f(d)=\lambda_f(p)^j\).
+Thus this is a geometric series, not an unspecified error:
+
+\[
+ \boxed{
+ \sum_{j\geq0}\frac{p^j\lambda_f(p)^{2j}}{(p+1)^{2j}}
+ =\frac1{\rho_f(p)}.}
+ \tag{4.849e}
+\]
+
+After the exterior squarefree-level factor \(1/\nu(p)=1/(p+1)\),
+the exact complete oldclass multiplier is therefore
+
+\[
+ \boxed{
+ B_f(p):=\frac1{(p+1)\rho_f(p)}
+ =\frac{p+1}{(p+1)^2-p\lambda_f(p)^2}.}
+ \tag{4.849f}
+\]
+
+If \(|\lambda_f(p)|\ll p^\theta\), \(0\leq\theta<1/2\), then
+
+\[
+ \boxed{
+ B_f(p)=\frac1p+O_f\!\left(p^{-2+2\theta}\right).}
+ \tag{4.849g}
+\]
+
+Consequently, after inserting \(\alpha(p)=-2\) and the exceptional
+factor \(p^{2\beta-w}\), the full local factor is
+
+\[
+ 1-2p^{2\beta-w}B_f(p)
+ =1-2p^{-(w+1-2\beta)}
+  +O_f\!\left(p^{2\beta-\Re w-2+2\theta}\right).
+ \tag{4.849h}
+\]
+
+The quotient by
+\((1-p^{-(w+1-2\beta)})^2\) is therefore absolutely convergent in
+
+\[
+ \boxed{
+ \Re w>
+ \max\left\{2\beta+2\theta-1,\ 2\beta-\frac12\right\}.}
+ \tag{4.849i}
+\]
+
+At \(\beta=\theta=7/64\), the tail-error boundary is \(-9/16\),
+while the quadratic inverse-zeta boundary is \(-9/32\); the latter is
+still decisive.  In particular, the \(j\geq1\) tail changes only
+second-order Euler terms and does not algebraically supply the missing
+\(+2p^{-(w+1-2\beta)}\) term.  Finite local factors can have isolated
+zeros, so this statement is deliberately not a blanket nonvanishing
+claim for the remaining Euler product.  It is the precise assertion
+needed here: the complete oldclass tail does not cancel the
+inverse-\(\zeta(w+1-2\beta)^2\) factor prime by prime.  Any remaining
+spectral route must obtain genuinely signed cancellation across the
+newform family, not from the oldclass geometric series itself.
+
+For the exact test witness \(p=5\), \(\lambda_f(5)^2=1\), one has
+\(\rho_f(5)=31/36\), \(B_f(5)=6/31\), tail correction \(5/186\), and
+full Möbius coefficient \(-12/31\).  The adapter
+exceptional_full_oldclass_tail_audit records these identities and
+keeps the newform-average, Perron-closure, and whole-gate flags false.
+
+
+### 4.111 The new (4/5) Möbius additive-twist bound leaves only a (T^{1/5}) model deficit
+
+A genuinely new input became available after the earlier route audit.
+[Robles, Theorem 2](https://arxiv.org/abs/2608.07198) proves that there
+is an absolute (C_0>0) such that, for every (x\geq3), every real
+\(\alpha\), and every reduced (r/q) with
+\(|\alpha-r/q|\leq q^{-2}),
+
+\[
+ \boxed{
+ \sum_{n\leq x}\mu(n)e(n\alpha)
+ \ll
+ \left(\frac{x}{\sqrt q}+x^{4/5}+\sqrt{xq}\right)
+ (\log x)^{C_0}.}
+\tag{4.850}
+\]
+
+Unlike Davenport's uniform logarithmic estimate, (4.850) gives a fixed
+power saving on the balanced minor arcs.  Put (x=T^\chi) and
+(q=T^\kappa).  The three power exponents in (4.850) are
+
+\[
+ \chi-\frac\kappa2,qquad
+ \frac{4\chi}{5},qquad
+ \frac\chi2+\frac\kappa2.
+\tag{4.851}
+\]
+
+All three are at most (4\chi/5) if and only if
+
+\[
+ \boxed{
+ \frac{2\chi}{5}\leq\kappa\leq\frac{3\chi}{5}.}
+\tag{4.852}
+\]
+
+Thus one independently exposed length-(T^\chi) Möbius variable gains
+at most (T^{\chi/5}) from the published pointwise theorem.
+
+Apply this ledger to the product-compatible hard shell (4.821), where
+the four Möbius variables have \(\chi=1\), the raw determinant exponent
+is (3), and the target exponent is (2).  Give (4.850) an
+over-optimistic advantage: pretend that the bilinear phases split and
+that the theorem can be applied independently to all four variables.
+Even this grants only
+
+\[
+ \boxed{
+ S_{\mathrm{Robles,opt}}=4\left(1-\frac45\right)=\frac45.}
+\tag{4.853}
+\]
+
+Consequently
+
+\[
+ \boxed{
+ E_{\mathrm{Robles,opt}}=3-\frac45=\frac{11}{5},
+ \qquad
+ E_{\mathrm{Robles,opt}}-2=\frac15.}
+\tag{4.854}
+\]
+
+The word “optimistic” is mathematically essential.  In the centered
+Fourier form the phase is (e(\alpha(ab-cd))); the four sums do not
+factor into four independent one-variable transforms.  A legal
+sequential use of (4.850) must retain the other three coefficients and
+therefore cannot simply multiply four pointwise savings.
+
+There is a second obstruction.  Taking (q=1) in (4.850) gives
+
+\[
+ \boxed{
+ \sum_{n\leq x}\mu(n)e(n\alpha)
+ \ll x(\log x)^{C_0},}
+\tag{4.855}
+\]
+
+with no power saving.  The exact identity (4.769) annihilates the
+constant Fourier mode, but it does not annihilate neighborhoods of the
+small-denominator major arcs.  Those neighborhoods occur inside the
+Schwartz support of \(\widehat w(A\alpha)\) and require their own
+signed major-arc analysis.
+
+Therefore the new theorem materially narrows the hard model deficit
+from one full power to, at best, (1/5) on balanced minor arcs, but it
+does not prove the determinant gate.  A viable hybrid must both make
+the four uses joint (or combine them with a determinant estimate) and
+extract an additional (T^{1/5}), while separately using the physical
+centering on all major arcs.  The adapter
+`robles_four_mobius_minor_arc_audit` records (4.851)--(4.854) and keeps
+the joint-application, major-arc, physical-kernel, and coverage flags
+false.
+
+### 4.112 The legal balanced Type-II use recovers only the determinant-window count
+
+The deliberately favourable calculation in Section 4.111 starts from
+the already windowed exponent \(3\).  To avoid counting that geometric
+saving twice, apply the actual Type-II corollary in Robles's proof before
+the determinant window is imposed.  In the balanced product box put
+
+
+\[
+ P_T(\alpha)=\sum_{a,b\asymp T}
+   \mu(a)\mu(b)U(a/T)V(b/T)e(\alpha ab),
+\tag{4.856}
+\]
+
+and define \(Q_T\) in the same way with the other two variables.  A
+dyadic partition and Mellin separation of the product cutoff give
+exact integrals of the displayed separated weights.  On a frequency
+cell whose reduced approximant has denominator \(q=T^\kappa\), the
+Type-II estimate with divisor-bounded grouped coefficients in Robles's
+proof, specialized to ambient length \(x=T^2\) and factor lengths
+\(M=N=T\), is
+
+\[
+ |P_T(\alpha)|
+ \ll T\bigl(q+T+T^2/q\bigr)^{1/2}(\log T)^D.
+\tag{4.857}
+\]
+
+Thus its exact \(T\)-exponent is
+
+\[
+ \boxed{
+ E_{\rm side}(\kappa)
+ =1+\frac12\max\{\kappa,1,2-\kappa\}
+ =\frac32+\frac12|\kappa-1|.}
+\tag{4.858}
+\]
+
+The minimum is \(3/2\), attained only at \(\kappa=1\).  The normalization
+must now be restored.  Fourier inversion of the hard model (4.821), with
+\(Y=T^2\) and \(H=T\), is exactly
+
+\[
+ \begin{aligned}
+ \mathcal A(T^2,T)
+ &=T\int_{\mathbb R}\widehat w(T\alpha)
+       P_T(-\alpha)Q_T(\alpha)\,d\alpha\\
+ &=\int_{\mathbb R}\widehat w(u)
+       P_T(-u/T)Q_T(u/T)\,du.
+ \end{aligned}
+\tag{4.859}
+\]
+
+The prefactor \(T\) and the Fourier-window width \(T^{-1}\) cancel.  The
+unwindowed pair \(P_TQ_T\) has ambient exponent \(4\).  Applying (4.857)
+to both sides at the optimal denominator therefore gives
+
+\[
+ \boxed{
+ E_{\rm two\,sides}(1)=2\cdot\frac32=3,
+ \qquad E_{\rm target}=2,
+ \qquad E_{\rm deficit}=1.}
+\tag{4.860}
+\]
+
+Exponent \(3\) is exactly the elementary determinant-window count in
+(4.821).  Hence the two Type-II applications recover the geometric
+codimension-one saving \(T^4\to T^3\); they do not provide any
+post-geometric Möbius saving.  Away from the optimal denominator the
+bound is even larger:
+
+\[
+ \boxed{
+ E_{\rm normalized}(\kappa)=3+|\kappa-1|.}
+\tag{4.861}
+\]
+
+Finally, bounding the product of the two sides pointwise takes an
+absolute value before the \(u\)-integral and loses the exact centering
+
+\[
+ \int_{\mathbb R}\widehat w(u)\,du=w(0)=0.
+\]
+
+So the missing input is not another one-sided additive-twist estimate.
+It is a signed two-side estimate for the centered integral in (4.859)
+which gains a full \(T\) beyond (4.860), together with the inherited
+coprimality and ratio tensors of (4.768).  The adapter
+`robles_balanced_product_fourier_audit` records (4.857)--(4.861) and
+keeps the centering, signed-correlation, and coverage flags false.
+
+
 
 ## 5. Route C: endpoint-to-all-length interpolation
 
@@ -12093,8 +25397,18 @@ theorem for a fixed horocycle orbit of
 directly apply because both the rational point and its modulus vary in
 (2.3).
 
-The outcome of the spike is therefore precise: Mellin separation and
-length interpolation are rejected; a nonempty endpoint logarithmic region
-is now proved; the surviving task is a power-saving pre-Cauchy
-two-Möbius spectral inequality for the displayed \(g(\delta)\), together
-with the deep-logarithmic and transform-tail estimates.
+The chronological spike first ended at the pre-Cauchy two-Möbius
+spectral inequality displayed above.  The later exact-level route in
+Sections 4.109g--4.109zh now start from the corrected Kiral--Young
+specialization: the physical Poisson orbit is directly the level-\(AB\)
+cross-cusp Kuznetsov orbit, and the normalized fixed-entry square has
+the exact \(A^{-1}\) factor without the optional \(ABj\) lift.  Those
+sections also prove the stronger weighted primitive-conductor PEVP
+square function.  Section 4.109zi shows that neither fixed-entry
+statement controls the actual outer \(A,B\) sums.  Within that
+historical spectral route, the remaining theorem is the joint signed
+outer-entry gate \((\mathrm{OLISK})_q\), equivalently MMKLS.  The later
+cubic complementary-divisor route instead treats the original signed
+sum before this positive majorization, so the failure of OLISK/MMKLS
+is no longer an obstruction to the unconditional asymptotic proved in
+Section 4.109zjaced000h.
