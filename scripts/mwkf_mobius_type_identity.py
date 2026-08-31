@@ -36,6 +36,397 @@ class TwistedRestrictedMobiusLogSignature:
 
 
 @dataclass(frozen=True)
+class BalancedSelbergReflection:
+    direct: Fraction
+    completed_prime_part: Fraction
+    negative_reflected_tail: Fraction
+    reflected_cofactors: tuple[int, ...]
+
+
+@dataclass(frozen=True)
+class ReflectedPairKernelEnergy:
+    direct_truncated: Fraction
+    completed_completed: Fraction
+    completed_reflected: Fraction
+    reflected_completed: Fraction
+    reflected_reflected: Fraction
+    expanded: Fraction
+
+
+@dataclass(frozen=True)
+class ReflectedBoundaryDiagonal:
+    direct: Fraction
+    lcm_sum: Fraction
+    gcd_parameterized_sum: Fraction
+    active_gcd_coordinates: tuple[tuple[int, int, int], ...]
+
+
+@dataclass(frozen=True)
+class ReflectedBoundaryPairKernel:
+    direct: Fraction
+    unfolded: Fraction
+    active_factor_pairs: tuple[tuple[int, int, int, int], ...]
+
+
+@dataclass(frozen=True)
+class SecondaryZeroPacket:
+    afe_direction: str
+    poisson_frequency_h: int
+    additive_shift_delta: int
+    dyadic_label: str
+    pair_kernel: dict[tuple[int, int], Fraction]
+
+
+@dataclass(frozen=True)
+class ZeroFrequencyReflectedMaster:
+    packet_contributions: tuple[tuple[str, int, int, str, Fraction], ...]
+    afe_direction_contributions: tuple[tuple[str, Fraction], ...]
+    direct_full_remainder: Fraction
+    completed_completed: Fraction
+    completed_reflected: Fraction
+    reflected_completed: Fraction
+    reflected_reflected: Fraction
+    explicit_diagonal: Fraction
+    reflected_unfolded: Fraction
+    resonant_row_component: Fraction
+    resonant_column_component: Fraction
+    resonant_grand_component: Fraction
+    resonant_reflected_projection: Fraction
+    resonant_master_term: Fraction
+    centered_remainder: Fraction
+    recombined_master_remainder: Fraction
+    weighted_centered_row_sums: tuple[tuple[int, Fraction], ...]
+    weighted_centered_column_sums: tuple[tuple[int, Fraction], ...]
+    centered_kernel_entries: tuple[tuple[int, int, Fraction], ...]
+
+
+@dataclass(frozen=True)
+class CanonicalSecondaryZeroEnergy:
+    spectral_amplitudes: tuple[tuple[str, Fraction], ...]
+    direct_one_direction_energy: Fraction
+    expanded_gram_energy: Fraction
+    explicit_diagonal: Fraction
+    secondary_zero_off_diagonal: Fraction
+    secondary_zero_plus_diagonal: Fraction
+    unfolded_two_afe_secondary_zero: Fraction
+    unfolded_two_afe_diagonal: Fraction
+    unfolded_two_afe_full_energy: Fraction
+    gram_expansion_exact: bool
+    secondary_zero_is_diagonal_removed_energy: bool
+    two_afe_directions_reinforce: bool
+    explicit_diagonal_restores_full_energy: bool
+    reciprocal_lcm_kernel_identified: bool
+    canonical_resonant_bound_proved: bool
+
+
+@dataclass(frozen=True)
+class MellinProductPacket:
+    """A product-coordinate packet after global Poisson reassembly.
+
+    It has no individual h label: fixed-h continuous kernels have not
+    been identified with integer product kernels.
+    """
+
+    afe_direction: str
+    mellin_label: str
+    product_partition_label: str
+    pair_kernel: dict[tuple[int, int], Fraction]
+
+
+@dataclass(frozen=True)
+class PhysicalZeroMellinReflectionAdapter:
+    product_coefficients: tuple[tuple[int, Fraction], ...]
+    packet_contributions: tuple[
+        tuple[str, int, int, str, Fraction, Fraction], ...
+    ]
+    direct_four_variable_sum: Fraction
+    paired_product_sum: Fraction
+    completed_completed: Fraction
+    completed_reflected: Fraction
+    reflected_completed: Fraction
+    reflected_reflected: Fraction
+    explicit_diagonal: Fraction
+    direct_remainder: Fraction
+    reflected_remainder: Fraction
+    afe_directions_retained: tuple[str, ...]
+    full_afe_direction_pair_present: bool
+    product_coefficients_equal_completed_minus_reflected: bool
+    four_variable_to_product_pairing_exact: bool
+    reflection_expansion_exact: bool
+    full_supplied_packet_adapter_exact: bool
+    original_h_delta_and_dyadic_labels_retained: bool
+    analytic_packet_family_exhaustive: bool
+    unified_signed_operator_bound_proved: bool
+
+
+@dataclass(frozen=True)
+class UnifiedSignedZeroNonzeroOperator:
+    nonzero_packet_contributions: tuple[
+        tuple[str, int, int, str, Fraction], ...
+    ]
+    canonical_zero_contribution: Fraction
+    raw_nonzero_contribution: Fraction
+    unified_direct_contribution: Fraction
+    nonzero_resonant_projection_contribution: Fraction
+    resonant_contribution: Fraction
+    centered_contribution: Fraction
+    recombined_contribution: Fraction
+    centered_kernel_entries: tuple[tuple[int, int, Fraction], ...]
+    resonant_kernel_entries: tuple[tuple[int, int, Fraction], ...]
+    unified_kernel_entries: tuple[tuple[int, int, Fraction], ...]
+    weighted_centered_row_sums: tuple[tuple[int, Fraction], ...]
+    weighted_centered_column_sums: tuple[tuple[int, Fraction], ...]
+    direct_ttstar_energy: Fraction
+    resonant_ttstar_energy: Fraction
+    resonant_centered_ttstar_cross: Fraction
+    centered_resonant_ttstar_cross: Fraction
+    centered_ttstar_energy: Fraction
+    recombined_ttstar_energy: Fraction
+    signed_kernel_recombination_exact: bool
+    ttstar_recombination_exact: bool
+    nonzero_centered_once: bool
+    packet_labels_retained_before_ttstar: bool
+    physical_nonzero_density_derived: bool
+    separate_resonant_or_centered_bound_proved: bool
+    coupled_kernel_gate_closed: bool
+
+
+@dataclass(frozen=True)
+class UnifiedSignedDoubleMobiusTypeOperator:
+    raw_mobius_coefficients: tuple[tuple[int, Fraction], ...]
+    type_coefficient_vectors: tuple[
+        tuple[str, tuple[tuple[int, Fraction], ...]], ...
+    ]
+    type_factorization_rows: tuple[
+        tuple[int, str, int, int, int, int], ...
+    ]
+    active_type_names: tuple[str, ...]
+    packet_product_labels: tuple[
+        tuple[str, str, int, int, int, str], ...
+    ]
+    full_type_ttstar_entries: tuple[tuple[str, str, Fraction], ...]
+    resonant_resonant_type_ttstar_entries: tuple[
+        tuple[str, str, Fraction], ...
+    ]
+    resonant_centered_type_ttstar_entries: tuple[
+        tuple[str, str, Fraction], ...
+    ]
+    centered_resonant_type_ttstar_entries: tuple[
+        tuple[str, str, Fraction], ...
+    ]
+    centered_centered_type_ttstar_entries: tuple[
+        tuple[str, str, Fraction], ...
+    ]
+    direct_full_ttstar_energy: Fraction
+    signed_type_ttstar_sum: Fraction
+    four_kernel_component_type_ttstar_sum: Fraction
+    raw_coefficients_reassemble_from_type_vectors: bool
+    every_type_block_keeps_full_unified_kernel: bool
+    a_equals_h_times_delta_retained: bool
+    two_mobius_weights_retained_until_global_ttstar: bool
+    no_type_blockwise_absolute_value_taken: bool
+    physical_nonzero_density_derived: bool
+    USZNTT_bound_proved: bool
+    coupled_kernel_gate_closed: bool
+
+
+@dataclass(frozen=True)
+class BBLRZeroFrequencyReindex:
+    direct_sum: Fraction
+    reindexed_sum: Fraction
+    product_pair_sum: Fraction
+    left_aggregate_entries: tuple[tuple[int, int, Fraction], ...]
+    right_aggregate_entries: tuple[tuple[int, int, Fraction], ...]
+    active_coprime_coordinates: tuple[tuple[int, int, int], ...]
+    labelled_product_pair_kernel_entries: tuple[
+        tuple[int, int, int, Fraction], ...
+    ]
+    combined_product_pair_kernel_entries: tuple[
+        tuple[int, int, Fraction], ...
+    ]
+    primitive_to_product_coordinates_are_bijective: bool
+    original_shift_labels_preserved: bool
+    secondary_zero_packet_shaped_kernels_constructed: bool
+    left_and_right_outer_weights_remain_separate: bool
+    zero_frequency_is_phase_free: bool
+    pre_cauchy_stage_identification_proved: bool
+    completed_coefficient_identification_proved: bool
+    packet_family_exhaustive: bool
+    registered_zero_master_identification_proved: bool
+
+
+@dataclass(frozen=True)
+class BBLRNonzeroFrequencyReindex:
+    direct_sum: Fraction
+    reindexed_sum: Fraction
+    active_labels: tuple[
+        tuple[int, int, int, int, int, int, int, int], ...
+    ]
+    nonzero_poisson_frequencies_retained: bool
+    original_shift_and_delta_labels_retained: bool
+    product_frequency_h_times_delta_preserved: bool
+    poisson_product_h_times_l_preserved: bool
+    type_factorizations_recombined_before_absolute_values: bool
+    left_and_right_mobius_families_remain_separate: bool
+    global_ttstar_estimate_proved: bool
+
+
+@dataclass(frozen=True)
+class BBLRReciprocalPhaseCollision:
+    left_phase_mod_one: Fraction
+    right_phase_mod_one: Fraction
+    common_phase_modulus: int
+    cross_phase_numerator: int
+    exact_phase_collision: bool
+    identical_rows: bool
+    left_original_product_frequency: int
+    right_original_product_frequency: int
+    left_poisson_product: int
+    right_poisson_product: int
+    resonance_can_join_distinct_product_frequencies: bool
+
+
+@dataclass(frozen=True)
+class BBLRPhaseGroupTTStar:
+    common_phase_modulus: int
+    phase_groups: tuple[tuple[Fraction, tuple[str, ...]], ...]
+    identity_diagonal_quadratic: Fraction
+    distinct_collision_quadratic: Fraction
+    orthogonality_quadratic: Fraction
+    signed_cross_terms_can_cancel_identity_diagonal: bool
+    product_frequency_partition_diagonalizes_ttstar: bool
+    absolute_value_phase_classes_reach_target_proved: bool
+
+
+@dataclass(frozen=True)
+class BBLRNearDiagonalResonanceCertificate:
+    modulus_y: int
+    gap_c: int
+    reciprocal_x: int
+    inverse_x_mod_y: int
+    phase_center_residue: int
+    resonant_h_values: tuple[int, ...]
+    phase_residues: tuple[int, ...]
+    centered_phase_turns: tuple[Fraction, ...]
+    max_absolute_centered_phase_turns: Fraction
+    all_near_diagonal_congruences_verified: bool
+    packet_lies_in_positive_real_half_plane: bool
+    term_count: int
+    absolute_majorant_real_part_lower_bound: Fraction
+    local_h_l_completion_alone_reaches_gate: bool
+    xy_or_outer_coefficient_average_still_required: bool
+
+
+@dataclass(frozen=True)
+class BBLRGapResonanceCoordinates:
+    x: int
+    y: int
+    h: int
+    gap_c: int
+    inverse_x_mod_y: int
+    phase_residue_r: int
+    determinant_index_k: int
+    gap_determinant_identity_verified: bool
+    principal_near_diagonal_incidence: bool
+
+
+@dataclass(frozen=True)
+class BBLRPrincipalIncidenceSolutionLine:
+    x: int
+    y: int
+    r: int
+    m2: int
+    n2: int
+    shift_h: int
+    line_parameter_t: int
+    solution_line_identity_verified: bool
+    short_inner_support_forces_t_zero: bool
+    partial_diagonal_m2_equals_n2_equals_r: bool
+
+
+@dataclass(frozen=True)
+class BBLRPartialDiagonalCorrelation:
+    direct_plus_sum: Fraction
+    direct_minus_sum: Fraction
+    direct_combined_sum: Fraction
+    product_pair_correlation_sum: Fraction
+    active_product_pair_rows: tuple[
+        tuple[str, int, int, int, int, Fraction], ...
+    ]
+    factorized_to_product_pair_identity_verified: bool
+    plus_minus_exhaust_every_unequal_product_pair: bool
+    common_second_factor_retained: bool
+    equal_product_diagonal_excluded: bool
+    analytic_afe_packet_exhaustive: bool
+    original_zeta_mollifier_coefficient_adapter_proved: bool
+    partial_diagonal_target_bound_proved: bool
+
+
+@dataclass(frozen=True)
+class AdditiveBandZeroMode:
+    modulus: int
+    direct_band_sum: Fraction
+    combined_kernel_mean: Fraction
+    constant_mode_contribution: Fraction
+    centered_band_sum: Fraction
+    recombined_band_sum: Fraction
+    centered_kernel_shift_sum: Fraction
+    combined_kernel_entries: tuple[tuple[int, Fraction], ...]
+    centered_kernel_entries: tuple[tuple[int, Fraction], ...]
+    packet_labels_retained: tuple[str, ...]
+    zero_mode_extraction_identity_verified: bool
+    combined_packet_zero_mode_vanishes: bool
+    analytic_afe_ordering_kernel_derived: bool
+
+
+@dataclass(frozen=True)
+class BBLRNearDiagonalOuterCorrelation:
+    direct_sum: Fraction
+    reindexed_sum: Fraction
+    positive_near_diagonal_sum: Fraction
+    positive_principal_incidence_sum: Fraction
+    positive_nonprincipal_incidence_sum: Fraction
+    zero_gap_sum: Fraction
+    negative_or_far_gap_sum: Fraction
+    positive_near_diagonal_entries: tuple[
+        tuple[int, int, int, int, int, int, int, Fraction], ...
+    ]
+    full_gap_partition_identity_verified: bool
+    principal_incidence_partition_verified: bool
+    type_factorizations_recombined_before_gap_partition: bool
+    all_h_delta_l_labels_preserved: bool
+    original_coupled_kernel_stage_exhaustive: bool
+
+
+@dataclass(frozen=True)
+class CenteredOperatorSavingLedger:
+    raw_sum_exponent: Fraction
+    target_sum_exponent: Fraction
+    required_operator_saving_exponent: Fraction
+    required_ttstar_saving_exponent: Fraction
+    fixed_coefficient_operator_gate_is_sufficient: bool
+    uniform_unit_ball_operator_gate_is_equivalent: bool
+
+
+@dataclass(frozen=True)
+class CoupledOperatorRow:
+    label: str
+    short_slope_k: int
+    short_slope_l: int
+
+
+@dataclass(frozen=True)
+class CoupledTTStarDeterminantSplit:
+    direct_quadratic: Fraction
+    gram_quadratic: Fraction
+    determinant_zero_quadratic: Fraction
+    determinant_nonzero_quadratic: Fraction
+    determinant_zero_pairs: tuple[tuple[str, str], ...]
+    determinant_nonzero_pairs: tuple[tuple[str, str], ...]
+    gram_entries: tuple[tuple[str, str, Fraction], ...]
+
+
+@dataclass(frozen=True)
 class CoprimeDivisorPairIdentity:
     direct_coprime_sum: Fraction
     mobius_inverted_sum: Fraction
@@ -80,6 +471,146 @@ class MobiusUnsignedSectorRecombination:
 
 
 @dataclass(frozen=True)
+class BBLRCoefficientStageSeparationWitness:
+    cutoff_u: int
+    shared_outer_product: int
+    left_parent: int
+    right_parent: int
+    left_outer_contribution: int
+    right_outer_contribution: int
+    same_outer_product: bool
+    parent_dependent_outer_weight: bool
+    direct_outer_index_only_adapter_refuted: bool
+    packet_exhaustive_parent_aware_adapter_still_open: bool
+
+
+@dataclass(frozen=True)
+class BBLRCommonUnsignedCofactorGram:
+    cutoff_u: int
+    direct_partial_diagonal_sum: Fraction
+    gcd_kernel_sum: Fraction
+    common_cofactor_gram_sum: Fraction
+    active_common_cofactor_rows: tuple[tuple[int, Fraction, Fraction], ...]
+    direct_to_gcd_kernel_identity_verified: bool
+    gcd_kernel_to_gram_identity_verified: bool
+    parent_and_inner_quotient_retained: bool
+    analytic_bblr_packet_exhaustive: bool
+    target_bound_proved: bool
+
+
+@dataclass(frozen=True)
+class BBLRFourParentPartialDiagonal:
+    parent_cutoffs: tuple[int, int, int, int]
+    direct_four_type_sum: Fraction
+    recombined_two_parent_sum: Fraction
+    gcd_kernel_sum: Fraction
+    labelled_recombined_sums: tuple[tuple[str, Fraction], ...]
+    direct_to_two_parent_recombination_verified: bool
+    two_parent_to_gcd_kernel_verified: bool
+    unconstrained_parent_type_sums_recombined_to_mobius: bool
+    common_diagonal_parent_kernel_retained: bool
+    supplied_slot_order_labels_retained: tuple[str, ...]
+    analytic_afe_packet_exhaustive: bool
+    target_bound_proved: bool
+
+
+@dataclass(frozen=True)
+class BBLRPartialDiagonalSlotCoprimality:
+    a: int
+    b: int
+    r1: int
+    r2: int
+    shift_h: int
+    pairing_gcds: tuple[tuple[str, int], ...]
+    three_static_or_mixed_pairings_forced_unit: bool
+    moving_pair_gcd: int
+    moving_pair_gcd_divides_shift: bool
+    only_moving_pair_can_support_nontrivial_common_cofactor: bool
+
+
+@dataclass(frozen=True)
+class BBLRMovingParentZeroMode:
+    modulus: int
+    direct_parent_master_sum: Fraction
+    combined_kernel_mean_by_r: tuple[tuple[int, Fraction], ...]
+    constant_mode_contribution: Fraction
+    centered_parent_master_sum: Fraction
+    recombined_parent_master_sum: Fraction
+    centered_kernel_shift_sum_by_r: tuple[tuple[int, Fraction], ...]
+    packet_labels_retained: tuple[str, ...]
+    common_r_divides_original_shift_verified: bool
+    packet_sum_precedes_centering: bool
+    zero_mode_split_identity_verified: bool
+    analytic_afe_ordering_kernel_exhaustive: bool
+    target_bound_proved: bool
+
+
+@dataclass(frozen=True)
+class BBLRCyclicCenteringModulusWitness:
+    moduli: tuple[int, ...]
+    direct_parent_master_sums: tuple[Fraction, ...]
+    cyclic_kernel_means_by_modulus: tuple[
+        tuple[int, tuple[tuple[int, Fraction], ...]],
+        ...,
+    ]
+    constant_contributions: tuple[Fraction, ...]
+    centered_contributions: tuple[Fraction, ...]
+    every_split_recombines: bool
+    constant_summand_depends_on_auxiliary_modulus: bool
+    cyclic_constant_identified_with_poisson_zero_mode: bool
+    target_bound_proved: bool
+
+
+@dataclass(frozen=True)
+class BBLRPoissonZeroGram:
+    primitive_zero_coefficient: Fraction
+    continuous_gram_energy: Fraction
+    pairwise_gram_quadratic: Fraction
+    continuous_self_gram_diagonal: Fraction
+    continuous_offdiagonal_zero_mode: Fraction
+    weighted_offdiagonal_zero_mode: Fraction
+    discrete_identity_diagonal: Fraction
+    diagonal_sampling_correction: Fraction
+    discrete_diagonal_plus_zero_mode: Fraction
+    recombined_resonant_main_term: Fraction
+    pairwise_gram_identity_verified: bool
+    resonant_main_recombination_verified: bool
+    canonical_zero_mode_is_gram_before_diagonal_removal: bool
+    offdiagonal_zero_mode_is_sign_indefinite: bool
+    continuous_self_gram_identified_with_discrete_diagonal: bool
+    target_bound_proved: bool
+
+
+@dataclass(frozen=True)
+class BBLRTensorParentProjection:
+    left_static_mobius_sum: Fraction
+    right_static_mobius_sum: Fraction
+    left_moving_projection_by_r: tuple[tuple[int, Fraction], ...]
+    right_moving_projection_by_r: tuple[tuple[int, Fraction], ...]
+    left_direct_parent_projection_by_r: tuple[tuple[int, Fraction], ...]
+    right_direct_parent_projection_by_r: tuple[tuple[int, Fraction], ...]
+    left_factorization_verified: bool
+    right_factorization_verified: bool
+    static_mertens_factors_remain: bool
+
+
+@dataclass(frozen=True)
+class BBLRLabelledTensorZeroMode:
+    direct_labelled_master_sum: Fraction
+    aggregate_kernel_mean_by_r: tuple[tuple[int, Fraction], ...]
+    aggregate_kernel_means_vanish: bool
+    constant_mode_by_label: tuple[tuple[str, Fraction], ...]
+    weighted_constant_mode_contribution: Fraction
+    weighted_constant_mode_vanishes: bool
+    centered_labelled_master_sum: Fraction
+    recombined_labelled_master_sum: Fraction
+    zero_mode_split_identity_verified: bool
+    parent_weights_are_label_dependent: bool
+    kernel_only_mean_cancellation_is_sufficient: bool
+    target_bound_proved: bool
+
+
+@dataclass(frozen=True)
 class FourMobiusUnsignedSectorRecombination:
     values: tuple[int, int, int, int]
     cutoff_u: int
@@ -88,6 +619,59 @@ class FourMobiusUnsignedSectorRecombination:
     all_other_boxes_contribution: int
     pure_box_is_unweighted_and_positive: bool
     recombination_identity_verified: bool
+
+
+@dataclass(frozen=True)
+class CoupledMobiusSectorTerm:
+    sector: str
+    r_long_factor: int
+    r_short_mobius_factor: int
+    s_long_factor: int
+    s_short_mobius_factor: int
+    r_truncated_coefficient: int
+    r_short_mobius_value: int
+    s_truncated_coefficient: int
+    s_short_mobius_value: int
+    coefficient: int
+    product_frequency: int
+    phase_mod_one: Fraction
+    poisson_frequency: int | None
+    poisson_product: int | None
+    poisson_phase_mod_one: Fraction | None
+
+
+@dataclass(frozen=True)
+class CoupledProductDoubleMobiusCertificate:
+    r: int
+    s: int
+    product_frequency: int
+    phase_mod_one: Fraction
+    poisson_frequency: int | None
+    poisson_product: int | None
+    poisson_phase_mod_one: Fraction | None
+    direct_mobius_product: int
+    sector_sums: tuple[tuple[str, int], ...]
+    terms: tuple[CoupledMobiusSectorTerm, ...]
+    product_frequency_preserved: bool
+    poisson_product_preserved: bool
+    both_reciprocal_phases_preserved: bool
+    two_mobius_sides_preserved: bool
+    recombination_identity_verified: bool
+
+
+@dataclass(frozen=True)
+class DrappeauDoubleQuotientPhase:
+    original_r: int
+    original_s: int
+    drappeau_r: int
+    drappeau_d: int
+    drappeau_s: int
+    drappeau_c: int
+    drappeau_n: int
+    original_phase: Fraction
+    drappeau_phase: Fraction
+    phase_identity_verified: bool
+    coprimality_identity_verified: bool
 
 
 @dataclass(frozen=True)
@@ -451,6 +1035,2875 @@ def truncated_selberg_divisor_sides(
         Fraction(0),
     )
     return direct, completed, reflected
+
+
+def balanced_selberg_reflection_sides(
+    *,
+    divisor: int,
+    cofactor: int,
+    cutoff: int,
+    normalization: Fraction,
+    prime_log_weights: dict[int, Fraction],
+) -> BalancedSelbergReflection:
+    """Exact zero-mode reflection on a balanced squarefree product.
+
+    The hypotheses ``1 < cofactor < divisor <= cutoff`` and
+    ``mobius(divisor) != 0`` force ``divisor * cofactor`` to have at
+    least two distinct prime factors.  Hence its completed divisor sum
+    has no von-Mangoldt part.  Every reflected cofactor ``k`` obeys the
+    strict descent ``k < cofactor`` because ``k*cutoff < divisor*cofactor``.
+    """
+    if not 1 < cofactor < divisor <= cutoff:
+        raise ValueError("require 1 < cofactor < divisor <= cutoff")
+    if mobius(divisor) == 0:
+        raise ValueError("the balanced divisor must be squarefree")
+
+    product = divisor * cofactor
+    direct, _, reflected = truncated_selberg_divisor_sides(
+        product,
+        cutoff=cutoff,
+        normalization=normalization,
+        prime_log_weights=prime_log_weights,
+    )
+    reflected_cofactors = tuple(
+        k for k in divisors(product) if k * cutoff < product
+    )
+    completed_prime_part = Fraction(0)
+    return BalancedSelbergReflection(
+        direct=direct,
+        completed_prime_part=completed_prime_part,
+        negative_reflected_tail=reflected - completed_prime_part,
+        reflected_cofactors=reflected_cofactors,
+    )
+
+
+def reflected_pair_kernel_energy_sides(
+    *,
+    completed_coefficients: dict[int, Fraction],
+    reflected_coefficients: dict[int, Fraction],
+    pair_kernel: dict[tuple[int, int], Fraction],
+) -> ReflectedPairKernelEnergy:
+    """Expand ``B=F-R`` against an arbitrary finite pair kernel."""
+    support = tuple(
+        sorted(set(completed_coefficients) | set(reflected_coefficients))
+    )
+    if any(index <= 0 for index in support):
+        raise ValueError("pair-kernel coefficient indices must be positive")
+
+    def coefficient(
+        coefficients: dict[int, Fraction], index: int
+    ) -> Fraction:
+        return Fraction(coefficients.get(index, Fraction(0)))
+
+    def pair_sum(
+        left: dict[int, Fraction], right: dict[int, Fraction]
+    ) -> Fraction:
+        return sum(
+            (
+                Fraction(pair_kernel.get((x, y), Fraction(0)))
+                * coefficient(left, x)
+                * coefficient(right, y)
+                for x in support
+                for y in support
+            ),
+            Fraction(0),
+        )
+
+    truncated = {
+        index: coefficient(completed_coefficients, index)
+        - coefficient(reflected_coefficients, index)
+        for index in support
+    }
+    direct_truncated = pair_sum(truncated, truncated)
+    completed_completed = pair_sum(
+        completed_coefficients, completed_coefficients
+    )
+    completed_reflected = pair_sum(
+        completed_coefficients, reflected_coefficients
+    )
+    reflected_completed = pair_sum(
+        reflected_coefficients, completed_coefficients
+    )
+    reflected_reflected = pair_sum(
+        reflected_coefficients, reflected_coefficients
+    )
+    expanded = (
+        completed_completed
+        - completed_reflected
+        - reflected_completed
+        + reflected_reflected
+    )
+    return ReflectedPairKernelEnergy(
+        direct_truncated=direct_truncated,
+        completed_completed=completed_completed,
+        completed_reflected=completed_reflected,
+        reflected_completed=reflected_completed,
+        reflected_reflected=reflected_reflected,
+        expanded=expanded,
+    )
+
+
+def reflected_boundary_diagonal_sides(
+    *,
+    long_weights: dict[int, Fraction],
+    cutoff: int,
+    product_cutoff: int,
+) -> ReflectedBoundaryDiagonal:
+    """Diagonal reflected energy in direct, LCM, and gcd coordinates."""
+    if cutoff <= 0 or product_cutoff <= 0:
+        raise ValueError("boundary cutoffs must be positive")
+    if any(index <= cutoff for index in long_weights):
+        raise ValueError("all reflected divisors must exceed the cutoff")
+    if any(mobius(index) == 0 for index in long_weights):
+        raise ValueError("reflected divisors must be squarefree")
+
+    weights = {
+        index: Fraction(weight) for index, weight in long_weights.items()
+    }
+    direct = sum(
+        (
+            sum(
+                (
+                    weight
+                    for divisor, weight in weights.items()
+                    if product % divisor == 0
+                ),
+                Fraction(0),
+            )
+            ** 2
+            for product in range(1, product_cutoff + 1)
+        ),
+        Fraction(0),
+    )
+
+    lcm_sum = Fraction(0)
+    gcd_parameterized_sum = Fraction(0)
+    active_coordinates: list[tuple[int, int, int]] = []
+    for left_divisor, left_weight in weights.items():
+        for right_divisor, right_weight in weights.items():
+            common = gcd(left_divisor, right_divisor)
+            left = left_divisor // common
+            right = right_divisor // common
+            multiple_count = product_cutoff // (common * left * right)
+            contribution = left_weight * right_weight * multiple_count
+            lcm_sum += contribution
+            gcd_parameterized_sum += contribution
+            if contribution:
+                active_coordinates.append((common, left, right))
+
+    return ReflectedBoundaryDiagonal(
+        direct=direct,
+        lcm_sum=lcm_sum,
+        gcd_parameterized_sum=gcd_parameterized_sum,
+        active_gcd_coordinates=tuple(active_coordinates),
+    )
+
+
+def reflected_boundary_pair_kernel_sides(
+    *,
+    long_weights: dict[int, Fraction],
+    cutoff: int,
+    product_cutoff: int,
+    pair_kernel: dict[tuple[int, int], Fraction],
+) -> ReflectedBoundaryPairKernel:
+    """Unfold a reflected pair energy into its two short cofactors."""
+    if cutoff <= 0 or product_cutoff <= 0:
+        raise ValueError("boundary cutoffs must be positive")
+    if any(index <= cutoff for index in long_weights):
+        raise ValueError("all reflected divisors must exceed the cutoff")
+    if any(mobius(index) == 0 for index in long_weights):
+        raise ValueError("reflected divisors must be squarefree")
+
+    weights = {
+        index: Fraction(weight) for index, weight in long_weights.items()
+    }
+
+    def reflected_coefficient(product: int) -> Fraction:
+        return sum(
+            (
+                weight
+                for divisor, weight in weights.items()
+                if product % divisor == 0
+            ),
+            Fraction(0),
+        )
+
+    direct = sum(
+        (
+            Fraction(kernel_weight)
+            * reflected_coefficient(left_product)
+            * reflected_coefficient(right_product)
+            for (left_product, right_product), kernel_weight in (
+                pair_kernel.items()
+            )
+            if 1 <= left_product <= product_cutoff
+            and 1 <= right_product <= product_cutoff
+        ),
+        Fraction(0),
+    )
+
+    unfolded = Fraction(0)
+    active_factor_pairs: list[tuple[int, int, int, int]] = []
+    for left_divisor, left_weight in weights.items():
+        for right_divisor, right_weight in weights.items():
+            for left_cofactor in range(
+                1, product_cutoff // left_divisor + 1
+            ):
+                for right_cofactor in range(
+                    1, product_cutoff // right_divisor + 1
+                ):
+                    kernel_weight = Fraction(
+                        pair_kernel.get(
+                            (
+                                left_divisor * left_cofactor,
+                                right_divisor * right_cofactor,
+                            ),
+                            Fraction(0),
+                        )
+                    )
+                    contribution = (
+                        left_weight * right_weight * kernel_weight
+                    )
+                    unfolded += contribution
+                    if contribution:
+                        active_factor_pairs.append(
+                            (
+                                left_divisor,
+                                left_cofactor,
+                                right_divisor,
+                                right_cofactor,
+                            )
+                        )
+
+    return ReflectedBoundaryPairKernel(
+        direct=direct,
+        unfolded=unfolded,
+        active_factor_pairs=tuple(active_factor_pairs),
+    )
+
+
+def bblr_nonzero_frequency_reindex_sides(
+    *,
+    left_outer_weights: dict[int, Fraction],
+    left_inner_weights: dict[int, Fraction],
+    right_outer_weights: dict[int, Fraction],
+    right_inner_weights: dict[int, Fraction],
+    labelled_kernels: dict[tuple[int, int, int, int, int, int], Fraction],
+) -> BBLRNonzeroFrequencyReindex:
+    """Recombine Type factorizations in the full BBLR nonzero-l kernel.
+
+    Kernel keys are ``(d,X,Y,h,delta,l)`` with ``(X,Y)=1`` and
+    ``h*delta*l != 0``.  They may contain every smooth weight and phase
+    from the analytic problem.  BBLR equation (14) depends on a left
+    factorization ``a*m1`` and a right factorization ``b*n1`` only through
+    ``d=(a*m1,b*n1)``, ``X=a*m1/d`` and ``Y=b*n1/d``.  Consequently all
+    Type sectors with the same products can be summed in the two outer
+    coefficients before any absolute value, while the original h, delta,
+    nonzero l, and product-frequency h*delta labels remain unchanged.
+
+    This is the exact finite master reindexing only.  It supplies no
+    global dispersion or TT* estimate.
+    """
+
+    families = (
+        left_outer_weights,
+        left_inner_weights,
+        right_outer_weights,
+        right_inner_weights,
+    )
+    if any(not family for family in families):
+        raise ValueError("all four BBLR coefficient families must be nonempty")
+    if any(index <= 0 for family in families for index in family):
+        raise ValueError("BBLR coefficient indices must be positive")
+    if any(
+        d <= 0
+        or x <= 0
+        or y <= 0
+        or gcd(x, y) != 1
+        or h == 0
+        or delta == 0
+        or frequency == 0
+        for d, x, y, h, delta, frequency in labelled_kernels
+    ):
+        raise ValueError(
+            "labelled kernels require positive d, coprime X,Y, and nonzero h,delta,l"
+        )
+
+    left_products: dict[int, Fraction] = {}
+    for outer, outer_weight in left_outer_weights.items():
+        for inner, inner_weight in left_inner_weights.items():
+            product = outer * inner
+            left_products[product] = left_products.get(
+                product, Fraction(0)
+            ) + Fraction(outer_weight) * Fraction(inner_weight)
+
+    right_products: dict[int, Fraction] = {}
+    for outer, outer_weight in right_outer_weights.items():
+        for inner, inner_weight in right_inner_weights.items():
+            product = outer * inner
+            right_products[product] = right_products.get(
+                product, Fraction(0)
+            ) + Fraction(outer_weight) * Fraction(inner_weight)
+
+    coordinate_kernels: dict[tuple[int, int, int], Fraction] = {}
+    for (d, x, y, _, _, _), weight in labelled_kernels.items():
+        coordinate = (d, x, y)
+        coordinate_kernels[coordinate] = coordinate_kernels.get(
+            coordinate, Fraction(0)
+        ) + Fraction(weight)
+
+    direct = Fraction(0)
+    for left_product, left_weight in left_products.items():
+        for right_product, right_weight in right_products.items():
+            d = gcd(left_product, right_product)
+            direct += (
+                left_weight
+                * right_weight
+                * coordinate_kernels.get(
+                    (d, left_product // d, right_product // d),
+                    Fraction(0),
+                )
+            )
+
+    reindexed = Fraction(0)
+    active: list[tuple[int, int, int, int, int, int, int, int]] = []
+    for (d, x, y, h, delta, frequency), kernel_weight in sorted(
+        labelled_kernels.items()
+    ):
+        contribution = (
+            left_products.get(d * x, Fraction(0))
+            * right_products.get(d * y, Fraction(0))
+            * Fraction(kernel_weight)
+        )
+        reindexed += contribution
+        if contribution:
+            active.append(
+                (
+                    d,
+                    x,
+                    y,
+                    h,
+                    delta,
+                    frequency,
+                    h * delta,
+                    h * frequency,
+                )
+            )
+
+    return BBLRNonzeroFrequencyReindex(
+        direct_sum=direct,
+        reindexed_sum=reindexed,
+        active_labels=tuple(active),
+        nonzero_poisson_frequencies_retained=True,
+        original_shift_and_delta_labels_retained=True,
+        product_frequency_h_times_delta_preserved=True,
+        poisson_product_h_times_l_preserved=True,
+        type_factorizations_recombined_before_absolute_values=True,
+        left_and_right_mobius_families_remain_separate=True,
+        global_ttstar_estimate_proved=False,
+    )
+
+
+def bblr_near_diagonal_outer_correlation_sides(
+    *,
+    left_outer_weights: dict[int, Fraction],
+    left_inner_weights: dict[int, Fraction],
+    right_outer_weights: dict[int, Fraction],
+    right_inner_weights: dict[int, Fraction],
+    labelled_kernels: dict[tuple[int, int, int, int, int, int], Fraction],
+    positive_gap_min: int,
+    positive_gap_max: int,
+) -> BBLRNearDiagonalOuterCorrelation:
+    """Partition a supplied BBLR packet by the exact product gap ``X-Y``.
+
+    The four factor families are first convolved into the product
+    coefficients at ``d*X`` and ``d*Y``, exactly as in
+    :func:`bblr_nonzero_frequency_reindex_sides`.  Only then is the labelled
+    packet split into a positive near-diagonal window, the zero gap, and its
+    complement.  Thus the operation models (4.621zd) without taking an
+    absolute value between Type sectors.
+
+    This finite partition is exhaustive for the supplied packet.  It does
+    not prove that the supplied labels exhaust the original analytic
+    coupled kernel.
+    """
+
+    if positive_gap_min <= 0 or positive_gap_min > positive_gap_max:
+        raise ValueError("require an ordered strictly positive gap window")
+    base = bblr_nonzero_frequency_reindex_sides(
+        left_outer_weights=left_outer_weights,
+        left_inner_weights=left_inner_weights,
+        right_outer_weights=right_outer_weights,
+        right_inner_weights=right_inner_weights,
+        labelled_kernels=labelled_kernels,
+    )
+
+    left_products: dict[int, Fraction] = {}
+    for outer, outer_weight in left_outer_weights.items():
+        for inner, inner_weight in left_inner_weights.items():
+            product = outer * inner
+            left_products[product] = left_products.get(
+                product, Fraction(0)
+            ) + Fraction(outer_weight) * Fraction(inner_weight)
+
+    right_products: dict[int, Fraction] = {}
+    for outer, outer_weight in right_outer_weights.items():
+        for inner, inner_weight in right_inner_weights.items():
+            product = outer * inner
+            right_products[product] = right_products.get(
+                product, Fraction(0)
+            ) + Fraction(outer_weight) * Fraction(inner_weight)
+
+    positive = Fraction(0)
+    principal = Fraction(0)
+    nonprincipal = Fraction(0)
+    zero = Fraction(0)
+    complement = Fraction(0)
+    positive_entries: list[
+        tuple[int, int, int, int, int, int, int, Fraction]
+    ] = []
+    for (d, x, y, h, delta, frequency), kernel_weight in sorted(
+        labelled_kernels.items()
+    ):
+        contribution = (
+            left_products.get(d * x, Fraction(0))
+            * right_products.get(d * y, Fraction(0))
+            * Fraction(kernel_weight)
+        )
+        gap = x - y
+        if positive_gap_min <= gap <= positive_gap_max:
+            positive += contribution
+            inverse_x = 0 if y == 1 else pow(x, -1, y)
+            residue = (h * inverse_x) % y
+            determinant_numerator = residue * gap - h
+            if determinant_numerator % y:
+                raise AssertionError(
+                    "the BBLR gap determinant index must be integral"
+                )
+            if determinant_numerator // y == 0:
+                principal += contribution
+            else:
+                nonprincipal += contribution
+            if contribution:
+                positive_entries.append(
+                    (d, gap, y, x, h, delta, frequency, contribution)
+                )
+        elif gap == 0:
+            zero += contribution
+        else:
+            complement += contribution
+
+    return BBLRNearDiagonalOuterCorrelation(
+        direct_sum=base.direct_sum,
+        reindexed_sum=base.reindexed_sum,
+        positive_near_diagonal_sum=positive,
+        positive_principal_incidence_sum=principal,
+        positive_nonprincipal_incidence_sum=nonprincipal,
+        zero_gap_sum=zero,
+        negative_or_far_gap_sum=complement,
+        positive_near_diagonal_entries=tuple(positive_entries),
+        full_gap_partition_identity_verified=(
+            positive + zero + complement
+            == base.reindexed_sum
+            == base.direct_sum
+        ),
+        principal_incidence_partition_verified=(
+            principal + nonprincipal == positive
+        ),
+        type_factorizations_recombined_before_gap_partition=True,
+        all_h_delta_l_labels_preserved=True,
+        original_coupled_kernel_stage_exhaustive=False,
+    )
+
+
+def bblr_reciprocal_phase_collision_audit(
+    *,
+    left_x: int,
+    left_y: int,
+    left_h: int,
+    left_delta: int,
+    left_l: int,
+    right_x: int,
+    right_y: int,
+    right_h: int,
+    right_delta: int,
+    right_l: int,
+) -> BBLRReciprocalPhaseCollision:
+    """Classify the exact row resonance in the BBLR nonzero-l TT*.
+
+    Equation (14)'s plus-orientation phase is
+
+    ``-l*h*inverse(X) / Y (mod 1)``.
+
+    Lifting the two reduced fractions to their least common denominator
+    gives the exact incidence condition in a global TT*.  The original
+    product frequency ``h*delta`` and the new Poisson product ``h*l`` are
+    both retained.  Distinct values of either product may still collide
+    after multiplication by the reciprocal residue; resonance is not the
+    same as equality of one scalar product-frequency label.
+    """
+
+    if min(left_x, left_y, right_x, right_y) <= 0:
+        raise ValueError("BBLR reciprocal coordinates must be positive")
+    if gcd(left_x, left_y) != 1 or gcd(right_x, right_y) != 1:
+        raise ValueError("BBLR reciprocal coordinates must be coprime")
+    if 0 in (left_h, left_delta, left_l, right_h, right_delta, right_l):
+        raise ValueError("BBLR h, delta, and nonzero l labels must be nonzero")
+
+    left_phase = Fraction(
+        (-left_l * left_h * pow(left_x, -1, left_y)) % left_y,
+        left_y,
+    )
+    right_phase = Fraction(
+        (-right_l * right_h * pow(right_x, -1, right_y)) % right_y,
+        right_y,
+    )
+    common_modulus = (
+        left_phase.denominator
+        * right_phase.denominator
+        // gcd(left_phase.denominator, right_phase.denominator)
+    )
+    cross_numerator = (
+        left_phase.numerator
+        * (common_modulus // left_phase.denominator)
+        - right_phase.numerator
+        * (common_modulus // right_phase.denominator)
+    ) % common_modulus
+    collision = cross_numerator == 0
+    identical = (
+        left_x,
+        left_y,
+        left_h,
+        left_delta,
+        left_l,
+    ) == (
+        right_x,
+        right_y,
+        right_h,
+        right_delta,
+        right_l,
+    )
+    left_original = left_h * left_delta
+    right_original = right_h * right_delta
+    left_poisson = left_h * left_l
+    right_poisson = right_h * right_l
+    return BBLRReciprocalPhaseCollision(
+        left_phase_mod_one=left_phase,
+        right_phase_mod_one=right_phase,
+        common_phase_modulus=common_modulus,
+        cross_phase_numerator=cross_numerator,
+        exact_phase_collision=collision,
+        identical_rows=identical,
+        left_original_product_frequency=left_original,
+        right_original_product_frequency=right_original,
+        left_poisson_product=left_poisson,
+        right_poisson_product=right_poisson,
+        resonance_can_join_distinct_product_frequencies=(
+            collision
+            and (left_original != right_original or left_poisson != right_poisson)
+        ),
+    )
+
+
+def bblr_gap_resonance_coordinates(
+    *,
+    x: int,
+    y: int,
+    h: int,
+) -> BBLRGapResonanceCoordinates:
+    """Remove the inverse from one ordered BBLR phase row exactly.
+
+    For ``X=Y+c`` and ``r=h*inverse(X) (mod Y)``, multiplication by
+    ``X`` gives ``h=r*c-k*Y`` for one integer ``k``.  Equivalently,
+    ``r*c-h=k*Y``.  The principal near-diagonal incidence is exactly
+    ``k=0``, hence ``h=r*c``; all other inverse-phase rows retain the
+    explicit nonzero determinant index.
+    """
+
+    if y <= 1 or x <= y:
+        raise ValueError("require ordered positive BBLR coordinates X>Y>1")
+    if not 0 < h < y:
+        raise ValueError("require a positive BBLR shift h below Y")
+    if gcd(x, y) != 1:
+        raise ValueError("BBLR reciprocal coordinates must be coprime")
+
+    gap = x - y
+    inverse_x = pow(x, -1, y)
+    residue = (h * inverse_x) % y
+    determinant_numerator = residue * gap - h
+    if determinant_numerator % y:
+        raise AssertionError("the inverse-to-gap determinant must be integral")
+    determinant_index = determinant_numerator // y
+    return BBLRGapResonanceCoordinates(
+        x=x,
+        y=y,
+        h=h,
+        gap_c=gap,
+        inverse_x_mod_y=inverse_x,
+        phase_residue_r=residue,
+        determinant_index_k=determinant_index,
+        gap_determinant_identity_verified=(
+            residue * gap - h == determinant_index * y
+        ),
+        principal_near_diagonal_incidence=(determinant_index == 0),
+    )
+
+
+def bblr_principal_incidence_solution_line(
+    *,
+    x: int,
+    y: int,
+    r: int,
+    m2: int,
+    n2: int,
+) -> BBLRPrincipalIncidenceSolutionLine:
+    """Parametrize the original shifted equation on the principal row.
+
+    In the plus orientation, the principal gap incidence has
+    ``h=(X-Y)*r``.  If the original BBLR equation
+
+    ``X*m2-Y*n2=h``
+
+    also holds, then ``X*(m2-r)=Y*(n2-r)``.  Coprimality gives the exact
+    integer line ``m2=r+Y*t``, ``n2=r+X*t``.  In particular, support
+    shorter than both reciprocal coordinates forces ``t=0`` and hence
+    the partial diagonal ``m2=n2=r``.
+    """
+
+    if min(x, y, r, m2, n2) <= 0 or x <= y:
+        raise ValueError("require positive ordered BBLR variables X>Y")
+    if gcd(x, y) != 1:
+        raise ValueError("BBLR principal coordinates must be coprime")
+
+    shift = (x - y) * r
+    if x * m2 - y * n2 != shift:
+        raise ValueError("the supplied inner variables miss the principal shift")
+    if (m2 - r) % y or (n2 - r) % x:
+        raise AssertionError("coprimality must produce an integral solution line")
+    left_parameter = (m2 - r) // y
+    right_parameter = (n2 - r) // x
+    if left_parameter != right_parameter:
+        raise AssertionError("the two principal line parameters must agree")
+    short_support = abs(m2 - r) < y and abs(n2 - r) < x
+    partial_diagonal = m2 == r and n2 == r
+    return BBLRPrincipalIncidenceSolutionLine(
+        x=x,
+        y=y,
+        r=r,
+        m2=m2,
+        n2=n2,
+        shift_h=shift,
+        line_parameter_t=left_parameter,
+        solution_line_identity_verified=(
+            m2 == r + y * left_parameter
+            and n2 == r + x * left_parameter
+            and x * m2 - y * n2 == shift
+        ),
+        short_inner_support_forces_t_zero=(
+            short_support and left_parameter == 0
+        ),
+        partial_diagonal_m2_equals_n2_equals_r=partial_diagonal,
+    )
+
+
+def bblr_partial_diagonal_correlation_sides(
+    *,
+    left_outer_weights: dict[int, Fraction],
+    left_inner_weights: dict[int, Fraction],
+    right_outer_weights: dict[int, Fraction],
+    right_inner_weights: dict[int, Fraction],
+    left_second_weights: dict[int, Fraction],
+    right_second_weights: dict[int, Fraction],
+    shift_weights: dict[int, Fraction],
+) -> BBLRPartialDiagonalCorrelation:
+    """Reindex both BBLR signs on the exact partial diagonal ``m2=n2``.
+
+    Write ``u=a*m1`` and ``v=b*n1``.  On the common second factor ``r``,
+    the original shifted equation has positive shift
+    ``h=r*abs(u-v)``.  The plus orientation is ``u>v`` and the minus
+    orientation is ``u<v``.  Summing both therefore gives the exact
+    additive-band product-pair correlation
+
+    ``sum_r R2(r)R4(r) sum_{u!=v} A(u)B(v)W0(r*abs(u-v))``.
+
+    The helper performs only finite reindexing.  It neither constructs an
+    exhaustive analytic AFE packet nor estimates the resulting band form.
+    Its outer and inner factors are the synthetic BBLR slots produced after
+    the Type decomposition; it does not identify their product coefficients
+    with the original finite ``zeta * M_N`` coefficients.
+    """
+
+    families = (
+        left_outer_weights,
+        left_inner_weights,
+        right_outer_weights,
+        right_inner_weights,
+        left_second_weights,
+        right_second_weights,
+        shift_weights,
+    )
+    if any(not family for family in families):
+        raise ValueError("all BBLR partial-diagonal weight families are required")
+    if any(index <= 0 for family in families for index in family):
+        raise ValueError("BBLR partial-diagonal indices must be positive")
+
+    common_second_indices = tuple(
+        sorted(set(left_second_weights) & set(right_second_weights))
+    )
+    if not common_second_indices:
+        raise ValueError("the two second-factor supports must intersect")
+
+    direct_plus = Fraction(0)
+    direct_minus = Fraction(0)
+    for left_outer, left_outer_weight in left_outer_weights.items():
+        for left_inner, left_inner_weight in left_inner_weights.items():
+            left_product = left_outer * left_inner
+            left_weight = Fraction(left_outer_weight) * Fraction(
+                left_inner_weight
+            )
+            for right_outer, right_outer_weight in right_outer_weights.items():
+                for right_inner, right_inner_weight in right_inner_weights.items():
+                    right_product = right_outer * right_inner
+                    if left_product == right_product:
+                        continue
+                    right_weight = Fraction(right_outer_weight) * Fraction(
+                        right_inner_weight
+                    )
+                    orientation = left_product > right_product
+                    for common_second in common_second_indices:
+                        shift = (
+                            abs(left_product - right_product) * common_second
+                        )
+                        contribution = (
+                            left_weight
+                            * right_weight
+                            * Fraction(left_second_weights[common_second])
+                            * Fraction(right_second_weights[common_second])
+                            * Fraction(shift_weights.get(shift, Fraction(0)))
+                        )
+                        if orientation:
+                            direct_plus += contribution
+                        else:
+                            direct_minus += contribution
+
+    left_products: dict[int, Fraction] = {}
+    for outer, outer_weight in left_outer_weights.items():
+        for inner, inner_weight in left_inner_weights.items():
+            product = outer * inner
+            left_products[product] = left_products.get(
+                product, Fraction(0)
+            ) + Fraction(outer_weight) * Fraction(inner_weight)
+
+    right_products: dict[int, Fraction] = {}
+    for outer, outer_weight in right_outer_weights.items():
+        for inner, inner_weight in right_inner_weights.items():
+            product = outer * inner
+            right_products[product] = right_products.get(
+                product, Fraction(0)
+            ) + Fraction(outer_weight) * Fraction(inner_weight)
+
+    correlation = Fraction(0)
+    active_rows: list[tuple[str, int, int, int, int, Fraction]] = []
+    for left_product, left_weight in sorted(left_products.items()):
+        for right_product, right_weight in sorted(right_products.items()):
+            if left_product == right_product:
+                continue
+            orientation = "plus" if left_product > right_product else "minus"
+            for common_second in common_second_indices:
+                shift = abs(left_product - right_product) * common_second
+                contribution = (
+                    left_weight
+                    * right_weight
+                    * Fraction(left_second_weights[common_second])
+                    * Fraction(right_second_weights[common_second])
+                    * Fraction(shift_weights.get(shift, Fraction(0)))
+                )
+                correlation += contribution
+                if contribution:
+                    active_rows.append(
+                        (
+                            orientation,
+                            left_product,
+                            right_product,
+                            common_second,
+                            shift,
+                            contribution,
+                        )
+                    )
+
+    direct_combined = direct_plus + direct_minus
+    return BBLRPartialDiagonalCorrelation(
+        direct_plus_sum=direct_plus,
+        direct_minus_sum=direct_minus,
+        direct_combined_sum=direct_combined,
+        product_pair_correlation_sum=correlation,
+        active_product_pair_rows=tuple(active_rows),
+        factorized_to_product_pair_identity_verified=(
+            direct_combined == correlation
+        ),
+        plus_minus_exhaust_every_unequal_product_pair=True,
+        common_second_factor_retained=True,
+        equal_product_diagonal_excluded=True,
+        analytic_afe_packet_exhaustive=False,
+        original_zeta_mollifier_coefficient_adapter_proved=False,
+        partial_diagonal_target_bound_proved=False,
+    )
+
+
+def additive_band_zero_mode_sides(
+    *,
+    modulus: int,
+    left_coefficients: dict[int, Fraction],
+    right_coefficients: dict[int, Fraction],
+    labelled_shift_kernels: dict[str, dict[int, Fraction]],
+) -> AdditiveBandZeroMode:
+    """Extract the constant Fourier mode of a labelled cyclic band kernel.
+
+    All packet kernels are summed with their signs before centering.  For
+    ``Kbar=Q^(-1)*sum_c K(c)`` the finite identity is
+
+    ``sum A(u)B(v)K(u-v)``
+    ``= Kbar*sum(A)*sum(B) + sum A(u)B(v)*(K(u-v)-Kbar)``.
+
+    The centered kernel has exact zero shift sum.  Whether the actual AFE
+    and BBLR ordering packets have zero combined mean remains an analytic
+    stage-map question and is deliberately not inferred here.
+    """
+
+    if modulus <= 1:
+        raise ValueError("the additive-band modulus must exceed one")
+    if not left_coefficients or not right_coefficients:
+        raise ValueError("both additive-band coefficient families are required")
+    if not labelled_shift_kernels:
+        raise ValueError("at least one labelled shift kernel is required")
+    if any(not label for label in labelled_shift_kernels):
+        raise ValueError("every additive-band packet must be labelled")
+    if any(
+        not 0 <= index < modulus
+        for family in (left_coefficients, right_coefficients)
+        for index in family
+    ):
+        raise ValueError("coefficient indices must be residues modulo Q")
+    if any(
+        not 0 <= residue < modulus
+        for kernel in labelled_shift_kernels.values()
+        for residue in kernel
+    ):
+        raise ValueError("shift-kernel indices must be residues modulo Q")
+
+    combined = {residue: Fraction(0) for residue in range(modulus)}
+    for kernel in labelled_shift_kernels.values():
+        for residue, weight in kernel.items():
+            combined[residue] += Fraction(weight)
+
+    left = {
+        residue: Fraction(weight)
+        for residue, weight in left_coefficients.items()
+    }
+    right = {
+        residue: Fraction(weight)
+        for residue, weight in right_coefficients.items()
+    }
+    direct = sum(
+        (
+            left_weight
+            * right_weight
+            * combined[(left_residue - right_residue) % modulus]
+            for left_residue, left_weight in left.items()
+            for right_residue, right_weight in right.items()
+        ),
+        Fraction(0),
+    )
+    kernel_mean = sum(combined.values(), Fraction(0)) / modulus
+    centered = {
+        residue: weight - kernel_mean
+        for residue, weight in combined.items()
+    }
+    constant_mode = (
+        kernel_mean
+        * sum(left.values(), Fraction(0))
+        * sum(right.values(), Fraction(0))
+    )
+    centered_band = sum(
+        (
+            left_weight
+            * right_weight
+            * centered[(left_residue - right_residue) % modulus]
+            for left_residue, left_weight in left.items()
+            for right_residue, right_weight in right.items()
+        ),
+        Fraction(0),
+    )
+    recombined = constant_mode + centered_band
+    centered_shift_sum = sum(centered.values(), Fraction(0))
+    return AdditiveBandZeroMode(
+        modulus=modulus,
+        direct_band_sum=direct,
+        combined_kernel_mean=kernel_mean,
+        constant_mode_contribution=constant_mode,
+        centered_band_sum=centered_band,
+        recombined_band_sum=recombined,
+        centered_kernel_shift_sum=centered_shift_sum,
+        combined_kernel_entries=tuple(sorted(combined.items())),
+        centered_kernel_entries=tuple(sorted(centered.items())),
+        packet_labels_retained=tuple(sorted(labelled_shift_kernels)),
+        zero_mode_extraction_identity_verified=(
+            direct == recombined and centered_shift_sum == 0
+        ),
+        combined_packet_zero_mode_vanishes=(kernel_mean == 0),
+        analytic_afe_ordering_kernel_derived=False,
+    )
+
+
+def bblr_near_diagonal_resonance_certificate(
+    *,
+    modulus_y: int,
+    gap_c: int,
+    residue_min: int,
+    residue_max: int,
+    frequency_min: int,
+    frequency_max: int,
+    phase_center_residue: int,
+) -> BBLRNearDiagonalResonanceCertificate:
+    """Certify the near-diagonal slow packet in BBLR equation (14).
+
+    Put ``X=Y+c`` with ``(c,Y)=1``.  For ``h=c*r<Y`` one has the exact
+    congruence
+
+    ``h*inverse(X) == r (mod Y)``.
+
+    The additional factor ``e(l*x)`` in equation (14) can be centered at
+    ``x=r0/Y``.  The combined phase on a row ``r`` is then represented by
+    ``l*(r0-r)/Y``.  If every such turn has absolute value at most ``1/6``,
+    each unit-coefficient term has real part at least ``1/2``.  The returned
+    lower bound concerns this resonant absolute-value packet only; it is not
+    a lower bound for the signed Möbius sum.
+    """
+
+    values = (
+        modulus_y,
+        gap_c,
+        residue_min,
+        residue_max,
+        frequency_min,
+        frequency_max,
+        phase_center_residue,
+    )
+    if min(values) <= 0:
+        raise ValueError("BBLR near-diagonal parameters must be positive")
+    if residue_min > residue_max or frequency_min > frequency_max:
+        raise ValueError("BBLR resonance intervals must be ordered")
+    if not residue_min <= phase_center_residue <= residue_max:
+        raise ValueError("the phase center must lie in the residue interval")
+    if gcd(gap_c, modulus_y) != 1:
+        raise ValueError("the near-diagonal gap must be coprime to Y")
+
+    reciprocal_x = modulus_y + gap_c
+    inverse_x = pow(reciprocal_x, -1, modulus_y)
+    residues = tuple(range(residue_min, residue_max + 1))
+    frequencies = tuple(range(frequency_min, frequency_max + 1))
+    h_values = tuple(gap_c * residue for residue in residues)
+    if max(h_values) >= modulus_y:
+        raise ValueError("require every resonant h=c*r to be below Y")
+
+    phase_residues = tuple(
+        (h_value * inverse_x) % modulus_y for h_value in h_values
+    )
+    congruences_verified = phase_residues == residues
+    centered_turns = tuple(
+        Fraction(
+            frequency * (phase_center_residue - residue),
+            modulus_y,
+        )
+        for residue in residues
+        for frequency in frequencies
+    )
+    max_absolute_turn = max(abs(turn) for turn in centered_turns)
+    coherent = congruences_verified and max_absolute_turn <= Fraction(1, 6)
+    term_count = len(centered_turns)
+    real_part_lower_bound = (
+        Fraction(term_count, 2) if coherent else Fraction(0)
+    )
+    return BBLRNearDiagonalResonanceCertificate(
+        modulus_y=modulus_y,
+        gap_c=gap_c,
+        reciprocal_x=reciprocal_x,
+        inverse_x_mod_y=inverse_x,
+        phase_center_residue=phase_center_residue,
+        resonant_h_values=h_values,
+        phase_residues=phase_residues,
+        centered_phase_turns=centered_turns,
+        max_absolute_centered_phase_turns=max_absolute_turn,
+        all_near_diagonal_congruences_verified=congruences_verified,
+        packet_lies_in_positive_real_half_plane=coherent,
+        term_count=term_count,
+        absolute_majorant_real_part_lower_bound=real_part_lower_bound,
+        local_h_l_completion_alone_reaches_gate=False,
+        xy_or_outer_coefficient_average_still_required=True,
+    )
+
+
+def bblr_phase_group_ttstar_sides(
+    *,
+    rows: tuple[tuple[str, int, int, int, int, int, Fraction], ...],
+) -> BBLRPhaseGroupTTStar:
+    """Evaluate one exact cyclic TT* by reciprocal-phase classes.
+
+    A row is ``(label,X,Y,h,delta,l,coefficient)``.  After lifting all
+    phases ``-l*h*inverse(X)/Y`` to one cyclic group, character
+    orthogonality gives
+
+    ``Q * sum_phase (sum_{row in phase} coefficient)^2``.
+
+    The identity diagonal and the distinct-row collision contribution are
+    returned separately.  Keeping the latter signed is essential: it can
+    cancel the positive identity diagonal for the actual coefficient
+    vector.  Grouping only by the original product frequency h*delta does
+    not in general diagonalize these phase classes.
+    """
+
+    if not rows:
+        raise ValueError("the BBLR TT* requires at least one row")
+    labels = tuple(row[0] for row in rows)
+    if len(set(labels)) != len(labels):
+        raise ValueError("BBLR TT* row labels must be unique")
+
+    phases: dict[str, Fraction] = {}
+    coefficients: dict[str, Fraction] = {}
+    original_products: dict[str, int] = {}
+    common_modulus = 1
+    for label, x, y, h, delta, frequency, coefficient in rows:
+        if x <= 0 or y <= 0 or gcd(x, y) != 1:
+            raise ValueError("BBLR phase rows require positive coprime X,Y")
+        if h == 0 or delta == 0 or frequency == 0:
+            raise ValueError("BBLR phase rows require nonzero h,delta,l")
+        phase = Fraction(
+            (-frequency * h * pow(x, -1, y)) % y,
+            y,
+        )
+        phases[label] = phase
+        coefficients[label] = Fraction(coefficient)
+        original_products[label] = h * delta
+        common_modulus = (
+            common_modulus
+            * phase.denominator
+            // gcd(common_modulus, phase.denominator)
+        )
+
+    grouped_labels: dict[Fraction, list[str]] = {}
+    for label in labels:
+        grouped_labels.setdefault(phases[label], []).append(label)
+    phase_groups = tuple(
+        (phase, tuple(grouped_labels[phase]))
+        for phase in sorted(grouped_labels)
+    )
+    identity_diagonal = common_modulus * sum(
+        (coefficient * coefficient for coefficient in coefficients.values()),
+        Fraction(0),
+    )
+    orthogonality = common_modulus * sum(
+        (
+            sum(
+                (coefficients[label] for label in group_labels),
+                Fraction(0),
+            )
+            ** 2
+            for _, group_labels in phase_groups
+        ),
+        Fraction(0),
+    )
+    collision_cross = orthogonality - identity_diagonal
+    product_partition_diagonalizes = all(
+        len({original_products[label] for label in group_labels}) <= 1
+        for _, group_labels in phase_groups
+    )
+    return BBLRPhaseGroupTTStar(
+        common_phase_modulus=common_modulus,
+        phase_groups=phase_groups,
+        identity_diagonal_quadratic=identity_diagonal,
+        distinct_collision_quadratic=collision_cross,
+        orthogonality_quadratic=orthogonality,
+        signed_cross_terms_can_cancel_identity_diagonal=(collision_cross < 0),
+        product_frequency_partition_diagonalizes_ttstar=(
+            product_partition_diagonalizes
+        ),
+        absolute_value_phase_classes_reach_target_proved=False,
+    )
+
+
+def bblr_zero_frequency_reindex_sides(
+    *,
+    left_outer_weights: dict[int, Fraction],
+    left_inner_weights: dict[int, Fraction],
+    right_outer_weights: dict[int, Fraction],
+    right_inner_weights: dict[int, Fraction],
+    shift_weights: dict[tuple[int, int], Fraction],
+    zero_kernels: dict[tuple[int, int, int], Fraction],
+) -> BBLRZeroFrequencyReindex:
+    """Reindex BBLR's finite ``l=0`` term by ``d,X,Y`` exactly.
+
+    For every original tuple put
+
+    ``d=(a*m1,b*n1)``, ``X=a*m1/d`` and ``Y=b*n1/d``.
+
+    The zero-frequency Poisson integral depends on the original four
+    variables only through ``d,X,Y``.  Thus the left factorizations of
+    ``dX`` and the right factorizations of ``dY`` aggregate separately,
+    while ``(X,Y)=1`` is retained.  This is the finite reindexing only;
+    identifying the resulting phase-free main term with the registered
+    reflected zero-frequency master remains a separate obligation.
+    """
+
+    families = (
+        left_outer_weights,
+        left_inner_weights,
+        right_outer_weights,
+        right_inner_weights,
+    )
+    if any(not family for family in families):
+        raise ValueError("all four BBLR coefficient families must be nonempty")
+    if any(index <= 0 for family in families for index in family):
+        raise ValueError("BBLR coefficient indices must be positive")
+    if any(d <= 0 or h <= 0 for d, h in shift_weights):
+        raise ValueError("BBLR shift coordinates must be positive")
+    if any(
+        d <= 0 or x <= 0 or y <= 0 or gcd(x, y) != 1
+        for d, x, y in zero_kernels
+    ):
+        raise ValueError("zero kernels require positive coprime X,Y coordinates")
+
+    left_products: dict[int, Fraction] = {}
+    for outer, outer_weight in left_outer_weights.items():
+        for inner, inner_weight in left_inner_weights.items():
+            product = outer * inner
+            left_products[product] = left_products.get(
+                product, Fraction(0)
+            ) + Fraction(outer_weight) * Fraction(inner_weight)
+
+    right_products: dict[int, Fraction] = {}
+    for outer, outer_weight in right_outer_weights.items():
+        for inner, inner_weight in right_inner_weights.items():
+            product = outer * inner
+            right_products[product] = right_products.get(
+                product, Fraction(0)
+            ) + Fraction(outer_weight) * Fraction(inner_weight)
+
+    possible_gcds = tuple(
+        sorted(
+            {
+                gcd(left_product, right_product)
+                for left_product in left_products
+                for right_product in right_products
+            }
+        )
+    )
+    shift_sums = {
+        d: sum(
+            (
+                Fraction(weight)
+                for (shift_d, _), weight in shift_weights.items()
+                if shift_d == d
+            ),
+            Fraction(0),
+        )
+        for d in possible_gcds
+    }
+
+    direct = Fraction(0)
+    for left_product, left_weight in left_products.items():
+        for right_product, right_weight in right_products.items():
+            d = gcd(left_product, right_product)
+            x = left_product // d
+            y = right_product // d
+            direct += (
+                left_weight
+                * right_weight
+                * shift_sums[d]
+                * Fraction(zero_kernels.get((d, x, y), Fraction(0)))
+            )
+
+    left_aggregates: dict[tuple[int, int], Fraction] = {}
+    right_aggregates: dict[tuple[int, int], Fraction] = {}
+    for d in possible_gcds:
+        for product, weight in left_products.items():
+            if product % d == 0:
+                left_aggregates[(d, product // d)] = weight
+        for product, weight in right_products.items():
+            if product % d == 0:
+                right_aggregates[(d, product // d)] = weight
+
+    reindexed = Fraction(0)
+    active: list[tuple[int, int, int]] = []
+    for (d, x, y), kernel_weight in sorted(zero_kernels.items()):
+        contribution = (
+            left_aggregates.get((d, x), Fraction(0))
+            * right_aggregates.get((d, y), Fraction(0))
+            * shift_sums.get(d, Fraction(0))
+            * Fraction(kernel_weight)
+        )
+        reindexed += contribution
+        if contribution:
+            active.append((d, x, y))
+
+    labelled_pair_kernels = tuple(
+        sorted(
+            (
+                h,
+                d * x,
+                d * y,
+                Fraction(shift_weight) * Fraction(kernel_weight),
+            )
+            for (d, x, y), kernel_weight in zero_kernels.items()
+            for (shift_d, h), shift_weight in shift_weights.items()
+            if shift_d == d and shift_weight and kernel_weight
+        )
+    )
+    combined_pair_kernels: dict[tuple[int, int], Fraction] = {}
+    for _, left_product, right_product, weight in labelled_pair_kernels:
+        pair = (left_product, right_product)
+        combined_pair_kernels[pair] = combined_pair_kernels.get(
+            pair, Fraction(0)
+        ) + weight
+    product_pair_sum = sum(
+        (
+            left_products.get(left_product, Fraction(0))
+            * right_products.get(right_product, Fraction(0))
+            * kernel_weight
+            for (left_product, right_product), kernel_weight in (
+                combined_pair_kernels.items()
+            )
+        ),
+        Fraction(0),
+    )
+    coordinate_bijection = all(
+        gcd(d * x, d * y) == d
+        and (d * x) // gcd(d * x, d * y) == x
+        and (d * y) // gcd(d * x, d * y) == y
+        for d, x, y in zero_kernels
+    )
+
+    return BBLRZeroFrequencyReindex(
+        direct_sum=direct,
+        reindexed_sum=reindexed,
+        product_pair_sum=product_pair_sum,
+        left_aggregate_entries=tuple(
+            (d, x, weight)
+            for (d, x), weight in sorted(left_aggregates.items())
+            if weight
+        ),
+        right_aggregate_entries=tuple(
+            (d, y, weight)
+            for (d, y), weight in sorted(right_aggregates.items())
+            if weight
+        ),
+        active_coprime_coordinates=tuple(active),
+        labelled_product_pair_kernel_entries=labelled_pair_kernels,
+        combined_product_pair_kernel_entries=tuple(
+            (left, right, weight)
+            for (left, right), weight in sorted(combined_pair_kernels.items())
+            if weight
+        ),
+        primitive_to_product_coordinates_are_bijective=coordinate_bijection,
+        original_shift_labels_preserved=True,
+        secondary_zero_packet_shaped_kernels_constructed=True,
+        left_and_right_outer_weights_remain_separate=True,
+        zero_frequency_is_phase_free=True,
+        pre_cauchy_stage_identification_proved=False,
+        completed_coefficient_identification_proved=False,
+        packet_family_exhaustive=False,
+        registered_zero_master_identification_proved=False,
+    )
+
+
+def zero_frequency_reflected_master_sides(
+    *,
+    completed_coefficients: dict[int, Fraction],
+    long_left_weights: dict[int, Fraction],
+    long_right_weights: dict[int, Fraction],
+    product_cutoff: int,
+    secondary_zero_packets: tuple[SecondaryZeroPacket, ...],
+    explicit_diagonal_weights: dict[int, Fraction],
+    left_density_weights: dict[int, Fraction],
+    right_density_weights: dict[int, Fraction],
+) -> ZeroFrequencyReflectedMaster:
+    """One finite zero-frequency master identity before any outer Cauchy.
+
+    Every secondary-zero packet keeps its AFE direction, nonzero original
+    Poisson frequency, unrestricted additive shift, dyadic label, and full
+    smooth pair kernel.
+    The kernels are summed without taking absolute values.  For ``B=F-R``
+    the pair energy is then expanded into its two distinct cross terms.
+    The reflected ``D,E`` cofactor kernel is double-centered once against
+    the supplied probability weights.  Its row/column/grand projections,
+    together with the completed terms and the explicit diagonal, form the
+    resonant master term; only the zero-row, zero-column operator remains
+    in ``centered_remainder``.
+
+    The original Poisson ``h=0`` term is rejected: it is already combined
+    with the explicit diagonal in equations (4.6)--(4.8) of the note.
+    """
+
+    if product_cutoff <= 0:
+        raise ValueError("product cutoff must be positive")
+    if not secondary_zero_packets:
+        raise ValueError("at least one secondary-zero packet is required")
+    if any(
+        packet.poisson_frequency_h == 0
+        for packet in secondary_zero_packets
+    ):
+        raise ValueError("the original h=0 mode is already counted in (4.6)--(4.8)")
+    if any(not packet.afe_direction for packet in secondary_zero_packets):
+        raise ValueError("every AFE direction must be named")
+    if any(not packet.dyadic_label for packet in secondary_zero_packets):
+        raise ValueError("every dyadic packet must be named")
+    left_divisors = tuple(sorted(long_left_weights))
+    right_divisors = tuple(sorted(long_right_weights))
+    if not left_divisors or not right_divisors:
+        raise ValueError("both reflected divisor families must be nonempty")
+    if set(left_density_weights) != set(left_divisors):
+        raise ValueError("left density support must equal the left divisor support")
+    if set(right_density_weights) != set(right_divisors):
+        raise ValueError("right density support must equal the right divisor support")
+
+    left_density = {
+        index: Fraction(left_density_weights[index]) for index in left_divisors
+    }
+    right_density = {
+        index: Fraction(right_density_weights[index])
+        for index in right_divisors
+    }
+    if any(weight < 0 for weight in left_density.values()) or any(
+        weight < 0 for weight in right_density.values()
+    ):
+        raise ValueError("density weights must be nonnegative")
+    if sum(left_density.values(), Fraction(0)) != 1:
+        raise ValueError("left density weights must sum to one")
+    if sum(right_density.values(), Fraction(0)) != 1:
+        raise ValueError("right density weights must sum to one")
+
+    for packet in secondary_zero_packets:
+        kernel = packet.pair_kernel
+        if any(
+            x <= 0 or y <= 0 or x > product_cutoff or y > product_cutoff
+            for x, y in kernel
+        ):
+            raise ValueError("AFE kernel indices must lie in the product box")
+    if any(
+        index <= 0 or index > product_cutoff
+        for index in explicit_diagonal_weights
+    ):
+        raise ValueError("diagonal indices must lie in the product box")
+
+    completed = {
+        index: Fraction(completed_coefficients.get(index, Fraction(0)))
+        for index in range(1, product_cutoff + 1)
+    }
+    left_long = {
+        index: Fraction(long_left_weights[index]) for index in left_divisors
+    }
+    right_long = {
+        index: Fraction(long_right_weights[index]) for index in right_divisors
+    }
+
+    def reflected(product: int, weights: dict[int, Fraction]) -> Fraction:
+        return sum(
+            (
+                weight
+                for divisor, weight in weights.items()
+                if product % divisor == 0
+            ),
+            Fraction(0),
+        )
+
+    reflected_left = {
+        x: reflected(x, left_long) for x in range(1, product_cutoff + 1)
+    }
+    reflected_right = {
+        y: reflected(y, right_long) for y in range(1, product_cutoff + 1)
+    }
+    truncated_left = {
+        x: completed[x] - reflected_left[x]
+        for x in range(1, product_cutoff + 1)
+    }
+    truncated_right = {
+        y: completed[y] - reflected_right[y]
+        for y in range(1, product_cutoff + 1)
+    }
+
+    combined_kernel: dict[tuple[int, int], Fraction] = {}
+    for packet in secondary_zero_packets:
+        kernel = packet.pair_kernel
+        for pair, weight in kernel.items():
+            combined_kernel[pair] = (
+                combined_kernel.get(pair, Fraction(0)) + Fraction(weight)
+            )
+
+    def pair_sum(
+        kernel: dict[tuple[int, int], Fraction],
+        left: dict[int, Fraction],
+        right: dict[int, Fraction],
+    ) -> Fraction:
+        return sum(
+            (
+                Fraction(weight) * left[x] * right[y]
+                for (x, y), weight in kernel.items()
+            ),
+            Fraction(0),
+        )
+
+    packet_contributions = tuple(
+        (
+            packet.afe_direction,
+            packet.poisson_frequency_h,
+            packet.additive_shift_delta,
+            packet.dyadic_label,
+            pair_sum(packet.pair_kernel, truncated_left, truncated_right),
+        )
+        for packet in secondary_zero_packets
+    )
+    direction_order = tuple(
+        dict.fromkeys(packet.afe_direction for packet in secondary_zero_packets)
+    )
+    direction_contributions = tuple(
+        (
+            direction,
+            sum(
+                (
+                    contribution
+                    for packet_direction, _, _, _, contribution in (
+                        packet_contributions
+                    )
+                    if packet_direction == direction
+                ),
+                Fraction(0),
+            ),
+        )
+        for direction in direction_order
+    )
+    pair_energy = sum(
+        (contribution for _, _, _, _, contribution in packet_contributions),
+        Fraction(0),
+    )
+    explicit_diagonal = sum(
+        (
+            Fraction(weight) * truncated_left[index] * truncated_right[index]
+            for index, weight in explicit_diagonal_weights.items()
+        ),
+        Fraction(0),
+    )
+    completed_completed = pair_sum(combined_kernel, completed, completed)
+    completed_reflected = pair_sum(
+        combined_kernel, completed, reflected_right
+    )
+    reflected_completed = pair_sum(
+        combined_kernel, reflected_left, completed
+    )
+    reflected_reflected = pair_sum(
+        combined_kernel, reflected_left, reflected_right
+    )
+
+    boundary_kernel: dict[tuple[int, int], Fraction] = {}
+    for left_divisor in left_divisors:
+        for right_divisor in right_divisors:
+            boundary_kernel[(left_divisor, right_divisor)] = sum(
+                (
+                    combined_kernel.get(
+                        (left_divisor * left_cofactor,
+                         right_divisor * right_cofactor),
+                        Fraction(0),
+                    )
+                    for left_cofactor in range(
+                        1, product_cutoff // left_divisor + 1
+                    )
+                    for right_cofactor in range(
+                        1, product_cutoff // right_divisor + 1
+                    )
+                ),
+                Fraction(0),
+            )
+
+    reflected_unfolded = sum(
+        (
+            left_long[left] * right_long[right] * value
+            for (left, right), value in boundary_kernel.items()
+        ),
+        Fraction(0),
+    )
+    row_means = {
+        left: sum(
+            (
+                right_density[right] * boundary_kernel[(left, right)]
+                for right in right_divisors
+            ),
+            Fraction(0),
+        )
+        for left in left_divisors
+    }
+    column_means = {
+        right: sum(
+            (
+                left_density[left] * boundary_kernel[(left, right)]
+                for left in left_divisors
+            ),
+            Fraction(0),
+        )
+        for right in right_divisors
+    }
+    grand_mean = sum(
+        (left_density[left] * row_means[left] for left in left_divisors),
+        Fraction(0),
+    )
+    centered_kernel = {
+        (left, right): (
+            boundary_kernel[(left, right)]
+            - row_means[left]
+            - column_means[right]
+            + grand_mean
+        )
+        for left in left_divisors
+        for right in right_divisors
+    }
+    weighted_row_sums = tuple(
+        (
+            left,
+            sum(
+                (
+                    right_density[right] * centered_kernel[(left, right)]
+                    for right in right_divisors
+                ),
+                Fraction(0),
+            ),
+        )
+        for left in left_divisors
+    )
+    weighted_column_sums = tuple(
+        (
+            right,
+            sum(
+                (
+                    left_density[left] * centered_kernel[(left, right)]
+                    for left in left_divisors
+                ),
+                Fraction(0),
+            ),
+        )
+        for right in right_divisors
+    )
+    centered_remainder = sum(
+        (
+            left_long[left]
+            * right_long[right]
+            * centered_kernel[(left, right)]
+            for left in left_divisors
+            for right in right_divisors
+        ),
+        Fraction(0),
+    )
+    left_mass = sum(left_long.values(), Fraction(0))
+    right_mass = sum(right_long.values(), Fraction(0))
+    resonant_row_component = right_mass * sum(
+        (left_long[left] * row_means[left] for left in left_divisors),
+        Fraction(0),
+    )
+    resonant_column_component = left_mass * sum(
+        (right_long[right] * column_means[right] for right in right_divisors),
+        Fraction(0),
+    )
+    resonant_grand_component = -grand_mean * left_mass * right_mass
+    resonant_projection = (
+        resonant_row_component
+        + resonant_column_component
+        + resonant_grand_component
+    )
+    resonant_master = (
+        completed_completed
+        - completed_reflected
+        - reflected_completed
+        + resonant_projection
+        - explicit_diagonal
+    )
+    recombined = resonant_master + centered_remainder
+    return ZeroFrequencyReflectedMaster(
+        packet_contributions=packet_contributions,
+        afe_direction_contributions=direction_contributions,
+        direct_full_remainder=pair_energy - explicit_diagonal,
+        completed_completed=completed_completed,
+        completed_reflected=completed_reflected,
+        reflected_completed=reflected_completed,
+        reflected_reflected=reflected_reflected,
+        explicit_diagonal=explicit_diagonal,
+        reflected_unfolded=reflected_unfolded,
+        resonant_row_component=resonant_row_component,
+        resonant_column_component=resonant_column_component,
+        resonant_grand_component=resonant_grand_component,
+        resonant_reflected_projection=resonant_projection,
+        resonant_master_term=resonant_master,
+        centered_remainder=centered_remainder,
+        recombined_master_remainder=recombined,
+        weighted_centered_row_sums=weighted_row_sums,
+        weighted_centered_column_sums=weighted_column_sums,
+        centered_kernel_entries=tuple(
+            (left, right, centered_kernel[(left, right)])
+            for left in left_divisors
+            for right in right_divisors
+        ),
+    )
+
+
+def canonical_secondary_zero_energy_sides(
+    *,
+    coefficients: dict[int, Fraction],
+    spectral_atoms: tuple[tuple[str, Fraction, dict[int, Fraction]], ...],
+) -> CanonicalSecondaryZeroEnergy:
+    """Expand the canonical secondary zero packet as a finite Gram energy.
+
+    ``spectral_atoms`` is a finite quadrature model for the common time
+    weight.  An atom ``(label, weight, phi)`` contributes
+
+    ``weight * (sum_d coefficients[d] * phi[d])**2``.
+
+    Expanding the squares gives the full Fourier Gram.  Removing its
+    equal-index diagonal is exactly the secondary zero packet.  The two
+    symmetric AFE directions are identical copies, so both the zero packet
+    and its diagonal are doubled; the diagonal restores the full energy
+    instead of cancelling the second direction.
+    """
+
+    if not coefficients:
+        raise ValueError("at least one coefficient is required")
+    if any(index <= 0 for index in coefficients):
+        raise ValueError("coefficient indices must be positive")
+    if not spectral_atoms:
+        raise ValueError("at least one spectral atom is required")
+    labels = tuple(label for label, _, _ in spectral_atoms)
+    if any(not label for label in labels) or len(set(labels)) != len(labels):
+        raise ValueError("spectral atom labels must be nonempty and unique")
+    if any(Fraction(weight) < 0 for _, weight, _ in spectral_atoms):
+        raise ValueError("spectral atom weights must be nonnegative")
+    if any(
+        index <= 0
+        for _, _, multipliers in spectral_atoms
+        for index in multipliers
+    ):
+        raise ValueError("spectral multiplier indices must be positive")
+
+    coeff = {index: Fraction(value) for index, value in coefficients.items()}
+    atoms = tuple(
+        (
+            label,
+            Fraction(weight),
+            {index: Fraction(value) for index, value in multipliers.items()},
+        )
+        for label, weight, multipliers in spectral_atoms
+    )
+    amplitudes = tuple(
+        (
+            label,
+            sum(
+                (
+                    value * multipliers.get(index, Fraction(0))
+                    for index, value in coeff.items()
+                ),
+                Fraction(0),
+            ),
+        )
+        for label, _, multipliers in atoms
+    )
+    amplitude_by_label = dict(amplitudes)
+    direct_energy = sum(
+        (
+            weight * amplitude_by_label[label] ** 2
+            for label, weight, _ in atoms
+        ),
+        Fraction(0),
+    )
+
+    gram = {
+        (left, right): sum(
+            (
+                weight
+                * multipliers.get(left, Fraction(0))
+                * multipliers.get(right, Fraction(0))
+                for _, weight, multipliers in atoms
+            ),
+            Fraction(0),
+        )
+        for left in coeff
+        for right in coeff
+    }
+    expanded_energy = sum(
+        (
+            coeff[left] * coeff[right] * gram[(left, right)]
+            for left in coeff
+            for right in coeff
+        ),
+        Fraction(0),
+    )
+    diagonal = sum(
+        (coeff[index] ** 2 * gram[(index, index)] for index in coeff),
+        Fraction(0),
+    )
+    off_diagonal = sum(
+        (
+            coeff[left] * coeff[right] * gram[(left, right)]
+            for left in coeff
+            for right in coeff
+            if left != right
+        ),
+        Fraction(0),
+    )
+    return CanonicalSecondaryZeroEnergy(
+        spectral_amplitudes=amplitudes,
+        direct_one_direction_energy=direct_energy,
+        expanded_gram_energy=expanded_energy,
+        explicit_diagonal=diagonal,
+        secondary_zero_off_diagonal=off_diagonal,
+        secondary_zero_plus_diagonal=off_diagonal + diagonal,
+        unfolded_two_afe_secondary_zero=2 * off_diagonal,
+        unfolded_two_afe_diagonal=2 * diagonal,
+        unfolded_two_afe_full_energy=2 * direct_energy,
+        gram_expansion_exact=(direct_energy == expanded_energy),
+        secondary_zero_is_diagonal_removed_energy=(
+            off_diagonal == expanded_energy - diagonal
+        ),
+        two_afe_directions_reinforce=True,
+        explicit_diagonal_restores_full_energy=(
+            off_diagonal + diagonal == direct_energy
+        ),
+        reciprocal_lcm_kernel_identified=False,
+        canonical_resonant_bound_proved=False,
+    )
+
+
+def physical_zero_mellin_reflection_adapter_sides(
+    *,
+    mollifier_weights: dict[int, Fraction],
+    zeta_weights: dict[int, Fraction],
+    completed_coefficients: dict[int, Fraction],
+    reflected_coefficients: dict[int, Fraction],
+    secondary_zero_packets: tuple[SecondaryZeroPacket, ...],
+    explicit_diagonal_weights: dict[int, Fraction],
+) -> PhysicalZeroMellinReflectionAdapter:
+    """Compose product pairing and the two-sided zero-Mellin reflection.
+
+    For each labelled packet this verifies the finite bijection
+    ``(d,n,e,m) -> (x=d*n,y=e*m)`` before any absolute value.  The paired
+    coefficient is then compared with the supplied physical reflection
+    ``B(x)=F(x)-R(x)``.  Both nonsymmetric cross terms and the explicit
+    equal-product diagonal remain in the returned master.
+
+    The function proves the adapter for the supplied finite packet family.
+    It does not assert that an analytic decomposition of equation (4.5)
+    has supplied every AFE/dyadic packet, and it proves no operator bound.
+    """
+
+    if not mollifier_weights or not zeta_weights:
+        raise ValueError("mollifier and zeta coefficient families are required")
+    coefficient_families = (
+        mollifier_weights,
+        zeta_weights,
+        completed_coefficients,
+        reflected_coefficients,
+    )
+    if any(index <= 0 for family in coefficient_families for index in family):
+        raise ValueError("all physical coefficient indices must be positive")
+    if not secondary_zero_packets:
+        raise ValueError("at least one secondary-zero packet is required")
+    if any(packet.poisson_frequency_h == 0 for packet in secondary_zero_packets):
+        raise ValueError("the physical secondary packet requires h nonzero")
+    if any(packet.additive_shift_delta == 0 for packet in secondary_zero_packets):
+        raise ValueError("the physical off-diagonal packet requires delta nonzero")
+    if any(
+        not packet.afe_direction or not packet.dyadic_label
+        for packet in secondary_zero_packets
+    ):
+        raise ValueError("every packet requires AFE and dyadic labels")
+    if any(
+        left <= 0 or right <= 0
+        for packet in secondary_zero_packets
+        for left, right in packet.pair_kernel
+    ):
+        raise ValueError("physical pair-kernel indices must be positive")
+    if any(index <= 0 for index in explicit_diagonal_weights):
+        raise ValueError("explicit diagonal indices must be positive")
+
+    mollifier = {
+        index: Fraction(weight) for index, weight in mollifier_weights.items()
+    }
+    zeta = {index: Fraction(weight) for index, weight in zeta_weights.items()}
+    completed = {
+        index: Fraction(weight) for index, weight in completed_coefficients.items()
+    }
+    reflected = {
+        index: Fraction(weight) for index, weight in reflected_coefficients.items()
+    }
+
+    products: dict[int, Fraction] = {}
+    for divisor, divisor_weight in mollifier.items():
+        for zeta_index, zeta_weight in zeta.items():
+            product = divisor * zeta_index
+            products[product] = products.get(product, Fraction(0)) + (
+                divisor_weight * zeta_weight
+            )
+
+    def direct_packet(packet: SecondaryZeroPacket) -> Fraction:
+        return sum(
+            (
+                left_divisor_weight
+                * left_zeta_weight
+                * right_divisor_weight
+                * right_zeta_weight
+                * Fraction(
+                    packet.pair_kernel.get(
+                        (
+                            left_divisor * left_zeta_index,
+                            right_divisor * right_zeta_index,
+                        ),
+                        Fraction(0),
+                    )
+                )
+                for left_divisor, left_divisor_weight in mollifier.items()
+                for left_zeta_index, left_zeta_weight in zeta.items()
+                for right_divisor, right_divisor_weight in mollifier.items()
+                for right_zeta_index, right_zeta_weight in zeta.items()
+            ),
+            Fraction(0),
+        )
+
+    def paired_packet(packet: SecondaryZeroPacket) -> Fraction:
+        return sum(
+            (
+                left_weight
+                * right_weight
+                * Fraction(
+                    packet.pair_kernel.get((left, right), Fraction(0))
+                )
+                for left, left_weight in products.items()
+                for right, right_weight in products.items()
+            ),
+            Fraction(0),
+        )
+
+    packet_contributions = tuple(
+        (
+            packet.afe_direction,
+            packet.poisson_frequency_h,
+            packet.additive_shift_delta,
+            packet.dyadic_label,
+            direct_packet(packet),
+            paired_packet(packet),
+        )
+        for packet in secondary_zero_packets
+    )
+    direct_sum = sum(
+        (entry[4] for entry in packet_contributions), Fraction(0)
+    )
+    paired_sum = sum(
+        (entry[5] for entry in packet_contributions), Fraction(0)
+    )
+    combined_kernel: dict[tuple[int, int], Fraction] = {}
+    for packet in secondary_zero_packets:
+        for pair, weight in packet.pair_kernel.items():
+            combined_kernel[pair] = combined_kernel.get(
+                pair, Fraction(0)
+            ) + Fraction(weight)
+
+    def pair_sum(
+        left_coefficients: dict[int, Fraction],
+        right_coefficients: dict[int, Fraction],
+    ) -> Fraction:
+        return sum(
+            (
+                weight
+                * left_coefficients.get(left, Fraction(0))
+                * right_coefficients.get(right, Fraction(0))
+                for (left, right), weight in combined_kernel.items()
+            ),
+            Fraction(0),
+        )
+
+    completed_completed = pair_sum(completed, completed)
+    completed_reflected = pair_sum(completed, reflected)
+    reflected_completed = pair_sum(reflected, completed)
+    reflected_reflected = pair_sum(reflected, reflected)
+    reflected_pair_sum = (
+        completed_completed
+        - completed_reflected
+        - reflected_completed
+        + reflected_reflected
+    )
+    diagonal = sum(
+        (
+            Fraction(weight) * products.get(index, Fraction(0)) ** 2
+            for index, weight in explicit_diagonal_weights.items()
+        ),
+        Fraction(0),
+    )
+    support = set(products) | set(completed) | set(reflected)
+    coefficient_adapter = all(
+        products.get(index, Fraction(0))
+        == completed.get(index, Fraction(0))
+        - reflected.get(index, Fraction(0))
+        for index in support
+    )
+    pairing_exact = all(entry[4] == entry[5] for entry in packet_contributions)
+    reflection_exact = paired_sum == reflected_pair_sum
+    directions = tuple(
+        dict.fromkeys(packet.afe_direction for packet in secondary_zero_packets)
+    )
+    labels_retained = len(packet_contributions) == len(secondary_zero_packets)
+    return PhysicalZeroMellinReflectionAdapter(
+        product_coefficients=tuple(sorted(products.items())),
+        packet_contributions=packet_contributions,
+        direct_four_variable_sum=direct_sum,
+        paired_product_sum=paired_sum,
+        completed_completed=completed_completed,
+        completed_reflected=completed_reflected,
+        reflected_completed=reflected_completed,
+        reflected_reflected=reflected_reflected,
+        explicit_diagonal=diagonal,
+        direct_remainder=direct_sum - diagonal,
+        reflected_remainder=reflected_pair_sum - diagonal,
+        afe_directions_retained=directions,
+        full_afe_direction_pair_present=(set(directions) == {"main", "dual"}),
+        product_coefficients_equal_completed_minus_reflected=coefficient_adapter,
+        four_variable_to_product_pairing_exact=pairing_exact,
+        reflection_expansion_exact=reflection_exact,
+        full_supplied_packet_adapter_exact=(
+            coefficient_adapter
+            and pairing_exact
+            and reflection_exact
+            and direct_sum - diagonal == reflected_pair_sum - diagonal
+        ),
+        original_h_delta_and_dyadic_labels_retained=labels_retained,
+        analytic_packet_family_exhaustive=False,
+        unified_signed_operator_bound_proved=False,
+    )
+
+
+def physical_mellin_convolution_signed_operator_sides(
+    *,
+    mollifier_cutoff: int,
+    product_cutoff: int,
+    complete_divisor_coefficients: dict[int, Fraction],
+    mellin_weights: dict[int, Fraction],
+    product_packets: tuple[MellinProductPacket, ...],
+    canonical_zero_kernel: dict[tuple[int, int], Fraction],
+    main_term_kernel: dict[tuple[int, int], Fraction],
+    left_density_weights: dict[int, Fraction],
+    right_density_weights: dict[int, Fraction],
+) -> dict[str, object]:
+    """Verify the common-cutoff physical convolution and signed pullback.
+
+    Write C_z(x,d)=1_{d|x} w(d), with d<=N and x<=X.  This routine
+    constructs B=C_z a and both complete/reflected divisor sums; it
+    never assumes that B equals the mollifier vector a.  The product
+    kernel is pulled back as C_z^T K C_z.  The canonical zero kernel
+    and the main-term kernel already live in the original d coordinates.
+
+    The complementary kernel is the explicit pullback minus the main
+    term and canonical zero.  It includes every residual correction;
+    it is NOT asserted to consist solely of a chosen nonzero Poisson
+    frequency family.  A continuous adapter and its ordered-limit proof
+    are mathematical obligations, not facts certified by rational data.
+    """
+
+    N, X = mollifier_cutoff, product_cutoff
+    if not isinstance(N, int) or not isinstance(X, int) or not 1 <= N <= X:
+        raise ValueError("integer cutoffs must satisfy 1 <= N <= X")
+    products = tuple(range(1, X + 1))
+    divisors_support = tuple(range(1, N + 1))
+    if set(complete_divisor_coefficients) != set(products):
+        raise ValueError("complete divisor coefficients must cover every d <= X")
+    if set(mellin_weights) != set(products):
+        raise ValueError("Mellin weights must cover every d <= X")
+    c = {d: Fraction(complete_divisor_coefficients[d]) for d in products}
+    w = {d: Fraction(mellin_weights[d]) for d in products}
+    if any(value == 0 for value in w.values()) or w[1] != 1:
+        raise ValueError("Mellin weights must be nonzero with w(1)=1")
+    if any(
+        w[u * v] != w[u] * w[v]
+        for u in products
+        for v in range(1, X // u + 1)
+    ):
+        raise ValueError("the Mellin model must be completely multiplicative")
+    if not product_packets or any(
+        not packet.afe_direction
+        or not packet.mellin_label
+        or not packet.product_partition_label
+        for packet in product_packets
+    ):
+        raise ValueError("every product packet requires its physical labels")
+    if len({packet.mellin_label for packet in product_packets}) != 1:
+        raise ValueError("one finite adapter uses a common Mellin slice")
+    if any(
+        x not in products or y not in products
+        for packet in product_packets
+        for x, y in packet.pair_kernel
+    ):
+        raise ValueError("a product kernel leaves the common product cutoff")
+    if any(
+        d not in divisors_support or e not in divisors_support
+        for kernel in (canonical_zero_kernel, main_term_kernel)
+        for d, e in kernel
+    ):
+        raise ValueError("zero and main kernels must use mollifier coordinates")
+
+    densities = []
+    for supplied in (left_density_weights, right_density_weights):
+        if set(supplied) != set(divisors_support):
+            raise ValueError("density support must equal the mollifier support")
+        density = {d: Fraction(supplied[d]) for d in divisors_support}
+        if min(density.values()) < 0 or sum(density.values(), Fraction(0)) != 1:
+            raise ValueError("density weights must be nonnegative and sum to one")
+        densities.append(density)
+    p, q = densities
+
+    B, complete, reflected = {}, {}, {}
+    reflected_rows = []
+    for x in products:
+        dx = divisors(x)
+        B[x] = sum((c[d] * w[d] for d in dx if d <= N), Fraction(0))
+        complete[x] = sum((c[d] * w[d] for d in dx), Fraction(0))
+        reflected[x] = sum((c[d] * w[d] for d in dx if d > N), Fraction(0))
+        reflected_rows.extend((x, d, x // d) for d in dx if d > N)
+    kernel = {
+        (x, y): sum(
+            (Fraction(packet.pair_kernel.get((x, y), 0))
+             for packet in product_packets),
+            Fraction(0),
+        )
+        for x in products
+        for y in products
+    }
+
+    def pair(left, right, entries):
+        return sum(
+            (left[i] * value * right[j] for (i, j), value in entries.items()),
+            Fraction(0),
+        )
+
+    reflection_parts = (
+        pair(complete, complete, kernel),
+        -pair(complete, reflected, kernel),
+        -pair(reflected, complete, kernel),
+        pair(reflected, reflected, kernel),
+    )
+    direct = Fraction(0)
+    coordinate_checks = []
+    unequal_diagonal = False
+    for d in divisors_support:
+        for e in divisors_support:
+            g = gcd(d, e)
+            r, s = d // g, e // g
+            for n in range(1, X // d + 1):
+                for m in range(1, X // e + 1):
+                    x, y = d * n, e * m
+                    delta = m * s - n * r
+                    coordinate_checks.append(
+                        y - x == g * delta
+                        and (n * r + delta) % s == 0
+                        and (n * r + delta) // s == m
+                    )
+                    unequal_diagonal |= x == y and d != e
+                    direct += c[d] * c[e] * w[d] * w[e] * kernel[x, y]
+
+    pullback = {
+        (d, e): w[d] * w[e] * sum(
+            (kernel[x, y]
+             for x in range(d, X + 1, d)
+             for y in range(e, X + 1, e)),
+            Fraction(0),
+        )
+        for d in divisors_support
+        for e in divisors_support
+    }
+    canonical = {
+        ij: Fraction(canonical_zero_kernel.get(ij, 0)) for ij in pullback
+    }
+    main = {ij: Fraction(main_term_kernel.get(ij, 0)) for ij in pullback}
+    full = {ij: pullback[ij] - main[ij] for ij in pullback}
+    complement = {ij: full[ij] - canonical[ij] for ij in pullback}
+
+    # L_z = D_{-z} U recovers the original coefficients from B_z.
+    inverse = {
+        (d, x): Fraction(mobius(d // x), 1) / w[d] if d % x == 0 else Fraction(0)
+        for d in divisors_support
+        for x in products
+    }
+    recovered = {
+        d: sum((inverse[d, x] * B[x] for x in products), Fraction(0))
+        for d in divisors_support
+    }
+    transported_zero = {
+        (x, y): sum(
+            (inverse[d, x] * canonical[d, e] * inverse[e, y]
+             for d in divisors_support for e in divisors_support),
+            Fraction(0),
+        )
+        for x in products for y in products
+    }
+    row_mean = {
+        d: sum((q[e] * complement[d, e] for e in divisors_support), Fraction(0))
+        for d in divisors_support
+    }
+    column_mean = {
+        e: sum((p[d] * complement[d, e] for d in divisors_support), Fraction(0))
+        for e in divisors_support
+    }
+    grand = sum((p[d] * row_mean[d] for d in divisors_support), Fraction(0))
+    centered = {
+        (d, e): complement[d, e] - row_mean[d] - column_mean[e] + grand
+        for d, e in complement
+    }
+    resonant = {ij: full[ij] - centered[ij] for ij in full}
+
+    def output(entries):
+        return tuple(
+            sum((c[d] * entries[d, e] for d in divisors_support), Fraction(0))
+            for e in divisors_support
+        )
+
+    def inner(left, right):
+        return sum((u * v for u, v in zip(left, right, strict=True)), Fraction(0))
+
+    full_out, res_out, cent_out = map(output, (full, resonant, centered))
+    tt_parts = (
+        inner(res_out, res_out), inner(res_out, cent_out),
+        inner(cent_out, res_out), inner(cent_out, cent_out),
+    )
+    energy = inner(full_out, full_out)
+    pairing_exact = direct == pair(B, B, kernel) == pair(c, c, pullback)
+    reflection_exact = sum(reflection_parts, Fraction(0)) == direct
+    coordinate_exact = all(coordinate_checks)
+    coefficient_exact = all(B[x] == complete[x] - reflected[x] for x in products)
+    canonical_exact = pair(c, c, canonical) == pair(B, B, transported_zero)
+    if not all((pairing_exact, reflection_exact, coordinate_exact,
+                coefficient_exact, canonical_exact,
+                all(recovered[d] == c[d] for d in divisors_support),
+                sum(tt_parts, Fraction(0)) == energy)):
+        raise ArithmeticError("the common-cutoff physical adapter failed")
+
+    return {
+        "truncated_product_coefficients": tuple(B.items()),
+        "completed_product_coefficients": tuple(complete.items()),
+        "reflected_product_coefficients": tuple(reflected.items()),
+        "original_four_variable_sum": direct,
+        "product_pair_sum": pair(B, B, kernel),
+        "reflection_four_signed_blocks": reflection_parts,
+        "reflection_four_block_sum": sum(reflection_parts, Fraction(0)),
+        "physical_pullback_kernel": pullback,
+        "canonical_zero_transported_kernel": transported_zero,
+        "convolution_first_column_norm_squared": sum(
+            (w[1] * w[1] for _ in products), Fraction(0)
+        ),
+        "canonical_zero_original_coordinates": pair(c, c, canonical),
+        "canonical_zero_transported_coordinates": pair(B, B, transported_zero),
+        "incorrect_untransported_product_gram": pair(B, B, canonical),
+        "signed_residual_value": pair(c, c, full),
+        "unified_residual_kernel": full,
+        "nonzero_and_correction_complement_kernel": complement,
+        "resonant_kernel": resonant,
+        "centered_kernel": centered,
+        "direct_ttstar_energy": energy,
+        "four_signed_ttstar_components": tt_parts,
+        "truncated_equals_completed_minus_reflected": coefficient_exact,
+        "original_lattice_to_product_pairing_exact": pairing_exact and coordinate_exact,
+        "reflection_expansion_exact": reflection_exact,
+        "complete_divisor_support_exhaustive": True,
+        "strict_reflected_cofactor_endpoints": all(
+            d > N and k * N < x and k * N < X for x, d, k in reflected_rows
+        ),
+        "full_afe_direction_pair_present": (
+            {packet.afe_direction for packet in product_packets} == {"main", "dual"}
+        ),
+        "afe_diagonal_includes_unequal_divisors": unequal_diagonal,
+        "global_h_reassembly_before_reflection_required": True,
+        "packetwise_fixed_h_reflection_claimed": False,
+        "signed_kernel_recombination_exact": all(
+            full[ij] == resonant[ij] + centered[ij] for ij in full
+        ),
+        "ttstar_recombination_exact": sum(tt_parts, Fraction(0)) == energy,
+        "product_packet_labels": tuple(
+            (p.afe_direction, p.mellin_label, p.product_partition_label)
+            for p in product_packets
+        ),
+        "analytic_norm_bound_proved": False,
+        "coupled_kernel_gate_closed": False,
+    }
+
+
+def unified_signed_zero_nonzero_operator_sides(
+    *,
+    coefficients: dict[int, Fraction],
+    canonical_zero_kernel: dict[tuple[int, int], Fraction],
+    nonzero_frequency_packets: tuple[SecondaryZeroPacket, ...],
+    left_density_weights: dict[int, Fraction],
+    right_density_weights: dict[int, Fraction],
+) -> UnifiedSignedZeroNonzeroOperator:
+    """Center the nonzero complement once and retain the full signed TT*.
+
+    The raw nonzero-frequency kernel is double-centered against the supplied
+    finite densities.  Its row/column projection is joined to the canonical
+    zero Gram in ``K_res``; the zero-row/zero-column remainder is ``K_cent``.
+    The identity
+
+    ``K_full = K_res + K_cent = K_zero + K_nonzero``
+
+    is checked before forming ``TT*``.  Both mixed Gram terms are then kept
+    explicitly.  No separate norm estimate is inferred from this algebra.
+    """
+
+    if not coefficients:
+        raise ValueError("at least one operator coefficient is required")
+    indices = tuple(sorted(coefficients))
+    if any(index <= 0 for index in indices):
+        raise ValueError("operator indices must be positive")
+    if set(left_density_weights) != set(indices):
+        raise ValueError("left density support must equal the operator support")
+    if set(right_density_weights) != set(indices):
+        raise ValueError("right density support must equal the operator support")
+    left_density = {
+        index: Fraction(left_density_weights[index]) for index in indices
+    }
+    right_density = {
+        index: Fraction(right_density_weights[index]) for index in indices
+    }
+    if any(weight < 0 for weight in left_density.values()) or any(
+        weight < 0 for weight in right_density.values()
+    ):
+        raise ValueError("density weights must be nonnegative")
+    if sum(left_density.values(), Fraction(0)) != 1:
+        raise ValueError("left density weights must sum to one")
+    if sum(right_density.values(), Fraction(0)) != 1:
+        raise ValueError("right density weights must sum to one")
+    if not nonzero_frequency_packets:
+        raise ValueError("at least one nonzero-frequency packet is required")
+    if any(
+        packet.poisson_frequency_h == 0
+        or packet.additive_shift_delta == 0
+        or not packet.afe_direction
+        or not packet.dyadic_label
+        for packet in nonzero_frequency_packets
+    ):
+        raise ValueError("every nonzero packet requires nonzero h,delta and labels")
+    admitted_pairs = {(left, right) for left in indices for right in indices}
+    if any(pair not in admitted_pairs for pair in canonical_zero_kernel):
+        raise ValueError("canonical zero kernel leaves the operator support")
+    if any(
+        pair not in admitted_pairs
+        for packet in nonzero_frequency_packets
+        for pair in packet.pair_kernel
+    ):
+        raise ValueError("nonzero packet kernel leaves the operator support")
+
+    coeff = {index: Fraction(coefficients[index]) for index in indices}
+
+    def normalized_kernel(
+        kernel: dict[tuple[int, int], Fraction],
+    ) -> dict[tuple[int, int], Fraction]:
+        return {
+            (left, right): Fraction(
+                kernel.get((left, right), Fraction(0))
+            )
+            for left in indices
+            for right in indices
+        }
+
+    canonical = normalized_kernel(canonical_zero_kernel)
+    packet_kernels = tuple(
+        normalized_kernel(packet.pair_kernel)
+        for packet in nonzero_frequency_packets
+    )
+    raw_nonzero = {
+        pair: sum((kernel[pair] for kernel in packet_kernels), Fraction(0))
+        for pair in admitted_pairs
+    }
+
+    def quadratic(kernel: dict[tuple[int, int], Fraction]) -> Fraction:
+        return sum(
+            (
+                coeff[left] * kernel[(left, right)] * coeff[right]
+                for left in indices
+                for right in indices
+            ),
+            Fraction(0),
+        )
+
+    packet_contributions = tuple(
+        (
+            packet.afe_direction,
+            packet.poisson_frequency_h,
+            packet.additive_shift_delta,
+            packet.dyadic_label,
+            quadratic(kernel),
+        )
+        for packet, kernel in zip(nonzero_frequency_packets, packet_kernels)
+    )
+    row_means = {
+        left: sum(
+            (
+                right_density[right] * raw_nonzero[(left, right)]
+                for right in indices
+            ),
+            Fraction(0),
+        )
+        for left in indices
+    }
+    column_means = {
+        right: sum(
+            (
+                left_density[left] * raw_nonzero[(left, right)]
+                for left in indices
+            ),
+            Fraction(0),
+        )
+        for right in indices
+    }
+    grand_mean = sum(
+        (left_density[left] * row_means[left] for left in indices),
+        Fraction(0),
+    )
+    centered = {
+        (left, right): (
+            raw_nonzero[(left, right)]
+            - row_means[left]
+            - column_means[right]
+            + grand_mean
+        )
+        for left in indices
+        for right in indices
+    }
+    nonzero_projection = {
+        pair: raw_nonzero[pair] - centered[pair] for pair in admitted_pairs
+    }
+    resonant = {
+        pair: canonical[pair] + nonzero_projection[pair]
+        for pair in admitted_pairs
+    }
+    unified = {
+        pair: canonical[pair] + raw_nonzero[pair] for pair in admitted_pairs
+    }
+    recombined = {
+        pair: resonant[pair] + centered[pair] for pair in admitted_pairs
+    }
+    weighted_rows = tuple(
+        (
+            left,
+            sum(
+                (
+                    right_density[right] * centered[(left, right)]
+                    for right in indices
+                ),
+                Fraction(0),
+            ),
+        )
+        for left in indices
+    )
+    weighted_columns = tuple(
+        (
+            right,
+            sum(
+                (
+                    left_density[left] * centered[(left, right)]
+                    for left in indices
+                ),
+                Fraction(0),
+            ),
+        )
+        for right in indices
+    )
+
+    def adjoint_output(
+        kernel: dict[tuple[int, int], Fraction],
+    ) -> dict[int, Fraction]:
+        return {
+            right: sum(
+                (coeff[left] * kernel[(left, right)] for left in indices),
+                Fraction(0),
+            )
+            for right in indices
+        }
+
+    unified_output = adjoint_output(unified)
+    resonant_output = adjoint_output(resonant)
+    centered_output = adjoint_output(centered)
+
+    def output_inner(
+        left: dict[int, Fraction], right: dict[int, Fraction]
+    ) -> Fraction:
+        return sum(
+            (left[index] * right[index] for index in indices), Fraction(0)
+        )
+
+    direct_ttstar = output_inner(unified_output, unified_output)
+    resonant_ttstar = output_inner(resonant_output, resonant_output)
+    resonant_centered = output_inner(resonant_output, centered_output)
+    centered_resonant = output_inner(centered_output, resonant_output)
+    centered_ttstar = output_inner(centered_output, centered_output)
+    recombined_ttstar = (
+        resonant_ttstar
+        + resonant_centered
+        + centered_resonant
+        + centered_ttstar
+    )
+    kernel_recombines = unified == recombined
+    labels_retained = len(packet_contributions) == len(
+        nonzero_frequency_packets
+    )
+    return UnifiedSignedZeroNonzeroOperator(
+        nonzero_packet_contributions=packet_contributions,
+        canonical_zero_contribution=quadratic(canonical),
+        raw_nonzero_contribution=quadratic(raw_nonzero),
+        unified_direct_contribution=quadratic(unified),
+        nonzero_resonant_projection_contribution=quadratic(
+            nonzero_projection
+        ),
+        resonant_contribution=quadratic(resonant),
+        centered_contribution=quadratic(centered),
+        recombined_contribution=quadratic(recombined),
+        centered_kernel_entries=tuple(
+            (left, right, centered[(left, right)])
+            for left in indices
+            for right in indices
+        ),
+        resonant_kernel_entries=tuple(
+            (left, right, resonant[(left, right)])
+            for left in indices
+            for right in indices
+        ),
+        unified_kernel_entries=tuple(
+            (left, right, unified[(left, right)])
+            for left in indices
+            for right in indices
+        ),
+        weighted_centered_row_sums=weighted_rows,
+        weighted_centered_column_sums=weighted_columns,
+        direct_ttstar_energy=direct_ttstar,
+        resonant_ttstar_energy=resonant_ttstar,
+        resonant_centered_ttstar_cross=resonant_centered,
+        centered_resonant_ttstar_cross=centered_resonant,
+        centered_ttstar_energy=centered_ttstar,
+        recombined_ttstar_energy=recombined_ttstar,
+        signed_kernel_recombination_exact=kernel_recombines,
+        ttstar_recombination_exact=(
+            kernel_recombines and direct_ttstar == recombined_ttstar
+        ),
+        nonzero_centered_once=True,
+        packet_labels_retained_before_ttstar=labels_retained,
+        physical_nonzero_density_derived=False,
+        separate_resonant_or_centered_bound_proved=False,
+        coupled_kernel_gate_closed=False,
+    )
+
+
+def unified_signed_zero_nonzero_double_mobius_type_operator_sides(
+    *,
+    smooth_coefficients: dict[int, Fraction],
+    canonical_zero_packets: tuple[SecondaryZeroPacket, ...],
+    nonzero_frequency_packets: tuple[SecondaryZeroPacket, ...],
+    left_density_weights: dict[int, Fraction],
+    right_density_weights: dict[int, Fraction],
+    cutoff_u: int,
+    cutoff_v: int,
+) -> UnifiedSignedDoubleMobiusTypeOperator:
+    """Apply both Möbius Type decompositions to the one signed operator.
+
+    ``smooth_coefficients[n]`` is the physical coefficient with its raw
+    Möbius factor removed.  The exact small/I/II identity is applied
+    pointwise and the resulting coefficient vectors are sent through the
+    same kernel
+
+    ``K_full = K_zero + K_nonzero = K_res + K_cent``.
+
+    Only then is one global ``TT*`` formed.  Consequently every ordered
+    Type pair contains the canonical zero packets, the nonzero complement,
+    and both resonant--centered mixed Gram terms.  Packet labels retain the
+    literal product ``a=h*delta`` throughout.  This is a finite signed
+    identity, not an analytic norm estimate.
+    """
+
+    if not smooth_coefficients:
+        raise ValueError("at least one smooth coefficient is required")
+    if min(cutoff_u, cutoff_v) <= 0:
+        raise ValueError("both Type cutoffs must be positive")
+    indices = tuple(sorted(smooth_coefficients))
+    if any(index <= 0 for index in indices):
+        raise ValueError("coefficient indices must be positive")
+    if not canonical_zero_packets:
+        raise ValueError("at least one canonical-zero packet is required")
+
+    all_packets = canonical_zero_packets + nonzero_frequency_packets
+    if any(
+        packet.poisson_frequency_h == 0
+        or packet.additive_shift_delta == 0
+        or not packet.afe_direction
+        or not packet.dyadic_label
+        for packet in all_packets
+    ):
+        raise ValueError("every packet requires nonzero h,delta and labels")
+
+    admitted_pairs = {(left, right) for left in indices for right in indices}
+    if any(
+        pair not in admitted_pairs
+        for packet in all_packets
+        for pair in packet.pair_kernel
+    ):
+        raise ValueError("a packet kernel leaves the coefficient support")
+
+    smooth = {
+        index: Fraction(smooth_coefficients[index]) for index in indices
+    }
+    type_names = ("small", "I", "II")
+    boundary = max(cutoff_u, cutoff_v)
+    multipliers: dict[int, dict[str, int]] = {}
+    factorization_rows: list[tuple[int, str, int, int, int, int]] = []
+    for index in indices:
+        values = {name: 0 for name in type_names}
+        if index <= boundary:
+            values["small"] = mobius(index)
+            factorization_rows.append(
+                (index, "small", 1, 1, index, mobius(index))
+            )
+        else:
+            for first_short in divisors(index):
+                quotient = index // first_short
+                for second_short in divisors(quotient):
+                    residual = quotient // second_short
+                    short_sign = mobius(first_short) * mobius(second_short)
+                    if short_sign == 0:
+                        continue
+                    if first_short <= cutoff_u and second_short <= cutoff_v:
+                        coefficient = -short_sign
+                        values["I"] += coefficient
+                        factorization_rows.append(
+                            (
+                                index,
+                                "I",
+                                first_short,
+                                second_short,
+                                residual,
+                                coefficient,
+                            )
+                        )
+                    if first_short > cutoff_u and second_short > cutoff_v:
+                        coefficient = short_sign
+                        values["II"] += coefficient
+                        factorization_rows.append(
+                            (
+                                index,
+                                "II",
+                                first_short,
+                                second_short,
+                                residual,
+                                coefficient,
+                            )
+                        )
+        if sum(values.values()) != mobius(index):
+            raise ArithmeticError("the exact small/I/II identity failed")
+        multipliers[index] = values
+
+    raw_coefficients = {
+        index: Fraction(mobius(index)) * smooth[index] for index in indices
+    }
+    type_vectors = {
+        name: {
+            index: Fraction(multipliers[index][name]) * smooth[index]
+            for index in indices
+        }
+        for name in type_names
+    }
+    reassembled = {
+        index: sum(
+            (type_vectors[name][index] for name in type_names), Fraction(0)
+        )
+        for index in indices
+    }
+
+    canonical_kernel = {
+        pair: sum(
+            (
+                Fraction(packet.pair_kernel.get(pair, Fraction(0)))
+                for packet in canonical_zero_packets
+            ),
+            Fraction(0),
+        )
+        for pair in admitted_pairs
+    }
+    base = unified_signed_zero_nonzero_operator_sides(
+        coefficients=raw_coefficients,
+        canonical_zero_kernel=canonical_kernel,
+        nonzero_frequency_packets=nonzero_frequency_packets,
+        left_density_weights=left_density_weights,
+        right_density_weights=right_density_weights,
+    )
+
+    def kernel_from_entries(
+        entries: tuple[tuple[int, int, Fraction], ...],
+    ) -> dict[tuple[int, int], Fraction]:
+        return {(left, right): value for left, right, value in entries}
+
+    full_kernel = kernel_from_entries(base.unified_kernel_entries)
+    resonant_kernel = kernel_from_entries(base.resonant_kernel_entries)
+    centered_kernel = kernel_from_entries(base.centered_kernel_entries)
+
+    def output(
+        vector: dict[int, Fraction],
+        kernel: dict[tuple[int, int], Fraction],
+    ) -> dict[int, Fraction]:
+        return {
+            right: sum(
+                (
+                    vector[left] * kernel[(left, right)]
+                    for left in indices
+                ),
+                Fraction(0),
+            )
+            for right in indices
+        }
+
+    def inner(
+        left: dict[int, Fraction], right: dict[int, Fraction]
+    ) -> Fraction:
+        return sum(
+            (left[index] * right[index] for index in indices), Fraction(0)
+        )
+
+    full_outputs = {
+        name: output(type_vectors[name], full_kernel) for name in type_names
+    }
+    resonant_outputs = {
+        name: output(type_vectors[name], resonant_kernel) for name in type_names
+    }
+    centered_outputs = {
+        name: output(type_vectors[name], centered_kernel) for name in type_names
+    }
+
+    def gram_entries(
+        left_outputs: dict[str, dict[int, Fraction]],
+        right_outputs: dict[str, dict[int, Fraction]],
+    ) -> tuple[tuple[str, str, Fraction], ...]:
+        return tuple(
+            (
+                left_name,
+                right_name,
+                inner(left_outputs[left_name], right_outputs[right_name]),
+            )
+            for left_name in type_names
+            for right_name in type_names
+        )
+
+    full_entries = gram_entries(full_outputs, full_outputs)
+    rr_entries = gram_entries(resonant_outputs, resonant_outputs)
+    rc_entries = gram_entries(resonant_outputs, centered_outputs)
+    cr_entries = gram_entries(centered_outputs, resonant_outputs)
+    cc_entries = gram_entries(centered_outputs, centered_outputs)
+    signed_sum = sum((entry[2] for entry in full_entries), Fraction(0))
+    component_sum = sum(
+        (
+            entry[2]
+            for entries in (rr_entries, rc_entries, cr_entries, cc_entries)
+            for entry in entries
+        ),
+        Fraction(0),
+    )
+    coefficients_reassemble = reassembled == raw_coefficients
+    if not coefficients_reassemble:
+        raise ArithmeticError(
+            "the Type vectors do not reconstruct the raw coefficients"
+        )
+    if signed_sum != base.direct_ttstar_energy:
+        raise ArithmeticError(
+            "the signed Type Gram does not reconstruct direct TT*"
+        )
+    if component_sum != base.direct_ttstar_energy:
+        raise ArithmeticError(
+            "the four signed kernel blocks do not reconstruct TT*"
+        )
+    packet_labels = tuple(
+        (
+            family,
+            packet.afe_direction,
+            packet.poisson_frequency_h,
+            packet.additive_shift_delta,
+            packet.poisson_frequency_h * packet.additive_shift_delta,
+            packet.dyadic_label,
+        )
+        for family, packets in (
+            ("canonical-zero", canonical_zero_packets),
+            ("nonzero", nonzero_frequency_packets),
+        )
+        for packet in packets
+    )
+    active_names = tuple(
+        name
+        for name in type_names
+        if any(type_vectors[name][index] != 0 for index in indices)
+    )
+    return UnifiedSignedDoubleMobiusTypeOperator(
+        raw_mobius_coefficients=tuple(raw_coefficients.items()),
+        type_coefficient_vectors=tuple(
+            (name, tuple(type_vectors[name].items())) for name in type_names
+        ),
+        type_factorization_rows=tuple(factorization_rows),
+        active_type_names=active_names,
+        packet_product_labels=packet_labels,
+        full_type_ttstar_entries=full_entries,
+        resonant_resonant_type_ttstar_entries=rr_entries,
+        resonant_centered_type_ttstar_entries=rc_entries,
+        centered_resonant_type_ttstar_entries=cr_entries,
+        centered_centered_type_ttstar_entries=cc_entries,
+        direct_full_ttstar_energy=base.direct_ttstar_energy,
+        signed_type_ttstar_sum=signed_sum,
+        four_kernel_component_type_ttstar_sum=component_sum,
+        raw_coefficients_reassemble_from_type_vectors=coefficients_reassemble,
+        every_type_block_keeps_full_unified_kernel=True,
+        a_equals_h_times_delta_retained=all(
+            product_label == h * delta
+            for _, _, h, delta, product_label, _ in packet_labels
+        ),
+        two_mobius_weights_retained_until_global_ttstar=True,
+        no_type_blockwise_absolute_value_taken=True,
+        physical_nonzero_density_derived=base.physical_nonzero_density_derived,
+        USZNTT_bound_proved=False,
+        coupled_kernel_gate_closed=False,
+    )
+
+
+def centered_operator_saving_ledger(
+    *,
+    raw_sum_exponent: Fraction,
+    target_sum_exponent: Fraction,
+) -> CenteredOperatorSavingLedger:
+    """Record the exact norm saving demanded by a centered-operator gate.
+
+    A fixed-coefficient ``2 -> 2`` estimate is sufficient by Cauchy.  The
+    same estimate is equivalent to a bilinear bound only when required
+    uniformly over both Euclidean unit balls.  Squaring through ``TT*``
+    doubles the exponent saving.
+    """
+
+    raw = Fraction(raw_sum_exponent)
+    target = Fraction(target_sum_exponent)
+    if target > raw:
+        raise ValueError("the target exponent cannot exceed the raw exponent")
+    saving = raw - target
+    return CenteredOperatorSavingLedger(
+        raw_sum_exponent=raw,
+        target_sum_exponent=target,
+        required_operator_saving_exponent=saving,
+        required_ttstar_saving_exponent=2 * saving,
+        fixed_coefficient_operator_gate_is_sufficient=True,
+        uniform_unit_ball_operator_gate_is_equivalent=True,
+    )
+
+
+def coupled_ttstar_determinant_split_sides(
+    *,
+    rows: tuple[CoupledOperatorRow, ...],
+    columns: tuple[str, ...],
+    operator_entries: dict[tuple[str, str], Fraction],
+    row_coefficients: dict[str, Fraction],
+) -> CoupledTTStarDeterminantSplit:
+    """Expand one global ``TT*`` and split determinant zero/nonzero exactly.
+
+    The split is made only after all row parameters have entered the same
+    operator.  No estimate is asserted: the determinant-zero part still
+    has to recombine with the resonant master term, and a spectral large
+    sieve is relevant only to the determinant-nonzero part.
+    """
+
+    if not rows or not columns:
+        raise ValueError("the coupled operator must have rows and columns")
+    if any(
+        row.short_slope_k <= 0
+        or row.short_slope_l <= 0
+        or gcd(row.short_slope_k, row.short_slope_l) != 1
+        for row in rows
+    ):
+        raise ValueError("every affine slope must be a positive primitive pair")
+    row_labels = tuple(row.label for row in rows)
+    if len(set(row_labels)) != len(row_labels):
+        raise ValueError("coupled operator row labels must be unique")
+    if len(set(columns)) != len(columns):
+        raise ValueError("coupled operator column labels must be unique")
+    if set(row_coefficients) != set(row_labels):
+        raise ValueError("row coefficient support must equal the row labels")
+    if any(
+        row_label not in row_coefficients or column not in columns
+        for row_label, column in operator_entries
+    ):
+        raise ValueError("operator entry lies outside the declared supports")
+
+    coefficients = {
+        label: Fraction(row_coefficients[label]) for label in row_labels
+    }
+    entries = {
+        (label, column): Fraction(operator_entries.get((label, column), 0))
+        for label in row_labels
+        for column in columns
+    }
+    direct = sum(
+        (
+            sum(
+                (
+                    coefficients[label] * entries[(label, column)]
+                    for label in row_labels
+                ),
+                Fraction(0),
+            )
+            ** 2
+            for column in columns
+        ),
+        Fraction(0),
+    )
+
+    gram: dict[tuple[str, str], Fraction] = {}
+    zero_pairs: list[tuple[str, str]] = []
+    nonzero_pairs: list[tuple[str, str]] = []
+    zero_quadratic = Fraction(0)
+    nonzero_quadratic = Fraction(0)
+    for left in rows:
+        for right in rows:
+            pair = (left.label, right.label)
+            gram[pair] = sum(
+                (
+                    entries[(left.label, column)]
+                    * entries[(right.label, column)]
+                    for column in columns
+                ),
+                Fraction(0),
+            )
+            contribution = (
+                coefficients[left.label]
+                * coefficients[right.label]
+                * gram[pair]
+            )
+            determinant = (
+                left.short_slope_k * right.short_slope_l
+                - right.short_slope_k * left.short_slope_l
+            )
+            if determinant == 0:
+                zero_pairs.append(pair)
+                zero_quadratic += contribution
+            else:
+                nonzero_pairs.append(pair)
+                nonzero_quadratic += contribution
+
+    gram_quadratic = zero_quadratic + nonzero_quadratic
+    return CoupledTTStarDeterminantSplit(
+        direct_quadratic=direct,
+        gram_quadratic=gram_quadratic,
+        determinant_zero_quadratic=zero_quadratic,
+        determinant_nonzero_quadratic=nonzero_quadratic,
+        determinant_zero_pairs=tuple(zero_pairs),
+        determinant_nonzero_pairs=tuple(nonzero_pairs),
+        gram_entries=tuple(
+            (left.label, right.label, gram[(left.label, right.label)])
+            for left in rows
+            for right in rows
+        ),
+    )
 
 
 def zeta_mollifier_pairing_sides(
@@ -944,6 +4397,1026 @@ def mobius_unsigned_sector_recombination(
     )
 
 
+def bblr_coefficient_stage_separation_witness(
+    *,
+    cutoff_u: int,
+    shared_outer_product: int,
+    left_parent: int,
+    right_parent: int,
+) -> BBLRCoefficientStageSeparationWitness:
+    """Refute a parent-free identification of one BBLR Type coefficient.
+
+    The grouped Type coefficient ``C_U(n;u)`` retains both its parent
+    variable ``n`` and its unsigned inner quotient even after the signed
+    atoms have been grouped by their outer product ``u``.  If two admissible
+    parents give different coefficients at the same ``u``, there can be no
+    pointwise adapter that replaces ``C_U(n;u)`` by a function of ``u``
+    alone.  The witness does not rule out a larger adapter that retains the
+    parent, all Type sectors, and every analytic packet label.
+    """
+
+    if min(cutoff_u, shared_outer_product, left_parent, right_parent) < 1:
+        raise ValueError("cutoff, outer product, and parents must be positive")
+    if left_parent <= cutoff_u or right_parent <= cutoff_u:
+        raise ValueError("both parent variables must exceed the Type cutoff")
+
+    left = dict(
+        mobius_unsigned_sector_recombination(
+            n=left_parent,
+            cutoff_u=cutoff_u,
+        ).outer_contributions
+    )
+    right = dict(
+        mobius_unsigned_sector_recombination(
+            n=right_parent,
+            cutoff_u=cutoff_u,
+        ).outer_contributions
+    )
+    if shared_outer_product not in left or shared_outer_product not in right:
+        raise ValueError("the shared outer product must occur for both parents")
+
+    left_contribution = left[shared_outer_product]
+    right_contribution = right[shared_outer_product]
+    parent_dependent = left_contribution != right_contribution
+    return BBLRCoefficientStageSeparationWitness(
+        cutoff_u=cutoff_u,
+        shared_outer_product=shared_outer_product,
+        left_parent=left_parent,
+        right_parent=right_parent,
+        left_outer_contribution=left_contribution,
+        right_outer_contribution=right_contribution,
+        same_outer_product=True,
+        parent_dependent_outer_weight=parent_dependent,
+        direct_outer_index_only_adapter_refuted=parent_dependent,
+        packet_exhaustive_parent_aware_adapter_still_open=True,
+    )
+
+
+def bblr_common_unsigned_cofactor_gram_sides(
+    *,
+    cutoff_u: int,
+    left_parent_weights: dict[int, Fraction],
+    right_parent_weights: dict[int, Fraction],
+) -> BBLRCommonUnsignedCofactorGram:
+    """Diagonalize one parent-aware BBLR inner-cofactor equality.
+
+    Group one Type identity by its signed outer product ``u`` and retain
+    the unsigned inner quotient ``r=n/u``.  Equality of the left and right
+    inner quotients gives the finite gcd kernel
+
+    ``P_U(n,m)=sum_(r|(n,m)) C_U(n;n/r) C_U(m;m/r)``.
+
+    A second finite reindexing writes the bilinear form with kernel ``P_U``
+    as a Gram sum over ``r``.  Equal left and right parent weights therefore
+    give a sum of exact rational squares.  This is a Type-stage identity;
+    analytic AFE/ordering packet exhaustion and the target estimate are not
+    asserted.
+    """
+
+    if cutoff_u < 1:
+        raise ValueError("the Type cutoff must be positive")
+    if not left_parent_weights or not right_parent_weights:
+        raise ValueError("both parent-weight families are required")
+    if any(
+        parent <= cutoff_u
+        for family in (left_parent_weights, right_parent_weights)
+        for parent in family
+    ):
+        raise ValueError("every parent variable must exceed the Type cutoff")
+
+    parents = set(left_parent_weights) | set(right_parent_weights)
+    outer_coefficients = {
+        parent: dict(
+            mobius_unsigned_sector_recombination(
+                n=parent,
+                cutoff_u=cutoff_u,
+            ).outer_contributions
+        )
+        for parent in parents
+    }
+
+    direct = Fraction(0)
+    for left_parent, left_weight in left_parent_weights.items():
+        for left_outer, left_coefficient in outer_coefficients[
+            left_parent
+        ].items():
+            left_inner = left_parent // left_outer
+            for right_parent, right_weight in right_parent_weights.items():
+                for right_outer, right_coefficient in outer_coefficients[
+                    right_parent
+                ].items():
+                    if left_inner != right_parent // right_outer:
+                        continue
+                    direct += (
+                        Fraction(left_weight)
+                        * left_coefficient
+                        * Fraction(right_weight)
+                        * right_coefficient
+                    )
+
+    gcd_kernel = Fraction(0)
+    for left_parent, left_weight in left_parent_weights.items():
+        for right_parent, right_weight in right_parent_weights.items():
+            kernel = sum(
+                outer_coefficients[left_parent].get(left_parent // r, 0)
+                * outer_coefficients[right_parent].get(right_parent // r, 0)
+                for r in divisors(gcd(left_parent, right_parent))
+            )
+            gcd_kernel += (
+                Fraction(left_weight) * Fraction(right_weight) * kernel
+            )
+
+    common_cofactors = sorted(
+        {
+            r
+            for parent in parents
+            for r in divisors(parent)
+        }
+    )
+    gram = Fraction(0)
+    active_rows: list[tuple[int, Fraction, Fraction]] = []
+    for common_cofactor in common_cofactors:
+        left_projection = sum(
+            (
+                Fraction(weight)
+                * outer_coefficients[parent].get(
+                    parent // common_cofactor,
+                    0,
+                )
+            )
+            for parent, weight in left_parent_weights.items()
+            if parent % common_cofactor == 0
+        )
+        right_projection = sum(
+            (
+                Fraction(weight)
+                * outer_coefficients[parent].get(
+                    parent // common_cofactor,
+                    0,
+                )
+            )
+            for parent, weight in right_parent_weights.items()
+            if parent % common_cofactor == 0
+        )
+        gram += left_projection * right_projection
+        if left_projection and right_projection:
+            active_rows.append(
+                (common_cofactor, left_projection, right_projection)
+            )
+
+    return BBLRCommonUnsignedCofactorGram(
+        cutoff_u=cutoff_u,
+        direct_partial_diagonal_sum=direct,
+        gcd_kernel_sum=gcd_kernel,
+        common_cofactor_gram_sum=gram,
+        active_common_cofactor_rows=tuple(active_rows),
+        direct_to_gcd_kernel_identity_verified=(direct == gcd_kernel),
+        gcd_kernel_to_gram_identity_verified=(gcd_kernel == gram),
+        parent_and_inner_quotient_retained=True,
+        analytic_bblr_packet_exhaustive=False,
+        target_bound_proved=False,
+    )
+
+
+def bblr_four_parent_partial_diagonal_sides(
+    *,
+    parent_cutoffs: tuple[int, int, int, int],
+    labelled_parent_kernels: dict[
+        str,
+        dict[tuple[int, int, int, int], Fraction],
+    ],
+) -> BBLRFourParentPartialDiagonal:
+    """Recombine the four Type identities around one common inner factor.
+
+    A parent tuple is ``(p,q,m,n)`` and the four Type cutoffs may differ.
+    The Type decompositions of ``q`` and ``n`` are constrained to have the
+    same unsigned quotient, while those of ``p`` and ``m`` are unrestricted.
+    Summing the latter two identities restores ``mu(p)mu(m)`` exactly and
+    leaves the parent-aware gcd kernel ``P_(U_q,U_n)(q,n)``.  Supplied labels
+    may encode BBLR slot permutations and AFE orderings, but this finite
+    helper does not assert that the supplied list exhausts the analytic
+    packets.
+    """
+
+    if len(parent_cutoffs) != 4 or min(parent_cutoffs) < 1:
+        raise ValueError("four positive parent-specific Type cutoffs are required")
+    if not labelled_parent_kernels:
+        raise ValueError("at least one labelled parent kernel is required")
+    for label, kernel in labelled_parent_kernels.items():
+        if not label or not kernel:
+            raise ValueError("every slot/order label requires a nonempty kernel")
+        if any(len(parents) != 4 for parents in kernel):
+            raise ValueError("each parent row must be a quadruple (p,q,m,n)")
+        if any(
+            parent <= parent_cutoffs[index]
+            for parents in kernel
+            for index, parent in enumerate(parents)
+        ):
+            raise ValueError("every parent variable must exceed the Type cutoff")
+
+    parent_cutoff_pairs = {
+        (parent, parent_cutoffs[index])
+        for kernel in labelled_parent_kernels.values()
+        for parents in kernel
+        for index, parent in enumerate(parents)
+    }
+    outer_coefficients = {
+        (parent, cutoff): dict(
+            mobius_unsigned_sector_recombination(
+                n=parent,
+                cutoff_u=cutoff,
+            ).outer_contributions
+        )
+        for parent, cutoff in parent_cutoff_pairs
+    }
+
+    direct = Fraction(0)
+    recombined = Fraction(0)
+    gcd_sum = Fraction(0)
+    labelled_sums: dict[str, Fraction] = {}
+    for label, kernel in labelled_parent_kernels.items():
+        labelled_recombined = Fraction(0)
+        for (left_free, left_diagonal, right_free, right_diagonal), weight in (
+            kernel.items()
+        ):
+            row_weight = Fraction(weight)
+            for _, left_free_coefficient in outer_coefficients[
+                (left_free, parent_cutoffs[0])
+            ].items():
+                for left_outer, left_diagonal_coefficient in outer_coefficients[
+                    (left_diagonal, parent_cutoffs[1])
+                ].items():
+                    left_inner = left_diagonal // left_outer
+                    for _, right_free_coefficient in outer_coefficients[
+                        (right_free, parent_cutoffs[2])
+                    ].items():
+                        for (
+                            right_outer,
+                            right_diagonal_coefficient,
+                        ) in outer_coefficients[
+                            (right_diagonal, parent_cutoffs[3])
+                        ].items():
+                            if left_inner != right_diagonal // right_outer:
+                                continue
+                            direct += (
+                                row_weight
+                                * left_free_coefficient
+                                * left_diagonal_coefficient
+                                * right_free_coefficient
+                                * right_diagonal_coefficient
+                            )
+
+            parent_kernel = sum(
+                left_coefficient * right_coefficient
+                for left_outer, left_coefficient in outer_coefficients[
+                    (left_diagonal, parent_cutoffs[1])
+                ].items()
+                for right_outer, right_coefficient in outer_coefficients[
+                    (right_diagonal, parent_cutoffs[3])
+                ].items()
+                if left_diagonal // left_outer
+                == right_diagonal // right_outer
+            )
+            recombined_row = (
+                row_weight
+                * mobius(left_free)
+                * mobius(right_free)
+                * parent_kernel
+            )
+            recombined += recombined_row
+            labelled_recombined += recombined_row
+
+            gcd_kernel = sum(
+                outer_coefficients[
+                    (left_diagonal, parent_cutoffs[1])
+                ].get(
+                    left_diagonal // common_cofactor,
+                    0,
+                )
+                * outer_coefficients[
+                    (right_diagonal, parent_cutoffs[3])
+                ].get(
+                    right_diagonal // common_cofactor,
+                    0,
+                )
+                for common_cofactor in divisors(
+                    gcd(left_diagonal, right_diagonal)
+                )
+            )
+            gcd_sum += (
+                row_weight
+                * mobius(left_free)
+                * mobius(right_free)
+                * gcd_kernel
+            )
+        labelled_sums[label] = labelled_recombined
+
+    retained_labels = tuple(sorted(labelled_parent_kernels))
+    return BBLRFourParentPartialDiagonal(
+        parent_cutoffs=parent_cutoffs,
+        direct_four_type_sum=direct,
+        recombined_two_parent_sum=recombined,
+        gcd_kernel_sum=gcd_sum,
+        labelled_recombined_sums=tuple(sorted(labelled_sums.items())),
+        direct_to_two_parent_recombination_verified=(direct == recombined),
+        two_parent_to_gcd_kernel_verified=(recombined == gcd_sum),
+        unconstrained_parent_type_sums_recombined_to_mobius=True,
+        common_diagonal_parent_kernel_retained=True,
+        supplied_slot_order_labels_retained=retained_labels,
+        analytic_afe_packet_exhaustive=False,
+        target_bound_proved=False,
+    )
+
+
+def bblr_partial_diagonal_slot_coprimality(
+    *,
+    a: int,
+    b: int,
+    r1: int,
+    r2: int,
+) -> BBLRPartialDiagonalSlotCoprimality:
+    """Classify the four possible common-inner BBLR slot pairings.
+
+    The determinant line is ``b*r1-a*r2=h``.  Its exact support has
+    ``gcd(a,b)=gcd(r1,a)=gcd(r2,b)=1``.  Thus the denominator/denominator
+    and both mixed cross-side pairings have unit gcd.  Only the moving pair
+    ``r1/r2`` may have a nontrivial common inner quotient, and its gcd
+    divides ``h``.
+    """
+
+    if min(a, b, r1, r2) < 1:
+        raise ValueError("determinant parents must be positive")
+    if gcd(a, b) != 1:
+        raise ValueError("the denominator cofactors a,b must be coprime")
+    if gcd(r1, a) != 1:
+        raise ValueError("the first moving parent must be coprime to a")
+    if gcd(r2, b) != 1:
+        raise ValueError("the second moving parent must be coprime to b")
+
+    shift = b * r1 - a * r2
+    if shift == 0:
+        raise ValueError("the off-diagonal determinant shift must be nonzero")
+    moving_gcd = gcd(r1, r2)
+    pairings = (
+        ("b/a", gcd(b, a)),
+        ("b/r2", gcd(b, r2)),
+        ("r1/a", gcd(r1, a)),
+        ("r1/r2", moving_gcd),
+    )
+    first_three_unit = all(value == 1 for _, value in pairings[:3])
+    return BBLRPartialDiagonalSlotCoprimality(
+        a=a,
+        b=b,
+        r1=r1,
+        r2=r2,
+        shift_h=shift,
+        pairing_gcds=pairings,
+        three_static_or_mixed_pairings_forced_unit=first_three_unit,
+        moving_pair_gcd=moving_gcd,
+        moving_pair_gcd_divides_shift=(shift % moving_gcd == 0),
+        only_moving_pair_can_support_nontrivial_common_cofactor=(
+            first_three_unit
+        ),
+    )
+
+
+def bblr_moving_parent_zero_mode_sides(
+    *,
+    modulus: int,
+    moving_parent_cutoffs: tuple[int, int],
+    left_parent_weights: dict[tuple[int, int], Fraction],
+    right_parent_weights: dict[tuple[int, int], Fraction],
+    labelled_common_shift_kernels: dict[
+        str,
+        dict[tuple[int, int], Fraction],
+    ],
+) -> BBLRMovingParentZeroMode:
+    """Center the surviving moving/moving parent kernel after packet sum.
+
+    A left parent row is ``(b,r1)`` and a right row is ``(a,r2)``.  For a
+    common Type quotient ``r``, write ``r1=r*x`` and ``r2=r*y``; the original
+    determinant shift is ``h=r*(b*x-a*y)``.  Every supplied packet kernel is
+    first summed as a function of ``(r,c)`` with ``c=b*x-a*y``.  Only then is
+    its constant cyclic mode removed separately on each ``r`` layer.
+
+    The modulus must be large enough that every supplied or active signed
+    ``c`` has absolute value less than half the modulus.  The zero shift is
+    extended by zero, so the already-counted original diagonal cancels
+    between the constant and centered pieces.
+    """
+
+    if modulus < 3:
+        raise ValueError("the cyclic modulus must be at least three")
+    if len(moving_parent_cutoffs) != 2 or min(moving_parent_cutoffs) < 1:
+        raise ValueError("two positive moving-parent cutoffs are required")
+    if not left_parent_weights or not right_parent_weights:
+        raise ValueError("both moving-parent weight families are required")
+    if not labelled_common_shift_kernels:
+        raise ValueError("at least one labelled common-shift kernel is required")
+    if any(
+        min(static_parent, moving_parent) < 1
+        for family in (left_parent_weights, right_parent_weights)
+        for static_parent, moving_parent in family
+    ):
+        raise ValueError("all parent variables must be positive")
+    if any(
+        moving_parent <= moving_parent_cutoffs[side]
+        for side, family in enumerate(
+            (left_parent_weights, right_parent_weights)
+        )
+        for _, moving_parent in family
+    ):
+        raise ValueError("moving parents must exceed their Type cutoffs")
+    for label, kernel in labelled_common_shift_kernels.items():
+        if not label or not kernel:
+            raise ValueError("every packet label requires a nonempty kernel")
+        if any(r < 1 for r, _ in kernel):
+            raise ValueError("common quotients must be positive")
+        if any(c == 0 and Fraction(value) for (r, c), value in kernel.items()):
+            raise ValueError("the original zero shift must have kernel value zero")
+
+    moving_coefficients: dict[tuple[int, int], dict[int, int]] = {}
+    for side, family in enumerate((left_parent_weights, right_parent_weights)):
+        cutoff = moving_parent_cutoffs[side]
+        for _, moving_parent in family:
+            moving_coefficients[(moving_parent, cutoff)] = dict(
+                mobius_unsigned_sector_recombination(
+                    n=moving_parent,
+                    cutoff_u=cutoff,
+                ).outer_contributions
+            )
+
+    combined_kernel: dict[tuple[int, int], Fraction] = {}
+    packet_labels = tuple(sorted(labelled_common_shift_kernels))
+    for label in packet_labels:
+        for key, value in labelled_common_shift_kernels[label].items():
+            combined_kernel[key] = combined_kernel.get(key, Fraction(0)) + Fraction(
+                value
+            )
+
+    active_rows: list[tuple[int, int, Fraction]] = []
+    common_r_values = {r for r, _ in combined_kernel}
+    common_r_divides_shift = True
+    for (b, r1), left_weight in left_parent_weights.items():
+        left_coefficients = moving_coefficients[(r1, moving_parent_cutoffs[0])]
+        for (a, r2), right_weight in right_parent_weights.items():
+            right_coefficients = moving_coefficients[
+                (r2, moving_parent_cutoffs[1])
+            ]
+            for common_r in divisors(gcd(r1, r2)):
+                left_coefficient = left_coefficients.get(r1 // common_r, 0)
+                right_coefficient = right_coefficients.get(r2 // common_r, 0)
+                base_weight = (
+                    Fraction(left_weight)
+                    * mobius(b)
+                    * left_coefficient
+                    * Fraction(right_weight)
+                    * mobius(a)
+                    * right_coefficient
+                )
+                if not base_weight:
+                    continue
+                determinant_c = (
+                    b * (r1 // common_r) - a * (r2 // common_r)
+                )
+                original_shift = common_r * determinant_c
+                common_r_divides_shift = (
+                    common_r_divides_shift
+                    and original_shift % common_r == 0
+                )
+                active_rows.append((common_r, determinant_c, base_weight))
+                common_r_values.add(common_r)
+
+    signed_coordinates = [c for _, c in combined_kernel] + [
+        c for _, c, _ in active_rows
+    ]
+    if any(2 * abs(c) >= modulus for c in signed_coordinates):
+        raise ValueError("the cyclic modulus aliases an active signed shift")
+
+    means: dict[int, Fraction] = {}
+    centered_shift_sums: dict[int, Fraction] = {}
+    for common_r in sorted(common_r_values):
+        residue_kernel = {residue: Fraction(0) for residue in range(modulus)}
+        for (kernel_r, signed_c), value in combined_kernel.items():
+            if kernel_r == common_r:
+                residue_kernel[signed_c % modulus] += value
+        mean = sum(residue_kernel.values(), Fraction(0)) / modulus
+        means[common_r] = mean
+        centered_shift_sums[common_r] = sum(
+            (value - mean for value in residue_kernel.values()),
+            Fraction(0),
+        )
+
+    direct = sum(
+        (
+            base_weight
+            * combined_kernel.get((common_r, determinant_c), Fraction(0))
+        )
+        for common_r, determinant_c, base_weight in active_rows
+    )
+    centered = sum(
+        (
+            base_weight
+            * (
+                combined_kernel.get((common_r, determinant_c), Fraction(0))
+                - means[common_r]
+            )
+        )
+        for common_r, determinant_c, base_weight in active_rows
+    )
+
+    constant = Fraction(0)
+    for common_r in sorted(common_r_values):
+        left_projection = sum(
+            (
+                Fraction(weight)
+                * mobius(static_parent)
+                * moving_coefficients[
+                    (moving_parent, moving_parent_cutoffs[0])
+                ].get(moving_parent // common_r, 0)
+            )
+            for (static_parent, moving_parent), weight in left_parent_weights.items()
+            if moving_parent % common_r == 0
+        )
+        right_projection = sum(
+            (
+                Fraction(weight)
+                * mobius(static_parent)
+                * moving_coefficients[
+                    (moving_parent, moving_parent_cutoffs[1])
+                ].get(moving_parent // common_r, 0)
+            )
+            for (static_parent, moving_parent), weight in right_parent_weights.items()
+            if moving_parent % common_r == 0
+        )
+        constant += means[common_r] * left_projection * right_projection
+
+    recombined = constant + centered
+    return BBLRMovingParentZeroMode(
+        modulus=modulus,
+        direct_parent_master_sum=direct,
+        combined_kernel_mean_by_r=tuple(sorted(means.items())),
+        constant_mode_contribution=constant,
+        centered_parent_master_sum=centered,
+        recombined_parent_master_sum=recombined,
+        centered_kernel_shift_sum_by_r=tuple(
+            sorted(centered_shift_sums.items())
+        ),
+        packet_labels_retained=packet_labels,
+        common_r_divides_original_shift_verified=common_r_divides_shift,
+        packet_sum_precedes_centering=True,
+        zero_mode_split_identity_verified=(direct == recombined),
+        analytic_afe_ordering_kernel_exhaustive=False,
+        target_bound_proved=False,
+    )
+
+
+def bblr_cyclic_centering_modulus_dependence_witness(
+    *,
+    moduli: tuple[int, ...],
+    moving_parent_cutoffs: tuple[int, int],
+    left_parent_weights: dict[tuple[int, int], Fraction],
+    right_parent_weights: dict[tuple[int, int], Fraction],
+    labelled_common_shift_kernels: dict[
+        str,
+        dict[tuple[int, int], Fraction],
+    ],
+) -> BBLRCyclicCenteringModulusWitness:
+    """Compare the same cyclic split under distinct no-alias moduli.
+
+    The direct finite parent sum is independent of the auxiliary cyclic
+    embedding.  Its constant and centered summands need not be.  This
+    prevents the cyclic constant summand from being identified, without a
+    separate adapter, with the canonical zero dual frequency in the
+    two-dimensional Poisson formula.
+    """
+    if len(moduli) < 2 or len(set(moduli)) != len(moduli):
+        raise ValueError("at least two distinct cyclic moduli are required")
+    splits = tuple(
+        bblr_moving_parent_zero_mode_sides(
+            modulus=modulus,
+            moving_parent_cutoffs=moving_parent_cutoffs,
+            left_parent_weights=left_parent_weights,
+            right_parent_weights=right_parent_weights,
+            labelled_common_shift_kernels=labelled_common_shift_kernels,
+        )
+        for modulus in moduli
+    )
+    direct = tuple(split.direct_parent_master_sum for split in splits)
+    constants = tuple(split.constant_mode_contribution for split in splits)
+    centered = tuple(split.centered_parent_master_sum for split in splits)
+    return BBLRCyclicCenteringModulusWitness(
+        moduli=moduli,
+        direct_parent_master_sums=direct,
+        cyclic_kernel_means_by_modulus=tuple(
+            (modulus, split.combined_kernel_mean_by_r)
+            for modulus, split in zip(moduli, splits, strict=True)
+        ),
+        constant_contributions=constants,
+        centered_contributions=centered,
+        every_split_recombines=all(
+            split.zero_mode_split_identity_verified for split in splits
+        ),
+        constant_summand_depends_on_auxiliary_modulus=(
+            len(set(constants)) > 1
+        ),
+        cyclic_constant_identified_with_poisson_zero_mode=False,
+        target_bound_proved=False,
+    )
+
+
+def bblr_poisson_zero_gram_sides(
+    *,
+    primitive_zero_coefficient: Fraction,
+    discrete_identity_diagonal: Fraction,
+    sample_weights: dict[str, Fraction],
+    entry_values: dict[tuple[str, str], Fraction],
+    entry_coefficients: dict[str, Fraction],
+) -> BBLRPoissonZeroGram:
+    """Recombine the canonical zero dual frequency before diagonal removal.
+
+    This is the exact finite Gram analogue of adjoining the *continuous*
+    self-pair terms to the offdiagonal zero frequency in (4.488).  The
+    resulting complete continuous mode is a nonnegative Gram energy.
+    The original identity diagonal is discrete and is supplied separately:
+
+    ``D_disc + c0 * Z_off = c0 * E_cont + (D_disc - c0 * D_cont)``.
+
+    Thus the continuous self Gram must not be silently identified with the
+    registered discrete diagonal; their difference is a sampling correction.
+    """
+    if not sample_weights or any(
+        Fraction(weight) < 0 for weight in sample_weights.values()
+    ):
+        raise ValueError("nonnegative sample weights are required")
+    if len(entry_coefficients) < 2:
+        raise ValueError("at least two entry rows are required")
+    c_zero = Fraction(primitive_zero_coefficient)
+    discrete_diagonal = Fraction(discrete_identity_diagonal)
+    if any(
+        entry not in entry_coefficients or sample not in sample_weights
+        for entry, sample in entry_values
+    ):
+        raise ValueError("entry value lies outside the declared supports")
+
+    entries = tuple(sorted(entry_coefficients))
+    samples = tuple(sorted(sample_weights))
+    coefficients = {
+        entry: Fraction(entry_coefficients[entry]) for entry in entries
+    }
+    values = {
+        (entry, sample): Fraction(entry_values.get((entry, sample), 0))
+        for entry in entries
+        for sample in samples
+    }
+    weights = {
+        sample: Fraction(sample_weights[sample]) for sample in samples
+    }
+
+    direct = sum(
+        (
+            weights[sample]
+            * sum(
+                (
+                    coefficients[entry] * values[(entry, sample)]
+                    for entry in entries
+                ),
+                Fraction(0),
+            )
+            ** 2
+            for sample in samples
+        ),
+        Fraction(0),
+    )
+    gram = {
+        (left, right): sum(
+            (
+                weights[sample]
+                * values[(left, sample)]
+                * values[(right, sample)]
+                for sample in samples
+            ),
+            Fraction(0),
+        )
+        for left in entries
+        for right in entries
+    }
+    pairwise = sum(
+        (
+            coefficients[left]
+            * coefficients[right]
+            * gram[(left, right)]
+            for left in entries
+            for right in entries
+        ),
+        Fraction(0),
+    )
+    diagonal = sum(
+        (
+            coefficients[entry] ** 2 * gram[(entry, entry)]
+            for entry in entries
+        ),
+        Fraction(0),
+    )
+    offdiagonal = sum(
+        (
+            coefficients[left]
+            * coefficients[right]
+            * gram[(left, right)]
+            for left in entries
+            for right in entries
+            if left != right
+        ),
+        Fraction(0),
+    )
+    weighted_offdiagonal = c_zero * offdiagonal
+    sampling_correction = discrete_diagonal - c_zero * diagonal
+    diagonal_plus_zero = discrete_diagonal + weighted_offdiagonal
+    resonant_main = c_zero * direct + sampling_correction
+    return BBLRPoissonZeroGram(
+        primitive_zero_coefficient=c_zero,
+        continuous_gram_energy=direct,
+        pairwise_gram_quadratic=pairwise,
+        continuous_self_gram_diagonal=diagonal,
+        continuous_offdiagonal_zero_mode=offdiagonal,
+        weighted_offdiagonal_zero_mode=weighted_offdiagonal,
+        discrete_identity_diagonal=discrete_diagonal,
+        diagonal_sampling_correction=sampling_correction,
+        discrete_diagonal_plus_zero_mode=diagonal_plus_zero,
+        recombined_resonant_main_term=resonant_main,
+        pairwise_gram_identity_verified=(direct == pairwise),
+        resonant_main_recombination_verified=(
+            diagonal_plus_zero == resonant_main
+        ),
+        canonical_zero_mode_is_gram_before_diagonal_removal=True,
+        offdiagonal_zero_mode_is_sign_indefinite=True,
+        continuous_self_gram_identified_with_discrete_diagonal=False,
+        target_bound_proved=False,
+    )
+
+
+def bblr_tensor_parent_projection_sides(
+    *,
+    common_r_values: tuple[int, ...],
+    moving_parent_cutoffs: tuple[int, int],
+    left_static_weights: dict[int, Fraction],
+    left_moving_weights: dict[int, Fraction],
+    right_static_weights: dict[int, Fraction],
+    right_moving_weights: dict[int, Fraction],
+) -> BBLRTensorParentProjection:
+    """Factor a separated parent tensor into static and moving projections.
+
+    For a tensor weight ``A(b,r1)=U(b)V(r1)``, the left projection in
+    (4.621zadj14) is the product of the one-variable smooth Mertens sum in
+    ``b`` and the common-cofactor Type projection in ``r1``.  The same holds
+    on the right.  This finite identity records that the Type diagonalization
+    does not remove the two static Möbius sums.
+    """
+
+    if not common_r_values or min(common_r_values) < 1:
+        raise ValueError("positive common-r layers are required")
+    if len(set(common_r_values)) != len(common_r_values):
+        raise ValueError("common-r layers must be distinct")
+    if len(moving_parent_cutoffs) != 2 or min(moving_parent_cutoffs) < 1:
+        raise ValueError("two positive moving-parent cutoffs are required")
+    families = (
+        left_static_weights,
+        left_moving_weights,
+        right_static_weights,
+        right_moving_weights,
+    )
+    if any(not family for family in families):
+        raise ValueError("all four tensor weight families are required")
+    if any(index < 1 for family in families for index in family):
+        raise ValueError("tensor parent indices must be positive")
+    if any(parent <= moving_parent_cutoffs[0] for parent in left_moving_weights):
+        raise ValueError("left moving parents must exceed their Type cutoff")
+    if any(parent <= moving_parent_cutoffs[1] for parent in right_moving_weights):
+        raise ValueError("right moving parents must exceed their Type cutoff")
+
+    left_static = sum(
+        (Fraction(weight) * mobius(parent) for parent, weight in left_static_weights.items()),
+        Fraction(0),
+    )
+    right_static = sum(
+        (
+            Fraction(weight) * mobius(parent)
+            for parent, weight in right_static_weights.items()
+        ),
+        Fraction(0),
+    )
+    left_coefficients = {
+        parent: dict(
+            mobius_unsigned_sector_recombination(
+                n=parent,
+                cutoff_u=moving_parent_cutoffs[0],
+            ).outer_contributions
+        )
+        for parent in left_moving_weights
+    }
+    right_coefficients = {
+        parent: dict(
+            mobius_unsigned_sector_recombination(
+                n=parent,
+                cutoff_u=moving_parent_cutoffs[1],
+            ).outer_contributions
+        )
+        for parent in right_moving_weights
+    }
+
+    left_moving_rows: list[tuple[int, Fraction]] = []
+    right_moving_rows: list[tuple[int, Fraction]] = []
+    left_direct_rows: list[tuple[int, Fraction]] = []
+    right_direct_rows: list[tuple[int, Fraction]] = []
+    for common_r in sorted(common_r_values):
+        left_moving = sum(
+            (
+                Fraction(weight)
+                * left_coefficients[parent].get(parent // common_r, 0)
+            )
+            for parent, weight in left_moving_weights.items()
+            if parent % common_r == 0
+        )
+        right_moving = sum(
+            (
+                Fraction(weight)
+                * right_coefficients[parent].get(parent // common_r, 0)
+            )
+            for parent, weight in right_moving_weights.items()
+            if parent % common_r == 0
+        )
+        left_direct = sum(
+            (
+                Fraction(static_weight)
+                * mobius(static_parent)
+                * Fraction(moving_weight)
+                * left_coefficients[moving_parent].get(
+                    moving_parent // common_r,
+                    0,
+                )
+            )
+            for static_parent, static_weight in left_static_weights.items()
+            for moving_parent, moving_weight in left_moving_weights.items()
+            if moving_parent % common_r == 0
+        )
+        right_direct = sum(
+            (
+                Fraction(static_weight)
+                * mobius(static_parent)
+                * Fraction(moving_weight)
+                * right_coefficients[moving_parent].get(
+                    moving_parent // common_r,
+                    0,
+                )
+            )
+            for static_parent, static_weight in right_static_weights.items()
+            for moving_parent, moving_weight in right_moving_weights.items()
+            if moving_parent % common_r == 0
+        )
+        left_moving_rows.append((common_r, left_moving))
+        right_moving_rows.append((common_r, right_moving))
+        left_direct_rows.append((common_r, left_direct))
+        right_direct_rows.append((common_r, right_direct))
+
+    left_factored = tuple(
+        (common_r, left_static * value)
+        for common_r, value in left_moving_rows
+    )
+    right_factored = tuple(
+        (common_r, right_static * value)
+        for common_r, value in right_moving_rows
+    )
+    return BBLRTensorParentProjection(
+        left_static_mobius_sum=left_static,
+        right_static_mobius_sum=right_static,
+        left_moving_projection_by_r=tuple(left_moving_rows),
+        right_moving_projection_by_r=tuple(right_moving_rows),
+        left_direct_parent_projection_by_r=tuple(left_direct_rows),
+        right_direct_parent_projection_by_r=tuple(right_direct_rows),
+        left_factorization_verified=(tuple(left_direct_rows) == left_factored),
+        right_factorization_verified=(
+            tuple(right_direct_rows) == right_factored
+        ),
+        static_mertens_factors_remain=True,
+    )
+
+
+def bblr_labelled_tensor_zero_mode_sides(
+    *,
+    modulus: int,
+    moving_parent_cutoffs: tuple[int, int],
+    left_parent_weights_by_label: dict[
+        str,
+        dict[tuple[int, int], Fraction],
+    ],
+    right_parent_weights_by_label: dict[
+        str,
+        dict[tuple[int, int], Fraction],
+    ],
+    common_shift_kernels_by_label: dict[
+        str,
+        dict[tuple[int, int], Fraction],
+    ],
+) -> BBLRLabelledTensorZeroMode:
+    """Center a signed tensor superposition with label-dependent parents.
+
+    The helper :func:`bblr_moving_parent_zero_mode_sides` may aggregate
+    packet kernels before centering because its parent weights are shared.
+    A Fourier tensor superposition generally has different one-variable
+    parent weights for each label.  Its constant mode is therefore
+
+    ``sum_label sum_r mean(K_label,r) L_label,r R_label,r``.
+
+    In particular, cancellation of the unweighted aggregate kernel means
+    does not by itself annihilate this parent-weighted constant mode.
+    """
+    label_sets = (
+        set(left_parent_weights_by_label),
+        set(right_parent_weights_by_label),
+        set(common_shift_kernels_by_label),
+    )
+    if not label_sets[0] or any(labels != label_sets[0] for labels in label_sets[1:]):
+        raise ValueError("the same nonempty tensor labels are required")
+
+    labels = tuple(sorted(label_sets[0]))
+    per_label = {
+        label: bblr_moving_parent_zero_mode_sides(
+            modulus=modulus,
+            moving_parent_cutoffs=moving_parent_cutoffs,
+            left_parent_weights=left_parent_weights_by_label[label],
+            right_parent_weights=right_parent_weights_by_label[label],
+            labelled_common_shift_kernels={
+                label: common_shift_kernels_by_label[label]
+            },
+        )
+        for label in labels
+    }
+
+    aggregate_kernel: dict[tuple[int, int], Fraction] = {}
+    for label in labels:
+        for key, value in common_shift_kernels_by_label[label].items():
+            aggregate_kernel[key] = aggregate_kernel.get(key, Fraction(0)) + Fraction(
+                value
+            )
+    kernel_r_values = sorted({common_r for common_r, _ in aggregate_kernel})
+    aggregate_means = tuple(
+        (
+            common_r,
+            sum(
+                (
+                    value
+                    for (kernel_r, _), value in aggregate_kernel.items()
+                    if kernel_r == common_r
+                ),
+                Fraction(0),
+            )
+            / modulus,
+        )
+        for common_r in kernel_r_values
+    )
+    aggregate_means_vanish = all(mean == 0 for _, mean in aggregate_means)
+
+    constant_by_label = tuple(
+        (label, per_label[label].constant_mode_contribution)
+        for label in labels
+    )
+    direct = sum(
+        (per_label[label].direct_parent_master_sum for label in labels),
+        Fraction(0),
+    )
+    constant = sum((value for _, value in constant_by_label), Fraction(0))
+    centered = sum(
+        (per_label[label].centered_parent_master_sum for label in labels),
+        Fraction(0),
+    )
+    recombined = constant + centered
+
+    first_left = left_parent_weights_by_label[labels[0]]
+    first_right = right_parent_weights_by_label[labels[0]]
+    label_dependent = any(
+        left_parent_weights_by_label[label] != first_left
+        or right_parent_weights_by_label[label] != first_right
+        for label in labels[1:]
+    )
+    kernel_only_sufficient = (
+        not aggregate_means_vanish or constant == 0
+    )
+    return BBLRLabelledTensorZeroMode(
+        direct_labelled_master_sum=direct,
+        aggregate_kernel_mean_by_r=aggregate_means,
+        aggregate_kernel_means_vanish=aggregate_means_vanish,
+        constant_mode_by_label=constant_by_label,
+        weighted_constant_mode_contribution=constant,
+        weighted_constant_mode_vanishes=(constant == 0),
+        centered_labelled_master_sum=centered,
+        recombined_labelled_master_sum=recombined,
+        zero_mode_split_identity_verified=(direct == recombined),
+        parent_weights_are_label_dependent=label_dependent,
+        kernel_only_mean_cancellation_is_sufficient=kernel_only_sufficient,
+        target_bound_proved=False,
+    )
+
+
 def four_mobius_unsigned_sector_recombination(
     *,
     values: tuple[int, int, int, int],
@@ -1044,6 +5517,89 @@ def _normalized_modular_phase(
         raise ValueError("phase denominator is not invertible")
     residue = numerator * pow(invert, -1, modulus) % modulus
     return Fraction(residue, modulus)
+
+
+def drappeau_double_quotient_phase(
+    *,
+    numerator: int,
+    r_short: int,
+    r_truncated_divisor: int,
+    r_smooth_quotient: int,
+    s_short: int,
+    s_truncated_divisor: int,
+    s_smooth_quotient: int,
+) -> DrappeauDoubleQuotientPhase:
+    """Match a double Type quotient with Drappeau's reciprocal phase.
+
+    Write the original variables as
+
+    ``r = r_short * r_truncated_divisor * r_smooth_quotient`` and
+    ``s = s_short * s_truncated_divisor * s_smooth_quotient``.
+
+    Drappeau's variables are then ``(r, d, s, c)`` equal to the first
+    two-factor product, the remaining r quotient, the analogous s
+    product, and the remaining s quotient.  The numerator is negated so
+    that ``e(n * inverse(r*d) / (s*c))`` is exactly the original
+    ``e(-numerator * inverse(original_r) / original_s)``.
+
+    This is an algebraic phase certificate only.  It does not verify the
+    smooth-weight or sharp-hyperbola hypotheses of the analytic theorem.
+    """
+
+    factors = (
+        r_short,
+        r_truncated_divisor,
+        r_smooth_quotient,
+        s_short,
+        s_truncated_divisor,
+        s_smooth_quotient,
+    )
+    if min(factors) < 1:
+        raise ValueError("all quotient factors must be positive")
+    if numerator == 0:
+        raise ValueError("the residual product frequency must be nonzero")
+
+    original_r = r_short * r_truncated_divisor * r_smooth_quotient
+    original_s = s_short * s_truncated_divisor * s_smooth_quotient
+    drappeau_r = r_short * r_truncated_divisor
+    drappeau_d = r_smooth_quotient
+    drappeau_s = s_short * s_truncated_divisor
+    drappeau_c = s_smooth_quotient
+    drappeau_n = -numerator
+
+    if gcd(original_r, original_s) != 1:
+        raise ValueError("the reciprocal phase requires coprime r and s")
+    original_phase = _normalized_modular_phase(
+        numerator=-numerator,
+        invert=original_r,
+        modulus=original_s,
+    )
+    drappeau_phase = _normalized_modular_phase(
+        numerator=drappeau_n,
+        invert=drappeau_r * drappeau_d,
+        modulus=drappeau_s * drappeau_c,
+    )
+    coprimality_identity_verified = (
+        gcd(original_r, original_s)
+        == gcd(
+            drappeau_r * drappeau_d,
+            drappeau_s * drappeau_c,
+        )
+        == 1
+    )
+    return DrappeauDoubleQuotientPhase(
+        original_r=original_r,
+        original_s=original_s,
+        drappeau_r=drappeau_r,
+        drappeau_d=drappeau_d,
+        drappeau_s=drappeau_s,
+        drappeau_c=drappeau_c,
+        drappeau_n=drappeau_n,
+        original_phase=original_phase,
+        drappeau_phase=drappeau_phase,
+        phase_identity_verified=original_phase == drappeau_phase,
+        coprimality_identity_verified=coprimality_identity_verified,
+    )
 
 
 def _fractional_part(value: Fraction) -> Fraction:
@@ -1306,6 +5862,174 @@ def double_split_mobius_identity(
         "II/II": r_ii * s_ii,
     }
     return mu_r * mu_s, sectors
+
+
+def coupled_product_double_mobius_certificate(
+    *,
+    r: int,
+    s: int,
+    h: int,
+    delta: int,
+    r_cutoff_u: int,
+    r_cutoff_v: int,
+    s_cutoff_u: int,
+    s_cutoff_v: int,
+    poisson_frequency: int | None = None,
+) -> CoupledProductDoubleMobiusCertificate:
+    """Expand both Möbius weights without separating either product phase.
+
+    The exact one-variable identity is applied independently to ``r`` and
+    ``s``.  Every resulting Type-I/II term retains the same original phase
+
+    ``e(-h*delta*bar(r)/s)``.  If a nonzero Poisson frequency ``l`` is
+    supplied, every term also retains the completed BBLR phase
+
+    ``e(-h*l*bar(r)/s)``.
+
+    Thus this is a finite reindexing certificate, not an estimate and not a
+    replacement of the product frequency by an arbitrary third coefficient.
+    """
+
+    cutoffs = (
+        r_cutoff_u,
+        r_cutoff_v,
+        s_cutoff_u,
+        s_cutoff_v,
+    )
+    if min(r, s, *cutoffs) < 1:
+        raise ValueError("variables and cutoffs must be positive")
+    if r <= r_cutoff_u or s <= s_cutoff_u:
+        raise ValueError("both Möbius variables must exceed their U cutoffs")
+    if h == 0 or delta == 0:
+        raise ValueError("the residual coupled cell requires h*delta nonzero")
+    if poisson_frequency == 0:
+        raise ValueError("the nonzero-frequency certificate requires l nonzero")
+    if gcd(r, s) != 1:
+        raise ValueError("the reciprocal phase requires coprime r and s")
+
+    product_frequency = h * delta
+    phase_mod_one = _normalized_modular_phase(
+        numerator=-product_frequency,
+        invert=r,
+        modulus=s,
+    )
+    poisson_product = (
+        None if poisson_frequency is None else h * poisson_frequency
+    )
+    poisson_phase_mod_one = (
+        None
+        if poisson_product is None
+        else _normalized_modular_phase(
+            numerator=-poisson_product,
+            invert=r,
+            modulus=s,
+        )
+    )
+    sector_sums = {
+        "I/I": 0,
+        "I/II": 0,
+        "II/I": 0,
+        "II/II": 0,
+    }
+    terms: list[CoupledMobiusSectorTerm] = []
+
+    r_terms: list[tuple[str, int, int, int, int]] = []
+    for r_long in divisors(r):
+        if r_long <= r_cutoff_u:
+            continue
+        r_short = r // r_long
+        r_truncated = c_u(r_long, r_cutoff_u)
+        r_mobius = mobius(r_short)
+        r_type = "I" if r_short <= r_cutoff_v else "II"
+        r_terms.append(
+            (r_type, r_long, r_short, r_truncated, r_mobius)
+        )
+
+    s_terms: list[tuple[str, int, int, int, int]] = []
+    for s_long in divisors(s):
+        if s_long <= s_cutoff_u:
+            continue
+        s_short = s // s_long
+        s_truncated = c_u(s_long, s_cutoff_u)
+        s_mobius = mobius(s_short)
+        s_type = "I" if s_short <= s_cutoff_v else "II"
+        s_terms.append(
+            (s_type, s_long, s_short, s_truncated, s_mobius)
+        )
+
+    for r_type, r_long, r_short, r_truncated, r_mobius in r_terms:
+        for s_type, s_long, s_short, s_truncated, s_mobius in s_terms:
+            sector = f"{r_type}/{s_type}"
+            coefficient = (
+                r_truncated * r_mobius * s_truncated * s_mobius
+            )
+            sector_sums[sector] += coefficient
+            if coefficient == 0:
+                continue
+            terms.append(
+                CoupledMobiusSectorTerm(
+                    sector=sector,
+                    r_long_factor=r_long,
+                    r_short_mobius_factor=r_short,
+                    s_long_factor=s_long,
+                    s_short_mobius_factor=s_short,
+                    r_truncated_coefficient=r_truncated,
+                    r_short_mobius_value=r_mobius,
+                    s_truncated_coefficient=s_truncated,
+                    s_short_mobius_value=s_mobius,
+                    coefficient=coefficient,
+                    product_frequency=product_frequency,
+                    phase_mod_one=phase_mod_one,
+                    poisson_frequency=poisson_frequency,
+                    poisson_product=poisson_product,
+                    poisson_phase_mod_one=poisson_phase_mod_one,
+                )
+            )
+
+    direct = mobius(r) * mobius(s)
+    recombined = sum(sector_sums.values())
+    product_preserved = all(
+        term.product_frequency == product_frequency
+        and term.phase_mod_one == phase_mod_one
+        for term in terms
+    )
+    poisson_preserved = all(
+        term.poisson_frequency == poisson_frequency
+        and term.poisson_product == poisson_product
+        and term.poisson_phase_mod_one == poisson_phase_mod_one
+        for term in terms
+    )
+    two_sides_preserved = all(
+        term.r_long_factor * term.r_short_mobius_factor == r
+        and term.s_long_factor * term.s_short_mobius_factor == s
+        and term.coefficient
+        == (
+            term.r_truncated_coefficient
+            * term.r_short_mobius_value
+            * term.s_truncated_coefficient
+            * term.s_short_mobius_value
+        )
+        for term in terms
+    )
+    return CoupledProductDoubleMobiusCertificate(
+        r=r,
+        s=s,
+        product_frequency=product_frequency,
+        phase_mod_one=phase_mod_one,
+        poisson_frequency=poisson_frequency,
+        poisson_product=poisson_product,
+        poisson_phase_mod_one=poisson_phase_mod_one,
+        direct_mobius_product=direct,
+        sector_sums=tuple(sector_sums.items()),
+        terms=tuple(terms),
+        product_frequency_preserved=product_preserved,
+        poisson_product_preserved=poisson_preserved,
+        both_reciprocal_phases_preserved=(
+            product_preserved and poisson_preserved
+        ),
+        two_mobius_sides_preserved=two_sides_preserved,
+        recombination_identity_verified=(recombined == direct),
+    )
 
 
 def crt_reciprocity_numerators(
@@ -1893,6 +6617,867 @@ class TypeScaleBounds:
     type_ii_a_max: Fraction
     type_ii_b_min: Fraction
     type_ii_b_max: Fraction
+
+
+@dataclass(frozen=True)
+class FareyTypeTTStarEuclideanLedger:
+    q: int
+    k: int
+    r1: int
+    r2: int
+    w1: int
+    w2: int
+    b1: int
+    b2: int
+    quotient1: int
+    quotient2: int
+    remainder1: int
+    remainder2: int
+    determinant: int
+    same_sector: bool
+    same_original_euclidean_quotient: bool
+    sector_quotient_equivalence_verified: bool
+    primitive_entries: bool
+    zero_determinant_forces_equal_primitive_entries: bool
+    general_remainder_identity_verified: bool
+    common_sector_remainder_identity_verified: bool
+    determinant_collar_verified: bool
+    nonzero_determinant_forces_q_below_denominator_product: bool
+
+
+@dataclass(frozen=True)
+class MobiusLogTypeTerm:
+    d: int
+    m: int
+    prime: int
+    coefficient: int
+
+
+@dataclass(frozen=True)
+class MobiusLogTypeDiagonalRecombination:
+    n: int
+    s: int
+    primitive_entry: bool
+    terms: tuple[MobiusLogTypeTerm, ...]
+    summed_prime_vector: tuple[tuple[int, int], ...]
+    target_prime_vector: tuple[tuple[int, int], ...]
+    factorization_cross_terms: tuple[
+        tuple[int, int, int, int, int, int, int], ...
+    ]
+    full_cross_outer_product: tuple[tuple[int, int, int], ...]
+    target_outer_product: tuple[tuple[int, int, int], ...]
+    recombination_identity_verified: bool
+    cross_factorizations_retained_before_cauchy: bool
+
+
+@dataclass(frozen=True)
+class LabelledAfeTypePacket:
+    packet_id: str
+    h: int
+    delta: int
+    dyadic_label: str
+    afe_direction: str
+    n: int
+    s: int
+    amplitude: Fraction
+    vector: tuple[Fraction, ...]
+
+
+@dataclass(frozen=True)
+class LabelledTypeZeroDeterminantRecombination:
+    packet_ids: tuple[str, ...]
+    product_frequencies: tuple[int, ...]
+    packet_label_ledger: tuple[tuple[str, int, int, str, str], ...]
+    expanded_type_determinant_zero_energy: Fraction
+    recombined_original_entry_energy: Fraction
+    all_original_packet_labels_retained: bool
+    all_entries_primitive: bool
+    internal_type_factorizations_recombined: bool
+    distinct_outer_packets_still_cross_inside_entry: bool
+    global_same_slope_gate_proved: bool
+
+
+@dataclass(frozen=True)
+class FareyScalarBeattyFixedCoefficientCollision:
+    q: int
+    k: int
+    entries: tuple[tuple[int, int, int, int, int, int], ...]
+    conflicting_value_coefficients: tuple[
+        tuple[int, int, int, int, int, int, int], ...
+    ]
+    fixed_scalar_value_assignment_consistent: bool
+    counterexample_to_universal_fixed_f_adapter: bool
+    technau_zafeiropoulos_fixed_f_hypothesis_refuted: bool
+
+
+@dataclass(frozen=True)
+class LabelledTypeNonprincipalDeterminantSplit:
+    packet_ids: tuple[str, ...]
+    product_frequencies: tuple[int, ...]
+    packet_label_ledger: tuple[tuple[str, int, int, str, str], ...]
+    sector_labels: tuple[int, ...]
+    type_pair_energies: tuple[tuple[str, Fraction], ...]
+    expanded_nonprincipal_energy: Fraction
+    zero_determinant_expanded_energy: Fraction
+    zero_determinant_recombined_energy: Fraction
+    nonzero_determinant_energy: Fraction
+    nonzero_determinants: tuple[int, ...]
+    nonprincipal_projector_square_energy: Fraction
+    all_original_packet_labels_retained: bool
+    type_i_ii_partition_exact: bool
+    determinant_split_exact: bool
+    zero_determinant_recombined_before_cauchy: bool
+    nonprincipal_projector_square_identity_exact: bool
+    expanded_nonprincipal_energy_nonnegative: bool
+    global_nonzero_determinant_gate_proved: bool
+
+
+@dataclass(frozen=True)
+class JointNonprincipalOneSidedUpperBound:
+    expanded_nonprincipal_energy: Fraction
+    zero_determinant_energy: Fraction
+    nonzero_determinant_energy: Fraction
+    zero_determinant_upper_bound: Fraction
+    nonzero_determinant_upper_bound: Fraction
+    resulting_absolute_upper_bound: Fraction
+    determinant_split_exact: bool
+    full_nonprincipal_energy_nonnegative: bool
+    zero_determinant_bound_holds: bool
+    one_sided_nonzero_bound_holds: bool
+    absolute_nonzero_bound_holds: bool
+    absolute_full_energy_bound_certified: bool
+    strict_weakening_witness: bool
+    analytic_one_sided_gate_proved: bool
+
+
+def farey_type_ttstar_euclidean_ledger(
+    *,
+    q: int,
+    k: int,
+    d1: int,
+    m1: int,
+    s1: int,
+    d2: int,
+    m2: int,
+    s2: int,
+) -> FareyTypeTTStarEuclideanLedger:
+    """Record the exact common-sector determinant after one Type split.
+
+    Put ``r_i=d_i*m_i`` and ``w_i=r_i-k*s_i``.  Since ``k*q`` is an
+    integer, the Beatty sector and the Euclidean quotient of the original
+    primitive numerator satisfy
+
+    ``floor(q*w_i/s_i) = floor(q*r_i/s_i) - k*q``.
+
+    If the two sectors agree, their original quotients agree.  Writing
+    ``q*r_i=B*s_i+rho_i`` then gives the exact, cancellation-bearing
+    identity
+
+    ``q*(r1*s2-r2*s1)=rho1*s2-rho2*s1``.
+
+    No ``h`` or ``delta`` label is removed here: this is only the integer
+    skeleton inside a row of the global pre-Cauchy master.
+    """
+    if q <= 0 or k < 0 or min(d1, m1, s1, d2, m2, s2) <= 0:
+        raise ValueError("q,d_i,m_i,s_i must be positive and k nonnegative")
+    r1 = d1 * m1
+    r2 = d2 * m2
+    w1 = r1 - k * s1
+    w2 = r2 - k * s2
+    if w1 < 0 or w2 < 0:
+        raise ValueError("Type numerators w_i=d_i*m_i-k*s_i must be nonnegative")
+
+    b1, b2 = q * w1 // s1, q * w2 // s2
+    quotient1, remainder1 = divmod(q * r1, s1)
+    quotient2, remainder2 = divmod(q * r2, s2)
+    determinant = r1 * s2 - r2 * s1
+    same_sector = b1 == b2
+    same_quotient = quotient1 == quotient2
+    primitive_entries = gcd(r1, s1) == 1 and gcd(r2, s2) == 1
+    general_rhs = (
+        (quotient1 - quotient2) * s1 * s2
+        + remainder1 * s2
+        - remainder2 * s1
+    )
+    general_identity = q * determinant == general_rhs
+    common_identity = (not same_sector) or (
+        same_quotient
+        and q * determinant == remainder1 * s2 - remainder2 * s1
+    )
+    collar = (not same_sector) or abs(q * determinant) < s1 * s2
+    nonzero_range = (
+        (not same_sector)
+        or determinant == 0
+        or q < s1 * s2
+    )
+    return FareyTypeTTStarEuclideanLedger(
+        q=q,
+        k=k,
+        r1=r1,
+        r2=r2,
+        w1=w1,
+        w2=w2,
+        b1=b1,
+        b2=b2,
+        quotient1=quotient1,
+        quotient2=quotient2,
+        remainder1=remainder1,
+        remainder2=remainder2,
+        determinant=determinant,
+        same_sector=same_sector,
+        same_original_euclidean_quotient=same_quotient,
+        sector_quotient_equivalence_verified=(same_sector == same_quotient),
+        primitive_entries=primitive_entries,
+        zero_determinant_forces_equal_primitive_entries=(
+            (not primitive_entries)
+            or determinant != 0
+            or (r1, s1) == (r2, s2)
+        ),
+        general_remainder_identity_verified=general_identity,
+        common_sector_remainder_identity_verified=common_identity,
+        determinant_collar_verified=collar,
+        nonzero_determinant_forces_q_below_denominator_product=nonzero_range,
+    )
+
+
+def mobius_log_type_diagonal_recombination(
+    *, n: int, s: int
+) -> MobiusLogTypeDiagonalRecombination:
+    """Recombine every prime-power Type factorization on a fixed entry.
+
+    The formal prime coordinate of
+
+    ``mu(s) * sum_(d*m=n) mu(d) Lambda(m)``
+
+    is summed over *all* ``m=p^j`` before any Cauchy--Schwarz step.  It is
+    exactly ``-mu(s)*mu(n)*v_p(n)``.  Expanding the square first therefore
+    requires every cross-factorization pair; their full outer product is
+    the outer product of the recombined prime vector.  This remains true
+    for nonsquarefree ``n``, where individual Type terms can cancel.
+    """
+    if n <= 0 or s <= 0:
+        raise ValueError("n and s must be positive")
+    primes = _distinct_prime_factors(n)
+    terms: list[MobiusLogTypeTerm] = []
+    valuations: dict[int, int] = {}
+    for prime in primes:
+        valuation = 0
+        prime_power = 1
+        remainder = n
+        while remainder % prime == 0:
+            valuation += 1
+            prime_power *= prime
+            remainder //= prime
+            terms.append(
+                MobiusLogTypeTerm(
+                    d=n // prime_power,
+                    m=prime_power,
+                    prime=prime,
+                    coefficient=mobius(s) * mobius(n // prime_power),
+                )
+            )
+        valuations[prime] = valuation
+
+    summed = tuple(
+        (
+            prime,
+            sum(term.coefficient for term in terms if term.prime == prime),
+        )
+        for prime in primes
+    )
+    target = tuple(
+        (prime, -mobius(s) * mobius(n) * valuations[prime])
+        for prime in primes
+    )
+    cross_terms = tuple(
+        (
+            left.d,
+            left.m,
+            left.prime,
+            right.d,
+            right.m,
+            right.prime,
+            left.coefficient * right.coefficient,
+        )
+        for left in terms
+        for right in terms
+    )
+    full_outer = tuple(
+        (
+            left_prime,
+            right_prime,
+            sum(
+                coefficient
+                for _, _, term_left_prime, _, _, term_right_prime, coefficient
+                in cross_terms
+                if term_left_prime == left_prime
+                and term_right_prime == right_prime
+            ),
+        )
+        for left_prime in primes
+        for right_prime in primes
+    )
+    target_by_prime = dict(target)
+    target_outer = tuple(
+        (
+            left_prime,
+            right_prime,
+            target_by_prime[left_prime] * target_by_prime[right_prime],
+        )
+        for left_prime in primes
+        for right_prime in primes
+    )
+    return MobiusLogTypeDiagonalRecombination(
+        n=n,
+        s=s,
+        primitive_entry=gcd(n, s) == 1,
+        terms=tuple(terms),
+        summed_prime_vector=summed,
+        target_prime_vector=target,
+        factorization_cross_terms=cross_terms,
+        full_cross_outer_product=full_outer,
+        target_outer_product=target_outer,
+        recombination_identity_verified=(summed == target),
+        cross_factorizations_retained_before_cauchy=(
+            len(cross_terms) == len(terms) * len(terms)
+        ),
+    )
+
+
+def labelled_type_zero_determinant_recombination(
+    *,
+    packets: tuple[LabelledAfeTypePacket, ...],
+    prime_log_weights: dict[int, Fraction],
+) -> LabelledTypeZeroDeterminantRecombination:
+    """Recombine the Type-internal zero determinant with AFE labels intact.
+
+    Every packet retains its h, delta, dyadic, and AFE-direction data, its
+    signed amplitude, and its vector wave packet.  The Type-expanded Gram is
+    summed only when n1*s2-n2*s1=0.  Primitive entries then agree, but
+    distinct outer AFE packets on that entry continue to cross inside the
+    square.
+
+    The helper proves only that all d*m=n factorizations recombine to the
+    original Mobius-log coefficient.  It deliberately does not claim the
+    separate global same-slope estimate in the analytic master.
+    """
+    if not packets:
+        raise ValueError("at least one labelled packet is required")
+    if len({packet.packet_id for packet in packets}) != len(packets):
+        raise ValueError("packet ids must be distinct")
+    dimensions = {len(packet.vector) for packet in packets}
+    if dimensions == {0} or len(dimensions) != 1:
+        raise ValueError("packet vectors must have one positive dimension")
+    if any(
+        packet.h == 0
+        or packet.n <= 0
+        or packet.s <= 0
+        or gcd(packet.n, packet.s) != 1
+        for packet in packets
+    ):
+        raise ValueError("require h nonzero and positive primitive entries")
+
+    required_primes = {
+        prime
+        for packet in packets
+        for prime in _distinct_prime_factors(packet.n)
+    }
+    missing = tuple(
+        prime for prime in sorted(required_primes) if prime not in prime_log_weights
+    )
+    if missing:
+        raise ValueError(f"missing formal prime-log weights: {missing}")
+
+    ledgers = {
+        packet.packet_id: mobius_log_type_diagonal_recombination(
+            n=packet.n, s=packet.s
+        )
+        for packet in packets
+    }
+
+    def dot(left: tuple[Fraction, ...], right: tuple[Fraction, ...]) -> Fraction:
+        return sum(
+            (Fraction(x) * Fraction(y) for x, y in zip(left, right)),
+            Fraction(0),
+        )
+
+    expanded = Fraction(0)
+    recombined = Fraction(0)
+    for left in packets:
+        for right in packets:
+            if left.n * right.s != right.n * left.s:
+                continue
+            wave_pair = (
+                Fraction(left.amplitude)
+                * Fraction(right.amplitude)
+                * dot(left.vector, right.vector)
+            )
+            left_ledger = ledgers[left.packet_id]
+            right_ledger = ledgers[right.packet_id]
+            expanded_coefficient = sum(
+                (
+                    left_term.coefficient
+                    * prime_log_weights[left_term.prime]
+                    * right_term.coefficient
+                    * prime_log_weights[right_term.prime]
+                    for left_term in left_ledger.terms
+                    for right_term in right_ledger.terms
+                ),
+                Fraction(0),
+            )
+            left_target = sum(
+                (
+                    coefficient * prime_log_weights[prime]
+                    for prime, coefficient in left_ledger.target_prime_vector
+                ),
+                Fraction(0),
+            )
+            right_target = sum(
+                (
+                    coefficient * prime_log_weights[prime]
+                    for prime, coefficient in right_ledger.target_prime_vector
+                ),
+                Fraction(0),
+            )
+            expanded += wave_pair * expanded_coefficient
+            recombined += wave_pair * left_target * right_target
+
+    distinct_outer_cross = any(
+        left.packet_id != right.packet_id
+        and left.n == right.n
+        and left.s == right.s
+        for left in packets
+        for right in packets
+    )
+    packet_ids = tuple(packet.packet_id for packet in packets)
+    product_frequencies = tuple(packet.h * packet.delta for packet in packets)
+    packet_label_ledger = tuple(
+        (
+            packet.packet_id,
+            packet.h,
+            packet.delta,
+            packet.dyadic_label,
+            packet.afe_direction,
+        )
+        for packet in packets
+    )
+    return LabelledTypeZeroDeterminantRecombination(
+        packet_ids=packet_ids,
+        product_frequencies=product_frequencies,
+        packet_label_ledger=packet_label_ledger,
+        expanded_type_determinant_zero_energy=expanded,
+        recombined_original_entry_energy=recombined,
+        all_original_packet_labels_retained=(
+            len(packet_ids) == len(packets)
+            and len(product_frequencies) == len(packets)
+            and len(packet_label_ledger) == len(packets)
+        ),
+        all_entries_primitive=True,
+        internal_type_factorizations_recombined=(expanded == recombined),
+        distinct_outer_packets_still_cross_inside_entry=distinct_outer_cross,
+        global_same_slope_gate_proved=False,
+    )
+
+
+def farey_scalar_beatty_fixed_coefficient_collision(
+    *,
+    q: int,
+    k: int,
+    sector_denominators: tuple[tuple[int, int], ...],
+) -> FareyScalarBeattyFixedCoefficientCollision:
+    """Test whether moving Beatty slopes can share one scalar coefficient.
+
+    A Technau--Zafeiropoulos slope average keeps one arithmetic function
+    ``f(r)`` fixed while the Beatty slope moves.  The present cluster has
+    coefficient ``mu(s)*mu(r)`` at
+
+    ``w=ceil(b*s/q),  r=k*s+w``.
+
+    If two supplied slopes produce the same value ``r`` from denominators
+    with different Mobius signs, no scalar assignment depending only on
+    ``r`` can encode both entries.  This is an exact finite obstruction;
+    it does not rule out a genuinely vector- or pair-valued theorem.
+    """
+    if q <= 0 or k < 0:
+        raise ValueError("q must be positive and k nonnegative")
+    if not sector_denominators:
+        raise ValueError("at least one sector-denominator pair is required")
+
+    entries: list[tuple[int, int, int, int, int, int]] = []
+    for sector, denominator in sector_denominators:
+        if sector < 0 or denominator <= 0 or denominator > q:
+            raise ValueError("require b >= 0 and 1 <= s <= q")
+        lower = (sector * denominator + q - 1) // q
+        upper = ((sector + 1) * denominator + q - 1) // q
+        if upper - lower != 1 or not (0 <= lower < denominator):
+            raise ValueError("every supplied critical sector fiber must be nonempty")
+        w = lower
+        r = k * denominator + w
+        if gcd(r, denominator) != 1 or mobius(r) == 0 or mobius(denominator) == 0:
+            raise ValueError("require primitive squarefree-supported entries")
+        entries.append(
+            (
+                sector,
+                denominator,
+                w,
+                r,
+                mobius(denominator),
+                mobius(r),
+            )
+        )
+
+    conflicts: list[tuple[int, int, int, int, int, int, int]] = []
+    for left_index, left in enumerate(entries):
+        left_sector, left_s, _, left_r, left_mu_s, left_mu_r = left
+        left_coefficient = left_mu_s * left_mu_r
+        for right in entries[left_index + 1 :]:
+            right_sector, right_s, _, right_r, right_mu_s, right_mu_r = right
+            right_coefficient = right_mu_s * right_mu_r
+            if left_r == right_r and left_coefficient != right_coefficient:
+                conflicts.append(
+                    (
+                        left_r,
+                        left_sector,
+                        left_s,
+                        left_coefficient,
+                        right_sector,
+                        right_s,
+                        right_coefficient,
+                    )
+                )
+
+    consistent = not conflicts
+    return FareyScalarBeattyFixedCoefficientCollision(
+        q=q,
+        k=k,
+        entries=tuple(entries),
+        conflicting_value_coefficients=tuple(conflicts),
+        fixed_scalar_value_assignment_consistent=consistent,
+        counterexample_to_universal_fixed_f_adapter=not consistent,
+        technau_zafeiropoulos_fixed_f_hypothesis_refuted=not consistent,
+    )
+
+
+def labelled_type_nonprincipal_determinant_split(
+    *,
+    packets: tuple[LabelledAfeTypePacket, ...],
+    angular_resolution: int,
+    slope_integer_part: int,
+    character_modulus: int,
+    type_cutoff: int,
+    prime_log_weights: dict[int, Fraction],
+) -> LabelledTypeNonprincipalDeterminantSplit:
+    """Split the exact nonprincipal Type Gram by sector and determinant.
+
+    The normalized nonprincipal character kernel is
+
+    ``1_(b_left=b_right) - 1/M``.
+
+    Each packet keeps its ``(h,delta,nu,sigma)`` labels and vector.  One
+    Mobius-log identity is expanded on each side, but all Type I/II cross
+    terms remain in the same signed Gram.  Only then is the determinant
+    ``n_left*s_right-n_right*s_left`` split into zero and nonzero parts.
+    The zero part is recombined over every internal ``d*m=n``
+    factorization before any estimate.
+    """
+    if not packets:
+        raise ValueError("at least one labelled packet is required")
+    if angular_resolution <= 0 or character_modulus <= 0 or type_cutoff < 1:
+        raise ValueError("Q,M,U must be positive")
+    if slope_integer_part < 0:
+        raise ValueError("the integer slope part must be nonnegative")
+    if len({packet.packet_id for packet in packets}) != len(packets):
+        raise ValueError("packet ids must be distinct")
+    dimensions = {len(packet.vector) for packet in packets}
+    if dimensions == {0} or len(dimensions) != 1:
+        raise ValueError("packet vectors must have one positive dimension")
+    if any(
+        packet.h == 0
+        or packet.n <= 0
+        or packet.s <= 0
+        or gcd(packet.n, packet.s) != 1
+        or mobius(packet.n) == 0
+        or mobius(packet.s) == 0
+        for packet in packets
+    ):
+        raise ValueError("require h nonzero and primitive squarefree support")
+
+    sectors: dict[str, int] = {}
+    for packet in packets:
+        w = packet.n - slope_integer_part * packet.s
+        if not (0 <= w < packet.s):
+            raise ValueError("require n=k*s+w with 0 <= w < s")
+        sector = angular_resolution * w // packet.s
+        if not (0 <= sector < character_modulus):
+            raise ValueError("sector labels must embed without character aliasing")
+        sectors[packet.packet_id] = sector
+
+    required_primes = {
+        prime
+        for packet in packets
+        for prime in _distinct_prime_factors(packet.n)
+    }
+    missing = tuple(
+        prime for prime in sorted(required_primes) if prime not in prime_log_weights
+    )
+    if missing:
+        raise ValueError(f"missing formal prime-log weights: {missing}")
+    ledgers = {
+        packet.packet_id: mobius_log_type_diagonal_recombination(
+            n=packet.n,
+            s=packet.s,
+        )
+        for packet in packets
+    }
+
+    def dot(left: tuple[Fraction, ...], right: tuple[Fraction, ...]) -> Fraction:
+        return sum(
+            (Fraction(x) * Fraction(y) for x, y in zip(left, right)),
+            Fraction(0),
+        )
+
+    def type_label(term: MobiusLogTypeTerm) -> str:
+        return "I" if min(term.d, term.m) <= type_cutoff else "II"
+
+    type_pair_energy = {
+        "I/I": Fraction(0),
+        "I/II": Fraction(0),
+        "II/I": Fraction(0),
+        "II/II": Fraction(0),
+    }
+    expanded = Fraction(0)
+    zero_expanded = Fraction(0)
+    nonzero = Fraction(0)
+    nonzero_determinants: set[int] = set()
+    for left in packets:
+        for right in packets:
+            wave_pair = (
+                Fraction(left.amplitude)
+                * Fraction(right.amplitude)
+                * dot(left.vector, right.vector)
+            )
+            character_kernel = (
+                Fraction(character_modulus - 1, character_modulus)
+                if sectors[left.packet_id] == sectors[right.packet_id]
+                else Fraction(-1, character_modulus)
+            )
+            determinant = left.n * right.s - right.n * left.s
+            for left_term in ledgers[left.packet_id].terms:
+                for right_term in ledgers[right.packet_id].terms:
+                    contribution = (
+                        wave_pair
+                        * character_kernel
+                        * left_term.coefficient
+                        * Fraction(prime_log_weights[left_term.prime])
+                        * right_term.coefficient
+                        * Fraction(prime_log_weights[right_term.prime])
+                    )
+                    pair_label = (
+                        f"{type_label(left_term)}/{type_label(right_term)}"
+                    )
+                    type_pair_energy[pair_label] += contribution
+                    expanded += contribution
+                    if determinant == 0:
+                        zero_expanded += contribution
+                    else:
+                        nonzero += contribution
+                        nonzero_determinants.add(determinant)
+
+    zero_recombined = Fraction(0)
+    packet_targets: dict[str, Fraction] = {}
+    for left in packets:
+        for right in packets:
+            if left.n * right.s != right.n * left.s:
+                continue
+            wave_pair = (
+                Fraction(left.amplitude)
+                * Fraction(right.amplitude)
+                * dot(left.vector, right.vector)
+            )
+            character_kernel = (
+                Fraction(character_modulus - 1, character_modulus)
+                if sectors[left.packet_id] == sectors[right.packet_id]
+                else Fraction(-1, character_modulus)
+            )
+            left_target = sum(
+                (
+                    coefficient * Fraction(prime_log_weights[prime])
+                    for prime, coefficient
+                    in ledgers[left.packet_id].target_prime_vector
+                ),
+                Fraction(0),
+            )
+            right_target = sum(
+                (
+                    coefficient * Fraction(prime_log_weights[prime])
+                    for prime, coefficient
+                    in ledgers[right.packet_id].target_prime_vector
+                ),
+                Fraction(0),
+            )
+            zero_recombined += (
+                wave_pair * character_kernel * left_target * right_target
+            )
+            packet_targets[left.packet_id] = left_target
+            packet_targets[right.packet_id] = right_target
+
+    # The full nonprincipal kernel is the orthogonal projector away from
+    # the constant character.  Include empty sectors explicitly and write
+    # its energy as an exact average of pairwise vector squares:
+    #
+    #   sum_b ||X_b||^2 - (1/M)||sum_b X_b||^2
+    #     = (1/M) sum_{b<c} ||X_b-X_c||^2.
+    #
+    # This positivity belongs to the complete signed Type sum; it does not
+    # give a sign to the determinant-nonzero summand by itself.
+    vector_dimension = next(iter(dimensions))
+    sector_vectors = [
+        [Fraction(0) for _ in range(vector_dimension)]
+        for _ in range(character_modulus)
+    ]
+    for packet in packets:
+        target = packet_targets.get(packet.packet_id)
+        if target is None:
+            target = sum(
+                (
+                    coefficient * Fraction(prime_log_weights[prime])
+                    for prime, coefficient
+                    in ledgers[packet.packet_id].target_prime_vector
+                ),
+                Fraction(0),
+            )
+        packet_scale = Fraction(packet.amplitude) * target
+        sector_vector = sector_vectors[sectors[packet.packet_id]]
+        for coordinate, value in enumerate(packet.vector):
+            sector_vector[coordinate] += packet_scale * Fraction(value)
+
+    projector_square_energy = Fraction(0)
+    for left_sector in range(character_modulus):
+        for right_sector in range(left_sector + 1, character_modulus):
+            projector_square_energy += sum(
+                (
+                    (sector_vectors[left_sector][coordinate]
+                     - sector_vectors[right_sector][coordinate]) ** 2
+                    for coordinate in range(vector_dimension)
+                ),
+                Fraction(0),
+            )
+    projector_square_energy /= character_modulus
+
+    packet_ids = tuple(packet.packet_id for packet in packets)
+    product_frequencies = tuple(packet.h * packet.delta for packet in packets)
+    packet_label_ledger = tuple(
+        (
+            packet.packet_id,
+            packet.h,
+            packet.delta,
+            packet.dyadic_label,
+            packet.afe_direction,
+        )
+        for packet in packets
+    )
+    ordered_type_pairs = tuple(type_pair_energy.items())
+    return LabelledTypeNonprincipalDeterminantSplit(
+        packet_ids=packet_ids,
+        product_frequencies=product_frequencies,
+        packet_label_ledger=packet_label_ledger,
+        sector_labels=tuple(sectors[packet.packet_id] for packet in packets),
+        type_pair_energies=ordered_type_pairs,
+        expanded_nonprincipal_energy=expanded,
+        zero_determinant_expanded_energy=zero_expanded,
+        zero_determinant_recombined_energy=zero_recombined,
+        nonzero_determinant_energy=nonzero,
+        nonzero_determinants=tuple(sorted(nonzero_determinants)),
+        nonprincipal_projector_square_energy=projector_square_energy,
+        all_original_packet_labels_retained=(
+            len(packet_ids) == len(packets)
+            and len(product_frequencies) == len(packets)
+            and len(packet_label_ledger) == len(packets)
+        ),
+        type_i_ii_partition_exact=(
+            expanded
+            == sum((energy for _, energy in ordered_type_pairs), Fraction(0))
+        ),
+        determinant_split_exact=(expanded == zero_expanded + nonzero),
+        zero_determinant_recombined_before_cauchy=(
+            zero_expanded == zero_recombined
+        ),
+        nonprincipal_projector_square_identity_exact=(
+            expanded == projector_square_energy
+        ),
+        expanded_nonprincipal_energy_nonnegative=(
+            projector_square_energy >= 0
+            and expanded == projector_square_energy
+        ),
+        global_nonzero_determinant_gate_proved=False,
+    )
+
+
+def joint_nonprincipal_one_sided_upper_bound(
+    *,
+    split: LabelledTypeNonprincipalDeterminantSplit,
+    zero_determinant_upper_bound: Fraction,
+    nonzero_determinant_upper_bound: Fraction,
+) -> JointNonprincipalOneSidedUpperBound:
+    """Certify the weakest signed upper bound after determinant recombination.
+
+    Write the complete nonprincipal projector energy as ``E=D+J``, where
+    ``D`` is the recombined determinant-zero energy and ``J`` is the joint
+    signed sum of all four determinant-nonzero Type blocks.  Since ``E`` is
+    a projector square, the hypotheses
+
+    ``D <= B_D`` and ``J <= B_J``
+
+    imply ``abs(E)=E <= B_D+B_J``.  No bound for ``abs(J)`` is needed.
+    This is an exact finite implication only; it does not prove either
+    analytic bound uniformly over the AFE packet family.
+    """
+    zero_bound = Fraction(zero_determinant_upper_bound)
+    nonzero_bound = Fraction(nonzero_determinant_upper_bound)
+    if zero_bound < 0 or nonzero_bound < 0:
+        raise ValueError("upper bounds must be nonnegative")
+
+    total = split.expanded_nonprincipal_energy
+    diagonal = split.zero_determinant_recombined_energy
+    joint_nonzero = split.nonzero_determinant_energy
+    determinant_split_exact = (
+        split.determinant_split_exact
+        and total == diagonal + joint_nonzero
+    )
+    full_nonnegative = (
+        split.nonprincipal_projector_square_identity_exact
+        and split.expanded_nonprincipal_energy_nonnegative
+        and total >= 0
+    )
+    diagonal_bound_holds = diagonal <= zero_bound
+    one_sided_holds = joint_nonzero <= nonzero_bound
+    absolute_nonzero_holds = abs(joint_nonzero) <= nonzero_bound
+    resulting_bound = zero_bound + nonzero_bound
+    absolute_total_certified = (
+        determinant_split_exact
+        and full_nonnegative
+        and diagonal_bound_holds
+        and one_sided_holds
+        and abs(total) <= resulting_bound
+    )
+    return JointNonprincipalOneSidedUpperBound(
+        expanded_nonprincipal_energy=total,
+        zero_determinant_energy=diagonal,
+        nonzero_determinant_energy=joint_nonzero,
+        zero_determinant_upper_bound=zero_bound,
+        nonzero_determinant_upper_bound=nonzero_bound,
+        resulting_absolute_upper_bound=resulting_bound,
+        determinant_split_exact=determinant_split_exact,
+        full_nonprincipal_energy_nonnegative=full_nonnegative,
+        zero_determinant_bound_holds=diagonal_bound_holds,
+        one_sided_nonzero_bound_holds=one_sided_holds,
+        absolute_nonzero_bound_holds=absolute_nonzero_holds,
+        absolute_full_energy_bound_certified=absolute_total_certified,
+        strict_weakening_witness=(
+            one_sided_holds and not absolute_nonzero_holds
+        ),
+        analytic_one_sided_gate_proved=False,
+    )
 
 
 def type_scale_bounds(

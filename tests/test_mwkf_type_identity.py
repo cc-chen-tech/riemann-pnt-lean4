@@ -94,6 +94,132 @@ def test_exact_double_mobius_split_has_four_sectors() -> None:
                 assert set(sectors) == {"I/I", "I/II", "II/I", "II/II"}
 
 
+def test_coupled_double_split_preserves_product_phase_and_two_mobius_sides() -> None:
+    adapter = getattr(
+        type_identity,
+        "coupled_product_double_mobius_certificate",
+        None,
+    )
+    assert adapter is not None, "coupled double-Mobius certificate is missing"
+
+    certificate = adapter(
+        r=30,
+        s=77,
+        h=3,
+        delta=-5,
+        r_cutoff_u=3,
+        r_cutoff_v=5,
+        s_cutoff_u=4,
+        s_cutoff_v=6,
+    )
+
+    assert certificate.direct_mobius_product == mobius(30) * mobius(77)
+    assert sum(dict(certificate.sector_sums).values()) == (
+        certificate.direct_mobius_product
+    )
+    assert {name for name, _ in certificate.sector_sums} == {
+        "I/I",
+        "I/II",
+        "II/I",
+        "II/II",
+    }
+    assert certificate.product_frequency == -15
+    assert certificate.phase_mod_one == F(39, 77)
+    assert certificate.poisson_frequency is None
+    assert certificate.poisson_product is None
+    assert certificate.poisson_phase_mod_one is None
+    assert certificate.product_frequency_preserved
+    assert certificate.poisson_product_preserved
+    assert certificate.both_reciprocal_phases_preserved
+    assert certificate.two_mobius_sides_preserved
+    assert certificate.recombination_identity_verified
+
+    for term in certificate.terms:
+        assert term.r_long_factor * term.r_short_mobius_factor == 30
+        assert term.s_long_factor * term.s_short_mobius_factor == 77
+        assert term.product_frequency == certificate.product_frequency
+        assert term.phase_mod_one == certificate.phase_mod_one
+        assert term.coefficient == (
+            term.r_truncated_coefficient
+            * term.r_short_mobius_value
+            * term.s_truncated_coefficient
+            * term.s_short_mobius_value
+        )
+
+
+def test_coupled_double_split_can_retain_the_second_bblr_product_phase() -> None:
+    certificate = type_identity.coupled_product_double_mobius_certificate(
+        r=30,
+        s=77,
+        h=3,
+        delta=-5,
+        poisson_frequency=7,
+        r_cutoff_u=3,
+        r_cutoff_v=5,
+        s_cutoff_u=4,
+        s_cutoff_v=6,
+    )
+
+    assert certificate.product_frequency == -15
+    assert certificate.poisson_frequency == 7
+    assert certificate.poisson_product == 21
+    assert certificate.poisson_phase_mod_one == F(1, 11)
+    assert certificate.phase_mod_one == F(39, 77)
+    assert certificate.product_frequency_preserved
+    assert certificate.poisson_product_preserved
+    assert certificate.both_reciprocal_phases_preserved
+    for term in certificate.terms:
+        assert term.product_frequency == -15
+        assert term.phase_mod_one == F(39, 77)
+        assert term.poisson_frequency == 7
+        assert term.poisson_product == 21
+        assert term.poisson_phase_mod_one == F(1, 11)
+
+    with pytest.raises(ValueError, match="requires l nonzero"):
+        type_identity.coupled_product_double_mobius_certificate(
+            r=30,
+            s=77,
+            h=3,
+            delta=-5,
+            poisson_frequency=0,
+            r_cutoff_u=3,
+            r_cutoff_v=5,
+            s_cutoff_u=4,
+            s_cutoff_v=6,
+        )
+
+
+def test_double_quotient_factorization_matches_drappeau_phase_exactly() -> None:
+    adapter = getattr(
+        type_identity,
+        "drappeau_double_quotient_phase",
+        None,
+    )
+    assert adapter is not None, "Drappeau double-quotient phase is missing"
+
+    phase = adapter(
+        numerator=15,
+        r_short=2,
+        r_truncated_divisor=3,
+        r_smooth_quotient=5,
+        s_short=7,
+        s_truncated_divisor=1,
+        s_smooth_quotient=11,
+    )
+
+    assert phase.original_r == 30
+    assert phase.original_s == 77
+    assert phase.drappeau_r == 6
+    assert phase.drappeau_d == 5
+    assert phase.drappeau_s == 7
+    assert phase.drappeau_c == 11
+    assert phase.drappeau_n == -15
+    assert phase.original_phase == F(38, 77)
+    assert phase.drappeau_phase == F(38, 77)
+    assert phase.phase_identity_verified
+    assert phase.coprimality_identity_verified
+
+
 def test_full_truncated_mobius_convolution_vanishes_above_the_cutoff() -> None:
     """Catch localizing the s*a factorization before its exact centering."""
     adapter = getattr(
@@ -142,6 +268,316 @@ def test_pure_unsigned_mobius_sector_is_exactly_minus_one() -> None:
         assert audit.recombined_contribution == mobius(n)
         assert sum(value for _, value in audit.outer_contributions) == mobius(n)
         assert audit.recombination_identity_verified
+
+
+def test_bblr_outer_product_weight_is_not_a_parent_free_coefficient() -> None:
+    """The same BBLR outer index retains its parent/inner-factor history."""
+    adapter = getattr(
+        type_identity,
+        "bblr_coefficient_stage_separation_witness",
+        None,
+    )
+    assert adapter is not None, "BBLR coefficient-stage witness is missing"
+
+    audit = adapter(
+        cutoff_u=3,
+        shared_outer_product=2,
+        left_parent=6,
+        right_parent=10,
+    )
+
+    assert audit.left_outer_contribution == 1
+    assert audit.right_outer_contribution == 2
+    assert audit.same_outer_product
+    assert audit.parent_dependent_outer_weight
+    assert audit.direct_outer_index_only_adapter_refuted
+    assert audit.packet_exhaustive_parent_aware_adapter_still_open
+
+
+def test_bblr_common_unsigned_cofactor_is_an_exact_gcd_gram_kernel() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_common_unsigned_cofactor_gram_sides",
+        None,
+    )
+    assert helper is not None, "BBLR common-cofactor Gram helper is missing"
+
+    sides = helper(
+        cutoff_u=3,
+        left_parent_weights={10: F(2)},
+        right_parent_weights={15: F(3)},
+    )
+
+    # C_3(10;2)=C_3(15;3)=2 and both have inner quotient r=5.
+    assert sides.direct_partial_diagonal_sum == F(24)
+    assert sides.gcd_kernel_sum == F(24)
+    assert sides.common_cofactor_gram_sum == F(24)
+    assert sides.active_common_cofactor_rows == ((5, F(4), F(6)),)
+    assert sides.direct_to_gcd_kernel_identity_verified
+    assert sides.gcd_kernel_to_gram_identity_verified
+    assert sides.parent_and_inner_quotient_retained
+    assert not sides.analytic_bblr_packet_exhaustive
+    assert not sides.target_bound_proved
+
+    square = helper(
+        cutoff_u=3,
+        left_parent_weights={10: F(2), 15: F(3)},
+        right_parent_weights={10: F(2), 15: F(3)},
+    )
+    assert all(left == right for _, left, right in square.active_common_cofactor_rows)
+    assert square.common_cofactor_gram_sum == sum(
+        left * left for _, left, _ in square.active_common_cofactor_rows
+    )
+
+
+def test_bblr_four_parent_partial_diagonal_recombines_two_mobius_factors() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_four_parent_partial_diagonal_sides",
+        None,
+    )
+    assert helper is not None, "BBLR four-parent partial diagonal is missing"
+
+    sides = helper(
+        parent_cutoffs=(3, 3, 3, 3),
+        labelled_parent_kernels={
+            "dual/slot-1": {(10, 15, 6, 10): F(-1)},
+            "main/slot-2": {(6, 10, 14, 15): F(2)},
+        },
+    )
+
+    # P_3(10,15)=P_3(15,10)=4 and the unconstrained parents have mu=1.
+    assert sides.direct_four_type_sum == F(4)
+    assert sides.recombined_two_parent_sum == F(4)
+    assert sides.gcd_kernel_sum == F(4)
+    assert sides.labelled_recombined_sums == (
+        ("dual/slot-1", F(-4)),
+        ("main/slot-2", F(8)),
+    )
+    assert sides.direct_to_two_parent_recombination_verified
+    assert sides.two_parent_to_gcd_kernel_verified
+    assert sides.unconstrained_parent_type_sums_recombined_to_mobius
+    assert sides.common_diagonal_parent_kernel_retained
+    assert sides.supplied_slot_order_labels_retained == (
+        "dual/slot-1",
+        "main/slot-2",
+    )
+    assert not sides.analytic_afe_packet_exhaustive
+    assert not sides.target_bound_proved
+
+    asymmetric = helper(
+        parent_cutoffs=(2, 5, 3, 3),
+        labelled_parent_kernels={
+            "main/asymmetric-cutoff": {(6, 10, 14, 15): F(2)},
+        },
+    )
+    # C_5(10;2)=1 while C_3(15;3)=2 at their common quotient 5.
+    assert asymmetric.direct_four_type_sum == F(4)
+    assert asymmetric.recombined_two_parent_sum == F(4)
+    assert asymmetric.gcd_kernel_sum == F(4)
+    assert asymmetric.direct_to_two_parent_recombination_verified
+    assert asymmetric.two_parent_to_gcd_kernel_verified
+
+
+def test_bblr_partial_diagonal_slot_coprimality_leaves_only_moving_pair() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_partial_diagonal_slot_coprimality",
+        None,
+    )
+    assert helper is not None, "BBLR slot-coprimality audit is missing"
+
+    audit = helper(a=5, b=7, r1=6, r2=6)
+
+    assert audit.shift_h == 12
+    assert audit.pairing_gcds == (
+        ("b/a", 1),
+        ("b/r2", 1),
+        ("r1/a", 1),
+        ("r1/r2", 6),
+    )
+    assert audit.three_static_or_mixed_pairings_forced_unit
+    assert audit.moving_pair_gcd == 6
+    assert audit.moving_pair_gcd_divides_shift
+    assert audit.only_moving_pair_can_support_nontrivial_common_cofactor
+
+
+def test_bblr_moving_parent_master_extracts_zero_mode_after_packet_sum() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_moving_parent_zero_mode_sides",
+        None,
+    )
+    assert helper is not None, "BBLR moving-parent zero-mode master is missing"
+
+    sides = helper(
+        modulus=7,
+        moving_parent_cutoffs=(3, 3),
+        left_parent_weights={(7, 10): F(2)},
+        right_parent_weights={(5, 15): F(3)},
+        labelled_common_shift_kernels={
+            "dual/order-2": {(5, -1): F(-1), (5, 1): F(4)},
+            "main/order-1": {(5, -1): F(2)},
+        },
+    )
+
+    # At r=5: x=2, y=3, c=7*2-5*3=-1 and the parent weight is 24.
+    assert sides.direct_parent_master_sum == F(24)
+    assert sides.combined_kernel_mean_by_r == ((5, F(5, 7)),)
+    assert sides.constant_mode_contribution == F(120, 7)
+    assert sides.centered_parent_master_sum == F(48, 7)
+    assert sides.recombined_parent_master_sum == F(24)
+    assert sides.centered_kernel_shift_sum_by_r == ((5, F(0)),)
+    assert sides.packet_labels_retained == (
+        "dual/order-2",
+        "main/order-1",
+    )
+    assert sides.common_r_divides_original_shift_verified
+    assert sides.packet_sum_precedes_centering
+    assert sides.zero_mode_split_identity_verified
+    assert not sides.analytic_afe_ordering_kernel_exhaustive
+    assert not sides.target_bound_proved
+
+
+def test_cyclic_parent_centering_is_not_the_canonical_poisson_zero_mode() -> None:
+    """Changing the auxiliary no-alias modulus changes the constant summand."""
+    helper = getattr(
+        type_identity,
+        "bblr_cyclic_centering_modulus_dependence_witness",
+        None,
+    )
+    assert helper is not None, "cyclic-centering modulus witness is missing"
+
+    witness = helper(
+        moduli=(7, 11),
+        moving_parent_cutoffs=(3, 3),
+        left_parent_weights={(7, 10): F(2)},
+        right_parent_weights={(5, 15): F(3)},
+        labelled_common_shift_kernels={
+            "dual/order-2": {(5, -1): F(-1), (5, 1): F(4)},
+            "main/order-1": {(5, -1): F(2)},
+        },
+    )
+
+    assert witness.moduli == (7, 11)
+    assert witness.direct_parent_master_sums == (F(24), F(24))
+    assert witness.cyclic_kernel_means_by_modulus == (
+        (7, ((5, F(5, 7)),)),
+        (11, ((5, F(5, 11)),)),
+    )
+    assert witness.constant_contributions == (F(120, 7), F(120, 11))
+    assert witness.centered_contributions == (F(48, 7), F(144, 11))
+    assert witness.every_split_recombines
+    assert witness.constant_summand_depends_on_auxiliary_modulus
+    assert not witness.cyclic_constant_identified_with_poisson_zero_mode
+    assert not witness.target_bound_proved
+
+
+def test_poisson_zero_mode_and_discrete_diagonal_form_resonant_main_term() -> None:
+    """Keep the continuous self diagonal distinct from the discrete one."""
+    helper = getattr(type_identity, "bblr_poisson_zero_gram_sides", None)
+    assert helper is not None, "canonical Poisson zero-mode Gram is missing"
+
+    sides = helper(
+        primitive_zero_coefficient=F(5, 6),
+        discrete_identity_diagonal=F(90),
+        sample_weights={"z0": F(2), "z1": F(3)},
+        entry_values={
+            ("u", "z0"): F(1),
+            ("u", "z1"): F(2),
+            ("v", "z0"): F(-1),
+            ("v", "z1"): F(3),
+        },
+        entry_coefficients={"u": F(2), "v": F(-1)},
+    )
+
+    assert sides.primitive_zero_coefficient == F(5, 6)
+    assert sides.continuous_gram_energy == F(21)
+    assert sides.pairwise_gram_quadratic == F(21)
+    assert sides.continuous_self_gram_diagonal == F(85)
+    assert sides.continuous_offdiagonal_zero_mode == F(-64)
+    assert sides.weighted_offdiagonal_zero_mode == F(-160, 3)
+    assert sides.discrete_identity_diagonal == F(90)
+    assert sides.diagonal_sampling_correction == F(115, 6)
+    assert sides.discrete_diagonal_plus_zero_mode == F(110, 3)
+    assert sides.recombined_resonant_main_term == F(110, 3)
+    assert sides.pairwise_gram_identity_verified
+    assert sides.resonant_main_recombination_verified
+    assert sides.canonical_zero_mode_is_gram_before_diagonal_removal
+    assert sides.offdiagonal_zero_mode_is_sign_indefinite
+    assert not sides.continuous_self_gram_identified_with_discrete_diagonal
+    assert not sides.target_bound_proved
+
+
+def test_bblr_tensor_parent_projection_factors_static_mertens_sum() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_tensor_parent_projection_sides",
+        None,
+    )
+    assert helper is not None, "BBLR tensor parent projection is missing"
+
+    sides = helper(
+        common_r_values=(5,),
+        moving_parent_cutoffs=(3, 3),
+        left_static_weights={7: F(2), 11: F(-1)},
+        left_moving_weights={10: F(3)},
+        right_static_weights={5: F(4)},
+        right_moving_weights={15: F(2)},
+    )
+
+    assert sides.left_static_mobius_sum == F(-1)
+    assert sides.right_static_mobius_sum == F(-4)
+    assert sides.left_moving_projection_by_r == ((5, F(6)),)
+    assert sides.right_moving_projection_by_r == ((5, F(4)),)
+    assert sides.left_direct_parent_projection_by_r == ((5, F(-6)),)
+    assert sides.right_direct_parent_projection_by_r == ((5, F(-16)),)
+    assert sides.left_factorization_verified
+    assert sides.right_factorization_verified
+    assert sides.static_mertens_factors_remain
+
+
+def test_label_dependent_tensor_weights_must_be_centered_before_label_sum() -> None:
+    """Kernel means can cancel while their parent-weighted zero mode does not."""
+    helper = getattr(
+        type_identity,
+        "bblr_labelled_tensor_zero_mode_sides",
+        None,
+    )
+    assert helper is not None, "label-dependent tensor zero-mode master is missing"
+
+    sides = helper(
+        modulus=7,
+        moving_parent_cutoffs=(3, 3),
+        left_parent_weights_by_label={
+            "omega+": {(7, 10): F(2)},
+            "omega-": {(7, 10): F(4)},
+        },
+        right_parent_weights_by_label={
+            "omega+": {(5, 15): F(3)},
+            "omega-": {(5, 15): F(3)},
+        },
+        common_shift_kernels_by_label={
+            "omega+": {(5, -1): F(1)},
+            "omega-": {(5, -1): F(-1)},
+        },
+    )
+
+    assert sides.aggregate_kernel_mean_by_r == ((5, F(0)),)
+    assert sides.aggregate_kernel_means_vanish
+    assert sides.constant_mode_by_label == (
+        ("omega+", F(24, 7)),
+        ("omega-", F(-48, 7)),
+    )
+    assert sides.weighted_constant_mode_contribution == F(-24, 7)
+    assert not sides.weighted_constant_mode_vanishes
+    assert sides.direct_labelled_master_sum == F(-24)
+    assert sides.centered_labelled_master_sum == F(-144, 7)
+    assert sides.recombined_labelled_master_sum == F(-24)
+    assert sides.zero_mode_split_identity_verified
+    assert sides.parent_weights_are_label_dependent
+    assert not sides.kernel_only_mean_cancellation_is_sufficient
+    assert not sides.target_bound_proved
 
 
 def test_four_mobius_pure_unsigned_bblr_box_has_positive_unit_weight() -> None:
@@ -485,6 +921,1037 @@ def test_truncated_selberg_divisor_sum_reflects_only_through_small_cofactors() -
                         expected = prime_log_weights.get(prime, F(prime)) / 13
                         break
                 assert direct == expected
+
+
+def test_balanced_squarefree_product_has_only_a_strictly_descending_tail() -> None:
+    """Catch retaining Lambda(dm) or allowing the reflected endpoint k=m."""
+    prime_log_weights = {2: F(2), 3: F(5), 5: F(7), 7: F(11)}
+    fixture = type_identity.balanced_selberg_reflection_sides(
+        divisor=6,
+        cofactor=5,
+        cutoff=10,
+        normalization=F(13),
+        prime_log_weights=prime_log_weights,
+    )
+    assert fixture.direct == F(-2, 13)
+    assert fixture.completed_prime_part == F(0)
+    assert fixture.negative_reflected_tail == F(-2, 13)
+    assert fixture.reflected_cofactors == (1, 2)
+
+    for cutoff in range(3, 24):
+        for divisor in range(2, cutoff + 1):
+            if mobius(divisor) == 0:
+                continue
+            for cofactor in range(2, divisor):
+                sides = type_identity.balanced_selberg_reflection_sides(
+                    divisor=divisor,
+                    cofactor=cofactor,
+                    cutoff=cutoff,
+                    normalization=F(29),
+                    prime_log_weights=prime_log_weights,
+                )
+                expected_cofactors = tuple(
+                    k
+                    for k in type_identity.divisors(divisor * cofactor)
+                    if k * cutoff < divisor * cofactor
+                )
+                assert sides.direct == sides.negative_reflected_tail
+                assert sides.completed_prime_part == F(0)
+                assert sides.reflected_cofactors == expected_cofactors
+                assert all(k < cofactor for k in sides.reflected_cofactors)
+
+
+def test_reflected_pair_energy_keeps_both_nonsymmetric_cross_terms() -> None:
+    """Catch merging or discarding either completed-boundary cross term."""
+    energy = type_identity.reflected_pair_kernel_energy_sides(
+        completed_coefficients={1: F(2), 2: F(3)},
+        reflected_coefficients={1: F(5), 2: F(7)},
+        pair_kernel={
+            (1, 1): F(11),
+            (1, 2): F(13),
+            (2, 1): F(17),
+            (2, 2): F(19),
+        },
+    )
+    assert energy.direct_truncated == F(763)
+    assert energy.completed_completed == F(395)
+    assert energy.completed_reflected == F(946)
+    assert energy.reflected_completed == F(942)
+    assert energy.reflected_reflected == F(2256)
+    assert energy.expanded == F(763)
+
+
+def test_reflected_boundary_diagonal_is_an_exact_lcm_sum() -> None:
+    """Catch losing floors or the high-gcd/short-quotient restrictions."""
+    sides = type_identity.reflected_boundary_diagonal_sides(
+        long_weights={6: F(2), 10: F(3), 15: F(5)},
+        cutoff=5,
+        product_cutoff=60,
+    )
+    assert sides.direct == F(318)
+    assert sides.lcm_sum == F(318)
+    assert sides.gcd_parameterized_sum == F(318)
+    assert (2, 3, 5) in sides.active_gcd_coordinates
+    assert (3, 2, 5) in sides.active_gcd_coordinates
+    assert (5, 2, 3) in sides.active_gcd_coordinates
+    for common, left, right in sides.active_gcd_coordinates:
+        assert F(common) > F(5 * 5, 60)
+        assert F(left) < F(60, 5)
+        assert F(right) < F(60, 5)
+
+
+def test_reflected_boundary_pair_kernel_unfolds_to_short_cofactors() -> None:
+    """Catch truncating either moving cofactor range in the pair energy."""
+    sides = type_identity.reflected_boundary_pair_kernel_sides(
+        long_weights={6: F(2), 10: F(3)},
+        cutoff=5,
+        product_cutoff=30,
+        pair_kernel={
+            (6, 10): F(5),
+            (10, 6): F(7),
+            (12, 20): F(11),
+            (20, 12): F(13),
+            (30, 30): F(17),
+        },
+    )
+    assert sides.direct == F(641)
+    assert sides.unfolded == F(641)
+    assert (6, 5, 10, 3) in sides.active_factor_pairs
+    assert (10, 3, 6, 5) in sides.active_factor_pairs
+    for left_divisor, left_cofactor, right_divisor, right_cofactor in (
+        sides.active_factor_pairs
+    ):
+        assert left_divisor * left_cofactor <= 30
+        assert right_divisor * right_cofactor <= 30
+        assert F(left_cofactor) < F(30, 5)
+        assert F(right_cofactor) < F(30, 5)
+
+
+def test_zero_frequency_master_keeps_both_afe_directions_and_centers_once() -> None:
+    """Catch losing a cross term, diagonal, or outer-scale row/column mode."""
+    sides = type_identity.zero_frequency_reflected_master_sides(
+        completed_coefficients={1: F(1), 2: F(2), 3: F(-1), 4: F(3), 6: F(1)},
+        long_left_weights={4: F(2), 5: F(-1)},
+        long_right_weights={4: F(2), 5: F(-1)},
+        product_cutoff=6,
+        secondary_zero_packets=(
+            type_identity.SecondaryZeroPacket(
+                afe_direction="main",
+                poisson_frequency_h=1,
+                additive_shift_delta=2,
+                dyadic_label="H1-D2",
+                pair_kernel={
+                    (4, 5): F(2),
+                    (5, 4): F(3),
+                    (4, 4): F(5),
+                    (6, 5): F(7),
+                },
+            ),
+            type_identity.SecondaryZeroPacket(
+                afe_direction="dual",
+                poisson_frequency_h=-2,
+                additive_shift_delta=-3,
+                dyadic_label="H2-D3",
+                pair_kernel={
+                    (4, 5): F(-1),
+                    (5, 4): F(4),
+                    (5, 5): F(2),
+                    (6, 4): F(-2),
+                },
+            ),
+        ),
+        explicit_diagonal_weights={4: F(11), 5: F(13), 6: F(17)},
+        left_density_weights={4: F(1, 2), 5: F(1, 2)},
+        right_density_weights={4: F(1, 2), 5: F(1, 2)},
+    )
+
+    assert sides.packet_contributions == (
+        ("main", 1, 2, "H1-D2", F(17)),
+        ("dual", -2, -3, "H2-D3", F(3)),
+    )
+    assert sides.afe_direction_contributions == (
+        ("main", F(17)),
+        ("dual", F(3)),
+    )
+    assert sides.direct_full_remainder == F(-21)
+    assert sides.completed_completed == F(39)
+    assert sides.completed_reflected == F(16)
+    assert sides.reflected_completed == F(9)
+    assert sides.reflected_reflected == F(6)
+    assert sides.explicit_diagonal == F(41)
+    assert sides.reflected_unfolded == F(6)
+    assert (
+        sides.resonant_row_component
+        + sides.resonant_column_component
+        + sides.resonant_grand_component
+        == sides.resonant_reflected_projection
+    )
+    assert sides.resonant_reflected_projection == F(33, 4)
+    assert sides.resonant_master_term == F(-75, 4)
+    assert sides.centered_remainder == F(-9, 4)
+    assert sides.recombined_master_remainder == F(-21)
+    assert all(value == 0 for _, value in sides.weighted_centered_row_sums)
+    assert all(value == 0 for _, value in sides.weighted_centered_column_sums)
+
+
+def test_bblr_zero_frequency_reindexes_into_two_outer_coefficients() -> None:
+    """Catch losing a factorization or inserting a phase into BBLR's l=0 term."""
+    helper = getattr(
+        type_identity,
+        "bblr_zero_frequency_reindex_sides",
+        None,
+    )
+    assert helper is not None, "BBLR zero-frequency reindex is missing"
+
+    sides = helper(
+        left_outer_weights={1: F(2), 2: F(-1)},
+        left_inner_weights={3: F(4), 6: F(1)},
+        right_outer_weights={1: F(3)},
+        right_inner_weights={2: F(5)},
+        shift_weights={(2, 1): F(11), (2, 2): F(-1)},
+        zero_kernels={(2, 3, 1): F(7)},
+    )
+
+    assert sides.direct_sum == F(-2100)
+    assert sides.reindexed_sum == F(-2100)
+    assert sides.product_pair_sum == F(-2100)
+    assert (2, 3, F(-2)) in sides.left_aggregate_entries
+    assert (2, 1, F(15)) in sides.right_aggregate_entries
+    assert sides.active_coprime_coordinates == ((2, 3, 1),)
+    assert sides.labelled_product_pair_kernel_entries == (
+        (1, 6, 2, F(77)),
+        (2, 6, 2, F(-7)),
+    )
+    assert sides.combined_product_pair_kernel_entries == ((6, 2, F(70)),)
+    assert sides.primitive_to_product_coordinates_are_bijective
+    assert sides.original_shift_labels_preserved
+    assert sides.secondary_zero_packet_shaped_kernels_constructed
+    assert sides.left_and_right_outer_weights_remain_separate
+    assert sides.zero_frequency_is_phase_free
+    assert not sides.pre_cauchy_stage_identification_proved
+    assert not sides.completed_coefficient_identification_proved
+    assert not sides.packet_family_exhaustive
+    assert not sides.registered_zero_master_identification_proved
+
+
+def test_bblr_nonzero_frequency_recombines_sectors_before_absolute_values() -> None:
+    """Catch separating Type sectors or replacing the original h*delta label."""
+    helper = getattr(
+        type_identity,
+        "bblr_nonzero_frequency_reindex_sides",
+        None,
+    )
+    assert helper is not None, "BBLR nonzero-frequency reindex is missing"
+
+    sides = helper(
+        left_outer_weights={1: F(2), 2: F(-1)},
+        left_inner_weights={3: F(4), 6: F(1)},
+        right_outer_weights={1: F(3)},
+        right_inner_weights={2: F(5)},
+        labelled_kernels={
+            (2, 3, 1, 2, 3, 1): F(7),
+            (2, 3, 1, -1, 5, -2): F(11),
+        },
+    )
+
+    assert sides.direct_sum == F(-540)
+    assert sides.reindexed_sum == F(-540)
+    assert sides.active_labels == (
+        (2, 3, 1, -1, 5, -2, -5, 2),
+        (2, 3, 1, 2, 3, 1, 6, 2),
+    )
+    assert sides.nonzero_poisson_frequencies_retained
+    assert sides.original_shift_and_delta_labels_retained
+    assert sides.product_frequency_h_times_delta_preserved
+    assert sides.poisson_product_h_times_l_preserved
+    assert sides.type_factorizations_recombined_before_absolute_values
+    assert sides.left_and_right_mobius_families_remain_separate
+    assert not sides.global_ttstar_estimate_proved
+
+
+def test_bblr_ttstar_resonance_is_exact_reciprocal_phase_collision() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_reciprocal_phase_collision_audit",
+        None,
+    )
+    assert helper is not None, "BBLR reciprocal-phase collision audit is missing"
+
+    collision = helper(
+        left_x=2,
+        left_y=5,
+        left_h=1,
+        left_delta=7,
+        left_l=1,
+        right_x=3,
+        right_y=5,
+        right_h=2,
+        right_delta=11,
+        right_l=2,
+    )
+    assert collision.left_phase_mod_one == F(2, 5)
+    assert collision.right_phase_mod_one == F(2, 5)
+    assert collision.common_phase_modulus == 5
+    assert collision.cross_phase_numerator == 0
+    assert collision.exact_phase_collision
+    assert not collision.identical_rows
+    assert collision.left_original_product_frequency == 7
+    assert collision.right_original_product_frequency == 22
+    assert collision.left_poisson_product == 1
+    assert collision.right_poisson_product == 4
+    assert collision.resonance_can_join_distinct_product_frequencies
+
+
+def test_bblr_ttstar_keeps_signed_cross_terms_inside_each_phase_class() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_phase_group_ttstar_sides",
+        None,
+    )
+    assert helper is not None, "BBLR phase-group TT* identity is missing"
+
+    sides = helper(
+        rows=(
+            ("u", 2, 5, 1, 7, 1, F(2)),
+            ("v", 3, 5, 2, 11, 2, F(-1)),
+            ("w", 1, 5, 1, 13, 1, F(3)),
+        )
+    )
+    assert sides.common_phase_modulus == 5
+    assert sides.phase_groups == (
+        (F(2, 5), ("u", "v")),
+        (F(4, 5), ("w",)),
+    )
+    assert sides.identity_diagonal_quadratic == F(70)
+    assert sides.distinct_collision_quadratic == F(-20)
+    assert sides.orthogonality_quadratic == F(50)
+    assert sides.signed_cross_terms_can_cancel_identity_diagonal
+    assert not sides.product_frequency_partition_diagonalizes_ttstar
+    assert not sides.absolute_value_phase_classes_reach_target_proved
+
+
+def test_bblr_near_diagonal_rows_form_a_large_slow_phase_packet() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_near_diagonal_resonance_certificate",
+        None,
+    )
+    assert helper is not None, "BBLR near-diagonal resonance helper is missing"
+
+    certificate = helper(
+        modulus_y=1009,
+        gap_c=10,
+        residue_min=9,
+        residue_max=11,
+        frequency_min=80,
+        frequency_max=100,
+        phase_center_residue=10,
+    )
+
+    assert certificate.reciprocal_x == 1019
+    assert certificate.inverse_x_mod_y == 101
+    assert certificate.resonant_h_values == (90, 100, 110)
+    assert certificate.phase_residues == (9, 10, 11)
+    assert certificate.all_near_diagonal_congruences_verified
+    assert certificate.max_absolute_centered_phase_turns == F(100, 1009)
+    assert certificate.packet_lies_in_positive_real_half_plane
+    assert certificate.term_count == 63
+    assert certificate.absolute_majorant_real_part_lower_bound == F(63, 2)
+    assert not certificate.local_h_l_completion_alone_reaches_gate
+
+
+def test_bblr_inverse_phase_has_exact_gap_determinant_coordinates() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_gap_resonance_coordinates",
+        None,
+    )
+    assert helper is not None, "BBLR gap-resonance coordinates are missing"
+
+    principal = helper(x=1019, y=1009, h=100)
+    assert principal.gap_c == 10
+    assert principal.inverse_x_mod_y == 101
+    assert principal.phase_residue_r == 10
+    assert principal.determinant_index_k == 0
+    assert principal.gap_determinant_identity_verified
+    assert principal.principal_near_diagonal_incidence
+
+    nonprincipal = helper(x=111, y=101, h=91)
+    assert nonprincipal.gap_c == 10
+    assert nonprincipal.inverse_x_mod_y == 91
+    assert nonprincipal.phase_residue_r == 100
+    assert nonprincipal.determinant_index_k == 9
+    assert nonprincipal.gap_determinant_identity_verified
+    assert not nonprincipal.principal_near_diagonal_incidence
+
+
+def test_bblr_principal_gap_is_a_partial_diagonal_solution_line() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_principal_incidence_solution_line",
+        None,
+    )
+    assert helper is not None, "BBLR principal solution-line helper is missing"
+
+    diagonal = helper(x=11, y=7, r=5, m2=5, n2=5)
+    assert diagonal.shift_h == 20
+    assert diagonal.line_parameter_t == 0
+    assert diagonal.solution_line_identity_verified
+    assert diagonal.short_inner_support_forces_t_zero
+    assert diagonal.partial_diagonal_m2_equals_n2_equals_r
+
+    translated = helper(x=11, y=7, r=5, m2=19, n2=27)
+    assert translated.shift_h == 20
+    assert translated.line_parameter_t == 2
+    assert translated.solution_line_identity_verified
+    assert not translated.short_inner_support_forces_t_zero
+    assert not translated.partial_diagonal_m2_equals_n2_equals_r
+
+
+def test_bblr_partial_diagonal_reindexes_as_additive_band_correlation() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_partial_diagonal_correlation_sides",
+        None,
+    )
+    assert helper is not None, "BBLR partial-diagonal correlation is missing"
+
+    sides = helper(
+        left_outer_weights={1: F(2), 2: F(-1)},
+        left_inner_weights={3: F(4)},
+        right_outer_weights={1: F(3)},
+        right_inner_weights={2: F(5), 3: F(1), 9: F(2)},
+        left_second_weights={1: F(2), 2: F(1)},
+        right_second_weights={1: F(3), 2: F(-1)},
+        shift_weights={h: F(1) for h in (1, 2, 3, 4, 6, 8, 12)},
+    )
+
+    assert sides.direct_plus_sum == F(240)
+    assert sides.direct_minus_sum == F(120)
+    assert sides.direct_combined_sum == F(360)
+    assert sides.product_pair_correlation_sum == F(360)
+    assert sides.factorized_to_product_pair_identity_verified
+    assert sides.plus_minus_exhaust_every_unequal_product_pair
+    assert sides.common_second_factor_retained
+    assert sides.equal_product_diagonal_excluded
+    assert not sides.analytic_afe_packet_exhaustive
+    assert not sides.original_zeta_mollifier_coefficient_adapter_proved
+    assert not sides.partial_diagonal_target_bound_proved
+
+
+def test_additive_band_extracts_its_constant_fourier_mode_exactly() -> None:
+    helper = getattr(
+        type_identity,
+        "additive_band_zero_mode_sides",
+        None,
+    )
+    assert helper is not None, "additive-band zero-mode helper is missing"
+
+    sides = helper(
+        modulus=5,
+        left_coefficients={0: F(2), 1: F(-1), 3: F(4)},
+        right_coefficients={0: F(3), 2: F(5)},
+        labelled_shift_kernels={
+            "main/order-1": {1: F(2), 2: F(-1)},
+            "dual/order-2": {1: F(-1), 3: F(4)},
+        },
+    )
+
+    assert sides.direct_band_sum == F(105)
+    assert sides.combined_kernel_mean == F(4, 5)
+    assert sides.constant_mode_contribution == F(32)
+    assert sides.centered_band_sum == F(73)
+    assert sides.recombined_band_sum == F(105)
+    assert sides.centered_kernel_shift_sum == F(0)
+    assert sides.zero_mode_extraction_identity_verified
+    assert sides.packet_labels_retained == (
+        "dual/order-2",
+        "main/order-1",
+    )
+    assert not sides.combined_packet_zero_mode_vanishes
+    assert not sides.analytic_afe_ordering_kernel_derived
+
+
+def test_bblr_master_partitions_exactly_by_outer_product_gap() -> None:
+    helper = getattr(
+        type_identity,
+        "bblr_near_diagonal_outer_correlation_sides",
+        None,
+    )
+    assert helper is not None, "BBLR near-diagonal outer adapter is missing"
+
+    sides = helper(
+        left_outer_weights={1: F(2), 2: F(-1)},
+        left_inner_weights={3: F(4), 6: F(1)},
+        right_outer_weights={1: F(3)},
+        right_inner_weights={2: F(5), 3: F(1), 5: F(-1)},
+        labelled_kernels={
+            (1, 3, 2, 2, 3, 1): F(7),
+            (2, 3, 1, 2, 3, 1): F(11),
+            (1, 3, 5, 2, 3, 1): F(13),
+            (3, 1, 1, 2, 3, 1): F(17),
+        },
+        positive_gap_min=1,
+        positive_gap_max=2,
+    )
+
+    assert sides.direct_sum == F(606)
+    assert sides.reindexed_sum == F(606)
+    assert sides.positive_near_diagonal_sum == F(510)
+    assert sides.positive_principal_incidence_sum == F(0)
+    assert sides.positive_nonprincipal_incidence_sum == F(510)
+    assert sides.zero_gap_sum == F(408)
+    assert sides.negative_or_far_gap_sum == F(-312)
+    assert sides.positive_near_diagonal_entries == (
+        (1, 1, 2, 3, 2, 3, 1, F(840)),
+        (2, 2, 1, 3, 2, 3, 1, F(-330)),
+    )
+    assert sides.full_gap_partition_identity_verified
+    assert sides.principal_incidence_partition_verified
+    assert sides.type_factorizations_recombined_before_gap_partition
+    assert sides.all_h_delta_l_labels_preserved
+    assert not sides.original_coupled_kernel_stage_exhaustive
+
+
+def test_zero_frequency_master_rejects_the_already_counted_original_zero_mode() -> None:
+    """The h=0 term belongs to (4.6), not the secondary completion master."""
+    with pytest.raises(ValueError, match="original h=0"):
+        type_identity.zero_frequency_reflected_master_sides(
+            completed_coefficients={1: F(1)},
+            long_left_weights={1: F(1)},
+            long_right_weights={1: F(1)},
+            product_cutoff=1,
+            secondary_zero_packets=(
+                type_identity.SecondaryZeroPacket(
+                    afe_direction="main",
+                    poisson_frequency_h=0,
+                    additive_shift_delta=1,
+                    dyadic_label="zero",
+                    pair_kernel={(1, 1): F(1)},
+                ),
+            ),
+            explicit_diagonal_weights={1: F(1)},
+            left_density_weights={1: F(1)},
+            right_density_weights={1: F(1)},
+        )
+
+
+def test_zero_frequency_centering_is_not_canonical_until_density_is_derived() -> None:
+    """Changing p,q moves mass between M_res and R_cent, not their sum."""
+    packets = (
+        type_identity.SecondaryZeroPacket(
+            "main", 1, 2, "H1-D2", {(4, 4): F(5), (4, 5): F(2)}
+        ),
+        type_identity.SecondaryZeroPacket(
+            "dual", -2, 3, "H2-D3", {(5, 4): F(4), (5, 5): F(2)}
+        ),
+    )
+    common = {
+        "completed_coefficients": {4: F(3), 5: F(-1)},
+        "long_left_weights": {4: F(2), 5: F(-1)},
+        "long_right_weights": {4: F(2), 5: F(-1)},
+        "product_cutoff": 5,
+        "secondary_zero_packets": packets,
+        "explicit_diagonal_weights": {4: F(11), 5: F(13)},
+    }
+    uniform = type_identity.zero_frequency_reflected_master_sides(
+        **common,
+        left_density_weights={4: F(1, 2), 5: F(1, 2)},
+        right_density_weights={4: F(1, 2), 5: F(1, 2)},
+    )
+    endpoint = type_identity.zero_frequency_reflected_master_sides(
+        **common,
+        left_density_weights={4: F(1), 5: F(0)},
+        right_density_weights={4: F(0), 5: F(1)},
+    )
+
+    assert (
+        uniform.recombined_master_remainder
+        == endpoint.recombined_master_remainder
+    )
+    assert uniform.resonant_master_term != endpoint.resonant_master_term
+    assert uniform.centered_remainder != endpoint.centered_remainder
+
+
+def test_canonical_secondary_zero_is_offdiagonal_long_polynomial_energy() -> None:
+    """Catch assigning an opposite AFE sign or subtracting the diagonal twice."""
+    sides = type_identity.canonical_secondary_zero_energy_sides(
+        coefficients={1: F(2), 2: F(-1), 3: F(3)},
+        spectral_atoms=(
+            ("tau-minus", F(2), {1: F(1), 2: F(2), 3: F(-1)}),
+            ("tau-plus", F(3), {1: F(-1), 2: F(1), 3: F(2)}),
+        ),
+    )
+
+    assert sides.spectral_amplitudes == (
+        ("tau-minus", F(-3)),
+        ("tau-plus", F(3)),
+    )
+    assert sides.direct_one_direction_energy == F(45)
+    assert sides.expanded_gram_energy == F(45)
+    assert sides.explicit_diagonal == F(157)
+    assert sides.secondary_zero_off_diagonal == F(-112)
+    assert sides.secondary_zero_plus_diagonal == F(45)
+    assert sides.unfolded_two_afe_secondary_zero == F(-224)
+    assert sides.unfolded_two_afe_diagonal == F(314)
+    assert sides.unfolded_two_afe_full_energy == F(90)
+    assert sides.gram_expansion_exact
+    assert sides.secondary_zero_is_diagonal_removed_energy
+    assert sides.two_afe_directions_reinforce
+    assert sides.explicit_diagonal_restores_full_energy
+    assert not sides.reciprocal_lcm_kernel_identified
+    assert not sides.canonical_resonant_bound_proved
+
+
+def test_physical_zero_mellin_adapter_keeps_both_reflection_cross_terms() -> None:
+    """Catch losing a product factorization, packet label, cross term, or diagonal."""
+    sides = type_identity.physical_zero_mellin_reflection_adapter_sides(
+        mollifier_weights={1: F(1), 2: F(-1)},
+        zeta_weights={1: F(2), 3: F(1)},
+        completed_coefficients={1: F(2), 2: F(-1), 3: F(1), 6: F(-3)},
+        reflected_coefficients={2: F(1), 6: F(-2)},
+        secondary_zero_packets=(
+            type_identity.SecondaryZeroPacket(
+                "main",
+                1,
+                2,
+                "H1-D2",
+                {(1, 2): F(3), (2, 1): F(5), (3, 6): F(-1)},
+            ),
+            type_identity.SecondaryZeroPacket(
+                "dual",
+                -2,
+                -1,
+                "H2-D1",
+                {(6, 3): F(4), (2, 2): F(2), (1, 6): F(7)},
+            ),
+        ),
+        explicit_diagonal_weights={1: F(1), 2: F(3), 6: F(-2)},
+    )
+
+    assert sides.product_coefficients == (
+        (1, F(2)),
+        (2, F(-2)),
+        (3, F(1)),
+        (6, F(-1)),
+    )
+    assert sides.packet_contributions == (
+        ("main", 1, 2, "H1-D2", F(-31), F(-31)),
+        ("dual", -2, -1, "H2-D1", F(-10), F(-10)),
+    )
+    assert sides.direct_four_variable_sum == F(-41)
+    assert sides.paired_product_sum == F(-41)
+    assert sides.completed_completed == F(-65)
+    assert sides.completed_reflected == F(-22)
+    assert sides.reflected_completed == F(0)
+    assert sides.reflected_reflected == F(2)
+    assert sides.explicit_diagonal == F(14)
+    assert sides.direct_remainder == F(-55)
+    assert sides.reflected_remainder == F(-55)
+    assert sides.afe_directions_retained == ("main", "dual")
+    assert sides.full_afe_direction_pair_present
+    assert sides.product_coefficients_equal_completed_minus_reflected
+    assert sides.four_variable_to_product_pairing_exact
+    assert sides.reflection_expansion_exact
+    assert sides.full_supplied_packet_adapter_exact
+    assert sides.original_h_delta_and_dyadic_labels_retained
+    assert not sides.analytic_packet_family_exhaustive
+    assert not sides.unified_signed_operator_bound_proved
+
+
+def test_global_45_reflection_adapter_keeps_the_convolution_coordinate_map() -> None:
+    """Catch substituting a product convolution into a mollifier Gram."""
+    helper = getattr(
+        type_identity,
+        "physical_mellin_convolution_signed_operator_sides",
+        None,
+    )
+    assert helper is not None, "the global (4.5)-to-reflection adapter is missing"
+
+    result = helper(
+        mollifier_cutoff=2,
+        product_cutoff=6,
+        complete_divisor_coefficients={
+            1: F(1),
+            2: F(-2),
+            3: F(3),
+            4: F(0),
+            5: F(5),
+            6: F(-6),
+        },
+        mellin_weights={index: F(1) for index in range(1, 7)},
+        product_packets=(
+            type_identity.MellinProductPacket(
+                "main",
+                "z=0",
+                "product-X6",
+                {(1, 2): F(3), (2, 1): F(5), (3, 6): F(-1)},
+            ),
+            type_identity.MellinProductPacket(
+                "dual",
+                "z=0",
+                "product-X6",
+                {(6, 3): F(4), (2, 2): F(2), (1, 6): F(7)},
+            ),
+        ),
+        canonical_zero_kernel={(1, 2): F(3), (2, 1): F(3)},
+        main_term_kernel={(1, 1): F(5), (2, 2): F(7)},
+        left_density_weights={1: F(1, 2), 2: F(1, 2)},
+        right_density_weights={1: F(1, 2), 2: F(1, 2)},
+    )
+
+    assert result["truncated_product_coefficients"] == (
+        (1, F(1)),
+        (2, F(-1)),
+        (3, F(1)),
+        (4, F(-1)),
+        (5, F(1)),
+        (6, F(-1)),
+    )
+    assert result["completed_product_coefficients"] == (
+        (1, F(1)),
+        (2, F(-1)),
+        (3, F(4)),
+        (4, F(-1)),
+        (5, F(6)),
+        (6, F(-4)),
+    )
+    assert result["reflected_product_coefficients"] == (
+        (1, F(0)),
+        (2, F(0)),
+        (3, F(3)),
+        (4, F(0)),
+        (5, F(5)),
+        (6, F(-3)),
+    )
+    assert result["original_four_variable_sum"] == F(-16)
+    assert result["product_pair_sum"] == F(-16)
+    assert result["reflection_four_block_sum"] == F(-16)
+    assert result["physical_pullback_kernel"] == {
+        (1, 1): F(20), (1, 2): F(11), (2, 1): F(11), (2, 2): F(2)
+    }
+    assert result["canonical_zero_original_coordinates"] == F(-12)
+    assert result["canonical_zero_transported_coordinates"] == F(-12)
+    assert result["incorrect_untransported_product_gram"] == F(-6)
+    assert result["signed_residual_value"] == F(-49)
+    assert result["direct_ttstar_energy"] == F(490)
+    assert result["four_signed_ttstar_components"] == (
+        F(557, 2), F(171, 2), F(171, 2), F(81, 2)
+    )
+    assert result["truncated_equals_completed_minus_reflected"]
+    assert result["original_lattice_to_product_pairing_exact"]
+    assert result["reflection_expansion_exact"]
+    assert result["complete_divisor_support_exhaustive"]
+    assert result["strict_reflected_cofactor_endpoints"]
+    assert result["full_afe_direction_pair_present"]
+    assert result["afe_diagonal_includes_unequal_divisors"]
+    assert result["global_h_reassembly_before_reflection_required"]
+    assert not result["packetwise_fixed_h_reflection_claimed"]
+    assert result["signed_kernel_recombination_exact"]
+    assert result["ttstar_recombination_exact"]
+    assert result["convolution_first_column_norm_squared"] == F(6)
+    assert not result["analytic_norm_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+@pytest.mark.parametrize("power", [-1, 1, 2])
+def test_physical_adapter_transports_the_entire_mellin_weight(power: int) -> None:
+    """The inverse coordinate map must undo d^z, not just divisor convolution."""
+    helper = type_identity.physical_mellin_convolution_signed_operator_sides
+    common = {
+        "mollifier_cutoff": 2,
+        "product_cutoff": 4,
+        "complete_divisor_coefficients": {1: F(1), 2: F(-2), 3: F(3), 4: F(0)},
+        "mellin_weights": {d: F(d) ** power for d in range(1, 5)},
+        "product_packets": (
+            type_identity.MellinProductPacket(
+                "main", f"z={power}", "product-X4",
+                {(1, 2): F(3), (2, 4): F(-1), (3, 1): F(2)},
+            ),
+        ),
+        "canonical_zero_kernel": {(1, 2): F(3), (2, 1): F(3)},
+        "main_term_kernel": {(1, 1): F(5)},
+    }
+    uniform = helper(
+        **common,
+        left_density_weights={1: F(1, 2), 2: F(1, 2)},
+        right_density_weights={1: F(1, 2), 2: F(1, 2)},
+    )
+    endpoint = helper(
+        **common,
+        left_density_weights={1: F(1), 2: F(0)},
+        right_density_weights={1: F(0), 2: F(1)},
+    )
+    assert dict(uniform["truncated_product_coefficients"])[2] == 1 - 2 * F(2) ** power
+    assert uniform["canonical_zero_original_coordinates"] == F(-12)
+    assert uniform["canonical_zero_transported_coordinates"] == F(-12)
+    assert uniform["unified_residual_kernel"] == endpoint["unified_residual_kernel"]
+    assert uniform["direct_ttstar_energy"] == endpoint["direct_ttstar_energy"]
+    assert uniform["resonant_kernel"] != endpoint["resonant_kernel"]
+    assert not uniform["coupled_kernel_gate_closed"]
+
+
+def test_physical_adapter_rejects_incomplete_reflection_lattice() -> None:
+    with pytest.raises(ValueError, match="every d <= X"):
+        type_identity.physical_mellin_convolution_signed_operator_sides(
+            mollifier_cutoff=2,
+            product_cutoff=4,
+            complete_divisor_coefficients={1: F(1), 2: F(-2)},
+            mellin_weights={d: F(1) for d in range(1, 5)},
+            product_packets=(),
+            canonical_zero_kernel={},
+            main_term_kernel={},
+            left_density_weights={1: F(1, 2), 2: F(1, 2)},
+            right_density_weights={1: F(1, 2), 2: F(1, 2)},
+        )
+
+
+def test_unified_signed_operator_centers_nonzero_packets_only_once() -> None:
+    """Catch dropping either resonant-centered TT* cross term after centering."""
+    sides = type_identity.unified_signed_zero_nonzero_operator_sides(
+        coefficients={1: F(2), 2: F(-1)},
+        canonical_zero_kernel={(1, 2): F(2), (2, 1): F(2)},
+        nonzero_frequency_packets=(
+            type_identity.SecondaryZeroPacket(
+                "main",
+                1,
+                2,
+                "H1-D2",
+                {(1, 1): F(3), (2, 1): F(-1), (2, 2): F(2)},
+            ),
+            type_identity.SecondaryZeroPacket(
+                "dual",
+                -2,
+                -1,
+                "H2-D1",
+                {(1, 2): F(1), (2, 2): F(3)},
+            ),
+        ),
+        left_density_weights={1: F(1, 2), 2: F(1, 2)},
+        right_density_weights={1: F(1, 2), 2: F(1, 2)},
+    )
+
+    assert sides.nonzero_packet_contributions == (
+        ("main", 1, 2, "H1-D2", F(16)),
+        ("dual", -2, -1, "H2-D1", F(1)),
+    )
+    assert sides.canonical_zero_contribution == F(-8)
+    assert sides.raw_nonzero_contribution == F(17)
+    assert sides.unified_direct_contribution == F(9)
+    assert sides.nonzero_resonant_projection_contribution == F(-1)
+    assert sides.resonant_contribution == F(-9)
+    assert sides.centered_contribution == F(18)
+    assert sides.recombined_contribution == F(9)
+    assert sides.centered_kernel_entries == (
+        (1, 1, F(2)),
+        (1, 2, F(-2)),
+        (2, 1, F(-2)),
+        (2, 2, F(2)),
+    )
+    assert all(value == 0 for _, value in sides.weighted_centered_row_sums)
+    assert all(value == 0 for _, value in sides.weighted_centered_column_sums)
+    assert sides.direct_ttstar_energy == F(26)
+    assert sides.resonant_ttstar_energy == F(50)
+    assert sides.resonant_centered_ttstar_cross == F(-48)
+    assert sides.centered_resonant_ttstar_cross == F(-48)
+    assert sides.centered_ttstar_energy == F(72)
+    assert sides.recombined_ttstar_energy == F(26)
+    assert sides.signed_kernel_recombination_exact
+    assert sides.ttstar_recombination_exact
+    assert sides.nonzero_centered_once
+    assert sides.packet_labels_retained_before_ttstar
+    assert not sides.physical_nonzero_density_derived
+    assert not sides.separate_resonant_or_centered_bound_proved
+    assert not sides.coupled_kernel_gate_closed
+
+
+def test_unified_signed_operator_type_split_keeps_all_four_signed_cross_blocks(
+) -> None:
+    """Catch losing h*delta, either Mobius split, or a mixed Gram term."""
+    helper = getattr(
+        type_identity,
+        "unified_signed_zero_nonzero_double_mobius_type_operator_sides",
+        None,
+    )
+    assert helper is not None, "unified signed double-Mobius Type operator is missing"
+
+    sides = helper(
+        smooth_coefficients={6: F(2), 35: F(3)},
+        canonical_zero_packets=(
+            type_identity.SecondaryZeroPacket(
+                "main", 2, 3, "zero-H2-D3", {(6, 35): F(2), (35, 6): F(2)}
+            ),
+        ),
+        nonzero_frequency_packets=(
+            type_identity.SecondaryZeroPacket(
+                "main",
+                1,
+                2,
+                "H1-D2",
+                {(6, 6): F(3), (35, 6): F(-1), (35, 35): F(2)},
+            ),
+            type_identity.SecondaryZeroPacket(
+                "dual",
+                -2,
+                -1,
+                "H2-D1",
+                {(6, 35): F(1), (35, 35): F(3)},
+            ),
+        ),
+        left_density_weights={6: F(1, 2), 35: F(1, 2)},
+        right_density_weights={6: F(1, 2), 35: F(1, 2)},
+        cutoff_u=3,
+        cutoff_v=3,
+    )
+
+    assert sides.raw_mobius_coefficients == ((6, F(2)), (35, F(3)))
+    assert sides.type_coefficient_vectors == (
+        ("small", ((6, F(0)), (35, F(0)))),
+        ("I", ((6, F(2)), (35, F(-3)))),
+        ("II", ((6, F(0)), (35, F(6)))),
+    )
+    assert sides.active_type_names == ("I", "II")
+    assert sides.packet_product_labels == (
+        ("canonical-zero", "main", 2, 3, 6, "zero-H2-D3"),
+        ("nonzero", "main", 1, 2, 2, "H1-D2"),
+        ("nonzero", "dual", -2, -1, 2, "H2-D1"),
+    )
+
+    full = {
+        (left, right): value
+        for left, right, value in sides.full_type_ttstar_entries
+    }
+    rr = {
+        (left, right): value
+        for left, right, value in sides.resonant_resonant_type_ttstar_entries
+    }
+    rc = {
+        (left, right): value
+        for left, right, value in sides.resonant_centered_type_ttstar_entries
+    }
+    cr = {
+        (left, right): value
+        for left, right, value in sides.centered_resonant_type_ttstar_entries
+    }
+    cc = {
+        (left, right): value
+        for left, right, value in sides.centered_centered_type_ttstar_entries
+    }
+    assert {(a, b): full[(a, b)] for a in ("I", "II") for b in ("I", "II")} == {
+        ("I", "I"): F(90),
+        ("I", "II"): F(-252),
+        ("II", "I"): F(-252),
+        ("II", "II"): F(936),
+    }
+    assert {(a, b): rr[(a, b)] for a in ("I", "II") for b in ("I", "II")} == {
+        ("I", "I"): F(50),
+        ("I", "II"): F(-108),
+        ("II", "I"): F(-108),
+        ("II", "II"): F(648),
+    }
+    assert {(a, b): rc[(a, b)] for a in ("I", "II") for b in ("I", "II")} == {
+        ("I", "I"): F(-80),
+        ("I", "II"): F(96),
+        ("II", "I"): F(0),
+        ("II", "II"): F(0),
+    }
+    assert {(a, b): cr[(a, b)] for a in ("I", "II") for b in ("I", "II")} == {
+        ("I", "I"): F(-80),
+        ("I", "II"): F(0),
+        ("II", "I"): F(96),
+        ("II", "II"): F(0),
+    }
+    assert {(a, b): cc[(a, b)] for a in ("I", "II") for b in ("I", "II")} == {
+        ("I", "I"): F(200),
+        ("I", "II"): F(-240),
+        ("II", "I"): F(-240),
+        ("II", "II"): F(288),
+    }
+    assert sides.direct_full_ttstar_energy == F(522)
+    assert sides.signed_type_ttstar_sum == F(522)
+    assert sides.four_kernel_component_type_ttstar_sum == F(522)
+    assert sides.raw_coefficients_reassemble_from_type_vectors
+    assert sides.every_type_block_keeps_full_unified_kernel
+    assert sides.a_equals_h_times_delta_retained
+    assert sides.two_mobius_weights_retained_until_global_ttstar
+    assert sides.no_type_blockwise_absolute_value_taken
+    assert not sides.USZNTT_bound_proved
+    assert not sides.coupled_kernel_gate_closed
+
+
+def test_zero_frequency_master_requires_probability_density_weights() -> None:
+    packet = type_identity.SecondaryZeroPacket(
+        "main", 1, 1, "unit", {(1, 1): F(1)}
+    )
+    with pytest.raises(ValueError, match="nonnegative"):
+        type_identity.zero_frequency_reflected_master_sides(
+            completed_coefficients={1: F(1)},
+            long_left_weights={1: F(1), 2: F(1)},
+            long_right_weights={1: F(1)},
+            product_cutoff=2,
+            secondary_zero_packets=(packet,),
+            explicit_diagonal_weights={1: F(1)},
+            left_density_weights={1: F(2), 2: F(-1)},
+            right_density_weights={1: F(1)},
+        )
+
+
+def test_centered_operator_gate_records_the_exact_t_squared_saving() -> None:
+    """Raw T^5 to target T^3 means T^2, or T^4 after TT*."""
+    ledger = type_identity.centered_operator_saving_ledger(
+        raw_sum_exponent=F(5),
+        target_sum_exponent=F(3),
+    )
+
+    assert ledger.required_operator_saving_exponent == F(2)
+    assert ledger.required_ttstar_saving_exponent == F(4)
+    assert ledger.fixed_coefficient_operator_gate_is_sufficient
+    assert ledger.uniform_unit_ball_operator_gate_is_equivalent
+
+
+def test_coupled_ttstar_splits_parallel_and_nonparallel_slopes_exactly() -> None:
+    """The determinant-zero orbit is separated before any spectral bound."""
+    split = type_identity.coupled_ttstar_determinant_split_sides(
+        rows=(
+            type_identity.CoupledOperatorRow("u", 1, 1),
+            type_identity.CoupledOperatorRow("v", 1, 1),
+            type_identity.CoupledOperatorRow("w", 1, 2),
+        ),
+        columns=("t0", "t1"),
+        operator_entries={
+            ("u", "t0"): F(1),
+            ("u", "t1"): F(2),
+            ("v", "t0"): F(-1),
+            ("v", "t1"): F(3),
+            ("w", "t0"): F(4),
+            ("w", "t1"): F(-2),
+        },
+        row_coefficients={"u": F(2), "v": F(-1), "w": F(3)},
+    )
+
+    assert split.direct_quadratic == split.gram_quadratic
+    assert (
+        split.determinant_zero_quadratic
+        + split.determinant_nonzero_quadratic
+        == split.gram_quadratic
+    )
+    assert split.determinant_zero_pairs == (
+        ("u", "u"),
+        ("u", "v"),
+        ("v", "u"),
+        ("v", "v"),
+        ("w", "w"),
+    )
+
+
+def test_coupled_ttstar_rejects_nonprimitive_affine_slopes() -> None:
+    with pytest.raises(ValueError, match="positive primitive"):
+        type_identity.coupled_ttstar_determinant_split_sides(
+            rows=(type_identity.CoupledOperatorRow("bad", 2, 2),),
+            columns=("t",),
+            operator_entries={("bad", "t"): F(1)},
+            row_coefficients={"bad": F(1)},
+        )
 
 
 def test_zeta_variables_pair_exactly_with_their_mollifier_divisors() -> None:
@@ -915,6 +2382,353 @@ def test_long_cutoff_quotient_progression_rejects_zero_or_negative_factors() -> 
     assert adapter is not None, "long-cutoff quotient progression is missing"
     with pytest.raises(ValueError, match="b,d must be positive and v nonzero"):
         adapter(j=1, delta=1, b=0, d=1, v=1)
+
+
+def test_farey_type_ttstar_common_sector_has_exact_euclidean_determinant() -> None:
+    adapter = getattr(
+        type_identity,
+        "farey_type_ttstar_euclidean_ledger",
+        None,
+    )
+    assert adapter is not None, "Farey Type TT* Euclidean ledger is missing"
+
+    # q=11 and k=1.  The original primitive entries are (10,7) and
+    # (13,9); both have Beatty sector b=4, but their determinant is -1.
+    ledger = adapter(
+        q=11,
+        k=1,
+        d1=2,
+        m1=5,
+        s1=7,
+        d2=13,
+        m2=1,
+        s2=9,
+    )
+    assert (ledger.r1, ledger.w1, ledger.b1) == (10, 3, 4)
+    assert (ledger.r2, ledger.w2, ledger.b2) == (13, 4, 4)
+    assert (ledger.quotient1, ledger.remainder1) == (15, 5)
+    assert (ledger.quotient2, ledger.remainder2) == (15, 8)
+    assert ledger.b1 == ledger.quotient1 - 11
+    assert ledger.b2 == ledger.quotient2 - 11
+    assert ledger.same_sector
+    assert ledger.same_original_euclidean_quotient
+    assert ledger.sector_quotient_equivalence_verified
+    assert ledger.determinant == -1
+    assert 11 * ledger.determinant == 5 * 9 - 8 * 7
+    assert ledger.general_remainder_identity_verified
+    assert ledger.common_sector_remainder_identity_verified
+    assert ledger.determinant_collar_verified
+    assert ledger.nonzero_determinant_forces_q_below_denominator_product
+
+
+def test_farey_type_euclidean_ledger_is_exhaustive_on_small_positive_data() -> None:
+    adapter = type_identity.farey_type_ttstar_euclidean_ledger
+    for q in range(1, 6):
+        for k in range(3):
+            for s1 in range(1, 6):
+                for s2 in range(1, 6):
+                    for w1 in range(6):
+                        for w2 in range(6):
+                            r1, r2 = k * s1 + w1, k * s2 + w2
+                            if r1 == 0 or r2 == 0:
+                                continue
+                            ledger = adapter(
+                                q=q,
+                                k=k,
+                                d1=r1,
+                                m1=1,
+                                s1=s1,
+                                d2=r2,
+                                m2=1,
+                                s2=s2,
+                            )
+                            assert ledger.sector_quotient_equivalence_verified
+                            assert ledger.general_remainder_identity_verified
+                            assert ledger.common_sector_remainder_identity_verified
+                            assert ledger.determinant_collar_verified
+                            assert (
+                                ledger.nonzero_determinant_forces_q_below_denominator_product
+                            )
+                            if ledger.primitive_entries and ledger.determinant == 0:
+                                assert (ledger.r1, s1) == (ledger.r2, s2)
+                                assert (
+                                    ledger.zero_determinant_forces_equal_primitive_entries
+                                )
+
+
+def test_type_determinant_zero_recombines_cross_factorizations_before_cauchy() -> None:
+    adapter = getattr(
+        type_identity,
+        "mobius_log_type_diagonal_recombination",
+        None,
+    )
+    assert adapter is not None, "Möbius-log Type diagonal ledger is missing"
+
+    ledger = adapter(n=10, s=7)
+    assert ledger.primitive_entry
+    assert {(term.d, term.m) for term in ledger.terms} == {(5, 2), (2, 5)}
+    assert ledger.summed_prime_vector == ((2, 1), (5, 1))
+    assert ledger.target_prime_vector == ((2, 1), (5, 1))
+    assert ledger.full_cross_outer_product == (
+        (2, 2, 1),
+        (2, 5, 1),
+        (5, 2, 1),
+        (5, 5, 1),
+    )
+    assert ledger.target_outer_product == ledger.full_cross_outer_product
+    assert ledger.recombination_identity_verified
+    assert ledger.cross_factorizations_retained_before_cauchy
+
+    # The prime-log identity is coordinatewise and remains exact when n is
+    # nonsquarefree: its two p=2 factorizations cancel for n=12.
+    nonsquarefree = adapter(n=12, s=5)
+    assert nonsquarefree.summed_prime_vector == ((2, 0), (3, 0))
+    assert nonsquarefree.target_prime_vector == ((2, 0), (3, 0))
+    assert nonsquarefree.recombination_identity_verified
+
+
+def test_labelled_type_zero_determinant_recombines_but_keeps_h_delta_packets() -> None:
+    packet_type = getattr(type_identity, "LabelledAfeTypePacket", None)
+    adapter = getattr(
+        type_identity,
+        "labelled_type_zero_determinant_recombination",
+        None,
+    )
+    assert packet_type is not None, "labelled AFE Type packet is missing"
+    assert adapter is not None, "labelled Type determinant-zero helper is missing"
+
+    packets = (
+        packet_type(
+            packet_id="plus-h",
+            h=2,
+            delta=3,
+            dyadic_label="nu-1",
+            afe_direction="+",
+            n=10,
+            s=7,
+            amplitude=F(2),
+            vector=(F(1), F(2)),
+        ),
+        packet_type(
+            packet_id="minus-h",
+            h=-1,
+            delta=5,
+            dyadic_label="nu-2",
+            afe_direction="-",
+            n=10,
+            s=7,
+            amplitude=F(-3),
+            vector=(F(2), F(-1)),
+        ),
+        packet_type(
+            packet_id="other-entry",
+            h=4,
+            delta=-2,
+            dyadic_label="nu-3",
+            afe_direction="+",
+            n=13,
+            s=9,
+            amplitude=F(5),
+            vector=(F(3), F(1)),
+        ),
+    )
+    ledger = adapter(
+        packets=packets,
+        prime_log_weights={2: F(2), 5: F(7), 13: F(11)},
+    )
+    assert ledger.packet_ids == ("plus-h", "minus-h", "other-entry")
+    assert ledger.product_frequencies == (6, -5, -8)
+    assert ledger.packet_label_ledger == (
+        ("plus-h", 2, 3, "nu-1", "+"),
+        ("minus-h", -1, 5, "nu-2", "-"),
+        ("other-entry", 4, -2, "nu-3", "+"),
+    )
+    assert ledger.all_original_packet_labels_retained
+    assert ledger.all_entries_primitive
+    assert ledger.expanded_type_determinant_zero_energy == (
+        ledger.recombined_original_entry_energy
+    )
+    assert ledger.internal_type_factorizations_recombined
+    assert ledger.distinct_outer_packets_still_cross_inside_entry
+    assert not ledger.global_same_slope_gate_proved
+
+
+def test_moving_beatty_slopes_do_not_share_one_scalar_coefficient_function() -> None:
+    collision = getattr(
+        type_identity,
+        "farey_scalar_beatty_fixed_coefficient_collision",
+        None,
+    )
+    assert collision is not None, "fixed-coefficient Beatty audit is missing"
+
+    ledger = collision(
+        q=6,
+        k=1,
+        sector_denominators=((1, 6), (2, 5)),
+    )
+
+    assert ledger.entries == (
+        (1, 6, 1, 7, 1, -1),
+        (2, 5, 2, 7, -1, -1),
+    )
+    assert ledger.conflicting_value_coefficients == (
+        (7, 1, 6, -1, 2, 5, 1),
+    )
+    assert not ledger.fixed_scalar_value_assignment_consistent
+    assert ledger.counterexample_to_universal_fixed_f_adapter
+    assert ledger.technau_zafeiropoulos_fixed_f_hypothesis_refuted
+
+
+def test_labelled_nonprincipal_type_energy_splits_before_cauchy() -> None:
+    packet_type = getattr(type_identity, "LabelledAfeTypePacket", None)
+    split = getattr(
+        type_identity,
+        "labelled_type_nonprincipal_determinant_split",
+        None,
+    )
+    assert packet_type is not None, "labelled AFE Type packet is missing"
+    assert split is not None, "labelled nonprincipal Type split is missing"
+
+    packets = (
+        packet_type(
+            packet_id="entry-30-plus",
+            h=2,
+            delta=3,
+            dyadic_label="nu-a",
+            afe_direction="+",
+            n=30,
+            s=19,
+            amplitude=F(2),
+            vector=(F(1), F(2)),
+        ),
+        packet_type(
+            packet_id="entry-30-minus",
+            h=-1,
+            delta=5,
+            dyadic_label="nu-b",
+            afe_direction="-",
+            n=30,
+            s=19,
+            amplitude=F(-1),
+            vector=(F(2), F(1)),
+        ),
+        packet_type(
+            packet_id="entry-35",
+            h=4,
+            delta=-2,
+            dyadic_label="nu-c",
+            afe_direction="+",
+            n=35,
+            s=22,
+            amplitude=F(3),
+            vector=(F(1), F(-1)),
+        ),
+    )
+    ledger = split(
+        packets=packets,
+        angular_resolution=20,
+        slope_integer_part=1,
+        character_modulus=20,
+        type_cutoff=2,
+        prime_log_weights={2: F(2), 3: F(3), 5: F(5), 7: F(7)},
+    )
+
+    assert ledger.packet_ids == (
+        "entry-30-plus",
+        "entry-30-minus",
+        "entry-35",
+    )
+    assert ledger.product_frequencies == (6, -5, -8)
+    assert ledger.sector_labels == (11, 11, 11)
+    assert tuple(label for label, _ in ledger.type_pair_energies) == (
+        "I/I",
+        "I/II",
+        "II/I",
+        "II/II",
+    )
+    assert ledger.type_pair_energies == (
+        ("I/I", F(171, 5)),
+        ("I/II", F(-342, 5)),
+        ("II/I", F(-342, 5)),
+        ("II/II", F(1368)),
+    )
+    assert ledger.zero_determinant_expanded_energy == F(16587, 5)
+    assert ledger.nonzero_determinant_energy == F(-2052)
+    assert ledger.expanded_nonprincipal_energy == F(6327, 5)
+    assert ledger.nonprincipal_projector_square_energy == F(6327, 5)
+    assert ledger.expanded_nonprincipal_energy == (
+        ledger.zero_determinant_expanded_energy
+        + ledger.nonzero_determinant_energy
+    )
+    assert ledger.zero_determinant_expanded_energy == (
+        ledger.zero_determinant_recombined_energy
+    )
+    assert ledger.expanded_nonprincipal_energy == sum(
+        (energy for _, energy in ledger.type_pair_energies),
+        F(0),
+    )
+    assert ledger.nonzero_determinants == (-5, 5)
+    assert ledger.all_original_packet_labels_retained
+    assert ledger.type_i_ii_partition_exact
+    assert ledger.determinant_split_exact
+    assert ledger.zero_determinant_recombined_before_cauchy
+    assert ledger.nonprincipal_projector_square_identity_exact
+    assert ledger.expanded_nonprincipal_energy_nonnegative
+    assert not ledger.global_nonzero_determinant_gate_proved
+
+    certify = getattr(
+        type_identity,
+        "joint_nonprincipal_one_sided_upper_bound",
+        None,
+    )
+    assert certify is not None, "one-sided joint gate certificate is missing"
+    certificate = certify(
+        split=ledger,
+        zero_determinant_upper_bound=F(16587, 5),
+        nonzero_determinant_upper_bound=F(0),
+    )
+    assert certificate.expanded_nonprincipal_energy == F(6327, 5)
+    assert certificate.zero_determinant_energy == F(16587, 5)
+    assert certificate.nonzero_determinant_energy == F(-2052)
+    assert certificate.resulting_absolute_upper_bound == F(16587, 5)
+    assert certificate.determinant_split_exact
+    assert certificate.full_nonprincipal_energy_nonnegative
+    assert certificate.zero_determinant_bound_holds
+    assert certificate.one_sided_nonzero_bound_holds
+    assert not certificate.absolute_nonzero_bound_holds
+    assert certificate.absolute_full_energy_bound_certified
+    assert certificate.strict_weakening_witness
+    assert not certificate.analytic_one_sided_gate_proved
+
+
+def test_one_sided_joint_gate_rejects_negative_upper_bounds() -> None:
+    packet_type = type_identity.LabelledAfeTypePacket
+    ledger = type_identity.labelled_type_nonprincipal_determinant_split(
+        packets=(
+            packet_type(
+                packet_id="single-entry",
+                h=1,
+                delta=1,
+                dyadic_label="nu",
+                afe_direction="+",
+                n=6,
+                s=5,
+                amplitude=F(1),
+                vector=(F(1),),
+            ),
+        ),
+        angular_resolution=5,
+        slope_integer_part=1,
+        character_modulus=5,
+        type_cutoff=1,
+        prime_log_weights={2: F(2), 3: F(3)},
+    )
+    with pytest.raises(ValueError, match="upper bounds must be nonnegative"):
+        type_identity.joint_nonprincipal_one_sided_upper_bound(
+            split=ledger,
+            zero_determinant_upper_bound=F(-1),
+            nonzero_determinant_upper_bound=F(0),
+        )
 
 
 def test_one_third_split_has_exact_balanced_scales() -> None:

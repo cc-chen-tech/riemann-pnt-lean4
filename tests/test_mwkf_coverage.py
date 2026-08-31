@@ -1,5 +1,6 @@
-from fractions import Fraction as F
 import sys
+from fractions import Fraction as F
+from math import gcd
 from pathlib import Path
 
 import pytest
@@ -31,6 +32,9 @@ COVERAGE_NOTE = Path(
 )
 ALTERNATIVE_ROUTES_NOTE = Path(
     "docs/research/2026-08-25-mwkf-alternative-routes-spike.md"
+)
+OFFDIAGONAL_NOTE = Path(
+    "docs/research/2026-08-24-mobius-weighted-off-diagonal.md"
 )
 
 
@@ -1532,6 +1536,44 @@ def test_transition_h_poisson_line_is_unimodular_in_the_two_mobius_entries() -> 
     assert result["mobius_entry_change_is_unimodular"]
 
 
+def test_h_product_phase_becomes_the_exact_determinant_line_constraint() -> None:
+    audit = getattr(
+        coverage_audit,
+        "h_product_phase_character_orthogonality",
+        None,
+    )
+    assert audit is not None, "h-product phase orthogonality audit is missing"
+
+    for s in range(1, 13):
+        for w in range(-12, 13):
+            if gcd(w, s) != 1:
+                continue
+            for delta in range(-7, 8):
+                for dual_v in range(-7, 8):
+                    row = audit(s=s, w=w, delta=delta, dual_v=dual_v)
+                    lattice = (w * dual_v - delta) % s == 0
+                    assert row[
+                        "character_condition_equals_lattice_constraint"
+                    ]
+                    assert (row["complete_character_sum"] == s) == lattice
+                    if lattice:
+                        dual_j = row["dual_j"]
+                        assert dual_j is not None
+                        assert w * dual_v - dual_j * s == delta
+                    else:
+                        assert row["dual_j"] is None
+                    assert row[
+                        "product_phase_converted_to_lattice_constraint"
+                    ]
+                    assert row[
+                        "h_variable_eliminated_by_character_orthogonality"
+                    ]
+                    assert not row["residual_hdelta_oscillation_available"]
+                    assert not row[
+                        "automatic_power_saving_from_product_frequency"
+                    ]
+
+
 def test_transition_h_poisson_line_gate_has_one_power_critical_layer() -> None:
     """After h-Poisson, inner area T and only theta=1,g=1 is critical."""
     adapter = getattr(
@@ -1651,8 +1693,14 @@ def test_published_kloosterman_bounds_miss_the_transition_entry_gate() -> None:
     assert audit.bp_uniform_deficit == F(15, 32)
     assert audit.mqw_uniform_saving_exponent == F(1, 100)
     assert audit.mqw_uniform_deficit == F(49, 100)
+    assert audit.pascadi_uniform_saving_exponent == F(1, 700)
+    assert audit.pascadi_uniform_deficit == F(349, 700)
+    assert audit.pascadi_one_bounded_saving_exponent == F(1, 276)
+    assert audit.pascadi_one_bounded_deficit == F(137, 276)
     assert audit.pascadi_factorable_saving_exponent == F(1, 12)
     assert audit.pascadi_factorable_deficit == F(5, 12)
+    assert audit.pascadi_averaged_common_divisor_exponent == F(0)
+    assert audit.pascadi_averaged_modulus_saving_exponent == F(0)
     assert audit.optimistic_four_bp_applications_saving_exponent == F(1, 8)
     assert audit.optimistic_four_bp_deficit == F(3, 8)
     assert audit.bp_square_root_length_condition_holds
@@ -1660,7 +1708,9 @@ def test_published_kloosterman_bounds_miss_the_transition_entry_gate() -> None:
     assert not audit.standard_kloosterman_kernel_verified
     assert not audit.coefficients_separate_from_matrix_entries
     assert not audit.fixed_modulus_before_entry_sum_verified
-    assert not audit.pascadi_uniform_for_all_moduli
+    assert audit.pascadi_uniform_for_all_moduli
+    assert audit.primitive_determinant_common_divisor_is_one
+    assert not audit.pascadi_averaged_modulus_power_saving
     assert not audit.published_coverage
 
 
@@ -1744,6 +1794,9838 @@ def test_transition_delta_lattice_zero_mode_needs_one_power_on_every_shell() -> 
     assert largest_divisor.primitive_divisor_weight_exponent == F(-1)
     assert largest_divisor.weighted_active_longitudinal_exponent == F(0)
     assert largest_divisor.primitive_divisor_layers_do_not_worsen
+
+
+def test_poisson_resonant_gram_isolates_the_only_positive_power_deficit() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_poisson_resonant_gram_audit",
+        None,
+    )
+    assert adapter is not None, "Poisson resonant-Gram audit is missing"
+
+    audit = adapter()
+    assert audit.discrete_identity_diagonal_exponent == F(2)
+    assert audit.continuous_self_gram_exponent == F(2)
+    assert audit.sampling_correction_bound_exponent == F(2)
+    assert audit.sampling_correction_power_deficit == F(0)
+    assert audit.continuous_full_gram_trivial_exponent == F(3)
+    assert audit.square_function_target_exponent == F(2)
+    assert audit.required_continuous_gram_saving_exponent == F(1)
+    assert audit.poisson_covolume_cancels_jacobian
+    assert audit.offdiagonal_zero_mode_is_sign_indefinite
+    assert audit.resonant_recombination_exact
+    assert audit.sampling_correction_has_no_positive_power_obstruction
+    assert not audit.endpoint_logarithmic_aggregation_closed
+    assert not audit.continuous_mobius_gram_bound_proved
+    assert not audit.whole_poisson_zero_mode_covered
+
+
+def test_resonant_gram_is_a_mobius_farey_microcluster_square_function() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_poisson_tube_cluster_audit",
+        None,
+    )
+    assert adapter is not None, "Poisson tube-cluster audit is missing"
+
+    audit = adapter()
+    assert audit.tube_longitudinal_length_exponent == F(1, 2)
+    assert audit.tube_transverse_width_exponent == F(-1, 2)
+    assert audit.angular_resolution_exponent == F(-1)
+    assert audit.primitive_direction_family_exponent == F(2)
+    assert audit.angular_cluster_count_exponent == F(1)
+    assert audit.entries_per_cluster_exponent == F(1)
+    assert audit.coherent_cluster_energy_exponent == F(3)
+    assert audit.square_root_cluster_energy_exponent == F(2)
+    assert audit.square_function_target_exponent == F(2)
+    assert audit.square_root_margin_exponent == F(0)
+    assert audit.cluster_coefficient == "mu(s)*mu(k*s+w)"
+    assert audit.same_cluster_implies_determinant_collar
+    assert audit.determinant_collar_implies_adjacent_clusters
+    assert audit.angular_interaction_has_bounded_cluster_multiplicity
+    assert audit.critical_sector_is_single_beatty_graph
+    assert audit.primitive_mobius_product_fold_exact
+    assert audit.vector_kernel_prevents_scalar_product_collapse
+    assert audit.additive_fourier_interface_reappears_after_strip_transform
+    assert not audit.additive_local_moment_input_is_unconditional
+    assert audit.sector_character_parseval_exact
+    assert audit.sector_principal_mode_absorbable
+    assert audit.remaining_resonant_gate_has_only_nonzero_sector_characters
+    assert audit.single_mobius_log_derivative_exact
+    assert not audit.nonzero_character_automatic_frequency_decay
+    assert audit.pre_cauchy_type_dispersion_required
+    assert not audit.nonzero_character_type_bound_proved
+    assert audit.requires_vector_valued_two_mobius_cancellation
+    assert not audit.unweighted_farey_equidistribution_matches
+    assert not audit.one_mobius_nilsequence_theorem_matches
+    assert not audit.published_coverage
+
+
+def test_farey_sector_partition_has_an_exact_determinant_collar_ledger() -> None:
+    ledger = getattr(coverage_audit, "farey_sector_pair_ledger", None)
+    assert ledger is not None, "exact Farey sector-pair ledger is missing"
+
+    for q in range(1, 9):
+        for s1 in range(1, 9):
+            for s2 in range(1, 9):
+                for w1 in range(0, 9):
+                    for w2 in range(0, 9):
+                        pair = ledger(q=q, w1=w1, s1=s1, w2=w2, s2=s2)
+                        if pair.same_sector:
+                            assert q * pair.absolute_determinant < s1 * s2
+                        if q * pair.absolute_determinant < s1 * s2:
+                            assert pair.sector_distance <= 1
+                        assert pair.same_sector_implies_collar
+                        assert pair.collar_implies_adjacent_sectors
+
+
+def test_critical_farey_sector_fiber_is_a_single_beatty_graph() -> None:
+    fiber = getattr(coverage_audit, "farey_sector_fiber_ledger", None)
+    assert fiber is not None, "exact Farey sector-fiber ledger is missing"
+
+    for q in range(1, 13):
+        for b in range(0, 13):
+            for s in range(1, q + 1):
+                row = fiber(q=q, b=b, s=s)
+                brute = tuple(
+                    w
+                    for w in range(0, (b + 2) * s + 2)
+                    if b * s <= q * w < (b + 1) * s
+                )
+                assert row.members == brute
+                assert row.member_count <= 1
+                assert row.unique_when_s_at_most_q
+                if row.members:
+                    assert row.members == (row.beatty_candidate,)
+
+
+def test_primitive_two_mobius_entry_folds_to_one_product_coordinate() -> None:
+    fold = getattr(
+        coverage_audit,
+        "farey_primitive_product_coordinate_ledger",
+        None,
+    )
+    assert fold is not None, "primitive product-coordinate ledger is missing"
+
+    for q in range(1, 8):
+        for k in range(1, 5):
+            for s in range(1, 16):
+                for r in range(k * s, (k + 3) * s + 1):
+                    if gcd(r, s) != 1:
+                        continue
+                    row = fold(q=q, k=k, r=r, s=s)
+                    assert row.primitive_entry
+                    assert row.mobius_product_fold_exact
+                    assert row.sector_product_inequality_exact
+                    assert row.product_coordinate == r * s
+                    assert row.second_entry_recovered_from_divisor == r
+
+
+def test_product_sector_fiber_has_critical_bounded_multiplicity() -> None:
+    fiber = getattr(
+        coverage_audit,
+        "farey_product_sector_fiber_ledger",
+        None,
+    )
+    assert fiber is not None, "product-sector fiber ledger is missing"
+
+    critical = fiber(
+        q=10,
+        k=1,
+        b=4,
+        n=117,
+        critical_ratio_bound=1,
+    )
+    assert critical.sector_scale == 14
+    assert critical.integer_interval_members == (9,)
+    assert critical.primitive_divisor_members == ((9, 13, 4),)
+    assert critical.critical_scale_hypothesis
+    assert critical.pairwise_diameter_inequality_exact
+    assert critical.integer_fiber_cardinality_bound == 1
+    assert critical.bounded_multiplicity_certified
+    assert critical.product_mobius_coefficient_fixed_across_primitive_fiber
+    assert critical.vector_weight_still_factorization_dependent
+    assert not critical.cancellation_estimate_proved
+
+    wider = fiber(
+        q=1,
+        k=1,
+        b=0,
+        n=420,
+        critical_ratio_bound=20,
+    )
+    assert wider.integer_interval_members == (15, 16, 17, 18, 19, 20)
+    assert wider.primitive_divisor_members == ((15, 28, 13), (20, 21, 1))
+    assert wider.bounded_multiplicity_certified
+    assert wider.product_mobius_coefficient_fixed_across_primitive_fiber
+
+    failed_scale = fiber(
+        q=1,
+        k=1,
+        b=0,
+        n=420,
+        critical_ratio_bound=5,
+    )
+    assert not failed_scale.critical_scale_hypothesis
+    assert not failed_scale.bounded_multiplicity_certified
+
+
+def test_banded_sector_gram_reduces_global_energy_to_cluster_square_function() -> None:
+    sides = getattr(coverage_audit, "banded_sector_gram_sides", None)
+    assert sides is not None, "finite banded sector-Gram helper is missing"
+
+    result = sides(
+        cluster_vectors={
+            0: (F(1), F(1), F(0)),
+            1: (F(0), F(2), F(1)),
+            2: (F(0), F(0), F(3)),
+        },
+        bandwidth=1,
+    )
+    assert result["far_cluster_inner_products_vanish"]
+    assert result["direct_global_energy"] == F(26)
+    assert result["expanded_global_energy"] == F(26)
+    assert result["cluster_square_function"] == F(16)
+    assert result["bounded_overlap_constant"] == 3
+    assert result["bounded_overlap_upper_bound"] == F(48)
+    assert result["global_energy_bounded_by_cluster_square_function"]
+
+
+def test_sector_character_parseval_splits_off_the_original_gram_over_m() -> None:
+    sides = getattr(coverage_audit, "sector_character_parseval_sides", None)
+    assert sides is not None, "finite sector-character Parseval helper is missing"
+
+    result = sides(
+        entries=(
+            (0, F(1), (F(1),)),
+            (0, F(2), (F(1),)),
+            (2, F(3), (F(1),)),
+        ),
+        modulus=7,
+    )
+    assert result["no_sector_aliasing"]
+    assert result["cluster_square_function"] == F(18)
+    assert result["normalized_all_character_energy"] == F(18)
+    assert result["finite_parseval_exact"]
+    assert result["original_global_gram"] == F(36)
+    assert result["principal_character_energy"] == F(36, 7)
+    assert result["nonprincipal_character_energy"] == F(90, 7)
+    assert result["nonprincipal_character_energy_nonnegative"]
+    assert result["entry_self_diagonal_energy"] == F(14)
+    assert result["nonprincipal_entry_diagonal_energy"] == F(12)
+    assert result["nonprincipal_offdiagonal_energy"] == F(6, 7)
+    assert result["nonprincipal_diagonal_split_exact"]
+    assert result["sector_character_is_trivial_on_entry_diagonal"]
+
+
+def test_sector_diagonal_recombines_outer_packets_with_one_original_entry_id() -> None:
+    result = coverage_audit.sector_character_parseval_sides(
+        entries=(
+            (0, F(1), (F(1),)),
+            (0, F(2), (F(1),)),
+            (2, F(3), (F(1),)),
+        ),
+        modulus=7,
+        original_entry_ids=("entry-0", "entry-0", "entry-2"),
+    )
+    assert result["original_entry_groups_recombined"]
+    assert result["entry_self_diagonal_energy"] == F(18)
+    assert result["nonprincipal_entry_diagonal_energy"] == F(108, 7)
+    assert result["nonprincipal_offdiagonal_energy"] == -F(18, 7)
+    assert result["nonprincipal_diagonal_split_exact"]
+
+
+def test_sector_principal_mode_is_absorbed_into_the_original_gram() -> None:
+    audit = getattr(coverage_audit, "sector_principal_absorption_audit", None)
+    assert audit is not None, "sector-principal absorption audit is missing"
+
+    result = audit(modulus=7, bandwidth=1)
+    assert result["bounded_overlap_constant"] == 3
+    assert result["principal_feedback_coefficient"] == F(3, 7)
+    assert result["absorption_denominator"] == F(4, 7)
+    assert result["exact_nonprincipal_multiplier"] == F(21, 4)
+    assert result["twice_overlap_upper_multiplier"] == F(6)
+    assert result["principal_mode_absorbable"]
+    assert result["zero_sector_frequency_requires_separate_bound"] is False
+
+
+def test_mobius_log_derivative_identity_is_exact_in_every_prime_coordinate() -> None:
+    identity = getattr(
+        coverage_audit,
+        "mobius_log_derivative_prime_coordinate_identity",
+        None,
+    )
+    assert identity is not None, "finite Möbius log-derivative helper is missing"
+
+    for n in range(1, 151):
+        result = identity(n=n)
+        assert result["prime_coordinate_identity_exact"]
+        assert result["left_prime_log_coefficients"] == result[
+            "right_prime_log_coefficients"
+        ]
+
+
+def test_single_mobius_type_split_retains_the_exact_farey_entry() -> None:
+    identity = getattr(
+        coverage_audit,
+        "farey_single_mobius_type_identity",
+        None,
+    )
+    assert identity is not None, "Farey one-Möbius Type identity is missing"
+
+    result = identity(q=11, b=14, k=2, s=7)
+    assert result["sector_fiber_nonempty"]
+    assert result["w"] == 9
+    assert result["r"] == 23
+    assert result["sector_membership_exact"]
+    assert result["retained_first_mobius"] == -1
+    assert result["prime_coordinate_identity_exact"]
+    assert result["one_mobius_factor_only"]
+    assert result["sector_character_label_retained"] == 14
+
+
+def test_global_farey_type_packet_retains_every_sector_and_both_mobius_weights() -> None:
+    partition = getattr(
+        coverage_audit,
+        "farey_global_mobius_type_partition",
+        None,
+    )
+    assert partition is not None, "global Farey Type partition is missing"
+
+    result = partition(
+        q=5,
+        k=1,
+        sector_character=2,
+        denominators=(3, 5),
+        h=2,
+        delta=-3,
+        short_cutoff=2,
+        packet_label="afe-plus",
+    )
+
+    assert result["primitive_entries"] == (
+        (1, 3, 1, 4),
+        (3, 3, 2, 5),
+        (1, 5, 1, 6),
+        (2, 5, 2, 7),
+        (3, 5, 3, 8),
+        (4, 5, 4, 9),
+    )
+    assert result["product_frequency"] == -6
+    assert result["nonzero_sector_character_retained"]
+    assert result["packet_label_retained"] == "afe-plus"
+    assert result["all_sector_fibers_reassemble_primitive_wedge"]
+    assert result["left_prime_coordinates"] == result[
+        "right_prime_coordinates"
+    ]
+    assert result["global_log_identity_exact"]
+    assert result["squarefree_left_prime_coordinates"] == result[
+        "squarefree_right_prime_coordinates"
+    ]
+    assert result["squarefree_supported_global_identity_exact"]
+    assert result["type_i_term_count"] == 10
+    assert result["type_ii_term_count"] == 1
+    assert result["all_type_terms_partitioned_without_remainder"]
+    assert result["nonzero_mollifier_support_term_count"] == 4
+    assert result["prime_power_is_prime_on_nonzero_mollifier_support"]
+
+    type_ii = result["type_ii_terms"][0]
+    assert type_ii == {
+        "packet_label": "afe-plus",
+        "sector_character": 2,
+        "sector": 4,
+        "denominator": 5,
+        "shifted_numerator": 4,
+        "numerator": 9,
+        "type_divisor": 3,
+        "prime_power": 3,
+        "denominator_mobius": -1,
+        "divisor_mobius": -1,
+        "prime": 3,
+        "h": 2,
+        "delta": -3,
+        "product_frequency": -6,
+        "type_class": "II",
+    }
+    assert result["two_mobius_weights_retained_in_every_type_term"]
+    assert not result["type_estimate_proved"]
+
+
+def test_global_farey_type_scale_ledger_exposes_each_half_power_gate() -> None:
+    ledger = getattr(
+        coverage_audit,
+        "farey_global_type_scale_ledger",
+        None,
+    )
+    assert ledger is not None, "global Farey Type scale ledger is missing"
+
+    result = ledger(numerator_exponent=F(1), cutoff_exponent=F(1, 3))
+    assert result["type_i_short_factor_range"] == (F(0), F(1, 3))
+    assert result["type_i_long_factor_range"] == (F(2, 3), F(1))
+    assert result["type_ii_divisor_range"] == (F(1, 3), F(2, 3))
+    assert result["type_ii_prime_range"] == (F(1, 3), F(2, 3))
+    assert result["coherent_cluster_energy_exponent"] == F(3)
+    assert result["square_function_target_exponent"] == F(2)
+    assert result["required_energy_saving_exponent"] == F(1)
+    assert result["required_unsquared_saving_exponent"] == F(1, 2)
+    assert result["product_frequency_retained"] == "h*delta"
+    assert result["two_mobius_weights_retained"] == "mu(s)*mu(d)"
+    assert result["type_ii_prime_bearing_on_squarefree_support"]
+    assert not result["type_i_bound_proved"]
+    assert not result["type_ii_bound_proved"]
+    assert not result["combined_gate_proved"]
+
+
+def test_unit_divisor_type_i_reassembles_as_moving_weight_shifted_primes() -> None:
+    reassemble = getattr(
+        coverage_audit,
+        "farey_type_i_unit_divisor_shifted_prime_reassembly",
+        None,
+    )
+    assert reassemble is not None, "unit-divisor shifted-prime adapter is missing"
+
+    result = reassemble(
+        q=11,
+        sector_character=3,
+        denominators=tuple(range(2, 12)),
+        h=2,
+        delta=-3,
+        packet_label="afe-plus",
+    )
+
+    assert result["unit_divisor_entries"] == (
+        (5, 2, 1, 3, -1),
+        (7, 3, 2, 5, -1),
+        (4, 5, 2, 7, -1),
+        (1, 6, 1, 7, 1),
+        (9, 6, 5, 11, 1),
+        (6, 7, 4, 11, -1),
+        (9, 7, 6, 13, -1),
+        (1, 10, 1, 11, 1),
+        (3, 10, 3, 13, 1),
+        (7, 10, 7, 17, 1),
+        (9, 10, 9, 19, 1),
+        (2, 11, 2, 13, -1),
+        (6, 11, 6, 17, -1),
+        (8, 11, 8, 19, -1),
+    )
+    assert result["shifted_prime_reassembly_exact"]
+    assert result["prime_equals_denominator_plus_shift"]
+    assert result["mobius_is_negative_prime_shift_exact"]
+    assert result["product_frequency"] == -6
+    assert result["packet_label_retained"] == "afe-plus"
+    assert result["shift_one_sector_labels"] == (1, 5)
+    assert result["sector_phase_varies_after_fixing_shift"]
+    assert not result["lichtman_fixed_weight_hypothesis_matched"]
+
+
+def test_lichtman_shifted_prime_bound_is_logarithmic_and_misses_type_i_gate() -> None:
+    audit = getattr(
+        coverage_audit,
+        "lichtman_shifted_prime_type_i_coverage_audit",
+        None,
+    )
+    assert audit is not None, "Lichtman Type-I coverage audit is missing"
+
+    result = audit(
+        prime_length_exponent=F(1),
+        shift_length_exponent=F(1),
+        required_unsquared_saving_exponent=F(1, 2),
+    )
+
+    assert result["published_average_norm"] == "L1 over shifts"
+    assert result["required_average_norm"] == "vector cluster L2"
+    assert result["published_saving_kind"] == "logarithmic"
+    assert result["published_power_saving_exponent"] == F(0)
+    assert result["remaining_power_deficit"] == F(1, 2)
+    assert not result["strict_shift_range_h_less_x"]
+    assert not result["fixed_weight_across_shifts"]
+    assert not result["norm_hypothesis_matched"]
+    assert not result["covers_type_i_gate"]
+
+
+def test_rational_slope_sampling_expands_into_exact_alias_classes() -> None:
+    alias = getattr(
+        coverage_audit,
+        "trigonometric_grid_aliasing_sides",
+        None,
+    )
+    assert alias is not None, "trigonometric grid alias ledger is missing"
+
+    result = alias(
+        q=5,
+        coefficients={1: F(1), 6: F(1), 11: F(1)},
+    )
+
+    assert result["continuous_fourier_energy"] == F(3)
+    assert result["residue_class_sums"] == ((1, F(3)),)
+    assert result["zero_alias_diagonal_energy"] == F(3)
+    assert result["nonzero_alias_cross_energy"] == F(6)
+    assert result["discrete_grid_energy"] == F(9)
+    assert result["expanded_collision_energy"] == F(9)
+    assert result["discrete_parseval_identity_verified"]
+    assert result["max_alias_multiplicity"] == 3
+    assert result["cauchy_alias_majorant"] == F(9)
+    assert result["alias_majorant_verified"]
+
+
+def test_metric_beatty_sampling_recreates_the_hard_face_half_power() -> None:
+    audit = getattr(
+        coverage_audit,
+        "technau_zafeiropoulos_grid_coverage_audit",
+        None,
+    )
+    assert audit is not None, "metric Beatty grid coverage audit is missing"
+
+    result = audit(
+        value_length_exponent=F(1),
+        fourier_truncation_exponent=F(1, 2),
+        slope_grid_exponent=F(1),
+        coefficient_l2_energy_exponent=F(1),
+        target_energy_exponent=F(2),
+    )
+
+    assert result["trigonometric_bandwidth_exponent"] == F(3, 2)
+    assert result["alias_multiplicity_exponent"] == F(1, 2)
+    assert result["continuous_slope_total_energy_exponent"] == F(2)
+    assert result["generic_sampled_energy_exponent"] == F(5, 2)
+    assert result["remaining_energy_deficit"] == F(1, 2)
+    assert result["published_slope_average"] == "continuous Lebesgue"
+    assert result["actual_slope_average"] == "Q-point rational grid"
+    assert not result["second_index_mobius_supported"]
+    assert not result["fixed_arithmetic_function_across_slopes_supported"]
+    assert result["finite_fixed_f_collision_exhibited"]
+    assert not result["afe_product_frequency_interlaces_sector_grid"]
+    assert not result["type_packet_fourier_adapter_constructed"]
+    assert result["structured_nonzero_alias_cancellation_required"]
+    assert not result["covers_coupled_type_gate"]
+
+
+def test_structured_beatty_coefficients_remove_generic_grid_power_loss() -> None:
+    audit = getattr(
+        coverage_audit,
+        "structured_beatty_sobolev_sampling_audit",
+        None,
+    )
+    assert audit is not None, "structured Beatty sampling audit is missing"
+
+    result = audit(
+        value_length_exponent=F(1),
+        fourier_truncation_exponent=F(1, 2),
+        slope_grid_exponent=F(1),
+        coefficient_l2_energy_exponent=F(1),
+        target_energy_exponent=F(2),
+        epsilon=F(1, 100),
+    )
+
+    assert result["sobolev_order"] == F(201, 400)
+    assert result["sobolev_slack"] == F(1, 400)
+    assert result["value_grid_length_mismatch_exponent"] == F(0)
+    assert result["length_mismatch_loss_exponent"] == F(0)
+    assert result["harmonic_decay_loss_exponent"] == F(1, 400)
+    assert result["divisor_convolution_loss_budget"] == F(1, 400)
+    assert result["normalized_sampling_loss_exponent"] == F(1, 200)
+    assert result["structured_sampled_energy_exponent"] == F(401, 200)
+    assert result["target_energy_with_epsilon_exponent"] == F(201, 100)
+    assert not result["generic_bandwidth_alias_loss_is_necessary"]
+    assert result["nonuniform_separated_nodes_supported"]
+    assert result["hilbert_valued_fixed_coefficients_supported"]
+    assert result["structured_sampling_reaches_target"]
+    assert not result["actual_packet_fixed_across_slopes"]
+    assert not result["moving_two_mobius_vector_adapter_constructed"]
+    assert not result["covers_coupled_type_gate"]
+
+
+def test_beatty_product_frequency_divisor_cauchy_is_exact_for_vectors() -> None:
+    sides = getattr(
+        coverage_audit,
+        "beatty_divisor_fourier_coefficient_sides",
+        None,
+    )
+    assert sides is not None, "Beatty divisor-Fourier helper is missing"
+
+    result = sides(
+        coefficient_vectors={
+            1: (F(1), F(2)),
+            2: (F(-1), F(1)),
+        },
+        harmonic_weights={
+            1: F(1),
+            2: F(1, 2),
+        },
+    )
+
+    assert result["fourier_coefficients"] == (
+        (1, (F(1), F(2))),
+        (2, (F(-1, 2), F(2))),
+        (4, (F(-1, 2), F(1, 2))),
+    )
+    assert result["frequency_power"] == 0
+    assert result["weighted_fourier_energy"] == F(39, 4)
+    assert result["divisor_cauchy_majorant"] == F(12)
+    assert result["max_product_representations"] == 2
+    assert result["divisor_cauchy_bound_verified"]
+    assert result["hilbert_vector_identity_exact"]
+
+
+def test_beatty_chowla_projector_retains_all_packet_labels() -> None:
+    sides = getattr(
+        coverage_audit,
+        "farey_beatty_chowla_projector_sides",
+        None,
+    )
+    assert sides is not None, "Beatty-Chowla projector helper is missing"
+
+    result = sides(
+        q=5,
+        k=1,
+        labelled_entry_vectors={
+            (2, 1, "u"): (F(1), F(2)),
+            (5, 2, "v"): (F(3), F(-1)),
+            (5, 1, "u"): (F(2), F(1)),
+            (5, 1, "v"): (F(1), F(-1)),
+        },
+        determinant_zero_energy=F(15),
+    )
+
+    assert result["sector_vectors"] == (
+        (1, (F(-3), F(0))),
+        (2, (F(4), F(1))),
+    )
+    assert result["labels_by_sector"] == (
+        (1, ("u", "v")),
+        (2, ("u", "v")),
+    )
+    assert result["same_sector_energy"] == F(26)
+    assert result["principal_energy"] == F(2, 5)
+    assert result["nonprincipal_projector_energy"] == F(128, 5)
+    assert result["orthogonality_pair_expansion_energy"] == F(128, 5)
+    assert result["weakest_positive_gate_energy"] == F(128, 5)
+    assert result["signed_nonzero_determinant_energy"] == F(53, 5)
+    assert result["finite_character_parseval_exact"]
+    assert result["projector_bounded_by_same_sector_energy"]
+    assert result["same_sector_gate_is_stronger"]
+    assert result["signed_nonzero_bounded_by_projector"]
+    assert result["one_sided_nonzero_determinant_bound_implied"]
+    assert result["two_mobius_coefficients_retained"]
+    assert result["all_packet_labels_retained"]
+    assert not result["analytic_square_function_bound_proved"]
+
+
+def test_published_beatty_chowla_is_short_by_a_half_power() -> None:
+    audit = getattr(
+        coverage_audit,
+        "beatty_chowla_power_gate_audit",
+        None,
+    )
+    assert audit is not None, "Beatty-Chowla power-gate audit is missing"
+
+    result = audit(
+        entry_length_exponent=F(1),
+        sector_count_exponent=F(1),
+        target_energy_exponent=F(2),
+    )
+
+    assert result["coherent_energy_exponent"] == F(3)
+    assert result["required_energy_saving_exponent"] == F(1)
+    assert result["required_unsquared_saving_exponent"] == F(1, 2)
+    assert result["published_power_saving_exponent"] == F(0)
+    assert result["remaining_unsquared_power_deficit"] == F(1, 2)
+    assert result["crncevic_result_is_subsumed_by_teravainen_walker"]
+    assert result["published_average"] == "logarithmic qualitative limit"
+    assert result["published_slope_regime"] == (
+        "fixed slopes: irrational cancellation and rational resonance classification"
+    )
+    assert result["actual_slope_regime"] == "moving rational Q-grid"
+    assert not result["mobius_pair_power_bound_published"]
+    assert not result["hilbert_packet_square_function_published"]
+    assert not result["covers_one_sided_joint_type_gate"]
+
+
+def test_primitive_beatty_fourier_boundary_is_one_entry_per_sector() -> None:
+    sides = getattr(
+        coverage_audit,
+        "primitive_beatty_fourier_boundary_sides",
+        None,
+    )
+    assert sides is not None, "primitive Beatty Fourier boundary helper is missing"
+
+    result = sides(
+        q=6,
+        k=1,
+        labelled_entry_vectors={
+            (1, 0, "a"): (F(1), F(0)),
+            (1, 0, "b"): (F(0), F(1)),
+            (2, 1, "c"): (F(2), F(0)),
+            (3, 1, "d"): (F(0), F(3)),
+            (5, 1, "nonboundary"): (F(20), F(20)),
+        },
+    )
+
+    assert result["canonical_boundary_entries"] == (
+        (0, 1, 0),
+        (1, 6, 1),
+        (2, 3, 1),
+        (3, 2, 1),
+        (4, 3, 2),
+        (5, 6, 5),
+    )
+    assert result["primitive_boundary_entry_count"] == 6
+    assert result["sector_count"] == 6
+    assert result["one_primitive_boundary_entry_per_sector"]
+    assert result["boundary_iff_denominator_divides_q"]
+    assert result["totient_divisor_sum_identity"]
+    assert result["supplied_boundary_sector_vectors"] == (
+        (0, (F(1), F(1))),
+        (2, (F(0), F(3))),
+        (3, (F(2), F(0))),
+    )
+    assert result["recombined_boundary_entry_diagonal_energy"] == F(15)
+    assert result["boundary_same_sector_energy"] == F(15)
+    assert result["boundary_nonprincipal_projector_energy"] == F(65, 6)
+    assert result["boundary_energy_bounded_by_recombined_diagonal"]
+    assert result["all_supplied_boundary_labels_recombined_by_entry"]
+
+
+def test_sector_fourier_harmonic_becomes_type_linear_fraction_phase() -> None:
+    ledger = getattr(
+        coverage_audit,
+        "beatty_sector_fourier_type_phase_ledger",
+        None,
+    )
+    assert ledger is not None, "Beatty Fourier Type-phase ledger is missing"
+
+    result = ledger(
+        q=7,
+        sector_character=3,
+        harmonic=-2,
+        k=1,
+        s=5,
+        w=2,
+        type_divisor=1,
+        prime_power=7,
+    )
+
+    assert result["fourier_frequency"] == -11
+    assert result["frequency_mod_q"] == 3
+    assert result["type_relation_exact"]
+    assert result["integer_slope_part_drops_out"]
+    assert result["type_linear_fraction_phase_exact"]
+    assert not result["at_fourier_jump_boundary"]
+    assert not result["boundary_correction_required"]
+
+
+def test_type_i_additive_large_sieve_still_loses_one_power() -> None:
+    audit = getattr(
+        coverage_audit,
+        "beatty_type_i_additive_large_sieve_audit",
+        None,
+    )
+    assert audit is not None, "Beatty Type-I additive-large-sieve audit is missing"
+
+    result = audit(
+        divisor_exponent=F(1, 3),
+        denominator_exponent=F(1),
+        sector_modulus_exponent=F(1),
+        target_energy_exponent=F(2),
+    )
+
+    assert result["prime_bearing_length_exponent"] == F(2, 3)
+    assert result["farey_large_sieve_constant_exponent"] == F(2)
+    assert result["fixed_divisor_energy_exponent"] == F(8, 3)
+    assert result["optimistic_dyadic_divisor_orthogonality_energy_exponent"] == F(3)
+    assert result["cauchy_over_divisors_energy_exponent"] == F(10, 3)
+    assert result["remaining_energy_deficit_even_with_divisor_orthogonality"] == F(1)
+    assert result["remaining_unsquared_deficit"] == F(1, 2)
+    assert result["sector_average_normalization_cancels_denominator_cauchy_count"]
+    assert result["requires_joint_mobius_or_determinant_dispersion"]
+    assert not result["standard_additive_large_sieve_covers_type_i"]
+
+
+def test_sector_and_afe_phases_recombine_to_prime_kloosterman_phase() -> None:
+    ledger = getattr(
+        coverage_audit,
+        "beatty_afe_type_kloosterman_phase_ledger",
+        None,
+    )
+    assert ledger is not None, "combined Beatty/AFE Kloosterman ledger is missing"
+
+    result = ledger(
+        sector_modulus=13,
+        sector_character=5,
+        harmonic=-1,
+        denominator=11,
+        quotient=1,
+        remainder=3,
+        type_divisor=2,
+        prime_power=7,
+        h=3,
+        delta=4,
+    )
+
+    assert result["fourier_frequency"] == -8
+    assert result["afe_product"] == 12
+    assert result["type_relation_exact"]
+    assert result["primitive_entry"]
+    assert result["combined_phase_exact_mod_denominator"]
+    assert result["prime_kloosterman_direct_coefficient_mod_denominator"] == 6
+    assert result["prime_kloosterman_inverse_coefficient_mod_denominator"] == 5
+    assert result["korolev_unit_condition_equivalent_to_frequency_times_afe_unit"]
+    assert result["korolev_unit_condition_holds"]
+    assert result["both_mobius_weights_retained"]
+    assert result["afe_factorization_retained"]
+
+
+def test_korolev_prime_kloosterman_saving_is_far_below_gate() -> None:
+    audit = getattr(
+        coverage_audit,
+        "korolev_prime_kloosterman_type_i_audit",
+        None,
+    )
+    assert audit is not None, "Korolev prime-Kloosterman audit is missing"
+
+    full = audit(
+        modulus_exponent=F(1),
+        type_divisor_exponent=F(0),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert full["prime_length_exponent"] == F(1)
+    assert full["published_range_holds"]
+    assert full["korolev_saving_exponent"] == F(1, 35)
+    assert full["remaining_unsquared_deficit"] == F(33, 70)
+    assert not full["pointwise_theorem_covers_coupled_gate"]
+
+    transition = audit(
+        modulus_exponent=F(1),
+        type_divisor_exponent=F(1, 8),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert transition["prime_length_exponent"] == F(7, 8)
+    assert transition["korolev_saving_exponent"] == F(1, 56)
+    assert transition["two_branches_meet"]
+
+    outside = audit(
+        modulus_exponent=F(1),
+        type_divisor_exponent=F(1, 3),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert not outside["published_range_holds"]
+    assert outside["korolev_saving_exponent"] == F(0)
+    assert not outside["pointwise_theorem_covers_coupled_gate"]
+
+
+def test_fkm_prime_modulus_trace_saving_is_still_far_below_gate() -> None:
+    audit = getattr(
+        coverage_audit,
+        "fkm_prime_modulus_kloosterman_type_i_audit",
+        None,
+    )
+    assert audit is not None, "FKM prime-modulus trace audit is missing"
+
+    full = audit(
+        modulus_exponent=F(1),
+        type_divisor_exponent=F(0),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert full["prime_length_exponent"] == F(1)
+    assert full["power_saving_range_holds"]
+    assert full["limiting_saving_exponent"] == F(1, 24)
+    assert full["remaining_unsquared_deficit"] == F(11, 24)
+    assert not full["pointwise_theorem_covers_coupled_gate"]
+
+    shorter = audit(
+        modulus_exponent=F(1),
+        type_divisor_exponent=F(1, 8),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert shorter["prime_length_exponent"] == F(7, 8)
+    assert shorter["limiting_saving_exponent"] == F(1, 48)
+
+    threshold = audit(
+        modulus_exponent=F(1),
+        type_divisor_exponent=F(1, 4),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert threshold["limiting_saving_exponent"] == F(0)
+    assert not threshold["power_saving_range_holds"]
+
+
+def test_fkm_bilinear_trace_covers_prime_slice_but_degenerates_at_balance() -> None:
+    audit = getattr(
+        coverage_audit,
+        "fkm_prime_modulus_bilinear_type_ii_audit",
+        None,
+    )
+    assert audit is not None, "FKM bilinear Type-II audit is missing"
+
+    quarter = audit(
+        modulus_exponent=F(1),
+        first_factor_exponent=F(1, 4),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert quarter["short_factor_exponent"] == F(1, 4)
+    assert quarter["long_factor_exponent"] == F(3, 4)
+    assert quarter["bilinear_saving_exponent"] == F(1, 8)
+    assert quarter["remaining_unsquared_deficit"] == F(3, 8)
+    assert quarter["bilinear_bound_is_power_saving"]
+    assert not quarter["fixed_prime_modulus_bound_covers_coupled_gate"]
+
+    eighth = audit(
+        modulus_exponent=F(1),
+        first_factor_exponent=F(1, 8),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert eighth["bilinear_saving_exponent"] == F(1, 16)
+    assert eighth["one_variable_limiting_saving_exponent"] == F(1, 48)
+    assert eighth["best_published_prime_slice_saving_exponent"] == F(1, 16)
+
+    crossover = audit(
+        modulus_exponent=F(1),
+        first_factor_exponent=F(1, 16),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert crossover["bilinear_saving_exponent"] == F(1, 32)
+    assert crossover["one_variable_limiting_saving_exponent"] == F(1, 32)
+
+    balanced = audit(
+        modulus_exponent=F(1),
+        first_factor_exponent=F(1, 2),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert balanced["bilinear_saving_exponent"] == F(0)
+    assert balanced["remaining_unsquared_deficit"] == F(1, 2)
+    assert balanced["exact_balanced_point_degenerates"]
+    assert not balanced["bilinear_bound_is_power_saving"]
+
+
+def test_fkm_general_type_atom_polytope_uses_both_orientations() -> None:
+    audit = getattr(
+        coverage_audit,
+        "fkm_general_bilinear_type_atom_coverage_audit",
+        None,
+    )
+    assert audit is not None, "general FKM Type-atom coverage audit is missing"
+
+    covered = audit(
+        conductor_exponent=F(3),
+        first_factor_exponent=F(3, 4),
+        second_factor_exponent=F(9, 4),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separable_type_atom_adapter_verified=True,
+    )
+    assert covered["best_orientation"] == "first_as_M"
+    assert covered["limiting_fixed_atom_saving"] == F(3, 8)
+    assert covered["published_fixed_atom_coverage"]
+    assert covered["separable_type_atom_adapter_hypothesis_verified"]
+    assert not covered["divisor_lifted_physical_adapter_proved"]
+    assert not covered["global_divisor_lifted_packet_coverage"]
+
+    reversed_atom = audit(
+        conductor_exponent=F(3),
+        first_factor_exponent=F(9, 4),
+        second_factor_exponent=F(3, 4),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separable_type_atom_adapter_verified=True,
+    )
+    assert reversed_atom["best_orientation"] == "second_as_M"
+    assert reversed_atom["limiting_fixed_atom_saving"] == F(3, 8)
+
+    shorter_product = audit(
+        conductor_exponent=F(3),
+        first_factor_exponent=F(1, 2),
+        second_factor_exponent=F(2),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separable_type_atom_adapter_verified=True,
+    )
+    assert shorter_product["limiting_fixed_atom_saving"] == F(1, 4)
+
+    balanced = audit(
+        conductor_exponent=F(3),
+        first_factor_exponent=F(3, 2),
+        second_factor_exponent=F(3, 2),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separable_type_atom_adapter_verified=True,
+    )
+    assert balanced["limiting_fixed_atom_saving"] == 0
+    assert balanced["exact_balance_degenerates"]
+    assert not balanced["published_fixed_atom_coverage"]
+
+    missing_adapter = audit(
+        conductor_exponent=F(3),
+        first_factor_exponent=F(3, 4),
+        second_factor_exponent=F(9, 4),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separable_type_atom_adapter_verified=False,
+    )
+    assert missing_adapter["limiting_fixed_atom_saving"] == F(3, 8)
+    assert not missing_adapter["published_fixed_atom_coverage"]
+    assert not missing_adapter["divisor_lifted_physical_adapter_proved"]
+
+
+def test_product_trace_additive_completion_is_exact_and_parseval_is_trivial() -> None:
+    audit = getattr(
+        coverage_audit,
+        "product_trace_additive_completion_audit",
+        None,
+    )
+    assert audit is not None, "product-trace completion audit is missing"
+
+    result = audit(
+        modulus=11,
+        direct_coefficient=2,
+        inverse_coefficient=3,
+        left_coefficients={1: 1, 2: -1, 3: 1},
+        right_coefficients={1: 1, 2: 1, 4: -1},
+    )
+
+    assert result["unit_coefficients"]
+    assert result["forward_transform_is_kloosterman_sum"]
+    assert result["inverse_completion_exact"]
+    assert result["completed_bilinear_identity_exact"]
+    assert result["kloosterman_parseval_exact"]
+    assert result["additive_bilinear_parseval_exact"]
+    assert result["completion_normalization_denominator"] == 11
+    assert result["completed_frequency_count"] == 11
+    assert result["second_kloosterman_argument_is_fixed"]
+    assert result["pascadi_short_two_argument_adapter_available"] is False
+    assert result["parseval_supplies_power_saving"] is False
+
+
+def test_fkms_2026_rank_one_balanced_formula_has_a_type_ii_collision_obstruction() -> None:
+    audit = getattr(
+        coverage_audit,
+        "fkms_rank_one_prime_type_ii_route_audit",
+        None,
+    )
+    assert audit is not None, "FKMS rank-one route audit is missing"
+
+    balanced = audit(
+        modulus_exponent=F(1),
+        first_factor_exponent=F(1, 2),
+        moment_parameter=14,
+        required_unsquared_saving=F(1, 2),
+    )
+
+    assert balanced["published_gallant_theorem_directly_applies"] is False
+    assert balanced["paper_discusses_rank_one_inverse_pole_method"]
+    assert balanced["rank_one_stratification_adapter_proved_here"] is False
+    assert balanced["formal_gallant_formula_saving_exponent"] == F(1, 224)
+    assert balanced["direct_rank_one_route_saving_exponent"] == F(0)
+    assert balanced["gallant_moment_order"] == 5
+    assert balanced["required_type_ii_exceptional_dimension"] == 15
+    assert balanced["equal_shift_collision_dimension_lower_bound"] == 19
+    assert balanced["equal_shift_collision_dimension_excess"] == 4
+    assert balanced["direct_pole_stratification_supports_formula"] is False
+    assert balanced["remaining_unsquared_deficit_after_registered_bounds"] == F(1, 2)
+    assert balanced["registered_prime_slice_saving_exponent"] == F(0)
+    assert balanced["fixed_prime_modulus_bound_covers_coupled_gate"] is False
+
+    candidate_savings = {
+        ell: audit(
+            modulus_exponent=F(1),
+            first_factor_exponent=F(1, 2),
+            moment_parameter=ell,
+            required_unsquared_saving=F(1, 2),
+        )["formal_gallant_formula_saving_exponent"]
+        for ell in range(8, 31)
+    }
+    assert max(candidate_savings, key=candidate_savings.get) == 14
+
+
+def test_rank_one_type_ii_equal_shift_collision_is_an_exact_constant_phase() -> None:
+    witness = getattr(
+        coverage_audit,
+        "fkms_rank_one_type_ii_collision_witness",
+        None,
+    )
+    assert witness is not None, "rank-one Type-II collision witness is missing"
+
+    result = witness(
+        modulus=11,
+        direct_coefficient=1,
+        inverse_coefficient=1,
+        common_shift=4,
+        first_dilations=(1, 1, 1, 1),
+        second_dilations=(2, 9, 3, 8),
+    )
+
+    assert result["moment_order"] == 2
+    assert result["pointwise_type_ii_exclusion_holds"]
+    assert result["linear_coefficient_vanishes"]
+    assert result["pole_residue_vanishes"]
+    assert result["phase_is_zero_off_common_pole"]
+    assert result["zero_phase_count"] == 10
+    assert result["one_variable_sum"] == 10 + 0j
+    assert result["jacobian_rank"] == 2
+    assert result["collision_family_dimension_lower_bound"] == 7
+    assert result["gallant_required_exceptional_dimension"] == 6
+    assert result["dimension_excess"] == 1
+    assert result["standard_type_ii_moment_exception_count_can_hold"] is False
+
+    nonresonant = witness(
+        modulus=11,
+        direct_coefficient=2,
+        inverse_coefficient=1,
+        common_shift=4,
+        first_dilations=(1, 1, 1, 1),
+        second_dilations=(2, 9, 3, 7),
+    )
+    assert not nonresonant["phase_is_zero_off_common_pole"]
+    assert nonresonant["one_variable_sum"] != nonresonant["zero_phase_count"]
+
+
+def test_squarefree_product_trace_crt_character_split_is_exact() -> None:
+    audit = getattr(
+        coverage_audit,
+        "squarefree_product_trace_crt_character_audit",
+        None,
+    )
+    assert audit is not None, "squarefree CRT-character audit is missing"
+
+    result = audit(
+        prime_modulus=5,
+        squarefree_cofactor=7,
+        direct_coefficient=2,
+        inverse_coefficient=3,
+        residue=11,
+        left_coefficients={1: 1, 2: -1, 3: 1},
+        right_coefficients={1: 1, 2: 1, 4: -1},
+    )
+
+    assert result["squarefree_two_prime_modulus"] == 35
+    assert result["crt_direct_phase_exact"]
+    assert result["crt_inverse_phase_exact"]
+    assert result["product_trace_factorization_exact"]
+    assert result["cofactor_character_reconstruction_exact"]
+    assert result["bilinear_character_split_exact"]
+    assert result["cofactor_character_parseval_exact"]
+    assert result["normalized_character_multiplier_l2_is_one"]
+    assert result["character_square_function_incidence_exact"]
+    assert result["product_incidence_principal_centered_split_exact"]
+    assert result["crt_bilinear_energy_le_character_square_function"]
+    assert not result["global_product_incidence_bound_proved"]
+    assert result["normalized_character_l1_bound_holds"]
+    assert result["both_mobius_weights_retained"]
+    assert result["h_delta_factor_retained"]
+
+    iterated = audit(
+        prime_modulus=5,
+        squarefree_cofactor=21,
+        direct_coefficient=2,
+        inverse_coefficient=1,
+        residue=11,
+        left_coefficients={1: 1, 2: -1},
+        right_coefficients={1: 1, 4: 1},
+    )
+    assert iterated["squarefree_modulus"] == 105
+    assert iterated["cofactor_prime_factors"] == (3, 7)
+    assert iterated["cofactor_character_count"] == 12
+    assert iterated["product_trace_factorization_exact"]
+    assert iterated["cofactor_character_reconstruction_exact"]
+    assert iterated["bilinear_character_split_exact"]
+    assert iterated["cofactor_character_parseval_exact"]
+    assert iterated["normalized_character_multiplier_l2_is_one"]
+    assert iterated["character_square_function_incidence_exact"]
+    assert iterated["product_incidence_principal_centered_split_exact"]
+    assert iterated["crt_bilinear_energy_le_character_square_function"]
+
+    even_cofactor = audit(
+        prime_modulus=5,
+        squarefree_cofactor=6,
+        direct_coefficient=1,
+        inverse_coefficient=2,
+        residue=7,
+        left_coefficients={1: 1, 2: -1, 5: 1},
+        right_coefficients={1: 1, 3: -1, 7: 1},
+    )
+    assert even_cofactor["squarefree_modulus"] == 30
+    assert even_cofactor["cofactor_prime_factors"] == (2, 3)
+    assert even_cofactor["cofactor_character_count"] == 2
+    assert even_cofactor["product_trace_factorization_exact"]
+    assert even_cofactor["cofactor_character_reconstruction_exact"]
+    assert even_cofactor["bilinear_character_split_exact"]
+    assert even_cofactor["cofactor_character_parseval_exact"]
+    assert even_cofactor["normalized_character_multiplier_l2_is_one"]
+    assert even_cofactor["character_square_function_incidence_exact"]
+    assert even_cofactor["product_incidence_principal_centered_split_exact"]
+    assert even_cofactor["crt_bilinear_energy_le_character_square_function"]
+
+
+def test_product_incidence_hdelta_phase_has_exact_reduced_conductor_bound() -> None:
+    audit = getattr(
+        coverage_audit,
+        "hdelta_product_incidence_fourier_audit",
+        None,
+    )
+    assert audit is not None, "h-delta product-incidence audit is missing"
+
+    prime_conductor = audit(
+        squarefree_modulus=35,
+        selected_divisor=5,
+        first_product_residue=11,
+        second_product_residue=18,
+        h_coefficients={index: (-1) ** index for index in range(1, 9)},
+        delta_coefficients={index: 1 for index in range(2, 9)},
+    )
+    assert prime_conductor["cofactor"] == 7
+    assert prime_conductor["cofactor_product_incidence_holds"]
+    assert prime_conductor["reduced_conductor"] == 5
+    assert prime_conductor["reduced_phase_is_primitive"]
+    assert prime_conductor["collision_modulus"] == 7
+    assert prime_conductor["collision_modulus_equals_s_over_conductor"]
+    assert prime_conductor["stronger_product_collision_holds"]
+    assert not prime_conductor["full_product_diagonal"]
+    assert prime_conductor["conductor_one_iff_full_product_diagonal"]
+    assert prime_conductor["conductor_reduction_exact"]
+    assert prime_conductor["residue_grouping_exact"]
+    assert prime_conductor["fourier_operator_bound_holds"]
+    assert prime_conductor["multiplicity_l2_bound_holds"]
+    assert prime_conductor["interval_one_bounded_ceiling_holds"]
+    assert prime_conductor["equal_outer_label_slice_only"]
+    assert not prime_conductor["unequal_outer_label_gram_proved"]
+    assert prime_conductor["uses_h_orthogonality_before_h_poisson"]
+    assert not prime_conductor["additional_post_h_poisson_saving_claimed"]
+    assert not prime_conductor["low_conductor_collision_strata_globally_bounded"]
+    assert not prime_conductor["afe_smooth_packet_adapter_proved"]
+    assert not prime_conductor["coupled_kernel_gate_closed"]
+
+    composite_reduced = audit(
+        squarefree_modulus=105,
+        selected_divisor=15,
+        first_product_residue=1,
+        second_product_residue=22,
+        h_coefficients={index: 1 for index in range(1, 12)},
+        delta_coefficients={index: (-1) ** index for index in range(1, 10)},
+    )
+    assert composite_reduced["cofactor"] == 7
+    assert composite_reduced["phase_coefficient_gcd"] == 3
+    assert composite_reduced["reduced_conductor"] == 5
+    assert composite_reduced["collision_modulus"] == 21
+    assert composite_reduced["stronger_product_collision_holds"]
+    assert not composite_reduced["full_product_diagonal"]
+    assert composite_reduced["conductor_reduction_exact"]
+    assert composite_reduced["residue_grouping_exact"]
+    assert composite_reduced["fourier_operator_bound_holds"]
+
+    diagonal = audit(
+        squarefree_modulus=35,
+        selected_divisor=5,
+        first_product_residue=11,
+        second_product_residue=11,
+        h_coefficients={1: 1, 2: -1},
+        delta_coefficients={1: 1, 2: 1},
+    )
+    assert diagonal["reduced_conductor"] == 1
+    assert diagonal["collision_modulus"] == 35
+    assert diagonal["full_product_diagonal"]
+    assert diagonal["conductor_one_iff_full_product_diagonal"]
+    assert diagonal["conductor_reduction_exact"]
+    assert diagonal["fourier_operator_bound_holds"]
+
+
+def test_balanced_hdelta_fourier_ledger_supplies_half_power_on_large_conductors() -> None:
+    audit = getattr(coverage_audit, "hdelta_fourier_exponent_audit", None)
+    assert audit is not None, "h-delta Fourier exponent audit is missing"
+
+    at_one = audit(
+        conductor_exponent=F(1),
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+    )
+    assert at_one["fourier_operator_bound_exponent"] == F(9, 2)
+    assert at_one["relative_saving_exponent"] == F(1, 2)
+    assert at_one["reaches_required_saving_on_this_conductor"]
+
+    at_turning_point = audit(
+        conductor_exponent=F(5, 2),
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+    )
+    assert at_turning_point["fourier_operator_bound_exponent"] == F(15, 4)
+    assert at_turning_point["relative_saving_exponent"] == F(5, 4)
+    assert at_turning_point["reaches_required_saving_on_this_conductor"]
+
+    at_three = audit(
+        conductor_exponent=F(3),
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+    )
+    assert at_three["fourier_operator_bound_exponent"] == F(4)
+    assert at_three["relative_saving_exponent"] == F(1)
+    assert at_three["reaches_required_saving_on_this_conductor"]
+    assert not at_three["compatibility_with_preceding_reductions_proved"]
+    assert not at_three["unequal_outer_label_gram_proved"]
+    assert not at_three["low_conductor_strata_covered"]
+    assert not at_three["analytic_packet_adapter_proved"]
+    assert not at_three["coupled_kernel_gate_closed"]
+
+
+def test_unequal_outer_labels_collapse_to_one_cofactor_kloosterman_gram() -> None:
+    audit = getattr(
+        coverage_audit,
+        "squarefree_crt_unequal_outer_character_gram_audit",
+        None,
+    )
+    assert audit is not None, "unequal-outer CRT character Gram audit is missing"
+
+    result = audit(
+        prime_modulus=5,
+        squarefree_cofactor=7,
+        direct_coefficient=2,
+        outer_product_coefficients={
+            2: {1: 1, 2: -1, 3: 1},
+            3: {1: -1, 4: 2},
+            9: {1: 2, 2: 1, 4: -1},
+        },
+    )
+
+    assert result["squarefree_modulus"] == 35
+    assert result["outer_product_labels"] == (2, 3, 9)
+    assert result["cofactor_character_count"] == 6
+    assert result["crt_character_reconstruction_exact"]
+    assert result["global_character_cauchy_bound_holds"]
+    assert result["character_square_collapse_exact"]
+    assert result["all_kloosterman_formulas_exact"]
+    assert result["all_local_crt_factorizations_exact"]
+    assert result["all_local_weil_or_trivial_bounds_hold"]
+    assert result["all_one_zero_ramanujan_values_exact"]
+    assert result["all_cofactor_conductor_bounds_hold"]
+    assert result["all_low_conductor_principal_congruences_hold"]
+    assert result["all_principal_conditions_exact"]
+    assert result["all_principal_kernels_equal_phi"]
+    assert result["unequal_outer_product_labels_retained_inside_character_square"]
+    assert not result["pointwise_cofactor_l1_cost_paid"]
+
+    rows = result["correlation_rows"]
+    congruent_unequal_principal = [
+        row
+        for row in rows
+        if row["outer_label_1"] == 2
+        and row["outer_label_2"] == 9
+        and row["product_ratio_mod_cofactor"] == 1
+    ]
+    assert congruent_unequal_principal
+    assert all(row["principal_cofactor_mode"] for row in congruent_unequal_principal)
+    assert all(row["principal_kernel_equals_phi"] for row in congruent_unequal_principal)
+
+    genuinely_centered = [
+        row
+        for row in rows
+        if row["outer_label_1"] == 2
+        and row["outer_label_2"] == 3
+        and row["product_ratio_mod_cofactor"] == 1
+    ]
+    assert genuinely_centered
+    assert not any(row["principal_cofactor_mode"] for row in genuinely_centered)
+    assert not result["principal_cofactor_mode_globally_reassembled"]
+    assert not result["centered_cofactor_kloosterman_operator_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    composite = audit(
+        prime_modulus=5,
+        squarefree_cofactor=6,
+        direct_coefficient=1,
+        outer_product_coefficients={
+            6: {11: 1},
+            2: {1: 1},
+        },
+    )
+    assert composite["squarefree_modulus"] == 30
+    assert composite["cofactor_character_count"] == 2
+    assert composite["crt_character_reconstruction_exact"]
+    assert composite["character_square_collapse_exact"]
+    assert composite["all_kloosterman_formulas_exact"]
+    assert composite["all_local_crt_factorizations_exact"]
+    assert composite["all_local_weil_or_trivial_bounds_hold"]
+    assert composite["all_one_zero_ramanujan_values_exact"]
+    assert composite["all_cofactor_conductor_bounds_hold"]
+    assert composite["all_low_conductor_principal_congruences_hold"]
+    assert composite["all_principal_conditions_exact"]
+    aliases = composite["nonprincipal_full_amplitude_alias_rows"]
+    assert aliases
+    alias = next(
+        row
+        for row in aliases
+        if row["outer_label_1"] == 6
+        and row["outer_label_2"] == 2
+        and row["first_product_residue"] == 11
+        and row["second_product_residue"] == 1
+    )
+    assert alias["product_ratio_mod_cofactor"] == 5
+    assert alias["direct_phase_coefficient_mod_cofactor"] == 2
+    assert alias["inverse_phase_coefficient_mod_cofactor"] == 4
+    assert not alias["principal_cofactor_mode"]
+    assert alias["cofactor_correlation"] == pytest.approx(2)
+    assert alias["principal_divisor"] == 2
+    assert alias["nonprincipal_conductor"] == 3
+    assert alias["small_alias_part"] == 3
+    assert alias["large_nonprincipal_part"] == 1
+    assert alias["cofactor_conductor_ceiling"] == pytest.approx(2)
+    assert alias["cofactor_conductor_bound_holds"]
+    assert alias["low_conductor_forces_principal_congruences"]
+    assert composite[
+        "nonprincipal_finite_aliases_may_exist_for_composite_cofactor"
+    ]
+    assert not composite["centered_cofactor_kloosterman_operator_bound_proved"]
+
+    negative_alias = audit(
+        prime_modulus=3,
+        squarefree_cofactor=10,
+        direct_coefficient=1,
+        outer_product_coefficients={
+            10: {1: 1},
+            5: {1: 1},
+        },
+    )
+    assert negative_alias["all_local_crt_factorizations_exact"]
+    negative_rows = negative_alias["nonprincipal_full_amplitude_alias_rows"]
+    assert negative_rows
+    negative = next(
+        row
+        for row in negative_rows
+        if row["outer_label_1"] == 10
+        and row["outer_label_2"] == 5
+        and row["first_product_residue"] == 1
+        and row["second_product_residue"] == 1
+    )
+    assert not negative["principal_cofactor_mode"]
+    assert negative["principal_divisor"] == 5
+    assert negative["nonprincipal_conductor"] == 2
+    assert negative["cofactor_correlation"] == pytest.approx(-4)
+    assert negative["cofactor_conductor_ceiling"] == pytest.approx(4)
+    assert negative["cofactor_conductor_bound_holds"]
+
+
+def test_cofactor_outer_product_matrix_is_an_exact_partial_fourier_isometry() -> None:
+    audit = getattr(
+        coverage_audit,
+        "cofactor_outer_product_fourier_operator_audit",
+        None,
+    )
+    assert audit is not None, "cofactor outer-product Fourier audit is missing"
+
+    composite = audit(
+        prime_modulus=5,
+        squarefree_cofactor=6,
+        direct_coefficient=1,
+        product_ratio=5,
+        left_outer_coefficients={0: 1, 7: 2 - 1j, 13: -1},
+        right_outer_coefficients={1: 1j, 8: 3, 16: 2 + 1j},
+    )
+    assert composite["squarefree_cofactor"] == 6
+    assert composite["all_row_sums_zero"]
+    assert composite["all_column_sums_zero"]
+    assert composite["all_fourier_actions_exact"]
+    assert composite["nonzero_singular_value"] == 6
+    assert composite["nonzero_singular_value_multiplicity"] == 2
+    assert composite["zero_singular_value_multiplicity"] == 4
+    assert composite["exact_operator_norm"] == 6
+    assert (
+        composite["left_primitive_fourier_energy"]
+        <= composite["left_residue_energy"] + 1e-8
+    )
+    assert (
+        composite["right_primitive_fourier_energy"]
+        <= composite["right_residue_energy"] + 1e-8
+    )
+    assert composite["operator_bound_holds"]
+    assert composite["principal_and_alias_entries_cancel_in_complete_rows"]
+    assert composite["outer_product_residue_operator_bound_proved"]
+    assert not composite["analytic_packet_residue_energy_bound_proved"]
+    assert not composite["coupled_kernel_gate_closed"]
+
+    rows = composite["fourier_action_rows"]
+    assert [row["input_frequency"] for row in rows] == list(range(6))
+    assert [
+        row["input_frequency"]
+        for row in rows
+        if row["input_frequency_is_unit"]
+    ] == [1, 5]
+    assert all(row["fourier_action_exact"] for row in rows)
+
+    prime_cofactor = audit(
+        prime_modulus=5,
+        squarefree_cofactor=7,
+        direct_coefficient=2,
+        product_ratio=3,
+        left_outer_coefficients={0: 1, 8: -2, 17: 1j},
+        right_outer_coefficients={2: 1, 10: -1j, 16: 3},
+    )
+    assert prime_cofactor["all_row_sums_zero"]
+    assert prime_cofactor["all_column_sums_zero"]
+    assert prime_cofactor["all_fourier_actions_exact"]
+    assert prime_cofactor["nonzero_singular_value"] == 7
+    assert prime_cofactor["nonzero_singular_value_multiplicity"] == 6
+    assert prime_cofactor["zero_singular_value_multiplicity"] == 1
+    assert prime_cofactor["operator_bound_holds"]
+
+
+def test_primitive_product_residue_energy_has_exact_parseval_and_alias_bounds() -> None:
+    audit = getattr(
+        coverage_audit,
+        "primitive_product_residue_energy_audit",
+        None,
+    )
+    assert audit is not None, "primitive product-residue audit is missing"
+
+    result = audit(
+        squarefree_modulus=30,
+        h_coefficients={1: 1, 2: -1, 7: 2, 31: 1j},
+        delta_coefficients={1: 2, 3: -1, 8: 1j, 33: 1},
+    )
+    assert result["squarefree_modulus"] == 30
+    assert result["unit_frequencies"] == (1, 7, 11, 13, 17, 19, 23, 29)
+    assert result["primitive_parseval_identity_exact"]
+    assert result["elementary_alias_bound_holds"]
+    assert result["interval_span_bound_holds"]
+    assert result["elementary_alias_bound"] <= result["interval_span_bound"]
+    assert result["constant_frequency_annihilated_by_cofactor_operator"]
+    assert result["nonunit_frequencies_annihilated_by_cofactor_operator"]
+    assert not result["mobius_cancellation_used_in_elementary_bound"]
+    assert not result["analytic_primitive_product_spectrum_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    dense = audit(
+        squarefree_modulus=6,
+        h_coefficients={index: (-1) ** index for index in range(1, 10)},
+        delta_coefficients={index: 1 + (index % 2) * 1j for index in range(1, 8)},
+    )
+    assert dense["primitive_parseval_identity_exact"]
+    assert dense["elementary_alias_bound_holds"]
+    assert dense["interval_span_bound_holds"]
+    assert dense["left_alias_multiplicity"] <= dense["left_interval_ceiling"]
+    assert dense["right_alias_multiplicity"] <= dense["right_interval_ceiling"]
+
+
+def test_balanced_primitive_product_spectrum_keeps_exact_half_power_deficit() -> None:
+    audit = getattr(
+        coverage_audit,
+        "primitive_product_spectrum_exponent_audit",
+        None,
+    )
+    assert audit is not None, "primitive product-spectrum ledger is missing"
+
+    balanced = audit(
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+        modulus_exponent=F(3),
+    )
+    assert balanced["coefficient_energy_exponent"] == F(5)
+    assert balanced["elementary_alias_factor_exponent"] == F(5, 2)
+    assert balanced["elementary_primitive_energy_exponent"] == F(15, 2)
+    assert balanced["product_density_factor_exponent"] == F(2)
+    assert balanced["product_density_energy_exponent"] == F(7)
+    assert balanced["elementary_primitive_energy_deficit"] == F(1, 2)
+    assert not balanced["mobius_cancellation_used"]
+    assert not balanced["primitive_product_spectrum_power_saving_proved"]
+    assert not balanced["coupled_kernel_gate_closed"]
+
+
+def test_cochrane_shi_closes_the_unit_interval_primitive_spectrum_only() -> None:
+    audit = getattr(
+        coverage_audit,
+        "cochrane_shi_unit_product_spectrum_audit",
+        None,
+    )
+    assert audit is not None, "Cochrane--Shi primitive-spectrum audit is missing"
+
+    balanced = audit(
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+        squarefree_modulus_exponent=F(3),
+    )
+    assert balanced["cochrane_shi_normalized_fourth_moment_h_exponent"] == F(5)
+    assert balanced["cochrane_shi_normalized_fourth_moment_delta_exponent"] == F(5)
+    assert balanced["squarefree_gauss_weight_ceiling_exponent"] == F(3)
+    assert balanced["nonprincipal_primitive_energy_exponent"] == F(5)
+    assert balanced["principal_primitive_energy_exponent"] == F(4)
+    assert balanced["published_unit_interval_bound_exponent"] == F(5)
+    assert balanced["elementary_primitive_energy_exponent"] == F(15, 2)
+    assert balanced["saving_over_elementary_bound"] == F(5, 2)
+    assert balanced["product_density_energy_exponent"] == F(7)
+    assert balanced["margin_below_product_density_energy"] == F(2)
+    assert balanced["cochrane_shi_theorem_one_applies"]
+    assert balanced["arbitrary_translated_sharp_intervals_covered"]
+    assert balanced["squarefree_arithmetic_factor_absorbed_in_t_epsilon"]
+    assert balanced["unit_outer_product_stratum_covered"]
+    assert not balanced["nonunit_gcd_strata_reduced_and_covered"]
+    assert not balanced["smooth_afe_packet_adapter_proved"]
+    assert not balanced["joint_q_phase_and_mobius_packet_bound_proved"]
+    assert not balanced["coupled_kernel_gate_closed"]
+
+
+def test_nonunit_product_gcd_strata_have_exact_reduced_conductors() -> None:
+    audit = getattr(
+        coverage_audit,
+        "nonunit_product_gcd_strata_audit",
+        None,
+    )
+    assert audit is not None, "nonunit product-gcd audit is missing"
+
+    result = audit(
+        squarefree_modulus=30,
+        h_labels=(1, 2, 3, 5, 6, 10, 15, 30, 42),
+        delta_labels=(1, 2, 5, 7, 10, 15, 21, 30, 45),
+    )
+    assert result["all_reduced_variables_are_units"]
+    assert result["all_phase_reductions_exact"]
+    assert result["all_frequency_lifts_uniform"]
+    assert result["all_fully_resonant_conditions_exact"]
+    assert result["nonunit_gcd_stratification_identity_proved"]
+    assert result["cochrane_shi_reapplies_on_every_reduced_modulus_above_one"]
+    assert not result["fully_resonant_divisor_incidence_analytic_bound_proved"]
+    assert not result["smooth_afe_packet_adapter_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    rows = result["rows"]
+    partially_reduced = next(
+        row for row in rows if row["h"] == 6 and row["delta"] == 5
+    )
+    assert partially_reduced["h_modulus_gcd"] == 6
+    assert partially_reduced["delta_modulus_gcd"] == 5
+    assert partially_reduced["product_gcd_lcm"] == 30
+    assert partially_reduced["reduced_modulus"] == 1
+    assert partially_reduced["fully_resonant_product"]
+
+    conductor_five = next(
+        row for row in rows if row["h"] == 2 and row["delta"] == 21
+    )
+    assert conductor_five["product_gcd_lcm"] == 6
+    assert conductor_five["reduced_modulus"] == 5
+    assert conductor_five["phase_multiplier"] == 1
+    assert conductor_five["expected_frequency_lift_count"] == 2
+    assert set(conductor_five["frequency_reduction_counts"].values()) == {2}
+
+
+def test_cochrane_shi_closes_all_sharp_interval_gcd_strata() -> None:
+    audit = getattr(
+        coverage_audit,
+        "cochrane_shi_all_gcd_product_spectrum_audit",
+        None,
+    )
+    assert audit is not None, "all-gcd Cochrane--Shi audit is missing"
+
+    balanced = audit(
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+        squarefree_modulus_exponent=F(3),
+    )
+    assert balanced["unit_stratum_bound_exponent"] == F(5)
+    assert balanced["fully_resonant_mass_exponent"] == F(5, 2)
+    assert balanced["fully_resonant_energy_exponent"] == F(5)
+    assert balanced["all_gcd_sharp_interval_bound_exponent"] == F(5)
+    assert balanced["product_density_energy_exponent"] == F(7)
+    assert balanced["margin_below_product_density_energy"] == F(2)
+    assert balanced["squarefree_divisor_strata_cost_only_t_epsilon"]
+    assert balanced["nonresonant_reduced_moduli_use_cochrane_shi"]
+    assert balanced["fully_resonant_divisor_incidence_bound_proved"]
+    assert balanced["all_sharp_interval_gcd_strata_covered"]
+    assert not balanced["smooth_afe_packet_adapter_proved"]
+    assert not balanced["joint_q_phase_and_mobius_packet_bound_proved"]
+    assert not balanced["coupled_kernel_gate_closed"]
+
+
+def test_finite_smooth_weight_has_exact_tensor_fourier_reconstruction() -> None:
+    audit = getattr(
+        coverage_audit,
+        "finite_two_variable_fourier_projective_audit",
+        None,
+    )
+    assert audit is not None, "finite smooth-projective audit is missing"
+
+    result = audit(
+        (
+            (1, 2 - 1j, -1, 3j),
+            (2, -2, 1 + 2j, 0),
+            (1j, 3, -1j, 4),
+        )
+    )
+    assert result["h_grid_size"] == 3
+    assert result["delta_grid_size"] == 4
+    assert result["maximum_reconstruction_error"] < 1e-8
+    assert result["exact_reconstruction"]
+    assert result["variation_weighted_projective_norm"] >= result[
+        "unweighted_projective_norm"
+    ]
+    assert result["finite_tensor_fourier_identity_proved"]
+    assert not result["continuous_sobolev_wiener_bound_proved_by_finite_check"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_smooth_projective_adapter_preserves_the_balanced_exponent() -> None:
+    audit = getattr(
+        coverage_audit,
+        "smooth_projective_product_spectrum_audit",
+        None,
+    )
+    assert audit is not None, "smooth product-spectrum audit is missing"
+
+    polylog_core = audit(
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+        squarefree_modulus_exponent=F(3),
+    )
+    assert polylog_core["sharp_interval_energy_exponent"] == F(5)
+    assert polylog_core["weighted_projective_norm_exponent"] == F(0)
+    assert polylog_core["minkowski_energy_cost_exponent"] == F(0)
+    assert polylog_core["smooth_packet_energy_exponent"] == F(5)
+    assert polylog_core["projective_cost_absorbed_in_epsilon_budget"]
+    assert polylog_core[
+        "four_variable_sobolev_order_required_strictly_above_four"
+    ]
+    assert polylog_core[
+        "bounded_variation_character_fourth_moment_adapter_proved"
+    ]
+    assert polylog_core["smooth_archimedean_afe_packet_adapter_proved"]
+    assert not polylog_core["joint_q_phase_and_mobius_packet_bound_proved"]
+    assert not polylog_core["reflection_and_global_packet_map_proved"]
+    assert not polylog_core["coupled_kernel_gate_closed"]
+
+    power_core = audit(
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+        squarefree_modulus_exponent=F(3),
+        weighted_projective_norm_exponent=F(1, 4000),
+        epsilon_budget=F(1, 1000),
+    )
+    assert power_core["minkowski_energy_cost_exponent"] == F(1, 2000)
+    assert power_core["smooth_packet_energy_exponent"] == F(10001, 2000)
+    assert power_core["projective_cost_absorbed_in_epsilon_budget"]
+
+
+def test_global_ratio_frequency_square_keeps_all_outer_cross_terms() -> None:
+    audit = getattr(
+        coverage_audit,
+        "global_ratio_frequency_square_audit",
+        None,
+    )
+    assert audit is not None, "global ratio-frequency square audit is missing"
+
+    result = audit(
+        squarefree_modulus=30,
+        direct_coefficient=7,
+        type_left_coefficients={1: 1, 7: -1, 11: 2j},
+        type_right_coefficients={1: 2, 13: 1 - 1j, 17: -1},
+        outer_product_coefficients={0: 1, 2: -2, 9: 1j, 17: 1 + 2j},
+    )
+    assert result["unit_residues"] == (1, 7, 11, 13, 17, 19, 23, 29)
+    assert result["direct_gram_is_real"]
+    assert result["direct_equals_frequency_square"]
+    assert result["frequency_equals_ratio_square"]
+    assert result["ratio_equals_rank_one_convolution_square"]
+    assert result["multiplicative_parseval_identity_exact"]
+    assert result["all_type_character_transforms_factor_exactly"]
+    assert result["all_outer_cross_terms_retained"]
+    assert not result["absolute_values_taken_before_global_square"]
+    assert result["type_mobius_weight_retained_inside_fixed_modulus_square"]
+    assert not result[
+        "outer_modulus_mobius_weight_retained_after_fixed_modulus_square"
+    ]
+    assert not result["cross_modulus_two_mobius_dispersion_proved"]
+    assert not result["type_i_ii_determinant_estimate_proved"]
+    assert not result["outer_modulus_average_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    prime = audit(
+        squarefree_modulus=7,
+        direct_coefficient=3,
+        type_left_coefficients={1: 1, 2: -1j, 3: 2},
+        type_right_coefficients={1: -1, 4: 1 + 1j},
+        outer_product_coefficients={0: 2, 1: -1, 5: 3j},
+    )
+    assert prime["direct_equals_frequency_square"]
+    assert prime["frequency_equals_ratio_square"]
+    assert prime["ratio_equals_rank_one_convolution_square"]
+    assert prime["multiplicative_parseval_identity_exact"]
+    assert prime["all_type_character_transforms_factor_exactly"]
+
+    congruent_outer_labels = audit(
+        squarefree_modulus=5,
+        direct_coefficient=2,
+        type_left_coefficients={1: 1, 2: -1j},
+        type_right_coefficients={1: 2, 3: -1},
+        outer_product_coefficients={0: 1, 5: 2, 1: -1j, 6: 3j},
+    )
+    assert congruent_outer_labels["outer_product_residue_coefficients"] == {
+        0: 3,
+        1: 2j,
+    }
+    assert congruent_outer_labels["direct_equals_frequency_square"]
+    assert congruent_outer_labels["frequency_equals_ratio_square"]
+    assert congruent_outer_labels["ratio_equals_rank_one_convolution_square"]
+    assert congruent_outer_labels["multiplicative_parseval_identity_exact"]
+
+
+def test_global_linear_character_master_retains_both_mobius_weights() -> None:
+    audit = getattr(
+        coverage_audit,
+        "global_two_mobius_character_master_audit",
+        None,
+    )
+    assert audit is not None, "global two-Mobius character audit is missing"
+
+    result = audit(
+        squarefree_moduli=(5, 7, 11),
+        direct_coefficient=2,
+        type_base_coefficients={1: 1, 2: -1j, 3: 2, 6: -1, 11: 1 + 2j, 13: -2},
+        companion_type_coefficients={1: 2, 4: -1, 9: 1j},
+        outer_product_coefficients={0: 1, 2: -2, 7: 1j, 13: 2 + 1j},
+        short_cutoff_u=2,
+        short_cutoff_v=3,
+    )
+    assert result["short_cutoff_u"] == 2
+    assert result["short_cutoff_v"] == 3
+    assert result["small_d_boundary"] == 3
+    assert result["global_linear_character_identity_exact"]
+    assert result["all_character_type_splits_exact"]
+    assert result["outer_modulus_mobius_weight_retained_linearly"]
+    assert result["inner_type_mobius_weight_retained_linearly"]
+    assert result["small_d_boundary_retained_exactly"]
+    assert result["mixed_type_rectangles_cancel_exactly"]
+    assert not result["absolute_values_taken_before_global_master"]
+    assert not result["global_cross_modulus_dispersion_proved"]
+    assert not result["exhaustive_afe_packet_map_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+    assert [row["outer_mobius_weight"] for row in result["modulus_rows"]] == [
+        -1,
+        -1,
+        -1,
+    ]
+
+    unequal = audit(
+        squarefree_moduli=(6, 10),
+        direct_coefficient=7,
+        type_base_coefficients={1: 1, 5: -2, 7: 1j, 14: 3},
+        companion_type_coefficients={1: -1, 11: 2j},
+        outer_product_coefficients={0: 2, 3: -1j, 8: 1},
+        short_cutoff_u=1,
+        short_cutoff_v=4,
+    )
+    assert unequal["small_d_boundary"] == 4
+    assert unequal["global_linear_character_identity_exact"]
+    assert unequal["all_character_type_splits_exact"]
+
+
+def test_centered_global_master_recombines_q1_and_primitive_rows() -> None:
+    audit = getattr(
+        coverage_audit,
+        "centered_global_two_mobius_character_master_audit",
+        None,
+    )
+    assert audit is not None, "centered global two-Mobius master is missing"
+
+    result = audit(
+        squarefree_moduli=(6, 10),
+        direct_coefficient=7,
+        type_base_coefficients={1: 1, 5: -2, 7: 1j, 14: 3, 17: -1j},
+        companion_type_coefficients={1: -1, 11: 2j, 13: 1},
+        outer_product_coefficients={3: -1j, 6: 2, 8: 1, 20: -2j},
+        short_cutoff_u=1,
+        short_cutoff_v=4,
+    )
+    assert result["raw_global_character_identity_exact"]
+    assert result["three_way_inverse_phase_split_exact"]
+    assert result["joint_principal_centered_master_equals_raw_master"]
+    assert result["principal_projection_retained_as_q1_row"]
+    assert result["centered_packet_retained_as_q_gt_1_rows"]
+    assert result["centered_inverse_principal_rows_deleted"]
+    assert result["all_centered_inverse_rows_have_nontrivial_primitive_conductor"]
+    assert result["all_centered_inverse_rows_match_conductor_descent"]
+    assert result["all_convolved_character_type_splits_exact"]
+    assert result["convolved_principal_rows_collapse_to_kloosterman"]
+    assert result["convolved_principal_q1_ramanujan_row_exact"]
+    assert result["convolved_principal_centered_rows_exact"]
+    assert result["outer_modulus_mobius_weight_retained_linearly"]
+    assert result["inner_type_mobius_weight_retained_linearly"]
+    assert result["physical_product_label_retained_inside_inverse_gauss_sum"]
+    assert result["principal_and_centered_recombined_before_absolute_values"]
+    assert result["joint_kernel_master_equivalent_to_uncentered_master"]
+    assert result["weak_joint_gate_is_not_separate_pecg_bounds"]
+    assert not result["joint_signed_cross_modulus_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    conductors = {
+        row["primitive_conductor"]
+        for modulus_row in result["modulus_rows"]
+        for row in modulus_row["centered_inverse_character_rows"]
+    }
+    # A squarefree modulus has no primitive conductor divisible by 2:
+    # the local character group modulo 2 is trivial.
+    assert conductors == {3, 5}
+    assert all(
+        not row["is_principal_inverse_character"]
+        for modulus_row in result["modulus_rows"]
+        for row in modulus_row["centered_inverse_character_rows"]
+    )
+
+    mixed_conductors = audit(
+        squarefree_moduli=(3, 5, 6, 7, 10, 15),
+        direct_coefficient=6,
+        type_base_coefficients={1: 1, 2: -1, 3: 1j, 6: -2j, 11: 2},
+        companion_type_coefficients={1: -1, 4: 2j, 7: 3},
+        outer_product_coefficients={0: 1, 3: -1j, 5: 2, 15: 1 + 1j},
+        short_cutoff_u=2,
+        short_cutoff_v=3,
+    )
+    assert mixed_conductors["raw_global_character_identity_exact"]
+    assert mixed_conductors["three_way_inverse_phase_split_exact"]
+    assert mixed_conductors[
+        "joint_principal_centered_master_equals_raw_master"
+    ]
+    assert mixed_conductors[
+        "all_centered_inverse_rows_match_conductor_descent"
+    ]
+    assert mixed_conductors["all_convolved_character_type_splits_exact"]
+    assert mixed_conductors[
+        "convolved_principal_rows_collapse_to_kloosterman"
+    ]
+    assert mixed_conductors["convolved_principal_q1_ramanujan_row_exact"]
+    assert mixed_conductors["convolved_principal_centered_rows_exact"]
+    assert mixed_conductors["nonunit_direct_coefficients_supported"]
+    assert {
+        row["primitive_conductor"]
+        for modulus_row in mixed_conductors["modulus_rows"]
+        for row in modulus_row["centered_inverse_character_rows"]
+    } == {3, 5, 7, 15}
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.113 The joint all-character master keeps the principal row" in text
+    assert r"\mathcal J_s(t)\mathcal K_{s,a}^{\circ}(t)" in text
+    assert r"(\lambda\psi)(dp)" in text
+    assert r"q=1" in text
+    assert r"q>1" in text
+    assert r"\mathfrak P_{\rm top}+\mathfrak N_{\rm all}" in text
+    assert "### 9.114 The convolved-principal row is a Kloosterman slice" in text
+    assert r"\lambda\psi=\chi_0" in text
+    assert r"S(B,-a;s)" in text
+
+
+def test_joint_all_character_standard_large_sieve_still_loses_five_halves() -> None:
+    audit = getattr(
+        coverage_audit,
+        "joint_all_character_large_sieve_deficit_audit",
+        None,
+    )
+    assert audit is not None, "joint all-character deficit audit is missing"
+
+    result = audit(
+        modulus_exponent=F(3),
+        long_mobius_exponent=F(3),
+        product_label_exponent=F(5),
+    )
+    assert result["reduced_fraction_family_exponent"] == F(6)
+    assert result["additive_large_sieve_energy_exponent"] == F(11)
+    assert result["standard_linear_bound_exponent"] == F(17, 2)
+    assert result["joint_gate_target_exponent"] == F(6)
+    assert result["remaining_deficit"] == F(5, 2)
+    assert result["principal_q1_row_algebraically_separated"]
+    assert not result["centering_reduces_farey_family_exponent"]
+    assert not result["standard_large_sieve_closes_joint_gate"]
+    assert not result["joint_signed_cross_modulus_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert r"T^{17/2+\varepsilon}" in text
+    assert r"T^{5/2}" in text
+    assert "standard large-sieve ceiling" in text
+
+
+def test_convolved_principal_pointwise_weil_is_one_power_worse() -> None:
+    audit = getattr(
+        coverage_audit,
+        "convolved_principal_kloosterman_slice_deficit_audit",
+        None,
+    )
+    assert audit is not None, "convolved-principal slice audit is missing"
+
+    result = audit(
+        modulus_exponent=F(3),
+        coherent_type_exponent=F(3),
+        product_label_exponent=F(5),
+    )
+    assert result["pointwise_weil_bound_exponent"] == F(19, 2)
+    assert result["joint_gate_target_exponent"] == F(6)
+    assert result["pointwise_weil_deficit"] == F(7, 2)
+    assert result["standard_global_large_sieve_exponent"] == F(17, 2)
+    assert result["pointwise_weil_minus_large_sieve"] == F(1)
+    assert result["convolved_principal_collapse_proved"]
+    assert not result["slice_may_be_bounded_separately_without_loss"]
+    assert not result["spectral_modulus_average_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_joint_character_conductors_isolate_only_common_principal_cofactor() -> None:
+    audit = getattr(
+        coverage_audit,
+        "joint_phase_character_conductor_lcm_audit",
+        None,
+    )
+    assert audit is not None, "joint phase-character conductor audit is missing"
+
+    result = audit(
+        modulus=30,
+        direct_label=6,
+        inverse_label=10,
+        cofactor_bound=30,
+    )
+    assert result["all_direct_transforms_are_conjugate_gauss_sums"]
+    assert result["all_inverse_transforms_are_gauss_sums"]
+    assert result["all_character_pairs_match_conductor_descent"]
+    assert result["all_joint_conductors_are_lcms"]
+    assert result["all_common_cofactor_primes_are_inactive_in_both"]
+    assert result["all_normalized_products_split_common_cofactor_exactly"]
+    assert result["joint_conductor_count"] == {1: 1, 3: 3, 5: 15, 15: 45}
+    assert result["local_character_pair_counts"][2] == {
+        "all_pairs": 1,
+        "common_inactive_pairs": 1,
+        "jointly_active_pairs": 0,
+    }
+    assert result["local_character_pair_counts"][3]["jointly_active_pairs"] == 3
+    assert result["local_character_pair_counts"][5]["jointly_active_pairs"] == 15
+    assert result["prime_two_always_lies_in_common_inactive_cofactor"]
+    assert result["finite_common_cofactor_sum_below_euler_product"]
+    assert result["common_cofactor_euler_local_classification_exact"]
+    assert result["common_cofactor_cost_has_no_fixed_power"]
+    assert result["all_stripped_gauss_factors_match_scaled_joint_modulus"]
+    assert result["physical_packet_cofactor_dependence_removed"] is False
+    assert result["jointly_primitive_core_sparse"] is False
+    assert result["jointly_primitive_cross_modulus_estimate_proved"] is False
+    assert result["coupled_kernel_gate_closed"] is False
+
+    classes = {
+        row["prime"]: row["divisibility_class"]
+        for row in result["common_cofactor_euler_rows"]
+    }
+    assert classes[2] == "divides_both"
+    assert classes[3] == "divides_exactly_one"
+    assert classes[5] == "divides_exactly_one"
+    assert classes[7] == "divides_neither"
+
+    bridge = audit(
+        modulus=15,
+        direct_label=1,
+        inverse_label=1,
+        cofactor_bound=15,
+        type_coefficients={1: 1, 2: -1, 3: 99, 4: 2j, 7: 3},
+    )
+    assert bridge["all_joint_conductor_tensor_bridges_exact"]
+    q_five = next(
+        row for row in bridge["joint_conductor_tensor_bridge_rows"]
+        if row["joint_conductor"] == 5
+    )
+    assert q_five["common_inactive_cofactor"] == 3
+    assert q_five["scaled_direct_label"] == 2
+    assert q_five["scaled_inverse_label"] == 2
+    assert q_five["ambient_unit_mask_removed_labels"] == (3,)
+    assert q_five["bridge_identity_exact"]
+
+    audited_cases = 0
+    for modulus in range(2, 24):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        labels = tuple(dict.fromkeys((1, 2, modulus, 2 * modulus - 1)))
+        for direct_label in labels:
+            for inverse_label in labels:
+                exhaustive = audit(
+                    modulus=modulus,
+                    direct_label=direct_label,
+                    inverse_label=inverse_label,
+                    cofactor_bound=24,
+                )
+                assert exhaustive[
+                    "all_character_pairs_match_conductor_descent"
+                ]
+                assert exhaustive[
+                    "all_normalized_products_split_common_cofactor_exactly"
+                ]
+                assert exhaustive[
+                    "finite_common_cofactor_sum_below_euler_product"
+                ]
+                audited_cases += 1
+    assert audited_cases == 233
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.115 Joint conductor LCM and the common inactive cofactor" in text
+    assert r"Q=[q_\lambda,q_\psi]" in text
+    assert r"r_0=\frac{s}{Q}" in text
+    assert r"\frac{\mu(r_0)c_{r_0}(B)c_{r_0}(a)}{\varphi(r_0)^2}" in text
+    assert r"p(p-2)" in text
+    assert "jointly primitive core" in text
+
+    with pytest.raises(ValueError, match="squarefree"):
+        audit(modulus=12, direct_label=1, inverse_label=1, cofactor_bound=10)
+    with pytest.raises(ValueError, match="nonzero"):
+        audit(modulus=6, direct_label=1, inverse_label=0, cofactor_bound=10)
+    with pytest.raises(ValueError, match="positive"):
+        audit(modulus=6, direct_label=1, inverse_label=1, cofactor_bound=0)
+
+
+def test_jointly_primitive_phase_pairs_become_centered_incidence_kernel() -> None:
+    audit = getattr(
+        coverage_audit,
+        "jointly_primitive_phase_convolution_audit",
+        None,
+    )
+    assert audit is not None, "jointly primitive phase convolution audit is missing"
+
+    result = audit(modulus=15, direct_label=6, inverse_label=10)
+    assert result["all_convolved_character_rows_match_incidence_kernel"]
+    assert result["all_phase_pairs_reparametrize_by_convolved_character"]
+    assert result["jointly_primitive_phase_pair_count"] == 45
+    assert result["fully_primitive_convolved_character_count"] == 3
+    assert result["partially_principal_convolved_character_count"] == 5
+    assert result["principal_convolved_row_centered_at_every_prime"]
+    assert result["every_partially_principal_row_has_local_zero_marginal"]
+    assert result["fully_primitive_rows_have_no_local_centering"]
+    assert result["nonunit_phase_labels_supported"]
+    assert result["physical_type_coefficients_retained_by_convolved_character"]
+    assert not result["jointly_primitive_twisted_kloosterman_moment_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    principal = next(
+        row
+        for row in result["convolved_character_rows"]
+        if row["is_principal_convolved_character"]
+    )
+    assert principal["locally_centered_primes"] == (3, 5)
+    assert principal["admissible_inverse_character_count"] == 3
+
+    fully_primitive = tuple(
+        row
+        for row in result["convolved_character_rows"]
+        if row["is_fully_primitive_convolved_character"]
+    )
+    assert len(fully_primitive) == 3
+    assert all(row["locally_centered_primes"] == () for row in fully_primitive)
+
+    audited_cases = 0
+    for modulus in range(2, 24):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        for direct_label, inverse_label in (
+            (1, 1),
+            (2, 3),
+            (modulus, 2 * modulus - 1),
+        ):
+            exhaustive = audit(
+                modulus=modulus,
+                direct_label=direct_label,
+                inverse_label=inverse_label,
+            )
+            assert exhaustive[
+                "all_convolved_character_rows_match_incidence_kernel"
+            ]
+            assert exhaustive[
+                "all_phase_pairs_reparametrize_by_convolved_character"
+            ]
+            audited_cases += 1
+    assert audited_cases == 45
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert r"\chi=\lambda\psi" in text
+    assert r"(p-1)\mathbf1_{uv\equiv1\ (p)}-1" in text
+    assert "locally centered incidence kernel" in text
+    assert "fully primitive convolved characters" in text
+
+    with pytest.raises(ValueError, match="squarefree"):
+        audit(modulus=9, direct_label=1, inverse_label=1)
+    with pytest.raises(ValueError, match="nonzero"):
+        audit(modulus=5, direct_label=1, inverse_label=0)
+
+
+def test_jointly_primitive_type_phase_tensor_is_primewise_centered() -> None:
+    audit = getattr(
+        coverage_audit,
+        "jointly_primitive_type_phase_tensor_audit",
+        None,
+    )
+    assert audit is not None, "jointly primitive Type-phase tensor audit is missing"
+
+    result = audit(
+        modulus=15,
+        direct_label=6,
+        inverse_label=10,
+        type_coefficients={1: 1, 2: -1, 3: 7, 4: 2j, 15: -3},
+    )
+    assert result["character_master_equals_centered_incidence_tensor"]
+    assert result["normalized_tensor_equals_mobius_divisor_expansion"]
+    assert result["every_prime_phase_plane_marginal_is_zero"]
+    assert result["outer_modulus_mobius_migrates_to_divisor_mobius"]
+    assert result["type_coefficients_retained_linearly"]
+    assert result["nonunit_type_labels_vanish_only_by_character_support"]
+    assert result["jointly_primitive_phase_pair_count"] == 45
+    assert result["divisor_expansion_rows"][0]["divisor"] == 1
+    assert result["divisor_expansion_rows"][-1]["divisor"] == 15
+    assert not result["divisor_terms_may_be_bounded_separately"]
+    assert not result["centered_tensor_global_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert r"(p-1)^2\mathbf1_{x\equiv u\ (p)}" in text
+    assert r"\sum_{d\mid Q}\mu(d)\varphi(d)^2" in text
+    assert "primewise centered Type--phase tensor" in text
+
+    with pytest.raises(ValueError, match="nonempty"):
+        audit(
+            modulus=5,
+            direct_label=1,
+            inverse_label=1,
+            type_coefficients={},
+        )
+
+
+def test_joint_conductor_audits_support_zero_direct_phase() -> None:
+    ambient = coverage_audit.joint_phase_character_conductor_lcm_audit(
+        modulus=15,
+        direct_label=0,
+        inverse_label=1,
+        cofactor_bound=15,
+        type_coefficients={1: 1, 2: -1, 3: 99, 4: 2j, 7: 3},
+    )
+    assert ambient["all_stripped_gauss_factors_match_scaled_joint_modulus"]
+    assert ambient["all_joint_conductor_tensor_bridges_exact"]
+    assert ambient["zero_direct_phase_supported"]
+
+    phase = coverage_audit.jointly_primitive_phase_convolution_audit(
+        modulus=15,
+        direct_label=0,
+        inverse_label=1,
+    )
+    assert phase["all_convolved_character_rows_match_incidence_kernel"]
+    assert phase["zero_direct_phase_supported"]
+
+    tensor = coverage_audit.jointly_primitive_type_phase_tensor_audit(
+        modulus=15,
+        direct_label=0,
+        inverse_label=1,
+        type_coefficients={1: 1, 2: -1, 4: 2j, 7: 3},
+    )
+    assert tensor["character_master_equals_centered_incidence_tensor"]
+    assert tensor["normalized_tensor_equals_mobius_divisor_expansion"]
+    assert tensor["zero_direct_phase_supported"]
+
+
+def test_centered_tensor_collapses_to_ramanujan_kloosterman_conductors() -> None:
+    audit = getattr(
+        coverage_audit,
+        "centered_type_phase_divisor_kloosterman_audit",
+        None,
+    )
+    assert audit is not None, "divisor-Kloosterman collapse audit is missing"
+
+    result = audit(
+        modulus=3,
+        direct_label=0,
+        inverse_label=1,
+        type_coefficients={1: 1, 2: 2},
+    )
+    assert result["centered_tensor_equals_divisor_kloosterman_collapse"]
+    assert result["every_free_cofactor_sum_is_ramanujan_exact"]
+    assert result["outer_mobius_retained_on_kloosterman_conductor"]
+    assert result["zero_direct_phase_cofactor_weight_reduces_exactly"]
+    assert abs(complex(result["collapsed_master"]).real) < 1e-8
+    assert abs(
+        complex(result["collapsed_master"]).imag + 3 ** 0.5 / 2
+    ) < 1e-8
+
+    rows = result["kloosterman_conductor_rows"]
+    assert tuple(row["conductor"] for row in rows) == (1, 3)
+    assert rows[0]["ramanujan_cofactor"] == 3
+    assert abs(complex(rows[0]["normalized_contribution"]) + 1.5) < 1e-8
+    assert rows[-1]["ramanujan_cofactor"] == 1
+    assert abs(complex(rows[-1]["normalized_contribution"]).real - 1.5) < 1e-8
+    assert not result["conductor_rows_may_be_bounded_separately"]
+    assert not result["signed_kloosterman_conductor_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    audited_cases = 0
+    for modulus in range(2, 16):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        for direct_label in (0, 1, modulus):
+            for inverse_label in (1, -2, modulus):
+                exhaustive = audit(
+                    modulus=modulus,
+                    direct_label=direct_label,
+                    inverse_label=inverse_label,
+                    type_coefficients={
+                        1: 1,
+                        2: -1,
+                        modulus: 7,
+                        modulus + 1: 2j,
+                    },
+                )
+                assert exhaustive[
+                    "centered_tensor_equals_divisor_kloosterman_collapse"
+                ]
+                assert exhaustive[
+                    "every_free_cofactor_sum_is_ramanujan_exact"
+                ]
+                audited_cases += 1
+    assert audited_cases == 90
+
+
+def test_conductor_and_type_mobius_signs_fuse_through_the_gcd() -> None:
+    audit = getattr(
+        coverage_audit,
+        "conductor_type_mobius_gcd_fusion_audit",
+        None,
+    )
+    assert audit is not None, "conductor-Type Mobius gcd fusion audit is missing"
+
+    result = audit(
+        modulus=15,
+        common_cofactor=7,
+        direct_label=0,
+        inverse_label=-2,
+        type_pair_weights={
+            (1, 1): 1,
+            (2, 4): -2,
+            (4, 2): 3j,
+            (11, 13): 2 - 1j,
+            (3, 1): 99,
+            (5, 2): -101,
+            (7, 11): 103,
+        },
+    )
+    assert result["two_mobius_master_equals_gcd_fused_master"]
+    assert result["every_retained_row_has_coprime_mobius_factors"]
+    assert result["every_retained_mobius_product_fuses_exactly"]
+    assert result["conductor_is_gcd_of_fused_label_and_joint_modulus"]
+    assert result["cofactor_is_joint_modulus_over_that_gcd"]
+    assert result["type_label_is_fused_label_over_that_gcd"]
+    assert result["ambient_unit_mask_transports_exactly"]
+    assert result["zero_direct_phase_supported"]
+    assert result["mobius_factor_count_before_fusion"] == 2
+    assert result["mobius_factor_count_after_fusion"] == 1
+    assert result["ordered_type_block_count_before_fusion"] == 9
+    assert result["ordered_type_block_count_after_fusion"] == 3
+    assert result["fusion_scope"] == "fixed_common_cofactor_jointly_primitive_core"
+    assert not result["common_cofactor_mobius_fused"]
+    assert not result["packet_uniform_common_cofactor_adapter_proved"]
+    assert not result["gcd_dependent_kernel_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    retained = result["retained_original_rows"]
+    assert retained
+    assert all(row["conductor"] == row["fused_gcd"] for row in retained)
+    assert all(row["type_label"] == row["fused_type_quotient"] for row in retained)
+
+    audited_cases = 0
+    for modulus in range(2, 16):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        weights = {
+            (type_label, companion_label): complex(
+                type_label - companion_label,
+                type_label + companion_label,
+            )
+            for type_label in range(1, modulus + 3)
+            for companion_label in range(1, 5)
+        }
+        for direct_label in (0, 1, modulus):
+            for inverse_label in (1, -2, modulus):
+                exhaustive = audit(
+                    modulus=modulus,
+                    common_cofactor=1,
+                    direct_label=direct_label,
+                    inverse_label=inverse_label,
+                    type_pair_weights=weights,
+                )
+                assert exhaustive[
+                    "two_mobius_master_equals_gcd_fused_master"
+                ]
+                assert exhaustive[
+                    "every_retained_mobius_product_fuses_exactly"
+                ]
+                assert exhaustive[
+                    "conductor_is_gcd_of_fused_label_and_joint_modulus"
+                ]
+                assert exhaustive["ambient_unit_mask_transports_exactly"]
+                audited_cases += 1
+    assert audited_cases == 90
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert r"d=(m,Q)" in text
+    assert "one Möbius variable" in text
+
+    with pytest.raises(ValueError, match="positive"):
+        audit(
+            modulus=15,
+            common_cofactor=1,
+            direct_label=0,
+            inverse_label=1,
+            type_pair_weights={(0, 1): 1},
+        )
+
+
+def test_fixed_gcd_mobius_trace_coverage_keeps_composite_gate_open() -> None:
+    audit = getattr(
+        coverage_audit,
+        "fused_gcd_mobius_trace_coverage_audit",
+        None,
+    )
+    assert audit is not None, "fixed-gcd Mobius-trace coverage audit is missing"
+
+    full_prime = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(3),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=False,
+    )
+    assert full_prime["fkm_length_threshold"] == F(9, 4)
+    assert full_prime["fkm_limiting_power_saving"] == F(1, 8)
+    assert full_prime["published_local_fixed_power_coverage"]
+    assert not full_prime["fkm_ceiling_is_attained"]
+
+    threshold = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(9, 4),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=False,
+    )
+    assert threshold["fkm_limiting_power_saving"] == 0
+    assert not threshold["published_local_fixed_power_coverage"]
+
+    interior = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(5, 2),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=False,
+    )
+    assert interior["fkm_limiting_power_saving"] == F(1, 24)
+
+    logarithmic_only = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(2),
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=False,
+    )
+    assert logarithmic_only["short_trace_logarithmic_range"]
+    assert logarithmic_only["short_trace_fixed_power_saving"] == 0
+    assert not logarithmic_only["published_local_fixed_power_coverage"]
+
+    composite = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(14, 5),
+        prime_conductor=False,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=True,
+        prime_factor_exponent=F(14, 5),
+    )
+    assert composite["formal_prime_factor_transfer_saving"] == F(1, 60)
+    assert composite["formal_prime_factor_transfer_positive"]
+    assert composite["gong_jia_inverse_phase_form_matches"]
+    assert composite["gong_jia_length_condition"]
+    assert composite["gong_jia_applicable"]
+    assert composite["gong_jia_fixed_power_saving"] == 0
+    assert not composite["prime_factor_transfer_adapter_proved"]
+    assert not composite["published_prime_factor_transfer_coverage"]
+    assert not composite["published_local_fixed_power_coverage"]
+
+    transfer_boundary = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(36, 13),
+        prime_conductor=False,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=False,
+        prime_factor_exponent=F(36, 13),
+    )
+    assert transfer_boundary["formal_prime_factor_transfer_saving"] == 0
+    assert transfer_boundary["large_prime_factor_threshold"] == F(36, 13)
+    assert transfer_boundary["global_large_sieve_deficit"] == F(5, 2)
+    assert transfer_boundary[
+        "maximal_fixed_prime_pointwise_saving"
+    ] == F(1, 8)
+    assert transfer_boundary[
+        "diagnostic_deficit_after_maximal_local_saving"
+    ] == F(19, 8)
+    assert not transfer_boundary["packet_uniform_common_cofactor_adapter_proved"]
+    assert not transfer_boundary["moving_gcd_kernel_estimate_proved"]
+    assert not transfer_boundary["coupled_kernel_gate_closed"]
+
+    short_composite = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(1),
+        prime_conductor=False,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=True,
+    )
+    assert short_composite["gong_jia_inverse_phase_form_matches"]
+    assert not short_composite["gong_jia_length_condition"]
+    assert not short_composite["gong_jia_applicable"]
+
+    exceptional_prime = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(3),
+        prime_conductor=True,
+        unit_nonexceptional_trace=False,
+        direct_phase_zero=False,
+    )
+    assert exceptional_prime["fkm_limiting_power_saving"] == F(1, 8)
+    assert not exceptional_prime["published_local_fixed_power_coverage"]
+    assert not exceptional_prime["short_trace_logarithmic_range"]
+
+    intermediate_boundary = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(27, 10),
+        prime_conductor=False,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=False,
+        prime_factor_exponent=F(14, 5),
+    )
+    assert intermediate_boundary[
+        "formal_prime_factor_transfer_saving"
+    ] == 0
+    assert intermediate_boundary[
+        "formal_intermediate_transfer_numerator"
+    ] == 0
+
+    intermediate_positive = audit(
+        conductor_exponent=F(3),
+        mobius_length_exponent=F(11, 4),
+        prime_conductor=False,
+        unit_nonexceptional_trace=True,
+        direct_phase_zero=False,
+        prime_factor_exponent=F(14, 5),
+    )
+    assert intermediate_positive[
+        "formal_prime_factor_transfer_saving"
+    ] == F(1, 120)
+    assert intermediate_positive[
+        "formal_intermediate_transfer_numerator"
+    ] == F(1, 5)
+
+    with pytest.raises(ValueError, match="prime factor"):
+        audit(
+            conductor_exponent=F(3),
+            mobius_length_exponent=F(2),
+            prime_conductor=False,
+            unit_nonexceptional_trace=True,
+            direct_phase_zero=False,
+            prime_factor_exponent=F(4),
+        )
+
+
+def test_common_cofactor_mobius_fuses_by_a_divisor_lift() -> None:
+    audit = getattr(
+        coverage_audit,
+        "common_cofactor_mobius_divisor_lift_audit",
+        None,
+    )
+    assert audit is not None, "common-cofactor Mobius divisor lift is missing"
+
+    packet_weights = {
+        (1, 1, 1): 1,
+        (1, 6, 7): -2,
+        (7, 2, 11): 3j,
+        (7, 30, 13): 2 - 1j,
+        (11, 14, 2): -4,
+        (7, 14, 11): 101,
+        (3, 2, 7): -103,
+        (4, 5, 7): 107,
+        (7, 12, 11): -109,
+        (7, 5, 7): 113,
+    }
+    result = audit(
+        modulus=15,
+        direct_label=0,
+        inverse_label=-2,
+        packet_weights=packet_weights,
+    )
+    assert result["two_mobius_master_equals_divisor_lifted_master"]
+    assert result["every_retained_mobius_product_fuses_exactly"]
+    assert result["moving_gcd_is_preserved_by_common_cofactor_lift"]
+    assert result["every_packet_weight_is_retained_exactly"]
+    assert result["ramanujan_divisor_l1_cost_bounded_by_tau"]
+    assert result["mobius_factor_count_before_lift"] == 2
+    assert result["mobius_factor_count_after_lift"] == 1
+    assert result["lift_scope"] == "finite_joint_conductor_master"
+    assert result["common_cofactor_mobius_divisor_lift_proved"]
+    assert result["packet_uniform_common_cofactor_adapter_proved"]
+    assert not result["divisor_lifted_moving_gcd_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    principal_row = audit(
+        modulus=1,
+        direct_label=0,
+        inverse_label=-2,
+        packet_weights=packet_weights,
+    )
+    assert principal_row["two_mobius_master_equals_divisor_lifted_master"]
+    assert principal_row["both_phase_characters_principal_supported"]
+    assert all(
+        row["moving_gcd_after"] == 1
+        for row in principal_row["retained_original_rows"]
+    )
+
+    cancellation = audit(
+        modulus=7,
+        direct_label=0,
+        inverse_label=1,
+        packet_weights={
+            (1, 30, 1): -1e20,
+            (2, 1, 1): -1e20,
+            (5, 1, 1): 4,
+        },
+    )
+    assert cancellation["termwise_contributions_match_by_packet_key"]
+    assert cancellation["two_mobius_master_equals_divisor_lifted_master"]
+    assert cancellation["common_cofactor_mobius_divisor_lift_proved"]
+    assert cancellation["packet_uniform_common_cofactor_adapter_proved"]
+
+    retained = result["retained_original_rows"]
+    assert retained
+    assert all(
+        row["moving_gcd_before"] == row["moving_gcd_after"]
+        for row in retained
+    )
+    assert all(
+        row["fused_label"]
+        == row["common_cofactor"] * row["mobius_label"]
+        for row in retained
+    )
+
+    audited_cases = 0
+    for modulus in range(1, 16):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        weights = {
+            (r0, mobius_label, companion): complex(
+                r0 - mobius_label,
+                companion,
+            )
+            for r0 in range(1, 10)
+            for mobius_label in range(1, 14)
+            for companion in (1, 2, 5)
+        }
+        for direct_label in (0, 1, modulus):
+            for inverse_label in (1, -2, modulus):
+                exhaustive = audit(
+                    modulus=modulus,
+                    direct_label=direct_label,
+                    inverse_label=inverse_label,
+                    packet_weights=weights,
+                )
+                assert exhaustive[
+                    "two_mobius_master_equals_divisor_lifted_master"
+                ]
+                assert exhaustive[
+                    "moving_gcd_is_preserved_by_common_cofactor_lift"
+                ]
+                assert exhaustive[
+                    "ramanujan_divisor_l1_cost_bounded_by_tau"
+                ]
+                audited_cases += 1
+    assert audited_cases == 99
+
+    with pytest.raises(ValueError, match="positive"):
+        audit(
+            modulus=15,
+            direct_label=0,
+            inverse_label=1,
+            packet_weights={(0, 1, 1): 1},
+        )
+    with pytest.raises(ValueError, match="modulus"):
+        audit(
+            modulus=0,
+            direct_label=0,
+            inverse_label=1,
+            packet_weights={(1, 1, 1): 1},
+        )
+
+
+def test_divisor_lifted_master_splits_the_true_type_quotient() -> None:
+    audit = getattr(
+        coverage_audit,
+        "divisor_lifted_quotient_type_split_audit",
+        None,
+    )
+    assert audit is not None, "divisor-lifted quotient Type split is missing"
+
+    result = audit(
+        modulus=6,
+        direct_label=0,
+        inverse_label=-5,
+        short_cutoff_u=2,
+        short_cutoff_v=3,
+        packet_weights={
+            (1, 1, 1): 1,
+            (1, 2, 5): -2,
+            (1, 3, 5): 3j,
+            (1, 5, 5): 4 - 1j,
+            (1, 70, 5): -7,
+            (11, 105, 5): 2 + 4j,
+            (11, 210, 5): -9,
+            (5, 70, 5): 101,
+            (11, 12, 5): -103,
+            (11, 70, 22): 107,
+        },
+    )
+
+    assert result["original_master_equals_gcd_first_master"]
+    assert result["gcd_first_master_equals_quotient_type_split_master"]
+    assert result["every_gcd_first_mobius_factorization_is_exact"]
+    assert result["every_true_type_quotient_split_is_exact"]
+    assert result["small_quotient_boundary_retained_exactly"]
+    assert result["mixed_type_rectangles_cancel_exactly"]
+    assert result["moving_conductor_frozen_inside_every_type_atom"]
+    assert result["all_type_atoms_retain_h_delta_product"]
+    assert result["all_type_factors_are_coprime_to_joint_modulus_and_cofactor"]
+    assert result["all_long_type_factors_are_pairwise_coprime"]
+    assert result["quotient_type_i_ii_finite_reduction_proved"]
+    assert not result["quotient_type_i_ii_global_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    retained = result["retained_packet_rows"]
+    assert retained
+    assert {row["moving_conductor"] for row in retained} >= {1, 2, 3, 6}
+    assert any(row["true_type_quotient"] == 35 for row in retained)
+    assert any(
+        atom["type_block"] == "II"
+        and atom["first_type_divisor"] > 2
+        and atom["second_type_divisor"] > 3
+        for atom in result["type_atoms"]
+    )
+    assert all(
+        atom["true_type_quotient"]
+        == atom["first_type_divisor"]
+        * atom["second_type_divisor"]
+        * atom["remaining_type_factor"]
+        for atom in result["type_atoms"]
+        if atom["type_block"] != "small"
+    )
+
+    unit_cutoff = audit(
+        modulus=1,
+        direct_label=0,
+        inverse_label=1,
+        short_cutoff_u=1,
+        short_cutoff_v=1,
+        packet_weights={
+            (1, 1, 1): 1,
+            (1, 5, 1): 2,
+            (11, 35, 1): -3,
+        },
+    )
+    assert unit_cutoff["quotient_type_i_ii_finite_reduction_proved"]
+    assert unit_cutoff["unit_cutoff_principal_plus_double_master_exact"]
+    assert unit_cutoff["principal_quotient_has_no_type_mobius_sign"]
+    assert unit_cutoff["principal_quotient_squarefree_support_retained"]
+    assert unit_cutoff["unit_cutoff_double_mobius_atom_count"] > 0
+    assert unit_cutoff[
+        "all_unit_cutoff_double_atoms_have_two_nontrivial_divisors"
+    ]
+    assert not unit_cutoff["principal_quotient_global_evaluation_proved"]
+    assert not unit_cutoff["double_mobius_global_dispersion_proved"]
+    assert all(
+        row["moving_conductor"] == 1
+        for row in unit_cutoff["retained_packet_rows"]
+    )
+    unit_rows = {
+        row["true_type_quotient"]: row
+        for row in unit_cutoff["retained_packet_rows"]
+    }
+    assert unit_rows[1]["small_coefficient"] == 1
+    assert unit_rows[5]["type_i_coefficient"] == 1
+    assert unit_rows[5]["type_ii_coefficient"] == 0
+    assert unit_rows[35]["type_i_coefficient"] == 1
+    assert unit_rows[35]["type_ii_coefficient"] == 2
+
+
+def test_squarefree_density_projector_has_half_conductor_trace_coverage() -> None:
+    projector = getattr(
+        coverage_audit,
+        "squarefree_projector_split_audit",
+        None,
+    )
+    assert projector is not None, "squarefree projector audit is missing"
+
+    finite = projector(max_label=96, square_divisor_cutoff=3)
+    assert finite["squarefree_projector_identity_exact"]
+    assert finite["short_plus_long_projector_exact"]
+    assert finite["principal_endpoint_density_reassembly_exact"]
+    assert finite["long_square_divisor_pair_count_within_X_over_D"]
+    rows = {row["label"]: row for row in finite["projector_rows"]}
+    assert rows[1]["principal_quotient_coefficient"] == 1
+    assert rows[30]["projector_coefficient"] == 1
+    assert rows[30]["principal_quotient_coefficient"] == -1
+    assert rows[4]["projector_coefficient"] == 0
+    assert rows[4]["principal_quotient_coefficient"] == 0
+    assert rows[12]["projector_coefficient"] == 0
+    assert rows[36]["short_projector_coefficient"] == -1
+    assert rows[36]["long_projector_coefficient"] == 1
+
+    exponent_audit = getattr(
+        coverage_audit,
+        "squarefree_density_trace_completion_audit",
+        None,
+    )
+    assert exponent_audit is not None, "squarefree trace ledger is missing"
+
+    boundary = exponent_audit(
+        conductor_exponent=F(3),
+        squarefree_length_exponent=F(3, 2),
+        squarefree_conductor=True,
+        unit_trace_phase=True,
+        separable_weight_adapter_verified=True,
+    )
+    assert boundary["optimized_square_divisor_cutoff_exponent"] == 0
+    assert boundary["limiting_local_saving_exponent"] == 0
+    assert not boundary["published_local_squarefree_density_coverage"]
+
+    conductor_length = exponent_audit(
+        conductor_exponent=F(3),
+        squarefree_length_exponent=F(3),
+        squarefree_conductor=True,
+        unit_trace_phase=True,
+        separable_weight_adapter_verified=True,
+    )
+    assert conductor_length[
+        "optimized_square_divisor_cutoff_exponent"
+    ] == F(3, 4)
+    assert conductor_length["limiting_local_saving_exponent"] == F(3, 4)
+    assert conductor_length["published_local_squarefree_density_coverage"]
+
+    saturated = exponent_audit(
+        conductor_exponent=F(3),
+        squarefree_length_exponent=F(5),
+        squarefree_conductor=True,
+        unit_trace_phase=True,
+        separable_weight_adapter_verified=True,
+    )
+    assert saturated["limiting_local_saving_exponent"] == F(3, 2)
+    assert saturated["saving_saturates_at_complete_trace_exponent"]
+
+    missing_adapter = exponent_audit(
+        conductor_exponent=F(3),
+        squarefree_length_exponent=F(3),
+        squarefree_conductor=True,
+        unit_trace_phase=True,
+        separable_weight_adapter_verified=False,
+    )
+    assert missing_adapter["limiting_local_saving_exponent"] == F(3, 4)
+    assert not missing_adapter["published_local_squarefree_density_coverage"]
+    assert not missing_adapter["global_principal_quotient_coverage"]
+
+
+def test_nonunit_inverse_phase_descends_to_effective_squarefree_conductor() -> None:
+    finite_audit = getattr(
+        coverage_audit,
+        "squarefree_nonunit_inverse_conductor_descent_audit",
+        None,
+    )
+    assert finite_audit is not None, "nonunit conductor descent is missing"
+
+    nonunit = finite_audit(
+        ambient_conductor=30,
+        inverse_coefficient=6,
+        direct_coefficient=11,
+        phase_multiplier=7,
+    )
+    assert nonunit["inactive_conductor"] == 6
+    assert nonunit["effective_inverse_conductor"] == 5
+    assert nonunit["inactive_primes"] == (2, 3)
+    assert nonunit["active_inverse_primes"] == (5,)
+    assert nonunit["inactive_fourier_divisor_expansion_exact"]
+
+    unit = finite_audit(
+        ambient_conductor=30,
+        inverse_coefficient=7,
+        direct_coefficient=11,
+        phase_multiplier=7,
+    )
+    assert unit["inactive_conductor"] == 1
+    assert unit["effective_inverse_conductor"] == 30
+    assert unit["inactive_fourier_divisor_expansion_exact"]
+
+    zero_inverse = finite_audit(
+        ambient_conductor=30,
+        inverse_coefficient=0,
+        direct_coefficient=11,
+        phase_multiplier=7,
+    )
+    assert zero_inverse["inactive_conductor"] == 30
+    assert zero_inverse["effective_inverse_conductor"] == 1
+    assert zero_inverse["inactive_fourier_divisor_expansion_exact"]
+
+    exponent_audit = getattr(
+        coverage_audit,
+        "squarefree_density_effective_conductor_completion_audit",
+        None,
+    )
+    assert exponent_audit is not None, "effective-conductor ledger is missing"
+
+    covered = exponent_audit(
+        ambient_conductor_exponent=F(3),
+        effective_inverse_conductor_exponent=F(1),
+        squarefree_length_exponent=F(1),
+        squarefree_ambient_conductor=True,
+        conductor_descent_verified=True,
+        separable_weight_adapter_verified=True,
+    )
+    assert covered["limiting_local_saving_exponent"] == F(1, 4)
+    assert covered["published_local_effective_conductor_coverage"]
+
+    boundary = exponent_audit(
+        ambient_conductor_exponent=F(3),
+        effective_inverse_conductor_exponent=F(1),
+        squarefree_length_exponent=F(1, 2),
+        squarefree_ambient_conductor=True,
+        conductor_descent_verified=True,
+        separable_weight_adapter_verified=True,
+    )
+    assert boundary["limiting_local_saving_exponent"] == 0
+    assert not boundary["published_local_effective_conductor_coverage"]
+
+    purely_direct = exponent_audit(
+        ambient_conductor_exponent=F(3),
+        effective_inverse_conductor_exponent=F(0),
+        squarefree_length_exponent=F(3),
+        squarefree_ambient_conductor=True,
+        conductor_descent_verified=True,
+        separable_weight_adapter_verified=True,
+    )
+    assert purely_direct["limiting_local_saving_exponent"] == 0
+    assert not purely_direct["published_local_effective_conductor_coverage"]
+
+
+def test_double_mobius_atom_uses_all_product_partitions_for_coverage() -> None:
+    audit = getattr(
+        coverage_audit,
+        "double_mobius_product_partition_coverage_audit",
+        None,
+    )
+    assert audit is not None, "double-Mobius partition coverage is missing"
+
+    four_factor = audit(
+        conductor_exponent=F(3),
+        b_exponent=F(3, 4),
+        c_exponent=F(3, 4),
+        n_exponent=F(3, 4),
+        p_exponent=F(3, 4),
+        squarefree_conductor=True,
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separated_four_factor_adapter_verified=True,
+    )
+    assert four_factor["best_bilinear_partition_saving_exponent"] == F(3, 8)
+    assert four_factor["bilinear_positivity_matches_closed_polytope"]
+    assert four_factor["best_partition_sides"] in (
+        (("b",), ("c", "n", "p")),
+        (("c",), ("b", "n", "p")),
+        (("n",), ("b", "c", "p")),
+        (("p",), ("b", "c", "n")),
+    )
+    assert four_factor["published_local_double_mobius_coverage"]
+
+    balanced_two_factor = audit(
+        conductor_exponent=F(3),
+        b_exponent=F(3, 2),
+        c_exponent=F(3, 2),
+        n_exponent=F(0),
+        p_exponent=F(0),
+        squarefree_conductor=True,
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separated_four_factor_adapter_verified=True,
+    )
+    assert balanced_two_factor["best_bilinear_partition_saving_exponent"] == 0
+    assert balanced_two_factor["bilinear_positivity_matches_closed_polytope"]
+    assert balanced_two_factor["best_one_mobius_saving_exponent"] == 0
+    assert balanced_two_factor["best_smooth_coordinate_saving_exponent"] == 0
+    assert not balanced_two_factor["published_local_double_mobius_coverage"]
+    assert balanced_two_factor["prime_balanced_two_factor_face_uncovered"]
+
+    long_mobius_axis = audit(
+        conductor_exponent=F(3),
+        b_exponent=F(5, 2),
+        c_exponent=F(0),
+        n_exponent=F(0),
+        p_exponent=F(0),
+        squarefree_conductor=True,
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separated_four_factor_adapter_verified=True,
+    )
+    assert long_mobius_axis["best_one_mobius_saving_exponent"] == F(1, 24)
+    assert long_mobius_axis["published_local_double_mobius_coverage"]
+
+    long_smooth_axis = audit(
+        conductor_exponent=F(3),
+        b_exponent=F(0),
+        c_exponent=F(0),
+        n_exponent=F(2),
+        p_exponent=F(0),
+        squarefree_conductor=True,
+        prime_conductor=False,
+        unit_nonexceptional_trace=True,
+        separated_four_factor_adapter_verified=True,
+    )
+    assert long_smooth_axis["best_smooth_coordinate_saving_exponent"] == F(1, 2)
+    assert long_smooth_axis["published_local_double_mobius_coverage"]
+
+    composite_central = audit(
+        conductor_exponent=F(3),
+        b_exponent=F(3, 4),
+        c_exponent=F(3, 4),
+        n_exponent=F(3, 4),
+        p_exponent=F(3, 4),
+        squarefree_conductor=True,
+        prime_conductor=False,
+        unit_nonexceptional_trace=True,
+        separated_four_factor_adapter_verified=True,
+    )
+    assert composite_central["best_bilinear_partition_saving_exponent"] == F(3, 8)
+    assert not composite_central["published_prime_bilinear_coverage"]
+    assert not composite_central["published_local_double_mobius_coverage"]
+    assert composite_central["composite_central_band_uncovered"]
+
+    missing_adapter = audit(
+        conductor_exponent=F(3),
+        b_exponent=F(3, 4),
+        c_exponent=F(3, 4),
+        n_exponent=F(3, 4),
+        p_exponent=F(3, 4),
+        squarefree_conductor=True,
+        prime_conductor=True,
+        unit_nonexceptional_trace=True,
+        separated_four_factor_adapter_verified=False,
+    )
+    assert missing_adapter["best_local_saving_exponent"] == F(3, 8)
+    assert not missing_adapter["published_local_double_mobius_coverage"]
+    assert not missing_adapter["physical_four_factor_adapter_proved"]
+
+
+def test_double_mobius_pre_cauchy_gram_keeps_cross_conductor_phase() -> None:
+    audit = getattr(
+        coverage_audit,
+        "double_mobius_cross_conductor_ttstar_audit",
+        None,
+    )
+    assert audit is not None, "cross-conductor double-Mobius Gram is missing"
+
+    result = audit(
+        max_label=18,
+        conductors=(5, 7),
+        direct_coefficients=(1, 2),
+        inverse_labels=(2, 3),
+        conductor_cofactors=(1, 2),
+    )
+    assert result["pre_cauchy_b_and_c_mobius_weights_retained"]
+    assert result["outer_conductor_mobius_signs_retained_in_gram"]
+    assert result["inverse_labels_a_retained_in_combined_phase"]
+    assert result["all_cross_conductor_phase_identities_exact"]
+    assert result["direct_gram_equals_combined_kloosterman_gram"]
+    assert result["resonant_plus_nonresonant_gram_exact"]
+    assert result["same_conductor_unit_resonance_is_c_diagonal"]
+    assert result["zero_orbit_forces_equal_conductor"]
+    assert result["same_conductor_resonance_compatibility_exact"]
+    assert result["resonant_c2_residue_unique"]
+    assert result["cross_conductor_rows_present"]
+    assert result["nonzero_combined_phase_rows_present"]
+    assert not result["cross_conductor_kloosterman_gram_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_resonant_invariant_fibres_have_full_product_energy_bound() -> None:
+    finite_audit = getattr(
+        coverage_audit,
+        "resonant_invariant_product_fibre_audit",
+        None,
+    )
+    assert finite_audit is not None, "resonant invariant-fibre audit is missing"
+
+    finite = finite_audit(
+        squarefree_modulus=30,
+        h_coefficients={1: F(2), 7: F(-1), 11: F(3), 13: F(1)},
+        delta_coefficients={1: F(1), 7: F(2), 17: F(-2)},
+        multiplier_coefficients={1: F(2), 7: F(-1), 11: F(3)},
+    )
+    assert finite["all_multipliers_are_unit_residue_permutations"]
+    assert finite["every_single_multiplier_preserves_product_energy"]
+    assert finite["combined_invariant_fibre_energy_within_projective_l1_bound"]
+    assert finite["h_delta_product_structure_retained"]
+    assert not finite["physical_multiplier_projective_norm_proved"]
+    assert not finite["coupled_kernel_gate_closed"]
+
+    exponent_audit = getattr(
+        coverage_audit,
+        "resonant_invariant_product_energy_exponent_audit",
+        None,
+    )
+    assert exponent_audit is not None, "resonant product-energy ledger is missing"
+
+    balanced = exponent_audit(
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+        squarefree_modulus_exponent=F(3),
+        multiplier_projective_norm_exponent=F(0),
+    )
+    assert balanced["nonprincipal_product_energy_exponent"] == F(5)
+    assert balanced["principal_product_energy_exponent"] == F(7)
+    assert balanced["boundary_product_energy_exponent"] == F(5)
+    assert balanced["full_product_energy_exponent"] == F(7)
+    assert balanced["resonant_diagonal_target_exponent"] == F(7)
+    assert balanced["fixed_multiplier_resonant_fibre_within_target"]
+    assert balanced["subpolynomial_multiplier_family_within_target"]
+    assert not balanced["physical_multiplier_projective_norm_proved"]
+
+    power_cost = exponent_audit(
+        h_length_exponent=F(5, 2),
+        delta_length_exponent=F(5, 2),
+        squarefree_modulus_exponent=F(3),
+        multiplier_projective_norm_exponent=F(1, 10),
+    )
+    assert power_cost["projective_energy_cost_exponent"] == F(1, 5)
+    assert not power_cost["multiplier_family_within_diagonal_target"]
+
+
+def test_korolev_bilinear_lemma_covers_the_fixed_prime_balanced_atom() -> None:
+    audit = getattr(
+        coverage_audit,
+        "korolev_prime_product_trace_bilinear_coverage_audit",
+        None,
+    )
+    assert audit is not None, "Korolev balanced product-trace audit is missing"
+
+    balanced = audit(
+        prime=101,
+        inverse_coefficient=7,
+        direct_coefficient=0,
+        first_labels=(2, 3, 5, 7),
+        second_labels=(11, 13, 17, 19),
+        modulus_exponent=F(3),
+        first_length_exponent=F(3, 2),
+        second_length_exponent=F(3, 2),
+        epsilon_parameter=F(1, 20),
+        prime_modulus=True,
+        unit_inverse_phase=True,
+        divisor_bounded_coefficients=True,
+        separated_weight_verified=True,
+    )
+    assert balanced["all_product_inverse_phase_identities_exact"]
+    assert balanced["direct_coefficient_may_vanish"]
+    assert balanced["published_lemma_hypotheses_verified"]
+    assert balanced["fixed_prime_balanced_atom_has_power_saving"]
+    assert balanced["saving_exponent_without_unknown_constant"] == F(3, 160000)
+    assert balanced["published_absolute_constant_is_unspecified"]
+    assert not balanced["composite_conductor_covered"]
+    assert not balanced["physical_packet_adapter_proved"]
+    assert not balanced["global_outer_signed_reassembly_proved"]
+    assert not balanced["coupled_kernel_gate_closed"]
+
+    too_short = audit(
+        prime=101,
+        inverse_coefficient=7,
+        direct_coefficient=9,
+        first_labels=(2, 3),
+        second_labels=(5, 11),
+        modulus_exponent=F(3),
+        first_length_exponent=F(1, 10),
+        second_length_exponent=F(3, 2),
+        epsilon_parameter=F(1, 20),
+        prime_modulus=True,
+        unit_inverse_phase=True,
+        divisor_bounded_coefficients=True,
+        separated_weight_verified=True,
+    )
+    assert not too_short["published_length_window_verified"]
+    assert not too_short["fixed_prime_balanced_atom_has_power_saving"]
+
+
+def test_bourgain_garaev_composite_inverse_product_polytope() -> None:
+    audit = getattr(
+        coverage_audit,
+        "bourgain_garaev_composite_inverse_product_bilinear_audit",
+        None,
+    )
+    assert audit is not None, "composite inverse-product audit is missing"
+
+    interior = audit(
+        modulus=30,
+        inverse_coefficient=7,
+        first_labels=(1, 7, 11, 13),
+        second_labels=(1, 17, 19, 23),
+        modulus_exponent=F(3),
+        first_length_exponent=F(1),
+        second_length_exponent=F(1),
+        first_moment_order=2,
+        second_moment_order=2,
+        zero_direct_phase=True,
+        one_bounded_coefficients=True,
+        separated_weight_verified=True,
+    )
+    assert interior["all_inverse_product_phase_identities_exact"]
+    assert interior["arbitrary_composite_modulus_allowed"]
+    assert interior["published_hypotheses_verified"]
+    assert interior["first_factor_exponent_contribution"] == F(-1, 2)
+    assert interior["second_factor_exponent_contribution"] == F(-1, 2)
+    assert interior["fixed_atom_saving_exponent"] == F(1, 8)
+    assert interior["fixed_composite_zero_direct_atom_covered"]
+    assert not interior["nonzero_direct_phase_covered"]
+    assert not interior["physical_packet_adapter_proved"]
+    assert not interior["global_varying_modulus_reassembly_proved"]
+    assert not interior["coupled_kernel_gate_closed"]
+
+    mixed_boundary = audit(
+        modulus=30,
+        inverse_coefficient=7,
+        first_labels=(1, 7),
+        second_labels=(11, 13),
+        modulus_exponent=F(3),
+        first_length_exponent=F(3, 2),
+        second_length_exponent=F(1),
+        first_moment_order=2,
+        second_moment_order=2,
+        zero_direct_phase=True,
+        one_bounded_coefficients=True,
+        separated_weight_verified=True,
+    )
+    assert mixed_boundary["first_factor_exponent_contribution"] == 0
+    assert mixed_boundary["second_factor_exponent_contribution"] == F(-1, 2)
+    assert mixed_boundary["fixed_atom_saving_exponent"] == F(1, 16)
+    assert mixed_boundary["fixed_composite_zero_direct_atom_covered"]
+
+    balanced = audit(
+        modulus=30,
+        inverse_coefficient=7,
+        first_labels=(1, 7),
+        second_labels=(11, 13),
+        modulus_exponent=F(3),
+        first_length_exponent=F(3, 2),
+        second_length_exponent=F(3, 2),
+        first_moment_order=2,
+        second_moment_order=2,
+        zero_direct_phase=True,
+        one_bounded_coefficients=True,
+        separated_weight_verified=True,
+    )
+    assert balanced["first_factor_exponent_contribution"] == 0
+    assert balanced["second_factor_exponent_contribution"] == 0
+    assert balanced["fixed_atom_saving_exponent"] == 0
+    assert balanced["exact_square_root_resonance"]
+    assert not balanced["fixed_composite_zero_direct_atom_covered"]
+
+    nonzero_direct = audit(
+        modulus=30,
+        inverse_coefficient=7,
+        first_labels=(1, 7),
+        second_labels=(11, 13),
+        modulus_exponent=F(3),
+        first_length_exponent=F(1),
+        second_length_exponent=F(1),
+        first_moment_order=2,
+        second_moment_order=2,
+        zero_direct_phase=False,
+        one_bounded_coefficients=True,
+        separated_weight_verified=True,
+    )
+    assert nonzero_direct["fixed_atom_saving_exponent"] == F(1, 8)
+    assert not nonzero_direct["published_hypotheses_verified"]
+    assert not nonzero_direct["fixed_composite_zero_direct_atom_covered"]
+    assert not nonzero_direct["nonzero_direct_phase_covered"]
+
+    for failed_hypothesis in (
+        {"inverse_coefficient": 5},
+        {"one_bounded_coefficients": False},
+        {"separated_weight_verified": False},
+    ):
+        rejected = audit(
+            modulus=30,
+            inverse_coefficient=failed_hypothesis.get("inverse_coefficient", 7),
+            first_labels=(1, 7),
+            second_labels=(11, 13),
+            modulus_exponent=F(3),
+            first_length_exponent=F(1),
+            second_length_exponent=F(1),
+            first_moment_order=2,
+            second_moment_order=2,
+            zero_direct_phase=True,
+            one_bounded_coefficients=failed_hypothesis.get(
+                "one_bounded_coefficients", True
+            ),
+            separated_weight_verified=failed_hypothesis.get(
+                "separated_weight_verified", True
+            ),
+        )
+        assert rejected["fixed_atom_saving_exponent"] == F(1, 8)
+        assert not rejected["published_hypotheses_verified"]
+        assert not rejected["fixed_composite_zero_direct_atom_covered"]
+
+    with pytest.raises(ValueError, match="must be units"):
+        audit(
+            modulus=30,
+            inverse_coefficient=7,
+            first_labels=(1, 6),
+            second_labels=(11, 13),
+            modulus_exponent=F(3),
+            first_length_exponent=F(1),
+            second_length_exponent=F(1),
+            first_moment_order=2,
+            second_moment_order=2,
+            zero_direct_phase=True,
+            one_bounded_coefficients=True,
+            separated_weight_verified=True,
+        )
+
+    with pytest.raises(ValueError, match="genuinely composite"):
+        audit(
+            modulus=31,
+            inverse_coefficient=7,
+            first_labels=(1, 7),
+            second_labels=(11, 13),
+            modulus_exponent=F(3),
+            first_length_exponent=F(1),
+            second_length_exponent=F(1),
+            first_moment_order=2,
+            second_moment_order=2,
+            zero_direct_phase=True,
+            one_bounded_coefficients=True,
+            separated_weight_verified=True,
+        )
+
+
+def test_bourgain_garaev_all_product_partitions_sharpen_composite_residual() -> None:
+    audit = getattr(
+        coverage_audit,
+        "bourgain_garaev_all_product_partition_polytope_audit",
+        None,
+    )
+    assert audit is not None, "all-partition Bourgain--Garaev audit is missing"
+
+    common = {
+        "conductor_exponent": F(3),
+        "composite_conductor": True,
+        "unit_inverse_phase": True,
+        "zero_direct_phase": True,
+        "one_bounded_after_divisor_normalization": True,
+        "separated_product_partition_adapter_verified": True,
+    }
+
+    four_quarters = audit(
+        factor_exponents={
+            "b": F(3, 4),
+            "c": F(3, 4),
+            "n": F(3, 4),
+            "p": F(3, 4),
+        },
+        **common,
+    )
+    assert len(four_quarters["partition_rows"]) == 7
+    assert four_quarters["best_partition_saving_exponent"] == F(3, 16)
+    assert four_quarters["published_composite_zero_direct_partition_coverage"]
+    assert not four_quarters["all_partitions_doubly_reciprocal_resonant"]
+    short_long_row = next(
+        row
+        for row in four_quarters["partition_rows"]
+        if row["left_length_exponent"] == F(3, 4)
+    )
+    assert short_long_row["left_candidate_moment_orders"] == (1, 2, 3, 4)
+    assert short_long_row["right_candidate_moment_orders"] == (1, 2, 3)
+    assert short_long_row["best_left_moment_order"] == 2
+    assert short_long_row["best_right_moment_order"] == 1
+    assert short_long_row["saving_exponent"] == F(3, 16)
+
+    three_quarters = audit(
+        factor_exponents={
+            "b": F(3, 4),
+            "c": F(3, 4),
+            "n": F(3, 4),
+            "p": F(0),
+        },
+        **common,
+    )
+    assert len(three_quarters["partition_rows"]) == 3
+    assert three_quarters["best_partition_saving_exponent"] == 0
+    assert three_quarters["all_partitions_doubly_reciprocal_resonant"]
+    assert not three_quarters[
+        "published_composite_zero_direct_partition_coverage"
+    ]
+
+    balanced_two_factor = audit(
+        factor_exponents={
+            "b": F(3, 2),
+            "c": F(3, 2),
+            "n": F(0),
+            "p": F(0),
+        },
+        **common,
+    )
+    assert len(balanced_two_factor["partition_rows"]) == 1
+    assert balanced_two_factor["best_partition_saving_exponent"] == 0
+    assert balanced_two_factor["all_partitions_doubly_reciprocal_resonant"]
+    assert not balanced_two_factor[
+        "published_composite_zero_direct_partition_coverage"
+    ]
+
+    mixed_boundary = audit(
+        factor_exponents={
+            "b": F(3, 2),
+            "c": F(1),
+            "n": F(0),
+            "p": F(0),
+        },
+        **common,
+    )
+    assert mixed_boundary["best_partition_saving_exponent"] == F(1, 8)
+    assert mixed_boundary["published_composite_zero_direct_partition_coverage"]
+
+    nonzero_direct = audit(
+        factor_exponents={
+            "b": F(3, 4),
+            "c": F(3, 4),
+            "n": F(3, 4),
+            "p": F(3, 4),
+        },
+        **{**common, "zero_direct_phase": False},
+    )
+    assert nonzero_direct["best_partition_saving_exponent"] == F(3, 16)
+    assert not nonzero_direct[
+        "published_composite_zero_direct_partition_coverage"
+    ]
+    assert not nonzero_direct["physical_packet_adapter_proved"]
+    assert not nonzero_direct["global_varying_modulus_reassembly_proved"]
+    assert not nonzero_direct["coupled_kernel_gate_closed"]
+
+    for hypothesis in (
+        "composite_conductor",
+        "unit_inverse_phase",
+        "zero_direct_phase",
+        "one_bounded_after_divisor_normalization",
+        "separated_product_partition_adapter_verified",
+    ):
+        rejected = audit(
+            factor_exponents={
+                "b": F(3, 4),
+                "c": F(3, 4),
+                "n": F(3, 4),
+                "p": F(3, 4),
+            },
+            **{**common, hypothesis: False},
+        )
+        assert rejected["best_partition_saving_exponent"] == F(3, 16)
+        assert not rejected["published_hypotheses_verified"]
+        assert not rejected[
+            "published_composite_zero_direct_partition_coverage"
+        ]
+
+    outside_direct_window = audit(
+        factor_exponents={"b": F(4), "c": F(4)},
+        **common,
+    )
+    assert outside_direct_window["partition_rows"]
+    assert not outside_direct_window["admissible_partition_rows"]
+    assert outside_direct_window["best_partition_saving_exponent"] == 0
+    assert not outside_direct_window["published_hypotheses_verified"]
+    assert not outside_direct_window[
+        "published_composite_zero_direct_partition_coverage"
+    ]
+
+    note = OFFDIAGONAL_NOTE.read_text()
+    for marker in (
+        "### 9.128 All product partitions isolate the composite resonant skeleton",
+        r"\eta_{\rm BG}^{\rm part}",
+        r"\left(\frac34,\frac34,\frac34,\frac34\right)",
+        r"\eta_{\rm BG}^{\rm part}=\frac3{16}",
+        "three equal positive coordinates",
+        "bourgain_garaev_all_product_partition_polytope_audit",
+    ):
+        assert marker in note
+
+
+def test_retained_product_spectrum_duality_covers_resonant_fixed_atoms() -> None:
+    finite_audit = getattr(
+        coverage_audit,
+        "retained_product_spectrum_duality_audit",
+        None,
+    )
+    assert finite_audit is not None, "retained product-spectrum audit is missing"
+
+    finite = finite_audit(
+        squarefree_modulus=30,
+        inverse_coefficient=7,
+        direct_coefficient=11,
+        h_coefficients={1: F(2), 7: F(-1), 11: F(3)},
+        delta_coefficients={1: F(1), 13: F(2), 17: F(-1)},
+        product_factor_coefficients=(
+            {1: F(1), 7: F(1), 11: F(-1)},
+            {1: F(2), 7: F(1), 17: F(-2)},
+        ),
+    )
+    assert finite["direct_phase_polynomial_equals_residue_fourier_pairing"]
+    assert finite["inverse_map_permuted_unit_frequencies_exact"]
+    assert finite["primitive_fourier_energy_ramanujan_identity_exact"]
+    assert finite["primitive_h_delta_fourier_energy_raw"] == F(372)
+    assert finite["normalized_primitive_h_delta_energy"] == F(62, 5)
+    assert finite["direct_primitive_fourier_energy_raw"] == pytest.approx(372)
+    assert finite["direct_normalized_primitive_energy"] == pytest.approx(62 / 5)
+    legacy_primitive = coverage_audit.primitive_product_residue_energy_audit(
+        squarefree_modulus=30,
+        h_coefficients={1: 2, 7: -1, 11: 3},
+        delta_coefficients={1: 1, 13: 2, 17: -1},
+    )
+    assert legacy_primitive["primitive_parseval_identity_exact"]
+    assert finite["direct_normalized_primitive_energy"] == pytest.approx(
+        legacy_primitive["parseval_primitive_energy"]
+    )
+    assert finite["integer_product_convolution_has_collision"]
+    assert finite["product_support_crosses_modulus_multiple"]
+    assert finite["product_support_maximum"] == 187
+    assert finite["interval_residue_multiplicity_ceiling"] >= 2
+    assert finite["product_residue_energy"] > finite[
+        "integer_product_coefficient_energy"
+    ]
+    assert finite[
+        "product_residue_energy_within_exact_residue_cauchy_bound"
+    ]
+    assert finite[
+        "product_residue_energy_within_interval_endpoint_bound"
+    ]
+    assert finite["cauchy_operator_bound_holds"]
+    assert finite["h_delta_factorization_retained"]
+    assert finite["product_factorization_retained"]
+    assert finite["fixed_coupled_phase_atom_operator_bound_proved"]
+    assert finite["arbitrary_fixed_direct_phase_covered"]
+    assert not finite["physical_packet_adapter_proved"]
+    assert not finite["global_varying_modulus_reassembly_proved"]
+    assert not finite["coupled_kernel_gate_closed"]
+
+    zero_direct = finite_audit(
+        squarefree_modulus=30,
+        inverse_coefficient=7,
+        direct_coefficient=0,
+        h_coefficients={1: F(2), 7: F(-1), 11: F(3)},
+        delta_coefficients={1: F(1), 13: F(2), 17: F(-1)},
+        product_factor_coefficients=(
+            {1: F(1), 7: F(1), 11: F(-1)},
+            {1: F(2), 7: F(1), 17: F(-2)},
+        ),
+    )
+    assert zero_direct["direct_phase_polynomial_equals_residue_fourier_pairing"]
+    assert zero_direct["cauchy_upper_bound_squared"] == finite[
+        "cauchy_upper_bound_squared"
+    ]
+
+    with pytest.raises(ValueError, match="inverse_coefficient"):
+        finite_audit(
+            squarefree_modulus=30,
+            inverse_coefficient=6,
+            direct_coefficient=11,
+            h_coefficients={1: F(1)},
+            delta_coefficients={1: F(1)},
+            product_factor_coefficients=({1: F(1)},),
+        )
+    with pytest.raises(ValueError, match="product-factor label"):
+        finite_audit(
+            squarefree_modulus=30,
+            inverse_coefficient=7,
+            direct_coefficient=11,
+            h_coefficients={1: F(1)},
+            delta_coefficients={1: F(1)},
+            product_factor_coefficients=({2: F(1)},),
+        )
+
+    exponent_audit = getattr(
+        coverage_audit,
+        "retained_product_spectrum_exponent_audit",
+        None,
+    )
+    assert exponent_audit is not None, "retained product-spectrum ledger is missing"
+    common = {
+        "conductor_exponent": F(3),
+        "h_length_exponent": F(5, 2),
+        "delta_length_exponent": F(5, 2),
+        "required_saving_exponent": F(2),
+        "squarefree_conductor": True,
+        "unit_inverse_phase_and_product_support": True,
+        "separated_h_delta_projective_adapter_verified": True,
+        "divisor_bounded_product_convolution_verified": True,
+    }
+
+    square_root_pair = exponent_audit(
+        product_total_length_exponent=F(3),
+        **common,
+    )
+    assert square_root_pair["primitive_h_delta_energy_exponent"] == F(5)
+    assert square_root_pair["product_residue_energy_exponent"] == F(3)
+    assert square_root_pair["operator_bound_exponent"] == F(11, 2)
+    assert square_root_pair["trivial_amplitude_exponent"] == F(8)
+    assert square_root_pair["power_saving_exponent"] == F(5, 2)
+    assert square_root_pair["fixed_coupled_phase_atom_target_met"]
+
+    three_quarters = exponent_audit(
+        product_total_length_exponent=F(9, 4),
+        **common,
+    )
+    assert three_quarters["operator_bound_exponent"] == F(41, 8)
+    assert three_quarters["trivial_amplitude_exponent"] == F(29, 4)
+    assert three_quarters["power_saving_exponent"] == F(17, 8)
+    assert three_quarters["fixed_coupled_phase_atom_target_met"]
+
+    threshold = exponent_audit(
+        product_total_length_exponent=F(2),
+        **common,
+    )
+    assert threshold["power_saving_exponent"] == F(2)
+    assert threshold["fixed_coupled_phase_atom_target_met"]
+
+    below_threshold = exponent_audit(
+        product_total_length_exponent=F(3, 2),
+        **common,
+    )
+    assert below_threshold["power_saving_exponent"] == F(7, 4)
+    assert not below_threshold["fixed_coupled_phase_atom_target_met"]
+
+    missing_adapter = exponent_audit(
+        product_total_length_exponent=F(3),
+        **{
+            **common,
+            "separated_h_delta_projective_adapter_verified": False,
+        },
+    )
+    assert missing_adapter["power_saving_exponent"] == F(5, 2)
+    assert not missing_adapter["published_hypotheses_verified"]
+    assert not missing_adapter["fixed_coupled_phase_atom_target_met"]
+    assert not missing_adapter["global_varying_modulus_reassembly_proved"]
+    assert not missing_adapter["coupled_kernel_gate_closed"]
+
+    for hypothesis in (
+        "squarefree_conductor",
+        "unit_inverse_phase_and_product_support",
+        "separated_h_delta_projective_adapter_verified",
+        "divisor_bounded_product_convolution_verified",
+    ):
+        rejected = exponent_audit(
+            product_total_length_exponent=F(3),
+            **{**common, hypothesis: False},
+        )
+        assert rejected["power_saving_exponent"] == F(5, 2)
+        assert not rejected["published_hypotheses_verified"]
+        assert not rejected["fixed_coupled_phase_atom_target_met"]
+
+    note = OFFDIAGONAL_NOTE.read_text()
+    for marker in (
+        "### 9.129 Retaining the product spectrum closes the resonant fixed atoms",
+        r"\mathcal E_{G}^{\rm prod}(V)",
+        r"\eta_{0}^{\rm spec}(3,x)=1+\frac{x}{2}",
+        r"\eta_{0}^{\rm spec}\left(3,\frac94\right)=\frac{17}{8}",
+        "retained_product_spectrum_duality_audit",
+    ):
+        assert marker in note
+
+
+def test_ramanujan_cofactor_lifts_into_total_primitive_spectrum() -> None:
+    finite_audit = getattr(
+        coverage_audit,
+        "ramanujan_lifted_retained_product_spectrum_audit",
+        None,
+    )
+    assert finite_audit is not None, "Ramanujan-lifted spectrum audit is missing"
+
+    finite = finite_audit(
+        active_squarefree_modulus=30,
+        joint_inactive_squarefree_cofactor=7,
+        common_inactive_squarefree_cofactor=11,
+        physical_direct_label=5,
+        h_coefficients={1: F(2), 6: F(-1), 11: F(3)},
+        delta_coefficients={1: F(1), 14: F(2), 17: F(-1)},
+        product_factor_coefficients=(
+            {1: F(1), 7: F(1), 11: F(-1)},
+            {1: F(2), 13: F(1), 17: F(-2)},
+        ),
+    )
+    assert finite["inactive_squarefree_cofactor"] == 77
+    assert finite["total_squarefree_modulus"] == 2310
+    assert finite["active_and_inactive_moduli_coprime"]
+    assert finite["derived_active_inverse_multiplier"] == 23
+    assert finite["derived_active_direct_coefficient"] == 25
+    assert finite["physical_phase_bridge_exact"]
+    assert finite["physical_separate_ramanujan_cofactors_combine_exactly"]
+    assert finite["ramanujan_expansion_exact"]
+    assert finite["lifted_phase_polynomial_identity_exact"]
+    assert finite["every_fixed_cofactor_frequency_map_injective"]
+    assert finite["every_lifted_frequency_is_primitive"]
+    assert finite["joint_product_cofactor_frequency_map_bijective"]
+    assert finite["direct_ramanujan_scalar_absolute_value_at_most_one"]
+    assert finite["ramanujan_average_jensen_cauchy_bound_holds"]
+    assert finite["normalized_ramanujan_jensen_gain"] == 60
+    assert finite["inactive_cofactor_absorbed_with_inverse_phi_gain"]
+    assert finite["inactive_cofactor_absorbed_without_phi_power_loss"]
+    assert finite["fixed_physical_cofactor_atom_operator_bound_proved"]
+    assert not finite["signed_varying_conductor_reassembly_proved"]
+    assert not finite["coupled_kernel_gate_closed"]
+
+    with pytest.raises(ValueError, match="coprime"):
+        finite_audit(
+            active_squarefree_modulus=30,
+            joint_inactive_squarefree_cofactor=15,
+            common_inactive_squarefree_cofactor=7,
+            physical_direct_label=5,
+            h_coefficients={1: F(1)},
+            delta_coefficients={1: F(1)},
+            product_factor_coefficients=({1: F(1)},),
+        )
+    with pytest.raises(ValueError, match="product-factor label"):
+        finite_audit(
+            active_squarefree_modulus=30,
+            joint_inactive_squarefree_cofactor=7,
+            common_inactive_squarefree_cofactor=11,
+            physical_direct_label=5,
+            h_coefficients={1: F(1)},
+            delta_coefficients={1: F(1)},
+            product_factor_coefficients=({2: F(1)},),
+        )
+
+    exponent_audit = getattr(
+        coverage_audit,
+        "ramanujan_lifted_retained_product_exponent_audit",
+        None,
+    )
+    assert exponent_audit is not None, "Ramanujan-lifted exponent audit is missing"
+    common = {
+        "total_modulus_exponent": F(3),
+        "h_length_exponent": F(5, 2),
+        "delta_length_exponent": F(5, 2),
+        "required_saving_exponent": F(2),
+        "squarefree_coprime_conductor_factorization_verified": True,
+        "unit_product_support_and_inverse_multiplier_verified": True,
+        "smooth_physical_tensor_adapter_verified": True,
+        "divisor_bounded_product_convolution_verified": True,
+    }
+    high_active = exponent_audit(
+        active_modulus_exponent=F(9, 4),
+        product_total_length_exponent=F(5, 2),
+        **common,
+    )
+    assert high_active["primitive_h_delta_energy_exponent"] == F(5)
+    assert high_active["product_residue_energy_exponent"] == F(11, 4)
+    assert high_active["operator_bound_exponent"] == F(5)
+    assert high_active["power_saving_exponent"] == F(5, 2)
+    assert high_active["balanced_saving_closed_form"] == F(5, 2)
+    assert high_active["fixed_physical_cofactor_atom_target_met"]
+
+    threshold = exponent_audit(
+        active_modulus_exponent=F(2),
+        product_total_length_exponent=F(3),
+        **common,
+    )
+    assert threshold["power_saving_exponent"] == F(5, 2)
+    assert threshold["fixed_physical_cofactor_atom_target_met"]
+
+    low_active = exponent_audit(
+        active_modulus_exponent=F(3, 2),
+        product_total_length_exponent=F(3),
+        **common,
+    )
+    assert low_active["power_saving_exponent"] == F(5, 2)
+    assert low_active["fixed_physical_cofactor_atom_target_met"]
+
+    short_product = exponent_audit(
+        active_modulus_exponent=F(3),
+        product_total_length_exponent=F(3, 2),
+        **common,
+    )
+    assert short_product["power_saving_exponent"] == F(7, 4)
+    assert not short_product["fixed_physical_cofactor_atom_target_met"]
+
+    missing_adapter = exponent_audit(
+        active_modulus_exponent=F(9, 4),
+        product_total_length_exponent=F(5, 2),
+        **{**common, "smooth_physical_tensor_adapter_verified": False},
+    )
+    assert missing_adapter["power_saving_exponent"] == F(5, 2)
+    assert not missing_adapter["published_hypotheses_verified"]
+    assert not missing_adapter["fixed_physical_cofactor_atom_target_met"]
+    assert not missing_adapter["signed_varying_conductor_reassembly_proved"]
+    assert not missing_adapter["coupled_kernel_gate_closed"]
+
+    note = OFFDIAGONAL_NOTE.read_text()
+    for marker in (
+        "### 9.130 The Ramanujan cofactor lifts to the total primitive spectrum",
+        r"\frac{c_K(a)}{\varphi(K)}",
+        r"\iota_u(x):=-KA\bar x+Gu",
+        r"\eta_0^{\rm Ram}",
+        r"x\geq\gamma-1",
+        "ramanujan_lifted_retained_product_spectrum_audit",
+    ):
+        assert marker in note
+
+
+def test_fixed_total_modulus_reassembles_supplied_conductor_partitions() -> None:
+    """A wrong CRT map, phi normalization, or partition count breaks this."""
+
+    audit = getattr(
+        coverage_audit,
+        "fixed_total_modulus_conductor_partition_energy_audit",
+        None,
+    )
+    assert audit is not None, "fixed-total-modulus partition audit is missing"
+
+    result = audit(
+        total_squarefree_modulus=6,
+        partition_rows=(
+            {
+                "row_label": "G1-Q2",
+                "active_squarefree_modulus": 1,
+                "joint_inactive_squarefree_cofactor": 2,
+                "common_inactive_squarefree_cofactor": 3,
+                "physical_direct_label": 0,
+                "partition_coefficient": F(1),
+                "product_residue_coefficients": {0: F(1)},
+            },
+            {
+                "row_label": "G1-Q3",
+                "active_squarefree_modulus": 1,
+                "joint_inactive_squarefree_cofactor": 3,
+                "common_inactive_squarefree_cofactor": 2,
+                "physical_direct_label": 0,
+                "partition_coefficient": F(-1),
+                "product_residue_coefficients": {0: F(1)},
+            },
+            {
+                "row_label": "G2-Q6",
+                "active_squarefree_modulus": 2,
+                "joint_inactive_squarefree_cofactor": 3,
+                "common_inactive_squarefree_cofactor": 1,
+                "physical_direct_label": 0,
+                "partition_coefficient": F(1),
+                "product_residue_coefficients": {1: F(1)},
+            },
+            {
+                "row_label": "G3-Q6",
+                "active_squarefree_modulus": 3,
+                "joint_inactive_squarefree_cofactor": 2,
+                "common_inactive_squarefree_cofactor": 1,
+                "physical_direct_label": 0,
+                "partition_coefficient": F(1),
+                "product_residue_coefficients": {1: F(1), 2: F(-1)},
+            },
+            {
+                "row_label": "G6-Q6",
+                "active_squarefree_modulus": 6,
+                "joint_inactive_squarefree_cofactor": 1,
+                "common_inactive_squarefree_cofactor": 1,
+                "physical_direct_label": 0,
+                "partition_coefficient": F(1),
+                "product_residue_coefficients": {1: F(2)},
+            },
+        ),
+    )
+    assert result["distinct_active_conductors"] == (1, 2, 3, 6)
+    assert result["repeated_active_conductor_rows_present"]
+    assert result["all_supplied_partition_factorizations_exact"]
+    assert result["all_joint_frequency_maps_bijective"]
+    assert result["all_lifted_frequencies_primitive"]
+    assert result["all_row_energy_identities_exact"]
+    assert result["sector_and_phase_label_fixed_outside_partition_family"]
+    assert result["row_energy_formula_sum"] == F(15, 2)
+    assert result["combined_coefficient_energy"] == pytest.approx(F(25, 2))
+    assert result["partition_cauchy_upper_bound"] == F(75, 2)
+    assert result["partition_cauchy_bound_holds"]
+    assert result["fixed_total_modulus_conductor_partition_reassembly_proved"]
+    assert not result[
+        "signed_varying_total_modulus_and_phase_reassembly_proved"
+    ]
+    assert not result["coupled_kernel_gate_closed"]
+
+    nonzero_direct = audit(
+        total_squarefree_modulus=6,
+        partition_rows=(
+            {
+                "row_label": "nonzero-direct-G1",
+                "active_squarefree_modulus": 1,
+                "joint_inactive_squarefree_cofactor": 2,
+                "common_inactive_squarefree_cofactor": 3,
+                "physical_direct_label": 1,
+                "partition_coefficient": F(1),
+                "product_residue_coefficients": {0: F(1)},
+            },
+        ),
+    )
+    nonzero_row = nonzero_direct["partition_rows"][0]
+    assert nonzero_row["normalized_inactive_direct_ramanujan_scalar"] == F(1, 2)
+    assert nonzero_row["row_energy_formula"] == F(1, 8)
+    assert nonzero_direct["combined_coefficient_energy"] == pytest.approx(F(1, 8))
+
+
+def test_fixed_total_modulus_divisor_sum_removes_active_conductor_loss() -> None:
+    """The X^2/G term must collapse to X^2/s after divisor reassembly."""
+
+    divisor_audit = getattr(
+        coverage_audit,
+        "fixed_total_modulus_divisor_energy_envelope_audit",
+        None,
+    )
+    assert divisor_audit is not None, "fixed-modulus divisor audit is missing"
+    divisor_result = divisor_audit(
+        total_squarefree_modulus=30,
+        product_support_length=12,
+    )
+    assert divisor_result["inverse_totient_divisor_sum"] == F(15, 4)
+    assert divisor_result["cofactor_over_totient_divisor_sum"] == F(135, 8)
+    assert divisor_result["direct_partition_energy_envelope"] == F(126)
+    assert divisor_result["total_modulus_energy_envelope"] == F(126)
+    assert divisor_result["active_conductor_losses_collapse_exactly"]
+    assert divisor_result["soft_divisor_cost_only"]
+
+    exponent_audit = getattr(
+        coverage_audit,
+        "fixed_total_modulus_partition_exponent_audit",
+        None,
+    )
+    assert exponent_audit is not None, "fixed-modulus exponent audit is missing"
+    common = {
+        "total_modulus_exponent": F(3),
+        "h_length_exponent": F(5, 2),
+        "delta_length_exponent": F(5, 2),
+        "required_saving_exponent": F(2),
+        "fixed_total_modulus_partition_reassembly_verified": True,
+        "sector_and_phase_label_fixed_outside_partition_family": True,
+        "smooth_physical_tensor_adapter_verified": True,
+        "divisor_bounded_partition_multiplicity_verified": True,
+    }
+    maximal = exponent_audit(
+        product_total_length_exponent=F(3),
+        **common,
+    )
+    assert maximal["product_partition_energy_exponent"] == F(3)
+    assert maximal["operator_bound_exponent"] == F(11, 2)
+    assert maximal["power_saving_exponent"] == F(5, 2)
+    assert maximal["fixed_total_modulus_target_met"]
+
+    threshold = exponent_audit(
+        product_total_length_exponent=F(2),
+        **common,
+    )
+    assert threshold["operator_bound_exponent"] == F(5)
+    assert threshold["power_saving_exponent"] == F(2)
+    assert threshold["balanced_target_region_exact"]
+    assert threshold["fixed_total_modulus_target_met"]
+
+    short_product = exponent_audit(
+        product_total_length_exponent=F(3, 2),
+        **common,
+    )
+    assert short_product["power_saving_exponent"] == F(7, 4)
+    assert short_product["balanced_target_region_exact"]
+    assert not short_product["fixed_total_modulus_target_met"]
+    assert short_product["active_conductor_exponent_absent_from_bound"]
+    assert short_product[
+        "sector_and_phase_label_fixed_outside_partition_family"
+    ]
+    assert not short_product[
+        "signed_varying_total_modulus_and_phase_reassembly_proved"
+    ]
+    assert not short_product["coupled_kernel_gate_closed"]
+
+    unfixed_phase = exponent_audit(
+        product_total_length_exponent=F(3),
+        **{
+            **common,
+            "sector_and_phase_label_fixed_outside_partition_family": False,
+        },
+    )
+    assert unfixed_phase["power_saving_exponent"] == F(5, 2)
+    assert not unfixed_phase["published_hypotheses_verified"]
+    assert not unfixed_phase["fixed_total_modulus_target_met"]
+    assert not unfixed_phase[
+        "signed_varying_total_modulus_and_phase_reassembly_proved"
+    ]
+    assert not unfixed_phase["coupled_kernel_gate_closed"]
+
+
+def test_continuous_sector_support_does_not_identify_original_modulus() -> None:
+    """The normalized s~T sector cannot be silently replaced by s~T^3."""
+
+    audit = getattr(
+        coverage_audit,
+        "physical_sector_product_support_bridge_audit",
+        None,
+    )
+    assert audit is not None, "physical sector bridge audit is missing"
+    common = {
+        "original_total_modulus_exponent": F(3),
+        "normalized_sector_modulus_exponent": F(1),
+        "dp_comparable_to_total_modulus_verified": True,
+        "quotient_type_factorization_d_equals_bcn_verified": True,
+        "cross_model_total_modulus_identification_verified": False,
+    }
+    normalized_quarters = audit(
+        factor_exponents=(F(1, 4), F(1, 4), F(1, 4), F(1, 4)),
+        **common,
+    )
+    assert normalized_quarters["product_total_length_exponent"] == F(1)
+    assert normalized_quarters[
+        "product_length_equals_normalized_sector_modulus_exponent"
+    ]
+    assert not normalized_quarters[
+        "product_length_equals_original_total_modulus_exponent"
+    ]
+    assert not normalized_quarters[
+        "fixed_total_modulus_partition_reassembly_applicable"
+    ]
+    assert not normalized_quarters["theta_three_short_product_wedge_removed"]
+    assert not normalized_quarters[
+        "joint_varying_total_modulus_and_phase_estimate_proved"
+    ]
+    assert not normalized_quarters["packet_exhaustive_adapter_from_afe_proved"]
+    assert not normalized_quarters["coupled_kernel_gate_closed"]
+
+    missing_physical_support = audit(
+        factor_exponents=(F(1, 4), F(1, 4), F(1, 4), F(1, 4)),
+        **{**common, "dp_comparable_to_total_modulus_verified": False},
+    )
+    assert not missing_physical_support[
+        "normalized_sector_product_support_identity_verified"
+    ]
+
+    with pytest.raises(ValueError, match="sector denominator"):
+        audit(
+            factor_exponents=(F(1, 2), F(1, 2), F(1, 4), F(1, 4)),
+            **common,
+        )
+
+    with pytest.raises(ValueError, match="equal exponents"):
+        audit(
+            factor_exponents=(F(1, 4), F(1, 4), F(1, 4), F(1, 4)),
+            **{
+                **common,
+                "cross_model_total_modulus_identification_verified": True,
+            },
+        )
+
+    identified_same_scale = audit(
+        original_total_modulus_exponent=F(3),
+        normalized_sector_modulus_exponent=F(3),
+        factor_exponents=(F(3, 4), F(3, 4), F(3, 4), F(3, 4)),
+        dp_comparable_to_total_modulus_verified=True,
+        quotient_type_factorization_d_equals_bcn_verified=True,
+        cross_model_total_modulus_identification_verified=True,
+    )
+    assert identified_same_scale[
+        "fixed_total_modulus_partition_reassembly_applicable"
+    ]
+    assert identified_same_scale["theta_three_short_product_wedge_removed"]
+    assert not identified_same_scale["coupled_kernel_gate_closed"]
+
+
+def test_original_master_product_support_closes_only_the_balanced_maximal_wedge() -> None:
+    """The original Type product is the reduced entry r, not the sector modulus."""
+
+    audit = getattr(
+        coverage_audit,
+        "original_master_type_product_support_audit",
+        None,
+    )
+    assert audit is not None, "original-master product support audit is missing"
+    rows = (
+        # (original r, Type cofactor n, prime-bearing p, b, c, residual u)
+        (13, 1, 13, 1, 1, 1),
+        (30, 6, 5, 2, 3, 1),
+        (210, 30, 7, 2, 3, 5),
+        (2310, 210, 11, 2, 3, 35),
+    )
+    balanced = audit(
+        rows=rows,
+        original_r_length_exponent=F(3),
+        original_s_modulus_exponent=F(3),
+        factor_exponents=(F(3, 4), F(3, 4), F(3, 4), F(3, 4)),
+        original_entry_type_factorization_verified=True,
+        quotient_type_factorization_verified=True,
+        residual_packet_uses_original_master_verified=True,
+    )
+    assert balanced["all_integer_product_identities_exact"]
+    assert balanced["product_total_length_exponent"] == F(3)
+    assert balanced["product_length_equals_original_r_exponent"]
+    assert balanced["balanced_maximal_original_face"]
+    assert balanced["fixed_total_modulus_long_product_threshold_met"]
+    assert balanced["balanced_maximal_short_product_wedge_removed"]
+    assert not balanced["all_core_boxes_short_product_wedge_removed"]
+    assert not balanced["packet_exhaustive_global_adapter_proved"]
+    assert not balanced[
+        "signed_varying_total_modulus_and_phase_reassembly_proved"
+    ]
+    assert not balanced["coupled_kernel_gate_closed"]
+
+    unbalanced = audit(
+        rows=rows,
+        original_r_length_exponent=F(3, 2),
+        original_s_modulus_exponent=F(3),
+        factor_exponents=(F(3, 8), F(3, 8), F(3, 8), F(3, 8)),
+        original_entry_type_factorization_verified=True,
+        quotient_type_factorization_verified=True,
+        residual_packet_uses_original_master_verified=True,
+    )
+    assert unbalanced["product_total_length_exponent"] == F(3, 2)
+    assert not unbalanced["balanced_maximal_original_face"]
+    assert not unbalanced["fixed_total_modulus_long_product_threshold_met"]
+    assert not unbalanced["balanced_maximal_short_product_wedge_removed"]
+
+    with pytest.raises(ValueError, match="n\\*p=r"):
+        audit(
+            rows=((30, 5, 5, 1, 1, 5),),
+            original_r_length_exponent=F(3),
+            original_s_modulus_exponent=F(3),
+            factor_exponents=(F(3, 4),) * 4,
+            original_entry_type_factorization_verified=True,
+            quotient_type_factorization_verified=True,
+            residual_packet_uses_original_master_verified=True,
+        )
+
+    with pytest.raises(ValueError, match="b\\*c\\*u=n"):
+        audit(
+            rows=((30, 6, 5, 2, 2, 1),),
+            original_r_length_exponent=F(3),
+            original_s_modulus_exponent=F(3),
+            factor_exponents=(F(3, 4),) * 4,
+            original_entry_type_factorization_verified=True,
+            quotient_type_factorization_verified=True,
+            residual_packet_uses_original_master_verified=True,
+        )
+
+
+def test_reciprocity_orientation_removes_every_fixed_fibre_short_product_wedge() -> None:
+    """The longer original entry can always be the Type product."""
+
+    audit = getattr(
+        coverage_audit,
+        "reciprocity_oriented_original_master_support_audit",
+        None,
+    )
+    assert audit is not None, "reciprocity-oriented support audit is missing"
+
+    balanced = audit(
+        rows=((210, 143, 55, 30, 7, 2, 3, 5),),
+        original_r_exponent=F(3),
+        original_s_exponent=F(3),
+        original_m_exponent=F(1, 2),
+        original_k_exponent=F(1, 2),
+        delta_exponent=F(5, 2),
+        poisson_exponent=F(5, 2),
+        type_factor_exponents=(F(3, 4),) * 4,
+        symmetric_type_factorization_verified=True,
+        smooth_reciprocity_adapter_verified=True,
+    )
+    assert not balanced["orientation_swapped"]
+    assert balanced["finite_reciprocity_and_support_exact"]
+    assert balanced["oriented_product_exponent"] == F(3)
+    assert balanced["oriented_total_modulus_exponent"] == F(3)
+    assert balanced["primitive_product_label_energy_exponent"] == F(5)
+    assert balanced["product_residue_energy_exponent"] == F(3)
+    assert balanced["fixed_row_squared_bound_exponent"] == F(11)
+    assert balanced["fixed_row_squared_target_exponent"] == F(12)
+    assert balanced["oriented_fixed_fibre_target_met"]
+
+    r_long = audit(
+        rows=((30, 7, -11, 6, 5, 2, 3, 1),),
+        original_r_exponent=F(2),
+        original_s_exponent=F(1),
+        original_m_exponent=F(0),
+        original_k_exponent=F(1),
+        delta_exponent=F(1),
+        poisson_exponent=F(1),
+        type_factor_exponents=(F(1, 2),) * 4,
+        symmetric_type_factorization_verified=True,
+        smooth_reciprocity_adapter_verified=True,
+    )
+    assert not r_long["orientation_swapped"]
+    assert r_long["both_label_exponents_at_most_oriented_modulus"]
+    assert r_long["extra_reciprocal_phase_exponent"] == F(-1)
+    assert r_long["fixed_row_squared_bound_exponent"] == F(6)
+    assert r_long["fixed_row_squared_target_exponent"] == F(6)
+    assert r_long["all_core_boxes_short_product_wedge_removed_at_fixed_fibre"]
+
+    s_long = audit(
+        rows=((7, 30, 11, 6, 5, 2, 3, 1),),
+        original_r_exponent=F(1),
+        original_s_exponent=F(2),
+        original_m_exponent=F(1),
+        original_k_exponent=F(0),
+        delta_exponent=F(1),
+        poisson_exponent=F(1),
+        type_factor_exponents=(F(1, 2),) * 4,
+        symmetric_type_factorization_verified=True,
+        smooth_reciprocity_adapter_verified=True,
+    )
+    assert s_long["orientation_swapped"]
+    assert s_long["rows"][0]["oriented_type_entry"] == 30
+    assert s_long["rows"][0]["reciprocity_exact_mod_one"]
+    assert s_long["oriented_m_exponent"] == F(0)
+    assert s_long["oriented_k_exponent"] == F(1)
+    assert s_long["both_label_exponents_at_most_oriented_modulus"]
+    assert s_long["all_core_boxes_short_product_wedge_removed_at_fixed_fibre"]
+    assert s_long["outer_mobius_weights_retained"]
+    assert not s_long[
+        "signed_varying_oriented_modulus_and_phase_norm_proved"
+    ]
+    assert not s_long["principal_resonant_global_reassembly_proved"]
+    assert not s_long["determinant_nonzero_dispersion_proved"]
+    assert not s_long["coupled_kernel_gate_closed"]
+
+    modulus_one = audit(
+        rows=((1, 30, 11, 6, 5, 2, 3, 1),),
+        original_r_exponent=F(0),
+        original_s_exponent=F(1),
+        original_m_exponent=F(1),
+        original_k_exponent=F(0),
+        delta_exponent=F(0),
+        poisson_exponent=F(0),
+        type_factor_exponents=(F(1), F(0), F(0), F(0)),
+        symmetric_type_factorization_verified=True,
+        smooth_reciprocity_adapter_verified=True,
+    )
+    assert modulus_one["orientation_swapped"]
+    assert modulus_one["oriented_total_modulus_exponent"] == F(0)
+    assert modulus_one["rows"][0]["reciprocity_exact_mod_one"]
+    assert modulus_one["fixed_row_squared_bound_exponent"] == F(2)
+    assert modulus_one["fixed_row_squared_target_exponent"] == F(2)
+    assert modulus_one[
+        "all_core_boxes_short_product_wedge_removed_at_fixed_fibre"
+    ]
+
+    missing_adapter = audit(
+        rows=((7, 30, 11, 6, 5, 2, 3, 1),),
+        original_r_exponent=F(1),
+        original_s_exponent=F(2),
+        original_m_exponent=F(1),
+        original_k_exponent=F(0),
+        delta_exponent=F(1),
+        poisson_exponent=F(1),
+        type_factor_exponents=(F(1, 2),) * 4,
+        symmetric_type_factorization_verified=True,
+        smooth_reciprocity_adapter_verified=False,
+    )
+    assert missing_adapter["finite_reciprocity_and_support_exact"]
+    assert not missing_adapter["oriented_fixed_fibre_target_met"]
+
+    checked_boxes = 0
+    reduced_scales = [F(index, 4) for index in range(13)]
+    afe_scales = [F(index, 4) for index in range(5)]
+    label_scales = [F(index, 4) for index in range(13)]
+    for rho in reduced_scales:
+        for sigma in reduced_scales:
+            for m in afe_scales:
+                for k in afe_scales:
+                    if m + k > 1 or k + sigma != m + rho:
+                        continue
+                    for ell in label_scales:
+                        if ell > m + rho - 1:
+                            continue
+                        for h in label_scales:
+                            if h > sigma - m or ell + h > rho + sigma - 1:
+                                continue
+                            swapped = sigma > rho
+                            if swapped:
+                                row = (
+                                    1 if rho == 0 else 7,
+                                    30,
+                                    11,
+                                    6,
+                                    5,
+                                    2,
+                                    3,
+                                    1,
+                                )
+                            else:
+                                row = (
+                                    30,
+                                    1 if sigma == 0 else 7,
+                                    -11,
+                                    6,
+                                    5,
+                                    2,
+                                    3,
+                                    1,
+                                )
+                            product_exponent = max(rho, sigma)
+                            grid_result = audit(
+                                rows=(row,),
+                                original_r_exponent=rho,
+                                original_s_exponent=sigma,
+                                original_m_exponent=m,
+                                original_k_exponent=k,
+                                delta_exponent=ell,
+                                poisson_exponent=h,
+                                type_factor_exponents=(
+                                    product_exponent,
+                                    F(0),
+                                    F(0),
+                                    F(0),
+                                ),
+                                symmetric_type_factorization_verified=True,
+                                smooth_reciprocity_adapter_verified=True,
+                            )
+                            assert grid_result[
+                                "all_core_boxes_short_product_wedge_removed_at_fixed_fibre"
+                            ]
+                            checked_boxes += 1
+    assert checked_boxes == 5936
+
+    with pytest.raises(ValueError, match="gcd"):
+        audit(
+            rows=((6, 30, 1, 6, 5, 2, 3, 1),),
+            original_r_exponent=F(1),
+            original_s_exponent=F(2),
+            original_m_exponent=F(1),
+            original_k_exponent=F(0),
+            delta_exponent=F(1),
+            poisson_exponent=F(1),
+            type_factor_exponents=(F(1, 2),) * 4,
+            symmetric_type_factorization_verified=True,
+            smooth_reciprocity_adapter_verified=True,
+        )
+
+    with pytest.raises(ValueError, match="core polytope"):
+        audit(
+            rows=((7, 30, 1, 6, 5, 2, 3, 1),),
+            original_r_exponent=F(1),
+            original_s_exponent=F(2),
+            original_m_exponent=F(0),
+            original_k_exponent=F(0),
+            delta_exponent=F(1),
+            poisson_exponent=F(1),
+            type_factor_exponents=(F(1, 2),) * 4,
+            symmetric_type_factorization_verified=True,
+            smooth_reciprocity_adapter_verified=True,
+        )
+
+
+def test_oriented_global_reduced_frequency_resonance_is_one_projector() -> None:
+    """All cross-modulus resonances group by one reduced fraction."""
+
+    audit = getattr(
+        coverage_audit,
+        "oriented_global_reduced_frequency_projector_audit",
+        None,
+    )
+    assert audit is not None, "oriented reduced-frequency audit is missing"
+    result = audit(
+        rows=(
+            # (v,w,h,delta,n,p,b,c,u,packet vector)
+            (6, 35, 2, 3, 7, 5, 7, 1, 1, (F(1), F(2))),
+            (10, 21, 2, 3, 3, 7, 3, 1, 1, (F(3), F(-1))),
+            (15, 14, 2, 3, 2, 7, 2, 1, 1, (F(2), F(4))),
+            (10, 7, 2, 3, 1, 7, 1, 1, 1, (F(-1), F(3))),
+        )
+    )
+    assert result["all_arithmetic_reductions_exact"]
+    assert result["rows"][0]["reduced_frequency"] == (1, 0)
+    assert result["rows"][1]["reduced_frequency"] == (5, 2)
+    assert result["rows"][2]["reduced_frequency"] == (5, 2)
+    assert result["rows"][3]["reduced_frequency"] == (5, 1)
+    assert result["grouped_signed_packet_vectors"] == {
+        (1, 0): (F(1), F(2)),
+        (5, 2): (F(5), F(3)),
+        (5, 1): (F(1), F(-3)),
+    }
+    assert result["principal_ramanujan_density_vector"] == (
+        F(-1, 2),
+        F(2),
+    )
+    assert result["centered_linear_phase_coefficients"] == {
+        (1, 0): (F(3, 2), F(0)),
+        (5, 2): (F(5), F(3)),
+        (5, 1): (F(1), F(-3)),
+    }
+    assert result["principal_plus_centered_linear_coefficients"] == {
+        (1, 0): (F(1), F(2)),
+        (5, 2): (F(5), F(3)),
+        (5, 1): (F(1), F(-3)),
+    }
+    assert result["canonical_ramanujan_linear_split_exact"]
+    assert result["principal_conductor_one_energy"] == F(5)
+    assert result["nonprincipal_resonant_energy"] == F(44)
+    assert result["reduced_frequency_projector_energy"] == F(49)
+    assert result["resonant_pair_sum"] == F(49)
+    assert result["resonant_pair_sum_equals_projector_energy"]
+    assert result["resonant_ordered_pair_count"] == 6
+    assert result["nonresonant_ordered_pair_count"] == 10
+    assert result[
+        "common_reduced_conductor_mobius_sign_cancels_in_resonant_pairs"
+    ]
+    assert result["product_label_factorization_retained"]
+    assert result["two_mobius_weights_retained_before_global_square"]
+    assert result["oriented_global_ramanujan_split_proved"]
+    assert result["rowwise_centered_inverse_kernel_has_zero_unit_mean"]
+    assert not result["oriented_to_joint_double_character_packet_map_proved"]
+    assert result["principal_q_one_projector_extracted"]
+    assert result["nonprincipal_resonant_projector_extracted"]
+    assert not result["principal_afe_reflection_reassembly_proved"]
+    assert not result["nonprincipal_resonant_projector_bound_proved"]
+    assert not result["nonresonant_determinant_dispersion_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    with pytest.raises(ValueError, match="coprime"):
+        audit(
+            rows=((6, 21, 2, 3, 3, 7, 3, 1, 1, (F(1),)),)
+        )
+    with pytest.raises(ValueError, match="n\\*p=w"):
+        audit(
+            rows=((10, 21, 2, 3, 1, 7, 1, 1, 1, (F(1),)),)
+        )
+    with pytest.raises(ValueError, match="nonzero"):
+        audit(
+            rows=((10, 21, 0, 3, 3, 7, 3, 1, 1, (F(1),)),)
+        )
+
+
+def test_nonprincipal_projector_retains_cofactor_and_type_convolution() -> None:
+    """One separated q-row is an exact signed multiplicative convolution."""
+
+    audit = getattr(
+        coverage_audit,
+        "oriented_nonprincipal_cofactor_type_convolution_audit",
+        None,
+    )
+    assert audit is not None, "nonprincipal convolution audit is missing"
+    result = audit(
+        reduced_conductor=3,
+        cofactor_product_rows=(
+            # (d1,d2,h1,delta1,weight)
+            (2, 5, 1, 1, F(2)),
+            (2, 7, 1, 2, F(3)),
+        ),
+        type_rows=(
+            # (w,n,p,b,c,u,weight)
+            (11, 1, 11, 1, 1, 1, F(5)),
+            (13, 1, 13, 1, 1, 1, F(7)),
+        ),
+    )
+    assert result["all_cofactor_product_splits_exact"]
+    assert result["principal_character_primitive_conductor"] == 1
+    assert result["ramanujan_principal_density"] == F(-1, 2)
+    assert result["outer_sign_times_ramanujan_density"] == F(1, 2)
+    assert result["ramanujan_bridge_to_joint_master_principal_row"]
+    assert result[
+        "ambient_reduced_modulus_is_not_primitive_character_conductor"
+    ]
+    assert result["cofactor_product_residue_function"] == {
+        1: F(2),
+        2: F(3),
+    }
+    assert result["type_residue_function"] == {
+        1: F(-7),
+        2: F(-5),
+    }
+    assert result["signed_ratio_convolution"] == {
+        1: F(31),
+        2: F(29),
+    }
+    assert result["ratio_convolution_energy"] == F(1802)
+    assert result["cofactor_product_total_mass"] == F(5)
+    assert result["type_total_mass"] == F(-12)
+    assert result["principal_character_mean"] == F(30)
+    assert result["centered_ratio_convolution"] == {
+        1: F(1),
+        2: F(-1),
+    }
+    assert result["principal_character_energy"] == F(1800)
+    assert result["linear_principal_ramanujan_contribution"] == F(-30)
+    assert result["linear_principal_density_formula_exact"]
+    assert result["centered_ratio_convolution_has_zero_total_mass"]
+    assert result["centered_character_energy"] == F(2)
+    assert result["principal_plus_centered_energy_is_total"]
+    assert result["expanded_resonant_energy"] == F(1802)
+    assert result["convolution_energy_equals_expanded_resonant_energy"]
+    assert result["resonant_ordered_pair_count"] == 8
+    assert result["cofactor_double_mobius_sign_retained"]
+    assert result["type_mobius_sign_retained"]
+    assert result["common_conductor_sign_cancels_in_principal_density"]
+    assert result["product_label_factorization_retained"]
+    assert result["multiplicative_ratio_convolution_factorization_exact"]
+    assert result["multiplicative_character_parseval_identity_available"]
+    assert not result["general_physical_unit_mask_divisor_adapter_proved"]
+    assert not result["varying_q_common_coefficient_adapter_proved"]
+    assert not result["q_projector_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    with pytest.raises(ValueError, match="pairwise coprime"):
+        audit(
+            reduced_conductor=3,
+            cofactor_product_rows=((3, 5, 1, 1, F(1)),),
+            type_rows=((11, 1, 11, 1, 1, 1, F(1)),),
+        )
+    with pytest.raises(ValueError, match="unit at every"):
+        audit(
+            reduced_conductor=3,
+            cofactor_product_rows=((2, 5, 1, 1, F(1)),),
+            type_rows=((5, 1, 5, 1, 1, 1, F(1)),),
+        )
+
+
+def test_oriented_canonical_centering_commutes_with_exact_type_split() -> None:
+    """Center first or split first gives the same nine-block projector."""
+
+    audit = getattr(
+        coverage_audit,
+        "oriented_canonical_centering_type_split_audit",
+        None,
+    )
+    assert audit is not None, "oriented centered Type-split audit is missing"
+    result = audit(
+        rows=(
+            # (v,w,h,delta,n,p,b,c,u,packet vector)
+            (5, 1, 1, 1, 1, 1, 1, 1, 1, (F(1), F(2))),
+            (5, 6, 1, 1, 6, 1, 2, 3, 1, (F(3), F(1))),
+        ),
+        short_cutoff_u=1,
+        short_cutoff_v=1,
+    )
+    assert result["rowwise_remainder_free_type_split_exact"]
+    assert result["type_block_signed_frequency_vectors"] == {
+        "small": {(5, 4): (F(-1), F(-2))},
+        "I": {(5, 4): (F(3), F(1))},
+        "II": {(5, 4): (F(-6), F(-2))},
+    }
+    assert result["type_blocks_recombine_to_raw_oriented_master"]
+    assert result["type_block_principal_vectors"] == {
+        "small": (F(1, 4), F(1, 2)),
+        "I": (F(-3, 4), F(-1, 4)),
+        "II": (F(3, 2), F(1, 2)),
+    }
+    assert result["canonical_centering_commutes_with_type_split"]
+    assert result["ordered_type_cross_energies"] == {
+        ("small", "small"): F(5),
+        ("small", "I"): F(-5),
+        ("small", "II"): F(10),
+        ("I", "small"): F(-5),
+        ("I", "I"): F(10),
+        ("I", "II"): F(-20),
+        ("II", "small"): F(10),
+        ("II", "I"): F(-20),
+        ("II", "II"): F(40),
+    }
+    assert result["all_nine_ordered_cross_type_blocks_retained"]
+    assert result["ordered_cross_type_sum"] == F(25)
+    assert result["original_reduced_frequency_projector_energy"] == F(25)
+    assert result["nine_cross_type_blocks_recombine_to_projector"]
+    assert result["two_mobius_weights_and_product_label_retained"]
+    assert not result["ordered_cross_type_analytic_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_oriented_principal_cofactor_and_type_signs_fuse_exactly() -> None:
+    """The canonical principal row has one moving-gcd Möbius sign."""
+
+    audit = getattr(
+        coverage_audit,
+        "oriented_principal_cofactor_type_mobius_fusion_audit",
+        None,
+    )
+    assert audit is not None, "oriented principal Möbius fusion is missing"
+    result = audit(
+        rows=(
+            # (v,w,h,delta,n,p,b,c,u,packet vector)
+            (6, 35, 2, 3, 7, 5, 7, 1, 1, (F(1), F(2))),
+            (10, 21, 2, 3, 3, 7, 3, 1, 1, (F(3), F(-1))),
+            (15, 14, 2, 3, 2, 7, 2, 1, 1, (F(2), F(4))),
+            (10, 7, 2, 3, 1, 7, 1, 1, 1, (F(-1), F(3))),
+        ),
+        short_cutoff_u=1,
+        short_cutoff_v=1,
+    )
+    assert result["cofactor_type_map_is_bijective_on_every_row"]
+    assert [row["fused_mobius_entry"] for row in result["rows"]] == [
+        210,
+        42,
+        42,
+        14,
+    ]
+    assert result["old_principal_vector"] == (F(-1, 2), F(2))
+    assert result["fused_one_mobius_principal_vector"] == (
+        F(-1, 2),
+        F(2),
+    )
+    assert result["principal_two_to_one_mobius_fusion_exact"]
+    assert result["fused_type_block_vectors"] == {
+        "small": (F(0), F(0)),
+        "I": (F(-2), F(-7, 2)),
+        "II": (F(3, 2), F(11, 2)),
+    }
+    assert result["fused_one_mobius_type_split_exact"]
+    assert result["principal_mobius_sources_before_fusion"] == 2
+    assert result["principal_mobius_sources_after_fusion"] == 1
+    assert not result["fused_principal_analytic_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    top = audit(
+        rows=((5, 6, 1, 1, 6, 1, 2, 3, 1, (F(2), F(1))),),
+        short_cutoff_u=1,
+        short_cutoff_v=1,
+    )
+    assert top["rows"][0]["inactive_cofactor"] == 1
+    assert top["rows"][0]["fused_mobius_entry"] == 6
+    assert top["rows"][0]["top_conductor_fusion_is_identity"]
+    assert top["top_conductor_still_requires_length_type_mean"]
+
+
+def test_generic_fourth_moment_misses_the_top_reduced_conductor() -> None:
+    """Primitive fourth moments omit an even larger principal row."""
+
+    audit = getattr(
+        coverage_audit,
+        "optimistic_resonant_fourth_moment_envelope_audit",
+        None,
+    )
+    assert audit is not None, "resonant fourth-moment envelope is missing"
+
+    top = audit(
+        reduced_conductor_exponent=F(3),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        product_label_count_exponent=F(5),
+        cofactor_convolution_excess_exponent=F(0),
+        type_convolution_excess_exponent=F(0),
+        principal_type_mean_exponent=F(3),
+        common_coefficient_across_moduli_verified=True,
+        physical_unit_mask_adapter_verified=True,
+        principal_character_mean_bound_verified=False,
+    )
+    assert top["inactive_cofactor_exponent"] == F(0)
+    assert top["effective_left_sequence_length_exponent"] == F(5)
+    assert top["left_fourth_moment_exponent"] == F(20)
+    assert top["type_fourth_moment_exponent"] == F(12)
+    assert top["ideal_divisor_bounded_primitive_projector_exponent"] == F(13)
+    assert top["squared_local_target_exponent"] == F(12)
+    assert top["ideal_primitive_remaining_deficit"] == F(1)
+    assert top[
+        "ideal_required_signed_conductor_linear_saving_exponent"
+    ] == F(1, 2)
+    assert top["ideal_required_signed_conductor_power_of_q"] == F(1, 6)
+    assert top["required_signed_gain_is_below_square_root_conductor"]
+    assert not top["centered_signed_conductor_gain_gate_proved"]
+    assert top["total_convolution_excess_budget"] == F(-2)
+    assert not top[
+        "generic_primitive_fourth_moment_can_meet_target_even_ideally"
+    ]
+    assert top["principal_character_projector_bound_exponent"] == F(16)
+    assert top["required_principal_type_mean_exponent"] == F(1)
+    assert top[
+        "required_principal_type_amplitude_saving_exponent"
+    ] == F(2)
+    assert top["principal_character_remaining_deficit"] == F(4)
+    assert not top["principal_character_meets_target"]
+    assert not top["primitive_fourth_moment_projection_covers_subfamily"]
+    assert not top["full_projector_covered_by_this_route"]
+
+    transition = audit(
+        reduced_conductor_exponent=F(2),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        product_label_count_exponent=F(5),
+        cofactor_convolution_excess_exponent=F(0),
+        type_convolution_excess_exponent=F(0),
+        principal_type_mean_exponent=F(3),
+        common_coefficient_across_moduli_verified=True,
+        physical_unit_mask_adapter_verified=True,
+        principal_character_mean_bound_verified=False,
+    )
+    assert transition["effective_left_sequence_length_exponent"] == F(4)
+    assert transition[
+        "weighted_primitive_projector_bound_exponent"
+    ] == F(12)
+    assert transition[
+        "generic_primitive_fourth_moment_can_meet_target_even_ideally"
+    ]
+    assert transition[
+        "ideal_required_signed_conductor_linear_saving_exponent"
+    ] == F(0)
+    assert transition["ideal_required_signed_conductor_power_of_q"] == F(0)
+    assert transition["principal_character_projector_bound_exponent"] == F(14)
+    assert transition["required_principal_type_mean_exponent"] == F(2)
+    assert transition[
+        "required_principal_type_amplitude_saving_exponent"
+    ] == F(1)
+    assert transition["primitive_fourth_moment_projection_covers_subfamily"]
+    assert not transition["principal_character_meets_target"]
+    assert not transition["full_projector_covered_by_this_route"]
+
+    low = audit(
+        reduced_conductor_exponent=F(1),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        product_label_count_exponent=F(5),
+        cofactor_convolution_excess_exponent=F(0),
+        type_convolution_excess_exponent=F(0),
+        principal_type_mean_exponent=F(3),
+        common_coefficient_across_moduli_verified=True,
+        physical_unit_mask_adapter_verified=True,
+        principal_character_mean_bound_verified=True,
+    )
+    assert low["effective_left_sequence_length_exponent"] == F(3)
+    assert low["weighted_primitive_projector_bound_exponent"] == F(11)
+    assert low["principal_character_projector_bound_exponent"] == F(12)
+    assert low["required_principal_type_mean_exponent"] == F(3)
+    assert low["required_principal_type_amplitude_saving_exponent"] == F(0)
+    assert low[
+        "ideal_required_signed_conductor_linear_saving_exponent"
+    ] == F(0)
+    assert low["principal_character_meets_target"]
+    assert low["full_projector_covered_by_this_route"]
+
+    physical = audit(
+        reduced_conductor_exponent=F(2),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        product_label_count_exponent=F(5),
+        cofactor_convolution_excess_exponent=F(0),
+        type_convolution_excess_exponent=F(0),
+        principal_type_mean_exponent=F(3),
+        common_coefficient_across_moduli_verified=False,
+        physical_unit_mask_adapter_verified=False,
+        principal_character_mean_bound_verified=False,
+    )
+    assert physical[
+        "weighted_primitive_projector_bound_exponent"
+    ] == F(12)
+    assert not physical["primitive_fourth_moment_hypotheses_verified"]
+    assert not physical[
+        "primitive_fourth_moment_projection_covers_subfamily"
+    ]
+    assert not physical["principal_character_mean_bound_verified"]
+    assert not physical["full_projector_covered_by_this_route"]
+    assert not physical["retains_cofactor_and_type_mobius_cancellation_jointly"]
+    assert not physical["q_projector_bound_proved"]
+    assert not physical["coupled_kernel_gate_closed"]
+
+
+def test_pv_hybrid_closes_only_the_adapted_primitive_centered_polytope() -> None:
+    """PV on the longer label factor removes the numerical top deficit."""
+
+    audit = getattr(
+        coverage_audit,
+        "primitive_centered_pv_hybrid_envelope_audit",
+        None,
+    )
+    assert audit is not None, "primitive centered PV hybrid audit is missing"
+
+    top = audit(
+        reduced_conductor_exponent=F(3),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        product_label_count_exponent=F(5),
+        smooth_bv_label_separation_verified=True,
+        common_type_coefficient_across_conductors_verified=True,
+        packet_exhaustive_outer_label_adapter_verified=False,
+    )
+    assert top["inactive_cofactor_exponent"] == F(0)
+    assert top["effective_product_label_length_exponent"] == F(5)
+    assert top["short_label_factor_cap_exponent"] == F(5, 2)
+    assert top["pv_long_factor_fourth_power_exponent"] == F(6)
+    assert top["short_factor_varying_character_fourth_moment_exponent"] == F(11)
+    assert top["inactive_cofactor_fourth_power_cost_exponent"] == F(0)
+    assert top["left_pv_hybrid_fourth_moment_exponent"] == F(17)
+    assert top["type_fourth_moment_exponent"] == F(12)
+    assert top["generic_projector_energy_exponent"] == F(13)
+    assert top["pv_hybrid_projector_energy_exponent"] == F(23, 2)
+    assert top["optimal_primitive_projector_energy_exponent"] == F(23, 2)
+    assert top["squared_local_target_exponent"] == F(12)
+    assert top["primitive_centered_numerical_margin_exponent"] == F(1, 2)
+    assert top["pv_hybrid_selected"]
+    assert top["primitive_centered_character_polytope_numerically_closed"]
+    assert not top["packet_exhaustive_outer_label_adapter_verified"]
+    assert not top["physical_primitive_centered_slice_covered"]
+
+    transition = audit(
+        reduced_conductor_exponent=F(2),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        product_label_count_exponent=F(5),
+        smooth_bv_label_separation_verified=True,
+        common_type_coefficient_across_conductors_verified=True,
+        packet_exhaustive_outer_label_adapter_verified=True,
+    )
+    assert transition["inactive_cofactor_exponent"] == F(1)
+    assert transition["effective_product_label_length_exponent"] == F(4)
+    assert transition["short_label_factor_cap_exponent"] == F(2)
+    assert transition["pv_long_factor_fourth_power_exponent"] == F(4)
+    assert transition[
+        "short_factor_varying_character_fourth_moment_exponent"
+    ] == F(8)
+    assert transition["inactive_cofactor_fourth_power_cost_exponent"] == F(4)
+    assert transition["left_pv_hybrid_fourth_moment_exponent"] == F(16)
+    assert transition["pv_hybrid_projector_energy_exponent"] == F(12)
+    assert transition["optimal_primitive_projector_energy_exponent"] == F(12)
+    assert transition["primitive_centered_numerical_margin_exponent"] == F(0)
+    assert transition["physical_primitive_centered_slice_covered"]
+
+    low = audit(
+        reduced_conductor_exponent=F(1),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        product_label_count_exponent=F(5),
+        smooth_bv_label_separation_verified=True,
+        common_type_coefficient_across_conductors_verified=True,
+        packet_exhaustive_outer_label_adapter_verified=True,
+    )
+    assert low["generic_projector_energy_exponent"] == F(11)
+    assert low["pv_hybrid_projector_energy_exponent"] == F(13)
+    assert low["optimal_primitive_projector_energy_exponent"] == F(11)
+    assert not low["pv_hybrid_selected"]
+    assert low["physical_primitive_centered_slice_covered"]
+
+    physical = audit(
+        reduced_conductor_exponent=F(3),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        product_label_count_exponent=F(5),
+        smooth_bv_label_separation_verified=False,
+        common_type_coefficient_across_conductors_verified=False,
+        packet_exhaustive_outer_label_adapter_verified=False,
+    )
+    assert physical["optimal_primitive_projector_energy_exponent"] == F(23, 2)
+    assert physical["primitive_centered_character_polytope_numerically_closed"]
+    assert not physical["primitive_centered_analytic_hypotheses_verified"]
+    assert not physical["physical_primitive_centered_slice_covered"]
+    assert not physical["imprimitive_centered_descent_verified"]
+    assert not physical["fused_principal_master_bound_proved"]
+    assert not physical["q_projector_bound_proved"]
+    assert not physical["coupled_kernel_gate_closed"]
+
+
+def test_common_q_unit_masks_expand_into_conductor_independent_type_atoms() -> None:
+    """Inactive unit masks leave one common Type sequence for every q."""
+
+    audit = getattr(
+        coverage_audit,
+        "packet_exhaustive_common_q_unit_mask_adapter_audit",
+        None,
+    )
+    assert audit is not None, "common-q unit-mask adapter audit is missing"
+    result = audit(
+        primitive_conductors=(5, 7),
+        imprimitive_cofactor=3,
+        gcd_h_cofactor=1,
+        gcd_delta_cofactor=2,
+        label_rows=(
+            # (h1,delta1,w,left weight)
+            (1, 1, 11, F(2)),
+            (5, 1, 13, F(-1)),
+            (1, 7, 17, F(3)),
+            (2, 1, 19, F(4)),
+            (3, 1, 33, F(5)),
+            (1, 2, 29, F(6)),
+        ),
+        type_base_coefficients={
+            11: F(1),
+            13: F(-2),
+            17: F(3),
+            19: F(4),
+            33: F(-1),
+            29: F(2),
+        },
+        modulus_scalar_weights={5: F(1, 2), 7: F(-1, 3)},
+        four_variable_sobolev_wiener_bound_verified=True,
+        all_physical_weights_in_registered_core_class=True,
+    )
+    assert result["imprimitive_unit_modulus"] == 3
+    assert result["h_inactive_unit_modulus"] == 6
+    assert result["delta_inactive_unit_modulus"] == 3
+    assert result["type_inactive_unit_modulus"] == 6
+    assert result["primitive_conductors_are_pairwise_admissible"]
+    assert result["all_original_unit_masks_equal_divisor_expansions"]
+    assert result["primitive_nonunit_rows_vanish_by_character_extension"]
+    assert result["type_atom_coefficients_identical_across_primitive_conductors"]
+    assert result["modulus_dependence_is_bounded_scalar_only"]
+    assert result["inactive_divisor_atom_count"] == 32
+    assert result["inactive_divisor_cost_is_euler_product_only"]
+    assert result["four_variable_sobolev_wiener_bound_verified"]
+    assert result["all_physical_weights_in_registered_core_class"]
+    assert result["packet_exhaustive_common_q_type_coefficient_adapter_proved"]
+    delta_two = next(
+        row
+        for row in result["rows"]
+        if row["primitive_conductor"] == 5 and row["delta1"] == 2
+    )
+    assert delta_two["original_full_unit_mask"] == 1
+    h_two = next(
+        row
+        for row in result["rows"]
+        if row["primitive_conductor"] == 5 and row["h1"] == 2
+    )
+    assert h_two["original_full_unit_mask"] == 0
+    assert not result["centered_resonant_projector_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_centered_energy_descends_exactly_to_primitive_conductors() -> None:
+    """Ambient nonprincipal energy keeps the exact inverse-totient lift."""
+
+    audit = getattr(
+        coverage_audit,
+        "centered_imprimitive_character_energy_descent_audit",
+        None,
+    )
+    assert audit is not None, "centered imprimitive energy descent is missing"
+    result = audit(
+        squarefree_ambient_moduli=(15, 30),
+        left_coefficients={1: 2, 2: -1, 3: 4, 5: -2, -7: 3},
+        type_coefficients={1: -1, 2: 3, 5: 2, -11: -4, 17: 1},
+    )
+    assert result["all_ambient_moduli_squarefree"]
+    assert result["ambient_principal_characters_deleted"]
+    assert result["all_remaining_rows_have_nontrivial_primitive_conductor"]
+    assert result["all_induced_transforms_equal_primitive_zero_extensions"]
+    assert result["all_parseval_weights_factor_as_inverse_totients"]
+    assert result["centered_energy_primitive_conductor_partition_exact"]
+    assert result["primitive_conductors"] == (3, 5, 15)
+    assert result["imprimitive_cofactors"] == (1, 2, 3, 5, 6, 10)
+    assert not result["principal_character_energy_included"]
+    assert not result["fused_principal_master_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_two_pv_closes_all_adapted_centered_character_conductors() -> None:
+    """Two PV bounds pay the full primitive family including imprimitive lifts."""
+
+    audit = getattr(
+        coverage_audit,
+        "centered_two_pv_conductor_envelope_audit",
+        None,
+    )
+    assert audit is not None, "centered two-PV conductor audit is missing"
+
+    top = audit(
+        primitive_conductor_exponent=F(3),
+        imprimitive_cofactor_exponent=F(0),
+        gcd_product_cofactor_exponent=F(0),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        principal_character_removed_exactly=True,
+        both_label_bv_separation_verified=True,
+        common_type_coefficient_adapter_verified=True,
+        imprimitive_euler_weight_adapter_verified=True,
+        gcd_atomwise_minkowski_verified=True,
+        packet_exhaustive_outer_label_adapter_verified=True,
+    )
+    assert top["primitive_character_family_count_exponent"] == F(6)
+    assert top["two_pv_label_product_fourth_power_exponent"] == F(12)
+    assert top["gcd_cofactor_fourth_power_cost_exponent"] == F(0)
+    assert top["gcd_atomwise_minkowski_energy_cost_exponent"] == F(0)
+    assert top["gcd_rows_are_not_assumed_to_share_one_type_sequence"]
+    assert top["left_two_pv_fourth_moment_exponent"] == F(18)
+    assert top["type_fourth_moment_exponent"] == F(12)
+    assert top["centered_projector_energy_exponent"] == F(12)
+    assert top["squared_local_target_exponent"] == F(12)
+    assert top["centered_projector_numerical_margin_exponent"] == F(0)
+    assert top["all_centered_character_conductors_numerically_covered"]
+    assert top["physical_centered_resonant_projector_covered"]
+    assert top["centered_resonant_projector_bound_proved"]
+    assert not top["fused_principal_master_bound_proved"]
+    assert not top["nonzero_determinant_dispersion_proved"]
+    assert not top["coupled_kernel_gate_closed"]
+
+    imprimitive = audit(
+        primitive_conductor_exponent=F(2),
+        imprimitive_cofactor_exponent=F(1),
+        gcd_product_cofactor_exponent=F(0),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        principal_character_removed_exactly=True,
+        both_label_bv_separation_verified=True,
+        common_type_coefficient_adapter_verified=True,
+        imprimitive_euler_weight_adapter_verified=True,
+        gcd_atomwise_minkowski_verified=True,
+        packet_exhaustive_outer_label_adapter_verified=True,
+    )
+    assert imprimitive["left_two_pv_fourth_moment_exponent"] == F(12)
+    assert imprimitive["centered_projector_energy_exponent"] == F(10)
+    assert imprimitive["centered_projector_numerical_margin_exponent"] == F(2)
+    assert imprimitive["imprimitive_margin_equals_twice_cofactor_exponent"]
+    assert imprimitive["physical_centered_resonant_projector_covered"]
+
+    low_primitive = audit(
+        primitive_conductor_exponent=F(1),
+        imprimitive_cofactor_exponent=F(0),
+        gcd_product_cofactor_exponent=F(2),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        principal_character_removed_exactly=True,
+        both_label_bv_separation_verified=True,
+        common_type_coefficient_adapter_verified=True,
+        imprimitive_euler_weight_adapter_verified=True,
+        gcd_atomwise_minkowski_verified=True,
+        packet_exhaustive_outer_label_adapter_verified=True,
+    )
+    assert low_primitive["left_two_pv_fourth_moment_exponent"] == F(14)
+    assert low_primitive["centered_projector_energy_exponent"] == F(12)
+    assert low_primitive["centered_projector_numerical_margin_exponent"] == F(0)
+    assert low_primitive["physical_centered_resonant_projector_covered"]
+
+    fixed_nonprincipal = audit(
+        primitive_conductor_exponent=F(0),
+        imprimitive_cofactor_exponent=F(0),
+        gcd_product_cofactor_exponent=F(3),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        principal_character_removed_exactly=True,
+        both_label_bv_separation_verified=True,
+        common_type_coefficient_adapter_verified=True,
+        imprimitive_euler_weight_adapter_verified=True,
+        gcd_atomwise_minkowski_verified=True,
+        packet_exhaustive_outer_label_adapter_verified=True,
+    )
+    assert fixed_nonprincipal["primitive_conductor_exponent"] == F(0)
+    assert fixed_nonprincipal["primitive_character_family_count_exponent"] == F(0)
+    assert fixed_nonprincipal["centered_projector_energy_exponent"] == F(12)
+    assert fixed_nonprincipal["physical_centered_resonant_projector_covered"]
+
+    unbalanced = audit(
+        primitive_conductor_exponent=F(1),
+        imprimitive_cofactor_exponent=F(1),
+        gcd_product_cofactor_exponent=F(0),
+        oriented_modulus_exponent=F(2),
+        type_entry_exponent=F(3),
+        principal_character_removed_exactly=True,
+        both_label_bv_separation_verified=True,
+        common_type_coefficient_adapter_verified=True,
+        imprimitive_euler_weight_adapter_verified=True,
+        gcd_atomwise_minkowski_verified=True,
+        packet_exhaustive_outer_label_adapter_verified=True,
+    )
+    assert unbalanced["oriented_type_dominates_modulus"]
+    assert unbalanced["centered_projector_energy_exponent"] == F(8)
+    assert unbalanced["squared_local_target_exponent"] == F(10)
+    assert unbalanced["centered_projector_numerical_margin_exponent"] == F(2)
+    assert unbalanced["imprimitive_margin_equals_twice_cofactor_exponent"]
+    assert unbalanced["physical_centered_resonant_projector_covered"]
+
+    missing_adapter = audit(
+        primitive_conductor_exponent=F(2),
+        imprimitive_cofactor_exponent=F(1),
+        gcd_product_cofactor_exponent=F(0),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        principal_character_removed_exactly=True,
+        both_label_bv_separation_verified=True,
+        common_type_coefficient_adapter_verified=False,
+        imprimitive_euler_weight_adapter_verified=False,
+        gcd_atomwise_minkowski_verified=False,
+        packet_exhaustive_outer_label_adapter_verified=False,
+    )
+    assert missing_adapter["all_centered_character_conductors_numerically_covered"]
+    assert not missing_adapter["centered_analytic_hypotheses_verified"]
+    assert not missing_adapter["physical_centered_resonant_projector_covered"]
+    assert not missing_adapter["centered_resonant_projector_bound_proved"]
+
+    missing_minkowski = audit(
+        primitive_conductor_exponent=F(1),
+        imprimitive_cofactor_exponent=F(0),
+        gcd_product_cofactor_exponent=F(2),
+        oriented_modulus_exponent=F(3),
+        type_entry_exponent=F(3),
+        principal_character_removed_exactly=True,
+        both_label_bv_separation_verified=True,
+        common_type_coefficient_adapter_verified=True,
+        imprimitive_euler_weight_adapter_verified=True,
+        gcd_atomwise_minkowski_verified=False,
+        packet_exhaustive_outer_label_adapter_verified=True,
+    )
+    assert missing_minkowski["all_centered_character_conductors_numerically_covered"]
+    assert not missing_minkowski["centered_analytic_hypotheses_verified"]
+    assert not missing_minkowski["physical_centered_resonant_projector_covered"]
+
+
+def test_fused_principal_master_is_the_ramanujan_nonzero_projection() -> None:
+    """The moving-gcd principal form is not an independent main term."""
+
+    audit = getattr(
+        coverage_audit,
+        "oriented_principal_ramanujan_sampled_bridge_audit",
+        None,
+    )
+    assert audit is not None, "principal Ramanujan/sampled bridge is missing"
+    result = audit(
+        rows=(
+            # (oriented modulus v, Type entry w, product label a, packet weight)
+            (30, 7, 18, F(2)),
+            (15, 2, 10, F(-3)),
+            (6, 5, 12, F(4)),
+            (1, 7, -3, F(5)),
+        ),
+        principal_harmonic_poisson_reassembly_verified=True,
+        proper_divisor_ramanujan_split_verified=True,
+    )
+    assert result["all_oriented_moduli_and_type_entries_squarefree"]
+    assert result["all_type_entries_are_units_at_oriented_moduli"]
+    assert result["all_reduced_product_labels_are_units"]
+    assert result["ambient_ramanujan_density_equals_reduced_unit_density"]
+    assert result["canonical_principal_coefficient_equals_fused_coefficient"]
+    assert result["direct_principal_plus_proper_mean_equals_ramanujan_mean"]
+    assert result["canonical_principal_master_equals_ramanujan_nonzero_master"]
+    assert result["raw_zero_plus_ramanujan_equals_sampled_plus_proper_ledger"]
+    assert result["canonical_and_sampled_principal_are_not_independent"]
+    q_one_rows = tuple(row for row in result["rows"] if row["reduced_modulus"] == 1)
+    assert len(q_one_rows) == 2
+    assert all(row["direct_principal_indicator"] == 1 for row in q_one_rows)
+    assert not result["sampled_principal_master_bound_proved"]
+    assert not result["fused_principal_master_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.145 The fused principal master is the earlier "
+        "sampled/Ramanujan ledger"
+    ) in text
+    assert r"\rho_v(a):=\frac{c_v(a)}{\varphi(v)}" in text
+    assert r"\mathfrak P_{\rm top}^{\rm or}" in text
+    assert r"\mathcal P^{{\rm all},{\rm or}}" in text
+    assert "not a third residual main term" in text
+    assert "neither is proved here" in text
+
+
+def test_second_principal_poisson_has_exact_coprime_origin_correction() -> None:
+    """The cyclic model keeps the s0=1 deleted origin and no other one."""
+
+    audit = getattr(
+        coverage_audit,
+        "second_principal_coprime_poisson_audit",
+        None,
+    )
+    assert audit is not None, "second principal Poisson audit is missing"
+    result = audit(
+        cyclic_values=(F(2), F(-1), F(3), F(5), F(-2), F(4),
+                       F(1), F(-3), F(6), F(2), F(-4), F(7)),
+        coprime_moduli=(1, 2, 3, 6),
+        q=5,
+        reduced_r=7,
+        gcd_g=6,
+        diagonal_index_n=3,
+        k_partition_reassembled_exactly=True,
+        afe_mellin_transform_verified=True,
+        diagonal_packet_reassembly_verified=True,
+        original_afe_packet_map_verified=True,
+    )
+    assert result["all_cyclic_coprime_poisson_rows_exact"]
+    assert result["deleted_origin_occurs_only_for_modulus_one"]
+    assert result["modulus_one_deleted_origin_correction_exact"]
+    assert result["positive_modulus_rows_have_ramanujan_zero_coefficient"]
+    assert result["zero_dual_mode_vanishes_after_global_k_reassembly"]
+    assert result["s0_one_origin_is_exact_afe_diagonal"]
+    assert result["diagonal_coefficient_denominator"] == 5 * 7 * 6 * 3
+    assert result["diagonal_plus_sampled_master_has_only_nonzero_second_dual_modes"]
+    assert not result["nonzero_second_dual_master_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_second_principal_poisson_balanced_dual_length_is_half_power() -> None:
+    """The exact zero removal leaves k asymptotic to T/K, not k=0."""
+
+    audit = coverage_audit.second_principal_coprime_poisson_audit
+    result = audit(
+        cyclic_values=(F(1), F(4), F(-2), F(3), F(5), F(-1)),
+        coprime_moduli=(1, 2, 3, 6),
+        q=1,
+        reduced_r=5,
+        gcd_g=6,
+        diagonal_index_n=2,
+        k_partition_reassembled_exactly=True,
+        afe_mellin_transform_verified=True,
+        diagonal_packet_reassembly_verified=True,
+        original_afe_packet_map_verified=True,
+        physical_k_exponent=F(1, 2),
+    )
+    assert result["second_dual_frequency_exponent"] == F(1, 2)
+    assert result["balanced_second_dual_frequency_length"] == "T^(1/2+o(1))"
+    assert result["nonzero_second_dual_modes_retain_both_mobius_weights"]
+    assert result["principal_zero_mode_is_not_a_new_secondary_main_term"]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.146 Second Poisson kills its zero mode and returns the diagonal" in text
+    assert r"G_t(s_t)=0" in text
+    assert r"\mathbf1_{s_0=1}\Phi^{K,M}(0)" in text
+    assert r"\mathcal D+\mathcal P^{\rm all}\) is an exact" in text
+    assert r"\tag{9.972}" in text
+    assert "doesnotboundthenonzerosecond-dualmaster" in "".join(text.split())
+
+
+def test_second_poisson_top_face_audit_does_not_certify_infinite_principal_tails() -> None:
+    """Passing top-face inputs cannot verify all W,C or infinite K tails."""
+
+    audit = getattr(
+        coverage_audit,
+        "ramanujan_principal_second_poisson_closure_audit",
+        None,
+    )
+    assert audit is not None, "joint Ramanujan second-Poisson audit is missing"
+    result = audit(
+        r_exponent=F(3),
+        s_exponent=F(3),
+        physical_m_exponent=F(1, 2),
+        physical_k_exponent=F(1, 2),
+        w_exponents=(F(0), F(1, 4), F(1, 2)),
+        squarefree_moduli=(1, 6, 30, 210),
+        all_h_and_delta_blocks_reassembled=True,
+        k_packet_zero_mellin_verified=True,
+        nonzero_stationary_phase_bound_verified=True,
+        ramanujan_short_sum_bound_verified=True,
+        proper_divisor_joint_reassembly_verified=True,
+        centered_resonant_projector_bound_verified=True,
+        original_afe_packet_map_verified=True,
+    )
+    assert result["all_squarefree_origin_divisor_sums_exact"]
+    assert result["u_one_deleted_origin_reassembles_afe_diagonal"]
+    assert result["joint_principal_zero_dual_mode_vanishes"]
+    assert not result["all_w_c_splits_within_target"]
+    assert result["top_face_w_c_splits_within_target"]
+    rows = result["split_rows"]
+    assert tuple(row["principal_bound_exponent"] for row in rows) == (
+        F(1, 2),
+        F(3, 4),
+        F(1),
+    )
+    assert tuple(row["target_margin"] for row in rows) == (
+        F(1, 2),
+        F(1, 4),
+        F(0),
+    )
+    assert result["conditional_top_face_bound"]
+    assert not result["joint_ramanujan_principal_bound_proved"]
+    assert result["diagonal_plus_joint_principal_is_nonzero_second_dual_master"]
+    assert not result["only_centered_nonzero_determinant_gate_remains"]
+    assert not result["nonzero_determinant_dispersion_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_joint_principal_closure_is_documented_without_closing_the_full_gate() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.147 Second Poisson closes the full Ramanujan principal ledger" in text
+    assert r"\Psi_{r,u,w,c,n}^{K,M}(x)" in text
+    assert r"E_{\rm pr}^{(2)}(\omega)" in text
+    assert r"\mathcal D+\mathcal J_{\rm Ram}" in text
+    assert "the only remaining analytic obligation in this route" in text
+    assert "nonzero reduced-determinant" in text
+    assert r"\tag{9.984}" in text
+
+
+def test_diagonal_subtracted_kloosterman_moment_has_short_determinant_model() -> None:
+    """The BRS secondary term fits only after an unavailable exact subtraction."""
+
+    audit = getattr(
+        coverage_audit,
+        "diagonal_subtracted_kloosterman_second_moment_audit",
+        None,
+    )
+    assert audit is not None, "diagonal-subtracted Kloosterman audit is missing"
+    result = audit(
+        moduli=(5, 7, 15, 21, 35),
+        frequency_length_exponent=F(5),
+        modulus_length_exponent=F(3),
+        physical_offdiagonal_energy_target_exponent=F(4),
+        physical_packet_to_common_kloosterman_sequence_verified=False,
+        published_diagonal_subtracted_remainder_verified=False,
+    )
+    assert result["all_moduli_squarefree"]
+    assert result["reduced_fraction_diagonal_exact"]
+    assert result["normalized_diagonal_weight"] == sum(
+        F(sum(1 for residue in range(1, modulus) if gcd(residue, modulus) == 1),
+          modulus * modulus)
+        for modulus in (5, 7, 15, 21, 35)
+    )
+    assert result["every_nonzero_determinant_is_divisible_by_modulus_gcd"]
+    assert result["cofactor_residue_classes_are_unique"]
+    assert result["reduced_determinant_is_unit_at_both_cofactors"]
+    assert result["crt_inverse_phase_factorization_exact"]
+    assert result["short_determinant_reciprocity_exact"]
+    assert result["brs_raw_regular_term_exponent"] == F(11)
+    assert result["brs_raw_secondary_term_exponent"] == F(26, 3)
+    assert result["brs_normalized_regular_term_exponent"] == F(5)
+    assert result["brs_normalized_secondary_term_exponent"] == F(8, 3)
+    assert result["exact_diagonal_exponent"] == F(5)
+    assert result["determinant_collar_exponent"] == F(1)
+    assert result["short_cofactor_determinant_exponent_at_common_gcd_zero"] == F(1)
+    assert result["conditional_secondary_margin_to_physical_target"] == F(4, 3)
+    assert result["published_total_moment_bound_contains_exact_diagonal_scale"]
+    assert not result["brs_allows_arbitrary_modulus_coefficients"]
+    assert not result["published_total_moment_bound_applies_to_physical_mobius_weight"]
+    assert not result["published_theorem_separates_arithmetic_diagonal"]
+    assert not result["physical_packet_adapter_verified"]
+    assert not result["diagonal_subtracted_remainder_bound_proved"]
+    assert not result["centered_nonzero_determinant_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_short_determinant_checkpoint_is_documented_as_an_unproved_gate() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.148 A diagonal-subtracted modulus moment is the next exact gate" in text
+    assert r"\mathfrak E_\beta(A,Q)" in text
+    assert r"\Delta=x_1q_2-x_2q_1" in text
+    assert r"g\mid\Delta" in text
+    assert r"|D|\ll T/g" in text
+    assert r"(AQ)^{1/3}" in text
+    assert "does not state a diagonal-subtracted theorem" in text
+    assert "physical packet adapter" in text
+    assert "not proved" in text
+
+
+def test_physical_centered_completion_creates_level_dependent_coefficients() -> None:
+    """Additive completion reaches S(n,1;q), but with a q-dependent sequence."""
+
+    audit = getattr(
+        coverage_audit,
+        "physical_centered_kloosterman_completion_audit",
+        None,
+    )
+    assert audit is not None, "physical centered Kloosterman adapter is missing"
+    result = audit(
+        modulus=15,
+        product_labels=(1, 2, 4),
+        product_label_weights=(F(2), F(-3), F(5)),
+        type_residue_weights=(
+            tuple(F(index - 4) for index in range(15)),
+            tuple(F((index + 1) * (index - 2), 3) for index in range(15)),
+            tuple(F((-1) ** index * (index + 2), 5) for index in range(15)),
+        ),
+    )
+    assert result["squarefree_modulus_verified"]
+    assert result["all_product_labels_are_units"]
+    assert result["all_centered_zero_additive_modes_vanish"]
+    assert result["all_additive_completion_rows_exact"]
+    assert result["all_unit_argument_kloosterman_scalings_exact"]
+    assert result["pure_kloosterman_rows_reassemble_by_product_frequency"]
+    assert result["rank_one_ramanujan_corrections_reassemble_exactly"]
+    assert result["centered_direct_master_equals_pure_minus_correction"]
+    assert result["completed_nonzero_coefficient_is_deleted_zero_fourier_projection"]
+    assert result["nonzero_parseval_has_exact_deleted_zero_correction"]
+    assert result["completed_energy_splits_centered_resonant_and_principal_excess"]
+    assert result["principal_excess_subtracted_diagonal_renormalizes_to_centered_projector"]
+    assert result["centered_completed_coefficients_have_zero_additive_mode"]
+    assert result["centered_completed_coefficient_is_fourier_transform_of_centered_fibres"]
+    assert result["centered_kloosterman_master_reassembles_direct_centered_master"]
+    assert result["centered_completed_parseval_equals_q_times_centered_projector"]
+    assert result["q_over_phi_centered_diagonal_equals_centered_projector"]
+    assert result["fixed_modulus_diagonal_adapter_proved"]
+    assert result["completed_coefficient_depends_on_modulus_and_type_packet"]
+    assert not result["common_coefficient_sequence_across_moduli_proved"]
+    assert not result["brs_unweighted_modulus_moment_directly_applicable"]
+    assert not result["pascadi_one_level_independent_sequence_hypothesis_verified"]
+    assert not result["physical_level_dependent_dskm_proved"]
+    assert not result["centered_nonzero_determinant_gate_closed"]
+
+
+def test_level_dependent_dskm_is_documented_as_the_physical_gate() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.149 The physical completion is level-dependent" in text
+    assert r"S(k,-A;q)=S(-Ak,1;q)" in text
+    assert r"b_{\omega,q}(n)" in text
+    assert r"\mathfrak E_{\rm lev}" in text
+    assert r"\mathfrak D_{\rm lev}" in text
+    assert "not a common sequence in the modulus" in text
+    assert "level-dependent DSKM" in text
+    assert "remains unproved" in text
+
+
+def test_centered_level_diagonal_is_exactly_the_resonant_projector_weight() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.150 The centered level diagonal is already closed" in text
+    assert r"\widetilde b_{q}(n)" in text
+    assert r"q\mathcal E_q^{\rm mult\text{-}cent}" in text
+    assert r"\frac{\varphi(q)}q" in text
+    assert r"\mathcal E_q^{\rm mult\text{-}cent}" in text
+    assert "diagonal is already within the Section 9.144 target" in text
+    assert "only the level-dependent off-diagonal remainder" in text
+    assert "remains unproved" in text
+
+
+def test_type_frequency_reduction_preserves_the_short_determinant_reciprocity() -> None:
+    audit = getattr(
+        coverage_audit,
+        "type_frequency_reduced_determinant_reciprocity_audit",
+        None,
+    )
+    assert audit is not None, "Type-frequency determinant audit is missing"
+    result = audit(
+        rows=(
+            # (squarefree modulus q, nonzero Type frequency k, unit y)
+            (15, 5, 2),
+            (21, 3, 5),
+            (35, 10, 3),
+            (30, 6, 7),
+            (77, 9, 10),
+        ),
+        product_label_length_exponent=F(5),
+        reduced_modulus_exponents=(F(3), F(5, 2), F(2), F(3, 2), F(1)),
+    )
+    assert result["all_moduli_squarefree"]
+    assert result["all_type_frequencies_nonzero_mod_modulus"]
+    assert result["all_residue_labels_are_units"]
+    assert result["all_reduced_type_frequencies_are_units"]
+    assert result["all_reduced_additive_fractions_are_primitive"]
+    assert result["zero_reduced_determinant_is_exact_frequency_equality"]
+    assert result["every_nonzero_reduced_determinant_is_divisible_by_reduced_modulus_gcd"]
+    assert result["all_reduced_cofactor_residue_classes_are_unique"]
+    assert result["all_reduced_determinants_are_cofactor_units"]
+    assert result["all_inactive_active_crt_splits_exact"]
+    assert result["all_active_cofactor_phases_transfer_to_short_determinant"]
+    assert result["type_frequency_gcd_only_lowers_effective_modulus"]
+    assert result["maximum_determinant_collar_exponent"] == F(1)
+    assert result["balanced_combined_short_conductor_exponent"] == F(1)
+    assert result["inactive_type_gcd_traces_retained"]
+    assert result["common_reduced_modulus_gcd_trace_retained"]
+    assert not result["signed_short_determinant_family_bound_proved"]
+    assert not result["level_dependent_dskm_offdiagonal_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_type_frequency_short_determinant_is_documented_without_claiming_bound() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.151 Type-frequency gcd only shortens the determinant modulus" in text
+    assert r"q'=q/(k,q)" in text
+    assert r"x\equiv-k'y\pmod {q'}" in text
+    assert r"\Delta_k=x_1q'_2-x_2q'_1" in text
+    assert r"gD=\Delta_k" in text
+    assert r"gD\ll T\mathscr L^B" in text
+    assert "inactive Type-gcd traces" in text
+    assert "signed short-determinant family" in text
+    assert "remains unproved" in text
+
+
+def test_signed_short_determinant_master_retains_outer_mobius_structure() -> None:
+    audit = getattr(
+        coverage_audit,
+        "signed_short_determinant_projective_master_audit",
+        None,
+    )
+    assert audit is not None, "signed short-determinant master audit is missing"
+    result = audit(
+        rows=(
+            # (squarefree modulus q, nonzero Type frequency k, unit y)
+            (15, 5, 2),
+            (21, 3, 5),
+            (35, 10, 3),
+            (30, 6, 7),
+            (77, 9, 10),
+        ),
+        row_coefficients=(F(2), F(-3), F(5), F(7, 2), F(-4, 3)),
+        product_label_weights=(F(1), F(2), F(-1), F(3), F(1, 2)),
+        product_label_length_exponent=F(5),
+        reduced_modulus_exponents=(F(3), F(5, 2), F(2), F(3, 2), F(1)),
+    )
+    assert result["all_reduced_product_frequencies_are_primitive"]
+    assert result["direct_energy_equals_full_pair_expansion"]
+    assert result["resonant_plus_nonzero_determinant_reassembles_master"]
+    assert result["nonzero_determinant_groups_reassemble_offdiagonal"]
+    assert result["all_nonzero_determinants_have_exact_g_times_D_factorization"]
+    assert result["common_reduced_modulus_gcd_mobius_sign_cancels_exactly"]
+    assert result["inactive_type_gcd_mobius_signs_retained"]
+    assert result["two_reduced_cofactor_mobius_signs_retained"]
+    assert result["all_inverse_phases_transfer_to_short_D"]
+    assert result["maximum_combined_short_conductor_exponent"] == F(1)
+    assert result["supplied_projective_atom_master_proved"]
+    assert not result["brs_kuznetsov_accepts_arbitrary_modulus_packet"]
+    assert not result["brs_regular_spectrum_term_is_arithmetic_diagonal"]
+    assert not result["signed_short_D_family_bound_proved"]
+    assert not result["packet_exhaustive_physical_short_D_bound_proved"]
+    assert not result["level_dependent_dskm_offdiagonal_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_signed_short_determinant_master_is_documented_as_an_unproved_bound() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.152 The signed short-determinant master retains four Möbius signs" in text
+    assert r"\mu(q_1)\mu(q_2)=\mu(d_1)\mu(d_2)\mu(r_1)\mu(r_2)" in text
+    assert r"\mathscr S_{\omega}^{\ne0}" in text
+    assert r"D\ll T/g\,\mathscr L^B" in text
+    assert "BRS proof" in text
+    assert r"signed short-\(D\) bound" in text
+    assert "remains unproved" in text
+
+
+def test_inactive_type_lifts_exactly_balance_the_shorter_frequency_collar() -> None:
+    audit = getattr(
+        coverage_audit,
+        "type_frequency_inactive_lift_conservation_audit",
+        None,
+    )
+    assert audit is not None, "inactive Type-lift conservation audit is missing"
+    result = audit(
+        type_gcd_exponent_pairs=(
+            (F(0), F(0)),
+            (F(1, 4), F(1, 4)),
+            (F(1, 2), F(1, 2)),
+        ),
+        common_reduced_gcd_exponents=(F(0), F(1, 2), F(0)),
+        original_modulus_exponent=F(3),
+        product_label_length_exponent=F(5),
+        physical_energy_target_exponent=F(4),
+        maximum_type_gcd_exponent=F(1, 2),
+    )
+    assert result["all_rows_inside_physical_type_gcd_polytope"]
+    assert result["all_common_gcd_exponents_inside_determinant_collar"]
+    assert result["all_inactive_lifts_exactly_restore_reduced_collar_loss"]
+    assert result["all_raw_outer_family_exponents_equal_six_minus_gamma"]
+    assert result["all_required_savings_equal_two_minus_gamma"]
+    assert result["all_four_outer_mobius_square_root_savings_equal_three_minus_gamma"]
+    assert result["all_square_root_power_margins_equal_one"]
+    assert result["primitive_type_frequency_row_is_the_conductor_worst_case"]
+    assert not result["inactive_type_lifts_supply_analytic_cancellation"]
+    assert not result["four_outer_mobius_square_root_bound_proved"]
+    assert not result["signed_short_D_family_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_inactive_type_lift_conservation_is_documented_without_spending_it() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.153 Inactive Type lifts exactly restore the lost collar volume" in text
+    assert r"\kappa_D=1-\delta_1-\delta_2" in text
+    assert r"\delta_1+\delta_2" in text
+    assert r"E_{\rm raw}=6-\gamma" in text
+    assert r"S_{\rm need}=2-\gamma" in text
+    assert r"S_{\rm sqrt}=3-\gamma" in text
+    assert "one full power of margin" in text
+    assert "does not constitute a cancellation estimate" in text
+    assert "remains unproved" in text
+
+
+def test_centering_does_not_formally_delete_the_unit_short_determinant() -> None:
+    audit = getattr(
+        coverage_audit,
+        "centered_unit_short_determinant_witness_audit",
+        None,
+    )
+    assert audit is not None, "centered unit-D witness audit is missing"
+    result = audit(
+        left_modulus=7,
+        left_numerator=3,
+        right_modulus=5,
+        right_numerator=2,
+    )
+    assert result["original_moduli_are_squarefree_and_coprime"]
+    assert result["reduced_fractions_are_primitive"]
+    assert result["oriented_determinant"] == 1
+    assert result["short_determinant"] == 1
+    assert result["both_fixed_modulus_packets_are_centered"]
+    assert result["both_centered_fourier_coefficients_are_nonzero"]
+    assert result["centered_cross_atom_is_nonzero"]
+    assert result["unit_D_modular_inverse_term_is_trivial"]
+    assert result["rational_tails_reconstruct_original_phase_mod_one"]
+    assert result["centering_alone_does_not_annihilate_unit_D_atom"]
+    assert result["bounded_D_removes_exactly_full_collar_exponent"]
+    assert result["bounded_D_raw_exponent"] == F(5)
+    assert result["bounded_D_required_saving_exponent"] == F(1)
+    assert not result["actual_AFE_unit_D_coefficient_evaluated"]
+    assert not result["bounded_D_four_mobius_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_unit_short_determinant_witness_is_documented_without_claiming_AFE_survival() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.154 Centering alone does not delete the unit-determinant face" in text
+    assert r"x_1Q_2-x_2Q_1=1" in text
+    assert r"Z_{q,1}=1,\qquad Z_{q,-1}=-1" in text
+    assert r"\widetilde b_q(n)=e_q(-n)-e_q(n)" in text
+    assert r"=-2i\sin(2\pi n/q)" in text
+    assert r"E_{|D|\asymp1}=5" in text
+    assert "actual AFE/reflection packet" in text
+    assert "remains unproved" in text
+
+
+def test_symmetric_AFE_directions_reinforce_under_linear_packet_maps() -> None:
+    audit = getattr(
+        coverage_audit,
+        "symmetric_afe_direction_reassembly_audit",
+        None,
+    )
+    assert audit is not None, "symmetric AFE reassembly audit is missing"
+    result = audit(
+        packet_coefficients=(F(2), F(-3), F(5, 2)),
+        linear_operator=(
+            (F(1), F(0), F(-2)),
+            (F(3), F(-1), F(4)),
+        ),
+    )
+    assert result["two_canonically_identified_AFE_direction_vectors_are_equal"]
+    assert result["unfolded_direction_sum_equals_twice_one_direction"]
+    assert result["every_supplied_linear_packet_image_reinforces_exactly"]
+    assert result["nonzero_bounded_D_projection_cannot_cancel_between_AFE_directions"]
+    assert not result["bounded_D_one_direction_projection_is_zero"]
+    assert not result["reflected_boundary_and_explicit_diagonal_reassembled"]
+    assert not result["bounded_D_physical_coefficient_proved_zero"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_AFE_direction_reinforcement_is_documented_before_other_cancellations() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.155 The two symmetric AFE directions reinforce linearly" in text
+    assert r"2\mathscr J_t=\Lambda(s_t)\Lambda(1-s_t)" in text
+    assert r"L(\mathscr O^{+}+\mathscr O^{-})=2L(\mathscr O^{+})" in text
+    assert "cannot supply an" in text
+    assert "opposite-sign cancellation" in text
+    assert "reflected boundary" in text
+    assert "remains unproved" in text
+
+
+def test_bounded_D_master_retains_product_labels_and_all_nine_type_blocks() -> None:
+    audit = getattr(
+        coverage_audit,
+        "bounded_short_determinant_type_split_audit",
+        None,
+    )
+    assert audit is not None, "bounded-D Type split audit is missing"
+    result = audit(
+        rows=(
+            # q, k, y, Type cofactor n, prime-bearing p
+            (7, 4, 1, 1, 11),
+            (7, 4, 1, 6, 13),
+            (7, 4, 1, 30, 17),
+            (5, 3, 1, 1, 7),
+            (5, 3, 1, 6, 7),
+            (5, 3, 1, 42, 11),
+        ),
+        base_row_coefficients=(F(2), F(-1), F(3), F(5), F(-2), F(4)),
+        h_weights=((-2, F(1)), (1, F(2)), (3, F(-1))),
+        delta_weights=((-1, F(2)), (2, F(1))),
+        short_cutoff_u=2,
+        short_cutoff_v=2,
+        maximum_short_determinant=1,
+    )
+    assert result["all_rows_have_exact_remainder_free_type_split"]
+    assert result["product_label_is_exact_h_delta_convolution"]
+    assert result["direct_h_delta_sum_equals_grouped_product_label_sum"]
+    assert result["all_nine_ordered_cross_type_blocks_retained"]
+    assert result["nine_type_blocks_reassemble_full_bounded_D_master"]
+    assert result["bounded_D_rows_have_exact_g_times_D_factorization"]
+    assert result["outer_modulus_and_type_mobius_signs_retained_before_pair_sum"]
+    assert result["no_absolute_values_taken_before_bounded_D_grouping"]
+    assert result["bounded_D_master_is_nonzero_on_fixture"]
+    assert result["bounded_D_raw_exponent"] == F(5)
+    assert result["bounded_D_target_exponent"] == F(4)
+    assert result["bounded_D_required_saving_exponent"] == F(1)
+    assert set(result["ordered_type_block_bounds_proved"]) == {
+        (left, right)
+        for left in ("small", "I", "II")
+        for right in ("small", "I", "II")
+    }
+    assert not any(result["ordered_type_block_bounds_proved"].values())
+    assert not result["bounded_D_packet_exhaustive_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_bounded_D_type_split_is_documented_as_the_one_power_gate() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.156 The bounded-determinant master has nine exact Type blocks" in text
+    assert r"W_\omega(a)=\sum_{h\delta=a}f_\omega(h)g_\omega(\delta)" in text
+    assert r"\sum_{\alpha,\beta\in\{\mathrm{small},\mathrm I,\mathrm{II}\}}" in text
+    assert r"\mathscr S_{|D|\leq D_0}^{\alpha,\beta}" in text
+    assert r"E_{|D|\asymp1}=5" in text
+    assert "one-power" in text
+    assert "all nine" in text
+    assert "remains unproved" in text
+
+
+def test_two_PV_projector_argument_cannot_be_reused_on_bounded_D() -> None:
+    audit = getattr(
+        coverage_audit,
+        "bounded_D_two_pv_compatibility_audit",
+        None,
+    )
+    assert audit is not None, "bounded-D two-PV compatibility audit is missing"
+    result = audit(
+        original_modulus_exponent=F(3),
+        maximum_type_frequency_gcd_exponent=F(1, 2),
+        product_label_length_exponent=F(5),
+        bounded_short_determinant_exponent=F(0),
+    )
+    assert result["minimum_reduced_modulus_exponent"] == F(5, 2)
+    assert result["maximum_nonzero_determinant_collar_exponent"] == F(1)
+    assert result["same_reduced_modulus_common_gcd_exponent"] == F(5, 2)
+    assert not result["same_reduced_modulus_bounded_nonzero_D_is_possible"]
+    assert result["bounded_nonzero_D_forces_distinct_ambient_moduli"]
+    assert result["resonant_two_PV_uses_one_common_residue_Parseval"]
+    assert result["cross_modulus_expansion_has_two_character_families"]
+    assert not result["determinant_incidence_forces_equal_primitive_characters"]
+    assert result["shared_primitive_conductor_slice_is_not_exhaustive"]
+    assert result["rowwise_cauchy_can_absorb_every_outer_mobius_sign"]
+    assert not result["two_PV_saving_transfers_to_bounded_D_master"]
+    assert not result["bounded_D_one_power_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_two_PV_noncoverage_is_documented_at_the_character_compatibility_step() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.157 Why the resonant two-PV proof stops at nonzero determinant" in text
+    assert r"Q_1=Q_2\Longrightarrow g=Q_1\geq T^{5/2}" in text
+    assert r"g|D|\ll T" in text
+    assert r"(\chi_1,\chi_2)" in text
+    assert "does not force" in text
+    assert "rowwise Cauchy" in text
+    assert "remains unproved" in text
+
+
+def test_common_g_lifts_form_a_two_pole_mixed_character_sum() -> None:
+    audit = getattr(
+        coverage_audit,
+        "common_g_lift_two_pole_audit",
+        None,
+    )
+    assert audit is not None, "common-g two-pole audit is missing"
+    result = audit(
+        common_modulus=15,
+        left_reduced_cofactor=7,
+        right_reduced_cofactor=11,
+        short_determinant=1,
+        left_phase_coefficient=2,
+        right_phase_coefficient=4,
+        common_modulus_exponent=F(1),
+        bounded_short_determinant_exponent=F(0),
+    )
+    assert result["all_modulus_factors_are_squarefree_and_pairwise_coprime"]
+    assert result["short_determinant_is_unit_on_active_cofactors"]
+    assert result["common_lifts_biject_with_t_and_t_minus_D_units"]
+    assert result["common_trace_equals_two_pole_phase_for_every_lift"]
+    assert result["two_pole_coefficients_are_units_at_common_modulus"]
+    assert result["worst_exceptional_divisor"] == 1
+    assert result["worst_exceptional_divisor_divides_short_determinant"]
+    assert result["published_square_root_bound_applies_prime_by_prime"]
+    assert result["squarefree_CRT_common_lift_bound_proved"]
+    assert result["fixed_character_atom_common_lift_saving_exponent"] == F(
+        1,
+        2,
+    )
+    assert result["formal_fixed_atom_bounded_D_residual_saving"] == F(1, 2)
+    assert not result[
+        "fixed_atom_saving_survives_arbitrary_character_reassembly"
+    ]
+    assert result["global_bounded_D_residual_without_coefficient_input"] == 1
+    assert not result["common_lift_bound_alone_closes_bounded_D_gate"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    exceptional = audit(
+        common_modulus=15,
+        left_reduced_cofactor=7,
+        right_reduced_cofactor=11,
+        short_determinant=-3,
+        left_phase_coefficient=1,
+        right_phase_coefficient=2,
+        common_modulus_exponent=F(1),
+        bounded_short_determinant_exponent=F(0),
+    )
+    assert exceptional["common_lifts_biject_with_t_and_t_minus_D_units"]
+    assert exceptional["common_trace_equals_two_pole_phase_for_every_lift"]
+    assert exceptional["worst_exceptional_divisor"] == 3
+    assert exceptional["worst_exceptional_divisor_divides_short_determinant"]
+
+
+def test_common_g_two_pole_bound_is_documented_with_its_exceptional_divisor() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.158 The common lift is a two-pole mixed character sum" in text
+    assert r"x_1r_2\equiv t" in text
+    assert r"x_2r_1\equiv t-D\pmod g" in text
+    assert r"\frac{A}{t}+\frac{B}{t-D}" in text
+    assert r"g_{\rm exc}\mid(g,D,A+B)" in text
+    assert r"g^{1/2+\varepsilon}g_{\rm exc}^{1/2}" in text
+    assert r"1-\frac\gamma2" in text
+    assert "remains unproved" in text
+
+
+def test_common_g_character_reassembly_has_no_automatic_operator_saving() -> None:
+    audit = getattr(
+        coverage_audit,
+        "common_g_character_reassembly_operator_audit",
+        None,
+    )
+    assert audit is not None, "common-g character operator audit is missing"
+    result = audit(
+        common_modulus=15,
+        short_determinant=1,
+        common_modulus_exponent=F(1),
+        bounded_short_determinant_exponent=F(0),
+    )
+    assert result["partial_shift_is_injective_on_its_unit_domain"]
+    assert result["admissible_domain_is_nonempty"]
+    assert result["delta_mass_saturates_unrestricted_packet_operator"]
+    assert result["unrestricted_packet_operator_l2_norm"] == 1
+    assert result["multiplicative_character_transform_is_unitary"]
+    assert not result["entrywise_Weil_implies_packet_operator_saving"]
+    assert result["fixed_character_atom_common_lift_saving_exponent"] == F(
+        1,
+        2,
+    )
+    assert result["formal_fixed_atom_bounded_D_residual_saving"] == F(1, 2)
+    assert result["global_bounded_D_residual_without_coefficient_input"] == 1
+    assert not result["centered_physical_character_compression_proved"]
+    assert not result["bounded_D_one_power_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_common_g_operator_norm_boundary_is_documented() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.159 Entrywise Weil does not survive arbitrary character reconstruction"
+        in text
+    )
+    assert r"\|J_D\|_{2\to2}=1" in text
+    assert "partial isometry" in text
+    assert "small entries and a small spectral norm" in text
+    assert "fixed character atom:" in text
+    assert "arbitrary reconstructed packet:" in text
+
+
+def test_active_cofactor_character_sectors_are_exactly_classified() -> None:
+    audit = getattr(
+        coverage_audit,
+        "active_cofactor_character_sector_audit",
+        None,
+    )
+    assert audit is not None, "active-cofactor character audit is missing"
+    result = audit(
+        common_modulus=5,
+        left_reduced_cofactor=7,
+        right_reduced_cofactor=11,
+        short_determinant=1,
+    )
+    assert result["left_active_residue"] == 2
+    assert result["right_active_residue"] == 3
+    assert result["active_residue_factorization_verified"]
+    assert result["common_component_has_nonprincipal_character"]
+    assert result["both_active_components_may_be_principal_after_centering"]
+    assert result["principal_active_cross_twist"] == 1
+    assert result["quadratic_cross_twist"] == -1
+    assert result["quadratic_reciprocity_sign"] == -1
+    assert result["quadratic_cross_twist_collapses_mod_four"]
+    assert result["bounded_D_quadratic_factor"] == -1
+    assert result["direct_active_quadratic_twist"] == 1
+    assert result["factored_active_quadratic_twist"] == 1
+    assert result["full_quadratic_active_factorization_verified"]
+    assert not result["quadratic_large_sieve_covers_principal_active_sector"]
+    assert not result["principal_active_mobius_type_estimate_proved"]
+    assert not result["bounded_D_one_power_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_active_principal_projection_cancels_no_crt_fiber_power() -> None:
+    audit = getattr(
+        coverage_audit,
+        "active_principal_crt_fiber_projection_audit",
+        None,
+    )
+    assert audit is not None, "active-principal CRT projection audit is missing"
+    left_profile = {1: F(1), 2: F(-1), 3: F(2), 4: F(-2)}
+    right_profile = {1: F(2), 2: F(-2), 3: F(1), 4: F(-1)}
+    result = audit(
+        common_modulus=5,
+        left_active_cofactor=3,
+        right_active_cofactor=7,
+        short_determinant=1,
+        left_packet_values=tuple(
+            (common, active, left_profile[common])
+            for common in (1, 2, 3, 4)
+            for active in (1, 2)
+        ),
+        right_packet_values=tuple(
+            (common, active, right_profile[common])
+            for common in (1, 2, 3, 4)
+            for active in (1, 2, 3, 4, 5, 6)
+        ),
+    )
+    assert result["left_packet_is_globally_centered"]
+    assert result["right_packet_is_globally_centered"]
+    assert result["left_active_principal_profile"] == left_profile
+    assert result["right_active_principal_profile"] == right_profile
+    assert result["left_raw_packet_energy"] == 20
+    assert result["left_projected_packet_energy"] == 20
+    assert result["right_raw_packet_energy"] == 60
+    assert result["right_projected_packet_energy"] == 60
+    assert result["left_fiber_average_bound_is_saturated"]
+    assert result["right_fiber_average_bound_is_saturated"]
+    assert result["left_fixed_active_residue"] == 1
+    assert result["right_fixed_active_residue"] == 2
+    assert result["admissible_common_lift_parameters"] == (2, 3, 4)
+    assert result["unphased_projected_determinant_pair_sum"] == -2
+    assert result["centering_does_not_force_cofactor_power_saving"]
+    assert not result["inverse_totient_weight_gives_uniform_power_saving"]
+    assert not result[
+        "principal_active_sector_bound_proved_by_fiber_projection_alone"
+    ]
+    assert not result["bounded_D_one_power_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_principal_active_outer_mobius_type_blocks_reassemble_pre_cauchy() -> None:
+    audit = getattr(
+        coverage_audit,
+        "principal_active_outer_mobius_type_split_audit",
+        None,
+    )
+    assert audit is not None, "principal-active outer Type audit is missing"
+    result = audit(
+        left_active_cofactor=30,
+        right_active_cofactor=77,
+        short_cutoff_u=2,
+        short_cutoff_v=2,
+        h_weights=((-1, F(2)), (2, F(-1))),
+        delta_weights=((1, F(3)), (-2, F(1))),
+    )
+    assert result["product_label_weights"] == {
+        -4: F(-1),
+        -1: F(6),
+        2: F(-1),
+    }
+    assert result["direct_h_delta_linear_kernel_sum"] == -4
+    assert result["grouped_product_label_linear_kernel_sum"] == -4
+    assert result["left_outer_type_multipliers"] == {
+        "small": 0,
+        "I": 1,
+        "II": -2,
+    }
+    assert result["right_outer_type_multipliers"] == {
+        "small": 0,
+        "I": -1,
+        "II": 2,
+    }
+    assert result["raw_outer_mobius_pair_sign"] == -1
+    assert result["raw_principal_active_model_sum"] == 4
+    assert result["ordered_outer_type_block_sums"] == {
+        ("small", "small"): 0,
+        ("small", "I"): 0,
+        ("small", "II"): 0,
+        ("I", "small"): 0,
+        ("I", "I"): F(4),
+        ("I", "II"): F(-8),
+        ("II", "small"): 0,
+        ("II", "I"): F(-8),
+        ("II", "II"): F(16),
+    }
+    assert result["all_nine_ordered_outer_type_blocks_retained"]
+    assert result["outer_type_blocks_reassemble_raw_pair_before_cauchy"]
+    assert result["product_label_remains_exact_h_delta_convolution"]
+    assert result["no_blockwise_absolute_value_taken"]
+    assert not result["ordered_outer_type_block_bounds_proved"]
+    assert not result[
+        "principal_active_sector_bound_proved_by_outer_type_split_alone"
+    ]
+    assert not result["bounded_D_one_power_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_principal_active_polytope_deletes_all_outer_small_blocks() -> None:
+    audit = getattr(
+        coverage_audit,
+        "principal_active_outer_type_polytope_audit",
+        None,
+    )
+    assert audit is not None, "principal-active Type polytope audit is missing"
+    result = audit(
+        original_modulus_exponent=F(3),
+        maximum_type_frequency_gcd_exponent=F(1, 2),
+        maximum_common_gcd_exponent=F(1),
+        outer_short_cutoff_exponent=F(1, 2),
+    )
+    assert result["minimum_active_cofactor_exponent"] == F(3, 2)
+    assert result["maximum_outer_short_cutoff_exponent"] == F(1, 2)
+    assert result["every_outer_small_block_is_empty"]
+    assert result["nonempty_ordered_outer_type_blocks"] == (
+        ("I", "I"),
+        ("I", "II"),
+        ("II", "I"),
+        ("II", "II"),
+    )
+    assert result["published_coverage_by_block"] == {
+        "any-small": "vacuous-empty",
+        "I-I": "none",
+        "I-II": "none",
+        "II-I": "none",
+        "II-II": "none",
+    }
+    assert result["principal_active_raw_exponent"] == 5
+    assert result["principal_active_target_exponent"] == 4
+    assert result["principal_active_required_saving_exponent"] == 1
+    assert not result["combined_I_II_APBD_bound_proved_by_polytope_alone"]
+    assert not result["bounded_D_one_power_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_active_principal_physical_H_packet_descends_to_common_modulus() -> None:
+    audit = getattr(
+        coverage_audit,
+        "active_principal_physical_H_descent_audit",
+        None,
+    )
+    assert audit is not None, "active-principal physical-H descent is missing"
+    result = audit(
+        common_modulus=5,
+        active_cofactor=3,
+        physical_H_values=(
+            (1, 1, F(2)),
+            (4, 1, F(3)),
+            (1, 2, F(5)),
+            (4, 2, F(7)),
+        ),
+    )
+    assert result["ambient_modulus"] == 15
+    assert result["ambient_projective_packet"] == {
+        7: F(5),
+        11: F(3),
+        13: F(7),
+        14: F(2),
+    }
+    assert result["active_principal_fiber_profile"] == {
+        1: F(3, 2),
+        2: F(5, 2),
+        3: F(7, 2),
+        4: F(1),
+    }
+    assert result["descended_H_values"] == {
+        (1, 1): F(1),
+        (1, 2): F(5, 2),
+        (4, 1): F(3, 2),
+        (4, 2): F(7, 2),
+    }
+    assert result["common_modulus_profile_from_descended_H"] == {
+        1: F(3, 2),
+        2: F(5, 2),
+        3: F(7, 2),
+        4: F(1),
+    }
+    assert result["centered_common_modulus_profile"] == {
+        1: F(-5, 8),
+        2: F(3, 8),
+        3: F(11, 8),
+        4: F(-9, 8),
+    }
+    assert result["fiber_projection_equals_physical_H_descent"]
+    assert result["centering_commutes_with_active_principal_descent"]
+    assert result["descended_packet_has_same_common_modulus_form"]
+    assert not result["single_inverse_totient_normalization_gives_power_saving"]
+    assert not result["cross_cofactor_sum_bound_proved_by_H_descent_alone"]
+    assert not result["principal_active_sector_bound_proved_by_H_descent_alone"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_active_principal_ratio_convolution_descends_factorwise() -> None:
+    audit = getattr(
+        coverage_audit,
+        "active_principal_ratio_convolution_descent_audit",
+        None,
+    )
+    assert audit is not None, "active-principal ratio descent is missing"
+    result = audit(
+        common_modulus=5,
+        active_cofactor=3,
+        left_ratio_values=((1, F(2)), (4, F(3))),
+        right_ratio_values=((1, F(5)), (2, F(7))),
+    )
+    assert result["ambient_conductor_mobius_sign"] == 1
+    assert result["left_active_principal_transform"] == {
+        1: F(2),
+        2: F(0),
+        3: F(0),
+        4: F(3),
+    }
+    assert result["right_active_principal_transform"] == {
+        1: F(5),
+        2: F(7),
+        3: F(0),
+        4: F(0),
+    }
+    assert result["factorized_descended_H"] == {
+        (1, 1): F(5),
+        (1, 2): F(7),
+        (4, 1): F(15, 2),
+        (4, 2): F(21, 2),
+    }
+    assert result["active_principal_fiber_profile"] == {
+        1: F(15, 2),
+        2: F(7),
+        3: F(21, 2),
+        4: F(5),
+    }
+    assert result["factorized_common_modulus_ratio_profile"] == {
+        1: F(15, 2),
+        2: F(7),
+        3: F(21, 2),
+        4: F(5),
+    }
+    assert result["physical_ratio_packet_descends_factorwise"]
+    assert result["single_active_totient_divides_two_principal_transforms"]
+    assert not result["active_principal_transforms_have_power_cancellation"]
+    assert not result[
+        "cross_cofactor_sum_bound_proved_by_ratio_descent_alone"
+    ]
+    assert not result[
+        "principal_active_sector_bound_proved_by_ratio_descent_alone"
+    ]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_weighted_pairwise_contractions_are_bounded_by_one_row_energy() -> None:
+    audit = getattr(
+        coverage_audit,
+        "weighted_pairwise_contraction_audit",
+        None,
+    )
+    assert audit is not None, "weighted pairwise contraction audit is missing"
+    result = audit(
+        rows=((3, 2, -1, F(2)), (5, 4, -1, F(-1))),
+        pair_contractions=(
+            (3, 3, F(1)),
+            (3, 5, F(-1)),
+            (5, 3, F(1, 2)),
+            (5, 5, F(0)),
+        ),
+    )
+    assert result["signed_pair_sum"] == F(9, 8)
+    assert result["weighted_l1_norm"] == F(5, 4)
+    assert result["weighted_l1_square"] == F(25, 16)
+    assert result["total_euler_weight"] == F(3, 4)
+    assert result["weighted_row_energy"] == F(9, 4)
+    assert result["euler_weight_times_row_energy"] == F(27, 16)
+    assert result["pair_sum_bounded_by_weighted_l1_square"]
+    assert result["weighted_l1_square_bounded_by_one_row_energy"]
+    assert result["all_pair_operators_are_contractions"]
+    assert result["outer_mobius_signs_are_retained_but_not_spent"]
+
+
+def test_principal_active_APBD_transfers_to_proved_resonant_energy() -> None:
+    audit = getattr(
+        coverage_audit,
+        "principal_active_APBD_transfer_audit",
+        None,
+    )
+    assert audit is not None, "principal-active APBD transfer audit is missing"
+    result = audit(
+        physical_H_descent_verified=True,
+        ratio_convolution_factorization_verified=True,
+        centered_imprimitive_energy_bound_proved=True,
+        pairwise_common_lift_contraction_verified=True,
+        inverse_totient_euler_sum_is_subpolynomial=True,
+        bounded_determinant_count_is_subpolynomial=True,
+    )
+    assert result["active_principal_energy_is_subset_of_section_9_144"]
+    assert result["pairwise_cross_cofactor_sum_uses_one_row_energy"]
+    assert result["outer_type_blocks_must_be_reassembled_before_bound"]
+    assert result["individual_outer_type_block_bounds_proved"] == {
+        "I-I": False,
+        "I-II": False,
+        "II-I": False,
+        "II-II": False,
+    }
+    assert result["combined_I_II_APBD_bound_proved"]
+    assert result["principal_active_sector_bound_proved"]
+    assert not result["all_active_character_sectors_proved"]
+    assert not result["bounded_D_one_power_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_fixed_order_active_characters_have_euler_sparse_multiplicity() -> None:
+    audit = getattr(
+        coverage_audit,
+        "sparse_active_character_sector_transfer_audit",
+        None,
+    )
+    assert audit is not None, "sparse active-character transfer is missing"
+    result = audit(
+        active_cofactors=(3, 5, 15),
+        character_power_exponent=2,
+        centered_imprimitive_energy_bound_proved=True,
+        pairwise_common_lift_contraction_verified=True,
+        bounded_determinant_count_is_subpolynomial=True,
+    )
+    assert result["character_multiplicity_by_cofactor"] == {
+        3: 2,
+        5: 2,
+        15: 4,
+    }
+    assert result["totient_by_cofactor"] == {3: 2, 5: 4, 15: 8}
+    assert result["finite_sparse_euler_weight"] == 2
+    assert result["multiplicity_is_bounded_by_B_to_omega"]
+    assert result["fixed_order_character_euler_sum_is_subpolynomial"]
+    assert result["principal_active_sector_bound_proved"]
+    assert result["quadratic_active_sector_bound_proved"]
+    assert result["every_fixed_order_active_sector_bound_proved"]
+    assert not result["all_active_character_sectors_proved"]
+    assert not result["high_order_active_character_sector_proved"]
+    assert not result["bounded_D_one_power_gate_closed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_active_conductor_entropy_is_absorbed_below_two_thirds() -> None:
+    audit = getattr(
+        coverage_audit,
+        "active_character_conductor_entropy_polytope_audit",
+        None,
+    )
+    assert audit is not None, "active conductor-entropy audit is missing"
+    boundary = audit(
+        active_cofactor_exponent=F(3, 2),
+        active_primitive_conductor_exponent=F(1),
+        centered_energy_target_exponent=F(12),
+    )
+    assert boundary["active_imprimitive_cofactor_exponent"] == F(1, 2)
+    assert boundary["character_entropy_cost_exponent"] == 1
+    assert boundary["imprimitive_energy_margin_exponent"] == 1
+    assert boundary["energy_after_character_entropy_exponent"] == 12
+    assert boundary["maximum_covered_conductor_exponent"] == 1
+    assert boundary["covered_conductor_ratio"] == F(2, 3)
+    assert boundary["active_conductor_sector_within_target"]
+
+    hard = audit(
+        active_cofactor_exponent=F(3, 2),
+        active_primitive_conductor_exponent=F(6, 5),
+        centered_energy_target_exponent=F(12),
+    )
+    assert hard["active_imprimitive_cofactor_exponent"] == F(3, 10)
+    assert hard["character_entropy_cost_exponent"] == F(6, 5)
+    assert hard["imprimitive_energy_margin_exponent"] == F(3, 5)
+    assert hard["energy_after_character_entropy_exponent"] == F(63, 5)
+    assert not hard["active_conductor_sector_within_target"]
+    assert hard["remaining_sector_is_near_primitive_above_two_thirds"]
+    assert not hard["near_primitive_high_order_sector_proved"]
+    assert not hard["bounded_D_one_power_gate_closed"]
+    assert not hard["coupled_kernel_gate_closed"]
+
+
+def test_bounded_determinant_common_shift_has_an_exact_fourier_split() -> None:
+    audit = getattr(
+        coverage_audit,
+        "bounded_determinant_common_frequency_audit",
+        None,
+    )
+    assert audit is not None, "common-frequency determinant audit is missing"
+    result = audit(
+        common_modulus=5,
+        left_active_cofactor=2,
+        right_active_cofactor=3,
+        determinant=1,
+        left_phase_label=1,
+        right_phase_label=2,
+        left_common_profile=((1, 2), (2, -1), (3, 3), (4, 1)),
+        right_common_profile=((1, 1), (2, 4), (3, -2), (4, 2)),
+    )
+    assert result["common_lift_equals_shifted_correlation"]
+    assert result["shifted_correlation_equals_additive_fourier_sum"]
+    assert result["left_additive_parseval_exact"]
+    assert result["right_additive_parseval_exact"]
+    assert result["zero_frequency_energy_is_a_parseval_subenergy"]
+    assert result["zero_common_frequency_factorizes_rowwise"]
+    assert result["nonzero_common_frequencies_retain_inverse_product_phase"]
+    assert result["common_frequency_shift_numerator"] == 1
+    assert result["common_frequency_shift_denominator"] == 1
+    assert not result["nonzero_common_frequency_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_mutual_character_evaluation_has_a_two_sided_orthogonality_bound() -> None:
+    audit = getattr(
+        coverage_audit,
+        "mutual_character_evaluation_large_sieve_audit",
+        None,
+    )
+    assert audit is not None, "mutual character-evaluation audit is missing"
+    result = audit(
+        left_coefficients=(
+            (5, (1,), 1),
+            (7, (2,), 2),
+        ),
+        right_coefficients=(
+            (11, (3,), -1),
+            (13, (4,), 3),
+        ),
+        pair_multipliers=(
+            (5, 11, 1j),
+            (5, 13, -1),
+            (7, 11, -1j),
+            (7, 13, 1),
+        ),
+    )
+    assert result["all_character_indices_valid"]
+    assert result["all_cross_moduli_coprime"]
+    assert result["left_orthogonality_factor"] == 6
+    assert result["right_orthogonality_factor"] == 12
+    assert result["two_sided_orthogonality_bound_verified"]
+    assert result["dyadic_Q_plus_R_operator_bound_verified"]
+    assert result["arbitrary_character_subfamilies_supported"]
+    assert result["arbitrary_unit_pair_multipliers_supported"]
+    assert result["pair_dependent_common_frequency_absorbed"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_near_primitive_conductors_split_before_cauchy_and_keep_short_cofactors() -> None:
+    audit = getattr(
+        coverage_audit,
+        "near_primitive_active_conductor_type_split_audit",
+        None,
+    )
+    assert audit is not None, "near-primitive conductor Type split is missing"
+    result = audit(
+        left_active_cofactor=10,
+        right_active_cofactor=33,
+        left_primitive_conductor=5,
+        right_primitive_conductor=11,
+        short_cutoff_u=2,
+        short_cutoff_v=2,
+        h_weights=((1, 2), (2, -1)),
+        delta_weights=((3, 1), (-1, 4)),
+    )
+    assert result["left_imprimitive_cofactor"] == 2
+    assert result["right_imprimitive_cofactor"] == 3
+    assert result["both_active_characters_are_near_primitive"]
+    assert result["short_cofactors_are_below_conductor_square_root"]
+    assert result["all_small_conductor_blocks_empty"]
+    assert result["nonempty_ordered_conductor_type_blocks"] == (
+        ("I", "I"),
+        ("I", "II"),
+        ("II", "I"),
+        ("II", "II"),
+    )
+    assert result["conductor_type_blocks_reassemble_full_outer_mobius_pair"]
+    assert result["short_cofactor_mobius_signs_retained"]
+    assert result["product_label_remains_exact_h_delta_convolution"]
+    assert not result["near_primitive_nonzero_frequency_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_all_common_frequencies_cover_the_mutual_large_sieve_polytope() -> None:
+    audit = getattr(
+        coverage_audit,
+        "near_primitive_mutual_character_polytope_audit",
+        None,
+    )
+    assert audit is not None, "near-primitive mutual-character polytope is missing"
+    covered = audit(
+        left_active_cofactor_exponent=F(3, 2),
+        right_active_cofactor_exponent=F(3, 2),
+        left_primitive_conductor_exponent=F(7, 5),
+        right_primitive_conductor_exponent=F(13, 10),
+        common_frequency_is_zero=True,
+        physical_additive_fourier_adapter_verified=True,
+        centered_two_pv_row_energy_verified=True,
+        unit_pair_multiplier_large_sieve_verified=True,
+        common_frequency_parseval_reassembly_verified=True,
+    )
+    assert covered["left_imprimitive_cofactor_exponent"] == F(1, 10)
+    assert covered["right_imprimitive_cofactor_exponent"] == F(1, 5)
+    assert covered["normalized_mutual_large_sieve_cost_exponent"] == F(1, 20)
+    assert covered["available_two_pv_pair_margin_exponent"] == F(3, 10)
+    assert covered["zero_common_frequency_sector_within_target"]
+    assert covered["all_common_frequency_sector_within_target"]
+
+    hard = audit(
+        left_active_cofactor_exponent=F(3, 2),
+        right_active_cofactor_exponent=F(2),
+        left_primitive_conductor_exponent=F(3, 2),
+        right_primitive_conductor_exponent=F(2),
+        common_frequency_is_zero=True,
+        physical_additive_fourier_adapter_verified=True,
+        centered_two_pv_row_energy_verified=True,
+        unit_pair_multiplier_large_sieve_verified=True,
+        common_frequency_parseval_reassembly_verified=True,
+    )
+    assert hard["normalized_mutual_large_sieve_cost_exponent"] == F(1, 4)
+    assert hard["available_two_pv_pair_margin_exponent"] == 0
+    assert hard["remaining_zero_frequency_deficit"] == F(1, 4)
+    assert not hard["zero_common_frequency_sector_within_target"]
+    assert not hard["all_common_frequency_sector_within_target"]
+    assert hard["remaining_sector_is_conductor_imbalance_wedge"]
+    assert not hard["bounded_D_one_power_gate_closed"]
+    assert not hard["coupled_kernel_gate_closed"]
+
+
+def test_remaining_conductor_imbalance_wedge_needs_at_most_one_quarter_power() -> None:
+    audit = getattr(
+        coverage_audit,
+        "near_primitive_conductor_imbalance_wedge_audit",
+        None,
+    )
+    assert audit is not None, "near-primitive imbalance-wedge audit is missing"
+    extreme = audit(
+        left_active_cofactor_exponent=F(2),
+        right_active_cofactor_exponent=F(3, 2),
+        left_primitive_conductor_exponent=F(2),
+        right_primitive_conductor_exponent=F(3, 2),
+        maximum_physical_active_scale_gap=F(1, 2),
+    )
+    assert extreme["longer_primitive_conductor_side"] == "left"
+    assert extreme["active_scale_gap_exponent"] == F(1, 2)
+    assert extreme["oriented_wedge_threshold_exponent"] == 0
+    assert extreme["inside_uncovered_conductor_imbalance_wedge"]
+    assert extreme["required_pre_cauchy_type_saving_exponent"] == F(1, 4)
+    assert extreme["maximum_required_type_saving_exponent"] == F(1, 4)
+    assert extreme["long_side_imprimitive_cofactor_below_one_sixth"]
+
+    boundary = audit(
+        left_active_cofactor_exponent=F(2),
+        right_active_cofactor_exponent=F(8, 5),
+        left_primitive_conductor_exponent=F(19, 10),
+        right_primitive_conductor_exponent=F(3, 2),
+        maximum_physical_active_scale_gap=F(1, 2),
+    )
+    assert boundary["long_imprimitive_cofactor_exponent"] == F(1, 10)
+    assert boundary["short_imprimitive_cofactor_exponent"] == F(1, 10)
+    assert boundary["active_scale_gap_exponent"] == F(2, 5)
+    assert boundary["oriented_wedge_threshold_exponent"] == F(2, 5)
+    assert not boundary["inside_uncovered_conductor_imbalance_wedge"]
+    assert boundary["required_pre_cauchy_type_saving_exponent"] == 0
+    assert not boundary["bounded_D_one_power_gate_closed"]
+    assert not boundary["coupled_kernel_gate_closed"]
+
+
+def test_prime_conductor_zero_frequency_face_is_type_I_only_and_saturates() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_conductor_zero_frequency_saturation_audit",
+        None,
+    )
+    assert audit is not None, "prime-conductor zero-frequency audit is missing"
+    result = audit(
+        long_primes=(31, 41, 61, 71),
+        short_prime=5,
+        residue_class=1,
+        deleted_character_order_bound=2,
+        short_cutoff_u=2,
+        short_cutoff_v=2,
+    )
+    assert result["all_supplied_conductors_are_prime"]
+    assert result["all_long_primes_lie_in_one_short_residue_class"]
+    assert result["short_conductor_type_multipliers"] == {
+        "small": 0,
+        "I": -1,
+        "II": 0,
+    }
+    assert all(
+        multipliers == {"small": 0, "I": -1, "II": 0}
+        for multipliers in result["long_conductor_type_multipliers"].values()
+    )
+    assert result["only_I_I_conductor_block_survives"]
+    assert result["short_high_order_character_count"] == 2
+    assert result["long_high_order_character_counts"] == {
+        31: 28,
+        41: 38,
+        61: 58,
+        71: 68,
+    }
+    assert result["residue_delta_input_norm_squared"] == 2
+    assert result["residue_delta_output_norm_squared"] == 768
+    assert result["mutual_operator_norm_lower_bound_squared"] == 384
+    assert result["zero_frequency_pair_multiplier_is_one"]
+    assert result["conductor_mobius_sign_is_constant_on_prime_face"]
+    assert not result["type_reassembly_supplies_power_cancellation"]
+    assert not result["near_primitive_zero_frequency_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_prime_conductor_saturation_keeps_the_full_imbalance_exponent() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_conductor_zero_frequency_polytope_audit",
+        None,
+    )
+    assert audit is not None, "prime-conductor exponent audit is missing"
+    extreme = audit(
+        long_conductor_exponent=F(2),
+        short_conductor_exponent=F(3, 2),
+        dyadic_prime_density_loss_exponent=F(0),
+        bounded_order_deletion_loss_exponent=F(0),
+    )
+    assert extreme["mutual_character_operator_exponent"] == 2
+    assert extreme["balanced_operator_target_exponent"] == F(7, 4)
+    assert extreme["unremoved_imbalance_exponent"] == F(1, 4)
+    assert extreme["matches_NPIT_extreme_deficit"]
+    assert extreme["prime_conductor_face_is_type_I_only"]
+    assert extreme["type_split_cannot_remove_a_positive_power"]
+    assert extreme["required_next_input"] == (
+        "physical-zero-frequency compression or explicit residual-main-term "
+        "reassembly"
+    )
+    assert not extreme["physical_zero_frequency_compression_proved"]
+    assert not extreme["NPIT_proved"]
+    assert not extreme["coupled_kernel_gate_closed"]
+
+
+def test_prime_conductor_zero_frequency_obstruction_is_documented() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.170 The prime-conductor zero frequency cannot be closed by "
+        "the Type split"
+    ) in text
+    assert r"\lambda_{\rm I}(p)=-1" in text
+    assert r"\lambda_{\rm II}(p)=0" in text
+    assert r"\|\mathcal M_{P,Q}^{(0)}\|" in text
+    assert r"\gg_B\frac P{\sqrt{\log P}}" in text
+    assert "prime--prime zero-frequency physical compression" in text
+    assert "The resulting physical gate is still unproved" in text
+
+
+def test_prime_zero_frequency_character_sum_reinverts_to_active_residues() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_zero_frequency_character_reinversion_audit",
+        None,
+    )
+    assert audit is not None, "prime zero-frequency reinversion audit is missing"
+    result = audit(
+        left_prime=7,
+        right_prime=5,
+        determinant=1,
+        deleted_character_order_bound=2,
+        left_active_profile=(
+            (1, 2),
+            (2, -1),
+            (3, 3),
+            (4, 0),
+            (5, -2),
+            (6, -2),
+        ),
+        right_active_profile=((1, 1), (2, 4), (3, -2), (4, -3)),
+    )
+    assert result["left_active_residue"] == 3
+    assert result["right_active_residue"] == 2
+    assert result["left_profile_is_centered"]
+    assert result["right_profile_is_centered"]
+    assert result["left_high_order_character_count"] == 4
+    assert result["right_high_order_character_count"] == 2
+    assert result["full_character_reinversion_exact"]
+    assert result["full_character_mutual_sum"] == 12
+    assert result["high_order_character_reinversion_exact"]
+    assert result["high_order_mutual_sum_equals_projected_cross_residue"]
+    assert result["active_residues_match_bounded_determinant_congruences"]
+    assert result["arbitrary_character_vectors_removed_from_zero_frequency_gate"]
+    assert not result["physical_cross_residue_profile_bound_proved"]
+    assert not result["NPIT_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_prime_zero_frequency_physical_reinversion_is_documented() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.171 Zero-frequency character reinversion exposes the physical "
+        "cross residues"
+    ) in text
+    assert r"D\overline q_p" in text
+    assert r"-D\overline p_q" in text
+    assert r"\mathscr S_{\rm pp,0}^{\rm phys}" in text
+    assert "no longer an arbitrary mutual-character vector" in text
+    assert "physical cross-residue profile bound remains unproved" in text
+
+
+def test_prime_cross_residue_incidence_puts_all_repetition_on_short_side() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_cross_residue_incidence_audit",
+        None,
+    )
+    assert audit is not None, "prime cross-residue incidence audit is missing"
+    result = audit(
+        long_primes=(31, 41, 61, 71),
+        short_primes=(5, 7),
+        determinant=1,
+    )
+    assert result["all_cross_residues_satisfy_determinant_congruences"]
+    assert result["long_profile_sampling_is_injective"]
+    assert result["long_profile_sampling_maximum_occupancy"] == 1
+    assert result["short_profile_residue_occupancies"][5][4] == 4
+    assert result["short_profile_sampling_maximum_occupancy"] == 4
+    assert result["cauchy_squared_loss_is_short_occupancy"] == 4
+    assert result["all_repetition_is_on_short_profile_side"]
+    assert not result["short_profile_centering_removes_positive_occupancy"]
+    assert not result["pre_cauchy_long_prime_cancellation_proved"]
+    assert not result["NPIT_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_prime_cross_residue_occupancy_boundary_is_documented() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.172 Cross-residue incidence puts the entire occupancy loss "
+        "on the short profile"
+    ) in text
+    assert r"n_q(a)" in text
+    assert r"\max_{q,a}n_q(a)" in text
+    assert "long-profile sampling is injective" in text
+    assert "Cauchy must be delayed past the long-prime average" in text
+    assert "pre-Cauchy physical incidence bound remains unproved" in text
+
+
+def test_prime_cross_residue_ratio_convolution_becomes_centered_incidence() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_cross_residue_centered_divisor_incidence_audit",
+        None,
+    )
+    assert audit is not None, "centered prime divisor-incidence audit is missing"
+    result = audit(
+        left_prime=7,
+        right_prime=5,
+        determinant=1,
+        left_F_lift=((1, 2), (2, -1), (10, 3)),
+        left_G_lift=((1, 1), (3, -2), (9, 4)),
+        right_F_lift=((1, -1), (2, 3), (8, 2)),
+        right_G_lift=((1, 2), (4, -1), (7, 3)),
+    )
+    assert result["left_cross_residue"] == 3
+    assert result["right_cross_residue"] == 2
+    assert result["left_ratio_convolution_equals_divisor_incidence"]
+    assert result["right_ratio_convolution_equals_divisor_incidence"]
+    assert result["left_centered_profile_equals_density_subtracted_incidence"]
+    assert result["right_centered_profile_equals_density_subtracted_incidence"]
+    assert result["centered_cross_product_equals_coupled_incidence_product"]
+    assert result["inverse_residue_has_been_eliminated"]
+    assert result["physical_lift_weights_remain_inside_incidence"]
+    assert result["bounded_order_projectors_are_separate_sparse_corrections"]
+    assert not result["coupled_centered_incidence_bound_proved"]
+    assert not result["NPIT_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_prime_centered_divisor_incidence_gate_is_documented() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.173 Ratio-convolution expansion removes both cross inverses"
+    ) in text
+    assert r"p\mid qm+Dn" in text
+    assert r"q\mid pu-Dv" in text
+    assert r"\mathbf1_{p\mid qm+Dn}-\frac1{\varphi(p)}" in text
+    assert "coupled centered divisor-incidence master" in text
+    assert "physical Möbius and Type weights remain inside" in text
+    assert "centered incidence bound remains unproved" in text
+
+
+def test_prime_centered_incidence_has_nine_exact_internal_type_blocks() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_centered_incidence_internal_type_split_audit",
+        None,
+    )
+    assert audit is not None, "prime centered-incidence Type split is missing"
+    result = audit(
+        left_prime=7,
+        right_prime=5,
+        determinant=1,
+        short_cutoff_u=2,
+        short_cutoff_v=2,
+        left_F_lift=((1, 2), (2, -1), (10, 3)),
+        left_G_type_lift=((1, 2, 1), (3, 3, -2), (9, 15, 4)),
+        right_F_lift=((1, -1), (2, 3), (8, 2)),
+        right_G_type_lift=((1, 2, 2), (4, 3, -1), (7, 15, 3)),
+    )
+    assert result["left_type_multipliers_by_argument"][2] == {
+        "small": -1,
+        "I": 0,
+        "II": 0,
+    }
+    assert result["left_type_multipliers_by_argument"][15] == {
+        "small": 0,
+        "I": -1,
+        "II": 2,
+    }
+    assert result["all_nine_ordered_internal_type_blocks_retained"]
+    assert result["internal_type_blocks_reassemble_centered_incidence_before_cauchy"]
+    assert result["left_raw_G_lift_reassembles_pointwise"]
+    assert result["right_raw_G_lift_reassembles_pointwise"]
+    assert result["F_lifts_keep_product_label_and_cofactor_mobius_weights"]
+    assert result["both_local_density_subtractions_are_unchanged_by_type_split"]
+    assert not result["individual_internal_type_block_bounds_proved"]
+    assert not result["combined_internal_type_incidence_bound_proved"]
+    assert not result["NPIT_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_prime_centered_incidence_type_polytope_is_documented() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.174 The centered incidence master has nine exact internal "
+        "Type blocks"
+    ) in text
+    assert r"\mathscr I_{\rm pp,0}^{\alpha,\beta}" in text
+    assert "all nine blocks must be reassembled before Cauchy" in text
+    assert "fixed-prime Type I completion" in text
+    assert "no published row closes one full physical block" in text
+    assert "combined nine-block incidence bound remains unproved" in text
+
+
+def test_prime_incidence_scale_adapter_keeps_ambient_and_active_exponents_distinct() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_incidence_scale_adapter_audit",
+        None,
+    )
+    assert audit is not None, "prime incidence scale adapter is missing"
+    result = audit(
+        left_ambient_reduced_modulus_exponent=F(3),
+        right_ambient_reduced_modulus_exponent=F(3),
+        left_type_frequency_gcd_exponent=F(0),
+        right_type_frequency_gcd_exponent=F(1, 2),
+        common_reduced_gcd_exponent=F(1),
+        left_active_primitive_conductor_exponent=F(2),
+        right_active_primitive_conductor_exponent=F(3, 2),
+        left_active_imprimitive_cofactor_exponent=F(0),
+        right_active_imprimitive_cofactor_exponent=F(0),
+        left_oriented_modulus_exponent=F(3),
+        right_oriented_modulus_exponent=F(3),
+        product_label_exponent=F(5),
+        internal_type_length_exponent=F(3),
+        internal_type_cutoff_exponent=F(1, 2),
+    )
+    assert result["left_reduced_denominator_exponent"] == F(3)
+    assert result["right_reduced_denominator_exponent"] == F(5, 2)
+    assert result["left_active_cofactor_exponent"] == F(2)
+    assert result["right_active_cofactor_exponent"] == F(3, 2)
+    assert result["left_scale_factorization_exact"]
+    assert result["right_scale_factorization_exact"]
+    assert result["left_9_138_effective_F_length_exponent"] == F(5)
+    assert result["right_9_138_effective_F_length_exponent"] == F(5)
+    assert result["9_138_internal_G_length_exponent"] == F(3)
+    assert not result[
+        "left_ambient_modulus_equals_active_primitive_conductor"
+    ]
+    assert not result[
+        "right_ambient_modulus_equals_active_primitive_conductor"
+    ]
+    assert result["internal_small_block_empty_on_this_dyadic_face"]
+    assert result["nonempty_internal_type_blocks_on_this_face"] == (
+        ("I", "I"),
+        ("I", "II"),
+        ("II", "I"),
+        ("II", "II"),
+    )
+    assert result["conductor_imbalance_exponent"] == F(1, 4)
+    assert not result["PCDI_proved"]
+    assert not result["NPIT_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_prime_incidence_scale_adapter_rejects_a_false_scale_identification() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_incidence_scale_adapter_audit",
+        None,
+    )
+    assert audit is not None, "prime incidence scale adapter is missing"
+    with pytest.raises(ValueError, match="scale factorization"):
+        audit(
+            left_ambient_reduced_modulus_exponent=F(2),
+            right_ambient_reduced_modulus_exponent=F(3, 2),
+            left_type_frequency_gcd_exponent=F(0),
+            right_type_frequency_gcd_exponent=F(1, 2),
+            common_reduced_gcd_exponent=F(1),
+            left_active_primitive_conductor_exponent=F(2),
+            right_active_primitive_conductor_exponent=F(3, 2),
+            left_active_imprimitive_cofactor_exponent=F(0),
+            right_active_imprimitive_cofactor_exponent=F(0),
+            left_oriented_modulus_exponent=F(3),
+            right_oriented_modulus_exponent=F(3),
+            product_label_exponent=F(5),
+            internal_type_length_exponent=F(3),
+            internal_type_cutoff_exponent=F(1, 2),
+        )
+
+
+def test_prime_centered_incidence_splits_its_resonant_double_incidence_diagonal() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_centered_incidence_resonant_split_audit",
+        None,
+    )
+    assert audit is not None, "prime incidence resonant split is missing"
+    result = audit(
+        left_prime=7,
+        right_prime=5,
+        determinant=1,
+        left_F_lift=((2, 1),),
+        left_G_lift=((4, 1),),
+        right_F_lift=((3, 1), (2, 1)),
+        right_G_lift=((6, 1), (9, 1)),
+    )
+    assert result["double_incidence_row_count"] == 2
+    assert result["resonant_double_incidence_row_count"] == 1
+    assert result["nonresonant_double_incidence_row_count"] == 1
+    assert result["double_incidence_weight"] == F(2)
+    assert result["resonant_double_incidence_weight"] == F(1)
+    assert result["nonresonant_double_incidence_weight"] == F(1)
+    resonant = result["resonant_parameter_rows"][0]
+    assert resonant["left_scale"] == 2
+    assert resonant["right_scale"] == 3
+    assert resonant["core_triple"] == (1, 1, 2)
+    assert resonant["core_equation"] == (7, 7)
+    assert resonant["parameterization_reconstructs_all_six_variables"]
+    assert resonant["primitive_ray_core"] == (1, 1, 2)
+    assert resonant["left_ray_scale"] == 2
+    assert resonant["right_ray_scale"] == 3
+    nonresonant = result["nonresonant_double_incidence_rows"][0]
+    assert nonresonant["incidence_determinant"] == -2
+    assert nonresonant["first_determinant_factorization"] == (-2, -2)
+    assert nonresonant["second_determinant_factorization"] == (-10, -10)
+    assert result["incidence_plane_primitive_normal"] == (7, -5, -1)
+    assert result["incidence_plane_canonical_basis"] == ((1, 1, 2), (1, 0, 7))
+    assert nonresonant["left_lattice_coordinates"] == (2, 0)
+    assert nonresonant["right_lattice_coordinates"] == (1, 1)
+    assert nonresonant["lattice_coordinate_determinant"] == 2
+    assert nonresonant["generated_sublattice_index"] == 2
+    assert nonresonant["vector_cross_product"] == (14, -10, -2)
+    assert nonresonant["cross_product_equals_minus_t_times_normal"]
+    assert result["canonical_basis_cross_product_equals_primitive_normal"]
+    assert result["every_double_incidence_pair_has_exact_lattice_index"]
+    assert result["every_nonresonant_row_has_one_common_integer_determinant"]
+    assert result["every_resonant_row_has_unique_coprime_scale_parameterization"]
+    assert result["left_primitive_ray_profile"] == {(1, 1, 2): F(1)}
+    assert result["right_primitive_ray_profile"] == {
+        (1, 1, 2): F(1),
+        (2, 1, 9): F(1),
+    }
+    assert result["factorized_resonant_ray_inner_product"] == F(1)
+    assert result["resonant_ray_profile_factorization_exact"]
+    assert result["double_incidence_reassembles_from_resonant_and_nonresonant"]
+    assert result["resonant_density_compensated_ledger"] == F(-1, 6)
+    assert result["nonresonant_incidence_remainder"] == F(1)
+    assert result["supplied_resonant_ledger_is_nonzero"]
+    assert result["centered_product_from_four_density_terms"] == F(5, 6)
+    assert result["resonant_plus_nonresonant_reassembles_centered_product"]
+    assert result["centered_product_equals_direct_centered_incidence"]
+    assert not result["resonant_diagonal_bound_proved"]
+    assert not result["nonresonant_incidence_bound_proved"]
+    assert not result["PCDI_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    scaled = audit(
+        left_prime=7,
+        right_prime=5,
+        determinant=1,
+        left_F_lift=((4, 1),),
+        left_G_lift=((8, 1),),
+        right_F_lift=((6, 1),),
+        right_G_lift=((12, 1),),
+    )
+    scaled_resonant = scaled["resonant_parameter_rows"][0]
+    assert scaled_resonant["left_scale"] == 2
+    assert scaled_resonant["right_scale"] == 3
+    assert scaled_resonant["core_triple"] == (2, 2, 4)
+    assert scaled_resonant["primitive_ray_core"] == (1, 1, 2)
+    assert scaled_resonant["left_ray_scale"] == 4
+    assert scaled_resonant["right_ray_scale"] == 6
+    assert scaled["resonant_ray_profile_factorization_exact"]
+
+
+def test_prime_incidence_determinant_literature_coverage_is_documented() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "Published fixed-determinant coverage audit" in text
+    assert "https://arxiv.org/abs/2410.04637" in text
+    assert "https://arxiv.org/abs/2509.16890" in text
+    assert "https://arxiv.org/abs/2509.20259" in text
+    assert "https://arxiv.org/abs/2605.15434" in text
+    assert "moving four-weight tensor" in text
+    assert "validates the determinant geometry but does not prove (PCDI)" in text
+
+
+def test_prime_incidence_type_I_factorization_and_short_side_pv_gain() -> None:
+    factorization = getattr(
+        coverage_audit,
+        "prime_incidence_type_I_factorization_audit",
+        None,
+    )
+    assert factorization is not None, "prime incidence Type-I factorization is missing"
+    exact = factorization(
+        short_cutoff_u=2,
+        short_cutoff_v=3,
+        weights=tuple((value, F(value + 1, value + 2)) for value in range(1, 31)),
+    )
+    assert exact["type_I_coefficients_reassemble_exactly"]
+    assert exact["quotient_residual_factor_has_no_mobius_coefficient"]
+    assert not exact["companion_factor_mobius_coefficient_removed"]
+    assert exact["mixed_endpoint_remainder_present"] is False
+
+    companion_factorization = getattr(
+        coverage_audit,
+        "prime_incidence_type_I_companion_factorization_audit",
+        None,
+    )
+    assert companion_factorization is not None
+    companion_exact = companion_factorization(
+        short_cutoff_u=2,
+        short_cutoff_v=3,
+        rows=((5, 2, F(2, 3)), (7, 3, F(3, 5)), (6, 5, F(5, 7))),
+    )
+    assert companion_exact["full_companion_factorization_reassembles_exactly"]
+    assert companion_exact["direct_coefficients"] == {
+        (5, 2): F(2, 3),
+        (7, 3): F(3, 5),
+        (6, 5): F(-5, 7),
+    }
+    assert companion_exact["physical_prime_companions_verified"]
+    assert companion_exact["companion_mobius_signs_retained"] == (-1, -1, -1)
+    assert not companion_exact["companion_factor_mobius_coefficient_removed"]
+
+    polytope = getattr(
+        coverage_audit,
+        "prime_incidence_short_type_I_pv_polytope_audit",
+        None,
+    )
+    assert polytope is not None, "short-side Type-I PV polytope audit is missing"
+    result = polytope(
+        internal_type_length_exponent=F(3),
+        first_short_cutoff_exponent=F(1, 2),
+        second_short_cutoff_exponent=F(1, 2),
+        long_active_primitive_conductor_exponent=F(2),
+        short_active_primitive_conductor_exponent=F(3, 2),
+        long_active_imprimitive_cofactor_exponent=F(0),
+        short_active_imprimitive_cofactor_exponent=F(0),
+        short_companion_factor_exponent=F(1, 2),
+        physical_maximum_primitive_conductor_exponent=F(2),
+        packet_exhaustive_residual_bv_adapter_verified=True,
+        common_phase_free_model_verified=True,
+    )
+    assert result["short_type_I_smooth_group_exponent"] == F(7, 4)
+    assert result["short_companion_fourth_moment_exponent"] == F(4)
+    assert result["generic_short_type_fourth_moment_exponent"] == F(12)
+    assert result["type_I_short_fourth_moment_exponent"] == F(11)
+    assert result["short_type_I_fourth_moment_gain_exponent"] == F(1)
+    assert result["usable_bilinear_gain_exponent"] == F(1, 4)
+    assert result["required_conductor_imbalance_gain_exponent"] == F(1, 4)
+    assert result["covered_type_I_short_companion_subpolytope"]
+    assert result["maximum_uniformly_covered_companion_exponent"] == F(1, 2)
+    assert result["remaining_companion_dispersion_gain_exponent"] == F(0)
+    assert not result["type_I_cell_retained_in_PCDI_SREM"]
+    assert result["short_side_type_II_cells_retained_in_PCDI_SREM"]
+    assert not result["entire_short_side_type_I_blocks_covered"]
+    assert not result["short_side_type_II_bound_proved"]
+    assert not result["PCDI_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_phase_free_type_I_model_gain_covers_the_oriented_wedge() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_incidence_short_type_I_pv_polytope_audit",
+        None,
+    )
+    assert audit is not None, "short-side Type-I PV polytope audit is missing"
+    result = audit(
+        internal_type_length_exponent=F(3),
+        first_short_cutoff_exponent=F(1, 2),
+        second_short_cutoff_exponent=F(1, 2),
+        long_active_primitive_conductor_exponent=F(19, 10),
+        short_active_primitive_conductor_exponent=F(9, 5),
+        long_active_imprimitive_cofactor_exponent=F(0),
+        short_active_imprimitive_cofactor_exponent=F(0),
+        short_companion_factor_exponent=F(1, 5),
+        physical_maximum_primitive_conductor_exponent=F(2),
+        packet_exhaustive_residual_bv_adapter_verified=True,
+        common_phase_free_model_verified=True,
+    )
+    assert result["usable_bilinear_gain_exponent"] == F(1, 10)
+    assert result["required_conductor_imbalance_gain_exponent"] == F(1, 20)
+    assert result["gain_margin_exponent"] == F(1, 20)
+    assert result["covered_type_I_short_companion_subpolytope"]
+    assert result["maximum_uniformly_covered_companion_exponent"] == F(3, 10)
+
+    outside = audit(
+        internal_type_length_exponent=F(3),
+        first_short_cutoff_exponent=F(1, 2),
+        second_short_cutoff_exponent=F(1, 2),
+        long_active_primitive_conductor_exponent=F(2),
+        short_active_primitive_conductor_exponent=F(3, 2),
+        long_active_imprimitive_cofactor_exponent=F(0),
+        short_active_imprimitive_cofactor_exponent=F(0),
+        short_companion_factor_exponent=F(3, 4),
+        physical_maximum_primitive_conductor_exponent=F(2),
+        packet_exhaustive_residual_bv_adapter_verified=True,
+        common_phase_free_model_verified=True,
+    )
+    assert outside["usable_bilinear_gain_exponent"] == F(1, 8)
+    assert not outside["covered_type_I_short_companion_subpolytope"]
+    assert outside["remaining_companion_dispersion_gain_exponent"] == F(1, 8)
+    assert outside["type_I_cell_retained_in_PCDI_SREM"]
+    assert outside["short_side_type_II_cells_retained_in_PCDI_SREM"]
+
+
+def test_prime_companion_fourth_moment_is_diagonally_saturated_below_sqrt_modulus() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_companion_character_fourth_moment_collision_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        prime_modulus=101,
+        companion_primes=(2, 3, 5),
+        weights=(F(1), F(2), F(3)),
+    )
+    assert result["maximum_integer_product_is_below_modulus"]
+    assert result["all_residue_collisions_are_integer_product_diagonals"]
+    assert result["character_second_moment_sum"] == F(1400)
+    assert result["weighted_collision_energy"] == F(294)
+    assert result["character_fourth_moment_sum"] == F(29400)
+    assert result["diagonal_lower_bound"] == F(19600)
+    assert result["fourth_from_second_moment_lower_bound"] == F(19600)
+    assert result["diagonal_lower_bound_verified"]
+    assert not result["separate_row_power_saving_available"]
+    assert result["requires_cross_row_determinant_dispersion"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_prime_incidence_all_nonzero_determinants_retain_the_rank_one_mode() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_incidence_all_determinants_rank_one_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        left_rows=(((1, 0), F(1)), ((0, 1), F(2)), ((1, 1), F(3))),
+        right_rows=(((1, 0), F(4)), ((0, 1), F(5)), ((1, 1), F(6))),
+    )
+    assert result["determinant_histogram"] == {
+        -1: F(32),
+        0: F(32),
+        1: F(26),
+    }
+    assert result["all_pair_weight"] == F(90)
+    assert result["zero_determinant_weight"] == F(32)
+    assert result["nonzero_determinant_weight"] == F(58)
+    assert result["all_determinants_reassemble_all_pairs"]
+    assert result["nonzero_equals_rank_one_mode_minus_parallel_orbit"]
+    assert result["zero_orbit_cancels_after_nonzero_is_rewritten"]
+    assert result["all_t_kernel_contains_rank_one_constant_mode"]
+    assert result["t_nonzero_is_not_fourier_frequency_centering"]
+    assert result["zero_vs_nonzero_is_not_a_canonical_main_remainder_split"]
+    assert result["fixed_determinant_main_terms_require_global_reassembly"]
+    assert not result["nonzero_determinant_spectral_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_short_prime_global_D_ttstar_is_signed_ratio_fiber_energy() -> None:
+    audit = getattr(
+        coverage_audit,
+        "short_prime_global_D_centered_ttstar_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        outer_rows=(
+            (7, 1, F(1)),
+            (17, 1, F(-1)),
+            (11, 2, F(2)),
+            (13, 1, F(3)),
+        ),
+    )
+    assert result["signed_ratio_fiber_weights"] == {2: F(0), 3: F(5)}
+    assert result["direct_centered_gram_energy"] == F(75)
+    assert result["ratio_fiber_energy_formula"] == F(75)
+    assert result["direct_gram_equals_ratio_fiber_energy"]
+    assert result["same_ratio_fiber_iff_outer_determinant_zero_mod_q"]
+    assert result["same_fiber_weights_are_summed_before_absolute_values"]
+    assert result["global_D_ttstar_identity_proved"]
+    assert not result["weighted_ratio_fiber_energy_bound_proved"]
+    assert not result["PCDI_SREM_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.180 Global \\(D\\)-averaging turns occupancy into signed "
+        "ratio-fiber energy"
+    ) in text
+    assert r"\varphi(q)\mathbf1_{c=c'}-1" in text
+    assert r"q\mid p_1D_2-p_2D_1" in text
+    assert "(WRFE)" in text
+    assert "Section 9.183 proves it and replaces (WRFE-local)" in text
+
+
+def test_short_prime_weighted_profile_ttstar_needs_no_scalar_adapter() -> None:
+    audit = getattr(
+        coverage_audit,
+        "short_prime_weighted_profile_ttstar_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=3,
+        outer_profiles=(
+            (
+                1,
+                1,
+                (
+                    ((1, 1), F(1)),
+                    ((1, 2), F(2)),
+                    ((2, 1), F(3)),
+                    ((2, 2), F(4)),
+                ),
+            ),
+            (
+                2,
+                1,
+                (
+                    ((1, 1), F(5)),
+                    ((1, 2), F(6)),
+                    ((2, 1), F(7)),
+                    ((2, 2), F(8)),
+                ),
+            ),
+        ),
+    )
+    assert result["slopes"] == (1, 2)
+    assert result["direct_centered_profile_energy"] == F(16)
+    assert result["weighted_line_gram_energy"] == F(16)
+    assert result["weighted_gram_matrix"] == (
+        (F(15, 2), F(-35, 2)),
+        (F(-35, 2), F(87, 2)),
+    )
+    assert result["direct_energy_equals_weighted_line_gram"]
+    assert result["outer_dependent_profiles_retained_exactly"]
+    assert result["scalar_projective_adapter_required"] is False
+    assert result["adapter_free_weighted_ttstar_identity_proved"]
+    assert not result["physical_PCDI_ttstar_adapter_proved"]
+    assert not result["weighted_physical_line_gram_bound_proved"]
+    assert not result["PCDI_SREM_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.181 The literal physical profiles admit an adapter-free "
+        "weighted Gram"
+    ) in text
+    assert r"\mathcal G_q(i,j)" in text
+    assert r"\mathbf1_{c_i=c_j}L_{ij}(c_i)" in text
+    assert "(WPLG)" in text
+    assert "(WPLG) analytic bound" in text
+
+
+def test_prime_cross_residue_fixed_packet_has_exact_scalar_ttstar_adapter() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_cross_residue_fixed_packet_ttstar_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        determinant_shift=1,
+        short_profile=(((1, 3), F(1)),),
+        long_outer_rows=(
+            (7, F(1)),
+            (17, F(-1)),
+            (23, F(2)),
+            (13, F(3)),
+        ),
+    )
+    assert result["signed_ratio_fiber_weights"] == {2: F(0), 3: F(5)}
+    assert result["original_cross_residue_block"] == F(15, 4)
+    assert result["ttstar_inner_product"] == F(15, 4)
+    assert result["short_profile_energy"] == F(1)
+    assert result["centered_outer_energy"] == F(75)
+    assert result["cauchy_upper_bound_squared"] == F(75)
+    assert result["original_equals_ttstar_inner_product"]
+    assert result["outer_prime_sum_precedes_cauchy"]
+    assert result["fixed_packet_scalar_ttstar_adapter_proved"]
+    assert result["scalar_projective_adapter_required"] is False
+    assert not result["weighted_ratio_fiber_energy_bound_proved"]
+    assert not result["PCDI_SREM_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.182 The cross-residue master has an exact fixed-packet "
+        "scalar adapter"
+    ) in text
+    assert r"H_\lambda(u,v)&:=\sum_pC_\lambda(p)K_{q,c_p}(u,v)" in text
+    assert "Section 9.183 proves its global packet normalization" in text
+    assert "global packet adapter" in text
+
+
+def test_prime_cross_residue_global_packet_norm_reassembles_before_cauchy() -> None:
+    audit = getattr(
+        coverage_audit,
+        "prime_cross_residue_global_packet_ttstar_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        projective_packets=(
+            (
+                F(2),
+                (
+                    (
+                        5,
+                        1,
+                        (((1, 3), F(1)),),
+                        (
+                            (7, F(1)),
+                            (17, F(-1)),
+                            (23, F(2)),
+                            (13, F(3)),
+                        ),
+                    ),
+                ),
+            ),
+            (
+                F(-1),
+                (
+                    (
+                        3,
+                        1,
+                        (((1, 1), F(1)),),
+                        ((7, F(1)), (13, F(-1)), (5, F(2))),
+                    ),
+                ),
+            ),
+        ),
+        physical_cross_residue_formula_verified=True,
+        packet_exhaustive_row_energy_inclusion_verified=True,
+        projective_l1_bound_verified=True,
+        shared_product_label_retained_verified=True,
+        signed_type_reassembly_verified=True,
+    )
+    assert result["packet_block_values"] == ((F(15, 4),), (F(-1),))
+    assert result["projective_packet_values"] == (F(15, 4), F(-1))
+    assert result["physical_reassembled_sum"] == F(17, 2)
+    assert result["weighted_short_profile_energy"] == F(3)
+    assert result["weighted_ratio_fiber_energy"] == F(154)
+    assert result["global_cauchy_upper_bound_squared"] == F(462)
+    assert result["physical_sum_within_global_cauchy_bound"]
+    assert result["all_long_prime_sums_precede_global_cauchy"]
+    assert result["projective_weights_cost_only_their_l1_norm"]
+    assert result["finite_direct_sum_ttstar_identity_proved"]
+    assert result["helper_does_not_split_shared_product_label"]
+    assert result["helper_does_not_split_signed_type_blocks"]
+    assert result["global_packet_ttstar_adapter_proved"]
+    assert result["WRFE_is_registered_sufficient_leaf"]
+    assert not result["weighted_ratio_fiber_energy_bound_proved"]
+    assert not result["PCDI_SREM_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.183 The global packet norm reduces PCDI-SREM to WRFE"
+    ) in text
+    assert r"\tag{WRFE-local}" in text
+    assert text.count(r"\tag{WRFE}") == 1
+    assert r"\mathrm{(WRFE)}\quad\Longrightarrow\quad" in text
+
+
+def test_normalized_separated_ratio_fiber_coefficients_are_covered() -> None:
+    audit = getattr(
+        coverage_audit,
+        "separated_ratio_fiber_large_sieve_polytope_audit",
+        None,
+    )
+    assert audit is not None
+    extreme = audit(
+        long_prime_exponent=F(2),
+        short_prime_exponent=F(3, 2),
+        required_linear_gain_exponent=F(1, 4),
+        level_independent_long_coefficients_verified=True,
+        bounded_projective_q_factor_verified=True,
+        normalized_occupancy_lower_exponent=F(7, 2),
+    )
+    assert extreme["occupancy_energy_exponent"] == F(7, 2)
+    assert extreme["large_sieve_energy_exponent"] == F(3)
+    assert extreme["large_sieve_energy_saving_exponent"] == F(1, 2)
+    assert extreme["required_energy_saving_exponent"] == F(1, 2)
+    assert extreme["separated_coefficient_cell_covered"]
+    assert extreme["multiplication_by_D_is_a_residue_permutation"]
+    assert extreme["nonprincipal_characters_at_prime_q_are_primitive"]
+    assert not extreme["physical_level_dependent_WRFE_proved"]
+    assert not extreme["PCDI_SREM_proved"]
+    nonseparated = audit(
+        long_prime_exponent=F(2),
+        short_prime_exponent=F(3, 2),
+        required_linear_gain_exponent=F(1, 4),
+        level_independent_long_coefficients_verified=False,
+        bounded_projective_q_factor_verified=True,
+        normalized_occupancy_lower_exponent=F(7, 2),
+    )
+    assert not nonseparated["separated_coefficient_cell_covered"]
+    assert nonseparated["normalized_power_ledger_covers"]
+
+
+def test_arbitrary_level_dependent_ratio_fibers_saturate_occupancy() -> None:
+    audit = getattr(
+        coverage_audit,
+        "level_dependent_ratio_fiber_saturation_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        determinant_shift=1,
+        supported_long_primes=(7, 17),
+        weights=(F(1), F(1)),
+    )
+    assert result["single_ratio_fiber"]
+    assert result["signed_ratio_fiber_energy"] == F(12)
+    assert result["occupancy_cauchy_bound"] == F(16)
+    assert result["energy_to_occupancy_ratio"] == F(3, 4)
+    assert result["constant_proportion_saturation"]
+    assert not result["uniform_power_saving_for_level_dependent_coefficients"]
+    assert not result["physical_level_dependent_WRFE_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_ratio_fiber_energy_is_a_centered_short_shift_master() -> None:
+    audit = getattr(
+        coverage_audit,
+        "ratio_fiber_short_shift_master_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        determinant_shift=1,
+        long_rows=(
+            (7, F(1), F(2), F(-1)),
+            (17, F(-1), F(-3), F(2)),
+            (23, F(2), F(1), F(1)),
+            (13, F(3), F(4), F(-1)),
+        ),
+    )
+    assert result["raw_coefficients_reassemble_I_II"]
+    assert result["short_shift_histogram"] == {
+        -2: F(5),
+        0: F(15),
+        2: F(5),
+    }
+    assert result["diagonal_shift_weight"] == F(15)
+    assert result["nonzero_shift_weight"] == F(10)
+    assert result["rank_one_subtraction"] == F(25)
+    assert result["centered_nonzero_shift_remainder"] == F(15)
+    assert result["ratio_fiber_energy"] == F(75)
+    assert result["diagonal_plus_centered_nonzero_equals_fiber_energy"]
+    assert result["all_four_ordered_type_blocks_reassemble_before_absolute_value"]
+    assert result["rank_one_subtraction_retains_type_cross_terms"]
+    assert result["maximum_short_shift"] == 2
+    assert not result["centered_short_shift_bound_proved"]
+    assert not result["WRFE_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.185 WRFE is a centered short-shift two-Type master"
+    ) in text
+    assert r"p_2-p_1=rq" in text
+    assert r"\tag{CSSM}" in text
+    assert "negative rank-one term" in text
+    assert "Hence (CSSM), (WRFE)," in text
+    assert "(PCDI-SREM), and the coupled-kernel gate remain unproved" in text
+
+
+def test_ratio_fiber_energy_retains_all_three_centered_incidence_kernels() -> None:
+    audit = getattr(
+        coverage_audit,
+        "triple_centered_ratio_incidence_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        determinant_shift=1,
+        physical_rows=(
+            (7, (((1, 2), F(1)),)),
+            (17, (((3, 2), F(1)),)),
+        ),
+    )
+    assert result["physical_row_coefficients"] == {
+        7: F(5, 6),
+        17: F(15, 16),
+    }
+    assert result["direct_ratio_fiber_energy"] == F(7225, 768)
+    assert result["triple_centered_incidence_energy"] == F(7225, 768)
+    assert result["direct_equals_triple_centered_incidence"]
+    assert result["outer_centering_is_not_split_from_inner_centering"]
+    assert result["all_density_cross_terms_retained"]
+    assert result["triple_centered_finite_master_proved"]
+    assert not result["triple_centered_incidence_bound_proved"]
+    assert not result["CSSM_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.186 The physical short-shift master has three centerings "
+        "and one determinant"
+    ) in text
+    assert r"\Delta_q(p_1-p_2)" in text
+    assert "all eight" in text
+    assert "triple-centered" in text
+
+
+def test_short_shift_double_incidence_has_exact_t_resonance_parameterization() -> None:
+    audit = getattr(
+        coverage_audit,
+        "short_shift_double_incidence_determinant_audit",
+        None,
+    )
+    assert audit is not None
+    resonant = audit(
+        short_prime=5,
+        determinant_shift=1,
+        first_long_prime=7,
+        second_long_prime=17,
+        short_shift=2,
+        first_m=1,
+        first_n=2,
+        first_quotient=1,
+        second_m=3,
+        second_n=2,
+        second_quotient=1,
+    )
+    assert resonant["common_determinant_t"] == 0
+    assert resonant["resonant"]
+    assert resonant["resonant_parameters"] == {
+        "common_gcd": 1,
+        "first_primitive_slope": 1,
+        "second_primitive_slope": 1,
+        "common_n_factor": 2,
+        "base_m_factor": 1,
+    }
+    assert resonant["resonant_ray_parameterization_reconstructs"]
+
+    nonresonant = audit(
+        short_prime=5,
+        determinant_shift=1,
+        first_long_prime=7,
+        second_long_prime=17,
+        short_shift=2,
+        first_m=1,
+        first_n=2,
+        first_quotient=1,
+        second_m=2,
+        second_n=7,
+        second_quotient=1,
+    )
+    assert nonresonant["common_determinant_t"] == 1
+    assert not nonresonant["resonant"]
+    assert nonresonant["first_determinant_equals_D_times_t"]
+    assert nonresonant["second_determinant_equals_q_times_t"]
+    assert not nonresonant["nonzero_determinant_bound_proved"]
+    assert not nonresonant["coupled_kernel_gate_closed"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert r"n_2s_1-n_1s_2&=qt" in text
+    assert r"m_2=v(\ell+rg)" in text
+    assert "determinant **value**, not a Fourier frequency" in text
+    assert "the other seven density terms" in text
+    assert "the coupled-kernel gate remain open" in text
+
+
+def test_triple_centered_eight_term_ledger_marks_only_full_incidence_by_t() -> None:
+    result = coverage_audit.triple_centered_ratio_incidence_audit(
+        short_prime=5,
+        determinant_shift=1,
+        physical_rows=(
+            (7, (((1, 2), F(1)),)),
+            (17, (((2, 7), F(1)),)),
+        ),
+    )
+    assert result["fully_incident_determinant_histogram"] == {
+        -1: F(4),
+        0: F(8),
+        1: F(4),
+    }
+    assert result["fully_incident_energy"] == F(16)
+    assert result["fully_incident_t0_energy"] == F(8)
+    assert result["all_seven_density_terms_energy"] == F(-5063, 768)
+    assert result["eight_term_expansion_energy"] == F(7225, 768)
+    assert result["eight_terms_equal_triple_centered_incidence"]
+    assert result["only_fully_incident_term_has_canonical_determinant"]
+    assert result["density_terms_have_no_canonical_determinant_value"]
+    assert not result["within_energy_resonant_ledger_evaluated"]
+    assert not result["pre_cauchy_AFE_diagonal_bypass_proved"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.187 The eight-term ledger separates two logically "
+        "different routes"
+    ) in text
+    assert "cannot prove the positive energy statement (WRFE)" in text
+    assert "within-energy route" in text
+    assert "pre-Cauchy bypass route" in text
+
+
+def test_t0_full_incidence_factors_through_primitive_ray_profiles() -> None:
+    audit = getattr(
+        coverage_audit,
+        "short_shift_t0_ray_factorization_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        determinant_shift=1,
+        factorized_rows=(
+            (
+                7,
+                ((1, F(2)), (2, F(11))),
+                ((2, F(3)), (4, F(13))),
+            ),
+            (
+                17,
+                ((3, F(5)), (6, F(17))),
+                ((2, F(7)), (4, F(19))),
+            ),
+        ),
+    )
+    assert result["primitive_ray_profiles"][7][(1, 1, 2)] == F(149)
+    assert result["primitive_ray_profiles"][17][(1, 3, 2)] == F(358)
+    assert result["direct_fully_incident_t0_energy"] == F(1028196)
+    assert result["primitive_ray_factorized_t0_energy"] == F(1028196)
+    assert result["direct_t0_equals_primitive_ray_factorization"]
+    assert result["all_primitive_cores_satisfy_plane_incidence"]
+    assert result["dilation_variables_are_independent_after_core_fixing"]
+    assert result["ray_factorization_finite_master_proved"]
+    assert not result["ray_profile_LCM_energy_bound_proved"]
+    assert not result["within_energy_resonant_ledger_evaluated"]
+    assert not result["WRFE_proved"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.188 The zero determinant factors into primitive ray profiles" in text
+    assert r"p_1g=q\ell+Dk" in text
+    assert r"\mathcal L_{p}(g,\ell,k)" in text
+    assert "candidate entry point for LCM square-energy" in text
+
+
+def test_ray_dilation_mobius_separates_only_after_type_reassembly() -> None:
+    audit = getattr(
+        coverage_audit,
+        "ray_dilation_type_reassembly_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_cutoff_u=3,
+        short_cutoff_v=3,
+        core_factors=(2, 5),
+        dilation_factors=(3, 7),
+    )
+    assert result["small_type_matrix"] == ((0, 0), (0, 0))
+    assert result["type_I_matrix"] == ((1, 1), (1, -1))
+    assert result["type_II_matrix"] == ((0, 0), (0, 2))
+    assert result["raw_mobius_matrix"] == ((1, 1), (1, 1))
+    assert result["type_I_two_by_two_determinant"] == -2
+    assert not result["type_I_separates_core_and_dilation"]
+    assert result["raw_mobius_two_by_two_determinant"] == 0
+    assert result["raw_mobius_separates_as_mu_core_times_mu_dilation"]
+    assert result["all_type_blocks_reassemble_raw_mobius"]
+    assert result["one_dilation_mobius_factor_only"]
+    assert not result["reciprocal_LCM_kernel_present"]
+    assert not result["existing_LCM_quadratic_bound_applies_directly"]
+    assert not result["ray_profile_energy_bound_proved"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.189 The ray dilation is one-Möbius only after Type reassembly" in text
+    assert r"\mu(uk)=\mu(u)\mu(k)" in text
+    assert r"determinant \(-2\)" in text
+    assert "no reciprocal-LCM kernel" in text
+
+
+def test_all_eight_centering_terms_admit_uniform_ratio_incidence_completion() -> None:
+    audit = getattr(
+        coverage_audit,
+        "triple_centered_uniform_ratio_completion_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        determinant_shift=1,
+        first_long_prime=7,
+        second_long_prime=17,
+        first_m=1,
+        first_n=2,
+        second_m=2,
+        second_n=7,
+    )
+    assert result["actual_outer_ratio"] == 1
+    assert result["actual_first_inner_ratio"] == 3
+    assert result["actual_second_inner_ratio"] == 7
+    assert result["direct_triple_centered_kernel"] == F(75, 128)
+    assert result["uniform_ratio_completed_kernel"] == F(75, 128)
+    assert result["direct_equals_uniform_ratio_completion"]
+    assert len(result["eight_full_incidence_ratio_terms"]) == 8
+    assert result["every_completed_term_contains_three_incidence_indicators"]
+    assert result["all_dummy_ratio_averages_are_endpoint_exact"]
+    assert result["principal_ratio_modes_removed_before_absolute_value"]
+    assert not result["dummy_ratio_completion_preserves_original_common_t"]
+    assert not result["completed_generalized_determinant_bound_proved"]
+    assert not result["WRFE_proved"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.190 Uniform ratio completion gives all eight terms incidences" in text
+    assert r"c_p^*\equiv D\overline q\pmod p" in text
+    assert "dummy ratio" in text
+    assert "does not preserve the original common determinant" in text
+
+
+def test_uniform_ratio_completion_has_no_new_published_full_residue_coverage() -> None:
+    audit = getattr(
+        coverage_audit,
+        "uniform_ratio_completion_published_coverage_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        long_prime_exponent=F(2),
+        short_prime_exponent=F(3, 2),
+        required_WRFE_energy_saving=F(1, 2),
+    )
+    assert result["long_modulus_exponent"] == F(2)
+    assert result["full_ratio_fourier_length_exponents"] == (F(2), F(2))
+    assert result["mqw_M_7_over_5_N_condition_deficit"] == F(9, 5)
+    assert result["mqw_MN_condition_deficit"] == F(3, 2)
+    assert result["blomer_pascadi_full_residue_margins"] == (
+        F(-1, 32),
+        F(-1, 8),
+        F(-5, 18),
+    )
+    assert result["pascadi_average_best_full_residue_margin"] == F(-1, 6)
+    assert result["three_varying_ratio_moduli_present"]
+    assert result["literal_coefficients_remain_level_dependent"]
+    assert not result["mqw_hypotheses_verified"]
+    assert not result["blomer_pascadi_power_saving"]
+    assert not result["pascadi_average_power_saving"]
+    assert not result["new_published_cell_covered"]
+    assert not result["WRFE_proved"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.191 Published fixed-modulus bounds do not cover the completed ratios" in text
+    assert r"T^{9/5}" in text
+    assert r"T^{3/2}" in text
+    assert "all three Blomer--Pascadi margins are negative" in text
+
+
+def test_completed_ratio_master_retains_product_labels_and_both_type_splits() -> None:
+    audit = getattr(
+        coverage_audit,
+        "completed_ratio_double_mobius_type_master_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        determinant_shift=1,
+        first_long_prime=7,
+        second_long_prime=17,
+        first_product_labels=(((1, 3), F(1)),),
+        second_product_labels=(((2, 5), F(1)),),
+        first_type_rows=((6, F(1)),),
+        second_type_rows=((35, F(1)),),
+        short_cutoff_u=3,
+        short_cutoff_v=3,
+    )
+    assert result["first_product_values"] == {3: F(1)}
+    assert result["second_product_values"] == {10: F(1)}
+    assert result["a_equals_h_times_delta_retained"]
+    assert result["first_raw_type_coefficients"] == {6: F(1)}
+    assert result["second_raw_type_coefficients"] == {35: F(1)}
+    assert result["first_type_multipliers"][6] == {
+        "small": 0,
+        "I": 1,
+        "II": 0,
+        "raw": 1,
+    }
+    assert result["second_type_multipliers"][35] == {
+        "small": 0,
+        "I": -1,
+        "II": 2,
+        "raw": 1,
+    }
+    assert result["raw_double_mobius_master"] == F(75, 128)
+    assert result["uniform_ratio_completed_master"] == F(75, 128)
+    assert result["nine_type_block_matrix"] == (
+        (F(0), F(0), F(0)),
+        (F(0), F(-75, 128), F(75, 64)),
+        (F(0), F(0), F(0)),
+    )
+    assert result["nine_type_blocks_reassemble_raw_master"]
+    assert result["uniform_ratio_completion_commutes_with_type_split"]
+    assert result["both_type_factorizations_have_mobius_short_factors"]
+    assert result["both_type_residuals_have_no_mobius_coefficient"]
+    assert result["completed_double_type_finite_master_proved"]
+    assert not result["any_individual_type_block_bound_proved"]
+    assert not result["GDTM_bound_proved"]
+    assert not result["WRFE_proved"]
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.192 The completed master has two exact Type decompositions" in text
+    assert r"a_i=h_i\delta_i" in text
+    assert r"\tag{GDTM}" in text
+    assert "all four I--I, I--II, II--I, and II--II blocks" in text
+
+
+def test_completed_double_type_master_has_exact_triple_character_form() -> None:
+    audit = getattr(
+        coverage_audit,
+        "completed_ratio_triple_character_type_master_audit",
+        None,
+    )
+    assert audit is not None
+    result = audit(
+        short_prime=5,
+        determinant_shift=1,
+        first_long_prime=7,
+        second_long_prime=17,
+        first_product_labels=(((1, 3), F(1)),),
+        second_product_labels=(((2, 5), F(1)),),
+        first_type_rows=((6, F(1)),),
+        second_type_rows=((35, F(1)),),
+        short_cutoff_u=3,
+        short_cutoff_v=3,
+        mutual_short_prime_labels=(3, 5, 7, 11, 13),
+        mutual_long_prime=17,
+    )
+    assert result["raw_centered_master"] == F(75, 128)
+    assert abs(result["triple_character_master"] - 75 / 128) < 1e-10
+    assert result["triple_character_expansion_matches_raw_master"]
+    assert result["triple_character_type_blocks_match_direct_blocks"]
+    assert result["both_type_character_factorizations_verified"]
+    assert result["outer_principal_character_deleted"]
+    assert result["first_inner_principal_character_deleted"]
+    assert result["second_inner_principal_character_deleted"]
+    assert result["all_three_character_families_are_nonprincipal"]
+    assert result["mutual_evaluation_phase_retained"]
+    assert result["mutual_evaluation_exact_gram"] == (
+        (15, -1, -1, -1, -1),
+        (-1, 15, -1, -1, -1),
+        (-1, -1, 15, -1, -1),
+        (-1, -1, -1, 15, -1),
+        (-1, -1, -1, -1, 15),
+    )
+    assert result["mutual_evaluation_gram_matches_character_sum"]
+    assert result["mutual_evaluation_row_rank"] == 5
+    assert result["raw_mutual_phase_is_rank_one"] is False
+    assert result["raw_phase_has_subpolynomial_common_coefficient_adapter"] is False
+    assert result["ordinary_large_sieve_closes_physical_master"] is False
+    assert result["TCGDTM_bound_proved"] is False
+    assert result["GDTM_bound_proved"] is False
+    assert result["coupled_kernel_gate_closed"] is False
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.193 Triple character inversion retains the mutual phase" in text
+    assert r"\tag{TCGDTM}" in text
+    assert "full-row-rank mutual-evaluation Gram matrix" in text
+
+
+def test_active_cofactor_principal_and_quadratic_boundaries_are_documented() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert (
+        "### 9.160 The active cofactor twist has principal and "
+        "reciprocal-collapse sectors"
+    ) in text
+    assert r"\overline{\chi_{1,r_1}(r_2)}\chi_{2,r_2}(r_1)" in text
+    assert "both active components" in text
+    assert "identically one" in text
+    assert "Quadratic reciprocity" in text
+    assert r"(M+N)(MN)^\varepsilon" in text
+    assert "principal-active face" in text
+    assert "remains unproved" in text
+
+
+def test_shen_varying_modulus_projection_saves_only_one_eighth() -> None:
+    """Shen's q-average is inverse-only and far below the coupled target."""
+
+    audit = getattr(
+        coverage_audit,
+        "shen_lehmer_varying_modulus_projection_audit",
+        None,
+    )
+    assert audit is not None, "Shen varying-modulus projection audit is missing"
+
+    optimistic = audit(
+        product_length_exponent=F(3),
+        modulus_length_exponent=F(3),
+        inverse_numerator_exponent=F(5),
+        required_saving_exponent=F(2),
+        direct_phase_absent=True,
+        inverse_numerator_fixed=True,
+        product_coefficients_independent_of_modulus=True,
+        separated_coefficient_adapter_verified=True,
+    )
+    assert optimistic["bilinear_bound_exponent"] == F(47, 8)
+    assert optimistic["relative_linear_saving_exponent"] == F(1, 8)
+    assert optimistic["second_moment_energy_saving_exponent"] == F(1, 4)
+    assert not optimistic["theorem_four_strict_N_less_than_Q_verified"]
+    assert optimistic["published_bilinear_projection_hypotheses_verified"]
+    assert not optimistic["required_coupled_saving_met"]
+    assert optimistic["remaining_saving_deficit"] == F(15, 8)
+    assert not optimistic["retains_joint_h_delta_family"]
+    assert not optimistic["coupled_kernel_gate_closed"]
+
+    physical = audit(
+        product_length_exponent=F(3),
+        modulus_length_exponent=F(3),
+        inverse_numerator_exponent=F(5),
+        required_saving_exponent=F(2),
+        direct_phase_absent=False,
+        inverse_numerator_fixed=False,
+        product_coefficients_independent_of_modulus=False,
+        separated_coefficient_adapter_verified=False,
+    )
+    assert physical["relative_linear_saving_exponent"] == F(1, 8)
+    assert not physical["direct_phase_absent"]
+    assert not physical["inverse_numerator_fixed"]
+    assert not physical["product_coefficients_independent_of_modulus"]
+    assert not physical["separated_coefficient_adapter_verified"]
+    assert not physical["published_bilinear_projection_hypotheses_verified"]
+    assert not physical["current_physical_packet_covered"]
+    assert not physical["coupled_kernel_gate_closed"]
+
+
+def test_final_wedge_published_table_rejects_only_local_or_wrong_weight_inputs(
+) -> None:
+    """Catch promoting a local or wrong-coefficient theorem to NPIT coverage."""
+    audit = getattr(
+        coverage_audit,
+        "final_coupled_kernel_published_polytope_audit",
+        None,
+    )
+    assert audit is not None, "final coupled-kernel coverage table is missing"
+
+    result = audit(
+        long_active_cofactor_exponent=F(2),
+        short_active_cofactor_exponent=F(3, 2),
+        long_primitive_conductor_exponent=F(2),
+        short_primitive_conductor_exponent=F(3, 2),
+        maximum_physical_active_scale_gap=F(1, 2),
+    )
+    rows = {row.source: row for row in result["published_rows"]}
+
+    assert result["inside_final_conductor_imbalance_wedge"]
+    assert result["required_pre_cauchy_saving_exponent"] == F(1, 4)
+    assert set(rows) == {
+        "primitive mutual-character large sieve",
+        "FKM/FKMS fixed-prime trace estimates",
+        "Bourgain-Garaev fixed-ring multilinear estimates",
+        "MQW/Blomer-Pascadi/Pascadi completed-ratio estimates",
+        "Shen varying-modulus inverse-only estimate",
+        "Mohammadi fixed-field small-box estimate",
+        "Yang convolution Bombieri-Vinogradov estimate",
+        "Milicevic-Robinson-Shupe prime-power product moment",
+        "Tang short twisted-moment reciprocity",
+    }
+    assert rows["primitive mutual-character large sieve"].physical_adapter_verified
+    assert not rows["primitive mutual-character large sieve"].meets_required_saving
+    assert (
+        rows[
+            "FKM/FKMS fixed-prime trace estimates"
+        ].formal_local_saving_exponent
+        == F(1, 4)
+    )
+    assert rows[
+        "MQW/Blomer-Pascadi/Pascadi completed-ratio estimates"
+    ].formal_local_saving_exponent == F(1, 16)
+    assert (
+        rows[
+            "Shen varying-modulus inverse-only estimate"
+        ].formal_local_saving_exponent
+        == F(1, 8)
+    )
+    assert rows[
+        "Milicevic-Robinson-Shupe prime-power product moment"
+    ].formal_local_saving_exponent == F(1)
+    assert rows[
+        "Yang convolution Bombieri-Vinogradov estimate"
+    ].usable_physical_saving_exponent == 0
+    assert (
+        rows[
+            "Tang short twisted-moment reciprocity"
+        ].usable_physical_saving_exponent
+        == 0
+    )
+    assert all(not row.covers_final_wedge for row in rows.values())
+    assert result["registered_published_inputs_exhausted"]
+    assert result["covered_sources"] == ()
+    assert result["residual_gate_name"] == "USZNTT"
+    assert not result["new_published_cell_covered"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_outer_modulus_row_energy_cannot_exploit_mobius_signs() -> None:
+    """Independent row phases can absorb every prescribed outer sign."""
+
+    audit = getattr(
+        coverage_audit,
+        "outer_modulus_row_energy_phase_alignment_audit",
+        None,
+    )
+    assert audit is not None, "outer row-energy no-go audit is missing"
+    result = audit(
+        outer_signs=(-1, 1, -1, 1),
+        row_amplitudes=(F(2), F(3), F(5), F(7)),
+    )
+    assert result["constructed_row_coefficients"] == (F(-2), F(3), F(-5), F(7))
+    assert result["signed_outer_sum"] == F(17)
+    assert result["triangle_bound"] == F(17)
+    assert result["triangle_bound_saturated"]
+    assert result["all_outer_signs_absorbed_by_row_phases"]
+    assert not result["cross_modulus_packet_rigidity_used"]
+    assert not result["row_energy_only_outer_power_saving_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    with pytest.raises(ValueError, match="sign"):
+        audit(outer_signs=(-1, 0, 1), row_amplitudes=(F(1),) * 3)
+    with pytest.raises(ValueError, match="nonnegative"):
+        audit(outer_signs=(-1, 1), row_amplitudes=(F(1), F(-1)))
+
+
+def test_centered_type_phase_local_operator_has_no_l2_power_gain() -> None:
+    audit = getattr(
+        coverage_audit,
+        "centered_type_phase_local_spectrum_audit",
+        None,
+    )
+    assert audit is not None, "local centered Type-phase spectrum audit is missing"
+
+    result = audit(prime=5)
+    assert result["phase_plane_cardinality"] == 16
+    assert result["type_label_cardinality"] == 4
+    assert result["gram_diagonal"] == F(15, 16)
+    assert result["gram_off_diagonal"] == F(-1, 16)
+    assert result["principal_type_eigenvalue"] == F(3, 4)
+    assert result["transverse_type_eigenvalue"] == F(1)
+    assert result["operator_norm_squared"] == F(1)
+    assert result["principal_phase_mode_deleted"]
+    assert not result["fixed_modulus_l2_power_saving"]
+    assert not result["centered_tensor_global_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert r"I-\frac1{(p-1)^2}J" in text
+    assert "transverse\neigenvalue is exactly \\(1\\)" in text
+
+    with pytest.raises(ValueError, match="prime"):
+        audit(prime=9)
+
+
+def test_cross_modulus_zero_product_frequency_is_exactly_diagonal() -> None:
+    audit = getattr(
+        coverage_audit,
+        "primitive_product_farey_collision_audit",
+        None,
+    )
+    assert audit is not None, "primitive product-Farey audit is missing"
+
+    result = audit(moduli=(5, 6, 7, 10, 14, 15))
+    assert result["all_zero_frequency_collisions_diagonal"]
+    assert result["all_distinct_frequencies_obey_farey_spacing"]
+    assert result["minimum_circular_spacing"] is not None
+    assert result["product_length_exponent"] == F(5)
+    assert result["coefficient_energy_exponent"] == F(5)
+    assert result["additive_large_sieve_energy_exponent"] == F(11)
+    assert result["summed_fixed_modulus_cochrane_shi_exponent"] == F(11)
+    assert not result["large_sieve_improves_summed_fixed_modulus_exponent"]
+    assert result["zero_frequency_projector_classified"]
+    assert not result["same_diagonal_globally_reassembled"]
+    assert not result["signed_nonzero_frequency_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    rows = result["collision_rows"]
+    same = next(
+        row
+        for row in rows
+        if row["first"]["modulus"] == 10
+        and row["first"]["unit_label"] == 3
+        and row["second"]["modulus"] == 10
+        and row["second"]["unit_label"] == 3
+    )
+    assert same["equal_frequency"]
+    assert same["same_pair"]
+
+    cross = next(
+        row
+        for row in rows
+        if row["first"]["modulus"] != row["second"]["modulus"]
+    )
+    assert not cross["equal_frequency"]
+    assert cross["farey_spacing_bound_holds"]
+
+
+def test_cross_modulus_frequency_density_has_exact_centered_euler_product() -> None:
+    audit = getattr(
+        coverage_audit,
+        "cross_modulus_product_frequency_density_audit",
+        None,
+    )
+    assert audit is not None, "cross-modulus frequency-density audit is missing"
+
+    for left_modulus, right_modulus in (
+        (5, 7),
+        (30, 42),
+        (30, 30),
+        (6, 10),
+        (14, 21),
+    ):
+        result = audit(
+            left_modulus=left_modulus,
+            right_modulus=right_modulus,
+        )
+        assert result["direct_equals_local_product_formula"]
+        assert result["centered_local_factorization_exact"]
+        assert result["centered_basis_expansion_exact"]
+        assert result["principal_density_equals_average_multiplicity"]
+        assert result["centered_frequency_sum_is_zero"]
+        assert result["zero_frequency_occurs_exactly_on_same_modulus"]
+        assert result["common_factor_mobius_sign_cancels"]
+        assert not result["weighted_type_packet_centered"]
+        assert not result["signed_nonzero_frequency_estimate_proved"]
+        assert not result["coupled_kernel_gate_closed"]
+
+    common_even = audit(left_modulus=30, right_modulus=42)
+    assert common_even["common_modulus_factor"] == 6
+    assert common_even["left_coprime_cofactor"] == 5
+    assert common_even["right_coprime_cofactor"] == 7
+    assert common_even["lcm_modulus"] == 210
+    assert common_even["direct_frequency_multiplicities"][1] == 0
+    assert common_even["direct_frequency_multiplicities"][2] == 1
+    assert common_even["direct_frequency_multiplicities"][6] == 2
+    assert common_even["direct_frequency_multiplicities"][11] == 0
+    assert common_even["direct_frequency_multiplicities"][22] == 1
+
+    same = audit(left_modulus=30, right_modulus=30)
+    assert same["zero_frequency_multiplicity"] == 8
+    assert same["principal_local_density"] == F(32, 15)
+
+
+def test_weighted_cross_modulus_hoeffding_projection_reconstructs_packet() -> None:
+    audit = getattr(
+        coverage_audit,
+        "weighted_cross_modulus_hoeffding_audit",
+        None,
+    )
+    assert audit is not None, "weighted cross-modulus Hoeffding audit is missing"
+
+    weights = {
+        (1, 1): F(1),
+        (1, 3): F(2),
+        (1, 7): F(4),
+        (1, 9): F(8),
+        (5, 1): F(16),
+        (5, 3): F(32),
+        (5, 7): F(64),
+        (5, 9): F(128),
+    }
+    result = audit(
+        left_modulus=6,
+        right_modulus=10,
+        inverse_pair_weights=weights,
+    )
+    point = (1, 1)
+    assert result["component_point_values"][1][point] == F(255, 8)
+    assert result["component_point_values"][3][point] == F(-225, 8)
+    assert result["component_point_values"][5][point] == F(-187, 8)
+    assert result["component_point_values"][15][point] == F(165, 8)
+    assert result["component_point_values"][2][point] == 0
+    assert result["component_point_values"][6][point] == 0
+    assert result["component_point_values"][10][point] == 0
+    assert result["component_point_values"][30][point] == 0
+    assert result["pointwise_reconstruction_exact"]
+    assert result["reconstructed_point_values"] == weights
+
+
+def test_weighted_cross_modulus_hoeffding_components_are_orthogonal() -> None:
+    audit = coverage_audit.weighted_cross_modulus_hoeffding_audit
+    weights = {
+        (1, 1): F(1),
+        (1, 3): F(2),
+        (1, 7): F(4),
+        (1, 9): F(8),
+        (5, 1): F(16),
+        (5, 3): F(32),
+        (5, 7): F(64),
+        (5, 9): F(128),
+    }
+    result = audit(
+        left_modulus=6,
+        right_modulus=10,
+        inverse_pair_weights=weights,
+    )
+    assert result["original_l2_energy"] == 21845
+    assert result["component_l2_energies"] == {
+        1: F(65025, 8),
+        2: 0,
+        3: F(50625, 8),
+        5: F(33235, 8),
+        6: 0,
+        10: 0,
+        15: F(25875, 8),
+        30: 0,
+    }
+    assert result["component_energy_sum"] == 21845
+    assert result["orthogonal_energy_identity_exact"]
+    assert result["all_distinct_components_pairwise_orthogonal"]
+    assert result["all_active_prime_conditional_marginals_zero"]
+
+
+def test_weighted_hoeffding_projection_uses_nontrivial_common_prime_pair() -> None:
+    audit = coverage_audit.weighted_cross_modulus_hoeffding_audit
+    weights = {
+        (left_inverse, right_inverse): F(
+            {
+                (1, 1): 1,
+                (1, 2): 2,
+                (2, 1): 4,
+                (2, 2): 8,
+            }[(left_inverse % 3, right_inverse % 3)]
+        )
+        for left_inverse in range(1, 15)
+        if gcd(left_inverse, 15) == 1
+        for right_inverse in range(1, 21)
+        if gcd(right_inverse, 21) == 1
+    }
+    result = audit(
+        left_modulus=15,
+        right_modulus=21,
+        inverse_pair_weights=weights,
+    )
+    assert result["component_point_values"][1][(1, 1)] == F(15, 4)
+    assert result["component_point_values"][3][(1, 1)] == F(-11, 4)
+    assert result["component_point_values"][3][(1, 2)] == F(-7, 4)
+    assert result["component_point_values"][3][(2, 1)] == F(1, 4)
+    assert result["component_point_values"][3][(2, 2)] == F(17, 4)
+    assert result["original_l2_energy"] == 2040
+    assert result["component_l2_energies"][1] == 1350
+    assert result["component_l2_energies"][3] == 690
+    assert sum(
+        energy
+        for divisor, energy in result["component_l2_energies"].items()
+        if divisor not in (1, 3)
+    ) == 0
+    assert result["all_active_prime_conditional_marginals_zero"]
+    assert result["arbitrary_fixed_modulus_pair_packet_centered_exactly"]
+
+
+def test_weighted_cross_modulus_fibres_split_principal_and_centered_parts() -> None:
+    audit = coverage_audit.weighted_cross_modulus_hoeffding_audit
+    weights = {
+        (1, 1): F(1),
+        (1, 3): F(2),
+        (1, 7): F(4),
+        (1, 9): F(8),
+        (5, 1): F(16),
+        (5, 3): F(32),
+        (5, 7): F(64),
+        (5, 9): F(128),
+    }
+    result = audit(
+        left_modulus=6,
+        right_modulus=10,
+        inverse_pair_weights=weights,
+    )
+    assert result["weighted_frequency_fibre_sums"][2] == 1
+    assert result["weighted_frequency_fibre_sums"][26] == 2
+    assert result["component_frequency_fibre_sums"][1][2] == F(255, 8)
+    assert result["packet_global_mean"] == F(255, 8)
+    assert result["principal_weighted_density"] == F(17, 2)
+    assert result["constant_centered_frequency_fibre_sums"][2] == F(187, 8)
+    assert result["constant_centered_frequency_fibre_sums"][1] == F(-17, 2)
+    assert result["nonconstant_component_frequency_fibre_sums"][2] == F(-247, 8)
+    assert result["weighted_fibre_reassembly_exact"]
+    assert result["constant_component_matches_mean_times_unweighted_multiplicity"]
+    assert result["constant_centered_frequency_sum_is_zero"]
+    assert result["nonconstant_component_frequency_sum_is_zero"]
+    assert result["arbitrary_fixed_modulus_pair_packet_centered_exactly"]
+    assert result["outer_mobius_pair_weight_retained_linearly"]
+    assert result["inner_type_mobius_weights_retained_linearly"]
+    assert result["h_delta_product_packet_retained_linearly"]
+    assert not result["afe_reflection_principal_density_reassembled"]
+    assert not result["signed_centered_dispersion_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_unnormalized_kappa_sum_cancels_reciprocal_lcm_density() -> None:
+    audit = getattr(
+        coverage_audit,
+        "weighted_principal_density_normalization_audit",
+        None,
+    )
+    assert audit is not None, "weighted principal-density normalization audit is missing"
+
+    result = audit(
+        modulus_packets={
+            5: {1: F(1), 2: F(-2), 3: F(3), 4: F(1)},
+            6: {1: F(5), 5: F(-7)},
+        }
+    )
+    assert result["packet_totals"] == {5: 3, 6: -2}
+    assert result["outer_signed_packet_totals"] == {5: -3, 6: -2}
+    assert result["global_linear_packet_total"] == -5
+    assert result["global_square"] == 25
+    assert result["reciprocal_lcm_density_candidate"] == F(43, 15)
+    assert result["explicit_normalized_kappa_average_principal_total"] == F(
+        43, 15
+    )
+    assert all(
+        row["direct_reciprocal_lcm_contribution"]
+        == row["explicit_normalized_kappa_average_contribution"]
+        for row in result["pair_rows"]
+    )
+    assert result["unnormalized_kappa_principal_total"] == 25
+    assert result["unnormalized_principal_recovers_global_square"]
+    assert result["reciprocal_lcm_candidate_requires_kappa_average"]
+    assert not result["reciprocal_lcm_saving_present_in_original_square"]
+    assert not result["afe_ttstar_extra_lcm_normalization_proved"]
+    assert not result["principal_density_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_frequency_multiplier_is_double_centered_before_dispersion() -> None:
+    audit = getattr(
+        coverage_audit,
+        "weighted_frequency_multiplier_centering_audit",
+        None,
+    )
+    assert audit is not None, "weighted frequency-multiplier audit is missing"
+
+    result = audit(
+        left_modulus=3,
+        right_modulus=3,
+        inverse_pair_weights={
+            (1, 1): F(1),
+            (1, 2): F(2),
+            (2, 1): F(4),
+            (2, 2): F(8),
+        },
+        frequency_multiplier={0: F(1), 1: F(2), 2: F(4)},
+    )
+    assert result["weighted_frequency_fibre_sums"] == {0: 9, 1: 4, 2: 2}
+    assert result["multiplier_global_mean"] == F(7, 3)
+    assert result["centered_frequency_multiplier"] == {
+        0: F(-4, 3),
+        1: F(-1, 3),
+        2: F(5, 3),
+    }
+    assert result["direct_multiplier_pairing"] == 25
+    assert result["principal_multiplier_mean_term"] == 35
+    assert result["constant_fibre_centered_pairing"] == -5
+    assert result["nonconstant_packet_component_pairing"] == -5
+    assert result["double_centered_reassembly"] == 25
+    assert result["double_centered_reassembly_exact"]
+    assert result["centered_multiplier_sum_is_zero"]
+    assert result["all_centered_fibre_terms_ignore_multiplier_mean"]
+
+
+def test_double_centered_incidence_bound_exposes_only_common_gcd_cost() -> None:
+    audit = coverage_audit.weighted_frequency_multiplier_centering_audit
+    result = audit(
+        left_modulus=3,
+        right_modulus=3,
+        inverse_pair_weights={
+            (1, 1): F(1),
+            (1, 2): F(2),
+            (2, 1): F(4),
+            (2, 2): F(8),
+        },
+        frequency_multiplier={0: F(1), 1: F(2), 2: F(4)},
+    )
+    assert result["maximum_frequency_fibre_multiplicity"] == 2
+    assert result["common_gcd_euler_phi"] == 2
+    assert result["maximum_fibre_multiplicity_equals_common_gcd_phi"]
+    assert result["centered_multiplier_l2_energy"] == F(14, 3)
+    assert result["constant_centered_fibre_l2_energy"] == F(75, 8)
+    assert result["nonconstant_component_fibre_l2_energies"] == {3: F(43, 8)}
+    assert result["centered_output_energy_sum"] == F(59, 4)
+    assert result["observed_cauchy_squared_upper_bound"] == F(413, 3)
+    assert result["universal_incidence_squared_upper_bound"] == F(4760, 3)
+    assert result["double_centered_pairing_obeys_observed_cauchy_bound"]
+    assert result["every_component_obeys_common_gcd_incidence_bound"]
+    assert result["double_centered_pairing_obeys_universal_incidence_bound"]
+    assert not result["physical_afe_ttstar_multiplier_derived_exhaustively"]
+    assert not result["principal_multiplier_mean_reassembled"]
+    assert not result["signed_double_centered_dispersion_estimate_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_zero_mean_multiplier_removes_only_the_bare_principal_mode() -> None:
+    result = coverage_audit.weighted_frequency_multiplier_centering_audit(
+        left_modulus=3,
+        right_modulus=3,
+        inverse_pair_weights={
+            (1, 1): F(1),
+            (1, 2): F(2),
+            (2, 1): F(4),
+            (2, 2): F(8),
+        },
+        frequency_multiplier={0: F(-1), 1: F(0), 2: F(1)},
+    )
+    assert result["multiplier_global_mean"] == 0
+    assert result["principal_multiplier_mean_term"] == 0
+    assert result["direct_multiplier_pairing"] == -7
+    assert result["double_centered_reassembly"] == -7
+    assert result["zero_mean_multiplier_eliminates_bare_principal_term"]
+    assert not result["zero_mean_multiplier_eliminates_centered_pairing"]
+
+
+@pytest.mark.parametrize("left_modulus,right_modulus", [(5, 7), (30, 42)])
+def test_double_centering_covers_coprime_and_composite_unequal_pairs(
+    left_modulus: int,
+    right_modulus: int,
+) -> None:
+    units_left = [
+        value
+        for value in range(1, left_modulus)
+        if gcd(value, left_modulus) == 1
+    ]
+    units_right = [
+        value
+        for value in range(1, right_modulus)
+        if gcd(value, right_modulus) == 1
+    ]
+    lcm_modulus = left_modulus * right_modulus // gcd(
+        left_modulus,
+        right_modulus,
+    )
+    result = coverage_audit.weighted_frequency_multiplier_centering_audit(
+        left_modulus=left_modulus,
+        right_modulus=right_modulus,
+        inverse_pair_weights={
+            (left, right): F((3 * left - 2 * right) % 11 - 5)
+            for left in units_left
+            for right in units_right
+        },
+        frequency_multiplier={
+            residue: F((residue * residue + 3 * residue) % 13 - 6)
+            for residue in range(lcm_modulus)
+        },
+    )
+    assert result["double_centered_reassembly_exact"]
+    assert result["all_centered_fibre_terms_ignore_multiplier_mean"]
+    assert result["maximum_fibre_multiplicity_equals_common_gcd_phi"]
+    assert result["every_component_obeys_common_gcd_incidence_bound"]
+    assert result["double_centered_pairing_obeys_universal_incidence_bound"]
+
+
+def test_cross_modulus_product_labels_factor_through_frequency_difference() -> None:
+    audit = getattr(
+        coverage_audit,
+        "cross_modulus_product_label_phase_audit",
+        None,
+    )
+    assert audit is not None, "cross-modulus product-label phase audit is missing"
+
+    row = audit(
+        left_modulus=6,
+        right_modulus=10,
+        left_product_label=3,
+        right_product_label=5,
+    )
+    assert row["common_modulus"] == 2
+    assert row["lcm_modulus"] == 30
+    assert row["product_labels_congruent_mod_common_modulus"]
+    assert row["circular_frequency_coefficient"] == 15
+    assert row["phase_factors_through_single_circular_character"]
+    assert row["all_unit_pair_phase_exponents_match"]
+    assert row["circular_multiplier_has_zero_mean"]
+    assert not row["principal_circular_multiplier_mode"]
+
+    odd_common_factor = audit(
+        left_modulus=15,
+        right_modulus=21,
+        left_product_label=4,
+        right_product_label=10,
+    )
+    assert odd_common_factor["common_modulus"] == 3
+    assert odd_common_factor["circular_frequency_coefficient"] == 11
+    assert odd_common_factor["phase_factors_through_single_circular_character"]
+    assert odd_common_factor["circular_multiplier_has_zero_mean"]
+
+
+def test_product_label_principal_mean_is_exactly_double_divisibility() -> None:
+    audit = coverage_audit.cross_modulus_product_label_phase_audit
+    principal = audit(
+        left_modulus=6,
+        right_modulus=10,
+        left_product_label=12,
+        right_product_label=20,
+    )
+    assert principal["circular_frequency_coefficient"] == 0
+    assert principal["left_modulus_divides_left_product_label"]
+    assert principal["right_modulus_divides_right_product_label"]
+    assert principal["principal_circular_multiplier_mode"]
+    assert not principal["circular_multiplier_has_zero_mean"]
+    assert principal["principal_mode_iff_both_product_labels_divisible"]
+
+    nonfactorable = audit(
+        left_modulus=6,
+        right_modulus=10,
+        left_product_label=3,
+        right_product_label=4,
+    )
+    assert not nonfactorable["product_labels_congruent_mod_common_modulus"]
+    assert nonfactorable["circular_frequency_coefficient"] is None
+    assert not nonfactorable["phase_factors_through_single_circular_character"]
+    assert not nonfactorable["circular_multiplier_mean_classified"]
+    assert not nonfactorable["physical_afe_ttstar_packet_map_exhaustive"]
+    assert not nonfactorable["coupled_kernel_gate_closed"]
+
+
+def test_product_label_divisibility_has_unique_gcd_stratum() -> None:
+    audit = getattr(
+        coverage_audit,
+        "product_label_divisibility_gcd_split_audit",
+        None,
+    )
+    assert audit is not None, "product-label gcd split audit is missing"
+
+    divisible = audit(modulus=30, h=12, delta=5)
+    assert divisible["direct_modulus_divides_product"]
+    assert divisible["h_modulus_gcd"] == 6
+    assert divisible["active_divisor_strata"] == (6,)
+    assert divisible["gcd_divisibility_split_total"] == 1
+    assert divisible["gcd_divisibility_split_exact"]
+
+    nondivisible = audit(modulus=30, h=12, delta=-7)
+    assert not nondivisible["direct_modulus_divides_product"]
+    assert nondivisible["active_divisor_strata"] == ()
+    assert nondivisible["gcd_divisibility_split_total"] == 0
+    assert nondivisible["gcd_divisibility_split_exact"]
+
+
+def test_product_label_resonant_set_has_reciprocal_modulus_density() -> None:
+    audit = getattr(
+        coverage_audit,
+        "product_label_resonant_pair_count_audit",
+        None,
+    )
+    assert audit is not None, "product-label resonant count audit is missing"
+
+    result = audit(modulus=6, h_radius=5, delta_radius=4)
+    assert result["direct_resonant_pair_count"] == 16
+    assert result["gcd_stratum_pair_counts"] == {1: 0, 2: 8, 3: 8, 6: 0}
+    assert result["gcd_stratum_count_sum"] == 16
+    assert result["exact_gcd_stratum_count_identity"]
+    assert result["reciprocal_modulus_upper_bound"] == F(160, 3)
+    assert result["resonant_count_obeys_reciprocal_modulus_bound"]
+    assert not result["principal_afe_weighted_sum_bounded"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_principal_product_labels_reduce_to_unit_masked_farey_large_sieve() -> None:
+    audit = getattr(
+        coverage_audit,
+        "principal_product_label_additive_master_audit",
+        None,
+    )
+    assert audit is not None, "principal additive-master audit is missing"
+
+    result = audit(
+        squarefree_moduli=(5, 6),
+        dyadic_modulus_lower=3,
+        direct_coefficient=1,
+        h_coefficients={1: F(1), 2: F(-1), 3: F(2)},
+        delta_coefficients={1: F(2), 2: F(1), 5: F(-1)},
+        type_base_coefficients={1: F(1), 2: F(-1), 3: F(2)},
+        companion_type_coefficients={1: F(1), 2: F(3)},
+    )
+    assert result["principal_product_label_weights"] == {5: -2, 6: 2}
+    assert result["type_product_convolution_coefficients"] == {
+        1: 1,
+        2: 4,
+        3: -2,
+        4: 3,
+        6: -6,
+    }
+    assert result["type_product_convolution_l2_energy"] == 66
+    assert result["type_convolution_divisor_bound"] == 240
+    assert result["type_convolution_energy_obeys_divisor_bound"]
+    assert result["all_unit_masks_equal_divisor_expansions"]
+    assert result["direct_principal_master_equals_divisor_farey_expansion"]
+    assert result["every_farey_row_bound_holds"]
+    assert result["finite_farey_large_sieve_bound_holds"]
+    assert result["all_principal_weight_cauchy_bounds_hold"]
+    assert result["outer_mobius_weight_retained_linearly"]
+    assert result["inner_type_mobius_weight_retained_linearly"]
+    assert result["h_delta_product_structure_retained"]
+    assert not result["full_afe_norm_adapter_proved"]
+    assert not result["principal_twisted_moment_contribution_in_target_proved"]
+    assert not result["nonprincipal_signed_dispersion_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_principal_product_label_master_validates_farey_support_endpoints() -> None:
+    audit = coverage_audit.principal_product_label_additive_master_audit
+    common = {
+        "dyadic_modulus_lower": 3,
+        "direct_coefficient": 1,
+        "h_coefficients": {1: F(1)},
+        "delta_coefficients": {1: F(1)},
+        "type_base_coefficients": {1: F(1)},
+        "companion_type_coefficients": {1: F(1)},
+    }
+    with pytest.raises(ValueError, match="must not contain duplicates"):
+        audit(squarefree_moduli=(5, 5), **common)
+    with pytest.raises(ValueError, match="positive labels"):
+        audit(
+            squarefree_moduli=(5,),
+            **{**common, "type_base_coefficients": {0: F(1)}},
+        )
+    with pytest.raises(ValueError, match="direct coefficient must be nonzero"):
+        audit(
+            squarefree_moduli=(5,),
+            **{**common, "direct_coefficient": 0},
+        )
+
+    zero = audit(
+        squarefree_moduli=(5,),
+        **{**common, "type_base_coefficients": {4: F(1)}},
+    )
+    assert zero["type_product_convolution_coefficients"] == {}
+    assert zero["direct_principal_additive_master"] == 0
+    assert zero["finite_farey_large_sieve_bound_holds"]
+    assert zero["type_convolution_energy_obeys_divisor_bound"]
+
+
+def test_principal_master_stratifies_nonunit_direct_frequencies() -> None:
+    result = coverage_audit.principal_product_label_additive_master_audit(
+        squarefree_moduli=(5, 6),
+        dyadic_modulus_lower=3,
+        direct_coefficient=6,
+        h_coefficients={1: F(1), 2: F(-1), 3: F(2)},
+        delta_coefficients={1: F(2), 2: F(1), 5: F(-1)},
+        type_base_coefficients={1: F(1), 2: F(-1), 3: F(2)},
+        companion_type_coefficients={1: F(1), 2: F(3)},
+    )
+    assert result["direct_coefficient"] == 6
+    assert result["nonunit_direct_frequency_stratified_exactly"]
+    assert result["all_unit_masks_equal_divisor_expansions"]
+    assert result["direct_principal_master_equals_divisor_farey_expansion"]
+    assert result["every_farey_row_bound_holds"]
+    assert result["finite_farey_large_sieve_bound_holds"]
+    assert any(
+        row["direct_gcd"] > 1 for row in result["divisor_farey_rows"]
+    )
+    assert not result["full_afe_norm_adapter_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_nonboundary_sector_harmonics_have_log_cost_and_power_tail() -> None:
+    audit = getattr(
+        coverage_audit,
+        "sector_fourier_nonboundary_truncation_audit",
+        None,
+    )
+    assert audit is not None, "sector harmonic truncation audit is missing"
+
+    result = audit(
+        sector_modulus=7,
+        sector_frequency=3,
+        residue_numerator=2,
+        residue_modulus=11,
+        harmonic_cutoff=80,
+    )
+    assert result["nonboundary"]
+    assert result["all_direct_coefficients_nonzero"]
+    assert result["truncation_error_obeys_power_tail"]
+    assert result["coefficient_l1_obeys_logarithmic_bound"]
+    assert result["maximum_direct_coefficient"] == 563
+    assert result["physical_principal_norm_adapter_proved"] is False
+    assert result["coupled_kernel_gate_closed"] is False
+
+    for edge_frequency in (1, 12):
+        edge = audit(
+            sector_modulus=13,
+            sector_frequency=edge_frequency,
+            residue_numerator=2,
+            residue_modulus=11,
+            harmonic_cutoff=1,
+        )
+        assert edge["truncation_error_obeys_power_tail"]
+        assert edge["coefficient_l1_obeys_logarithmic_bound"]
+        assert edge["all_direct_coefficients_nonzero"]
+
+    with pytest.raises(ValueError, match=r"excludes s dividing Q\*w"):
+        audit(
+            sector_modulus=5,
+            sector_frequency=2,
+            residue_numerator=1,
+            residue_modulus=5,
+            harmonic_cutoff=10,
+        )
+
+
+def test_sector_harmonic_average_gains_the_normalizing_frequency_length() -> None:
+    audit = getattr(
+        coverage_audit,
+        "sector_harmonic_farey_operator_audit",
+        None,
+    )
+    assert audit is not None, "sector harmonic Farey operator audit is missing"
+
+    result = audit(
+        squarefree_moduli=(5, 6),
+        dyadic_modulus_lower=3,
+        sector_modulus=7,
+        harmonic_cutoff=20,
+        reduced_fraction_coefficients={
+            (5, 1): F(2),
+            (5, 2): F(-1),
+            (6, 1): F(3),
+            (6, 5): F(-2),
+        },
+    )
+    assert result["reduced_farey_points_are_distinct"]
+    assert result["harmonic_labels_are_globally_unique"]
+    assert result["weighted_block_large_sieve_bound_holds"]
+    assert result["normalized_sector_energy_obeys_operator_bound"]
+    assert result["frequency_normalization_gain_recorded"]
+    assert result["fixed_coefficient_operator_proved"]
+    assert result["physical_sector_support_condition_holds"]
+    assert not result["original_long_modulus_principal_adapter_proved"]
+    assert not result["physical_coefficient_energy_target_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_sector_harmonic_operator_does_not_identify_long_principal_moduli() -> None:
+    result = coverage_audit.sector_harmonic_farey_operator_audit(
+        squarefree_moduli=(10, 11),
+        dyadic_modulus_lower=7,
+        sector_modulus=7,
+        harmonic_cutoff=4,
+        reduced_fraction_coefficients={
+            (10, 1): F(1),
+            (11, 2): F(-2),
+        },
+    )
+    assert result["fixed_coefficient_operator_proved"]
+    assert not result["physical_sector_support_condition_holds"]
+    assert not result["original_long_modulus_principal_adapter_proved"]
+    assert not result["physical_coefficient_energy_target_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+
+def test_sector_note_keeps_original_and_normalized_modulus_scales_separate() -> None:
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "S=X=T^3,\\qquad Q=T" not in text
+    assert "an amplitude \\(T^{15/2}\\)" not in text
+    assert "S\\asymp X\\asymp Q\\asymp T" in text
+    assert "one full power of energy" in text
+    assert "| Nonunit sector-harmonic principal adapter |" not in text
+    assert (
+        "| Separate direct-coefficient and sector-harmonic adapters |"
+        in text
+    )
+    assert "handles packet-dependent nonunit direct phases" not in text
+    assert (
+        "handles an arbitrary fixed nonzero direct phase within the finite "
+        "principal master"
+        in text
+    )
+    sector_operator = text.split(
+        "### 9.99 The normalized sector average recovers one frequency length",
+        1,
+    )[1].split("## 10. What has and has not been proved", 1)[0]
+    assert r"U_s^{\rm res}" not in sector_operator
+    assert r"\sum_s|b_s|^2" in sector_operator
+
+
+def test_zero_direct_principal_taper_is_euler_core_plus_short_boundary() -> None:
+    audit = getattr(
+        coverage_audit,
+        "zero_direct_principal_selberg_reassembly_audit",
+        None,
+    )
+    assert audit is not None, "zero-direct principal reassembly is missing"
+
+    result = audit(
+        cutoff=5,
+        common_factor=1,
+        packet_coefficients={
+            (30, 1): F(1),
+            (5, 1): F(2),
+            (30, 30): F(-1),
+        },
+    )
+    assert result["direct_truncated_formal_weight"] == {
+        "constant": F(-3),
+        "log_prime_coefficients": {2: F(1), 3: F(1), 5: F(3)},
+    }
+    assert result["complete_euler_core_formal_weight"] == {
+        "constant": F(-1),
+        "log_prime_coefficients": {5: F(2)},
+    }
+    assert result["long_divisor_boundary_formal_weight"] == {
+        "constant": F(2),
+        "log_prime_coefficients": {2: F(-1), 3: F(-1), 5: F(-1)},
+    }
+    assert result["truncated_equals_core_minus_boundary"]
+    assert result["complete_core_supported_on_at_most_one_unmatched_prime"]
+    assert result["every_boundary_cofactor_is_short"]
+    assert result["largest_boundary_cofactor"] == 5
+    assert result["boundary_cofactor_strict_upper_bound"] == F(6)
+    assert result["common_factor"] == 1
+    assert result["outer_mobius_sum_performed_before_absolute_values"]
+    assert result["zero_direct_coefficient_included"]
+    assert not result["full_afe_packet_adapter_proved"]
+    assert not result["zero_direct_principal_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    common_factor = audit(
+        cutoff=30,
+        common_factor=6,
+        packet_coefficients={(35, 1): F(1)},
+    )
+    assert common_factor["direct_truncated_formal_weight"] == {
+        "constant": F(0),
+        "log_prime_coefficients": {5: F(1)},
+    }
+    assert common_factor["complete_euler_core_formal_weight"] == {
+        "constant": F(0),
+        "log_prime_coefficients": {},
+    }
+    assert common_factor["long_divisor_boundary_formal_weight"] == {
+        "constant": F(0),
+        "log_prime_coefficients": {5: F(-1)},
+    }
+    assert common_factor["boundary_cofactors"] == (5, 1)
+    assert common_factor["largest_boundary_cofactor"] == 5
+    assert common_factor["boundary_cofactor_strict_upper_bound"] == F(7)
+    assert common_factor["truncated_equals_core_minus_boundary"]
+    assert common_factor["every_boundary_cofactor_is_short"]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.100 The zero-direct principal taper" in text
+    assert "| Zero-direct principal Selberg reassembly |" in text
+    assert r"k<\frac{qR_q(m,n)}N\leq\frac{qm}N" in text
+    assert "does not prove a bound for the zero-direct principal master" in text
+    assert "There is no common Möbius sign to restore" in text
+    assert "The factor \\(\\mu(q)\\)" not in text
+    assert "coefficient is not yet known to be independent" in text
+
+
+def test_zero_direct_principal_core_box_shortens_the_reflected_boundary() -> None:
+    audit = getattr(
+        coverage_audit,
+        "zero_direct_principal_box_boundary_audit",
+        None,
+    )
+    assert audit is not None, "zero-direct core-box boundary ledger is missing"
+
+    result = audit(
+        cutoff=1000,
+        common_factor=5,
+        first_mollifier_scale=200,
+        second_mollifier_scale=300,
+        time_scale=10,
+        logarithmic_factor=F(7, 3),
+    )
+    assert result["product_label_upper_bound"] == F(896000)
+    assert result["common_scaled_product_over_cutoff"] == F(4480)
+    assert result["dyadic_boundary_upper_bound"] == F(17920, 3)
+    assert result["global_boundary_upper_bound"] == F(35840, 3)
+    assert result["common_scaled_product_obeys_dyadic_bound"]
+    assert result["dyadic_bound_obeys_global_bound"]
+    assert result["theta_three_support_condition_holds"]
+    assert result["theta_three_boundary_exponent"] == F(2)
+    assert result["theta_three_common_factor_gain"] == F(1, 5)
+    assert not result["weighted_divisor_lattice_adapter_proved"]
+    assert not result["zero_direct_principal_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    non_theta_three = audit(
+        cutoff=100,
+        common_factor=2,
+        first_mollifier_scale=20,
+        second_mollifier_scale=30,
+        time_scale=5,
+    )
+    assert not non_theta_three["theta_three_support_condition_holds"]
+    assert non_theta_three["theta_three_boundary_exponent"] is None
+    assert non_theta_three["theta_three_common_factor_gain"] is None
+
+    with pytest.raises(ValueError, match="core support"):
+        audit(
+            cutoff=100,
+            common_factor=3,
+            first_mollifier_scale=100,
+            second_mollifier_scale=10,
+            time_scale=10,
+        )
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert r"m=|h\delta|\leq\frac{64RS}T\mathscr L^{2B}" in text
+    assert r"\frac{256N}{qT}\mathscr L^{2B}" in text
+    assert r"T^{2+o(1)}/q" in text
+    assert "Thus at (N=T^3)" not in text
+
+
+def test_zero_direct_weighted_divisor_adapter_is_anchor_plus_variation() -> None:
+    audit = getattr(
+        coverage_audit,
+        "zero_direct_weighted_divisor_adapter_audit",
+        None,
+    )
+    assert audit is not None, "weighted zero-direct divisor adapter is missing"
+
+    result = audit(
+        cutoff=20,
+        common_factor=5,
+        product_label=6,
+        coprimality_label=1,
+        divisor_weights={1: F(2), 2: F(-1), 3: F(3), 6: F(4)},
+    )
+    assert result["truncated_weighted_formal_weight"] == {
+        "constant": F(0),
+        "log_prime_coefficients": {2: F(-1), 3: F(3)},
+    }
+    assert result["complete_weighted_formal_weight"] == {
+        "constant": F(4),
+        "log_prime_coefficients": {2: F(-5), 3: F(-1), 5: F(-4)},
+    }
+    assert result["anchored_euler_core_formal_weight"] == {
+        "constant": F(0),
+        "log_prime_coefficients": {},
+    }
+    assert result["anchored_variation_formal_weight"] == result[
+        "complete_weighted_formal_weight"
+    ]
+    assert result["weighted_boundary_formal_weight"] == {
+        "constant": F(4),
+        "log_prime_coefficients": {2: F(-4), 3: F(-4), 5: F(-4)},
+    }
+    assert result["truncated_equals_anchor_plus_variation_minus_boundary"]
+    assert result["complete_equals_boolean_mixed_difference"]
+    assert result["boundary_cofactors"] == (1,)
+
+    constant = audit(
+        cutoff=20,
+        common_factor=5,
+        product_label=6,
+        coprimality_label=1,
+        divisor_weights={1: F(7), 2: F(7), 3: F(7), 6: F(7)},
+    )
+    assert constant["anchored_variation_formal_weight"] == {
+        "constant": F(0),
+        "log_prime_coefficients": {},
+    }
+    assert constant["constant_weights_collapse_to_euler_core"]
+    assert not constant["physical_variation_bound_proved"]
+    assert not constant["zero_direct_principal_bound_proved"]
+    assert not constant["coupled_kernel_gate_closed"]
+
+    with pytest.raises(ValueError, match="exactly the divisors"):
+        audit(
+            cutoff=20,
+            common_factor=5,
+            product_label=6,
+            coprimality_label=1,
+            divisor_weights={1: F(1), 2: F(1)},
+        )
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.101 The exact weighted divisor adapter" in text
+    assert r"\mathscr V_q(R;W)" in text
+    assert "physical mixed-difference bound remains unproved" in text
+
+
+def test_zero_direct_two_taper_coprime_euler_core_and_reflections() -> None:
+    audit = getattr(
+        coverage_audit,
+        "zero_direct_two_taper_coprime_reassembly_audit",
+        None,
+    )
+    assert audit is not None, "two-taper coprime reassembly is missing"
+
+    shared_and_exclusive = audit(
+        cutoff=5,
+        common_factor=1,
+        first_product_label=6,
+        second_product_label=10,
+        first_coprimality_label=1,
+        second_coprimality_label=1,
+    )
+    assert shared_and_exclusive["first_exclusive_primes"] == (3,)
+    assert shared_and_exclusive["second_exclusive_primes"] == (5,)
+    assert shared_and_exclusive["shared_primes"] == (2,)
+    assert shared_and_exclusive["closed_euler_core_formal_weight"] == {
+        "constant": F(0),
+        "log_monomial_coefficients": {(3, 5): F(-1)},
+    }
+    assert shared_and_exclusive["enumerated_complete_formal_weight"] == (
+        shared_and_exclusive["closed_euler_core_formal_weight"]
+    )
+    assert shared_and_exclusive[
+        "truncated_equals_core_minus_first_tail_minus_second_tail_plus_double_tail"
+    ]
+    assert shared_and_exclusive["every_first_boundary_cofactor_is_short"]
+    assert shared_and_exclusive["every_second_boundary_cofactor_is_short"]
+    assert shared_and_exclusive["two_taper_euler_core_identity_proved"]
+    assert shared_and_exclusive[
+        "complete_core_supported_on_at_most_one_exclusive_prime_per_side"
+    ]
+    assert not shared_and_exclusive["full_afe_reflection_adapter_proved"]
+    assert not shared_and_exclusive["principal_analytic_bound_proved"]
+    assert not shared_and_exclusive["coupled_kernel_gate_closed"]
+
+    shared_only = audit(
+        cutoff=20,
+        common_factor=1,
+        first_product_label=6,
+        second_product_label=6,
+        first_coprimality_label=1,
+        second_coprimality_label=1,
+    )
+    assert shared_only["first_exclusive_primes"] == ()
+    assert shared_only["second_exclusive_primes"] == ()
+    assert shared_only["shared_primes"] == (2, 3)
+    assert shared_only["closed_euler_core_formal_weight"] == {
+        "constant": F(1),
+        "log_monomial_coefficients": {
+            (2,): F(-2),
+            (2, 3): F(2),
+            (3,): F(-2),
+        },
+    }
+
+    common_factor = audit(
+        cutoff=30,
+        common_factor=5,
+        first_product_label=6,
+        second_product_label=2,
+        first_coprimality_label=1,
+        second_coprimality_label=1,
+    )
+    assert common_factor["closed_euler_core_formal_weight"] == {
+        "constant": F(0),
+        "log_monomial_coefficients": {
+            (2, 3): F(1),
+            (3,): F(-1),
+            (3, 5): F(1),
+        },
+    }
+
+    composite_common_factor = audit(
+        cutoff=100,
+        common_factor=6,
+        first_product_label=35,
+        second_product_label=35,
+        first_coprimality_label=1,
+        second_coprimality_label=1,
+    )
+    assert composite_common_factor["closed_euler_core_formal_weight"] == {
+        "constant": F(1),
+        "log_monomial_coefficients": {
+            (2,): F(-2),
+            (2, 2): F(1),
+            (2, 3): F(2),
+            (2, 5): F(2),
+            (2, 7): F(2),
+            (3,): F(-2),
+            (3, 3): F(1),
+            (3, 5): F(2),
+            (3, 7): F(2),
+            (5,): F(-2),
+            (5, 7): F(2),
+            (7,): F(-2),
+        },
+    }
+
+    killed = audit(
+        cutoff=100,
+        common_factor=1,
+        first_product_label=30,
+        second_product_label=2,
+        first_coprimality_label=1,
+        second_coprimality_label=1,
+    )
+    assert killed["first_exclusive_primes"] == (3, 5)
+    assert killed["closed_euler_core_formal_weight"] == {
+        "constant": F(0),
+        "log_monomial_coefficients": {},
+    }
+
+    squarefree_labels = (1, 2, 3, 5, 6, 7, 10, 14, 15, 21, 30, 42, 70, 105)
+    enumerated_cases = 0
+    for level in (5, 11, 30):
+        for common in (1, 2, 3, 5):
+            if common > level:
+                continue
+            for first_label in squarefree_labels:
+                for second_label in squarefree_labels:
+                    exhaustive = audit(
+                        cutoff=level,
+                        common_factor=common,
+                        first_product_label=first_label,
+                        second_product_label=second_label,
+                        first_coprimality_label=7,
+                        second_coprimality_label=11,
+                    )
+                    assert exhaustive["two_taper_euler_core_identity_proved"]
+                    assert exhaustive[
+                        "truncated_equals_core_minus_first_tail_minus_second_tail_plus_double_tail"
+                    ]
+                    assert exhaustive[
+                        "every_first_boundary_cofactor_is_short"
+                    ]
+                    assert exhaustive[
+                        "every_second_boundary_cofactor_is_short"
+                    ]
+                    enumerated_cases += 1
+    assert enumerated_cases == 2352
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.102 Both principal tapers" in text
+    assert r"\mathscr E_q(R_1,R_2)" in text
+    assert r"-\mathscr B_1-\mathscr B_2+\mathscr B_{12}" in text
+    assert "constant physical-weight, two-taper Euler algebra" in text
+    assert "principal analytic estimate" in text
+
+    with pytest.raises(ValueError, match="squarefree"):
+        audit(
+            cutoff=20,
+            common_factor=4,
+            first_product_label=6,
+            second_product_label=10,
+            first_coprimality_label=1,
+            second_coprimality_label=1,
+        )
+
+
+def test_two_taper_weighted_adapter_is_axis_sparse_plus_mixed() -> None:
+    audit = coverage_audit.zero_direct_two_taper_coprime_reassembly_audit
+    admissible_pairs = tuple(
+        (first, second)
+        for first in (1, 2, 3, 6)
+        for second in (1, 2, 5, 10)
+        if gcd(first, second) == 1
+    )
+    additive_weights = {
+        pair: F(pair[0] + 2 * pair[1]) for pair in admissible_pairs
+    }
+    additive = audit(
+        cutoff=5,
+        common_factor=1,
+        first_product_label=6,
+        second_product_label=10,
+        first_coprimality_label=1,
+        second_coprimality_label=1,
+        pair_weights=additive_weights,
+    )
+    assert additive[
+        "weighted_complete_equals_anchor_plus_first_axis_plus_second_axis_plus_mixed"
+    ]
+    assert additive[
+        "weighted_truncated_equals_complete_minus_first_tail_minus_second_tail_plus_double_tail"
+    ]
+    assert additive["first_axis_inner_euler_cores_are_sparse"]
+    assert additive["second_axis_inner_euler_cores_are_sparse"]
+    assert additive["mixed_interaction_formal_weight"] == {
+        "constant": F(0),
+        "log_monomial_coefficients": {},
+    }
+    assert additive["additively_separable_weights_have_zero_mixed_interaction"]
+    assert not additive["physical_mixed_interaction_bound_proved"]
+    assert not additive["principal_analytic_bound_proved"]
+
+    rank_one_weights = {
+        pair: F(pair[0] * pair[1]) for pair in admissible_pairs
+    }
+    rank_one = audit(
+        cutoff=5,
+        common_factor=1,
+        first_product_label=6,
+        second_product_label=10,
+        first_coprimality_label=1,
+        second_coprimality_label=1,
+        pair_weights=rank_one_weights,
+    )
+    assert rank_one[
+        "weighted_complete_equals_anchor_plus_first_axis_plus_second_axis_plus_mixed"
+    ]
+    assert rank_one[
+        "mixed_interaction_formal_weight"
+    ] != {"constant": F(0), "log_monomial_coefficients": {}}
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.103 Only the genuinely mixed" in text
+    assert r"\Delta_{12}W(r,s)" in text
+    assert r"\mathscr V_1(W)+\mathscr V_2(W)+\mathscr V_{12}(W)" in text
+    assert "mixed-interaction gate" in text
+
+    with pytest.raises(ValueError, match="exactly the admissible"):
+        audit(
+            cutoff=5,
+            common_factor=1,
+            first_product_label=6,
+            second_product_label=10,
+            first_coprimality_label=1,
+            second_coprimality_label=1,
+            pair_weights={(1, 1): F(1)},
+        )
+
+
+def test_two_dimensional_mixed_abel_is_exact_and_variation_bounded() -> None:
+    audit = getattr(
+        coverage_audit,
+        "two_dimensional_mixed_abel_audit",
+        None,
+    )
+    assert audit is not None, "two-dimensional mixed Abel helper is missing"
+
+    first_coordinates = (1, 2, 6)
+    second_coordinates = (1, 5, 10)
+    coefficients = {
+        (first, second): F(3 * first - 2 * second)
+        for first in first_coordinates
+        for second in second_coordinates
+    }
+    weights = {
+        (first, second): F(first * second + first**2 - 3 * second)
+        for first in first_coordinates
+        for second in second_coordinates
+    }
+    result = audit(
+        first_coordinates=first_coordinates,
+        second_coordinates=second_coordinates,
+        coefficients=coefficients,
+        full_grid_weights=weights,
+    )
+    assert result["mixed_direct_equals_increment_suffix_reassembly"]
+    assert result["every_pointwise_mixed_difference_is_reconstructed"]
+    assert result["variation_bound_holds"]
+    assert result["mixed_increment_l1_norm"] > 0
+    assert result["maximum_suffix_coefficient_mass"] > 0
+
+    additive_weights = {
+        (first, second): F(7 * first - 4 * second + 3)
+        for first in first_coordinates
+        for second in second_coordinates
+    }
+    additive = audit(
+        first_coordinates=first_coordinates,
+        second_coordinates=second_coordinates,
+        coefficients=coefficients,
+        full_grid_weights=additive_weights,
+    )
+    assert additive["mixed_increment_l1_norm"] == 0
+    assert additive["direct_mixed_pairing"] == 0
+    assert additive["increment_suffix_pairing"] == 0
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.104 Two-dimensional Abel" in text
+    assert r"\nabla_{ij}W\,C_{ij}^{\nearrow}" in text
+    assert "for each supplied fixed" in text
+    assert "mixed-variation seminorm is controlled" in text
+    assert "packet-exhaustive physical variation" in text
+    assert "global double reflected-tail reassembly" in text
+    assert "### 9.105 Each fixed-label divisor rectangle" in text
+    assert r"\tau(R_1)\tau(R_2)" in text
+    assert r"|\mathscr V_{12}(W)|\ll_{\varepsilon,W}T^\varepsilon" in text
+    assert "two-taper principal divisor-lattice operator" in text
+
+    with pytest.raises(ValueError, match="strictly increasing"):
+        audit(
+            first_coordinates=(1, 6, 2),
+            second_coordinates=second_coordinates,
+            coefficients=coefficients,
+            full_grid_weights=weights,
+        )
+
+
+def test_principal_harmonics_project_exactly_to_the_gcd_lattice() -> None:
+    audit = getattr(
+        coverage_audit,
+        "principal_harmonic_gcd_projection_audit",
+        None,
+    )
+    assert audit is not None, "principal harmonic projection is missing"
+
+    result = audit(
+        modulus=12,
+        shift=8,
+        cyclic_samples=tuple(F(index + 1) for index in range(12)),
+    )
+    assert result["gcd"] == 4
+    assert result["reduced_modulus"] == 3
+    assert result["principal_frequency_residues"] == (0, 3, 6, 9)
+    assert result["orthogonality_weights"] == (
+        4,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+    )
+    assert result["zero_frequency_projection"] == 78
+    assert result["all_principal_projection"] == 60
+    assert result["nonzero_principal_projection"] == -18
+    assert result["principal_residues_are_exact_multiples"]
+    assert result["phase_cycles_are_complete"]
+    assert result["principal_projection_equals_gcd_sampled_lattice"]
+    assert result[
+        "nonzero_principal_plus_zero_reassembles_sampled_lattice"
+    ]
+    assert result["principal_harmonic_packet_exhaustion_proved"]
+    assert result["raw_zero_mode_reassembly_proved"]
+    assert not result["sampled_principal_master_bound_proved"]
+    assert not result["centered_harmonic_dispersion_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    for modulus in range(2, 25):
+        samples = tuple(
+            F((index + 2) * (index - 3), index + 1)
+            for index in range(modulus)
+        )
+        for shift in range(-2 * modulus, 2 * modulus + 1):
+            if shift == 0:
+                continue
+            exhaustive = audit(
+                modulus=modulus,
+                shift=shift,
+                cyclic_samples=samples,
+            )
+            assert exhaustive["principal_residues_are_exact_multiples"]
+            assert exhaustive["phase_cycles_are_complete"]
+            assert exhaustive[
+                "principal_projection_equals_gcd_sampled_lattice"
+            ]
+            assert exhaustive[
+                "nonzero_principal_plus_zero_reassembles_sampled_lattice"
+            ]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.106 Principal $h$-harmonics" in text
+    assert r"s\mid h\delta" in text
+    assert r"g\sum_{n\in\mathbb Z}\mathcal F_{r,s,\delta}(gn)" in text
+    assert r"\mathcal O_{q;R,S,K,M}^{h=0}" in text
+    assert r"\mathcal P_{q;R,S,K,M}^{\ne0}" in text
+    assert r"\frac{M}{32\mathscr L^B}\le g\le2M" in text
+    assert "sampled-master estimate" in text
+
+    with pytest.raises(ValueError, match="nonzero"):
+        audit(modulus=5, shift=0, cyclic_samples=(F(0),) * 5)
+    with pytest.raises(ValueError, match="exactly modulus"):
+        audit(modulus=5, shift=1, cyclic_samples=(F(0),) * 4)
+
+
+def test_principal_extraction_leaves_a_proper_divisor_centered_gate() -> None:
+    audit = getattr(
+        coverage_audit,
+        "principal_extracted_ramanujan_centering_audit",
+        None,
+    )
+    assert audit is not None, "principal-extracted centering is missing"
+
+    principal = audit(modulus=6, product_label=12)
+    assert principal["totient"] == 2
+    assert principal["gcd"] == 6
+    assert principal["principal_indicator"]
+    assert principal["ramanujan_sum"] == 2
+    assert principal["residual_mean_numerator"] == 0
+    assert principal["proper_divisor_numerator"] == 0
+    assert principal["centered_kernel_is_zero_on_principal_set"]
+
+    nonprincipal = audit(modulus=6, product_label=4)
+    assert nonprincipal["gcd"] == 2
+    assert not nonprincipal["principal_indicator"]
+    assert nonprincipal["ramanujan_sum"] == -1
+    assert nonprincipal["residual_mean_numerator"] == -1
+    assert nonprincipal["proper_divisor_numerator"] == -1
+    assert nonprincipal["ramanujan_divisor_formulas_agree"]
+    assert nonprincipal[
+        "principal_extracted_mean_uses_only_proper_divisors"
+    ]
+    assert nonprincipal["centered_kernel_has_zero_unit_mean"]
+    assert nonprincipal["pointwise_three_way_inverse_phase_split_proved"]
+    assert nonprincipal["outer_modulus_mobius_weight_retained"]
+    assert nonprincipal["inner_mobius_type_split_permitted_after_centering"]
+    assert nonprincipal["pecg_algebraic_replacement_proved"]
+    assert nonprincipal[
+        "principal_and_proper_mean_recombine_before_absolute_values"
+    ]
+    assert not nonprincipal["proper_divisor_mean_estimate_proved"]
+    assert not nonprincipal[
+        "joint_nonunit_principal_lattice_estimate_proved"
+    ]
+    assert not nonprincipal["centered_type_i_ii_dispersion_proved"]
+    assert not nonprincipal["sampled_principal_master_bound_proved"]
+    assert not nonprincipal["coupled_kernel_gate_closed"]
+
+    audited_cases = 0
+    for modulus in range(2, 51):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        for product_label in range(-2 * modulus, 2 * modulus + 1):
+            if product_label == 0:
+                continue
+            exhaustive = audit(
+                modulus=modulus,
+                product_label=product_label,
+            )
+            assert exhaustive["ramanujan_divisor_formulas_agree"]
+            assert exhaustive[
+                "principal_extracted_mean_uses_only_proper_divisors"
+            ]
+            assert exhaustive["residual_mean_vanishes_on_principal_set"]
+            assert exhaustive["centered_kernel_has_zero_unit_mean"]
+            assert exhaustive[
+                "pointwise_three_way_inverse_phase_split_proved"
+            ]
+            audited_cases += 1
+    assert audited_cases == 2956
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.107 Principal extraction" in text
+    assert r"K_{s,a}^{\circ}(r)" in text
+    assert r"\rho_s(a)-\mathbf1_{s\mid a}" in text
+    assert r"j\mid s\\j<s" in text
+    assert r"\mathcal C^{\ne0}=\mathcal M^{\rm prop}+\mathcal C^\circ" in text
+    assert r"\mathcal P^{\rm all}+\mathcal M^{\rm prop}" in text
+    assert r"\mathfrak C^{\circ}" in text
+    assert r"a=h\delta" in text
+    assert r"{\rm PECG}_3" in text
+    assert r"|\mathcal D|\ll_W T\log^4(2N)" in text
+
+    with pytest.raises(ValueError, match="squarefree"):
+        audit(modulus=12, product_label=5)
+    with pytest.raises(ValueError, match="nonzero"):
+        audit(modulus=6, product_label=0)
+
+
+def test_centered_inverse_phase_has_no_zero_additive_frequency() -> None:
+    audit = getattr(
+        coverage_audit,
+        "centered_inverse_phase_additive_transform_audit",
+        None,
+    )
+    assert audit is not None, "centered inverse-phase transform is missing"
+
+    nonprincipal = audit(modulus=6, product_label=4)
+    assert not nonprincipal["principal_indicator"]
+    assert nonprincipal["ramanujan_product_label"] == -1
+    assert nonprincipal["all_additive_transform_rows_match"]
+    assert nonprincipal["maximum_transform_error"] < 1e-8
+    assert nonprincipal["zero_additive_frequency_vanishes"]
+    assert nonprincipal["rank_one_ramanujan_correction_retained"]
+    assert nonprincipal["centered_type_i_zero_dual_mode_removed"]
+    assert not nonprincipal["nonzero_kloosterman_spectrum_estimate_proved"]
+    assert not nonprincipal["centered_type_i_global_bound_proved"]
+    assert not nonprincipal["centered_type_ii_global_bound_proved"]
+    assert not nonprincipal["coupled_kernel_gate_closed"]
+
+    principal = audit(modulus=6, product_label=12)
+    assert principal["principal_indicator"]
+    assert principal["zero_additive_frequency_vanishes"]
+    assert principal["principal_labels_have_identically_zero_centered_transform"]
+    assert all(
+        abs(row["direct_centered_transform"]) < 1e-8
+        for row in principal["transform_rows"]
+    )
+
+    audited_cases = 0
+    for modulus in range(2, 36):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        for product_label in range(1, 2 * modulus + 1):
+            exhaustive = audit(
+                modulus=modulus,
+                product_label=product_label,
+            )
+            assert exhaustive["all_additive_transform_rows_match"]
+            assert exhaustive["maximum_transform_error"] < 1e-8
+            assert exhaustive["zero_additive_frequency_vanishes"]
+            assert exhaustive[
+                "principal_labels_have_identically_zero_centered_transform"
+            ]
+            audited_cases += 1
+    assert audited_cases == 812
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.108 Centered Type I" in text
+    assert r"\widehat K_{s,a}^\circ(0)=0" in text
+    assert r"S(k,-a;s)-\frac{c_s(a)c_s(k)}{\varphi(s)}" in text
+    assert r"k\in\mathbb Z\setminus\{0\}" in text
+    assert r"|k|\ll\frac{ds}{R}\mathscr L^{C_W}" in text
+    assert "rank-one Ramanujan correction" in text
+
+    with pytest.raises(ValueError, match="squarefree"):
+        audit(modulus=8, product_label=3)
+    with pytest.raises(ValueError, match="nonzero"):
+        audit(modulus=6, product_label=0)
+
+
+def test_centered_type_i_ramanujan_correction_is_elementary() -> None:
+    audit = getattr(
+        coverage_audit,
+        "centered_type_i_ramanujan_correction_audit",
+        None,
+    )
+    assert audit is not None, "Type-I Ramanujan correction audit is missing"
+
+    result = audit(
+        modulus=6,
+        h_bound=3,
+        delta_bound=4,
+        dual_bound=5,
+    )
+    assert result["prime_factors"] == (2, 3)
+    assert result["product_ramanujan_average_bound_holds"]
+    assert result["dual_ramanujan_average_bound_holds"]
+    assert result["product_euler_cost_below_three_to_omega"]
+    assert result["dual_euler_cost_below_two_to_omega"]
+    assert result["rank_one_ramanujan_correction_locally_closed"]
+    assert result["global_correction_bound_requires_hluv_le_rs"]
+    assert not result["nonzero_kloosterman_spectrum_estimate_proved"]
+    assert not result["centered_type_i_global_bound_proved"]
+    assert not result["centered_type_ii_global_bound_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    audited_cases = 0
+    for modulus in range(2, 45):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        for h_bound, delta_bound, dual_bound in (
+            (1, 1, 1),
+            (2, 3, 4),
+            (5, 4, 3),
+        ):
+            exhaustive = audit(
+                modulus=modulus,
+                h_bound=h_bound,
+                delta_bound=delta_bound,
+                dual_bound=dual_bound,
+            )
+            assert exhaustive["product_ramanujan_average_bound_holds"]
+            assert exhaustive["dual_ramanujan_average_bound_holds"]
+            assert exhaustive["product_euler_cost_below_three_to_omega"]
+            assert exhaustive["dual_euler_cost_below_two_to_omega"]
+            audited_cases += 1
+    assert audited_cases == 84
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.109 The rank-one Ramanujan correction" in text
+    assert r"|c_s(n)|=\varphi((s,n))" in text
+    assert r"HLUV\,T^\varepsilon" in text
+    assert r"HLUV\le RS" in text
+    assert r"\frac{11}{2}<6" in text
+    assert r"S(k,-h\delta;s)" in text
+
+    with pytest.raises(ValueError, match="squarefree"):
+        audit(modulus=18, h_bound=1, delta_bound=1, dual_bound=1)
+    with pytest.raises(ValueError, match="positive"):
+        audit(modulus=6, h_bound=0, delta_bound=1, dual_bound=1)
+
+
+def test_type_i_kloosterman_divisor_transform_factors_into_gauss_sums() -> None:
+    audit = getattr(
+        coverage_audit,
+        "kloosterman_type_divisor_character_factorization_audit",
+        None,
+    )
+    assert audit is not None, "Type-I Gauss-product character audit is missing"
+
+    nonunit = audit(
+        modulus=6,
+        product_label=4,
+        additive_frequency=3,
+    )
+    assert nonunit["all_character_rows_factor_exactly"]
+    assert nonunit["maximum_factorization_error"] < 1e-8
+    assert nonunit["nonunit_product_labels_supported"]
+    assert nonunit["nonunit_additive_frequencies_supported"]
+    assert nonunit["type_divisor_mobius_polynomial_remains_linear"]
+    assert nonunit["outer_modulus_mobius_weight_remains_linear"]
+    assert nonunit["fixed_modulus_cauchy_forbidden_before_outer_sum"]
+    assert not nonunit["global_gauss_product_character_moment_proved"]
+    assert not nonunit["centered_type_i_global_bound_proved"]
+    assert not nonunit["centered_type_ii_global_bound_proved"]
+    assert not nonunit["coupled_kernel_gate_closed"]
+
+    unit = audit(
+        modulus=10,
+        product_label=3,
+        additive_frequency=7,
+    )
+    assert unit["all_character_rows_factor_exactly"]
+    assert unit["maximum_factorization_error"] < 1e-8
+    assert not unit["nonunit_product_labels_supported"]
+    assert not unit["nonunit_additive_frequencies_supported"]
+
+    audited_cases = 0
+    for modulus in range(2, 23):
+        if coverage_audit._finite_mobius(modulus) == 0:
+            continue
+        labels = tuple(dict.fromkeys((1, 2, modulus, 2 * modulus - 1)))
+        for product_label in labels:
+            for additive_frequency in labels:
+                exhaustive = audit(
+                    modulus=modulus,
+                    product_label=product_label,
+                    additive_frequency=additive_frequency,
+                )
+                assert exhaustive["all_character_rows_factor_exactly"]
+                assert exhaustive["maximum_factorization_error"] < 1e-8
+                audited_cases += 1
+    assert audited_cases == 217
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.110 The pure Type-I spectrum" in text
+    assert r"G_\chi(-a)G_\chi(k)" in text
+    assert r"\overline{\chi(d)}F_{s,a,k}(d)" in text
+    assert r"a=h\delta" in text
+    assert "Gauss-product character moment" in text
+
+    with pytest.raises(ValueError, match="squarefree"):
+        audit(modulus=12, product_label=5, additive_frequency=1)
+    with pytest.raises(ValueError, match="nonzero"):
+        audit(modulus=6, product_label=0, additive_frequency=1)
+    with pytest.raises(ValueError, match="nonzero"):
+        audit(modulus=6, product_label=1, additive_frequency=0)
+
+
+def test_centered_type_i_character_transform_deletes_principal_conductor() -> None:
+    audit = coverage_audit.kloosterman_type_divisor_character_factorization_audit
+
+    result = audit(
+        modulus=30,
+        product_label=6,
+        additive_frequency=7,
+    )
+    assert result["all_centered_character_rows_factor_exactly"]
+    assert result["principal_character_centered_row_deleted"]
+    assert result["all_gauss_sums_match_primitive_conductor_factorization"]
+    assert result["all_gauss_products_match_primitive_conductor_factorization"]
+    assert result["character_count_by_primitive_conductor"] == {
+        1: 1,
+        3: 1,
+        5: 3,
+        15: 3,
+    }
+    assert result["nonprincipal_character_count"] == 7
+    assert result["principal_character_count"] == 1
+    assert result["nonunit_labels_are_confined_to_ramanujan_cofactors"]
+    assert result["primitive_conductor_master_retains_outer_mobius_weight"]
+    assert result["ramanujan_cofactor_absolute_summation_costs_only_divisor_weights"]
+    assert not result["primitive_conductor_global_moment_proved"]
+    assert not result["coupled_kernel_gate_closed"]
+
+    principal_row = next(
+        row for row in result["character_rows"] if row["is_principal_character"]
+    )
+    assert principal_row["primitive_conductor"] == 1
+    assert principal_row["ramanujan_cofactor"] == 30
+    assert abs(principal_row["centered_direct_transform"]) < 1e-8
+    assert abs(principal_row["centered_factorized_transform"]) < 1e-8
+
+    for row in result["character_rows"]:
+        assert row["primitive_conductor"] * row["ramanujan_cofactor"] == 30
+        assert row["centered_identity_holds"]
+        assert row["product_conductor_factorization_holds"]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.111 Principal-character deletion" in text
+    assert r"\chi=\chi_0" in text
+    assert r"\operatorname{cond}(\chi)=q" in text
+    assert r"\mathbf1_{(n,q)=1}" in text
+    assert r"c_r(h\delta)c_r(k)" in text
+    assert r"\prod_{p\le R}\left(1+\frac6{p-1}\right)" in text
+    assert "primitive unit-conductor gate" in text
+
+
+def test_blomer_pascadi_2026_is_too_short_on_centered_type_i_face() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "blomer_pascadi_2026_centered_type_i_audit",
+        None,
+    )
+    assert adapter is not None, "Blomer--Pascadi 2026 audit is missing"
+
+    result = adapter(
+        modulus_exponent=F(3),
+        short_coordinate_exponent=F(1, 2),
+    )
+    assert result["source"] == (
+        "Blomer--Pascadi, arXiv:2607.24311v1, "
+        "Theorems 1.1 and 5.5"
+    )
+    assert result["short_length_relative_to_modulus"] == F(1, 6)
+    assert result["published_balanced_lower_threshold"] == F(13, 28)
+    assert not result["published_balanced_power_range_holds"]
+    assert result["critical_square_root_saving"] == F(1, 32)
+    assert result["optimistic_balanced_published_bound_exponent"] == F(89, 96)
+    assert result["balanced_trivial_bound_exponent"] == F(2, 3)
+    assert result["balanced_published_over_trivial_deficit"] == F(25, 96)
+    assert result["full_label_f0_factor_exponent"] == F(1, 96)
+    assert result["full_label_general_bound_factor_exponent"] == F(5, 36)
+    assert result["full_label_general_bound_exponent"] == F(41, 36)
+    assert result["full_label_trivial_bound_exponent"] == F(1)
+    assert result["full_label_published_over_trivial_deficit"] == F(5, 36)
+    assert result["inverse_type_divisor_image_is_not_an_interval"]
+    assert not result["outer_modulus_mobius_average_provided"]
+    assert not result["joint_centered_type_ii_block_provided"]
+    assert not result["direct_published_coverage"]
+
+    text = OFFDIAGONAL_NOTE.read_text()
+    assert "### 9.112 Full-interval refinement" in text
+    assert "arXiv:2607.24311v1" in text
+    assert r"N=c^{1/6}" in text
+    assert r"c^{25/96}" in text
+    assert r"c^{1/96}" in text
+    assert r"c^{5/36}" in text
+
+
+def test_rank_one_type_ii_resonance_is_exactly_subtracted() -> None:
+    audit = getattr(
+        coverage_audit,
+        "rank_one_type_ii_resonance_audit",
+        None,
+    )
+    assert audit is not None, "rank-one resonance audit is missing"
+
+    resonant = audit(
+        modulus=11,
+        direct_coefficient=2,
+        inverse_coefficient=3,
+        shifts=(0, 0, 1, 1),
+        first_dilations=(1, 1, 1, 1),
+        second_dilations=(2, 8, 2, 8),
+    )
+    assert resonant["pointwise_type_ii_exclusion_holds"]
+    assert resonant["distinct_shifts"] == (0, 1)
+    assert resonant["reciprocal_residues_by_shift"] == {0: 0, 1: 0}
+    assert resonant["linear_slope_mod_modulus"] == 0
+    assert resonant["resonance_conditions_hold"]
+    assert resonant["rational_function_is_constant"]
+    assert resonant["rational_function_resonance_classification_exact"]
+    assert resonant["finite_nonpole_values_are_constant"]
+    assert not resonant["finite_value_aliasing_detected"]
+    assert resonant["nonpole_term_count"] == 9
+    assert resonant["resonant_main_exact"]
+    assert resonant["centered_sum_vanishes_on_resonance"]
+
+    nonresonant = audit(
+        modulus=11,
+        direct_coefficient=2,
+        inverse_coefficient=3,
+        shifts=(0, 0, 1, 1),
+        first_dilations=(1, 1, 1, 1),
+        second_dilations=(2, 8, 2, 7),
+    )
+    assert not nonresonant["resonance_conditions_hold"]
+    assert not nonresonant["rational_function_is_constant"]
+    assert not nonresonant["finite_nonpole_values_are_constant"]
+    assert nonresonant["rational_function_resonance_classification_exact"]
+    assert nonresonant["resonant_main"] == 0j
+    assert nonresonant["square_root_bound_for_nonresonance_requires_weil"]
+
+    small_prime_alias = audit(
+        modulus=5,
+        direct_coefficient=1,
+        inverse_coefficient=1,
+        shifts=(0, 1),
+        first_dilations=(1, 1),
+        second_dilations=(2, 4),
+    )
+    assert not small_prime_alias["resonance_conditions_hold"]
+    assert not small_prime_alias["rational_function_is_constant"]
+    assert small_prime_alias["finite_nonpole_values_are_constant"]
+    assert small_prime_alias["finite_value_aliasing_detected"]
+    assert small_prime_alias["rational_function_resonance_classification_exact"]
+
+    with pytest.raises(ValueError, match="phase coefficients"):
+        audit(
+            modulus=11,
+            direct_coefficient=0,
+            inverse_coefficient=3,
+            shifts=(0, 0),
+            first_dilations=(1, 1),
+            second_dilations=(2, 8),
+        )
+
+
+def test_all_type_ii_resonance_partitions_have_the_same_dimension_barrier() -> None:
+    audit = getattr(
+        coverage_audit,
+        "rank_one_type_ii_resonance_partition_audit",
+        None,
+    )
+    assert audit is not None, "rank-one resonance partition audit is missing"
+
+    for blocks in ((4,), (2, 2)):
+        result = audit(moment_order=2, shift_block_sizes=blocks)
+        assert result["compatible_with_pointwise_type_ii"]
+        assert result["resonance_dimension_lower_bound"] == 7
+        assert result["gallant_required_exceptional_dimension"] == 6
+        assert result["dimension_excess"] == 1
+        assert not result["standard_type_ii_exception_count_can_hold"]
+        assert result["resonant_term_requires_separate_global_estimate"]
+
+    singleton = audit(moment_order=2, shift_block_sizes=(1, 3))
+    assert singleton["has_singleton_block"]
+    assert not singleton["compatible_with_pointwise_type_ii"]
+    assert not singleton["active_admissible_resonant_stratum"]
+    assert singleton["standard_type_ii_exception_count_can_hold"]
+    assert not singleton["resonant_term_requires_separate_global_estimate"]
+
+
+def test_resonance_projector_splits_into_principal_and_centered_dual_modes() -> None:
+    audit = getattr(
+        coverage_audit,
+        "rank_one_resonance_orthogonality_audit",
+        None,
+    )
+    assert audit is not None, "rank-one resonance orthogonality audit is missing"
+
+    result = audit(
+        modulus=5,
+        shifts=(0, 0),
+        left_coefficient_families=(
+            {1: 1, 2: -1, 3: 2, 4: 1},
+            {1: -1, 2: 1, 3: 1, 4: 2},
+        ),
+        right_coefficient_families=(
+            {1: 2, 2: 1, 3: -1, 4: 1},
+            {1: 1, 2: -2, 3: 1, 4: 1},
+        ),
+    )
+
+    assert result["moment_order"] == 1
+    assert result["distinct_shifts"] == (0,)
+    assert result["dual_coordinate_count"] == 2
+    assert result["dual_frequency_count"] == 25
+    assert result["direct_state_count"] == 25
+    assert result["direct_resonance_sum"] == -15 + 0j
+    assert result["dual_reconstructed_resonance_sum"] == pytest.approx(-15)
+    assert result["local_zero_frequency_factors"] == (9 + 0j, 3 + 0j)
+    assert result["local_zero_frequency_formula_factors"] == (
+        9 + 0j,
+        3 + 0j,
+    )
+    assert result["principal_dual_mode"] == pytest.approx(F(27, 25))
+    assert result["centered_dual_modes"] == pytest.approx(F(-402, 25))
+    assert result["principal_plus_centered_exact"]
+    assert result["additive_orthogonality_reconstruction_exact"]
+    assert result["type_ii_diagonal_removal_formula_exact"]
+    assert result["both_coefficient_families_retained"]
+    assert not result["absolute_values_taken_before_reconstruction"]
+    assert result["principal_dual_mode_is_nonoscillatory"]
+    assert not result["principal_dual_mode_globally_evaluated"]
+    assert not result["centered_dual_operator_bound_proved"]
+
+    multi_block = audit(
+        modulus=5,
+        shifts=(0, 0, 1, 1),
+        left_coefficient_families=(
+            {1: 1, 2: -1, 3: 1},
+            {1: -1, 2: 1, 4: 1},
+            {1: 2, 3: -1, 4: 1},
+            {1: 1, 2: 1, 3: -1},
+        ),
+        right_coefficient_families=(
+            {1: 1, 2: 1, 4: -1},
+            {1: 2, 3: 1, 4: -1},
+            {1: -1, 2: 1, 3: 1},
+            {1: 1, 2: -1, 4: 2},
+        ),
+    )
+    assert multi_block["moment_order"] == 2
+    assert multi_block["distinct_shifts"] == (0, 1)
+    assert multi_block["dual_coordinate_count"] == 3
+    assert multi_block["dual_frequency_count"] == 125
+    assert multi_block["additive_orthogonality_reconstruction_exact"]
+    assert multi_block["type_ii_diagonal_removal_formula_exact"]
+    assert multi_block["principal_plus_centered_exact"]
+    assert not multi_block["principal_dual_mode_globally_evaluated"]
+    assert not multi_block["centered_dual_operator_bound_proved"]
+
+
+def test_prime_factor_transfer_cost_covers_only_an_extreme_large_prime_subface() -> None:
+    audit = getattr(
+        coverage_audit,
+        "squarefree_prime_factor_transfer_audit",
+        None,
+    )
+    assert audit is not None, "prime-factor transfer audit is missing"
+
+    threshold = audit(
+        modulus_exponent=F(1),
+        prime_factor_exponent=F(4, 5),
+        prime_relative_saving_exponent=F(1, 8),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert threshold["prime_bound_saving_in_T_exponent"] == F(1, 10)
+    assert threshold["cofactor_character_l1_cost_exponent"] == F(1, 10)
+    assert threshold["net_transfer_saving_exponent"] == F(0)
+    assert threshold["strict_power_saving_after_transfer"] is False
+
+    extreme = audit(
+        modulus_exponent=F(1),
+        prime_factor_exponent=F(9, 10),
+        prime_relative_saving_exponent=F(1, 8),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert extreme["net_transfer_saving_exponent"] == F(1, 16)
+    assert extreme["large_prime_threshold_exponent"] == F(4, 5)
+    assert extreme["strict_power_saving_after_transfer"]
+    assert extreme["remaining_unsquared_deficit"] == F(7, 16)
+    assert extreme["transfer_closes_coupled_gate"] is False
+    assert extreme["outer_modulus_average_provided"] is False
+
+    hypothetical = audit(
+        modulus_exponent=F(1),
+        prime_factor_exponent=F(9, 10),
+        prime_relative_saving_exponent=F(1),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert hypothetical["pointwise_transfer_meets_required_saving"]
+    assert not hypothetical["transfer_closes_coupled_gate"]
+    assert not hypothetical["outer_modulus_average_provided"]
+    assert not hypothetical["joint_sector_character_moment_provided"]
+    assert not hypothetical["joint_h_delta_moment_provided"]
+
+
+def test_prime_factor_transfer_is_optimized_over_the_squarefree_polytope() -> None:
+    audit = getattr(
+        coverage_audit,
+        "squarefree_prime_factor_polytope_audit",
+        None,
+    )
+    assert audit is not None, "squarefree prime-factor polytope audit is missing"
+
+    balanced = audit(
+        modulus_exponent=F(1),
+        prime_factor_exponents=(F(1, 2), F(1, 2)),
+        prime_relative_saving_exponent=F(1, 8),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert balanced["signed_transfer_savings"] == (F(-3, 16), F(-3, 16))
+    assert balanced["best_net_transfer_saving"] == 0
+    assert balanced["continuous_polytope_supremum"] == F(1, 8)
+    assert not balanced["continuous_pointwise_supremum_meets_required_saving"]
+    assert not balanced["selected_pointwise_factor_meets_required_saving"]
+    assert not balanced["transfer_closes_coupled_gate"]
+
+    extreme = audit(
+        modulus_exponent=F(1),
+        prime_factor_exponents=(F(9, 10), F(1, 10)),
+        prime_relative_saving_exponent=F(1, 8),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert extreme["best_prime_factor_index"] == 0
+    assert extreme["best_prime_factor_exponent"] == F(9, 10)
+    assert extreme["best_net_transfer_saving"] == F(1, 16)
+    assert extreme["finite_nontrivial_factorization_is_below_supremum"]
+    assert extreme["remaining_unsquared_deficit"] == F(7, 16)
+    assert extreme["outer_modulus_average_provided"] is False
+
+    hypothetical = audit(
+        modulus_exponent=F(1),
+        prime_factor_exponents=(F(9, 10), F(1, 10)),
+        prime_relative_saving_exponent=F(1),
+        required_unsquared_saving=F(1, 2),
+    )
+    assert hypothetical["continuous_pointwise_supremum_meets_required_saving"]
+    assert hypothetical["selected_pointwise_factor_meets_required_saving"]
+    assert not hypothetical["transfer_closes_coupled_gate"]
+
+
+def test_nonzero_sector_character_has_no_automatic_frequency_decay() -> None:
+    coefficients = getattr(
+        coverage_audit,
+        "sector_character_correlation_coefficients",
+        None,
+    )
+    assert coefficients is not None, "sector-character correlation helper is missing"
+
+    result = coefficients(
+        cluster_vectors={
+            0: (F(1), F(0), F(0)),
+            1: (F(0), F(1), F(0)),
+            2: (F(0), F(0), F(1)),
+        }
+    )
+    assert result["correlation_coefficients"] == {0: F(3)}
+    assert result["offzero_correlations_vanish"]
+    assert result["character_energy_is_frequency_independent"]
+    assert result["constant_character_energy"] == F(3)
+    assert not result["nonzero_character_alone_supplies_saving"]
 
 
 def test_transition_denominator_gcd_line_reduces_to_two_mobius_square_root() -> None:
@@ -2189,6 +12071,246 @@ def test_bblr_uncompressed_lemma_keeps_the_half_power_unsigned_deficit() -> None
     assert top.global_error_exponent == F(5, 2)
 
 
+def test_bblr_h_first_completion_closes_the_hard_unsigned_error() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_bblr_hard_h_completion_audit",
+        None,
+    )
+    assert adapter is not None, "BBLR h-first completion audit is missing"
+
+    bottom = adapter(poisson_gcd_exponent=F(0))
+    assert bottom.reduced_h_length_exponent == F(1)
+    assert bottom.reduced_modulus_exponent == F(1)
+    assert bottom.h_length_matches_modulus
+    assert bottom.nonzero_l_cutoff_exponent == F(0)
+    assert not bottom.positive_power_gcd_shell_has_no_nonzero_l
+    assert bottom.reduced_n1_count_exponent == F(1)
+    assert bottom.completed_m1_h_exponent == F(1)
+    assert bottom.poisson_integral_exponent == F(0)
+    assert bottom.fixed_gcd_value_exponent == F(2)
+    assert bottom.poisson_gcd_count_exponent == F(0)
+    assert bottom.dyadic_layer_exponent == F(2)
+    assert bottom.global_nonzero_frequency_exponent == F(2)
+    assert bottom.target_exponent == F(2)
+    assert bottom.power_margin == F(0)
+    assert bottom.inverse_map_is_permutation_on_units
+    assert bottom.multiplier_fibre_bound_is_gcd
+    assert bottom.nonzero_frequency_error_closed_with_epsilon_loss
+    assert not bottom.poisson_main_term_controlled
+    assert not bottom.whole_unsigned_cell_covered
+
+    positive = adapter(poisson_gcd_exponent=F(1, 3))
+    assert positive.reduced_h_length_exponent == F(2, 3)
+    assert positive.reduced_modulus_exponent == F(2, 3)
+    assert positive.nonzero_l_cutoff_exponent == F(-1, 3)
+    assert positive.positive_power_gcd_shell_has_no_nonzero_l
+    assert positive.poisson_integral_exponent == F(1, 3)
+    assert positive.fixed_gcd_value_exponent == F(5, 3)
+    assert positive.poisson_gcd_count_exponent == F(1, 3)
+    assert positive.dyadic_layer_exponent == F(2)
+
+
+def test_bblr_h_completion_inverse_multiplier_fibres_are_gcd_bounded() -> None:
+    helper = getattr(
+        coverage_audit,
+        "inverse_multiplier_unit_fibre_max",
+        None,
+    )
+    assert helper is not None, "inverse multiplier fibre helper is missing"
+
+    for modulus in range(2, 80):
+        for multiplier in range(1, 16):
+            assert helper(modulus, multiplier) <= gcd(modulus, multiplier)
+
+
+def test_bblr_frequency_gcd_sum_has_an_exact_divisor_expansion() -> None:
+    helper = getattr(
+        coverage_audit,
+        "frequency_gcd_sum_identity",
+        None,
+    )
+    assert helper is not None, "frequency gcd-sum identity is missing"
+
+    identity = helper(modulus=12, cutoff=10)
+    assert identity.direct_gcd_sum == 27
+    assert identity.divisor_totient_sum == 27
+    assert identity.divisor_count == 6
+    assert identity.linear_divisor_bound == 60
+    assert identity.direct_gcd_sum <= identity.linear_divisor_bound
+
+
+def test_bblr_h_completion_gives_an_exact_type_subcell_coverage_test() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_bblr_h_completion_subcell_audit",
+        None,
+    )
+    assert adapter is not None, "general BBLR h-completion audit is missing"
+
+    unsigned = adapter(
+        outer_a_exponent=F(0),
+        outer_b_exponent=F(0),
+        m1_exponent=F(1),
+        m2_exponent=F(1),
+        n1_exponent=F(1),
+        n2_exponent=F(1),
+        shift_exponent=F(1),
+    )
+    assert unsigned.left_side_product_exponent == F(2)
+    assert unsigned.right_side_product_exponent == F(2)
+    assert unsigned.x_product_exponent == F(1)
+    assert unsigned.y_modulus_exponent == F(1)
+    assert unsigned.x_over_y_excess_exponent == F(0)
+    assert unsigned.h_or_modulus_exponent == F(1)
+    assert unsigned.nonzero_l_base_cutoff_exponent == F(0)
+    assert unsigned.summed_frequency_gcd_exponent == F(0)
+    assert unsigned.chosen_orientation_hypothesis_verified
+    assert not unsigned.nonzero_frequency_family_empty
+    assert unsigned.global_nonzero_frequency_exponent == F(2)
+    assert unsigned.target_exponent == F(2)
+    assert unsigned.nonzero_frequency_cell_covered
+    assert unsigned.outer_coefficients_may_be_arbitrary
+    assert unsigned.factorization_multiplicity_is_divisor_bounded
+    assert unsigned.frequency_gcd_average_is_divisor_bounded
+    assert not unsigned.poisson_main_term_controlled
+    assert not unsigned.whole_type_subcell_covered
+
+    signed = adapter(
+        outer_a_exponent=F(1),
+        outer_b_exponent=F(1),
+        m1_exponent=F(1, 2),
+        m2_exponent=F(1, 2),
+        n1_exponent=F(1, 2),
+        n2_exponent=F(1, 2),
+        shift_exponent=F(1),
+    )
+    assert signed.x_product_exponent == F(3, 2)
+    assert signed.y_modulus_exponent == F(3, 2)
+    assert signed.h_or_modulus_exponent == F(3, 2)
+    assert signed.nonzero_l_base_cutoff_exponent == F(1)
+    assert signed.summed_frequency_gcd_exponent == F(1)
+    assert signed.chosen_orientation_hypothesis_verified
+    assert signed.global_nonzero_frequency_exponent == F(3)
+    assert signed.target_exponent == F(2)
+    assert signed.power_margin == F(-1)
+    assert not signed.nonzero_frequency_cell_covered
+
+    empty = adapter(
+        outer_a_exponent=F(0),
+        outer_b_exponent=F(1),
+        m1_exponent=F(1, 4),
+        m2_exponent=F(7, 4),
+        n1_exponent=F(1, 2),
+        n2_exponent=F(1, 2),
+        shift_exponent=F(1),
+    )
+    assert empty.nonzero_l_base_cutoff_exponent == F(-1, 4)
+    assert empty.summed_frequency_gcd_exponent == F(0)
+    assert empty.nonzero_frequency_family_empty
+    assert not empty.chosen_orientation_hypothesis_verified
+    assert not empty.nonzero_frequency_cell_covered
+
+
+def test_bblr_zero_main_term_has_exactly_one_shift_length_gap() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_bblr_zero_main_term_audit",
+        None,
+    )
+    assert adapter is not None, "BBLR zero-main-term audit is missing"
+
+    bottom = adapter(
+        side_product_exponent=F(2),
+        shift_exponent=F(1),
+        poisson_gcd_exponent=F(0),
+    )
+    assert bottom.fixed_gcd_exponent == F(3)
+    assert bottom.dyadic_gcd_layer_exponent == F(3)
+    assert bottom.global_raw_main_term_exponent == F(3)
+    assert bottom.target_exponent == F(2)
+    assert bottom.power_margin == F(-1)
+    assert bottom.missing_saving_exponent == F(1)
+    assert bottom.main_term_is_independent_of_shift_orientation
+    assert not bottom.shift_orientations_cancel_internally
+    assert not bottom.registered_zero_master_identification_proved
+
+    positive_gcd = adapter(
+        side_product_exponent=F(2),
+        shift_exponent=F(1),
+        poisson_gcd_exponent=F(1, 3),
+    )
+    assert positive_gcd.fixed_gcd_exponent == F(7, 3)
+    assert positive_gcd.dyadic_gcd_layer_exponent == F(8, 3)
+    assert positive_gcd.global_raw_main_term_exponent == F(3)
+
+
+def test_bblr_h_completion_uses_the_better_left_right_orientation() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_bblr_symmetric_h_completion_audit",
+        None,
+    )
+    assert adapter is not None, "symmetric BBLR h-completion audit is missing"
+
+    reversed_boundary = adapter(
+        outer_a_exponent=F(0),
+        outer_b_exponent=F(1, 2),
+        m1_exponent=F(1, 2),
+        m2_exponent=F(1),
+        n1_exponent=F(1, 2),
+        n2_exponent=F(1, 2),
+        shift_exponent=F(1, 2),
+    )
+    assert reversed_boundary.left_prefix_exponent == F(1, 2)
+    assert reversed_boundary.right_prefix_exponent == F(1)
+    assert reversed_boundary.smaller_prefix_exponent == F(1, 2)
+    assert reversed_boundary.cutoff_hyperplane_excess == F(0)
+    assert reversed_boundary.chosen_orientation == "right_to_left"
+    assert reversed_boundary.symmetric_nonzero_frequency_exponent == F(3, 2)
+    assert reversed_boundary.target_exponent == F(3, 2)
+    assert reversed_boundary.nonzero_frequency_cell_covered
+
+    supercritical = adapter(
+        outer_a_exponent=F(1),
+        outer_b_exponent=F(1),
+        m1_exponent=F(1, 2),
+        m2_exponent=F(1, 2),
+        n1_exponent=F(1, 2),
+        n2_exponent=F(1, 2),
+        shift_exponent=F(1),
+    )
+    assert supercritical.cutoff_hyperplane_excess == F(1)
+    assert supercritical.symmetric_nonzero_frequency_exponent == F(3)
+    assert supercritical.target_exponent == F(2)
+    assert not supercritical.nonzero_frequency_cell_covered
+
+
+def test_bblr_phase_group_budget_locates_the_extra_half_power() -> None:
+    adapter = getattr(
+        coverage_audit,
+        "transition_bblr_phase_group_saving_audit",
+        None,
+    )
+    assert adapter is not None, "BBLR phase-group saving audit is missing"
+
+    hard = adapter(
+        side_product_exponent=F(2),
+        shift_exponent=F(1),
+        left_prefix_exponent=F(3, 2),
+        right_prefix_exponent=F(3, 2),
+    )
+    assert hard.nonzero_l_range_exponent == F(1)
+    assert hard.raw_nonzero_frequency_exponent == F(3)
+    assert hard.target_exponent == F(2)
+    assert hard.required_l_range_saving_exponent == F(1)
+    assert hard.square_root_l_saving_exponent == F(1, 2)
+    assert hard.remaining_after_square_root_exponent == F(1, 2)
+    assert hard.signed_phase_class_cross_terms_required
+    assert not hard.product_frequency_partition_is_sufficient
+    assert not hard.required_phase_class_cancellation_proved
+
+
 def test_transition_line_fourier_identity_and_microarc_gate_are_exact() -> None:
     helper = getattr(
         coverage_audit,
@@ -2421,6 +12543,36 @@ def test_transition_variance_is_a_mixed_mobius_fourth_moment_gate() -> None:
     assert top.symmetric_top_face_is_mobius_fourth_moment
 
 
+def test_recent_amplified_fourth_moments_do_not_cover_the_mobius_gate() -> None:
+    """Require length, coefficient, and integrand compatibility simultaneously."""
+    adapter = getattr(
+        coverage_audit,
+        "published_mobius_fourth_moment_coverage_audit",
+        None,
+    )
+    assert adapter is not None, "published fourth-moment coverage audit is missing"
+
+    audit = adapter(target_length_exponent=F(1))
+    assert audit.target_length_exponent == F(1)
+    assert audit.target_height_exponent == F(1)
+    assert audit.target_normalized_moment_exponent == F(1)
+
+    assert audit.bhsj_amplifier_length_ceiling == F(1, 8)
+    assert audit.bhsj_length_power_deficit == F(7, 8)
+    assert not audit.bhsj_length_hypothesis_met
+    assert not audit.bhsj_mobius_coefficient_class_matches
+    assert not audit.bhsj_pure_fourth_moment_integrand_matches
+    assert not audit.bhsj_direct_coverage
+
+    assert audit.verjovsky_polynomial_is_additive_fourier
+    assert not audit.verjovsky_polynomial_is_multiplicative_dirichlet
+    assert audit.verjovsky_local_arc_exponent == F(-1)
+    assert audit.verjovsky_subpolynomial_moment_bound_equivalent_to_rh
+    assert not audit.verjovsky_unconditional_coverage
+
+    assert not audit.direct_published_coverage
+
+
 def test_generic_large_values_do_not_prove_the_mobius_fourth_moment() -> None:
     """Catch any adapter that spends a logarithmic theorem as a power saving."""
     adapter = getattr(
@@ -2460,6 +12612,63 @@ def test_generic_large_values_do_not_prove_the_mobius_fourth_moment() -> None:
     assert high.best_published_power_deficit == F(3, 5)
     assert not high.original_signed_dcv_requires_componentwise_large_values
     assert not high.whole_line_family_covered
+
+
+def test_kim_2026_ternary_bound_is_too_weak_and_excludes_mobius() -> None:
+    ledger = coverage_audit.transition_kim_ternary_correlation_audit(
+        ambient_length_exponent=F(3),
+        shift_length_exponent=F(2),
+        target_exponent=F(9, 2),
+    )
+
+    assert ledger.relative_shift_exponent == F(2, 3)
+    assert ledger.theorem_alpha_zero_shift_floor == F(1, 2)
+    assert ledger.theorem_buffer_multiplier == 100
+    assert ledger.theorem_epsilon_ceiling == F(1, 600)
+    assert ledger.ambient_sum_exponent == F(5)
+    assert ledger.required_saving_exponent == F(1, 2)
+    assert ledger.theorem_saving_ceiling == F(1, 600)
+    assert ledger.residual_power_deficit == F(299, 600)
+    assert ledger.mobius_dirichlet_series_is_reciprocal_l
+    assert not ledger.mobius_holomorphic_halfplane_hypothesis
+    assert not ledger.mobius_critical_line_second_moment_hypothesis
+    assert not ledger.dyadic_convolution_is_one_multiplicative_function
+    assert not ledger.theorem_applies_to_actual_packet
+    assert not ledger.whole_line_family_covered
+
+
+def test_doyle_2026_length_enters_but_moment_and_coefficient_do_not() -> None:
+    ledger = coverage_audit.transition_doyle_kfree_moment_audit(
+        product_center_exponent=F(2),
+        short_interval_exponent=F(1),
+    )
+
+    assert ledger.relative_interval_exponent == F(1, 2)
+    assert ledger.k_two_middle_part_exponent == F(105, 317)
+    assert ledger.mobius_l1_threshold_exponent == F(315, 634)
+    assert ledger.length_margin_exponent == F(1, 317)
+    assert ledger.theorem_is_l1_lower_bound
+    assert not ledger.theorem_is_variance_upper_bound
+    assert ledger.middle_coefficient_uses_square_divisors
+    assert not ledger.middle_coefficient_matches_balanced_two_mobius_convolution
+    assert not ledger.theorem_applies_to_actual_packet
+    assert not ledger.whole_line_family_covered
+
+
+def test_shi_2026_bessel_phase_transition_misses_the_degenerate_orbit() -> None:
+    ledger = coverage_audit.transition_shi_bessel_kuznetsov_audit(
+        first_fourier_index=0,
+        second_fourier_index=-1,
+    )
+
+    assert ledger.exact_orbit_first_fourier_index == 0
+    assert ledger.exact_orbit_second_fourier_index == -1
+    assert ledger.bessel_argument_is_zero
+    assert ledger.paper_requires_positive_dyadic_bessel_argument
+    assert not ledger.paper_linear_twist_identified_in_actual_orbit
+    assert not ledger.classical_nondegenerate_kuznetsov_adapter_verified
+    assert not ledger.subcritical_rapid_decay_applies
+    assert not ledger.whole_line_family_covered
 
 
 def test_long_cutoff_quotient_split_hits_the_exact_bv_boundary() -> None:
@@ -3980,10 +14189,14 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "large_q_transition: published_kloosterman_entry="
         "modulus=1,interval=1/2,required=1/2,"
         "bp=1/32,bp_deficit=15/32,mqw=1/100,mqw_deficit=49/100,"
-        "pascadi=1/12,pascadi_deficit=5/12,four_bp=1/8,"
+        "pascadi_uniform=1/700,pascadi_uniform_deficit=349/700,"
+        "pascadi_one_bounded=1/276,pascadi_one_bounded_deficit=137/276,"
+        "pascadi_factorable=1/12,pascadi_factorable_deficit=5/12,"
+        "pascadi_average_q=0,pascadi_average_save=0,four_bp=1/8,"
         "four_bp_deficit=3/8,sqrt_range=True,arbitrary=True,"
         "kernel=False,separable=False,fixed_modulus=False,"
-        "pascadi_uniform=False,covered=False"
+        "pascadi_uniform=True,primitive_q_one=True,"
+        "pascadi_average_power=False,covered=False"
     ) in output
     assert (
         "large_q_transition: bourgain_garaev_multilinear="
@@ -4048,6 +14261,26 @@ def test_coverage_report_emits_the_minimal_far_shell_gate(capsys) -> None:
         "lemma15:d0:z=5/2,x=0,dcount=0,layer=5/2;"
         "d1:z=-1,x=1,dcount=1,layer=1;"
         "global=5/2,target=2,margin=-1/2,improved=False"
+    ) in output
+    assert (
+        "large_q_transition: unit_divisor_shifted_prime="
+        "entries=14,exact=True,shift_identity=True,"
+        "shift_one_sectors=1,5,phase_varies=True,"
+        "fixed_weight=False,proved=False"
+    ) in output
+    assert (
+        "large_q_transition: lichtman_type_i="
+        "norm=L1_over_shifts,required=vector_cluster_L2,"
+        "log_sup=1/3,power=0,deficit=1/2,H_lt_X=False,"
+        "fixed_weight=False,norm_match=False,covered=False"
+    ) in output
+    assert (
+        "large_q_transition: beatty_grid_alias="
+        "bandwidth=3/2,grid=1,alias=1/2,continuous=2,"
+        "sampled=5/2,target=2,deficit=1/2,continuous_metric=True,"
+        "second_mu=False,fixed_f=False,collision=True,"
+        "afe_interlaces=False,adapter=False,"
+        "alias_gate=True,covered=False"
     ) in output
     assert (
         "balanced_max_a: centered_log_cutoff_power=1 "
@@ -4227,6 +14460,18 @@ def test_coverage_note_has_hypothesis_and_residual_ledgers() -> None:
         "Pascadi, arXiv:2404.04239v3, Corollary 18",
         r"T^8",
         r"\frac{4501}{1000}",
+        "### 2.1 Exact mutually exclusive coverage cells",
+        r"s_{\rm BC}:=\min(s_1,s_2)>\frac1{1000}",
+        "A_rho_ge_sigma",
+        "B_ell_zero",
+        "D_sigma_gt_rho",
+        "positive but smaller than",
+        "### 2.2 Exact residual Type-I/II routing",
+        r"\mu(r)\mu(s)",
+        r"e\!\left(-\frac{h\delta\bar r}{s}\right)",
+        "residual_type_i_ii_ledger",
+        "residual_coupled_type_certificate",
+        "the two D cells remain uncovered",
         "## 4. Wright fixed-factor adapter",
         "## 5. Exact residual witnesses",
         "published coverage result: residual cells remain",
@@ -4544,9 +14789,30 @@ def test_alternative_routes_note_records_the_endpoint_critical_ledger() -> None:
         r"(1+p^{-1})^2(1+p^{-2})",
         r"\tag{DCV\(_\gamma\)}",
         "transition_coprimality_layer_audit",
+        r"a_{\rm AFE}:=h\delta",
+        r"\mathcal A_\xi:=\sum_b e(\xi b/M)S_b",
+        r"\mathcal N_{\ne0}"
+        r"=\left(1-\frac1M\right)D_{\rm cont}"
+        r"+\mathcal N_{\ne0}^{\rm off}",
+        "sector_character_is_trivial_on_entry_diagonal",
+        r"\sum_{\xi\ne0}\|\mathcal A_\xi\|_2^2",
         "### 4.63 Exact Möbius--Hecke Euler factor and the reciprocal-\\(L\\) spectral gate",
         r"\frac{K_f(s)}{\zeta(2s)L(s,f)}",
         r"L(s+i\tau,f)L(s+i\upsilon,f)",
         "transition_mobius_hecke_reciprocal_l_audit",
+        "### 4.69 Kim's 2026 ternary-correlation theorem enters the shift range",
+        r"\frac{299}{600}",
+        "transition_kim_ternary_correlation_audit",
+        "### 4.70 Doyle's 2026 short k-free theorem crosses the length line",
+        r"\frac12-\frac{315}{634}=\frac1{317}",
+        "transition_doyle_kfree_moment_audit",
+        "### 4.71 The 2026 Bessel-Kuznetsov phase transition misses",
+        r"x_{\rm Bes}=0",
+        "transition_shi_bessel_kuznetsov_audit",
+        "### 4.72 Beatty two-point Chowla is qualitative and fixed-slope",
+        "arXiv:2303.12574",
+        r"\frac{\alpha_2}{\alpha_1}=k+\frac bQ\in\mathbb Q",
+        "logarithmic limit, not a uniform power-saving estimate",
+        "moving rational slope family",
         ):
         assert marker in text
