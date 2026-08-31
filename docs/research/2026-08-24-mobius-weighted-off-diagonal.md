@@ -1,5 +1,7 @@
 # Möbius-weighted long mollifier: exact off-diagonal reduction
 
+> **#483 集成纠错边界。** 旧完整渐近式口径不再有效。当前仍未证明的输入包括 `short_cofactor_HL_normalization`、`full_outer_PEVP_aggregation`、`physical_tail_partition_and_bounds`；局部有限恒等式不消除这些输入。LCM 分支的独立编号续篇见 [LCM continuation](2026-08-31-mwkf-lcm-route-continuation.md)，不能与 alternative-routes 同号公式混用。
+
 > **2026-08-31 非平方自由删项修正，不新增覆盖。** [NS1–NS6](2026-08-31-nonsquarefree-mask-scope-correction.md) 撤回旧 §9.48 从未限制的 signed 中心化上界直接删除非平方自由子和的推断。平方自由支持上的 (9.311)–(9.313) 仍是精确恒等式，但完整 (9.315) 必须保留未付的 \(\mathfrak E_{\rm nsf}\)。一般 mask 继承有明确余类密度反例；这不构成原特殊 Möbius 子和的下界。本项与 PT 的全局 principal 修补不同，不将尚未证明的受限估计记成已付。
 
 > **共同上游已冻结，不新增覆盖。** [MWKF-PHYS-v1 / FP1–FP7](2026-08-30-mwkf-frozen-physical-atom.md) 锁定 `49cfacd7` 的原式定义、完整外权、非空 gcd 子族和 SF/PA 共同能量账本。真实 gcd 层的 µ(e) 不等于容斥正交叠项的 µ²(e)；固定约化模数与 Type 频率不消除 (e,n) 掩码，也不固定完成后的列 ξ=−euvk。三条研究线复用同一上游，但完整 paired adapter、跨对象范数转移和实际目标界仍开放。本轮新增覆盖 0、净幂次节省 0。
@@ -1017,7 +1019,7 @@ For \(N=T^3\), the right side is beyond all polynomial orders:
 \tag{4.7c}
 \]
 
-Thus the exact correction is negligible for the later conditional estimate,
+Thus the exact correction is negligible for the later global estimate,
 but it remains present in every exact formula.
 
 zero-mode audit result: the baseline identity required correction;
@@ -1488,7 +1490,9 @@ The second required local statement is the polylogarithmic-tail estimate
 \]
 
 It too is unproved; (5.8d) explains why it cannot be replaced by an
-absolute-value argument.
+absolute-value argument.  The [physical closure correction](2026-08-30-mwkf-physical-closure-correction.md)
+retains the normalization saving, full outer PEVP aggregation, and
+physical tail partition and bounds as separate unproved inputs.
 
 ### 6.2 Boundary diagnostics and global implication
 
@@ -1521,7 +1525,7 @@ There are \(O_W(\mathscr L^6)\) retained dyadic choices, and
 \]
 
 Together with (4.5j), CK\(_{1/1000}\) and
-TAIL\(_{B,D}\) prove the precise conditional implication
+TAIL\(_{B,D}\) give the precise implication
 
 \[
  \boxed{\mathrm{CK}_{1/1000}+\mathrm{TAIL}_{B,D}
@@ -11232,7 +11236,7 @@ but
 
 Thus no scalar value \(f(7)\) represents both moving slopes.  This is
 independent of the additional rational-grid sampling loss in
-(4.652)--(4.654) of the alternative-routes note.  A new pair-valued or
+(4.652)--(4.654) of [LCM continuation §4.75](2026-08-31-mwkf-lcm-route-continuation.md).  A new pair-valued or
 vector-valued theorem could evade (9.484), but the published scalar
 continuous-slope estimate cannot be inserted into (9.482).
 
@@ -11431,8 +11435,8 @@ Neither bounded multiplicity nor the fold \(\mu(r)\mu(s)=\mu(n)\) proves
 square-root cancellation in the sparse product sequence.
 
 The rational slope grid itself is no longer an additional power
-obstruction.  The generic bandwidth estimate (4.652)--(4.654) in the
-alternative-routes note ignores the actual Beatty Fourier coefficients.
+obstruction.  The generic bandwidth estimate (4.652)--(4.654) in
+[LCM continuation §4.75](2026-08-31-mwkf-lcm-route-continuation.md) ignores the actual Beatty Fourier coefficients.
 For a fixed Hilbert-valued family they have the form
 
 \[
