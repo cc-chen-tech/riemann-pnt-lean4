@@ -458,7 +458,7 @@ n<=0 时为0。对固定 m,c,y，在积分中展开
 P_(m,k) 已属于实际有限维 S_k。由第2节的正交归一基及第5.1节，
 
 \[
- P_{m,k}=rac{\Gamma(k-1)}{(4\pi m)^{k-1}}
+ P_{m,k}=\frac{\Gamma(k-1)}{(4\pi m)^{k-1}}
               \sum_{f\in B_k(q)}\overline{a_f(m)}f.
 \]
 
@@ -573,7 +573,7 @@ f 在0的归一化 Fourier 系数就是 U_qf 在 infinity 的 Fourier
 令 B=cosh(1)，则
 
 \[
- D_1-rac12=\frac{1+B-B^2}{2(B^2-1)}>0.
+ D_1-\frac12=\frac{1+B-B^2}{2(B^2-1)}>0.
 \]
 
 严格不等式不用数值：cosh 的幂级数中，1/6! 之后相邻比至多

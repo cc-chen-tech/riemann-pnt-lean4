@@ -31,7 +31,7 @@ J、I、K 均为标准 Bessel 函数，正实数的幂用实对数定义。
 对 h in C_c^infty，后面证明
 
 \[
- h(x)=\sum_{\substack{l\ge2\\l\ {m even}}}
+ h(x)=\sum_{\substack{l\ge2\\l\ \mathrm{even}}}
           2lJ_l(x)\int_0^\infty J_l(y)h(y)\frac{dy}{y}
        +\int_{\mathbb R}\frac{tS_t(x)}{\sinh(2\pi t)}
                    \left(\int_0^\infty S_t(y)h(y)\frac{dy}{y}\right)dt,
@@ -241,7 +241,7 @@ K_(2it)(x)=(1/2)integral_R exp(-x cosh u+2it u)du。
 
 \[
  \widetilde\phi(l)=\int_0^\infty J_l(x)\phi(x)\frac{dx}{x},\qquad
- \phi_B(x)=\sum_{\substack{l\ge1\\l\ {m odd}}}
+ \phi_B(x)=\sum_{\substack{l\ge1\\l\ \mathrm{odd}}}
                       2l\widetilde\phi(l)J_l(x),\qquad
  \phi_H=\phi-\phi_B,
 \]
