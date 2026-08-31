@@ -397,6 +397,28 @@ private lemma hasDerivAt_fourierMellinPhase
     (((hasDerivAt_id x).const_mul (2 * Real.pi * (k : ℝ))).sub
       ((Real.hasDerivAt_log hx).const_mul t))
 
+/-- The curvature of the Mellin--Fourier phase is positive for positive
+height and is independent of the Fourier frequency. -/
+theorem iteratedDeriv_two_fourierMellinPhase
+    (k : ℤ) (t : ℝ) {x : ℝ} (hx : x ≠ 0) :
+    iteratedDeriv 2 (fourierMellinPhase k t) x = t / x ^ 2 := by
+  let g : ℝ → ℝ := fun y => 2 * Real.pi * (k : ℝ) - t / y
+  have h_event : deriv (fourierMellinPhase k t) =ᶠ[𝓝 x] g := by
+    filter_upwards [eventually_ne_nhds hx] with y hy
+    exact (hasDerivAt_fourierMellinPhase k t hy).deriv
+  rw [show 2 = 1 + 1 by omega, iteratedDeriv_succ, iteratedDeriv_one]
+  rw [h_event.deriv_eq]
+  have hconst : HasDerivAt (fun _y : ℝ => 2 * Real.pi * (k : ℝ)) 0 x :=
+    hasDerivAt_const x _
+  have hquot : HasDerivAt (fun y : ℝ => t / y) (-t / x ^ 2) x := by
+    have hd : DifferentiableAt ℝ (fun y : ℝ => t / y) x :=
+      differentiableAt_const t |>.div differentiableAt_id hx
+    simpa only [deriv_const_div_id] using hd.hasDerivAt
+  have hg : HasDerivAt g (t / x ^ 2) x := by
+    convert hconst.sub hquot using 1
+    all_goals first | rfl | ring
+  exact hg.deriv
+
 /-- A nonzero Fourier mode gains one inverse power of its frequency after it
 is combined with Mellin oscillation.  The range `|t| ≤ a` keeps every mode
 uniformly nonstationary on `[a, b]`. -/
@@ -475,6 +497,109 @@ theorem norm_integral_rpow_smul_cexp_fourierMellinPhase_le
   simpa [fourierMellinPhase, m] using
     norm_integral_rpow_smul_cexp_phase_le_of_monotone_deriv_local
       hab ha hm hp hF hmono haway
+
+/-- If the stationary point of the Mellin--Fourier phase lies strictly to
+the right of `[a,b]`, the first-derivative bound retains the exact distance
+from the right endpoint. -/
+theorem norm_integral_rpow_smul_cexp_fourierMellinPhase_le_of_stationary_right
+    {a b t p : ℝ} (hab : a ≤ b) (ha : 0 < a) (hp : 0 < p)
+    (ht : 0 ≤ t) (k : ℤ)
+    (hgap : 0 < t / b - 2 * Real.pi * (k : ℝ)) :
+    ‖∫ x in a..b, x ^ (-p) •
+        Complex.exp (I * fourierMellinPhase k t x)‖ ≤
+      4 * a ^ (-p) / (t / b - 2 * Real.pi * (k : ℝ)) := by
+  let m : ℝ := t / b - 2 * Real.pi * (k : ℝ)
+  have hb : 0 < b := ha.trans_le hab
+  have hF : ∀ x ∈ Icc a b,
+      ContDiffAt ℝ 2 (fourierMellinPhase k t) x := by
+    intro x hx
+    have hx0 : x ≠ 0 := ne_of_gt (ha.trans_le hx.1)
+    unfold fourierMellinPhase
+    exact ((contDiffAt_const.mul contDiffAt_id).sub
+      (contDiffAt_const.mul (Real.contDiffAt_log.2 hx0)))
+  have hderiv : ∀ x ∈ Icc a b,
+      deriv (fourierMellinPhase k t) x =
+        2 * Real.pi * (k : ℝ) - t / x := by
+    intro x hx
+    exact (hasDerivAt_fourierMellinPhase k t
+      (ne_of_gt (ha.trans_le hx.1))).deriv
+  have hmono :
+      MonotoneOn (deriv (fourierMellinPhase k t)) (Icc a b) := by
+    intro x hx y hy hxy
+    rw [hderiv x hx, hderiv y hy]
+    have hxpos : 0 < x := ha.trans_le hx.1
+    have hypos : 0 < y := hxpos.trans_le hxy
+    have hdiv : t / y ≤ t / x := by
+      exact (div_le_div_iff₀ hypos hxpos).2
+        (mul_le_mul_of_nonneg_left hxy ht)
+    linarith
+  have haway : ∀ x ∈ Icc a b,
+      m ≤ |deriv (fourierMellinPhase k t) x| := by
+    intro x hx
+    rw [hderiv x hx]
+    have hxpos : 0 < x := ha.trans_le hx.1
+    have hdiv : t / b ≤ t / x := by
+      exact (div_le_div_iff₀ hb hxpos).2
+        (mul_le_mul_of_nonneg_left hx.2 ht)
+    have hneg : 2 * Real.pi * (k : ℝ) - t / x < 0 := by
+      linarith
+    rw [abs_of_neg hneg]
+    dsimp only [m]
+    linarith
+  simpa only [m] using
+    norm_integral_rpow_smul_cexp_phase_le_of_monotone_deriv_local
+      hab ha hgap hp hF (Or.inl hmono) haway
+
+/-- If the stationary point of the Mellin--Fourier phase lies strictly to
+the left of `[a,b]`, the first-derivative bound retains the exact distance
+from the left endpoint. -/
+theorem norm_integral_rpow_smul_cexp_fourierMellinPhase_le_of_stationary_left
+    {a b t p : ℝ} (hab : a ≤ b) (ha : 0 < a) (hp : 0 < p)
+    (ht : 0 ≤ t) (k : ℤ)
+    (hgap : 0 < 2 * Real.pi * (k : ℝ) - t / a) :
+    ‖∫ x in a..b, x ^ (-p) •
+        Complex.exp (I * fourierMellinPhase k t x)‖ ≤
+      4 * a ^ (-p) / (2 * Real.pi * (k : ℝ) - t / a) := by
+  let m : ℝ := 2 * Real.pi * (k : ℝ) - t / a
+  have hF : ∀ x ∈ Icc a b,
+      ContDiffAt ℝ 2 (fourierMellinPhase k t) x := by
+    intro x hx
+    have hx0 : x ≠ 0 := ne_of_gt (ha.trans_le hx.1)
+    unfold fourierMellinPhase
+    exact ((contDiffAt_const.mul contDiffAt_id).sub
+      (contDiffAt_const.mul (Real.contDiffAt_log.2 hx0)))
+  have hderiv : ∀ x ∈ Icc a b,
+      deriv (fourierMellinPhase k t) x =
+        2 * Real.pi * (k : ℝ) - t / x := by
+    intro x hx
+    exact (hasDerivAt_fourierMellinPhase k t
+      (ne_of_gt (ha.trans_le hx.1))).deriv
+  have hmono :
+      MonotoneOn (deriv (fourierMellinPhase k t)) (Icc a b) := by
+    intro x hx y hy hxy
+    rw [hderiv x hx, hderiv y hy]
+    have hxpos : 0 < x := ha.trans_le hx.1
+    have hypos : 0 < y := hxpos.trans_le hxy
+    have hdiv : t / y ≤ t / x := by
+      exact (div_le_div_iff₀ hypos hxpos).2
+        (mul_le_mul_of_nonneg_left hxy ht)
+    linarith
+  have haway : ∀ x ∈ Icc a b,
+      m ≤ |deriv (fourierMellinPhase k t) x| := by
+    intro x hx
+    rw [hderiv x hx]
+    have hxpos : 0 < x := ha.trans_le hx.1
+    have hdiv : t / x ≤ t / a := by
+      exact (div_le_div_iff₀ hxpos ha).2
+        (mul_le_mul_of_nonneg_left hx.1 ht)
+    have hpos : 0 < 2 * Real.pi * (k : ℝ) - t / x := by
+      linarith
+    rw [abs_of_pos hpos]
+    dsimp only [m]
+    linarith
+  simpa only [m] using
+    norm_integral_rpow_smul_cexp_phase_le_of_monotone_deriv_local
+      hab ha hgap hp hF (Or.inl hmono) haway
 
 private theorem deriv_growth_of_second_deriv_lower
     {F : ℝ → ℝ} {a b r : ℝ}

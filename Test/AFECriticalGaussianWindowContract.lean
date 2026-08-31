@@ -1,0 +1,9 @@
+import HardyTheorem.AFECriticalGaussianWindow
+
+#check HardyTheorem.AFE.integrable_criticalAfeGaussianWeight
+#check HardyTheorem.AFE.integral_criticalAfeGaussianWeight
+#check HardyTheorem.AFE.setIntegral_gaussian_normSq_criticalAfeProduct_le_of_target
+
+#print axioms HardyTheorem.AFE.integrable_criticalAfeGaussianWeight
+#print axioms HardyTheorem.AFE.integral_criticalAfeGaussianWeight
+#print axioms HardyTheorem.AFE.setIntegral_gaussian_normSq_criticalAfeProduct_le_of_target

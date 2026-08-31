@@ -1,0 +1,9 @@
+import HardyTheorem.AFECriticalGaussianFixedEnergy
+
+open Complex
+
+#check HardyTheorem.AFE.integrable_gaussian_mul_criticalAfeFixedPolynomialEnergy
+#check HardyTheorem.AFE.integral_gaussian_mul_criticalAfeFixedPolynomialEnergy_le
+
+#print axioms HardyTheorem.AFE.integrable_gaussian_mul_criticalAfeFixedPolynomialEnergy
+#print axioms HardyTheorem.AFE.integral_gaussian_mul_criticalAfeFixedPolynomialEnergy_le

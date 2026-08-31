@@ -1,0 +1,8 @@
+import HardyTheorem.AFECriticalPolynomialBridge
+
+#check HardyTheorem.AFE.criticalAfeMainSum_eq_Icc
+#check HardyTheorem.AFE.criticalAfeDualSum_eq_Icc
+#check HardyTheorem.AFE.criticalAfeMainSum_mul_mollifier_eq_exponentialPolynomial
+#check HardyTheorem.AFE.criticalAfeDualSum_mul_mollifier_eq_dualPolynomial
+#check HardyTheorem.AFE.normSq_criticalAfeProduct_le_three_components
+#check HardyTheorem.AFE.normSq_criticalAfeProduct_le_three_fixedPolynomial_components

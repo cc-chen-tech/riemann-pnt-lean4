@@ -1,0 +1,3 @@
+import HardyTheorem.AFECriticalTargetTwoCutoff
+
+#print axioms HardyTheorem.AFE.normSq_criticalAfeProduct_le_twoCutoffEnergies_of_target

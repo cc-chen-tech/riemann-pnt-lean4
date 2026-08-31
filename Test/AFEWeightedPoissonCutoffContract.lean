@@ -1,0 +1,42 @@
+import HardyTheorem.AFEWeightedPoissonCutoff
+
+open Complex
+
+open HardyTheorem AFE
+
+#check intervalPlateauBump
+#check intervalPlateauBump_eq_one
+#check intervalPlateauBump_eq_zero_of_le
+#check intervalPlateauBump_eq_zero_of_ge
+#check weightedPoissonCutoff
+#check weightedPoissonCutoff_hasCompactSupport
+#check weightedPoissonCutoff_contDiff
+#check weightedPoissonCutoff_eq_cpow
+#check norm_weightedPoissonCutoff_le_rpow
+#check weightedPoissonCutoff_tsum_eq_sum_Icc
+#check weightedPoissonCutoff_tsum_eq_boundary_add_core
+#check weightedPoissonPhase
+#check weightedPoissonPhase_eq_fourierMellinPhase_neg
+#check weightedPoissonPhase_hasDerivAt
+#check deriv_weightedPoissonPhase
+#check deriv_weightedPoissonPhase_neg_nat
+#check deriv_weightedPoissonPhase_neg_nat_eq_zero_iff
+#check deriv_weightedPoissonPhase_neg_of_nonneg
+#check stationaryPoint_mem_Ioo_iff
+#check exists_stationaryPoint_in_Ioo_iff
+#check weightedPoissonCutoff_fourierIntegrand_eq
+#check fourier_weightedPoissonCutoff_eq_intervalIntegral
+#check fourier_weightedPoissonCutoff_eq_phaseIntegral
+#check weightedPoissonCutoff_tsum_eq_fourier_tsum
+
+#print axioms intervalPlateauBump_eq_one
+#print axioms weightedPoissonCutoff_contDiff
+#print axioms weightedPoissonCutoff_tsum_eq_boundary_add_core
+#print axioms deriv_weightedPoissonPhase_neg_nat_eq_zero_iff
+#print axioms deriv_weightedPoissonPhase_neg_of_nonneg
+#print axioms stationaryPoint_mem_Ioo_iff
+#print axioms exists_stationaryPoint_in_Ioo_iff
+#print axioms weightedPoissonCutoff_fourierIntegrand_eq
+#print axioms fourier_weightedPoissonCutoff_eq_intervalIntegral
+#print axioms fourier_weightedPoissonCutoff_eq_phaseIntegral
+#print axioms weightedPoissonCutoff_tsum_eq_fourier_tsum

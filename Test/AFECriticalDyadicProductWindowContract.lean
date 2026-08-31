@@ -1,0 +1,6 @@
+import HardyTheorem.AFECriticalDyadicProductWindow
+
+#check HardyTheorem.AFE.dyadicCriticalGaussianBound
+#check HardyTheorem.AFE.setIntegral_gaussian_normSq_criticalAfeProduct_le_of_dyadic_target
+
+#print axioms HardyTheorem.AFE.setIntegral_gaussian_normSq_criticalAfeProduct_le_of_dyadic_target

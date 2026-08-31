@@ -1,0 +1,6 @@
+import MathlibAux.GaussianSeparatedFrequency
+
+open MathlibAux
+
+#print axioms gaussian_frequency_kernel_le_of_separated
+#print axioms integral_gaussian_mul_normSq_exponentialPolynomial_le_of_separated

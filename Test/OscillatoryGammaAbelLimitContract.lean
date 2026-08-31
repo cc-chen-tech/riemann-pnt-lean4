@@ -1,0 +1,12 @@
+import HardyTheorem.OscillatoryGammaAbelLimit
+
+open Real Complex Set MeasureTheory Filter Topology
+
+namespace HardyTheorem.OscillatoryGammaAbelLimit
+
+#check dampedGammaNegWhole
+#check oscillatoryGammaNegWhole
+#check tendsto_dampedGammaNegWhole_nhdsWithin_zero
+#print axioms tendsto_dampedGammaNegWhole_nhdsWithin_zero
+
+end HardyTheorem.OscillatoryGammaAbelLimit

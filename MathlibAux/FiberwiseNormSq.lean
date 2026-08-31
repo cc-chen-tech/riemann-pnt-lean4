@@ -74,4 +74,27 @@ theorem sum_normSq_fiber_le_mul_sum_normSq
     _ = C * ∑ x ∈ s, Complex.normSq (f x) := by
       rw [Finset.sum_fiberwise_of_maps_to hmaps]
 
+/-- Divisor-Cauchy form of the fiber estimate.  If every collected fiber has
+at most `D` terms and the total uncollected square energy is also at most
+`D`, then the collected square energy is at most `D^2`.
+
+For a multiplicative convolution at a fixed integer `r`, take `D` to be the
+number of factor pairs of `r`. -/
+theorem sum_normSq_fiber_le_sq
+    {ι κ : Type*} [DecidableEq ι] [DecidableEq κ]
+    (s : Finset ι) (t : Finset κ) (g : ι → κ) (f : ι → ℂ)
+    (hmaps : ∀ x ∈ s, g x ∈ t) {D : ℝ} (hD : 0 ≤ D)
+    (hcard : ∀ k ∈ t, ((s.filter (fun x => g x = k)).card : ℝ) ≤ D)
+    (henergy : (∑ x ∈ s, Complex.normSq (f x)) ≤ D) :
+    (∑ k ∈ t,
+        Complex.normSq (∑ x ∈ s.filter (fun x => g x = k), f x)) ≤
+      D ^ 2 := by
+  calc
+    (∑ k ∈ t,
+        Complex.normSq (∑ x ∈ s.filter (fun x => g x = k), f x)) ≤
+        D * ∑ x ∈ s, Complex.normSq (f x) :=
+      sum_normSq_fiber_le_mul_sum_normSq s t g f hmaps hcard
+    _ ≤ D * D := mul_le_mul_of_nonneg_left henergy hD
+    _ = D ^ 2 := by ring
+
 end MathlibAux

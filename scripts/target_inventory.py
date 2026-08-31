@@ -59,6 +59,8 @@ ROUTE_INTERFACES = {
 }
 
 REUSABLE_PREDICATES = {
+    # Proved unconditionally by HardyTheorem.AFE.zeta_critical_unitPhase_logAfe.
+    "HardyTheorem.AFE.zeta_critical_unitPhase_logAfe_target",
     "FiniteSpectrumGap.IsAdmissible",
     "Zeta23.EF.EF_lit",
     "Zeta23.EF.EF_paper",

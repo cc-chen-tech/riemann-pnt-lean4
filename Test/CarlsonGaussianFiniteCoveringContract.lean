@@ -1,0 +1,17 @@
+import PrimeNumberTheorem.CarlsonGaussianFiniteCovering
+
+open Set MeasureTheory
+
+namespace PrimeNumberTheorem.CarlsonZeroDensity
+
+#check integral_indicator_Icc_le_card_mul_of_gaussian_cover
+#check carlsonGaussianCoverCenters
+#check exists_mem_carlsonGaussianCoverCenters_abs_sub_le_half
+#check card_carlsonGaussianCoverCenters_le
+#check integral_indicator_Icc_le_floor_add_one_mul_of_local_gaussian_bound
+#print axioms integral_indicator_Icc_le_card_mul_of_gaussian_cover
+#print axioms exists_mem_carlsonGaussianCoverCenters_abs_sub_le_half
+#print axioms card_carlsonGaussianCoverCenters_le
+#print axioms integral_indicator_Icc_le_floor_add_one_mul_of_local_gaussian_bound
+
+end PrimeNumberTheorem.CarlsonZeroDensity
