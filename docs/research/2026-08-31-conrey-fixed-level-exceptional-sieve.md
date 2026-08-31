@@ -28,7 +28,7 @@ lambda=1/4、r=0 放入普通实谱。令 N>=1 为实数，复数系数 a_n
 
 \[
  \mathcal E_{\mathfrak a}(X;a,q)
-   =\sum_{j\ {m exceptional}} X^{2\nu_j}
+   =\sum_{j\ \mathrm{exceptional}} X^{2\nu_j}
                      \left|\sum_n a_n\rho_{j\mathfrak a}(n)\right|^2.
 \]
 
@@ -82,7 +82,7 @@ n^(-(k-1)/2)a_(f,mathfrak a)(n)。不合并不同尖点的连续谱索引。
 
 \[
  \mathcal A_\delta
-  =\sum_{j\ {m exceptional}}
+  =\sum_{j\ \mathrm{exceptional}}
        \frac{\widehat\Phi_\delta(i\nu_j)}{\cos(\pi\nu_j)}
                   \left|\sum_n a_n\rho_{j\mathfrak a}(n)\right|^2.
  \tag{actual-exceptional-square}
@@ -93,7 +93,7 @@ sum_c integral hat(Phi_delta)(r)|sum_n a_n n^(ir)
 varphi_(c,mathfrak a,n)(1/2+ir)|^2 dr；全纯项为
 
 \[
- \frac1\pi\sum_{\substack{k\ge2\\k\ {m even}}}
+ \frac1\pi\sum_{\substack{k\ge2\\k\ \mathrm{even}}}
      i^k\widetilde\Phi_\delta(k-1)
      \frac{\Gamma(k)}{(4\pi)^{k-1}}
      \sum_{f\in B_k(q)}
@@ -143,7 +143,7 @@ K_delta=A_delta+R_delta；没有另加或删去对角项，沿用已证明
 [1/sqrt2,1]，差核的正下界给
 
 \[
- \sum_{j\ {m exceptional}}\delta^{-2\nu_j}
+ \sum_{j\ \mathrm{exceptional}}\delta^{-2\nu_j}
         \left|\sum_n a_n\rho_{j\mathfrak a}(n)\right|^2
              \ll_\eta(1+BN^\eta)\|a\|_2^2.
  \tag{geometric-cutoff-amplification}
