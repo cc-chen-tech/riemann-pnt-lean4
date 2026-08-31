@@ -41,9 +41,14 @@ class LowCommonChecks(unittest.TestCase):
         for ell,F0,X,Y,z in product((1,3,5,7,15,21),(1,2,6,10),range(1,31),range(1,21),(1,2)):
             old_x=mobius(X)*int(gcd(X,F0*ell)==1)
             new_x=mobius(X)*int(gcd(X,F0)==1)*int(gcd(X,ell)==1)
-            old_y=mobius(Y)*int(gcd(Y,F0*z*ell)==1)
-            new_y=mobius(Y)*int(gcd(Y,F0*z)==1)*int(gcd(Y,ell)==1)
+            old_y=mobius(Y)*int(gcd(Y,F0*ell)==1)
+            new_y=mobius(Y)*int(gcd(Y,F0)==1)*int(gcd(Y,ell)==1)
             self.assertEqual((old_x,old_y),(new_x,new_y))
+            # AM12/LC3 removed the old (Y,z) restriction.  Equality of two
+            # identically overmasked columns alone cannot guard this fact.
+            if gcd(Y,F0*ell)==1:
+                self.assertEqual(old_y,mobius(Y))
+                self.assertEqual(new_y,mobius(Y))
             count+=1
         print("common_character_masks",count)
 
