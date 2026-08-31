@@ -494,6 +494,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.CarlsonMeanSquareContourBridge,
     `Test.CarlsonMeanSquareContourBridgeContract,
     `MathlibAux.HadamardThreeLinesSquared,
+    `MathlibAux.HadamardBoundaryLimit,
     `Test.HadamardThreeLinesSquaredContract,
     `MathlibAux.LpPointwiseDerivBridge,
     `Test.LpPointwiseDerivBridgeContract,
