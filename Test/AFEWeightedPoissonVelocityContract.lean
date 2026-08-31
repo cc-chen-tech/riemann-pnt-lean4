@@ -1,0 +1,14 @@
+import HardyTheorem.AFEWeightedPoissonVelocity
+
+open HardyTheorem AFE
+
+#check weightedPoissonVelocity
+#check weightedPoissonVelocityDeriv
+#check weightedPoissonVelocitySecondDeriv
+#check weightedPoissonPhase_hasDerivAt_velocity
+#check weightedPoissonVelocity_hasDerivAt
+#check weightedPoissonVelocityDeriv_hasDerivAt
+
+#print axioms weightedPoissonPhase_hasDerivAt_velocity
+#print axioms weightedPoissonVelocity_hasDerivAt
+#print axioms weightedPoissonVelocityDeriv_hasDerivAt

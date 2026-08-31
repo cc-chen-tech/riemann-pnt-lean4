@@ -1,0 +1,7 @@
+import HardyTheorem.AFE
+
+open HardyTheorem.AFE
+
+#print axioms criticalGamma_div_norm_eq_exp
+#print axioms criticalGamma_conj_div_gamma_eq_dualPhase
+#print axioms criticalAfeDualPhase_eq_exp_neg_two_thetaPhase

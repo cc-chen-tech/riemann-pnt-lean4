@@ -1,0 +1,5 @@
+import HardyTheorem.AFECriticalDyadicMaximalGaussian
+
+#check HardyTheorem.AFE.integral_gaussian_normSq_dyadicMovingPrefixMollifiedPolynomial_le
+
+#print axioms HardyTheorem.AFE.integral_gaussian_normSq_dyadicMovingPrefixMollifiedPolynomial_le

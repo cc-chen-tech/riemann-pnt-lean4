@@ -1,0 +1,7 @@
+import HardyTheorem.AFEExplicitPoissonSecondIBP
+
+open Complex HardyTheorem AFE MeasureTheory Set
+
+#check norm_explicitPoissonIntegral_le_secondRemainder
+
+#print axioms norm_explicitPoissonIntegral_le_secondRemainder

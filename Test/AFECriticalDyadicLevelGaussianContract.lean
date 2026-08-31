@@ -1,0 +1,6 @@
+import HardyTheorem.AFECriticalDyadicLevelGaussian
+
+#check HardyTheorem.AFE.dyadicMollifiedCriticalBlockPolynomial
+#check HardyTheorem.AFE.sum_integral_gaussian_normSq_dyadicMollifiedCriticalBlockPolynomial_le
+
+#print axioms HardyTheorem.AFE.sum_integral_gaussian_normSq_dyadicMollifiedCriticalBlockPolynomial_le

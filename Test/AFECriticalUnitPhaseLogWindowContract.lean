@@ -1,0 +1,8 @@
+import HardyTheorem.AFECriticalUnitPhaseLogWindow
+
+namespace HardyTheorem.AFE
+
+#check setIntegral_gaussian_normSq_criticalAfeProduct_le_of_unitPhase_log_target
+#print axioms setIntegral_gaussian_normSq_criticalAfeProduct_le_of_unitPhase_log_target
+
+end HardyTheorem.AFE
