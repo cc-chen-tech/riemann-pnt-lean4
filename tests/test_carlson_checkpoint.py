@@ -31,6 +31,20 @@ def test_accepts_real_trace_shape_and_counts_distinct_declarations(tmp_path):
     assert result["observed"] == ["Classical.choice", "Quot.sound", "propext"]
 
 
+@pytest.mark.parametrize("include_multiline_report", [False, True])
+def test_multiline_print_is_required_even_when_another_report_exists(tmp_path, include_multiline_report):
+    messages = ["'Example.bound' depends on axioms: [propext]"]
+    if include_multiline_report:
+        messages.append("'Example.bound'' depends on axioms: [propext, Classical.choice, Quot.sound]")
+    write_fixture(tmp_path, "#print axioms Example.bound\n#print axioms\n  Example.bound'\n", messages)
+    result = audit_traces(tmp_path, ["Test.Example"])
+    if include_multiline_report:
+        assert result["errors"] == []
+        assert result["reports"] == result["unique_declarations"] == 2
+    else:
+        assert any("missing axiom report for Example.bound'" in error for error in result["errors"])
+
+
 @pytest.mark.parametrize("messages, fragment", [
     ([], "missing axiom report"),
     (["'Example.bound' depends on axioms: [sorryAx]"], "sorryAx"),

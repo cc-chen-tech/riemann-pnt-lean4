@@ -43,7 +43,7 @@ def audit_traces(root, targets):
         trace = root / ".lake/build/lib/lean" / source.with_suffix(".trace")
         try:
             data = json.loads(trace.read_text())
-            expected = re.findall(r"^#print axioms (\S+)", (root / source).read_text(), re.M)
+            expected = re.findall(r"^\s*#print\s+axioms\s+(\S+)", (root / source).read_text(), re.M)
             local = {}
             for item in data["log"]:
                 parsed = parse_axiom_report(item["message"])
