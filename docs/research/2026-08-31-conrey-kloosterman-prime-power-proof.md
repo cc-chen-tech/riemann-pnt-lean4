@@ -81,7 +81,7 @@
 
 \[
  K_q(a,b)=p^m
- \sum_{\substack{r'\bmod p^{m+1}\ {m unit}\\a(r')^2\equiv b\ (p^m)}}
+ \sum_{\substack{r'\bmod p^{m+1}\ \mathrm{unit}\\a(r')^2\equiv b\ (p^m)}}
  e_q(ar'+b\overline{r'}).
  \tag{odd-first-split}
 \]
