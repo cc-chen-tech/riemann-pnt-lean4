@@ -331,7 +331,7 @@ sum_(l odd>0)l i^(l+1)J_l(x)=-xJ_0(x)/2
 \[
  \boxed{\begin{split}
  \sum_\gamma\frac{S_{ab}(m,n;\gamma)}\gamma\phi(x_\gamma)
-  ={}&\sum_{\substack{k\ge2\\k\ {m even}}}
+  ={}&\sum_{\substack{k\ge2\\k\ \mathrm{even}}}
        \frac{i^k\Gamma(k)}{\pi(4\pi\sqrt{mn})^{k-1}}
        \widetilde\phi(k-1)
           \sum_{f\in B_k(q)}\overline{a_{fa}(m)}a_{fb}(n)\\
