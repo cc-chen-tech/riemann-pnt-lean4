@@ -973,13 +973,71 @@ Dirichlet 角色在 \(p=q\) 时自动给零，所以
 常数中的 \((2P)^2+4P^2\) 已除以外面的 \(P\)；没有把模数个数
 再乘一次。
 
-Cochrane--Shi 的任意平移区间四阶矩（其 Theorem 1 明确允许任意
-整数起点），经固定总变差的分部求和并在 exact Gauss--Poisson 后
-把完整对偶轴分块，均匀给
+CF15.7 所需的均匀性不能在原 \(t\)-和上对
+\(e(\alpha at/q)\) 作 Abel 求和：其总变差最坏为
+\(aA/q\asymp A^2/P\)，会丢掉固定幂。正确的顺序是先作一次
+exact Gauss--Poisson。置
+\[
+ \widehat W(\xi)=\int_{\mathbb R}W(x)e(-x\xi)\,dx,
+ \qquad \beta=\alpha a,\qquad B_q={q\over A}.
+\]
+对素数 \(q\) 的每个非主角色 \(\chi\)，因其 primitive，有
+\[
+ \sum_{r\ ({\rm mod}\ q)}\chi(r)e(kr/q)
+   =\tau(\chi)\overline\chi(k),
+ \qquad |\tau(\chi)|=\sqrt q.
+\]
+在每个剩余类 \(r+q\mathbb Z\) 上作 Poisson，有绝对收敛的精确式
+\[
+ \boxed{\quad
+ \mathcal T_{q,a,\alpha}(\chi)
+ ={A\tau(\chi)\over q}
+   \sum_{k\in\mathbb Z}\overline\chi(k)
+     \widehat W\!\left({k-\beta\over B_q}\right).
+ \quad}                                                   \tag{CF15.7a}
+\]
+因此 additive twist 只把长度 \(B_q=q/A\) 的对偶窗中心平移到
+实数 \(\beta\)；它不进入对偶权的变差。
+[Cochrane--Shi Theorem 1](https://www.math.ksu.edu/~cochrane/research/xyequvmodm.pdf)
+对素数模数的特例正是，对任意整数起点 \(K\) 与
+\(1\le L\le q\)，
+\[
+ {1\over q-1}\sum_{\chi\ne\chi_0}
+   \left|\sum_{K<k\le K+L}\chi(k)\right|^4
+ \ll L^2(\log q)^{12}.                                  \tag{CF15.7b}
+\]
+这里的 12 只是把原定理中对 prime \(q\) 的
+\((\log q)^3(\log\log q)^7\) 粗略放大后的整数幂。将对偶和按
+\[
+ |k-\beta|\le B_q,\qquad
+ 2^{j-1}B_q<|k-\beta|\le2^jB_q
+\]
+分块。在 \(2^jB_q\le q/2\) 的块上，对 \(\chi\) 和用
+CF15.7b，再只对已经对偶化的权
+\(\xi\mapsto\widehat W((\xi-\beta)/B_q)\) 作分部求和，
+该块的四阶均值范数至多
+\[
+ \ll_{W,J}(2^jB_q)^{1/2}(\log q)^3\,2^{-jJ}.
+\]
+对 \(\widehat W\) 的一致 Schwartz 界使这些范数可求和。而
+\(|k-\beta|>q/2\) 的整个尾绝对值为
+\[
+ \ll_{W,J}B_q(q/B_q)^{-J+1}=B_qA^{-J+1};
+\]
+取固定 \(J>3\) 就远小于主界。Minkowski 因而给出
+\[
+ {1\over q-1}\sum_{\chi\ne\chi_0}
+ \left|\sum_k\overline\chi(k)
+     \widehat W\!\left({k-\beta\over B_q}\right)\right|^4
+ \ll_{W,J}B_q^2(\log q)^{12},
+\]
+常数与实数平移 \(\beta\) 无关。代入 CF15.7a 并用
+\(|\tau(\chi)|=\sqrt q\)，才得
 \[
  {1\over q-1}\sum_{\chi\ne\chi_0}
        |\mathcal T_{q,a,\alpha}(\chi)|^4
- \ll_W A^2(\log P)^{12},\qquad A<q.                    \tag{CF15.7}
+ \ll_{W,J}{A^4\over q^2}B_q^2(\log q)^{12}
+ =A^2(\log q)^{12},\qquad A<q.                         \tag{CF15.7}
 \]
 对每个 \(q\) 先在角色变量用 Cauchy，再在 \(q\) 上以
 \(|Y_q|^2\) 为测度用 Cauchy；由 CF15.1、CF15.6、CF15.7，左端至多
@@ -997,7 +1055,7 @@ Cochrane--Shi 的任意平移区间四阶矩（其 Theorem 1 明确允许任意
 \[
  {\mathfrak S}_J(W)=\sum_{r=0}^{J+2}\|W^{(r)}\|_{L^1}.  \tag{CF15.9}
 \]
-RV5 的分块 Abel--Minkowski 证明只使用
+CF15.7a--CF15.7b 的对偶分块只使用
 \(\widehat W,\widehat W'\) 的 \(J\) 阶衰减；在固定支撑上分部积分
 逐项给该常数
 \(\ll_J{\mathfrak S}_J(W)\)。因此，对任意有限标签集 \(\Lambda\)、
