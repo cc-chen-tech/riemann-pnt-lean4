@@ -1534,9 +1534,111 @@ CF19.24 才是 sign-safe 的有限输出估计。
 的 \(B_{1,*}\mid h'\delta'\) 可在 CF19.1 的另一 Hilbert 输出中独立
 使用同一证明。这里 \((h\delta)^{-1/2}\) 正是 CF7 的 shell
 half-root，不能在 CF19.24 之后再乘一次。由此 CF19.L 中
-critical-\(C_1\) 的 **level multiplicity** 已支付；仍未证明的是两侧
-divisor outputs 与同一个 complete-shift/principal/equal-prime packet
-的无损输运，以及非 leading atoms 和 native rows 的共同分解。
+critical-\(C_1\) 的 **level multiplicity** 已支付；两侧 divisor
+outputs 与同一个 complete-shift/principal/equal-prime packet 的无损
+输运仍未证明。其余 local atoms 的 level multiplicity 由下一分割继续
+处理；native rows 保持开放。
+
+逐 local valuation 再看一次，divisor-output 实际覆盖得更多。对
+unramified generic shell 的每个 \(p\mid A\) 记
+\[
+ u_p=v_p(k),\qquad b_p=v_p(h)+v_p(\delta),
+\]
+并作互斥分解
+\[
+ A_{00}=\prod_{\substack{p\mid A\\u_p=b_p=0}}p,\qquad
+ A_{\rm div}=A/A_{00}.                                  \tag{CF19.25}
+\]
+于是精确有：
+\[
+ (A_{00},|kh\delta|)=1,\qquad
+ A_{\rm div}\mid\operatorname{rad}(|kh\delta|).
+\]
+令 \(e_{00,p}\) 是只保留 \((u,b)=(0,0)\) 坐标的秩一矩阵，并在
+已经带有 (8.13) 的 \(k,h,\delta\) 权的局部空间中写
+\[
+ E_p=E_p(1,0)e_{00,p}+\widetilde E_p.                   \tag{CF19.26}
+\]
+这是精确矩阵等式；\(\widetilde E_p\) 的每个非零坐标都满足
+\(u_p+b_p\ge1\)。由三角不等式、(8.10) 与 (8.13)--(8.17)，
+\[
+ \|\widetilde E_p\|
+ \le \|E_p\|+|E_p(1,0)|
+ \ll_\varepsilon p^{-1/2+\varepsilon}.
+\]
+因此张量展开 \(\widehat\otimes_{p\mid A}E_p\) 时，取零--零块的
+prime product 恰为 \(A_{00}\)，其余块的 product 恰为
+\(A_{\rm div}\)，并且
+\[
+ \left\|\widehat\bigotimes_{p\mid A_{\rm div}}
+          \widetilde E_p\right\|
+ \ll_\varepsilon A_{\rm div}^{-1/2+\varepsilon}.       \tag{CF19.27}
+\]
+这里 shell half-root 只使用了这一次；没有再从调和权或
+progression mass 中复制它。
+
+在逐 \(D\) 具有共同输入预算的纯 shell 层，这个补块的
+varying-level multiplicity 也没有幂次损失。确切地说，
+在固定输出 \((k,h,\delta)\) 上只有
+\(D\mid\operatorname{rad}(|kh\delta|)\) 的补块 \(D=A_{\rm div}\)
+非零，故对任意同一 Hilbert 输出中的有限向量 \(F_D(k,h,\delta)\)，
+\[
+ \left\|\sum_DF_D(k,h,\delta)\right\|^2
+ \le \tau(|kh\delta|)
+      \sum_D\|F_D(k,h,\delta)\|^2.                     \tag{CF19.28}
+\]
+先应用这个点态 Cauchy，再求全部输出，并对每个 \(D\) 应用
+CF19.27，得到（把任意固定幂次支撑写成 \(D\le P^C\)）
+\[
+ \left\|\sum_DF_D\right\|^2
+ \ll_\varepsilon P^\varepsilon
+       \sum_{D\le P^C}D^{-1+\varepsilon}\|x_D\|_1^2.
+                                                               \tag{CF19.29}
+\]
+所以当剩余输入列逐 \(D\) 具有同一 \(\ell^1\) 预算时，右端只付
+\(P^\varepsilon\)。CF19.28 允许 \(F_D\) 依赖完整输出，因而没有把
+\(C_j(b_p)\) 错当成固定的 \(v_D\)；这正是不能直接把一般 atoms
+塞进 CF19.24 的原因。CF19.24 仍精确支付 leading \(C_1\) 的固定
+divisor-column，而 CF19.26--CF19.29 支付整个补块的局部 level
+multiplicity。尚未证明的仍是实际非局部权确实给出 CF19.29 所要求的
+共同 \(x_D\) 预算。
+
+真正没有 divisor incidence 的只剩 \(A_{00}\)。此时每个 prime 只取
+(386.1)，且 (8.5) 给出**精确值**
+\[
+ E_p(1,0)=\lambda_\pi(p)-{p\lambda_\pi(p)\over p+1}
+          ={\lambda_\pi(p)\over p+1}.
+\]
+故张量后该零--零 level 的 signed 系数恰为
+\[
+ \boxed{\quad
+   {\mu(A_{00})\lambda_\pi(A_{00})
+      \over\prod_{p\mid A_{00}}(p+1)},\qquad
+   (A_{00},|kh\delta|)=1.
+ \quad}                                                   \tag{CF19.30}
+\]
+这里使用 squarefree unramified Hecke multiplicativity；continuous
+oldspace 先采用 (8.7) 的同一 ambient basis，不能把它换成逐个 ramified
+Eisenstein Fourier coefficient。
+
+因此 generic expanded shell 的局部 varying-level 问题已缩成
+CF19.30 这一条 reciprocal Hecke--Möbius 零列。MC10--MC14 可把实际
+\(b^\sharp\) 在平方自由 canonical 子域分成共同 Mellin columns，但
+仍须证明这些 columns 与 CF19.27、另一 orientation、共享
+complete-shift 权及 Maaß/holomorphic/Eisenstein 全谱在**同一次**
+谱范数中相容；逐 \(A_{00}\) 使用 Kim--Sarnak 绝对值仍会损失幂次。
+具体地，在 \(A_{00}\asymp A\) 上，
+\[
+ \sum_{A_{00}}\left|
+ {\mu(A_{00})\lambda_\pi(A_{00})
+  \over\prod_{p\mid A_{00}}(p+1)}\right|
+ \ll_\varepsilon A^{\theta+\varepsilon},
+ \qquad\theta={7\over64},
+\]
+而 CF19.L 只容许 \(P^\varepsilon\) 的 level 费用；所以不能在此处
+逐 level 取绝对值。
+这是比“重做全部四 atom”更窄的 signed spectral leaf。ramified、native
+及端点行不由此分割自动支付。
 
 CF19.16 精确说明 CF19.C 可以如何被证明：必须把 opposite-shell 的
 全部 auxiliary outputs 在变化 \(q\) **之前**写成同一组
@@ -1614,8 +1716,13 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     \(C_1\) 的 divisor-output 精确写成 Hilbert 值 lcm--harmonic Gram，
     并以 \(H_N^4\) 支付其全部 level multiplicity；同时给出不能直接用
     \(H_N\) 乘 reciprocal-LCM form 的最小反例。这个结论没有完成两侧
-    output 到 common shift 的输运。CF19.8 仍须对实际 CF6.2 tags 完成
-    逐行映射或独立支付。
+    output 到 common shift 的输运。CF19.25--CF19.30 进一步把 generic
+    unramified shell 的全部 level primes 分成 divisor-supported 部分
+    与唯一 \(u=b=0\) 部分；前者在纯 shell 层由 CF19.27--CF19.29
+    支付，后者精确成为 reciprocal Hecke--Möbius 零列。补块估计仍须
+    证明实际 nonlocal columns 满足 CF19.29 的共同输入预算；零列的
+    共同全谱估计也未证明。CF19.8 仍须对实际 CF6.2 tags 完成逐行
+    映射或独立支付。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
