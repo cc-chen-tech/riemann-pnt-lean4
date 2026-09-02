@@ -1890,6 +1890,60 @@ datum 上
 该级数以原几何比 \(r_p\) 绝对收敛，且 \(r_p\) 对全部 unramified
 datum 与 prime 一致小于一。
 
+这个几何级数可以进一步无损改写为真正的 odd-Hecke 列。
+由 Hecke recurrence，在收敛圆内有生成函数
+\[
+ \sum_{n\ge0}\lambda_nz^n={1\over1-\lambda_1z+z^2}.
+\]
+取奇数部并置 \(y=z^2\)，得
+\[
+ \sum_{a\ge0}\lambda_{2a+1}y^a
+ ={\lambda_1\over(1+y)^2-\lambda_1^2y}.
+\]
+在 \(y=1/p\) 处，CF7A 的 Kim--Sarnak 上界使左边由
+\((2a+2)p^{-a-2+\theta(2a+1)}\) 控制，因
+\(p^{-1+2\theta}<1\) 而绝对收敛。因此
+\[
+ \boxed{\quad
+ {\lambda_\pi(p)\over(p+1)^2\rho_p}
+   =\sum_{a\ge0}{\lambda_\pi(p^{2a+1})\over p^{a+2}}.
+ \quad}                                                   \tag{CF19.32a}
+\]
+特别地，除去 \(a=0\) 项后的局部绝对尾满足
+\[
+ \sum_{a\ge1}{|\lambda_\pi(p^{2a+1})|\over p^{a+2}}
+ \ll p^{-3+3\theta}.                                  \tag{CF19.32b}
+\]
+这是可求和的局部修正，但它不授权交换全部谱和与 level 和。
+
+对 squarefree \(A_{00}\) 张量 CF19.32a，并用 unramified
+Hecke multiplicativity，得到另一个精确形式
+\[
+ \prod_{p\mid A_{00}}P_1(0,0)E_p(1,0)
+ =\sum_{\substack{t\ge1\\\operatorname{rad}(t)\mid A_{00}}}
+     {\lambda_\pi(A_{00}t^2)\over A_{00}^2t}.          \tag{CF19.32c}
+\]
+右边系数的普通平方质量是有限的：
+\[
+ \sum_{\substack{t\ge1\\\operatorname{rad}(t)\mid A_{00}}}
+ {1\over A_{00}^4t^2}
+ ={1\over A_{00}^4}\prod_{p\mid A_{00}}(1-p^{-2})^{-1}
+ \le {\zeta(2)\over A_{00}^4}.                         \tag{CF19.32d}
+\]
+但不能因此把无限右边当成一个有限长普通 spectral
+large-sieve polynomial。事实上，其 index-length 加权质量精确为
+\[
+ \sum_{\substack{t\ge1\\\operatorname{rad}(t)\mid A_{00}}}
+ (A_{00}t^2)\left|{1\over A_{00}^2t}\right|^2
+ ={1\over A_{00}^3}
+   \sum_{\substack{t\ge1\\\operatorname{rad}(t)\mid A_{00}}}1=+\infty
+ \qquad(A_{00}>1).                                     \tag{CF19.32e}
+\]
+所以含 \(N/q\) 长度项的粗略大筛在逐项取 CF19.32c 极限时
+必然失败。合法路线必须或者对有限 odd-Hecke 截断与原有理
+multiplier 尾作一致控制，或者直接证明该有理 multiplier 的谱算子界。
+CF19.32d 不能单独闭合 CF19.L。
+
 Hecke recurrence
 \(\lambda_\pi(p)\lambda_\pi(p^j)
 =\lambda_\pi(p^{j+1})+\lambda_\pi(p^{j-1})\) 还给一个精确 parity
@@ -2055,9 +2109,13 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     证明实际 nonlocal columns 满足 CF19.29 的共同输入预算；零列的
     共同全谱估计也未证明。CF19.8 仍须对实际 CF6.2 tags 完成逐行
     映射或独立支付。CF19.31--CF19.33 恢复 ambient kernel 后把零列
-    展成仅含正奇 local valuation 的 Hecke shifts，证明每个有限截断
-    在 \((A_{00},kn)=1\) 时没有 primitive diagonal；共同 Bessel test
-    下的无限极限、off-diagonal、principal 与 axis 仍开放。
+    展成仅含正奇 local valuation 的 Hecke shifts。CF19.32a--CF19.32d
+    给出精确 odd-Hecke 生成函数、可求和的局部尾与有限普通系数平方
+    质量；CF19.32e 同时证明带 index-length 权的质量发散，所以不能把
+    无限展开直接塞进含 \(N/q\) 项的普通 spectral large sieve。每个
+    有限截断在 \((A_{00},kn)=1\) 时没有 primitive diagonal，但共同
+    Bessel test 下的一致截断极限或有理 multiplier 算子界、off-diagonal、
+    principal 与 axis 仍开放。
     CF19.34--CF19.35 又把同一零列精确识别为
     \(L^{(M)}(1+s,\pi)^{-1}\) 乘一个在 \(\Re s>-1/2\) 绝对收敛的
     Euler product；它同时说明逐 form 移线会重新遇到未知 zeros，不能
