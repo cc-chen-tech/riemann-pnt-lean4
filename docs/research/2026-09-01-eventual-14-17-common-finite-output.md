@@ -1428,6 +1428,64 @@ CF15/RV 的 actual-Riesz 四阶矩有一个真正有用的共同 Hilbert 列扩�
 为测度对 \(q\) 用 Cauchy，并代入 CF15.1、CF15.7 与 CF19.18，恰得
 CF19.16。这个证明只使用一次 actual-Riesz flatness 和一次大筛。
 
+CF19.16 可以改写成一个不依赖所选分解的 edge-kernel 判据。对有限
+标量数组 \(z=(z_{p,q})\) 定义
+\[
+ \gamma_2(z)=\inf_{\substack{{\cal H},\,u_p\in{\cal H},\\
+                    R_q:{\cal H}\to\mathbb C,\ z_{p,q}=R_q(u_p)}}
+       \left(\sup_p\|u_p\|\right)
+       \left(\sup_q\|R_q\|\right).                       \tag{CF19.19}
+\]
+这里下确界遍历有限维 Hilbert 分解。令
+\[
+ {\cal P}_{q,z}(\chi)=\sum_pY_p\chi(p)z_{p,q}.
+\]
+若 \(z=0\)，下式平凡。否则任一容许分解的两个 sup norm 都非零；把
+\(u_p,R_q\) 分别除以这两个 norm，先对该分解应用 CF19.16，再对全部
+分解取下确界（不要求下确界取到），得到
+\[
+ \boxed{\quad
+ \sum_q|Y_q|^2{1\over q-1}\sum_{\chi\ne\chi_0}
+ |{\cal P}_{q,z}(\chi)|^2|{\cal T}_{q,a,\alpha}(\chi)|^2
+ \ll_{\rho,w,W,\varepsilon}
+ A P^\varepsilon S_Y^2\,\gamma_2(z)^2.
+ \quad}                                                   \tag{CF19.20}
+\]
+这不是 coefficient-uniform bound：任意 edge array 的
+\(\gamma_2\) 不必有绝对常数界。确实，对阶数 \(n=2^k\) 的
+Sylvester--Hadamard 矩阵 \(H_n\)，有
+\(H_nH_n^*=nI\)，故 \(\|H_n\|_*=n^{3/2}\)。任一分解
+\(H_n=UV\) 若行向量范数至多 \(A\)、列泛函范数至多 \(B\)，则
+\(\|H_n\|_*\le\|U\|_{\rm F}\|V\|_{\rm F}\le nAB\)；所以
+\(\gamma_2(H_n)\ge\sqrt n\)。这里 CF19.19--CF19.22 只陈述标量
+edge；算子值实际 shell 还须给出相应的 Hilbert factorization，不能
+由标量式自动获得。
+
+CF19.19 也把 projective-atom 账翻译成一个可逐项验证的充分条件。
+若
+\[
+ z_{p,q}=\sum_\nu c_\nu\,\ell_{p,\nu}r_{q,\nu},          \tag{CF19.21}
+\]
+则在 \({\cal H}=\ell^2(\nu)\) 中取
+\[
+ u_p(\nu)=|c_\nu|^{1/2}\ell_{p,\nu},\qquad
+ R_q(x)=\sum_\nu |c_\nu|^{1/2}
+       {c_\nu\over|c_\nu|}r_{q,\nu}x_\nu
+\]
+（\(c_\nu=0\) 的项删掉）。Cauchy 给出
+\[
+ \gamma_2(z)\le
+ \left(\sup_p\sum_\nu|c_\nu||\ell_{p,\nu}|^2\right)^{1/2}
+ \left(\sup_q\sum_\nu|c_\nu||r_{q,\nu}|^2\right)^{1/2}.
+                                                               \tag{CF19.22}
+\]
+所以 CF386 的局部 projective atoms 与 CF19.9 的 smooth Fourier
+atoms 若在**变化的全部** \(a_0,b_0\) 上满足 CF19.22 的共同平方
+质量 \(P^\varepsilon\)，便足以把 CF19.20 接入 actual-Riesz saving。
+只知道 atom 数为 \(P^{o(1)}\)、逐 atom 范数为一或逐 level
+projective mass 为 \(a_0^{-1/2+\varepsilon}\) 并不自动证明这两个
+supremum；这正是 CF19.L 仍须逐字节核对的全局能量账。
+
 CF19.16 精确说明 CF19.C 可以如何被证明：必须把 opposite-shell 的
 全部 auxiliary outputs 在变化 \(q\) **之前**写成同一组
 \(q\)-无关向量 \(z_p\)，允许随后用 \(R_q\) 收缩。有限正交标签可放入
@@ -1436,6 +1494,9 @@ CF19.16 精确说明 CF19.C 可以如何被证明：必须把 opposite-shell 的
 已经给出这种数组仍可存在于非主子空间的精确反例。故 CF19.16 是
 新的无损 analytic supplier，但“实际 mixed-Bruhat/complete-shift
 输出属于共同 Hilbert 列”仍是 CF19.L 中必须逐项证明的解析内容。
+等价地，对每个归一化实际 edge kernel 证明
+\(\gamma_2(z)\ll P^\varepsilon\)，再用 CF19.20；CF19.22 给出目前
+最直接的可验收证书格式。
 
 所以 CF19.8 对 **CF6.2 的整个 actual common coefficient list** 尚未
 完成：还需要把 CF3 的四 endpoint 行、CF5 的 quotient-zero/axis 行、
@@ -1494,7 +1555,11 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     \(F\) 的 normalized-seminorm pullback。CF19.15--CF19.18 把
     actual-Riesz 四阶矩严格扩张到任意共同 Hilbert 列及其逐模数
     contractions；它不接受 CF17 的任意 \(z_{p,q}\) edge array。
-    CF19.8 仍须对实际 CF6.2 tags 完成逐行映射或独立支付。
+    CF19.19--CF19.22 把标量 edge 的共同列义务等价写成
+    \(\gamma_2\) factorization norm，并给出 projective-square-mass
+    充分条件；它没有证明实际 shell 满足 \(\gamma_2\ll P^\varepsilon\)，
+    算子值 shell 也仍需另给对应分解。CF19.8 仍须对实际 CF6.2 tags
+    完成逐行映射或独立支付。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
