@@ -1999,6 +1999,74 @@ CF19.35 也排除一个看似便宜的闭合：对 dyadic \(A_{00}\) 做 Mellin
 只能把剩余对象识别为一个**谱平均中的 reciprocal standard-
 \(L\) mollifier**；不能把点态 contour shift 当成 varying-level saving。
 
+不过，若 opposite orientation 已经真正给出与 \(A_{00}\) 无关的共同
+Hecke 列，则不需要使用 CF19.32c 的无限展开。下面的有限卷积引理同时
+适用于 Maaß、holomorphic 与 Eisenstein datum，因为只用 unramified
+Hecke 关系。固定整数 \(M\ge1\)、实数 \(X,N\ge1\) 与 Hilbert 空间
+\({\cal H}\)，令
+\[
+ \alpha_A={\mu(A)\over\prod_{p\mid A}(p+1)},\qquad
+ d_m=\sum_{\substack{X<A\le2X,\ A\ {\mathrm{squarefree}}\\
+                     (A,M)=1,\ An=m,\ (A,n)=1}}
+             \alpha_Ac_n,                              \tag{CF19.36}
+\]
+其中 \(c_n\in{\cal H}\) 支撑于 \(1\le n\le N\)。对任一 conductor
+整除 \(M\) 的 trivial-central-character Hecke datum \(\pi\)，
+逐有限项使用 \((A,n)=1\) 时的乘法性，精确得到
+\[
+ \sum_{\substack{X<A\le2X,\ A\ {\mathrm{squarefree}}\\(A,M)=1}}
+   \alpha_A\lambda_\pi(A)
+   \sum_{\substack{n\le N\\(n,A)=1}}c_n\lambda_\pi(n)
+ =\sum_{m\le2XN}d_m\lambda_\pi(m).                   \tag{CF19.37}
+\]
+这一步没有恢复 CF19.31 的 harmonic \(1/p\)，所以没有把它重复算成
+saving；它直接重组原 CF19.30 的有限 Möbius 列。
+
+记 \(\Delta(U)=\max_{1\le m\le U}\tau(m)\)。固定 \(m\) 的分解
+\(m=An\) 至多有 \(\tau(m)\) 个，Hilbert 空间中的 Cauchy--Schwarz
+因而给
+\[
+ \begin{aligned}
+ \sum_m\|d_m\|^2
+ &\le \Delta(2XN)
+   \sum_{X<A\le2X}|\alpha_A|^2\sum_{n\le N}\|c_n\|^2\\
+ &\le {2\Delta(2XN)\over X}\sum_{n\le N}\|c_n\|^2
+ \ll_\varepsilon X^{-1}(XN)^\varepsilon
+                    \sum_{n\le N}\|c_n\|^2.          \tag{CF19.38}
+ \end{aligned}
+\]
+第二行只用了 \(\prod_{p\mid A}(p+1)\ge A\) 及区间内整数个数不超过
+\(2X\)。最后的初等 divisor bound 也不作为黑箱：给定
+\(\varepsilon>0\)，对充分大的 prime 有
+\(e+1\le p^{\varepsilon e/2}\)；余下有限 primes 的
+\((e+1)p^{-\varepsilon e/2}\) supremum 有限。逐素数相乘即得
+\(\tau(m)\ll_\varepsilon m^\varepsilon\)（把 \(\varepsilon/2\)
+重命名为 \(\varepsilon\)）。
+
+因此设一个包含三类离散谱与连续谱的非负共同调和测度 \(d\nu(\pi)\)
+已经在同一 Bessel majorant 下满足标量 spectral large sieve
+\[
+ \int\left|\sum_{m\le U}a_m\lambda_\pi(m)\right|^2d\nu(\pi)
+ \le {\mathscr L}(U)\sum_{m\le U}|a_m|^2.
+\]
+在有限维子空间 \(\operatorname{span}\{c_n:n\le N\}\) 的正交基逐坐标
+求和（连续谱用非负 Tonelli），再代
+CF19.37--CF19.38，严格推出
+\[
+ \boxed{\quad
+ \int\left\|\sum_A\alpha_A\lambda_\pi(A)
+       \sum_{(n,A)=1}c_n\lambda_\pi(n)\right\|^2d\nu(\pi)
+ \ll_\varepsilon {\mathscr L}(2XN)\over X}(XN)^\varepsilon
+                 \sum_{n\le N}\|c_n\|^2.
+ \quad}                                                   \tag{CF19.39}
+\]
+CF19.39 是一个已证明的蕴含；其唯一解析前提就是紧邻显示的 scalar
+large sieve。它准确说明下一条谱估计应作用于哪个长度与平方质量；
+这个 scalar large sieve 本身仍须按原共同 Bessel test 重证。若 \(c_n\) 还依赖 \(A\)、谱权不是
+同一个非负 majorant，或 ramified prime 未先放入 \(M\)，CF19.37--
+CF19.39 均不能直接使用。这三项正是 CF19.L 尚需从 physical atom
+验证的共同列条件。
+
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
 实际 \(b^\sharp\) 证明平方自由 canonical 子域的共同 Mellin columns，
@@ -2115,11 +2183,13 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     无限展开直接塞进含 \(N/q\) 项的普通 spectral large sieve。每个
     有限截断在 \((A_{00},kn)=1\) 时没有 primitive diagonal，但共同
     Bessel test 下的一致截断极限或有理 multiplier 算子界、off-diagonal、
-    principal 与 axis 仍开放。
-    CF19.34--CF19.35 又把同一零列精确识别为
+    principal 与 axis 仍开放。CF19.34--CF19.35 又把同一零列精确识别为
     \(L^{(M)}(1+s,\pi)^{-1}\) 乘一个在 \(\Re s>-1/2\) 绝对收敛的
     Euler product；它同时说明逐 form 移线会重新遇到未知 zeros，不能
-    代替所需 joint spectral estimate。
+    代替所需 joint spectral estimate。CF19.36--CF19.39 则在 opposite side
+    已成为真正共同 Hecke 列时，把原有限 Möbius 零列无损压成长度
+    \(2XN\)、系数平方质量 \(X^{-1+o(1)}\) 的单一 Hilbert 值多项式；
+    它没有证明该共同列条件或原 Bessel test 下的标量全谱大筛。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
