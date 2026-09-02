@@ -1210,36 +1210,51 @@ unit endpoints、未展开的 other-character/non-squarefree/nonflat/
 unequal-gcd native rows，也不覆盖 low-height expanding band。
 
 CF19.D 中纯 affine-lattice 的 physical-shift 部分可以单独闭合，并且
-不需要误用 KW6。设 \(F(d,c)\) 支撑在两个长度分别为 \(D,C\) 的固定
-倍长区间，定义
+不需要误用 KW6。不过短移位必须作为一个显式归一化坐标保留，不能
+藏进一个据称有 product-scale 导数界的二变量函数。设
+\(\Phi(d,c,\alpha)\) 在前两个坐标支撑于长度分别为 \(D,C\) 的固定
+倍长区间，并在 \(\alpha\) 的固定紧集支撑。定义
 \[
- \mathfrak N_m(F)=
- \max_{i+j\le m}D^iC^j\|\partial_d^i\partial_c^jF\|_\infty.
+ \mathfrak N_m^{\rm sh}(\Phi)=
+ \max_{i+j+k\le m}D^iC^j
+   \|\partial_d^i\partial_c^j\partial_\alpha^k\Phi\|_\infty.
 \]
 令 \(P_0,Q_0\) 互素，固定整数 \(j\)，并置
 \[
  I_j(v)={1\over Q_0}\int_{\mathbb R}
- F\!\left(x,{P_0x-v\over Q_0}\right)e(-jx/Q_0)\,dx,
+ \Phi\!\left(x,{P_0x-v\over Q_0},{v\over V}\right)
+ e(-jx/Q_0)\,dx,
  \qquad G_j(v)=W(v/V)I_j(v).                         \tag{CF19.11}
 \]
 若 \(V\le Q_0C\)，则对每个 \(0\le\ell\le m\)
 \[
  \|(V\partial_v)^\ell G_j\|_\infty
  +\|(V\partial_v)^\ell G_j\|_{L^2(dv/V)}
- \ll_{m,W}{D\over Q_0}\mathfrak N_m(F),              \tag{CF19.12}
+ \ll_{m,W}{D\over Q_0}\mathfrak N_m^{\rm sh}(\Phi), \tag{CF19.12}
 \]
 并对每个 \(N\le m\)
 \[
  |\widehat G_j(\xi)|
- \ll_{N,W}V{D\over Q_0}\mathfrak N_N(F)
+ \ll_{N,W}V{D\over Q_0}\mathfrak N_N^{\rm sh}(\Phi)
                    (1+V|\xi|)^{-N}.                    \tag{CF19.13}
 \]
-证明是直接的：每次 \(v\)-微分落在第二坐标时给
-\(Q_0^{-1}\partial_c\)，故归一化费用为
-\(V/(Q_0C)\le1\)；落在 \(W(v/V)\) 时费用为常数。\(x\)-积分长度
-\(O(D)\)，而 \(W\) 使 \(v/V\) 支撑固定，给 CF19.12。对
+证明是直接的。在被积函数上
+\[
+ V\partial_v=-{V\over Q_0}\partial_c+\partial_\alpha.
+\]
+第一项相对于 \(C\partial_c\) 的归一化费用为
+\(V/(Q_0C)\le1\)，第二项本来就是归一化短移位导数；落在
+\(W(v/V)\) 时费用也是常数。\(x\)-积分长度 \(O(D)\)，而 \(W\)
+使 \(v/V\) 支撑固定，给 CF19.12。对
 CF19.11 在 \(v\) 上分部积分 \(N\) 次并与零次界取小者，给
 CF19.13，全部边界项因 \(W\) 消失。这是解析证明，不是有限检查。
+
+三变量写法是必要的。若原权含
+\(\Omega((P_0d-Q_0c)/V)\)，把它硬塞进二变量 \(F(d,c)\) 会给
+\(C\partial_cF\) 一个 \(Q_0C/V\) 因子；此时二变量半范数并非
+power-free。CF19.11 把该因子放回 \(\alpha\) 坐标，沿仿射格
+\(P_0d-Q_0c=v\) 后恰由 \(V\partial_v\) 支付。\(\Phi\) 与
+\(\alpha\) 无关时，旧的二变量陈述只是本引理的特例。
 
 在 balanced generic 物理尺度
 \[
@@ -1255,10 +1270,13 @@ CF19.13，全部边界项因 \(W\) 消失。这是解析证明，不是有限检
 所以 CF19.13 在 \(\xi=-t/Q_0\) 恰给 \(|t|\ll b_0P^\varepsilon\)
 及全部远 \(t\) 尾；它不会产生新的 \(P\) 损失。CF19.D 由此缩成
 一个更窄而可核对的输入：必须从原 (4.4)--(5.13b) 逐项证明送入
-CF372.4 的完整 \(F\) 满足 \(\mathfrak N_m(F)\ll
+CF372.4 的完整权可写为 CF19.11 的三变量 \(\Phi\)，并满足
+\(\mathfrak N_m^{\rm sh}(\Phi)\ll
 P^\varepsilon{\cal S}_m(w)\)，统一于 detector/Bessel/AFE tags。
-KW6 对另一组归一化参数的结论可作为这个 pullback 的输入，但两者
-之间的逐变量链式映射尚未写出，不能仅凭符号 \(v\) 相同而引用。
+KW6 已控制原核的归一化 \(u,v,\alpha,\beta\) 导数；现在仍须逐项
+写出这些坐标到 \((d/D,c/C,(P_0d-Q_0c)/V)\) 的链式映射，并核对
+全部 finite tags。不能把短移位重新藏回 product 坐标，也不能仅凭
+符号 \(v\) 相同而引用 KW6。
 
 CF15/RV 的 actual-Riesz 四阶矩有一个真正有用的共同 Hilbert 列扩张。
 令 \({\cal H}\) 为有限维 Hilbert 空间，任取 \(z_p\in{\cal H}\)、
