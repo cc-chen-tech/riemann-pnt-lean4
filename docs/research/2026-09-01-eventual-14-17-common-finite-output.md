@@ -67,9 +67,14 @@ supplier 本身不产生所需 \(P^{-1/12}\) centered contraction。
 固定有限可见整数上界 \(J\)、\(N>1\)、窗口 \(Xy<n\le Xy+H\)，并
 设 ambient coefficient support 至少包含 \([1,2J]\)，原有限系数
 \(b\) 满足 \(\sum_db_d/d=0\)。令
-\(B_i\) 是同一加权 \(L^2\) 空间中的有限低响应列，\(G\) 是其 Gram
-矩阵，\(z=G^{-1}v\) 是原输出 \(F_b\) 的唯一正交投影系数；空表时
-下列和均为空。任选固定 cutoff \(\chi\)，使它在全部可见窗口上为一，
+\(B_i\) 是同一加权 \(L^2\) 空间中的有限低响应列。先按固定原顺序
+删去零列及落在前列 span 中的列，得到同一低响应空间的线性无关
+基底；这是有限基约简，不改变正交投影 \(\Pi\)。令 \(G\) 是该基底的
+Gram 矩阵，即 \(G_{ij}=\langle B_i,B_j\rangle\)，并令
+\(v_i=\langle B_i,F_b\rangle\)（内积在第二变量线性）。则 \(G\) 正定，
+\(z=G^{-1}v\) 是原输出 \(F_b\) 在这个固定基底中的唯一投影系数；
+空表时下列和均为空。每个保留的 \(B_i\) 连同产生它的 \(u_i\) 一起
+保留。任选固定 cutoff \(\chi\)，使它在全部可见窗口上为一，
 并对 \(1\le n\le J\) 置（其余 \(D_n=0\)）
 \[
  D_n={\chi(n/X)\over H}\sum_i z_i u_i(n/X),\qquad
@@ -476,30 +481,51 @@ CF7.2 逐项给出
  {\cal N}_p(0)\ll_\eta p^{-1/2+\eta},\qquad
  {\cal N}_p(u)\ll_\eta(u+2)^Cp^{\theta(u-1)+\eta u}\quad(u\ge1),
 \]
-从而 normalized \(k\)-progression mass 只使用一次时
+令 \({\cal Y}_p\) 是坐标 \((r,s)\in\mathbb N_0^2\)、测度
+\(p^{-r-s+\eta(r+s)}\) 的 Hilbert 空间，并令
+\(K_{p,u}\in{\cal Y}_p\) 的坐标为 \(E_p(1+u,r+s)\)。于是
+\(\|K_{p,u}\|_{{\cal Y}_p}={\cal N}_p(u)\)。定义的是如下明确的
+valuation-averaged projective mass，而不是未定义的任意系数算子：
 \[
-                    \sum_{u\ge0}p^{-u}{\cal N}_p(u)
-                    \ll_\eta p^{-1/2+2\eta}.            \tag{CF7.9}
+ {\mathfrak h}_p:=\sum_{u\ge0}p^{-u}
+                         \|K_{p,u}\|_{{\cal Y}_p}
+ \ll_\eta p^{-1/2+2\eta}.                              \tag{CF7.9}
 \]
 矩阵对 \((r,s)\) 的 rank 一致有界：Hecke recurrence 使每个
 \(\lambda_{r+s-j}\) 在非负区域是 rank 至多二的 Hankel matrix，
 \(b=0\) 的分段值只增加一个 rank-one boundary，CF7.3 也只增加固定
 多个 shifts。故 nuclear norm 至多固定 rank 平方根乘 CF7.8 的
-Hilbert--Schmidt norm。因此 CF7.9 是合法的
-\(\ell^1(k)\to\ell^2(h)\widehat\otimes\ell^2(\delta)\) nuclear norm，
-不是逐系数绝对值估计。若短区间含 \(d\) 的倍数，则
-\(d\le2Z\) 且其个数至多 \(Z/d+1\le3Z/d\)。分别对
-\(\prod p^u\)、\(\prod p^r\)、\(\prod p^s\) 在 \(k,h,\delta\) 三个
-坐标各使用一次此计数，费用是固定常数而不是逐 prime 常数；再以 CRT
-张量 CF7.9，便得到
+Hilbert--Schmidt norm，所以 CF7.9 同时控制将 \(h,\delta\) 分开的
+nuclear projective mass。
+
+对 squarefree \(A\) 现在可以无歧义地定义
 \[
- \|\mathrm{HSL}(A)\|_{\ell^1(k)\to
-       \ell^2(h)\widehat\otimes\ell^2(\delta)}
-       \ll_\varepsilon A^{-1/2+\varepsilon}.            \tag{CF7.10}
+ {\cal Y}_A=\widehat\bigotimes_{p\mid A}{\cal Y}_p,
+ \quad K_{A,\boldsymbol u}=\widehat\bigotimes_{p\mid A}K_{p,u_p},
+ \quad
+ {\mathfrak h}(A)=\sum_{\boldsymbol u\in\mathbb N_0^{\omega(A)}}
+       \left(\prod_{p\mid A}p^{-u_p}\right)
+       \|K_{A,\boldsymbol u}\|_{{\cal Y}_A}.
 \]
-fixed local ranks 只给 \(C^{\omega(A)}=A^{o(1)}\)。连续谱必须先在
-ambient oldbasis 的内积恒等式中应用同一计算；CF7.10 不主张单个
-ramified Eisenstein oldvector 有逐系数除数界。
+Hilbert tensor norm 的乘法性与非负 Tonelli（这里也可先作有限截断）给
+\[
+ {\mathfrak h}(A)=\prod_{p\mid A}{\mathfrak h}_p
+ \ll_\varepsilon A^{-1/2+\varepsilon}.                 \tag{CF7.10}
+\]
+fixed local ranks 只给 \(C^{\omega(A)}=A^{o(1)}\)。若一个 dyadic
+整数区间 \((Z,2Z]\) 含 \(d\) 的倍数，则 \(d\le2Z\) 且其个数至多
+\(Z/d+1\le3Z/d\)。分别对 \(\prod p^u\)、\(\prod p^r\)、
+\(\prod p^s\) 在 \(k,h,\delta\) 三个坐标各使用一次时，最多产生固定
+常数而不是逐 prime 常数。这只是未来 physical adapter 可使用的初等
+计数事实；本文没有据此定义或断言一个完整的 normalized global
+average。
+
+CF7.10 没有定义或证明一个对任意 \(k\)-系数成立的 global
+\(\ell^1\to\ell^2\) operator bound。要用于实际 QCT，必须先把同一
+区间内变化的 coefficient/Bessel/complete-shift 权写成与这些
+valuation fibers 相容的共同有界列；这正属于 CF19.D/CF19.L。连续谱
+也必须先在 ambient oldbasis 的内积恒等式中应用同一计算；CF7.10
+不主张单个 ramified Eisenstein oldvector 有逐系数除数界。
 
 ## CF8. 共同投影与 CF6.2 的精确接口
 
@@ -1722,8 +1748,9 @@ outputs 与同一个 complete-shift/principal/equal-prime packet 的无损
 输运仍未证明。其余 local atoms 的 level multiplicity 由下一分割继续
 处理；native rows 保持开放。
 
-逐 local valuation 再看一次，divisor-output 实际覆盖得更多。对
-unramified generic shell 的每个 \(p\mid A\) 记
+逐 local valuation 再看一次，divisor-output 实际覆盖得更多。以下
+只处理 \(kh\delta\ne0\) 的 unramified generic shell；任一坐标为零的
+axis 继续留在 CF6 的 native/open 行。对每个 \(p\mid A\) 记
 \[
  u_p=v_p(k),\qquad b_p=v_p(h)+v_p(\delta),
 \]
@@ -1743,18 +1770,26 @@ unramified generic shell 的每个 \(p\mid A\) 记
  E_p=E_p(1,0)e_{00,p}+\widetilde E_p.                   \tag{CF19.26}
 \]
 这是精确矩阵等式；\(\widetilde E_p\) 的每个非零坐标都满足
-\(u_p+b_p\ge1\)。由三角不等式、CF7.6 与 CF7.8--CF7.10，
+\(u_p+b_p\ge1\)。令 \(\widetilde K_{p,u}\in{\cal Y}_p\) 是其第
+\(u\) 个输出列，并定义
 \[
- \|\widetilde E_p\|
- \le \|E_p\|+|E_p(1,0)|
+ \widetilde{\mathfrak h}_p
+ :=\sum_{u\ge0}p^{-u}\|\widetilde K_{p,u}\|_{{\cal Y}_p}.
+\]
+零--零秩一块的同一 projective mass 恰为 \(|E_p(1,0)|\)。故由
+三角不等式、CF7.6 与 CF7.9，
+\[
+ \widetilde{\mathfrak h}_p
+ \le {\mathfrak h}_p+|E_p(1,0)|
  \ll_\varepsilon p^{-1/2+\varepsilon}.
 \]
 因此张量展开 \(\widehat\otimes_{p\mid A}E_p\) 时，取零--零块的
 prime product 恰为 \(A_{00}\)，其余块的 product 恰为
-\(A_{\rm div}\)，并且
+\(A_{\rm div}\)。对补块定义
+\(\widetilde{\mathfrak h}(D)=\prod_{p\mid D}
+\widetilde{\mathfrak h}_p\)，则
 \[
- \left\|\widehat\bigotimes_{p\mid A_{\rm div}}
-          \widetilde E_p\right\|
+ \widetilde{\mathfrak h}(A_{\rm div})
  \ll_\varepsilon A_{\rm div}^{-1/2+\varepsilon}.       \tag{CF19.27}
 \]
 这里 shell half-root 只使用了这一次；没有再从调和权或
@@ -1770,21 +1805,24 @@ varying-level multiplicity 也没有幂次损失。确切地说，
  \le \tau(|kh\delta|)
       \sum_D\|F_D(k,h,\delta)\|^2.                     \tag{CF19.28}
 \]
-先应用这个点态 Cauchy，再求全部输出，并对每个 \(D\) 应用
-CF19.27，得到（把任意固定幂次支撑写成 \(D\le P^C\)）
+若实际 nonlocal column 已经被写成纯 valuation tensor 与一个向量
+\(x_D\) 的张量，随后只经过 norm-one contractions，并记
+\(B_D=\|x_D\|\)，CF19.27 才给
+\(\|F_D\|\le\widetilde{\mathfrak h}(D)B_D\)。先应用 CF19.28，再求
+全部输出，得到（把任意固定幂次支撑写成 \(D\le P^C\)）
 \[
  \left\|\sum_DF_D\right\|^2
  \ll_\varepsilon P^\varepsilon
-       \sum_{D\le P^C}D^{-1+\varepsilon}\|x_D\|_1^2.
+       \sum_{D\le P^C}D^{-1+\varepsilon}B_D^2.
                                                                \tag{CF19.29}
 \]
-所以当剩余输入列逐 \(D\) 具有同一 \(\ell^1\) 预算时，右端只付
+所以当剩余输入列逐 \(D\) 具有同一预算 \(B_D\le B\) 时，右端只付
 \(P^\varepsilon\)。CF19.28 允许 \(F_D\) 依赖完整输出，因而没有把
 \(C_j(b_p)\) 错当成固定的 \(v_D\)；这正是不能直接把一般 atoms
 塞进 CF19.24 的原因。CF19.24 仍精确支付 leading \(C_1\) 的固定
 divisor-column，而 CF19.26--CF19.29 支付整个补块的局部 level
-multiplicity。尚未证明的仍是实际非局部权确实给出 CF19.29 所要求的
-共同 \(x_D\) 预算。
+multiplicity。尚未证明的仍是实际非局部权确实具有这里显示的
+valuation-tensor/norm-one factorization，并给出共同 \(B_D\) 预算。
 
 真正没有 divisor incidence 的只剩 \(A_{00}\)。此时每个 prime 只取
 CF7.5 的零--零块，且 CF7.6 给出**精确值**
@@ -1803,6 +1841,81 @@ CF7.5 的零--零块，且 CF7.6 给出**精确值**
 这里使用 squarefree unramified Hecke multiplicativity；continuous
 oldspace 先采用 CF7A 的同一 ambient basis，不能把它换成逐个 ramified
 Eisenstein Fourier coefficient。
+
+CF19.30 是**相对于** ambient harmonic zero kernel 的 multiplier；若要
+重新送入 primitive trace，必须先恢复 CF7.4，不能把 ambient
+\(P_1(0,0)\) 当作第二份 saving。对一个零--零 prime 精确有
+\[
+ P_1(0,0)E_p(1,0)
+ ={\lambda_\pi(p)\over(p+1)^2\rho_p},\qquad
+ \rho_p=1-{p\lambda_\pi(p)^2\over(p+1)^2}.              \tag{CF19.31}
+\]
+CF7A 已证明
+\(r_p:=p\lambda_\pi(p)^2/(p+1)^2<1\)，所以在每个 unramified
+datum 上
+\[
+ {\lambda_\pi(p)\over(p+1)^2\rho_p}
+ ={1\over(p+1)^2}\sum_{\ell\ge0}
+       \left({p\over(p+1)^2}\right)^\ell
+       \lambda_\pi(p)^{2\ell+1}.                       \tag{CF19.32}
+\]
+该级数以原几何比 \(r_p\) 绝对收敛，且 \(r_p\) 对全部 unramified
+datum 与 prime 一致小于一。
+
+Hecke recurrence
+\(\lambda_\pi(p)\lambda_\pi(p^j)
+=\lambda_\pi(p^{j+1})+\lambda_\pi(p^{j-1})\) 还给一个精确 parity
+事实：每个奇次幂 \(\lambda_\pi(p)^{2\ell+1}\) 都是
+\(\lambda_\pi(p^{2a+1})\) 的有限线性组合，不含偶 valuation。
+因此 CF19.32 的任一有限截断乘 \(\lambda_\pi(k)\) 后，在
+\((p,k)=1\) 时只含第一 Hecke index 的正奇 \(p\)-valuation。若另一
+index \(n\) 满足 \((p,n)=1\)，primitive Petersson/Kuznetsov 的
+Kronecker diagonal 对这个截断逐项为零。张量全部
+\(p\mid A_{00}\) 后，只要 \(A_{00}>1\)，同一结论仍成立，因为
+\((A_{00},kn)=1\)：
+\[
+ \boxed{\quad\text{zero--zero block 的每个有限 odd-Hecke 截断
+ 在 primitive trace 上没有 diagonal。}\quad}          \tag{CF19.33}
+\]
+这不是逐 level 绝对值，也没有复用 harmonic \(1/p\)：CF19.31 正是把
+它恢复后再作 Hecke parity 展开。要把 CF19.33 升为完整全谱结论，仍须
+在共同 Bessel test 下证明 CF19.32 的极限可与 Maaß、holomorphic、
+Eisenstein 三谱及全部 level 外和交换；而 off-diagonal、principal 与
+axis 并未由 diagonal 消失而得到估计。因此 CF19.33 是新的局部
+diagonal guard，不是 CF19.C 或 CF9.1。
+
+同一个零列还有一个精确 Euler-product 解释。令 \(M\) 含 primitive
+conductor、\(kh\delta\) 与全部另行冻结的小 primes，并在
+\(\Re s>\theta\) 先绝对收敛地定义
+\[
+ {\cal Z}_{\pi,M}(s)
+ =\sum_{\substack{A\ {\rm squarefree}\\(A,M)=1}}
+   {\mu(A)\lambda_\pi(A)\over\prod_{p\mid A}(p+1)}A^{-s}
+ =\prod_{p\nmid M}\left(1-{\lambda_\pi(p)p^{-s}\over p+1}\right).
+                                                               \tag{CF19.34}
+\]
+逐 Euler factor 有
+\[
+ {\cal Z}_{\pi,M}(s)=L^{(M)}(1+s,\pi)^{-1}{\cal H}_{\pi,M}(s),
+\quad
+ {\cal H}_{\pi,M}(s)=\prod_{p\nmid M}
+ {1-\lambda_\pi(p)p^{-s}/(p+1)
+  \over1-\lambda_\pi(p)p^{-1-s}+p^{-2-2s}}.             \tag{CF19.35}
+\]
+确实分子与分母之差恰为
+\[
+ {\lambda_\pi(p)p^{-s}\over p(p+1)}-p^{-2-2s}.
+\]
+Kim--Sarnak 因而使 \({\cal H}_{\pi,M}\) 的 Euler product 在
+\(\Re s>-1/2\) 的每个闭子带绝对收敛；第一项只要求
+\(\Re s>\theta-1\)，第二项给真正边界 \(-1/2\)。
+
+CF19.35 也排除一个看似便宜的闭合：对 dyadic \(A_{00}\) 做 Mellin
+反演后，逐 \(\pi\) 把线向左移动固定距离，必须穿过
+\(L(1+s,\pi)^{-1}\) 的 poles，也就是 \(L(1+s,\pi)\) 的 zeros。
+现有逐 form zero-free region 不能一致提供所需固定幂。故 CF19.35
+只能把剩余对象识别为一个**谱平均中的 reciprocal standard-
+\(L\) mollifier**；不能把点态 contour shift 当成 varying-level saving。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
@@ -1858,8 +1971,11 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
 4. CF6 给出不允许静默丢项的 master-tag contract；只有 adapter 已验证
    的行才能进入 expanded 分支，其余必须留在 native complement。
    因此本稿不把 CF6.2 对全部原行的等同性列为已证；
-5. CF7A：从 oldspace Gram 定义重证 exact-shell local kernel、
-   \(A^{-1/2}\) half-root 及其与 harmonic/progression 权不重复；
+5. CF7A：从 oldspace Gram 定义重证 exact-shell local kernel；CF7.9--
+   CF7.10 只把 \(A^{-1/2}\) half-root 证明为显式 valuation-averaged
+   projective mass，并核对它没有与 harmonic/progression 权重复。
+   把这份纯 valuation mass 迁移为实际 coefficient/Bessel/complete-shift
+   算子界仍是 CF19.D/CF19.L 的开放 adapter；
 6. CF8.1--CF8.3：输出修正到全高度余量的显式接口义务，而非已证
    height reassembly；
 7. CF11.1--CF11.3：保留两侧角色与共同 tags 的 exact zero-alias
@@ -1910,7 +2026,14 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     支付，后者精确成为 reciprocal Hecke--Möbius 零列。补块估计仍须
     证明实际 nonlocal columns 满足 CF19.29 的共同输入预算；零列的
     共同全谱估计也未证明。CF19.8 仍须对实际 CF6.2 tags 完成逐行
-    映射或独立支付。
+    映射或独立支付。CF19.31--CF19.33 恢复 ambient kernel 后把零列
+    展成仅含正奇 local valuation 的 Hecke shifts，证明每个有限截断
+    在 \((A_{00},kn)=1\) 时没有 primitive diagonal；共同 Bessel test
+    下的无限极限、off-diagonal、principal 与 axis 仍开放。
+    CF19.34--CF19.35 又把同一零列精确识别为
+    \(L^{(M)}(1+s,\pi)^{-1}\) 乘一个在 \(\Re s>-1/2\) 绝对收敛的
+    Euler product；它同时说明逐 form 移线会重新遇到未知 zeros，不能
+    代替所需 joint spectral estimate。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
