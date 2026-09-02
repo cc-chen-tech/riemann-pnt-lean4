@@ -14,8 +14,11 @@ adapter 必须留在 native complement，不能因写入 contract 就算关闭�
 此外本文证明若干独立 supplier：exact zero-alias Fourier isometry、
 cross-prime contraction、短逆边实际 Riesz 平方能量、affine
 physical-shift 导数/尾引理，以及 actual-Riesz 四阶矩的共同 Hilbert
-列扩张。反向审计同时撤回一个错误推断：这些 norm-one/isometry
-supplier 本身不产生所需 \(P^{-1/12}\) centered contraction。
+列扩张；CF19B 还把经典 Andersen--Kıral level reciprocity 的三项
+prime completion 无损张量化到互素平方自由 levels，并证明该
+reciprocity 本身不含第二份 shell half-root。反向审计同时撤回一个
+错误推断：这些 norm-one/isometry supplier 本身不产生所需
+\(P^{-1/12}\) centered contraction。
 
 本文不证明这个共同输出的所需上界。最后剩下的命题准确等于 CF9.1，
 而不是一个较窄的 balanced fixed-level core。因而本文不证明高高度或
@@ -2234,6 +2237,217 @@ physical baseline 中没有这一项。CF19.45 只排除这种 naive common-LCM
 overprojector；它不排除一个真正的 signed level reciprocity 或直接
 rational-multiplier trace，而后两者正是仍应继续证明的路线。
 
+### CF19B. 真实 level reciprocity 的有限平方自由完成，以及它不提供的 half-root
+
+先把一个符号边界钉死。Hu--Petrow--Young 的 Theorem 1.8 是
+\(m_1m_2>0\) 的 generalized PBK。该文在 Theorem 1.8 后明确说明
+\(m_1m_2<0\) 的相对迹公式“expected”，但当时没有 relative-trace
+proof；其 (1.22)--(1.23) 版本在后文只是被 posited and assumed。
+因此 CF19.40--CF19.44 的 generalized local projector 目前只能直接
+用于同号行。经典 \(K_0(N)\) Kuznetsov 的异号版本当然存在，但不能
+据此把 HPY 的任意有限处 \(f\) 与 actual exact-shell projector 也
+自动升级成异号公式。这个差别正落在 QCT 的 opposite-sign/mixed 行，
+不是一个可由绝对值忽略的 Bessel 符号。
+
+另一方面，Andersen--Kıral 的
+[level reciprocity](https://arxiv.org/abs/1801.06089) 确实给出一个
+**已证明的经典全谱模板**，而且其 prime 假设中的有限局部完成可以
+扩到平方自由数。为避免把模板误称为 CF19.L，下面从其原公式重做这
+一步。
+
+固定 level-one holomorphic newform \(g\)（归一化 Hecke 系数记为
+\(\lambda_g\)，weight 为 \(\kappa\)）。以下始终假设
+\(\phi^{(j)}(0)=0\)（\(0\le j\le12\)），且某个 \(B>12\) 使
+\(\phi^{(j)}(x)\ll(1+x)^{-B}\)（\(0\le j\le12\)）；这正是该文
+Theorem 5.1 的 test class。对平方自由 \(N\)、\((r,N)=1\)，令
+\({\cal N}_g^+(r,N;s;\phi)\) 为 Andersen--Kıral (2.10)--(2.13)
+的三谱和，只把 prime twist 换成 \(\lambda_f(r)\)：
+
+* Maaß 项以 Fricke 特征值 \(\omega_f\)、\(\phi_+(t_f)\)、
+  \(\widetilde L(s,g\times f)^2\lambda_f(r)\) 加权；
+* holomorphic 项以 \(i^\ell\phi_h(\ell)\)、同一个 Fricke 权和同一个
+  raw \(\widetilde L^2\) 加权；
+* Eisenstein 项在所有 cusps 上积分，两个 raw Eisenstein
+  \(\widetilde L\) 因子分别取 \(it\) 与 \(-it\)，twist 是
+  \(\tau_{it}(r)\)。
+
+这里 raw \(\widetilde L\) 使用 Fourier coefficient \(\nu_f(n)\)，而
+不是只对 newform 写 \(\nu_f(1)L(s,g\times f)\)；这正是 oldforms 已
+包括在同一迹公式中的归一化。这个 moment 是带 Fricke 符号的
+\(\widetilde L^2\)，不是非负的 \(|L|^2\)，也不是任意 Hilbert 系数列。
+
+若 \(p\nmid rN\)，在这些 moment 的有限线性空间上定义
+
+\[
+ \begin{aligned}
+ ({\mathscr C}^{(s)}_p{\cal N})(r,N)
+ :={}&(1-p^{-4s}){\cal N}(pr,N)\\
+ &-2\lambda_g(p)p^{-s}(1-p^{-2s}){\cal N}(r,N)
+   +p^{-1/2}{\cal N}(r,pN).
+ \end{aligned}                                           \tag{CF19.46}
+\]
+
+不同 prime 的 \(\mathscr C_p^{(s)}\) 交换，因为三种操作只在该 prime
+上分别选择 twist、neutral 或 level 状态。于是对
+\(A\) squarefree、\((A,N)=1\)，可无歧义地置
+
+\[
+ {\cal M}_g^+(A,N;s;\phi)
+ :=\left(\prod_{p\mid A}{\mathscr C}^{(s)}_p\right)
+       {\cal N}_g^+(1,N;s;\phi).                         \tag{CF19.47}
+\]
+
+这不是形式猜测。在 \(\Re s>5/4\) 的绝对收敛域，先用 \(0\infty\)
+Kuznetsov 打开两个 raw Dirichlet series。\(A=1\) 时得到
+
+\[
+ {\cal N}_g^+(1,N;s;\phi)=\zeta_N(2s)^2
+                 {\cal S}_g^+(1,N;s;\phi),
+\]
+
+其中
+
+\[
+ {\cal S}_g^+(A,N;s;\phi)
+ =\sum_{m,n\ge1}{\lambda_g(m)\lambda_g(n)\over(mn)^s}
+  \sum_{(c,AN)=1}{S(m\overline N,nA;c)\over c\sqrt N}
+  \phi\!\left({4\pi\sqrt{mnA}\over c\sqrt N}\right). \tag{CF19.48}
+\]
+
+设已处理互素的 \(D\mid A\)，再取 \(p\mid A/D\)。这里不能把裸的
+\(\lambda_f(D)\) 在应用 trace formula 时冒充一个无关 scalar；正确的
+归纳对象是已经完成的 \(\prod_{\ell\mid D}\mathscr C_\ell^{(s)}\)。
+先把这个有限乘积与 \(\mathscr C_p^{(s)}\) 全部展开，再打开两个 raw
+Dirichlet series。不同 prime 的 Hecke relations 交换。对新 prime
+\(p\)，此前所有 \(D\)-状态的 indices 与 levels 都是 \(p\)-units，
+所以 Andersen--Kıral Lemma 4.1 与 Proposition 4.2 的
+\(p\)-adic 分割逐项不变；其 (4.11)--(4.13) 分别处理
+\(p\Vert c\)、\(p^2\mid c\) 与同时除去两端的情形。把三个分支与已经
+完成的 \(D\)-组合重新合起，恰产生 CF19.46，并把 geometric modulus
+条件从 \((c,DN)=1\) 改成 \((c,DpN)=1\)、第二 Kloosterman index 从
+\(nD\) 改成 \(nDp\)，同时把 \(\zeta_{DN}\) 的 local factor 改成
+\(\zeta_{DpN}\)。所以对 \(\omega(A)\) 归纳得到
+
+\[
+ \boxed{\quad
+ {\cal M}_g^+(A,N;s;\phi)
+   =\zeta_{AN}(2s)^2{\cal S}_g^+(A,N;s;\phi)
+ \quad}                                                   \tag{CF19.49}
+\]
+
+于 \(\Re s>5/4\)。归纳每一步只重排绝对收敛级数，且不同 prime 的
+valuation 操作交换，故没有隐藏 Fubini 或 prime-order 选择。
+
+同一 geometric 对象也有真正的 two-sided reciprocity。Andersen--
+Kıral Theorem 5.1 的证明把内和写成
+\(D_g(\overline N,A,c;s+u/2)\)，只使用
+\((A,N)=(AN,c)=1\) 以取得逆元；其 additive-twist functional
+equation 并不使用 \(A,N\) 为 prime。因此同一 Mellin contour 计算给
+
+\[
+ \sqrt N\,{\cal S}_g^+(A,N;s;\phi)
+ =\left({A\over N}\right)^{2s-1}
+   \sqrt A\,{\cal S}_g^+(N,A;s;\Phi_{\kappa,s}),       \tag{CF19.50}
+\]
+
+其中 \(\Phi_{\kappa,s}\) **正是**该文 (5.2) 的 gamma-ratio Mellin
+transform；它不是可逐 box 重新选择的任意 majorant。先在绝对收敛域
+证明 CF19.49--CF19.50。对每个固定 \(A,N\)，CF19.52 只含有限个
+固定 levels \(Nw\)；该文对 raw Rankin--Selberg \(L\)-functions、
+rapid Bessel transforms 与全部 cusps 的 continuation 可逐个应用，
+再由恒等定理把 CF19.49--CF19.50 延到 \(s=1/2\)。这里没有声称这些
+continuation bounds 对变化的 \(A,N\) 一致；所得只是每个有限
+\((A,N)\) 的精确恒等式。于是对互素 squarefree \(A,N\)
+
+\[
+ \boxed{\quad
+ \sqrt N\,{\cal M}_g^+(A,N;\phi)
+   =\sqrt A\,{\cal M}_g^+(N,A;\Phi).
+ \quad}                                                   \tag{CF19.51}
+\]
+
+所以 prime--prime reciprocity 的**局部完成**并不会因平方自由
+tensorization 自动产生指数损失。确切地，把 \(A=uvw\) 分成两两互素
+的 twist、neutral、level 三种 prime 状态，CF19.47 展开为
+
+\[
+ \begin{aligned}
+ {\cal M}_g^+(A,N;s;\phi)
+ =\sum_{uvw=A}\;&
+  \prod_{p\mid u}(1-p^{-4s})
+  \prod_{p\mid v}\{-2\lambda_g(p)p^{-s}(1-p^{-2s})\}
+  w^{-1/2}
+  {\cal N}_g^+(u,Nw;s;\phi).
+ \end{aligned}                                           \tag{CF19.52}
+\]
+
+在 \(s=1/2\) 时，Deligne 的 \(|\lambda_g(p)|\le2\) 使一个 prime 的
+绝对系数质量至多
+
+\[
+ (1-p^{-2})+4p^{-1/2}(1-p^{-1})+p^{-1/2}
+ \le1+5p^{-1/2}.
+\]
+
+若所有未冻结 prime 都满足 \(p\ge Z>1\)，则
+
+\[
+ \sum_{uvw=A}|c(u,v,w)|
+ \le\exp\!\left(5\sum_{p\mid A}p^{-1/2}\right)
+ \le A^{5/(\sqrt Z\log Z)}.                              \tag{CF19.53}
+\]
+
+给定 \(\varepsilon>0\)，先冻结只依赖 \(\varepsilon\) 的有限个小
+primes，使 \(5/(\sqrt Z\log Z)\le\varepsilon\)，便只付
+\(A^\varepsilon\)。这给出了 composite local completion 的真实有限
+系数账，而不是把 \(3^{\omega(A)}\) 粗估成固定幂。
+
+但 CF19.51 **没有**提供 shell half-root。CF19.52 中所有 prime 都取
+twist 状态的项，其系数为
+
+\[
+ \prod_{p\mid A}(1-p^{-2})\ge\prod_p(1-p^{-2})
+ ={1\over\zeta(2)}>0.                                   \tag{CF19.54}
+\]
+
+只有所有 prime 都取 level 状态的单独一项带 \(A^{-1/2}\)；它不能代表
+整个完成式。在 \(A\asymp N\) 时 CF19.51 的外比例
+\(\sqrt{A/N}\) 也是常数量级。因此任何用于 actual QCT 的
+\(A^{-1/2}\) 仍只能来自 CF7.9--CF7.10 已支付一次的 shell coefficient
+norm，不能再从 level reciprocity、Fricke harmonic weight 或
+CF19.52 的某个子项复制。这也严格否定了把 §420 候选中的
+“互反外因子”直接记成全谱 \(A^{-1/2}\) saving。
+
+CF19.46--CF19.54 同时把可复用范围划得很窄：它们完整包含经典
+Maaß、holomorphic、Eisenstein、oldforms 与 level-raised correction，
+却仍不闭合 CF19.L/CF19.C，原因逐项如下。
+
+1. \(+\) moment 的两个 Dirichlet columns 都是同一 fixed \(g\) 的
+   \(\lambda_g(n)n^{-s}\)，且谱侧是 raw \(\widetilde L^2\)。actual
+   \(b^\sharp\)、complete-shift tags 与任意 Hilbert columns 并不满足
+   这个特殊结构。
+2. CF19.50 把一个共同 \(\phi\) 变成一个共同 \(\Phi\)。尚未证明原
+   AFE/Bessel/physical-shift 权恰为这对变换，也未证明 CF19.D 的
+   seminorm 能控制变换后所有 boxes；而 \(\phi_+,\Phi_+\) 本身并非
+   CF19.40 的非负 majorants，若无另一个共同 domination 证明，不能
+   在 reciprocity 后直接丢绝对值再调用 CF19.41。
+3. 异号经典 Kuznetsov 改用 \(K\)-Bessel transform，Maaß Fourier
+   coefficient 还带 parity，holomorphic 项消失；HPY 的 generalized
+   opposite-sign local-projector 版本又正是尚未证明的假设。因此不能
+   把 CF19.51 的三谱 \(+\) moment 原样贴到负号 QCT row。
+4. CF19.52 的 level-raised 项虽以 raw Fourier coefficients 正确包含
+   classical oldforms，却没有证明其局部三项就是 CF7.5 的
+   valuation-one \(E_p(a,b)\)，更没有包含 CF10.1 的共同
+   principal/axis/residue/finite-projection 四行。
+
+故这里得到的是一个新的**无条件平方自由 level-reciprocity 子定理**和
+一个严格的 no-double-counting 结论。要把它接入 CF9.1，下一条必须是
+实际 coefficient identity：在同一个 finite tag 与同一个 Bessel
+test 下，把 CF6.2 的指定同号行逐字写成 CF19.52，并对异号行另给已证
+的 generalized trace；或者直接为 actual Hilbert columns 重证
+CF19.49 的 local sieving induction。未完成这一步时，CF19.51 不能
+被称为 varying-level QCT bound。
+
 这三条是比“另证 continuous spectrum”更准确的剩余 adapter。HPY
 全谱正性已经支付 Maaß--Eisenstein 的抽象 scalar inequality，经典
 投影也精确恢复 CF7.1；但本文尚未证明实际 QCT 同时满足上述三条，
@@ -2362,6 +2576,18 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     已成为真正共同 Hecke 列时，把原有限 Möbius 零列无损压成长度
     \(2XN\)、系数平方质量 \(X^{-1+o(1)}\) 的单一 Hilbert 值多项式；
     它没有证明该共同列条件或原 Bessel test 下的标量全谱大筛。
+    CF19.40--CF19.45 从 HPY 同号公式抽出正的 Maaß--Eisenstein
+    scalar large sieve 并对齐 classical exponent-one projector，
+    同时证明 naive common-LCM projector 的 Plancherel 成本；HPY 的
+    generalized opposite-sign 公式在原文中仍只是被假设。
+    CF19.46--CF19.54 则从 Andersen--Kıral 的局部三项重新归纳出互素
+    squarefree--squarefree 的经典同号全谱 reciprocity：有限完成的
+    \(3^{\omega(A)}\) 项在冻结小 primes 后只付 \(A^\varepsilon\)，
+    但 all-twist 项系数有绝对正常数下界，所以 reciprocity 本身绝不
+    提供第二份 \(A^{-1/2}\)。这个子定理仍限于 fixed-\(g\) raw
+    \(\widetilde L^2\)、共同 gamma-ratio Bessel transform；actual
+    \(b^\sharp\)、generalized 异号 projector 与完整四行共同投影尚未
+    映射。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
