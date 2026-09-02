@@ -385,8 +385,12 @@ varying-level 外和。
 \[
  P_1(0,0)=\frac1{(p+1)\rho_p}\asymp p^{-1}.              \tag{CF7.1}
 \]
-exact-shell ratio 是相对于 CF7.1 定义的。unshifted ratio
-\(D_p(0,0)/P_1(0,0)=1-1/p\) 没有额外 saving；shifted \(b=0\) cell
+exact-shell ratio 是相对于 CF7.1 定义的。由下面 CF7.2--CF7.3 的
+完整 \(C_2\) 向量，unshifted ratio 精确为
+\[
+ {D_p(0,0)\over P_1(0,0)}=1-{p\over p^2-1};
+\]
+它仍为 \(O(1)\) 且没有额外 saving。shifted \(b=0\) cell
 给 \(O(p^{-1+\theta})\)；\(b=1\) AFE cell 的 ratio 是 \(O(1)\)，
 但系数能量密度为 \(p^{-1}\)，故 Hilbert norm 为 \(p^{-1/2}\)。
 
@@ -427,8 +431,16 @@ level exponents one、two 的 ambient kernels 及 valuation-one 差核是
 \[
  P_1(0,0)={1\over(p+1)\rho_p},\qquad
  D_p(a,0)={\lambda_a-p\lambda_1\lambda_{a-1}/(p+1)
-                  \over(p+1)\rho_p}.                   \tag{CF7.4}
+                  \over(p+1)\rho_p}\quad(a\ge1).       \tag{CF7.4}
 \]
+这里 \(a\ge1\) 是必要条件，也是 corrected lift 的实际范围：
+第一 Fourier index 含 shell prime。精确地，CF7.2--CF7.3 还给出
+\[
+ P_2(a,0)=0\quad(a\ge1),\qquad
+ {P_2(0,0)\over P_1(0,0)}={p\over p^2-1}.              \tag{CF7.4a}
+\]
+因此 CF7.4 不可对 \(a=0\) 使用；后者正是上面 unshifted
+ratio 的来源。
 corrected squarefree lift 的 local factor 是
 \(\mu(p)/c_p(n)\)：除去 CF3.2 已保留的共同 Möbius 符号后，
 \(b=v_p(n)=0\) 时为一，\(b\ge1\) 时为 \(-1/(p-1)\)。故 normalized
