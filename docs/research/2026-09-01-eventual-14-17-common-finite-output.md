@@ -2,11 +2,14 @@
 
 ## 结论边界
 
-本文首先关闭一个代数层问题：把实际零点自适应系数、唯一共同投影、
-quotient 两端点、Poisson 零模与轴、Maaß/holomorphic/Eisenstein 全谱、
-exact valuation-one shell、连续谱的 PP/PQ/QP/QQ 四行及局部余项放进
-**同一个有限 Hermitian 输出**。所有操作先在有限截断上进行；没有先对
-level、box、谱型或端点分别取绝对值。
+本文首先构造一个共同的有限 Hermitian 输出 contract：它同时为实际
+零点自适应系数、唯一共同投影、quotient 两端点、Poisson 零模与轴、
+Maaß/holomorphic/Eisenstein 全谱、exact valuation-one shell、连续谱
+PP/PQ/QP/QQ 四行及局部余项预留坐标。CF0A、CF1 与 CF3 的有限
+恒等式在本文自含证明；尚未从公开原 atom 逐项验证的全谱/physical
+adapter 必须留在 native complement，不能因写入 contract 就算关闭。
+所有操作先在有限截断上进行；没有先对 level、box、谱型或端点分别取
+绝对值。
 
 此外本文证明若干独立 supplier：exact zero-alias Fourier isometry、
 cross-prime contraction、短逆边实际 Riesz 平方能量、affine
@@ -14,7 +17,7 @@ physical-shift 导数/尾引理，以及 actual-Riesz 四阶矩的共同 Hilbert
 列扩张。反向审计同时撤回一个错误推断：这些 norm-one/isometry
 supplier 本身不产生所需 \(P^{-1/12}\) centered contraction。
 
-本文不证明这个共同输出的所需上界。最后剩下的命题准确等于 HR16，
+本文不证明这个共同输出的所需上界。最后剩下的命题准确等于 CF9.1，
 而不是一个较窄的 balanced fixed-level core。因而本文不证明高高度或
 全高度 \(14/17\) 零点区域，也不进入 Lean。
 
@@ -31,37 +34,91 @@ supplier 本身不产生所需 \(P^{-1/12}\) centered contraction。
    \qquad (A,s)=1, A\ \text{squarefree}.
    \tag{CF0.1}
    \]
-3. 实际输出系数 \(b^\sharp\) 与一次投影修正采用 MC1--MC3；输出到
-   全高度余量采用 HR1--HR16。冻结文件来源分别为
-   `e2f359bf54c8d98f7becdaa08833a1c92d090dcc` 的
-   `2026-08-31-projected-coefficient-common-mellin-columns.md`、
-   `b7fe1134d855120b43494f9cc2b8116fd589abe3` 的
-   `2026-08-31-projected-complete-height-reassembly.md`，以及
-   `9cf69d59a03bcdfa630612fcbae662376a11f83f` 的
-   `2026-08-31-common-projection-finite-coefficient-correction.md`。
-   CT1--CT9 取 `0c9f90f969f6e248a44b7bb26776813939af2c39` 的
-   `2026-08-30-mwkf-common-ttstar.md`。
-4. 谱局部行采用 AFE/Bessel 延续稿的 (446.1)--(446.4)、
-   (463.2)、(465.1)--(465.6)、(472.1)--(472.8)、
-   (475.1)--(475.3)、(477.1)--(477.5) 与 (488.1)--(488.5)。
-   CF344、CF386--CF387、CF395--CF405 的冻结母稿取提交
-   `1810d3fbe2a3bd7dccb4da6d375b4a16a58747fd`；本稿没有读取该树中
-   与这些节无关的 dirty 修订。原核 KW1--KW7 取独立提交
-   `dc0fbb93fcb4a6eb18943fe0fc11d5f1c74db51b`。
+3. 共同 TT* 的公开来源为已经进入本 PR base 的提交
+   `0c9f90f969f6e248a44b7bb26776813939af2c39`。本稿所用的一次有限
+   投影修正不再引用不可达的研究提交；它在 CF0A 中从定义重证。
+4. exact-shell 的全部局部公式及范数也不再把本地长母稿当作来源；
+   CF7A 从旧空间 Gram 定义开始重证所需结论。后文括号中的
+   (344)、(386)--(387)、(446)、(465)、(472)、(475)、(477)、(488)
+   仅是推导过程中的历史交叉索引：相应公式若未在本文显示写出，便只
+   属于待验证的 physical adapter，不作为本文已证结论的前提。
+
+因此 fresh checkout 的规范来源只有上述两个已进入 base 的提交和本
+文件本身。早期本地研究 SHA 不构成可复核证明来源，也不用于
+`source gate`。特别地，完整 height reassembly、实际共同 Mellin 列与
+原核到 CF19.D 的坐标迁移在本文中保持 open contract。
 
 有两个不能混合的 Möbius 记号约定。
 
 - native 行直接携带
   \(b^\sharp_{q_0r}\overline{b^\sharp_{q_0s}}\)，不得再乘一个
   “原 mollifier” Möbius 符号；
-- 在平方自由 canonical 子域使用 MC16 时，先定义
+- 在平方自由 canonical 子域使用本稿的 Möbius 重写时，先定义
   \(B(d)=\mu(d)b^\sharp_d\)，再且只再出现一次
   \(\mu(r)\mu(s)B(q_0r)\overline{B(q_0s)}\)。
 
-下面 (475.3) 中的 \(\mu(A)\mu(B)\) 是 quotient 展开的符号，
+下面 CF3.2 中的 \(\mu(A)\mu(B)\) 是 quotient 展开的符号，
 不是第三份 mollifier 符号。exact shell 内的
-\(\mu(A)/c_A(h\delta)\) 已包含在 (472.2) 中，也不再作为一个独立
-level 系数复制。
+\(\mu(A)/c_A(h\delta)\) 只进入 CF7.5 的归一化局部核一次，也不再
+作为一个独立 level 系数复制。
+
+### CF0A. 一次有限投影修正的自含构造
+
+固定有限可见整数上界 \(J\)、\(N>1\)、窗口 \(Xy<n\le Xy+H\)，并
+设 ambient coefficient support 至少包含 \([1,2J]\)，原有限系数
+\(b\) 满足 \(\sum_db_d/d=0\)。令
+\(B_i\) 是同一加权 \(L^2\) 空间中的有限低响应列，\(G\) 是其 Gram
+矩阵，\(z=G^{-1}v\) 是原输出 \(F_b\) 的唯一正交投影系数；空表时
+下列和均为空。任选固定 cutoff \(\chi\)，使它在全部可见窗口上为一，
+并对 \(1\le n\le J\) 置（其余 \(D_n=0\)）
+\[
+ D_n={\chi(n/X)\over H}\sum_i z_i u_i(n/X),\qquad
+ A_i(y)={1\over H}\sum_{Xy<n\le Xy+H}\chi(n/X)u_i(n/X).
+                                                               \tag{CF0A.1}
+\]
+于是有限换序精确给
+\[
+             \sum_{Xy<n\le Xy+H}D_n=\sum_i z_iA_i(y).  \tag{CF0A.2}
+\]
+先在 \(d\le J\) 作一次有限 Möbius 反演：
+\[
+ e_d^{(0)}={1\over\log N}\sum_{a\mid d}\mu(d/a)D_a,
+ \qquad s_J=\sum_{d\le J}{e_d^{(0)}\over d},\qquad
+ c_J=\sum_{J<d\le2J}{1\over d}.
+\]
+因 \(J\ge1\)，有 \(c_J>0\)。定义
+\[
+ e_d=\begin{cases}
+ e_d^{(0)},&d\le J,\\
+ -s_J/c_J,&J<d\le2J,\\
+ 0,&d>2J,
+ \end{cases}
+ \qquad b_d^\sharp=b_d-e_d.                             \tag{CF0A.3}
+\]
+则直接有
+\[
+ \sum_d{e_d\over d}=0,
+ \qquad
+ (\log N)\sum_{d\mid n}e_d=D_n\quad(1\le n\le J).     \tag{CF0A.4}
+\]
+第二式包含 \(n=1\)：展开后内和是
+\(\sum_{r\mid n/a}\mu(r)={\bf1}_{a=n}\)，而补偿壳严格大于 \(J\)，
+不会整除可见 \(n\)。因此 \(b^\sharp\) 仍有 reciprocal mean zero，且
+若
+\[
+ F_\sharp(y)=(\log N)\sum_{Xy<n\le Xy+H}
+                              \sum_{d\mid n}b_d^\sharp,
+ \qquad \delta_i=A_i-B_i,
+\]
+则
+\[
+ F_\sharp=F_b-\sum_i z_iA_i,
+ \qquad
+ (I-\Pi)F_b=F_\sharp+\sum_i z_i\delta_i.               \tag{CF0A.5}
+\]
+这证明后文所用的唯一共同投影恒等式。它不证明
+\(A_i-B_i\) 的解析小量估计，也不证明 \(b^\sharp\) 的共同 Mellin
+分解；这两项必须在应用 CF8--CF9 时另外供应。
 
 ## CF1. 原共同投影等于一个增广有限 Gram 形式
 
@@ -78,7 +135,7 @@ level 系数复制。
  c_\sharp(n)=(\log N)\sum_{d\mid n}b^\sharp_d.
  \tag{CF1.1}
 \]
-采用 PCF/MC 的同一 \(z=G^{-1}v\)、离散低响应 \(A_i\) 与连续低响应
+采用 CF0A 的同一 \(z=G^{-1}v\)、离散低响应 \(A_i\) 与连续低响应
 \(B_i\)。记
 \[
  \delta_i=A_i-B_i,
@@ -88,7 +145,7 @@ level 系数复制。
  \Delta_z=\sum_i z_i\delta_i.
  \tag{CF1.2}
 \]
-PCF10/MC2 逐点给出精确等式
+CF0A.5 逐点给出精确等式
 \[
              (I-\Pi_P)F_b=F_\sharp+\Delta_z.             \tag{CF1.3}
 \]
@@ -116,10 +173,10 @@ PCF10/MC2 逐点给出精确等式
 投影，也不能在每个 QCT box 中重新计算。
 
 证明只用了有限和的线性与 Gram 展开。特别地，若直接消去
-\(b^\sharp\)，(CF1.5) 退回 (488.2) 的
+\(b^\sharp\)，(CF1.5) 退回 Schur complement
 \(K-q^*G^{-1}q\)；反之，(CF1.5) 是把这个 dense correction 送入
 一次有限系数修正后的精确增广形式，不遗漏长距离 cross terms。
-PCF11--PCF16 控制 \(\Delta_z\)，但该控制不是 (CF1.5) 的前提。
+\(\Delta_z\) 的解析控制不是 (CF1.5) 的前提，也未由 CF0A 证明。
 
 ## CF2. 物理层只展开左上短移位块，外权只出现一次
 
@@ -130,23 +187,24 @@ CT/AFE 把 (CF1.5) 的左上块送到临界线 moment；它给的是上界传输
 \[
        b^\sharp_{q_0r}\overline{b^\sharp_{q_0s}}.        \tag{CF2.1}
 \]
-在允许 MC16 的平方自由行，(CF2.1) 只是按 CF0 的第二约定重写，
+在采用 CF0 的平方自由 Möbius 约定时，(CF2.1) 只是记号重写，
 不是更换系数。
 
 每个 atom 的字面标量为
 \[
                  \frac{2T}{q_0RS}.                       \tag{CF2.2}
 \]
-quotient Poisson 后 (472.2) 的 \(R\) 在 native trace 外。故任何谱
-估计的物理恢复顺序必须是
+本文把 quotient Poisson 的 Jacobian \(R\) 定义在 native trace 外。
+故任何谱估计的物理恢复顺序必须是
 \[
  \frac{2T}{q_0RS}\ \times R\ \times
        (\text{frequency sum})\ \times(\text{one native trace}).
  \tag{CF2.3}
 \]
 不能再从 Blomer--Milićević 的 \(C^{-1/2}\) convention 引入一个
-\(\sqrt{AS}\)：(472.4)--(472.6) 已说明该量与 test 中的
-\((AS)^{-1/2}\) 恰好抵消。
+\(\sqrt{AS}\)：在 CF2.3 的 normalized trace 定义中，该量已经与
+test 的 \((AS)^{-1/2}\) 配对。把此 normalized trace 与公开原 atom
+逐项相等仍属于 CF19.D 的 physical adapter，而不是这里新增的估计。
 
 ## CF3. quotient 两端点必须先组成同一个四行列
 
@@ -155,7 +213,8 @@ quotient Poisson 后 (472.2) 的 \(R\) 在 native trace 外。故任何谱
  \gamma_A={\bf1}_{(A,q_0)=1},\qquad
  \gamma_B={\bf1}_{(B,q_0)=1}.
 \]
-对任意尚未拆开的物理权 \(\Phi\)，(475.2) 给出
+对任意尚未拆开的物理权 \(\Phi\)，把 quotient 两端点的有限
+inclusion--exclusion 定义为
 \[
  \mathcal U_{A,B}[\Phi]
  =\mathcal B_{A,B}[\Phi]
@@ -168,7 +227,7 @@ quotient Poisson 后 (472.2) 的 \(R\) 在 native trace 外。故任何谱
  \sum_{(A,B)=1}\mu(A)\mu(B)\mathcal U_{A,B}[\Phi].      \tag{CF3.2}
 \]
 单位入口 \(r=1\) 或 \(s=1\) 另作同一 master row 的 unit tags，
-不塞入 (475.1)。
+不塞入 CF3.1 的 expanded--expanded 行。
 
 固定 \(r,s\) 把所有 divisor labels 求完时，CF3.1 的前三行各自为零，
 最后一行恢复原系数。这证明 CF3.1 不是 contraction；它是端点选择器。
@@ -177,21 +236,22 @@ quotient Poisson 后 (472.2) 的 \(R\) 在 native trace 外。故任何谱
 
 ## CF4. 非零 quotient frequency 的全谱共同列
 
-对 \(k\ne0\)，先使用 corrected lift (CF0.1) 与 exact-shell
+本节固定**待核对的全谱 adapter contract**，不把不可达母稿当作
+证明。对 \(k\ne0\)，先使用 corrected lift (CF0.1) 与 exact-shell
 resummation。固定所有局部 Hecke 截断 \(\boldsymbol J\)，且
 \(J_p\ge(a_p+b_p)/2\)。对 Maaß 两 parity、holomorphic 与
 Eisenstein 分别采用其真实 Bessel/Petersson test；holomorphic 行不把
 \(t=i/2\) 插入 Maaß multiplier。把两 Maaß parity 在使用同号与异号
 Kuznetsov 前写成 average/difference。
 
-对每个这样的共同 test，(446.4) 是有限核等式
+对每个这样的共同 test，所需有限核等式是
 \[
  \mathcal T^h_{A,B,z,d}
      =\mathfrak D^h_{A,B,z,d}
        +\mathcal O^h_{\boldsymbol J;A,B,z,d}
        +\mathcal R^h_{\boldsymbol J;A,B,z,d}.             \tag{CF4.1}
 \]
-其对角恰为
+其对角必须逐 normalization 核对为
 \[
  \delta_{m,n}\mathfrak D[h]
  \prod_{p\mid A}\{-(1-t_p)\tau_p(a_p+b_p)\}
@@ -202,13 +262,14 @@ Kuznetsov 前写成 average/difference。
 \(\mathcal O\)，含任一 exact local remainder 的项全留在
 \(\mathcal R\)。
 
-在 trivial-character exact shell 的连续谱中，非平凡 primitive
+contract 的连续谱部分还要求：在 trivial-character exact shell 中，
+非平凡 primitive
 Eisenstein 数据因第一 Fourier index 含 shell prime 而逐系数为零；
 剩下 level-one Eisenstein，native measure 是
 \[
        \frac{dt}{\zeta(1+2it)\zeta(1-2it)}.              \tag{CF4.3}
 \]
-对其两个原 shift 变量，(465.3) 在系数层逐项给
+对其两个原 shift 变量，必须在系数层逐项得到
 \[
  \sum_{h,\delta}\mathcal K_{AB,k}(h\delta;t)W_1(h/Y_1)W_2(\delta/Y_2)
  =\lambda_t(m_0)\sum_{e,f\mid AB}C_{e,f}(t)
@@ -221,18 +282,21 @@ Eisenstein 数据因第一 Fourier index 含 shell prime 而逐系数为零；
 \[
        PP+P(-P)+(-P)P+(-P)(-P)=0                         \tag{CF4.5}
 \]
-逐 \(d\) 精确抵消。只延长 PP 不合法。CF4.4--CF4.5 把连续谱
-residues 放回同一原系数行，但不声称它已与物理 principal/axis 抵消。
+逐 \(d\) 精确抵消；这一抵消本身是有限代数，且只延长 PP 不合法。
+但 CF4.1--CF4.4 与公开原 atom 的逐 normalization 等同性尚未在本稿
+自含证明，因而属于 CF19.D/CF19.L 的来源 adapter，而不是已关闭的
+全谱估计。即使该 adapter 完成，连续谱 residues 与物理
+principal/axis 的共同抵消仍须另证。
 
 ## CF5. quotient 零模与双 Poisson 轴是不同的共同坐标
 
-quotient Poisson 的 \(k=0\) 行是 (472.8)，即
+本文所需 quotient Poisson 的 \(k=0\) contract 行定义为
 \[
  Z^{(0)}_{A,B}=\frac{\mu(A)\mu(B)R}{A}\widehat f(0)
  \sum_{\substack{B\mid s\\(A,s)=1}}\frac{g(s/S)}s
  \sum_{h,\delta}v(h/H_1)w(\delta/H_2)c_s(h\delta).       \tag{CF5.1}
 \]
-对每个 prime power modulus，(477.1) 的有限二维差分核给
+对每个 prime power modulus，所需有限二维差分核写成
 \[
  c_s(h\delta)=
  \sum_{\substack{d\mid s,d\mid h\\e\mid s,e\mid\delta}}b_s(d,e),
@@ -241,18 +305,18 @@ quotient Poisson 的 \(k=0\) 行是 (472.8)，即
  \quad
  \sum_{d,e\mid s}\frac{|b_s(d,e)|}{de}\le\tau(s)^2.   \tag{CF5.2}
 \]
-这保留全部 mixed valuation splits。短边反例 (478.5) 表明
-CF5.1 不能换成 complete-residue PP average。
+CF5.2 是必须从每个 prime-power Ramanujan kernel 逐项验证的 contract；
+在完成该验证前，CF5.1 不能换成 complete-residue PP average。
 
-双 Poisson 的 nonunit axes 则使用 (452.1)：两条 sampling line 与
+双 Poisson 的 nonunit axes contract 则含两条 sampling line 与
 一次负的 double integral，其系数分别为 \(1/C,1/C,-g_C/C^2\)。
 当 \(g_C\ne1\) 时不可把它们写成同一系数。它们与 CF5.1 是不同
 tags；“都是 principal-looking”不构成等同或抵消证明。
 
 ## CF6. 一个不重不漏的 master tag 集
 
-在所有有限截断固定后，先按已经证明的 adapter 作一个互斥分割：
-\(\mathscr P_{\rm exp}\) 是能合法使用 MC16/CF3/CF4 的指定平方自由
+在所有有限截断固定后，先按**已经逐项验证的** adapter 作一个互斥
+分割：\(\mathscr P_{\rm exp}\) 是能合法使用 CF0/CF3/CF4 的指定平方自由
 exact-shell 行，\(\mathscr P_{\rm nat}\) 是其余 native complement。
 这个分割在原有限整数支撑上逐项决定；不以估计大小或事后 cancellation
 决定。令 \(\Omega_{T,\sharp}\) 为下列互斥 tags：
@@ -279,8 +343,9 @@ exact-shell 行，\(\mathscr P_{\rm nat}\) 是其余 native complement。
 - \(\varpi\in\{PP,PQ,QP,QQ\}\) 只在 Eisenstein residue 行出现；
 - 含 local Hecke remainder 的 tag 与 polynomial tag 互斥。
 
-令 \(C_\omega\) 是从原有限和按上述恒等式逐次展开得到的系数。
-这一定义唯一地保留以下规则：实际 \(b^\sharp\) 对只出现一次；
+令 \(C_\omega\) 是从原有限和按上述**已验证**恒等式逐次展开得到的
+系数；尚未验证 CF4 adapter 的行必须留在 native complement。这一
+定义唯一地保留以下规则：实际 \(b^\sharp\) 对只出现一次；
 CF3.2 的 quotient Möbius 符号只出现一次；CF4.4 的
 \(C_{e,f}(t)\mu(d)\) 四行共用；(CF2.2) 在整个 atom 外只出现一次。
 
@@ -300,9 +365,11 @@ residue rows 与 local remainder；native complement 则原样保留尚无
 合法 adapter 的 non-squarefree、其他 character、nonflat、unequal-gcd
 或其他未展开行。这样完整性来自显式保留补集，不来自假想覆盖。
 
-CF6.2 的证明是有限恒等式的复合：先 CF3，再 quotient Poisson 与
-corrected lift，再 CF4/CF5，最后只在共同有限系数下求和。因此没有
-Fubini 问题。取 \(\boldsymbol J\to\infty\) 时只使用每个固定
+对已经进入 \(\mathscr P_{\rm exp}\) 的行，CF6.2 的证明是有限恒等式
+的复合：先 CF3，再 quotient Poisson 与 corrected lift，再 CF4/CF5，
+最后只在共同有限系数下求和。因此没有 Fubini 问题。本文尚未自含
+证明 CF4 与公开原 atom 的逐项 adapter，所以在当前可复核结论中这些
+候选行不得离开 native complement。取 \(\boldsymbol J\to\infty\) 时只使用每个固定
 \(A,B\) 已证明的 local remainder limit；取 Eisenstein \(d\) cutoff
 到无穷时必须把 CF4.5 四行一起取极限。本文不交换这些极限与全部
 varying-level 外和。
@@ -324,10 +391,121 @@ exact-shell ratio 是相对于 CF7.1 定义的。unshifted ratio
 \(p^{-1/2}\)。物理外权 CF2.2、Poisson 外因子 \(R\) 与该局部
 Hilbert norm 是三个不同来源，各只计一次。
 
+### CF7A. exact-shell 局部核与 half-root 的自含证明
+
+为使后面的 level 分割可由 fresh checkout 复核，这里从定义重证所需
+局部结论。令 \(p\) 是 trivial-central-character primitive datum 的
+unramified prime，
+\(\lambda_j=\lambda_\pi(p^j)\)，负指标取零，并使用
+\(\lambda_{j+1}=\lambda_1\lambda_j-\lambda_{j-1}\)。置
+\[
+ t_p={\lambda_1\over p+1},\qquad
+ \rho_p=1-pt_p^2,
+\]
+以及
+\[
+\begin{aligned}
+ C_0(j)&=\lambda_j,\\
+ C_1(j)&={\sqrt p\over\sqrt{\rho_p}}
+                 (\lambda_{j-1}-t_p\lambda_j),\\
+ C_2(j)&={p\lambda_{j-2}-\lambda_1\lambda_{j-1}+p^{-1}\lambda_j
+          \over\sqrt{\rho_p(1-p^{-2})}}.
+\end{aligned}                                             \tag{CF7.2}
+\]
+level exponents one、two 的 ambient kernels 及 valuation-one 差核是
+\[
+ P_1(a,b)={1\over p+1}\sum_{j=0}^1C_j(a)C_j(b),\qquad
+ P_2(a,b)={1\over p(p+1)}\sum_{j=0}^2C_j(a)C_j(b),
+ \qquad D_p=P_1-P_2.                                    \tag{CF7.3}
+\]
+直接代入 \(C_j(0)\) 得
+\[
+ P_1(0,0)={1\over(p+1)\rho_p},\qquad
+ D_p(a,0)={\lambda_a-p\lambda_1\lambda_{a-1}/(p+1)
+                  \over(p+1)\rho_p}.                   \tag{CF7.4}
+\]
+corrected squarefree lift 的 local factor 是
+\(\mu(p)/c_p(n)\)：除去 CF3.2 已保留的共同 Möbius 符号后，
+\(b=v_p(n)=0\) 时为一，\(b\ge1\) 时为 \(-1/(p-1)\)。故 normalized
+shell matrix 的**定义**是
+\[
+ E_p(a,b)=
+ \begin{cases}
+ D_p(a,0)/P_1(0,0),&b=0,\\
+ -D_p(a,b)/((p-1)P_1(0,0)),&b\ge1.
+ \end{cases}                                             \tag{CF7.5}
+\]
+特别地，由 CF7.4 与 Hecke recurrence，若 \(a=1+u\)，则
+\[
+ E_p(1,0)={\lambda_1\over p+1},\qquad
+ E_p(1+u,0)={\lambda_1\lambda_u\over p+1}-\lambda_{u-1}\qquad(u\ge1).
+                                                               \tag{CF7.6}
+\]
+
+现在只使用 Kim--Sarnak 的公开 unramified bound
+\(|\lambda_1|\le p^\theta+p^{-\theta}\)、
+\(|\lambda_j|\le(j+1)p^{\theta j}\)、\(\theta=7/64\)。它与
+CF7.2 逐项给出
+\[
+\begin{aligned}
+ |C_0(j)|&\ll(j+1)p^{\theta j},\\
+ |C_1(j)|&\ll(j+1)p^{1/2+\theta(j-1)},\\
+ |C_2(j)|&\ll(j+1)p^{1+\theta(j-2)},
+\end{aligned}
+\]
+其中 \(j=0,1\) 直接读 CF7.2；\(\rho_p\) 一致离零，因为
+\(pt_p^2\le p(p^\theta+p^{-\theta})^2/(p+1)^2<1\)。最后一个严格
+不等式等价于
+\((p-p^{2\theta})(p-p^{-2\theta})>0\)；该上界又趋零，故余下有限
+多个 prime 的最小间隙为正。代回 CF7.3--CF7.5
+得到
+\[
+ |E_p(1,0)|\ll p^{-1+\theta},\quad
+ |E_p(1+u,0)|\ll(u+2)^Cp^{\theta(u-1)},\qquad
+ |E_p(1+u,b)|\ll(u+b+2)^Cp^{\theta(u+b-1)} (b\ge1).
+                                                               \tag{CF7.7}
+\]
+最后令 \(b=r+s\)，并对固定充分小的 \(\eta>0\) 定义
+\[
+ {\cal N}_p(u)^2=\sum_{r,s\ge0}p^{-r-s+\eta(r+s)}
+                         |E_p(1+u,r+s)|^2.               \tag{CF7.8}
+\]
+每个 \(b\) 有 \(b+1\) 个有序分拆。因 \(2\theta<1\)，CF7.7 的
+两个几何级数给
+\[
+ {\cal N}_p(0)\ll_\eta p^{-1/2+\eta},\qquad
+ {\cal N}_p(u)\ll_\eta(u+2)^Cp^{\theta(u-1)+\eta u}\quad(u\ge1),
+\]
+从而 normalized \(k\)-progression mass 只使用一次时
+\[
+                    \sum_{u\ge0}p^{-u}{\cal N}_p(u)
+                    \ll_\eta p^{-1/2+2\eta}.            \tag{CF7.9}
+\]
+矩阵对 \((r,s)\) 的 rank 一致有界：Hecke recurrence 使每个
+\(\lambda_{r+s-j}\) 在非负区域是 rank 至多二的 Hankel matrix，
+\(b=0\) 的分段值只增加一个 rank-one boundary，CF7.3 也只增加固定
+多个 shifts。故 nuclear norm 至多固定 rank 平方根乘 CF7.8 的
+Hilbert--Schmidt norm。因此 CF7.9 是合法的
+\(\ell^1(k)\to\ell^2(h)\widehat\otimes\ell^2(\delta)\) nuclear norm，
+不是逐系数绝对值估计。若短区间含 \(d\) 的倍数，则
+\(d\le2Z\) 且其个数至多 \(Z/d+1\le3Z/d\)。分别对
+\(\prod p^u\)、\(\prod p^r\)、\(\prod p^s\) 在 \(k,h,\delta\) 三个
+坐标各使用一次此计数，费用是固定常数而不是逐 prime 常数；再以 CRT
+张量 CF7.9，便得到
+\[
+ \|\mathrm{HSL}(A)\|_{\ell^1(k)\to
+       \ell^2(h)\widehat\otimes\ell^2(\delta)}
+       \ll_\varepsilon A^{-1/2+\varepsilon}.            \tag{CF7.10}
+\]
+fixed local ranks 只给 \(C^{\omega(A)}=A^{o(1)}\)。连续谱必须先在
+ambient oldbasis 的内积恒等式中应用同一计算；CF7.10 不主张单个
+ramified Eisenstein oldvector 有逐系数除数界。
+
 ## CF8. 共同投影与 CF6.2 的精确接口
 
-CF1.5 的 \(F_\sharp\) 左上块由 CT9 送入同一个
-\(\mathfrak M_\sharp\)。HR14 在不改变 \(b^\sharp\) 的前提下给
+CF1.5 的 \(F_\sharp\) 左上块所需的 physical adapter 记为同一个
+\(\mathfrak M_\sharp\)。完整 height reassembly 必须在不改变
+\(b^\sharp\) 的前提下证明
 \[
  \mathfrak M_\sharp=\mathfrak R_\sharp(P)+\mathfrak A_\sharp(P),
  \qquad
@@ -346,13 +524,15 @@ bad-tag 子集的限制，包括 native complement；它不能逐 box 另作投�
 正负高度只把系数换成
 \(b^\sharp,\overline{b^\sharp}\)，核、低表与高度权保持共同。
 
-CF1 的增广残差由 PCF11--16 在 HR15 中支付，得到已证明归约
+若另外证明 CF0A.5 的增广残差满足相应小量界，CF1 的范数三角才给
 \[
  \mathcal E_{\rho,P,\mathcal L}
  \le 2C_KH^2(\log N)^2\mathfrak R_\sharp(P)
        +O_\varepsilon(XHQ_PP^{a_*+\varepsilon}).         \tag{CF8.3}
 \]
-因此 projection top block 已进入同一链：它先以 CF1.5 的增广 Gram
+因此 CF8.1 与该残差界是从有限共同输出到完整高度的**显式接口
+义务**，不是本稿引用本地 SHA 后自动获得的结论。接口一旦成立，
+projection top block 便先以 CF1.5 的增广 Gram
 精确出现，再通过唯一 \(b^\sharp\) 修正与显式残差进入 CF8.3。
 它既未被删除，也未被错误送进一个只有短 shift support 的 QCT box。
 
@@ -362,7 +542,7 @@ CF1 的增广残差由 PCF11--16 在 HR15 中支付，得到已证明归约
 \[
  g=(17\beta-14)/3>0,\qquad \eta=g/4.
 \]
-先按 HR5 选择固定 \(K,r_{\rm cut}\)，再固定由此得到的同一个
+先按 CF0A 的参数顺序选择固定 \(K,r_{\rm cut}\)，再固定由此得到的同一个
 \(b^\sharp\)。所需且尚未证明的命题是：存在
 \(C=C(\rho,\mathcal L,w,\alpha,K,h_0,\eta)\) 与
 \(P_0=P_0(\rho,\mathcal L,w,\alpha,K,h_0,\eta)\)，使每个实数
@@ -377,7 +557,7 @@ CF1 的增广残差由 PCF11--16 在 HR15 中支付，得到已证明归约
  \le C Q_PT_*P^\eta .
  \quad}                                                   \tag{CF9.1}
 \]
-这就是 HR16 的 CF6.2 展开版，没有新增 gate。特别地：
+这就是本文自含定义的最终 full-output upper gate。特别地：
 
 - \(P\) 必须可在固定 \(\rho\) 后独立趋于无穷；不得只取
   \(P=|\gamma|^{6/17}\)；
@@ -789,7 +969,7 @@ RV5 的分块 Abel--Minkowski 证明只使用
 \(W_\lambda\) 后右端只付 \(\sum_\lambda|c_\lambda|^2\)。
 
 CF15.10 可以合法吸收一侧 leading \(C_1\) 的 divisor-output：
-原稿 (405.5) 对固定 \(n=h\delta\) 给
+对固定 \(n=h\delta\) 的 finite divisor output，Cauchy 给
 \[
  \left|\sum_{D\mid n}c_{D,n}\chi(D)\right|^2
  \le\tau(n)\sum_{D\mid n}|c_{D,n}|^2,                   \tag{CF15.11}
@@ -1048,7 +1228,7 @@ critical-incidence 与 principal/equal-prime/axis 四行先组成同一个
 平方能量，而不是一个随后才平方的标量双线性型。现有
 complete-shift/determinant 等式尚未给出这个 lossless Gram
 intertwiner；CF18 因而是一个真实的实际权能量引理及一个精确的
-\(P^{-1/24}\) 失败账，不是 HR16 的证明。
+\(P^{-1/24}\) 失败账，不是 CF9.1 的证明。
 
 ## CF19. 共享乘积 Fourier 空间的算子值引理
 
@@ -1074,7 +1254,7 @@ mixed-Bruhat 输出不同。对每个 \(p\in{\cal P}\) 取有限维 Hilbert
 \(p\ne p'\)；逐项使用 \(\|\Theta_{p,q}\|\le1\)；再固定 \(p\)，
 不同 \(q\) 在 \(U(p)\) 中给互异坐标，最后用 Hilbert 值 Parseval。
 因此任何在抽出 CF11 的 enforcement-character 因子后、与
-\(\chi,\psi\) 无关的 CF344.6 norm-one mixed-Bruhat 自伴块都可以
+\(\chi,\psi\) 无关且已独立证明为 norm-one 的 mixed-Bruhat 自伴块都可以
 作为 \(\Theta_{p,q}\) 使用；不需要把两种 orientation 错认成同一个
 局部剩余类。证明实际块具有这种独立性属于后面的 CF19.L，不能由
 抽象范数界反推。
@@ -1132,7 +1312,7 @@ cross-prime 算子 \({\cal U}_{\Theta}\)，共享的 \(\alpha\) 在两边只
 dyadic interval、\(t\) 有长度 \(A_t\)，且归一化向量一致有界，则
 右端为 \(A_tP^\varepsilon\)，因为
 \(\sum_{a\asymp A_0}a^{-1}\ll1\)。右侧 \(b,k\) 完全相同。
-更一般地，把 (405.5) 的 \(A_{1,*}\mid h\delta\) 作为 \({\cal W}_q\)
+更一般地，把 leading \(C_1\) 的 \(A_{1,*}\mid h\delta\) 作为 \({\cal W}_q\)
 中的正交输出，只再付一份 \(\tau(h\delta)\)；另一 orientation 的
 \(B_{1,*}\mid h'\delta'\) 可独立放在 \({\cal V}_p\) 中。CF19.1
 允许 \({\cal V}_p\ne{\cal W}_q\)，所以不需要先证明两个输出指标相等。
@@ -1147,7 +1327,7 @@ dyadic interval、\(t\) 有长度 \(A_t\)，且归一化向量一致有界，则
 把一个另行出现的“完整模数容量”
 \(P\sqrt{E_LE_R}\) 放在分母，会形式上得到
 \[
- {\sqrt{A_tA_k}\over P};qquad
+ {\sqrt{A_tA_k}\over P};\qquad
  A_t\asymp A_k\asymp P^{11/12} \Longrightarrow P^{-1/12}.
                                                                \tag{CF19.6b}
 \]
@@ -1199,9 +1379,10 @@ CF19.1 的 cross-prime 次序正是避免这个错误的必要部分。
 \]
 其中 \(E^L_\nu,E^R_\nu\) 是 CF19.4 右端的**同一** coefficient
 energies，\(E_{\rm shell}\) 已含 CF7 的两侧 shell 密度各一次。
-CF387.1 给 determinant 与全部 finite tags 的精确输运；CF386.1--CF386.4
-给局部 shell 的有限 projective atoms；KW6 给归一化 archimedean 核的
-有限阶一致导数。对固定紧支撑光滑部分，CF19.8 的连续变量分离可由
+所需 physical adapter 必须给 determinant 与全部 finite tags 的精确
+输运；CF7A 给局部 shell 的有限 projective atoms。原始 archimedean
+核到同一 normalized 坐标的有限阶一致导数仍属于 CF19.D。对固定紧支撑
+光滑部分，CF19.8 的连续变量分离可由
 如下有限 Fourier 论证完成：在包住支撑的固定 torus 上展开 Fourier
 级数，取 \(s>d/2\)，由 Cauchy--Schwarz、Parseval 与分部积分有
 \[
@@ -1220,29 +1401,30 @@ Sobolev 半范数已经证明，Schwartz 尾由同一分部积分求和；CF19.9
 \(p\ne q\)、\(jtk\ne0\) 的 expanded exact-shell 行。固定一个原
 dyadic box 与有限截断后，已有的严格步骤只有如下四项。
 
-1. CF387.1 不改变任何系数地把完整 physical-shift 核写成
+1. 所需 determinant adapter 必须不改变任何系数地把完整
+   physical-shift 核写成
    \(pa_0t-qb_0k=j\)。这里 shell 的第一频率仍是 \(a_0j\) 或
    \(b_0j\)，没有把 \(t,k\) 冒充 shell frequency。
 2. 在 balanced generic 支撑上
    \(|j|,|t|,|k|,a_0,b_0<P<p,q\)；因此 CF11 所需单位条件全部成立。
    \((a_0,b_0)=1\) 由 CF19.7 分离，费用 \(P^\varepsilon\)。
-3. CF386.1--CF386.4 把每侧 exact shell 写成有限 projective atoms，
+3. CF7A 把每侧 exact shell 写成有限 projective atoms，
    总质量分别为 \(a_0^{-1/2+\varepsilon}\)、
-   \(b_0^{-1/2+\varepsilon}\)。leading \(C_1\) 因 (405.4) 成为
+   \(b_0^{-1/2+\varepsilon}\)。leading \(C_1\) 因 \(b=1\) 成为
    divisor-output，并由 CF19.6 支付；其他三个 atoms 有更强局部幂次，
    其总和已经包含在同一 projective mass 中。
-4. CF344.6 的两种 mixed-Bruhat orientation 组成 norm-one 块。这个
-   局部事实允许一个**已经构造出的**跨 level 分块映射作为
+4. 仍须从原 trace 证明两种 mixed-Bruhat orientation 组成 norm-one
+   块。这个局部目标若成立，才允许一个**已经构造出的**跨 level 分块映射作为
    CF19.1 的 \(\Theta_{p,q}\)，但它自身没有构造该映射。本步必须停留
    在 CF4.1 左侧的共同 geometric trace 上；不能把 Maaß parity、
    holomorphic、Eisenstein、diagonal 与 local remainder 擅自宣称为
    正交直和。
 
 原先把这四步直接接到 CF19.10 是不合法的。首先发生了变量同名造成的
-误接：KW6 控制的是原核
-\(\Psi(r/R,s/S,\delta/L_h,h/H_M)\) 的归一化导数；CF387.1 中
+误接：原核
+\(\Psi(r/R,s/S,\delta/L_h,h/H_M)\) 的归一化导数与 determinant 中
 \(G_{x,y,j}(v)=W(v/V)I_{x,y,j}(v)\) 的 \(v\) 是**第二次 Poisson 前的
-physical shift**。CF387.1 只证明代数恒等式，没有证明后一个 \(v\) 的
+physical shift** 是不同坐标。代数 determinant 恒等式本身没有证明后一个 \(v\) 的
 导数范数。因而还须独立证明
 \[
  \sup_{\boldsymbol z}\sum_{0\le \ell+|\eta|\le m}
@@ -1253,10 +1435,11 @@ physical shift**。CF387.1 只证明代数恒等式，没有证明后一个 \(v\
 这里 \(\boldsymbol z\) 是实际左右归一化坐标，且常数须一致于
 \(p,q,a_0,b_0,j\) 和全部有限 detector/Bessel/AFE tags。CF19.D 才能
 通过对 physical \(v\) 分部积分和 CF19.9 给出
-\(\widehat G(-t/Q_0)\) 的一致 Schwartz 尾；KW6 不能代替 CF19.D。
+\(\widehat G(-t/Q_0)\) 的一致 Schwartz 尾；任何只控制原核坐标的
+旧估计都不能代替 CF19.D。
 
-其次，CF386.1--CF386.4 只给逐 level 的有限 projective atoms，
-CF344.6 只给每个已选 mixed-Bruhat 块的范数一，CF387.1 只逐项输运。
+其次，CF7A 只给逐 level 的有限 projective atoms；mixed-Bruhat
+norm-one 与 determinant 输运都仍是 adapter obligations。
 三者尚未证明所有变化的 \(a_0,b_0\) 纤维可在取正范数前组成同一个
 CF19.1 算子，并满足无额外 multiplicity 的能量账。所需的精确命题是
 \[
@@ -1267,11 +1450,11 @@ CF19.1 算子，并满足无额外 multiplicity 的能量账。所需的精确�
  \sum_\nu|c_\nu|\sqrt{E^L_\nu E^R_\nu}
  \ll P^\varepsilon{\cal B}_{\rm shell},                 \tag{CF19.L}
 \]
-其中左边是 CF387.6 的原带符号 determinant 行，右边的
+其中左边是原带符号 determinant 行，右边的
 \(E^L_\nu,E^R_\nu\) 必须逐字等于 CF377.3 已支付一次 shell half-root
 后的 energies。特别不能把 \(a_0,b_0\) 的求和藏进
 \(\Theta_{p,q}\) 的“有限维”二字。CF19.L 正是尚缺的 two-sided
-critical-incidence orthogonalization，而不是 CF344.6 的推论。
+critical-incidence orthogonalization，而不是逐块 norm-one 的推论。
 
 即使 CF19.D 与 CF19.L 都成立，CF19.4 仍只给 CF12.1 的 diagonal
 级别。还须在实际 Riesz/四行中心化子空间上证明真正的压缩。令
@@ -1314,8 +1497,8 @@ quotient \(k=0\)、physical \(t=0\) 或 \(k=0\) axes、top ramified、
 unit endpoints、未展开的 other-character/non-squarefree/nonflat/
 unequal-gcd native rows，也不覆盖 low-height expanding band。
 
-CF19.D 中纯 affine-lattice 的 physical-shift 部分可以单独闭合，并且
-不需要误用 KW6。不过短移位必须作为一个显式归一化坐标保留，不能
+CF19.D 中纯 affine-lattice 的 physical-shift 部分可以单独闭合。不过
+短移位必须作为一个显式归一化坐标保留，不能
 藏进一个据称有 product-scale 导数界的二变量函数。设
 \(\Phi(d,c,\alpha)\) 在前两个坐标支撑于长度分别为 \(D,C\) 的固定
 倍长区间，并在 \(\alpha\) 的固定紧集支撑。定义
@@ -1378,10 +1561,10 @@ power-free。CF19.11 把该因子放回 \(\alpha\) 坐标，沿仿射格
 CF372.4 的完整权可写为 CF19.11 的三变量 \(\Phi\)，并满足
 \(\mathfrak N_m^{\rm sh}(\Phi)\ll
 P^\varepsilon{\cal S}_m(w)\)，统一于 detector/Bessel/AFE tags。
-KW6 已控制原核的归一化 \(u,v,\alpha,\beta\) 导数；现在仍须逐项
-写出这些坐标到 \((d/D,c/C,(P_0d-Q_0c)/V)\) 的链式映射，并核对
-全部 finite tags。不能把短移位重新藏回 product 坐标，也不能仅凭
-符号 \(v\) 相同而引用 KW6。
+现在仍须从公开原 atom 逐项写出其 normalized 坐标到
+\((d/D,c/C,(P_0d-Q_0c)/V)\) 的链式映射，并核对全部 finite tags。
+不能把短移位重新藏回 product 坐标，也不能仅凭符号 \(v\) 相同而
+引用不可复核的旧估计。
 
 CF15/RV 的 actual-Riesz 四阶矩有一个真正有用的共同 Hilbert 列扩张。
 令 \({\cal H}\) 为有限维 Hilbert 空间，任取 \(z_p\in{\cal H}\)、
@@ -1479,7 +1662,7 @@ CF19.19 也把 projective-atom 账翻译成一个可逐项验证的充分条件�
  \left(\sup_q\sum_\nu|c_\nu||r_{q,\nu}|^2\right)^{1/2}.
                                                                \tag{CF19.22}
 \]
-所以 CF386 的局部 projective atoms 与 CF19.9 的 smooth Fourier
+所以 CF7A 的局部 projective atoms 与 CF19.9 的 smooth Fourier
 atoms 若在**变化的全部** \(a_0,b_0\) 上满足 CF19.22 的共同平方
 质量 \(P^\varepsilon\)，便足以把 CF19.20 接入 actual-Riesz saving。
 只知道 atom 数为 \(P^{o(1)}\)、逐 atom 范数为一或逐 level
@@ -1526,8 +1709,8 @@ CF19.23 不能先被替换成
 所以主线已有的 reciprocal-LCM 正定性不能用逐核上界直接接入；
 CF19.24 才是 sign-safe 的有限输出估计。
 
-在 (405.4) 的 leading \(C_1\) cell 中，真实条件是
-\(A_{1,*}\mid h\delta\)，而 (8.13) 的平方权是
+在 CF7A 的 leading \(C_1\) cell 中，真实条件是
+\(A_{1,*}\mid h\delta\)，而 CF7.8 的平方权是
 \((h\delta)^{-1+\eta}\)。因此只要其余已归一化系数向量逐
 \(A_{1,*}\) 一致有界，CF19.24 把**全部变化的**
 \(A_{1,*}\) 在取范数前合并，只付 \(P^\varepsilon\)；另一 orientation
@@ -1555,12 +1738,12 @@ unramified generic shell 的每个 \(p\mid A\) 记
  A_{\rm div}\mid\operatorname{rad}(|kh\delta|).
 \]
 令 \(e_{00,p}\) 是只保留 \((u,b)=(0,0)\) 坐标的秩一矩阵，并在
-已经带有 (8.13) 的 \(k,h,\delta\) 权的局部空间中写
+已经带有 CF7.8 的 \(k,h,\delta\) 权的局部空间中写
 \[
  E_p=E_p(1,0)e_{00,p}+\widetilde E_p.                   \tag{CF19.26}
 \]
 这是精确矩阵等式；\(\widetilde E_p\) 的每个非零坐标都满足
-\(u_p+b_p\ge1\)。由三角不等式、(8.10) 与 (8.13)--(8.17)，
+\(u_p+b_p\ge1\)。由三角不等式、CF7.6 与 CF7.8--CF7.10，
 \[
  \|\widetilde E_p\|
  \le \|E_p\|+|E_p(1,0)|
@@ -1604,7 +1787,7 @@ multiplicity。尚未证明的仍是实际非局部权确实给出 CF19.29 所�
 共同 \(x_D\) 预算。
 
 真正没有 divisor incidence 的只剩 \(A_{00}\)。此时每个 prime 只取
-(386.1)，且 (8.5) 给出**精确值**
+CF7.5 的零--零块，且 CF7.6 给出**精确值**
 \[
  E_p(1,0)=\lambda_\pi(p)-{p\lambda_\pi(p)\over p+1}
           ={\lambda_\pi(p)\over p+1}.
@@ -1618,13 +1801,13 @@ multiplicity。尚未证明的仍是实际非局部权确实给出 CF19.29 所�
  \quad}                                                   \tag{CF19.30}
 \]
 这里使用 squarefree unramified Hecke multiplicativity；continuous
-oldspace 先采用 (8.7) 的同一 ambient basis，不能把它换成逐个 ramified
+oldspace 先采用 CF7A 的同一 ambient basis，不能把它换成逐个 ramified
 Eisenstein Fourier coefficient。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
-CF19.30 这一条 reciprocal Hecke--Möbius 零列。MC10--MC14 可把实际
-\(b^\sharp\) 在平方自由 canonical 子域分成共同 Mellin columns，但
-仍须证明这些 columns 与 CF19.27、另一 orientation、共享
+CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
+实际 \(b^\sharp\) 证明平方自由 canonical 子域的共同 Mellin columns，
+还必须证明这些 columns 与 CF19.27、另一 orientation、共享
 complete-shift 权及 Maaß/holomorphic/Eisenstein 全谱在**同一次**
 谱范数中相容；逐 \(A_{00}\) 使用 Kim--Sarnak 绝对值仍会损失幂次。
 具体地，在 \(A_{00}\asymp A\) 上，
@@ -1664,47 +1847,52 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
 
 ## CF20. 反向审计表
 
-本文已证明的只有：
+本文在 fresh checkout 可自含复核的结论只有：
 
-1. CF1.5：共同投影的精确增广 Gram 等式；
-2. CF3.1--CF3.2：quotient 两端点共同四行；
-3. CF4.1--CF4.5：非零频率的全谱有限列与 Eisenstein 四行同系数；
-4. CF5.1--CF5.2：零模、mixed valuations 与轴坐标不重不漏；
-5. CF6.2：已展开行与显式 native complement 在唯一物理外权下的
-   有限 master equality；这不声称补集已经谱化；
-6. CF7：\(A^{-1/2}\) 与 harmonic/local shell 权不重复；
-7. CF8.3：已有输出修正与全高度余量的接口；
-8. CF11.1--CF11.3：保留两侧角色与共同 tags 的 exact zero-alias
+1. CF0A.1--CF0A.5 与 CF1.5：一次有限 Möbius 系数修正、唯一共同
+   投影及精确增广 Gram 等式；修正误差的解析小量界仍未证明；
+2. CF3.1--CF3.2：quotient 两端点的有限 inclusion--exclusion；把四个
+   abstract rows 逐项识别为公开原 atom 的端点仍是 adapter obligation；
+3. CF4.5：在四行确有同一系数的前提下，PP/PQ/QP/QQ 的有限尾逐项
+   抵消。CF4.1--CF4.4 的全谱 normalization 与原 atom 的等同性未证；
+4. CF6 给出不允许静默丢项的 master-tag contract；只有 adapter 已验证
+   的行才能进入 expanded 分支，其余必须留在 native complement。
+   因此本稿不把 CF6.2 对全部原行的等同性列为已证；
+5. CF7A：从 oldspace Gram 定义重证 exact-shell local kernel、
+   \(A^{-1/2}\) half-root 及其与 harmonic/progression 权不重复；
+6. CF8.1--CF8.3：输出修正到全高度余量的显式接口义务，而非已证
+   height reassembly；
+7. CF11.1--CF11.3：保留两侧角色与共同 tags 的 exact zero-alias
    Fourier projector 及其无 alias 单边 isometry；
-9. CF13.1--CF13.2：两篇 2025--2026 原始 Kloosterman 定理在真实尺度
+8. CF13.1--CF13.2：两篇 2025--2026 原始 Kloosterman 定理在真实尺度
    的数值与对象适配边界；
-10. CF14.1--CF14.3：任意有限秩中心化后部分匹配算子仍有范数 1 的
+9. CF14.1--CF14.3：任意有限秩中心化后部分匹配算子仍有范数 1 的
     严格 no-free-contraction 引理；
-11. CF15.1--CF15.11：对实际 Riesz 素数权的 varying-prime-modulus
+10. CF15.1--CF15.11：对实际 Riesz 素数权的 varying-prime-modulus
     prime--interval 四阶矩及正交有限标签扩张，准确支付 scalar
     \(P^{-1/12}\) leaf 与一侧 divisor-output；它不正交化物理
     cofactor 的 scalar 求和。
-12. CF16.1--CF16.6：带任意双素数单位相位的 cross-prime mutual-character
+11. CF16.1--CF16.6：带任意双素数单位相位的 cross-prime mutual-character
     operator 是 contraction；双方非主投影后仍成立。CF16.7--CF16.8
     证明一旦 critical cofactor 已成为正交输出，共享 Fourier 相位不再
     产生 zero-alias 长度损失。
-13. CF17.1--CF17.5：乘上短角色和后的算子按 \(q\) 逐块成为 centered
+12. CF17.1--CF17.5：乘上短角色和后的算子按 \(q\) 逐块成为 centered
     multiplicative-incidence 矩阵；非主输入仍能以常数代价承载任意
     \(z_{p,q}\)。因此 CF16 本身没有 coefficient-uniform
     varying-level power saving。
-14. CF18.1--CF18.5：固定 cofactor 的短逆边注入给实际 Riesz 加权
+13. CF18.1--CF18.5：固定 cofactor 的短逆边注入给实际 Riesz 加权
     平方条目能量 \(\ll BA M_YS_Y\)，包括正交有限标签与 exact
     determinant 子支撑；CF18.6 同时证明若先退化成一般算子范数，
     只能得到 \((A/P)^{1/2}\) 而非 \(A/P\)。
-15. CF19.1--CF19.7：cross-prime contraction 的算子值版本、共享乘积
+14. CF19.1--CF19.7：cross-prime contraction 的算子值版本、共享乘积
     Fourier isometry、两侧不同 critical divisor outputs 及 genuine-gcd
     mask 的无固定幂重组。CF19.9 证明归一化 smooth kernel 的核分解
     只付已显示的有限 Sobolev 半范数。CF19.6b 是未对齐基线的形式
     比值，不是 saving；CF19.4 仍返回 CF12.1 的 diagonal 级别。
     CF19.10 只是在新增 physical-shift 半范数 CF19.D、varying-level
     能量恒等式 CF19.L 与 actual-centered 压缩 CF19.C 下的条件性
-    balanced generic 结论；现有 KW6、CF344、CF386、CF387 均不蕴含
-    这三个输入。CF19.11--CF19.14 已独立支付第二次 Poisson
+    balanced generic 结论；旧的原核导数、逐块 norm-one、CF7A 与
+    determinant 代数各自都不蕴含这三个输入。CF19.11--CF19.14 已独立支付第二次 Poisson
     的 affine physical-shift 导数与远频尾，把 CF19.D 缩成原完整
     \(F\) 的 normalized-seminorm pullback。CF19.15--CF19.18 把
     actual-Riesz 四阶矩严格扩张到任意共同 Hilbert 列及其逐模数
