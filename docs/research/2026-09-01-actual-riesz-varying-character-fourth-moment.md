@@ -66,24 +66,26 @@ RV1.4 的一致上界与 RV1.5 的正主项证明：存在只依赖固定
 
 ## RV2. 定理
 
-固定 \(C^1\) 函数 \(W\)，支撑于 \([1,2]\)。令
-\(1\le A\le P/3\)，并定义
+固定 \(C^\infty\) 函数 \(W\)，支撑于 \([1,2]\)，并写
+\(e(x)=e^{2\pi ix}\)。令
+\(1\le A\le P/3\)、整数 \(1\le a\le A\)、\(0\le\alpha\le1\)，并定义
 \[
  \mathcal P_q(\chi)=\sum_pY_p\chi(p),\qquad
- \mathcal T_A(\chi)=\sum_{t\in\mathbb Z}W(t/A)\chi(t). \tag{RV2.1}
+ \mathcal T_{A,a,\alpha,q}(\chi)
+ =\sum_{t\in\mathbb Z}W(t/A)\chi(t)e(\alpha at/q).      \tag{RV2.1}
 \]
 对素数 \(q\in(P,2P]\)，角色按通常方式在非单位处取零；故
 RV2.1 的 \(p=q\) 项自动为零，同一个系数列可用于所有 \(q\)。
 
 **定理 RV.** 对每个 \(\varepsilon>0\)，存在
 \(C_{\rho,w,W,\varepsilon}\)，使全部充分大 \(P\) 与
-\(1\le A\le P/3\) 满足
+\(1\le A\le P/3\)、整数 \(1\le a\le A\)、\(0\le\alpha\le1\) 满足
 \[
  \boxed{\quad
  \sum_{\substack{P<q\le2P\\q\ {\rm prime}}}|Y_q|^2
  {1\over q-1}
  \sum_{\substack{\chi\ ({\rm mod}\ q)\\\chi\ne\chi_0}}
- |\mathcal P_q(\chi)\mathcal T_A(\chi)|^2
+ |\mathcal P_q(\chi)\mathcal T_{A,a,\alpha,q}(\chi)|^2
  \ll_{\rho,w,W,\varepsilon} A P^\varepsilon S_Y^2.
  \quad}                                                  \tag{RV2.2}
 \]
@@ -132,7 +134,7 @@ RV2.1 的 \(p=q\) 项自动为零，同一个系数列可用于所有 \(q\)。
 \]
 注意 \(P\) 来自 \((Q^2+N)/P\)，没有另乘素数模数的个数。
 
-## RV5. 区间角色四阶矩与最终 Cauchy
+## RV5. Gauss--Poisson 后的短对偶角色四阶矩
 
 Ayyad--Cochrane--Zheng 对任意位置、长度 \(B<q\) 的整数区间证明
 \[
@@ -142,31 +144,82 @@ Ayyad--Cochrane--Zheng 对任意位置、长度 \(B<q\) 的整数区间证明
 \]
 参见 [Journal of Number Theory 59 (1996), 398--413,
 DOI 10.1006/jnth.1996.0105](https://doi.org/10.1006/jnth.1996.0105)。
-对 RV2.1 作 Abel 分部求和；\(W\) 的总变差固定，且
-\([A,2A]\) 长度为 \(A<q\)，所以
+
+这里不能直接对 RV2.1 作 Abel 分部求和：相位的总变差可达
+\(aA/q\asymp A^2/P=P^{5/6}\)。正确做法是先完成。取 Fourier
+约定
+\[
+                   \widehat W(\xi)=\int_{\mathbb R}W(x)e(-x\xi)\,dx.
+\]
+对每个非主角色 \(\chi\pmod q\)，它是 primitive，Poisson 求和与
+Gauss 恒等式逐项给
+\[
+ \mathcal T_{A,a,\alpha,q}(\chi)
+ ={A\tau(\chi)\over q}
+  \sum_{h\in\mathbb Z}\overline{\chi(h)}
+       \widehat W\!\left({A(h-a\alpha)\over q}\right),   \tag{RV5.2}
+\]
+其中 \(|\tau(\chi)|=\sqrt q\)。没有把 \(a\alpha\) 取整；它只是
+对偶区间的实中心。
+
+置 \(H=q/A\)，并取整数 \(B=\lfloor H/2\rfloor\)。由
+\(A\le P/3<q/3\) 得 \(H>3\)，所以
+\[
+                         1\le B<q.                       \tag{RV5.3}
+\]
+置 \(m_0=\lfloor a\alpha\rfloor\)，并令
+\(I_k=[m_0+kB,m_0+(k+1)B)\cap\mathbb Z\)。这些长度为 \(B\) 的
+连续整数块分割整个 \(h\)-轴。Schwartz 衰减逐块给：
+对每个固定 \(J>2\)，
+\[
+ \sup_{h\in I_k}|\widehat W((h-a\alpha)/H)|
+ +\operatorname {Var}_{I_k}\{\widehat W((h-a\alpha)/H)\}
+ \ll_{J,W}(1+|k|)^{-J}.                                 \tag{RV5.4}
+\]
+这里的变差可取分段线性插值的总变差；常数对实中心 \(a\alpha\)
+一致。对每块作 Abel 分部求和，并在 Abel 积分内对角色 \(L^4\)
+使用 Minkowski。块内每个前缀都是长度至多 \(B<q\) 的任意位置区间；
+由角色的 \(q\)-周期性，跨越一个剩余系边界时把它拆成至多两个这种
+区间。因此 RV5.1 与 RV5.4 给
+\[
+ \left\{{1\over q-1}\sum_{\chi\ne\chi_0}
+  \left|\sum_{h\in I_k}\overline{\chi(h)}
+       \widehat W((h-a\alpha)/H)\right|^4\right\}^{1/4}
+ \ll_W(1+|k|)^{-J}H^{1/2}\log P.
+\]
+最后在 \(k\in\mathbb Z\) 上再用一次 Minkowski；因
+\(\sum_k(1+|k|)^{-J}<\infty\)，整个对偶和满足
+\[
+ \left\{{1\over q-1}\sum_{\chi\ne\chi_0}
+  \left|\sum_{h\in\mathbb Z}\overline{\chi(h)}
+       \widehat W((h-a\alpha)/H)\right|^4\right\}^{1/4}
+ \ll_W H^{1/2}\log P.                                  \tag{RV5.5}
+\]
+因此 RV5.2 与 RV5.5 一致于全部 \(a,\alpha,q\) 给
 \[
  {1\over q-1}\sum_{\chi\ne\chi_0}
-                  |\mathcal T_A(\chi)|^4
- \ll_W A^2(\log P)^2.                                  \tag{RV5.2}
+        |\mathcal T_{A,a,\alpha,q}(\chi)|^4
+ \ll_W {A^4\over q^2}H^2(\log P)^4
+ =A^2(\log P)^4.                                       \tag{RV5.6}
 \]
 
-对每个 \(q\) 在角色平均中用 Cauchy，由 RV5.2，RV2.2 左端至多
+对每个 \(q\) 在角色平均中用 Cauchy，由 RV5.6，RV2.2 左端至多
 \[
- A\log P\sum_q|Y_q|^2
+ A(\log P)^2\sum_q|Y_q|^2
  \left\{{1\over q-1}\sum_{\chi\ne\chi_0}
-                     |\mathcal P_q(\chi)|^4\right\}^{1/2}. \tag{RV5.3}
+                     |\mathcal P_q(\chi)|^4\right\}^{1/2}. \tag{RV5.7}
 \]
-再以 \(|Y_q|^2\) 为测度对 \(q\) 用 Cauchy，RV5.3 至多
+再以 \(|Y_q|^2\) 为测度对 \(q\) 用 Cauchy，RV5.7 至多
 \[
- A\log P\,S_Y^{1/2}
+ A(\log P)^2S_Y^{1/2}
  \left\{M_Y\sum_q{1\over q-1}
              \sum_{\chi\ne\chi_0}|\mathcal P_q(\chi)|^4
- \right\}^{1/2}.                                       \tag{RV5.4}
+ \right\}^{1/2}.                                       \tag{RV5.8}
 \]
 代入 RV1.6 与 RV4.2 得
 \[
- \text{RV5.4}\ll_{\rho,w,W}
- A(\log P)^{3/2}S_Y^2,
+ \text{RV5.8}\ll_{\rho,w,W}
+ A(\log P)^{5/2}S_Y^2,
 \]
 把固定对数幂吸收到 \(P^\varepsilon\) 即证 RV2.2。
 
@@ -180,8 +233,12 @@ RV2.2 把旧 prime--interval Pólya 容量中的 \(P\) 换成 \(A\)，故
 \]
 这正是 balanced squarefree scalar row 的剩余指数。
 
+RV5 的完成还表明该估计对 CF11 的共享相位
+\(e(\alpha at/q)\) 一致；固定一个 divisor/shell 输出 \(a\) 不产生
+\(P^{5/6}\) 的相位变差损失。
+
 但 RV2.2 只在同一个 \(q\)-平均内控制
-\(|\mathcal P_q\mathcal T_A|^2\)。完整物理输出还必须证明一个共同
+\(|\mathcal P_q\mathcal T_{A,a,\alpha,q}|^2\)。完整物理输出还必须证明一个共同
 有限系数映射，使两侧 shell incidence、精确等式而非仅模 \(pq\) 的
 shift detector、principal/equal-prime/axis 四行、nonflat/gcd/endpoints、
 AFE 与 transform tails 在使用 RV2.2 前已经位于这些相同的

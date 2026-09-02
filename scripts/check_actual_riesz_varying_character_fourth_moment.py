@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Finite transcription guards for the RV3 product-column identities.
+"""Finite transcription guards for the RV3 and RV5 identities.
 
-This script does not certify the analytic large sieve or the ACZ theorem.
-It checks only the exact finite algebra to which those theorems are applied.
+This script does not certify Poisson summation, the analytic large sieve, or the
+ACZ theorem.  It checks only the exact finite algebra and exponent ledger to
+which those theorems are applied.
 """
 
 from __future__ import annotations
@@ -10,6 +11,7 @@ from __future__ import annotations
 import cmath
 import itertools
 import math
+from fractions import Fraction
 
 
 def primes_up_to(limit: int) -> list[int]:
@@ -94,6 +96,34 @@ def check_character_factorization(
     return cases
 
 
+def check_gauss_identity(q: int) -> int:
+    """Check sum_r chi(r)e(hr/q) = conjugate(chi(h))*tau(chi)."""
+    logs = discrete_logs(q)
+    cases = 0
+    wrong_orientation_detected = False
+    for index in range(1, q - 1):
+        tau = sum(
+            character(q, index, residue, logs)
+            * cmath.exp(2j * math.pi * residue / q)
+            for residue in range(q)
+        )
+        assert abs(abs(tau) - math.sqrt(q)) < 1e-9
+        for h in range(1, q):
+            twisted = sum(
+                character(q, index, residue, logs)
+                * cmath.exp(2j * math.pi * h * residue / q)
+                for residue in range(q)
+            )
+            expected = character(q, index, h, logs).conjugate() * tau
+            assert abs(twisted - expected) < 1e-8
+            wrong_orientation = character(q, index, h, logs) * tau
+            if abs(twisted - wrong_orientation) > 1e-6:
+                wrong_orientation_detected = True
+            cases += 1
+    assert wrong_orientation_detected
+    return cases
+
+
 def main() -> None:
     prime_pool = primes_up_to(31)
     samples = [
@@ -102,19 +132,30 @@ def main() -> None:
         {p: complex(p - 10, 2 * p - 17) for p in prime_pool[3:8]},
     ]
     character_cases = 0
+    gauss_cases = 0
     for weights in samples:
         check_energy_identity(weights)
         for q in (5, 7, 11, 13):
             character_cases += check_character_factorization(q, weights)
 
-    # RV5.4 uses M_Y <= (log P / P) S_Y and RV4.2 costs P S_Y^2.
+    for q in (5, 7, 11, 13):
+        gauss_cases += check_gauss_identity(q)
+
+    # RV5.8 uses M_Y <= (log P / P) S_Y and RV4.2 costs P S_Y^2.
     # Their P powers cancel before the outer square root.
     flatness_power = -1
     large_sieve_power = 1
     assert (flatness_power + large_sieve_power) / 2 == 0
 
+    # In RV5.6, (A/sqrt(q))^4 * H^2 with H=q/A is exactly A^2.
+    a_power = Fraction(4) + Fraction(-2)
+    q_power = Fraction(-2) + Fraction(2)
+    assert a_power == 2
+    assert q_power == 0
+
     print(f"RV3 energy samples: {len(samples)}")
     print(f"RV3 character-factorization cases: {character_cases}")
+    print(f"RV5 Gauss-identity cases: {gauss_cases}")
     print("RV5 exponent ledger: exact")
 
 
