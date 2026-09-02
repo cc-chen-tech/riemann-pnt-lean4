@@ -567,6 +567,32 @@ Milićević--Qin--Wu 的 Theorem 1.1
 signed varying-level/common-projection 坐标。其 twisted-\(L\) 应用的
 平均误差并不会改变本处原双线性定理的最弱项。
 
+同一论文的 factorable-modulus Theorem 2.1 则给出一个可严格划出的
+正面子域。它允许任取除数 \(s\mid c\)；在
+\(M=N=c^{1/2}\) 时，其三项 saving 化为
+\[
+ c^{-1/4}s^{1/2},\qquad c^{-1/4}s^{1/4},\qquad s^{-1/4}.
+                                                               \tag{CF13.7}
+\]
+写 \(s=c^\theta\)。因为
+\[
+ P^{-1/12}=c^{-1/22}\qquad(c=P^{11/6}),                 \tag{CF13.8}
+\]
+CF13.7 的每一项都不大于目标，当且仅当
+\[
+             {2\over11}\le\theta\le {9\over22}.          \tag{CF13.9}
+\]
+若要吸收源定理的 \(c^\varepsilon\)，须在两个端点内留下固定正
+margin。特别地，若 \(c\) 有 \(s\asymp c^{1/3}\)，三项依次为
+\[
+ c^{-1/12},\qquad c^{-1/6},\qquad c^{-1/12},
+\]
+故相对于 \(P\) 得到 \(P^{-11/72}\)，比所需 \(P^{-1/12}\) 多出
+\(P^{-5/72}\) 的余量。这个结论只支付**已经具有 CF13.9 除数的固定
+shell 模数**。一般 \(c=AB\) 可以由两个 rough squarefree levels
+组成而没有该尺度的除数；源定理也仍是固定模数正范数，不能据此
+恢复 CF10.1 的带符号 varying-level/common-projection 输出。
+
 所以这些原始定理分别给出“数值不足的全模数固定层”和“数值足够但
 对象不匹配的特殊分解固定层”。它们都是 CF12 后续 joint operator 的
 局部输入，不是该 operator 本身。
