@@ -2067,6 +2067,120 @@ large sieve。它准确说明下一条谱估计应作用于哪个长度与平方
 CF19.39 均不能直接使用。这三项正是 CF19.L 尚需从 physical atom
 验证的共同列条件。
 
+这里可以把“全谱 scalar large sieve”与 shell 的归一化再缩窄一步。
+采用 [Hu--Petrow--Young 的 generalized PBK
+公式](https://www.cambridge.org/core/services/aop-cambridge-core/content/view/88D50BBABA259F680EEF50F145BC5E0F/S2050509426101765a.pdf/generalized_mathrmpgl2_peterssonbruggemankuznetsov_formula_for_analytic_applications.pdf)
+的记号，令 \(f\) 是满足其
+TF、NmL、FTB、CvF 四条件的有限处纯张量，并令 \(h_\infty\) 是该文
+(1.40) 或 (1.41) 的非负 archimedean majorant。对支撑于
+\(m\le U\)、且 \((m,N_f)=1\) 的有限系数 \(a_m\)，把 Theorem 4.8
+的 Fourier-coefficient 形式在开平方以后写成
+\[
+ \begin{aligned}
+ {\mathcal Q}_f(a)={}&
+ \sum_{\pi\in F_0(f)}h_\infty(t_\pi)
+   \sum_{\varphi\in B_f(\pi)}
+       \left|\sum_{m\le U}a_m a_{u_\varphi}(m)\right|^2\\
+ &+{1\over4\pi}\sum_{\chi\in F_E(f)}\int_{\mathbb R}
+ h_\infty(t)\sum_{\varphi\in B_f(\chi,\chi^{-1})}
+       \left|\sum_{m\le U}a_m a_{u_E(\varphi_{it})}(m)\right|^2dt.
+                                                               \tag{CF19.40}
+ \end{aligned}
+\]
+这是逐项非负的 Maaß--Eisenstein 二次型；正性是在 orthonormal
+Fourier basis 中开平方得到的，不能从一个可能带相位的压缩权反推。
+在 \((m,N_f)=1\) 时用该文 (1.9)、(4.21) 才可把 CF19.40 改写成
+共同 Hecke polynomial 的 cusp 与 continuous harmonic measures。
+
+该文 Theorem 1.23 的证明在丢掉目标 cusp 子族**以前**先把正的
+CF19.40 通过 Theorem 1.8 精确写成 diagonal \(D\) 与 generalized
+Kloosterman 项 \(S\)，随后其 (5.17)--(5.26) 分别估计 \(D\) 与
+\(S\)。所以同一证明实际给出比定理陈述更直接的全正谱推论
+\[
+ \boxed{\quad
+ {\mathcal Q}_f(a)
+ \ll_\varepsilon (|F|+U)(UqT)^\varepsilon
+                    \sum_{m\le U}|a_m|^2.
+ \quad}                                                   \tag{CF19.41}
+\]
+这里 \(F\) 是 NmL 中用于比较 \(F_0(f)\) 的同导子有限 cusp family；
+\(|F|\) 支付 diagonal，\(U\) 支付 off-diagonal。CF19.41 不是把
+Theorem 1.23 的 cusp 左边形式上加一个 continuous 项，而是引用其
+证明中在这一步尚未删项的 PBK 等式。holomorphic/discrete-series
+变体由该文 Remark 1.24 的独立 Petersson 版本给出；若实际对象同时
+含 Maaß、holomorphic、Eisenstein 三部分，必须对同一个 coefficient
+polynomial 分别应用这两个正公式再相加。它仍不允许三类谱各自选择
+不同的 physical 投影或 Bessel majorant。
+
+经典 exponent-one local projector 与 CF7 的 ambient kernel 也能
+逐式对齐。HPY (7.1)--(7.4) 在 \(c=1\) 时给
+\[
+ f_{\le1,p}=(p+1){\bf1}_{ZK_0(p)},\qquad
+ f_{\le1,p}(1)=p+1,
+\]
+且 \(\pi(f_{\le1,p})\) 是投到 \(V_\pi^{K_0(p)}\) 的正交投影。
+对 unramified trivial-central-character datum，HPY (1.11) 的
+oldclass factor 满足
+\[
+ r_\pi(p)^{-1}
+ =(1+p^{-1})\sum_{a\ge0}{\lambda_\pi(p^{2a})\over p^a}
+ ={1\over1-p\lambda_\pi(p)^2/(p+1)^2}
+ ={1\over\rho_p}.                                      \tag{CF19.42}
+\]
+第二个等号不是额外局部假设：从
+\(\sum_{j\ge0}\lambda_jz^j=(1-\lambda_1z+z^2)^{-1}\)
+取偶部，得
+\(\sum_{a\ge0}\lambda_{2a}y^a=(1+y)/((1+y)^2-\lambda_1^2y)\)，
+再置 \(y=p^{-1}\)。因此将 HPY 的 primitive harmonic trace 除以
+局部 Plancherel mass \(f_{\le1,p}(1)\) 后，局部权精确成为
+\[
+ {r_\pi(p)^{-1}\over p+1}
+ ={1\over(p+1)\rho_p}=P_1(0,0).                       \tag{CF19.43}
+\]
+squarefree 多素数情形由纯张量相乘。故 CF7 的 ambient \(p^{-1}\)
+来自 normalized classical projector，而 CF7.10 的 shell half-root
+来自其上的 coefficient norm；两者来源不同，但相对于已经含 CF19.43
+的 physical baseline 时绝不能再把前者称为第二份 saving。
+
+最后，把 CF19.41 代入 CF19.39 时尺度不能简写成“整体除以 \(X\)”。
+在未除以 \(f(1)\) 的 HPY harmonic trace 中，\(U=2XN\) 给
+\[
+ {\mathscr L(2XN)\over X}
+ \ll_\varepsilon
+ \left({|F|\over X}+2N\right)(XNqT)^\varepsilon.       \tag{CF19.44}
+\]
+若 physical convention 已按 CF19.43 将整个 trace 除以 \(f(1)\)，
+则 CF19.44 的右边也整体除以 \(f(1)\)。因此 reciprocal
+Hecke--Möbius 列只在 family-mass 项产生显式 \(X^{-1}\)；length
+项仍是 \(2N\)（或 normalized convention 下的 \(2N/f(1)\)）。
+要把它称为 CF19.L 所需的 \(P\)-saving，仍须从原 atom 证明：
+
+1. 所有变化的 shell labels 已嵌入**一个** classical positive
+   projector，而不是一族不能相加的 normalized traces；
+2. CF19.36 的 opposite column 真正与 \(A\) 无关，并且其全部 indices
+   与 projector level 互素，ramified primes 已进入 \(M\)；
+3. 原 Bessel/AFE weight 被同一个 (1.40)/(1.41) majorant 控制，且
+   CF19.44 的 \(|F|/X\) 与 \(N\) 逐项落在 physical baseline 内。
+
+第一条不能靠把全部 level 放进一个未经计费的巨大 classical level
+来形式解决。确切地说，若 shell 集合包含每个
+\(X<p\le2X\) 的 prime level，而一个 classical pure-tensor
+\(K_0(L)\) projector 要同时保留这些 level-one oldspaces，则逐 prime
+必有 \(p\mid L\)，从而
+\[
+ L\ge\prod_{X<p\le2X}p,\qquad
+ f_{\le L}(1)=\nu(L)\ge\prod_{X<p\le2X}(p+1).          \tag{CF19.45}
+\]
+这是 level 与 Plancherel mass 的真实新增费用，原 polynomial
+physical baseline 中没有这一项。CF19.45 只排除这种 naive common-LCM
+overprojector；它不排除一个真正的 signed level reciprocity 或直接
+rational-multiplier trace，而后两者正是仍应继续证明的路线。
+
+这三条是比“另证 continuous spectrum”更准确的剩余 adapter。HPY
+全谱正性已经支付 Maaß--Eisenstein 的抽象 scalar inequality，经典
+投影也精确恢复 CF7.1；但本文尚未证明实际 QCT 同时满足上述三条，
+所以 CF19.41--CF19.44 仍不能宣布 CF19.L 闭合。
+
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
 实际 \(b^\sharp\) 证明平方自由 canonical 子域的共同 Mellin columns，
