@@ -136,14 +136,16 @@ RV2.1 的 \(p=q\) 项自动为零，同一个系数列可用于所有 \(q\)。
 
 ## RV5. Gauss--Poisson 后的短对偶角色四阶矩
 
-Ayyad--Cochrane--Zheng 对任意位置、长度 \(B<q\) 的整数区间证明
+Cochrane--Shi 的一般模数定理明确对任意整数起点 \(c\) 与正整数长度
+\(B\) 给出；在素数模数 \(q\) 上，它化为
 \[
  {1\over q-1}\sum_{\chi\ne\chi_0}
-       \left|\sum_{x=a+1}^{a+B}\chi(x)\right|^4
- \ll B^2(\log q)^2;                                     \tag{RV5.1}
+       \left|\sum_{x=c+1}^{c+B}\chi(x)\right|^4
+ \ll B^2(\log q)^3\{\log\log(3q)\}^7.                  \tag{RV5.1}
 \]
-参见 [Journal of Number Theory 59 (1996), 398--413,
-DOI 10.1006/jnth.1996.0105](https://doi.org/10.1006/jnth.1996.0105)。
+参见 [Cochrane--Shi, Journal of Number Theory 130 (2010), Theorem 1,
+767--785](https://www.math.ksu.edu/~cochrane/research/xyequvmodm.pdf)。
+该定理原常数中的 \(8^{\nu(q)}\tau(q)\) 在素数 \(q\) 上为绝对常数。
 
 这里不能直接对 RV2.1 作 Abel 分部求和：相位的总变差可达
 \(aA/q\asymp A^2/P=P^{5/6}\)。正确做法是先完成。取 Fourier
@@ -185,7 +187,7 @@ Gauss 恒等式逐项给
  \left\{{1\over q-1}\sum_{\chi\ne\chi_0}
   \left|\sum_{h\in I_k}\overline{\chi(h)}
        \widehat W((h-a\alpha)/H)\right|^4\right\}^{1/4}
- \ll_W(1+|k|)^{-J}H^{1/2}\log P.
+ \ll_W(1+|k|)^{-J}H^{1/2}(\log P)^3.
 \]
 最后在 \(k\in\mathbb Z\) 上再用一次 Minkowski；因
 \(\sum_k(1+|k|)^{-J}<\infty\)，整个对偶和满足
@@ -193,25 +195,25 @@ Gauss 恒等式逐项给
  \left\{{1\over q-1}\sum_{\chi\ne\chi_0}
   \left|\sum_{h\in\mathbb Z}\overline{\chi(h)}
        \widehat W((h-a\alpha)/H)\right|^4\right\}^{1/4}
- \ll_W H^{1/2}\log P.                                  \tag{RV5.5}
+ \ll_W H^{1/2}(\log P)^3.                              \tag{RV5.5}
 \]
 因此 RV5.2 与 RV5.5 一致于全部 \(a,\alpha,q\) 给
 \[
  {1\over q-1}\sum_{\chi\ne\chi_0}
         |\mathcal T_{A,a,\alpha,q}(\chi)|^4
- \ll_W {A^4\over q^2}H^2(\log P)^4
- =A^2(\log P)^4.                                       \tag{RV5.6}
+ \ll_W {A^4\over q^2}H^2(\log P)^{12}
+ =A^2(\log P)^{12}.                                    \tag{RV5.6}
 \]
 
 对每个 \(q\) 在角色平均中用 Cauchy，由 RV5.6，RV2.2 左端至多
 \[
- A(\log P)^2\sum_q|Y_q|^2
+ A(\log P)^6\sum_q|Y_q|^2
  \left\{{1\over q-1}\sum_{\chi\ne\chi_0}
                      |\mathcal P_q(\chi)|^4\right\}^{1/2}. \tag{RV5.7}
 \]
 再以 \(|Y_q|^2\) 为测度对 \(q\) 用 Cauchy，RV5.7 至多
 \[
- A(\log P)^2S_Y^{1/2}
+ A(\log P)^6S_Y^{1/2}
  \left\{M_Y\sum_q{1\over q-1}
              \sum_{\chi\ne\chi_0}|\mathcal P_q(\chi)|^4
  \right\}^{1/2}.                                       \tag{RV5.8}
@@ -219,7 +221,7 @@ Gauss 恒等式逐项给
 代入 RV1.6 与 RV4.2 得
 \[
  \text{RV5.8}\ll_{\rho,w,W}
- A(\log P)^{5/2}S_Y^2,
+ A(\log P)^{13/2}S_Y^2,
 \]
 把固定对数幂吸收到 \(P^\varepsilon\) 即证 RV2.2。
 
