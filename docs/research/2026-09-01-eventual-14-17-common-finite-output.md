@@ -1486,6 +1486,58 @@ atoms 若在**变化的全部** \(a_0,b_0\) 上满足 CF19.22 的共同平方
 projective mass 为 \(a_0^{-1/2+\varepsilon}\) 并不自动证明这两个
 supremum；这正是 CF19.L 仍须逐字节核对的全局能量账。
 
+但 critical \(C_1\) atom 的变化 level 确实可以无幂支付；这里必须
+使用它的真实 divisor-output，而不是逐 level 的 projective
+\(\ell^1\) 质量。令 \(M,N\ge1\)，\({\cal V}\) 为有限维 Hilbert
+空间，\(v_D\in{\cal V}\) 支撑于 \(1\le D\le M\)，并置
+\(V(n)=\sum_{D\mid n}v_D\)。有限展开严格给
+\[
+ \sum_{n\le N}{\|V(n)\|^2\over n}
+ =\sum_{D,E\le M}\langle v_D,v_E\rangle
+   {H_{\lfloor N/[D,E]\rfloor}\over[D,E]}.             \tag{CF19.23}
+\]
+其中约定 \(H_0=0\)。
+这就是带符号、Hilbert 值的 lcm--harmonic Gram；没有先对
+\(D,E\) 取绝对值。若 \(B=\sup_D\|v_D\|\)，则对任意
+\(\eta\ge0\)，还有完全初等的
+\[
+ \boxed{\quad
+ \sum_{n\le N}n^{-1+\eta}\|V(n)\|^2
+ \le B^2N^\eta H_N^4.
+ \quad}                                                   \tag{CF19.24}
+\]
+确实 \(\|V(n)\|\le B\tau(n)\)。若 \(d_4(n)\) 是有序四因子
+分解数，则逐素数指数 \(e\) 有
+\[
+ (e+1)^2\le { (e+1)(e+2)(e+3)\over6},
+ \]
+故 \(\tau(n)^2\le d_4(n)\)；最后
+\[
+ \sum_{n\le N}{d_4(n)\over n}
+ =\sum_{abcd\le N}{1\over abcd}\le H_N^4.
+\]
+这也证明 CF19.24 对复系数、任意删减后的 divisor 子集及正交有限
+tags 同时成立。
+
+CF19.23 不能先被替换成
+\(H_N\sum_{D,E}\langle v_D,v_E\rangle/[D,E]\)。最小反例已在标量
+情形出现：\(M=N=2\)、\(v_1=1,v_2=-1\) 时 CF19.23 左端为 \(1\)，
+而 reciprocal-lcm form 为 \(1/2\)，乘 \(H_2=3/2\) 只有 \(3/4\)。
+所以主线已有的 reciprocal-LCM 正定性不能用逐核上界直接接入；
+CF19.24 才是 sign-safe 的有限输出估计。
+
+在 (405.4) 的 leading \(C_1\) cell 中，真实条件是
+\(A_{1,*}\mid h\delta\)，而 (8.13) 的平方权是
+\((h\delta)^{-1+\eta}\)。因此只要其余已归一化系数向量逐
+\(A_{1,*}\) 一致有界，CF19.24 把**全部变化的**
+\(A_{1,*}\) 在取范数前合并，只付 \(P^\varepsilon\)；另一 orientation
+的 \(B_{1,*}\mid h'\delta'\) 可在 CF19.1 的另一 Hilbert 输出中独立
+使用同一证明。这里 \((h\delta)^{-1/2}\) 正是 CF7 的 shell
+half-root，不能在 CF19.24 之后再乘一次。由此 CF19.L 中
+critical-\(C_1\) 的 **level multiplicity** 已支付；仍未证明的是两侧
+divisor outputs 与同一个 complete-shift/principal/equal-prime packet
+的无损输运，以及非 leading atoms 和 native rows 的共同分解。
+
 CF19.16 精确说明 CF19.C 可以如何被证明：必须把 opposite-shell 的
 全部 auxiliary outputs 在变化 \(q\) **之前**写成同一组
 \(q\)-无关向量 \(z_p\)，允许随后用 \(R_q\) 收缩。有限正交标签可放入
@@ -1558,8 +1610,12 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     CF19.19--CF19.22 把标量 edge 的共同列义务等价写成
     \(\gamma_2\) factorization norm，并给出 projective-square-mass
     充分条件；它没有证明实际 shell 满足 \(\gamma_2\ll P^\varepsilon\)，
-    算子值 shell 也仍需另给对应分解。CF19.8 仍须对实际 CF6.2 tags
-    完成逐行映射或独立支付。
+    算子值 shell 也仍需另给对应分解。CF19.23--CF19.24 则把 leading
+    \(C_1\) 的 divisor-output 精确写成 Hilbert 值 lcm--harmonic Gram，
+    并以 \(H_N^4\) 支付其全部 level multiplicity；同时给出不能直接用
+    \(H_N\) 乘 reciprocal-LCM form 的最小反例。这个结论没有完成两侧
+    output 到 common shift 的输运。CF19.8 仍须对实际 CF6.2 tags 完成
+    逐行映射或独立支付。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
