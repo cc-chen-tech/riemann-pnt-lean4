@@ -786,10 +786,12 @@ cofactor 的短和
 只需它自己的二阶 Parseval：当支撑区间长度小于 \(q\) 时，
 \[
  {1\over q-1}\sum_\chi|T_{q,a}(\chi;\alpha)|^2
-       =\sum_t|W_a(t/A)|^2\ll A,                         \tag{CF16.8}
+       =\sum_{q\nmid t}|W_a(t/A)|^2\ll A,                \tag{CF16.8}
 \]
 且非主角色子和只会更小。对正交 \(a\)-坐标求和仍只付其系数平方
-能量。CF16.6 再把两侧这种范数配对；这正保留 \(A/q=P^{-1/12}\)
+能量。这里 \(q\nmid t\) 不能省略：Dirichlet 角色在非单位上为零；
+长度小于 \(q\) 只保证单位剩余类互异，不保证支撑不含 \(q\) 的倍数。
+CF16.6 再把两侧这种范数配对；这正保留 \(A/q=P^{-1/12}\)
 而无需估计一个长度 \(PA^2\) 的任意公共列。
 
 但现有 complete-shift 等式尚未证明两侧 mixed-Bruhat 的
@@ -820,16 +822,24 @@ CF16.3 不能在乘上 \(\mathcal T_{q,a,\alpha}\) 后直接当作所需
 \(x\in U(q)\) 坐标上的值，除去不影响范数的共轭约定，恰为
 \[
  \sum_{\substack{p\in{\cal P},\,t\\pt\equiv x\ ({\rm mod}\ q)}}
-   w_t e(\alpha at/q)\vartheta_{p,q}\,g_p(q).             \tag{CF17.2}
+   w_t e(\alpha at/q)\vartheta_{p,q}\,g_p(q),\qquad x\in U(q).
+                                                               \tag{CF17.2}
 \]
+这个同余自动强制 \(q\nmid t\)，但下面的中心项也必须显式使用同一
+单位支撑。
 所以组合算子按 \(q\) **完全分块**。输出的非主投影在这些剩余类
 坐标中只是扣除常数向量；相应的固定 \(q\) 矩阵是
 \[
  C_q^0(x,p)=
  \sum_{\substack{t\\pt\equiv x\ ({\rm mod}\ q)}}
        w_t e(\alpha at/q)\vartheta_{p,q}
- -{1\over q-1}\sum_t w_t e(\alpha at/q)\vartheta_{p,q}.  \tag{CF17.3}
+ -{1\over q-1}\sum_{q\nmid t}
+       w_t e(\alpha at/q)\vartheta_{p,q}.                 \tag{CF17.3}
 \]
+例如 \(q=5\) 且唯一非零权为 \(w_5=1\) 时，真实角色短和恒为零；
+若在 CF16.8 或 CF17.3 的中心项中错误保留 \(t=5\)，会分别得到假的
+右端 \(1\) 或假的常数列 \(-1/4\)。这也是单位限制不可由短区间长度
+替代的有限反例。
 
 输入非主投影也不会强迫不同 \(q\) 的边值相关。固定 \(p\)，令
 \({\cal Q}_p={\cal P}\setminus\{p\}\)，\(m_p=|{\cal Q}_p|\)。
