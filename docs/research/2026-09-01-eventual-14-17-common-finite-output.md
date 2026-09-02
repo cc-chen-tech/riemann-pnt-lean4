@@ -491,12 +491,28 @@ valuation-averaged projective mass，而不是未定义的任意系数算子：
                          \|K_{p,u}\|_{{\cal Y}_p}
  \ll_\eta p^{-1/2+2\eta}.                              \tag{CF7.9}
 \]
-矩阵对 \((r,s)\) 的 rank 一致有界：Hecke recurrence 使每个
-\(\lambda_{r+s-j}\) 在非负区域是 rank 至多二的 Hankel matrix，
-\(b=0\) 的分段值只增加一个 rank-one boundary，CF7.3 也只增加固定
-多个 shifts。故 nuclear norm 至多固定 rank 平方根乘 CF7.8 的
-Hilbert--Schmidt norm，所以 CF7.9 同时控制将 \(h,\delta\) 分开的
-nuclear projective mass。
+矩阵对 \((r,s)\) 的 rank 一致有界，但负指标置零造成的边界
+必须显式计入。对任意固定 \(j\ge0\)，令
+\(H_j(r,s)=\lambda_{r+s-j}\)，其中负指标为零。当 \(s\ge j\) 时，
+Hecke recurrence 给出（置 \(n=s-j\ge0\)）
+\[
+ \lambda_{r+n}
+ =\lambda_n\lambda_r-\lambda_{n-1}\lambda_{r-1}
+ =(\lambda_n-\lambda_1\lambda_{n-1})\lambda_r
+       +\lambda_{n-1}\lambda_{r+1},
+\]
+其中 \(\lambda_{-1}=0\)。所以第 \(s\) 列属于第 \(j\) 与第
+\(j+1\) 列的张成空间；前 \(j\) 列各至多再增加一维。因此
+\[
+                         \operatorname{rank}H_j\le j+2.       \tag{CF7.9a}
+\]
+这个结论也可先对任意有限左上截断证明，上界与截断无关。
+CF7.2--CF7.5 中对 \(r+s\) 只出现 \(j=0,1,2\) 的这些 shifts，
+而 \(b=0\) 的分段值只再增加一个 rank-one boundary。故整个
+局部矩阵的 rank 有与 \(p,u\) 及截断无关的绝对上界；对每个有限
+截断，nuclear norm 至多该固定 rank 平方根乘 CF7.8 的
+Hilbert--Schmidt norm，然后取截断极限。所以 CF7.9 仍同时控制将
+\(h,\delta\) 分开的 nuclear projective mass。
 
 对 squarefree \(A\) 现在可以无歧义地定义
 \[
