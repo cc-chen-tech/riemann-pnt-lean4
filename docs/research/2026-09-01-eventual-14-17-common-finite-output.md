@@ -593,6 +593,28 @@ shell 模数**。一般 \(c=AB\) 可以由两个 rough squarefree levels
 组成而没有该尺度的除数；源定理也仍是固定模数正范数，不能据此
 恢复 CF10.1 的带符号 varying-level/common-projection 输出。
 
+这个 factorable/rough 分割还有一个完全初等的反向描述。固定
+\(0<\delta<5/44\)。若整数 \(c>1\) 没有除数落在
+\[
+ [c^{\,2/11+\delta},c^{\,9/22-\delta}],                 \tag{CF13.10}
+\]
+则必有素数 \(r\mid c\) 满足
+\[
+ r>c^{\,5/22-2\delta}
+   =P^{\,5/12-(11/3)\delta}\qquad(c=P^{11/6}).           \tag{CF13.11}
+\]
+证明只需把 \(c\) 的素因子按任意次序逐个相乘，并取第一个达到
+\(c^{2/11+\delta}\) 的部分积。若每个素因子都不超过
+\(c^{5/22-2\delta}\)，这个首次越界的部分积至多
+\[
+ c^{2/11+\delta}c^{5/22-2\delta}
+ =c^{9/22-\delta},
+\]
+与 CF13.10 矛盾。于是 CF13.9 的补集可缩成一个带显式大素因子的
+rough-shell 问题。CF13.11 本身不是新的 saving：该素因子的
+valuation-one half-root 已在 CF7 的共同基线中计过一次，不能再乘。
+它只给后续 rough-modulus joint estimate 一个不重不漏的输入分层。
+
 所以这些原始定理分别给出“数值不足的全模数固定层”和“数值足够但
 对象不匹配的特殊分解固定层”。它们都是 CF12 后续 joint operator 的
 局部输入，不是该 operator 本身。
