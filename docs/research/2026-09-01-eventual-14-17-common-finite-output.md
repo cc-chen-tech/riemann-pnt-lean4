@@ -2078,6 +2078,147 @@ CF8.54--CF8.58，唯一未证物理和因而可写成
 correlation**；下一步可以从中减去并精确支付共同 singular reference，
 但不能把 Hardy--Littlewood 预测直接当作 \(\mathfrak R_o\) 的估计。
 
+不过，一个显式定义的 reference density 可以在四个 parity branches
+合并后完全支付。CF8.62 的 \(\Phi_h\) 由 Tonelli 精确满足
+\[
+             \int_{\mathbb R}\Phi_h(u)\,du
+       =XJ_P(H-|h|)_+,\qquad
+ J_P=\int_{I_P}\omega_K(y)\,dy\ll_K1.                 \tag{CF8.64}
+\]
+固定 \(p\ne q,a,b,h\)，置
+\[
+ g=(a,b),\qquad A=ap/g,\quad B=bq/g,\quad h'=h/g.
+\]
+若 \(g\nmid h\)，定义 \(R_{pq}^{ab}(h)=0\)。否则
+\((A,B)=1\)，两线性式的整数解是一条步长 \(AB\) 的格；定义
+\[
+ R_{pq}^{ab}(h)
+ ={g\over abpq}\,\mathfrak S_{pq}^{ab}(h)
+        \int\Phi_h(u)\,du,                             \tag{CF8.65}
+\]
+其中
+\[
+ \mathfrak S_{pq}^{ab}(h)
+ =\prod_\ell{1-\nu_\ell/\ell\over(1-1/\ell)^2}
+\]
+且 \(\nu_\ell\) 是这两条 primitive 线性式在模 \(\ell\) 的根并集
+大小；若某个局部因子阻塞，则右边定义为零。CF8.65 只是一个显式
+数，不断言真实 prime correlation 等于它。
+
+以下计算都在充分大 \(P\) 后进行，因而 \(p,q\) 是互异奇素数；又由
+CF8.58，求和中的 \(h\) 与 \(pq\) 互素。全部局部因子可直接计算。置
+\[
+ C_o=\prod_{\ell>2}\left(1-{1\over(\ell-1)^2}\right),
+ \quad s_o(h)=C_o\prod_{\substack{\ell\mid h\\\ell>2}}
+                         {\ell-1\over\ell-2},
+ \quad r_p={p-1\over p-2}.                             \tag{CF8.66}
+\]
+乘积绝对收敛。奇素数处四个 parity rows 都给
+\(r_pr_qs_o(h)\)；在 \(2\) 处逐行的可解/非阻塞条件及乘回
+\(g\sigma_a\sigma_b\) 后的系数为
+\[
+\begin{array}{c|c|c|c}
+(a,b)&\text{格点条件}&\text{\(2\)-处条件}&
+       2g\sigma_a\sigma_b\\ \hline
+(1,1)&\text{无}&2\mid h&2\\
+(1,2)&\text{无}&h\ {\rm odd}&-2\\
+(2,1)&\text{无}&h\ {\rm odd}&-2\\
+(2,2)&2\mid h&4\mid h&4 .
+\end{array}
+\]
+所以四行先相加后的准确 parity 因子是
+\[
+ F(h)=2{\bf1}_{2\mid h}+4{\bf1}_{4\mid h}
+                    -4{\bf1}_{h\ {\rm odd}},
+ \qquad(F(0),F(1),F(2),F(3))=(6,-4,2,-4).             \tag{CF8.67}
+\]
+由 CF8.64--CF8.67，全部 reference contribution 恰为
+\[
+ \mathfrak M_{\rm ref}=XJ_P\,\mathcal T_Y\mathcal A(H),
+ \quad
+ \mathcal T_Y=\sum_{p\ne q}Y_p\overline{Y_q}r_pr_q,
+ \quad
+ \mathcal A(H)=\sum_{0<|h|<H}(H-|h|)s_o(h)F(h).        \tag{CF8.68}
+\]
+
+这两个因子都可自含估计。先由 \(\sum_pY_p=0\) 得精确式
+\[
+ \mathcal T_Y=
+ \left|\sum_p{Y_p\over p-2}\right|^2
+       -\sum_p|Y_p|^2r_p^2,
+ \qquad |\mathcal T_Y|\ll {Q_P\over P}.               \tag{CF8.69}
+\]
+第一项用加权 Cauchy 后的 reciprocal square 和为 \(O(P^{-2})\)，
+第二项为 \(O(Q_P/P)\)。
+
+为估计 \(\mathcal A(H)\)，对奇平方自由 \(d\) 置
+\[
+ a(d)={1\over\prod_{\ell\mid d}(\ell-2)},\qquad
+ b(d)=\prod_{\ell\mid d}{2\over\ell-2};
+\]
+其余 \(d\) 置零，且 \(a(1)=b(1)=1\)。有限 Euler 展开给
+\[
+ s_o(h)=C_o\sum_{d\mid h}a(d),\qquad
+ da(d)\le\sum_{k\mid d}b(k),\qquad
+ \sum_{k\ge1}{b(k)\over k}\le e^{3/2}.                \tag{CF8.70}
+\]
+最后一式来自 Euler 乘积、\(1+x\le e^x\)，以及更强的望远镜界
+\[
+ \sum_{\ell>2}{2\over\ell(\ell-2)}
+ \le\sum_{j\ge1}{2\over(2j+1)(2j-1)}=1<3/2.
+\]
+因 \(d\) 为奇数，\(F(dk)=F(k)\)。若 \(L=H/d=M+r\)、
+\(M=\lfloor L\rfloor,0\le r<1\)，有限 Fejér 平方恒等式
+\[
+ \sum_k(L-|k|)_+e(k\theta)
+ =(1-r)\left|\sum_{j=0}^{M-1}e(j\theta)\right|^2
+   +r\left|\sum_{j=0}^{M}e(j\theta)\right|^2
+\]
+在 \(\theta=1/2,\pm1/4\) 与
+\(F(k)=4e(k/2)+e(k/4)+e(-k/4)\) 给
+\[
+ 0\le\sum_kF(k)(H-d|k|)_+\le8d.
+\]
+去掉 \(k=0\) 只减 \(6H\)，故相应非零 \(k\) 和的绝对值至多
+\(6H+8d\)。再由 CF8.70 非负换序得
+\[
+ \sum_{d<H}a(d)\ll1+\log(2H),\qquad
+ \sum_{d<H}da(d)\ll H,
+\]
+从而
+\[
+ |\mathcal A(H)|\ll H\{1+\log(2H)\},\qquad
+ \boxed{\quad|\mathfrak M_{\rm ref}|
+       \ll_K XH Q_PP^{-1}\log(2H).\quad}              \tag{CF8.71}
+\]
+这里 \(H^2\) 的连续主质量只在四个 parity rows 合并后降为
+\(H\log H\)；不能把这一收益复制给真实余项。
+
+现在定义唯一的 centered prime-pair remainder
+\[
+ \begin{aligned}
+ \mathfrak E_o={}&
+ \sum_{\substack{p\ne q\\a,b\in\{1,2\}}}
+ \sigma_a\sigma_b\,abpqY_p\overline{Y_q}
+ \sum_{0<|h|<H}
+ \{T_{pq}^{ab}(h)-R_{pq}^{ab}(h)\},\\
+ T_{pq}^{ab}(h)={}&
+ \sum_{\substack{m,n\ {\rm odd\ prime}\\apm-bqn=h}}
+             (\log m)(\log n)\Phi_h(apm).
+                                                               \tag{CF8.72}
+ \end{aligned}
+\]
+有限定义严格给 \(\mathfrak R_o=\mathfrak M_{\rm ref}+\mathfrak E_o\)。
+因此此前全部 reductions 之后，CF8.5 的唯一未证命题正是
+\[
+             \boxed{\quad
+             |\mathfrak E_o|
+             \ll_{\rho,\eta}XH Q_PP^\eta.\quad}        \tag{CF8.73}
+\]
+CF8.73 是实际相关减去共同 reference 的 signed 总和，不是逐
+\((p,q,a,b,h)\) 的 Hardy--Littlewood error；后者远强于所需且没有
+在这里被假定。
+
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
 cancellation，因为在该 squarefree canonical 行上
