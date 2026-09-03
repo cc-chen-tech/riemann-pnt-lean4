@@ -16,11 +16,14 @@ cross-prime contraction、短逆边实际 Riesz 平方能量、affine
 physical-shift 导数/尾引理，以及 actual-Riesz 四阶矩的共同 Hilbert
 列扩张；CF19B 还把经典 Andersen--Kıral level reciprocity 的三项
 prime completion 无损张量化到互素平方自由 levels，并证明该
-reciprocity 本身不含第二份 shell half-root；CF19Z--CF19Z5 则在
-不交换无限谱和的前提下，先直接给出 odd--Hecke 零列的 exact-shell
-几何绝对界，再用一次有限 level Möbius 容斥把该几何边精确识别为
-包含 oldforms 与连续谱的整体 regulated full-spectrum trace，并在
-真实 dyadic modulus 权下消去 Hecke-index 长度。
+reciprocity 本身不含第二份 shell half-root；CF19Z--CF19Z6 则在
+不交换无限谱和的前提下，直接给出 odd--Hecke 零列的若干 exact-shell
+辅助几何绝对界，并用一次有限 level Möbius 容斥把该辅助壳精确识别为
+包含 oldforms 与连续谱的整体 regulated full-spectrum trace。CF19Z7
+进一步给出一个反向审计修正：这个 exact-shell trace 不能再与已经包含
+shell local coefficient 的 CF19.32c 串联，否则单素数局部和精确为零；
+正确的物理候选必须降到 level \(B\)，相应绝对界只有 \(A^{-2+\varepsilon}\)
+而不是重复壳密度所得的 \(A^{-3+\varepsilon}\)。
 反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
@@ -3154,9 +3157,12 @@ CF19.32e 发散；所以把它直接塞进普通谱大筛不是合法的极限�
 \]
 因 \((A,B)=(A,r)=1\)，每个 \(p\mid A\) 在模数 \(ABr\) 中恰有
 valuation one；所以 CF19.59 真的是 exact valuation-one shell，而
-不是放宽后的全模数和。其系数 \(A^{-2}t^{-1}\) 正是 CF19.32c
-已经恢复 ambient harmonic kernel 后的系数，不能再另乘一份
-\(p^{-1}\) 或 shell half-root。
+不是放宽后的全模数和。其数值系数 \(A^{-2}t^{-1}\) 与 CF19.32c
+的 odd--Hecke 系数相同；但 CF19.59 又在 modulus 上额外施加了一次
+exact-shell 条件。CF19Z7 将证明：若把二者串联，单素数局部谱和精确
+为零。因此 CF19.59 只是一个辅助几何对象，不能据系数外形把它认作
+CF19.32c 的物理实现，更不能再从中宣称一份 \(p^{-1}\) 或 shell
+half-root saving。
 
 对任意 \(0<\eta<J-1/2\) 和 \(Y>0\)，分 \(r\le Y\) 与 \(r>Y\)
 （若 \(Y<1\)，前者为空），两个幂级数分别给
@@ -3243,20 +3249,19 @@ CF19.58 把 test 的自然尺度归一为一；物理使用时不能把变化尺
 \(\max(1,X_\phi^{-\varepsilon})\) 放入统一的 \(T^\varepsilon\)；
 CF19.61 的 unit-scale 写法本身不授权这一步。
 
-CF19.61 同时说明任一有限 odd--Hecke 截断的几何边在截断参数上一致
+CF19.61 同时说明任一有限 odd--Hecke 截断的辅助几何边在截断参数上一致
 可和；而 \(A>1\)、\((A,n)=1\) 还使第一 index \(At^2k\) 与第二
 index \(n\) 永不相等，所以对应 primitive trace 的 Kronecker
 diagonal 逐项为零。这是 CF19.33 的几何强化，并且 Maaß、holomorphic、
 Eisenstein 的区分在这条纯 Kloosterman 估计中没有出现。
 
-但 CF19.61 **尚不是** actual QCT 的全谱界。要使用它，仍须在同一个
-共同 Bessel test 下证明：有限 odd--Hecke 截断的完整 classical
-Kuznetsov/Petersson 三谱迹趋于 CF19.31 的有理 multiplier；极限可与
-全部 Maaß、holomorphic、oldform 与 cusp--Eisenstein 和交换；其几何
-模数、正负号和归一化恰为 CF19.59；并且原 complete-shift 的
-principal/axis/residue 行在恢复整数格后进入同一个共同账本。
-CF19.61 只关闭了这个 adapter **之后**的 exact-shell off-diagonal
-估计，不支付 adapter 本身，也不支付 CF19.D/CF19.C。
+CF19.61 **不是** actual QCT 的全谱界。CF19Z2 只把 CF19.59 这个
+辅助 exact-shell 几何级数识别成相应的完整 classical
+Kuznetsov/Petersson regulated trace；CF19Z7 的单素数计算则证明，
+该 trace 不能与 CF19.31--CF19.32c 的 local multiplier 再串联。
+actual zero--zero 行的候选应是 CF19.85 的 lower-level trace。
+把 CF19.85 接回原 complete-shift，并使 principal/axis/residue 行在
+恢复整数格后进入同一个共同账本，仍属于未证 CF4/CF19.D/CF19.C。
 
 ### CF19Z2. 完整谱 exact-shell 由 level Möbius 容斥一次实现
 
@@ -3415,11 +3420,12 @@ CF19.69 遂给
 
 CF19.70 的优点是允许 \(\phi_{k,n}\) 随 pair 变化；代价是已经对
 \(k,n\) 取 pointwise majorant，不能再把这个 bound 与另一份谱大筛
-saving 相乘。要接 actual QCT，只需但也必须证明每个对应的模数权能
-写成 CF19.59 的 rescaled test，且**同一个**
+saving 相乘。它只装配 CF19.59 这个辅助 exact-shell 对象；CF19Z7
+证明，把 actual CF19.32c 再接到 CF19.59 会重复 shell 并精确杀掉
+局部零块。actual QCT 应改接 CF19.85；即使如此，也必须证明同一个
 \(C_\phi,X_\phi\) 一致控制全部 AFE、detector、reflection 与 endpoint
-tags。这个任务是 CF19.D 的具体几何版；没有该 seminorm/尺度证明，
-CF19.70 仍只是一个已闭合 supplier。
+tags，并核对 lower-level harmonic measure。这个任务仍属 CF19.D/CF4；
+没有该 seminorm/尺度和谱归一化证明，CF19.70 只是辅助 supplier。
 
 ### CF19Z4. 固定 dyadic 模数权消掉 Hecke-index 长度
 
@@ -3522,7 +3528,7 @@ CF19.72--CF19.73 完全一致。
 \((K_0N_0)^{3/4+\varepsilon}\)。
 
 CF19.73--CF19.75 是固定模数壳、允许 test 随 \(t\) 变化的
-zero--zero exact-shell supplier；它允许 \(W_t\) 带全部已经固定的
+exact-shell 辅助几何 supplier；它允许 \(W_t\) 带全部已经固定的
 AFE/detector/reflection tags，只要求同一 \(\ell^\infty\) 预算。
 但这还不是“actual common test 直接可用”：同一物理 Bessel test
 在 Hecke index 从 \(Ak\) 改为 \(At^2k\) 时不会自动换成
@@ -3591,7 +3597,8 @@ CF19.73 的 \(\prod(1-p^{-1})^{-1}\)，而是 CF19.78 显示的
 仍需 CF19.D 证明原始 quotient-Poisson 核在同一尺度
 \(X_{k,n}\) 上真正可写成 CF19.76，且全部 endpoint/
 reflection tags 具有共同 \(C_W\) 预算。CF19.78 仍只是
-zero--zero exact-shell 的几何 supplier，不估计其他 local states 或
+common-test exact-shell 的辅助几何 supplier；CF19Z7 将证明它不能和
+CF19.32c 串联。它也不估计其他 local states 或
 principal/axis/residue/native 行。
 
 ### CF19Z6. 原 Type-I/Type-I bulk 的几何 test/scale 映射
@@ -3673,16 +3680,135 @@ dyadic cutoff，zero--zero 子行中余下的完整几何权可定义为
 \(C_0=AS\)、base index \(Ak\) 与 modulus \(ABm\) 已逐项对上
 CF19.76。
 
-然而 CF19.80 本身没有 \(A^{-2}t^{-1}\)。该系数只在先用
-CF4 把 actual exact shell 识别为 ambient oldspace 核，再对其
-zero--zero local state 应用 CF19.31--CF19.32c 后出现。若这个尚未证的
-谱适配成立，则 CF19.32c 给 \(A^{-2}t^{-1}\) 和 \(At^2k\)，
-CF19.80 给 \(ABm\) 及唯一外因子 \(R\)，CF19.77--CF19.78
-则支付 common-test moving shell。在 CF4 闭合前，不能把这三条拼成
-已证的 actual spectral bound。而且 CF19.79--CF19.82 只处理
+然而 CF19.80 本身没有 \(A^{-2}t^{-1}\)。该系数只在对 actual shell
+的 zero--zero local state 应用 CF19.31--CF19.32c 后出现；而
+CF19Z7 证明，不能再把所得 odd--Hecke 列送进 CF19Z2 的 exact-shell
+trace。正确候选是：由 CF4 在完整 Maaß/holomorphic/Eisenstein
+归一化中把该列降到 CF19.85 的 level-\(B\) trace，CF19.80 只负责
+核对原 Poisson 的 base index、modulus scale 与唯一外因子 \(R\)。
+在 CF4 闭合前，不能把这些条目拼成已证的 actual spectral bound。
+而且 CF19.79--CF19.82 只处理
 expanded--expanded Type-I/Type-I 的非零 bulk；四个 quotient endpoint、
 Type-II、\(k=0\)、axes、principal/residue 与 native complement 均未因此获得
 新覆盖。
+
+### CF19Z7. 再套 exact shell 会精确杀掉零块；正确候选降到 level \(B\)
+
+CF19Z--CF19Z5 的几何不等式本身正确，但它们不能作为 CF19.32c 的
+zero--zero 物理实现。原因可在一个 prime 上精确看见。固定
+\(p\nmid B\)，令
+\[
+ \Delta_p(y)=(1+y)^2-\lambda_1^2y.
+\]
+Hecke recurrence 的奇偶生成函数分别是
+\[
+ \sum_{a\ge0}\lambda_{2a+1}y^a={\lambda_1\over\Delta_p(y)},
+ \qquad
+ \sum_{a\ge0}\lambda_{2a}y^a={1+y\over\Delta_p(y)}.     \tag{CF19.83}
+\]
+CF19.32a 前的 Kim--Sarnak majorant 同时控制奇、偶两列，所以二者在
+\(y=1/p\) 都绝对收敛。
+CF7.4a 对所有 \(j\ge1\) 给 \(P_2(j,0)=0\)，故
+\[
+ D_p(j,0)=P_1(j,0)
+ ={\,\lambda_j-\dfrac p{p+1}\lambda_1\lambda_{j-1}\,
+   \over(p+1)\rho_p}.
+\]
+因此在 \(y=1/p\) 处绝对收敛地有
+\[
+ \begin{aligned}
+ \sum_{a\ge0}{D_p(2a+1,0)\over p^{a+2}}
+ &={p^{-2}\lambda_1\over(p+1)\rho_p\Delta_p(1/p)}
+   \left\{1-{p\over p+1}\left(1+{1\over p}\right)\right\}\\
+ &=0.                                                       \tag{CF19.84}
+ \end{aligned}
+\]
+这不是少算一个 \(p^{-1}\) 的量级警告，而是精确的零；例如局部取
+\(p=2,\lambda_1=1\) 时，左边仍为零，而
+\(D_2(1,0)=1/7\ne0\)。CF19.32a 已把
+原 shell zero--zero coefficient \(D_p(1,0)\) 展成
+\(\sum_a p^{-a-2}\lambda_{2a+1}\)。若再把每个 odd-Hecke 项送入
+CF19.65 的 exact-shell trace，则在这个 unramified oldclass 分量上
+又乘 \(D_p(2a+1,0)\)，恰得到 CF19.84，而不是 \(D_p(1,0)\)。所以
+\[
+ \boxed{\text{CF19.32c 的 odd--Hecke 系数与 CF19Z2 的 level
+ inclusion--exclusion 不可串联。}}
+\]
+这正是“harmonic \(1/p\) 或 local \(O(1/p)\) 不能重复计算”的一个
+精确反例。
+
+不重复 shell 的 classical candidate 是把 prime \(A\) 从 level 中
+降掉。定义
+\[
+ \begin{aligned}
+ \mathfrak L_{A,B}^{\pm}(k,n;\phi)
+ :=\sum_{\substack{t\ge1\\\operatorname{rad}(t)\mid A}}
+ {1\over A^2t}
+ \sum_{r\ge1}
+ {S(At^2k,\pm n;Br)\over Br}\,
+ \phi\!\left({4\pi t\sqrt{Akn}\over Br}\right).
+                                                               \tag{CF19.85}
+ \end{aligned}
+\]
+这里仍假设 \(A>1\) 平方自由、\((A,Bkn)=1\)。令 \(\mathcal T\)
+是只含 \(A\)-素因子的正整数所成的任意有限集。若 \(\phi\) 还满足
+CF19.61c 的 classical Kuznetsov
+admissibility，普通 level-\(B\) 全谱公式（采用 CF19.62 的同一
+harmonic/Fourier 归一化）逐项给
+\[
+ \sum_{t\in\mathcal T}{1\over A^2t}
+   \operatorname{Spec}^{\pm}_{B}(At^2k,n;\phi)
+ =\mathfrak L_{A,B;\mathcal T}^{\pm}(k,n;\phi),          \tag{CF19.86}
+\]
+且同号 diagonal 因 \(At^2k\ne n\) 为零。按 CF19.62 的 \(\pm\)
+约定，level \(B\) 的 Maaß、同号 holomorphic、oldforms 与全部
+Eisenstein cusps 都保留（异号 holomorphic 行为空）；因
+\((A,B)=1\)，它们在每个 \(p\mid A\) 都是 unramified datum，
+所以 CF19.32c 的 Hecke 关系可在同一 full spectrum 上逐项使用。
+当 \(\mathcal T\) 穷尽全部 \(A\)-smooth \(t\) 时，下面 CF19.87 的
+绝对界使几何右边收敛，从而定义唯一的 aggregate regulated
+full-spectrum limit；这里不交换 \(t\)-极限与任何单独谱和。
+这说明 CF19.85--CF19.86 是 zero--zero local multiplier 的正确
+classical trace **candidate**。把它等同于 actual CF19.80 的
+zero--zero 行仍要求 CF4 证明 level lowering、Fourier/harmonic measure
+与连续谱归一化完全一致；本文不从局部生成函数反推该全局等同。
+
+CF19.85 的几何边不需谱解释即可估计。对满足 CF19.58 的 test，重复
+CF19.60--CF19.61，但把 modulus \(ABr\) 换成 \(Br\)。这里即使
+\(r\) 含 \(A\)-素因子也仍有
+\((At^2k,n,Br)=(k,n,Br)\le(k,n)\)，因为 \((At,n)=1\)。于是得到
+\[
+ |\mathfrak L_{A,B}^{\pm}(k,n;\phi)|
+ \ll_{\varepsilon}
+ {C_\phi(k,n)^{1/2}(kn)^{1/4+\varepsilon}
+  \over BA^{7/4-\varepsilon}}.                         \tag{CF19.87}
+\]
+若进一步使用 actual-common-test 形状 CF19.76，则
+\[
+ \phi_{k,n}\!\left({4\pi t\sqrt{Akn}\over Br}\right)
+   =W_{k,n}\!\left({Br\over tC_0}\right),
+\]
+固定 \(t\) 的 Weil 和支撑于 \(Br\asymp tC_0\)。乘
+\(A^{-2}t^{-1}\) 并求全部 \(A\)-smooth \(t\)，严格给
+\[
+ \boxed{
+ |\mathfrak L_{A,B}^{\pm}(k,n;\phi_{k,n})|
+ \ll_\varepsilon
+ {C_W(k,n)^{1/2}C_0^{1/2+\varepsilon}
+  \over BA^{2-\varepsilon}}.}                          \tag{CF19.88}
+\]
+其 \(t\)-Euler 乘积仍是 CF19.78 的
+\(\prod_{p\mid A}(1-p^{-1/2+\eta})^{-1}\)。对两条非极端 dyadic
+\(k,n\) 列再用 CF19.69，长度费用仍为
+\((K_0N_0)^{1/2+\varepsilon}\)。
+
+CF19.88 比 CF19.78 少一个 \(A^{-1}\)，正因为 level-\(B\) 几何边
+不再人为要求 \(A\mid c\)。这不是损失，而是删除重复 shell density
+后的正确账。下一条真正需要核验的命题因此不再是把 actual row 接到
+CF19Z2，而是：CF4 的 completed Maaß/holomorphic/Eisenstein
+normalization 是否把 CF19.80 的 zero--zero oldspace 差核无损降为
+CF19.86，同时把其余 local states、principal、axes 与 residues 留在
+同一个有限系数不等式中。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
@@ -3858,14 +3984,11 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     映射。CF19.55--CF19.57 进一步证明 reciprocity 在交换不变的共同
     和中只删除 test 的反对称部分；fixed-\(\omega\) product shell 上
     \(\mu(A)\mu(N)\) 是常号，所以对称部分不能仅由“两侧 Möbius
-    符号”获得 saving。CF19.58--CF19.61 随后直接在几何侧求和
-    CF19.32c 的整个 odd--Hecke 列：Weil 界、模数分段和 restricted
-    Euler 乘积给出
+    符号”获得 saving。CF19.58--CF19.61 随后直接在几何侧估计一个
+    与 CF19.32c 数值权相同、但在 modulus 上另施 exact-shell 的辅助
+    odd--Hecke 级数：Weil 界、模数分段和 restricted Euler 乘积给出
     \(B^{-1}A^{-11/4+\varepsilon}(kn)^{1/4+\varepsilon}(k,n)^{1/2}\)
-    的绝对 exact-shell 界，并再次核对 ambient harmonic 权与 shell
-    half-root 没有重复计算。有限截断到有理 multiplier 的完整三谱
-    逐谱极限、actual common Bessel test 和 principal/axis/residue
-    物理映射仍开放。CF19.62--CF19.67 另用
+    的绝对界。CF19.62--CF19.67 另用
     \(\sum_{d\mid A}\mu(d)\operatorname{Spec}_{ABd}^{\pm}\) 精确选出
     \(v_p(c)=1\ (p\mid A)\)：同号 diagonal 由
     \(\sum_{d\mid A}\mu(d)=0\) 消失，Maaß/holomorphic/Eisenstein
@@ -3890,13 +4013,24 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     \(t\)-质量为 \(\prod_{p\mid A}(1-p^{-1/2+\eta})^{-1}\)，
     仍只付 \(A^\varepsilon\)。两种对象的非极端 dyadic 列长度费用
     都为 \((K_0N_0)^{1/2+\varepsilon}\)，但不能在局部账上互换。
-    原物理零列与 CF19.76 的 test/scale 等同性及其他
-    local/principal/axis/native 行仍未映射。
+    这些仍是 auxiliary exact-shell 估计，不能据此宣称原物理零列
+    已映射；其他 local/principal/axis/native 行同样仍未支付。
     CF19.79--CF19.82 进一步从主笔记 §412 的字面 quotient Poisson
     证明 Type-I/Type-I bulk 的几何尺度 \(C_0=AS\)、base index
     \(Ak\)、modulus \(ABm\) 与唯一 Jacobian \(R\)；但
-    \(A^{-2}t^{-1}\) 仍只在尚未闭合的 CF4 ambient-oldspace 识别后由
+    \(A^{-2}t^{-1}\) 仍只在 zero--zero local multiplier 中由
     CF19.32c 产生，所以没有据此新增 actual spectral coverage。
+    最后 CF19.83--CF19.84 给出决定性的反向审计：CF19.32c 的
+    odd--Hecke 系数若再送进 CF19.62 的 exact-shell level 容斥，则
+    每个 shell prime 的局部和精确为零，故 CF19Z--CF19Z5 不能与
+    physical local multiplier 串联。去掉重复 shell 后，正确候选是
+    CF19.85 的 level-\(B\) full-spectrum trace；其纯几何界为
+    \(B^{-1}A^{-7/4+\varepsilon}(kn)^{1/4+\varepsilon}(k,n)^{1/2}\)，
+    actual-common-test 形式为
+    \(C_WC_0^{1/2+\varepsilon}B^{-1}A^{-2+\varepsilon}(k,n)^{1/2}\)。
+    把这个 lower-level candidate 与 actual Maaß/holomorphic/Eisenstein
+    harmonic measure、principal/axes/residues 无损对齐，仍是 CF4 的
+    未证命题。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
