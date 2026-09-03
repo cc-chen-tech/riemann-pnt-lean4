@@ -48,7 +48,10 @@ CF19.119，且不付 Fourier index、level 或第二份 Jacobian。这个结论�
 dyadic 壳、三个符号象限内把 \((k,h,\delta)\) 与 Bessel test 作共同
 projective 分离，并用 divisor Cauchy 正确支付 \(n=h\delta\) 的合并；
 它关闭该 literal bulk 的 CF19.130 与 quotient-Fourier 远尾，但不覆盖
-另一 orientation、complete-shift、principal/axes 或 Type-II。
+complete-shift、principal/axes 或 Type-II。CF19Z17 从 pre-Poisson
+格点和重推另一 orientation，证明其外权、共同 test 与远尾具有同一
+预算；同时精确显示换向必须携带两个 Poisson 零模之差，故两向 signed
+谱行的共同重组仍未关闭。
 反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
@@ -4760,6 +4763,118 @@ CF19.129 的至多多项式 Bessel capacity 后仍绝对可和。这支付了
 quotient masks、另一 orientation、CF3 endpoints、CF5 axes/origin、
 principal/residue、complete-shift detector 与 Type-II 仍须在 CF19.L/CF19.C
 的同一有限输出中重组。
+
+### CF19Z17. 另一 BCR orientation 具有同一预算，但换向必须携带零模差
+
+“另一 orientation 同理”若只针对非零 Poisson 频率是错误的；这里从
+原 pre-Poisson shifted-divisor box 直接推导。原方程
+\(m_1s-m_2r=\delta\) 也可写成
+\[
+ m_2={m_1s-\delta\over r},\qquad
+ m_1\equiv\delta\bar s\pmod r.                       \tag{CF19.144}
+\]
+固定 \(r,s,\delta\)，令 \(x=m_1\)。按原 (4.3b) 的 Fourier 约定，
+另一向的 literal kernel 是
+\[
+ \begin{aligned}
+ \mathscr K^\vee(r,s;\delta,j)
+ ={}&\int_0^\infty
+ {F_K(x)F_M((xs-\delta)/r)\over
+          \sqrt{x(xs-\delta)/r}}e(-jx/r)\\
+ &\times\int_{\mathbb R}W(t/T)
+ V_t\!\left({x(xs-\delta)\over r}\right)
+ \exp\!\left(-it\log\left(1-{\delta\over xs}\right)\right)dt\,dx,
+ \end{aligned}                                      \tag{CF19.145}
+\]
+并在 \(xs-\delta\le0\) 时置零。负号不能由“交换 \(r,s\)”省略：它
+来自
+\(\log(m_1s/(m_2r))=-\log(1-\delta/(m_1s))\)。Poisson 给出的非零行
+严格为
+\[
+ \begin{aligned}
+ \mathcal O^{\vee,\ne0}_{q;R,S,K,M}
+ ={}&{2\over q}\sum_{(r,s)=1}
+ {a_N(qr)a_N(qs)F_R(r)F_S(s)\over\sqrt{rs}\,r}\\
+ &\quad\times\sum_{\delta\ne0}\sum_{j\ne0}
+ e\!\left({j\delta\bar s\over r}\right)
+ \mathscr K^\vee(r,s;\delta,j).
+ \end{aligned}                                      \tag{CF19.146}
+\]
+因此第一层 Poisson 的分母是 \(1/r\)，不是把原 \(1/s\) 留住后再乘
+一份。令 \(Z_s,\mathcal O_s^{\ne0}\) 表示原 (4.5) orientation 的
+零/非零频率，令 \(Z_r^\vee,\mathcal O_r^{\vee,\ne0}\) 表示
+CF19.146 的零/非零频率。两次 Poisson 都从同一个有限光滑格点和开始，
+故逐 box 有
+\[
+ Z_s+\mathcal O_s^{\ne0}
+ =Z_r^\vee+\mathcal O_r^{\vee,\ne0},\qquad
+ \mathcal O_s^{\ne0}-\mathcal O_r^{\vee,\ne0}
+ =Z_r^\vee-Z_s.                                     \tag{CF19.147}
+\]
+这就是换向时必须带入 CF5 origin/axis 账本的精确 correction；两个
+非零行一般不逐频率相等。
+
+尺度也可从 CF19.145 直接重算。置 \(x=KX,t=T\tau\)，则 kernel 的
+唯一尺度为 \(T\sqrt{R/S}\)。事实上，置
+\[
+ \lambda_0^\vee={L\over KS},\qquad
+ \omega_0^\vee={JK\over R},\qquad
+ \chi_0^\vee={K^2S\over RT},
+\]
+余下的 literal dimensionless kernel 是
+\[
+ \begin{aligned}
+ \Psi^{\vee,\circ}(u,v,\alpha,\beta)
+ ={}&\int_0^\infty
+ {F(X)F\!\left({KS\over MR}{Xv-\lambda_0^\vee\alpha\over u}\right)
+  \over\sqrt{X(Xv-\lambda_0^\vee\alpha)/u}}
+ e\!\left(-{\omega_0^\vee\beta X\over u}\right)\\
+ &\times\int_{\mathbb R}W(\tau)
+ V_{T\tau}\!\left(T\chi_0^\vee
+       {X(Xv-\lambda_0^\vee\alpha)\over u}\right)
+ \exp\!\left(-iT\tau\log\left(
+       1-{\lambda_0^\vee\alpha\over Xv}\right)\right)d\tau\,dX.
+ \end{aligned}                                      \tag{CF19.148a}
+\]
+这里 \((u,v,\alpha,\beta)=(r/R,s/S,\delta/L,j/J)\)，且原正支撑
+保证 \(Xv-\lambda_0^\vee\alpha>0\)。CF19.148a 与原 (5.13b) 一样
+保留 exact logarithm、AFE 权和两个 dyadic factors，并没有作 Taylor
+展开。将其唯一尺度与 CF19.146 的
+\((\sqrt{rs}\,r)^{-1}\) 相乘后仍恰给
+\[
+ \mathcal O^{\vee,\ne0}_{q;R,S,K,M,L,J}
+ ={2T\over qRS}\,\mathfrak S_q^\vee[\Psi^\vee].     \tag{CF19.148}
+\]
+由 \(KS\asymp MR\)、\(KM\ll T\log^B(2T)\) 及另一向的有效范围
+\(L\ll KS\log^B(2T)/T\)、\(J\ll R\log^B(2T)/K\)，它们与原
+(5.13c) 一样只付登记的 polylogarithmic derivative seminorm。
+特别地，CF19.145 的负 logarithm 不改变任一绝对导数预算。
+
+现在在 expanded--expanded Type-I/Type-I 内部行写
+\(s=B\ell\)、\((B,r)=1\)、\(n'=j\delta\)。把 CF19.146 的正逆元相位
+看成 \(e(-(-n')\overline{B\ell}/r)\)，则 (412.2)--(412.6) 原样给出
+\[
+ S\sum_{k'\in\mathbb Z}
+ \widehat f^\vee_{r,n'}\!\left({k'S\over Br}\right)
+ {S(Bk',n';Br)\over Br\,c_B(n')}.                   \tag{CF19.149}
+\]
+这里 \(S\) 是唯一 quotient-Poisson Jacobian；\(c_B(-n')=c_B(n')\)
+已在式中使用。对 CF19.149 取 \(C_0^\vee=BR\)，再作
+CF19.131--CF19.143 的替换
+\[
+ (A,R,S,H,h\delta,k)
+ \longmapsto(B,S,R,J,j\delta,k'),
+\]
+便得到另一 orientation 的同一 CF19.119、共同 Bessel test projective
+分解和 quotient-frequency 远尾，外权仍只有 CF19.148 的
+\(2T/(qRS)\)。
+
+所以“另一 orientation 的 literal 内部 test/尾预算”现已关闭；但
+CF19.147 同时证明，不能在非零行层面任选较有利方向再丢掉
+\(Z_r^\vee-Z_s\)。要把两向 signed level sum 放进同一个谱范数，仍须
+把这项同 CF5 的 quotient-zero、两轴、principal/residue 及 CF3
+endpoints 一起送入 CF19.L/CF19.C。CF19Z17 是这个共同换向恒等式，
+不是 varying-level power saving。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
