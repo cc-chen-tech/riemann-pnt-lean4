@@ -323,7 +323,9 @@ divisor 输出；它不估计 CF5.1，也不把它与后面的 Poisson axes 合�
 双 Poisson 的 nonunit axes contract 则含两条 sampling line 与
 一次负的 double integral，其系数分别为 \(1/C,1/C,-g_C/C^2\)。
 当 \(g_C\ne1\) 时不可把它们写成同一系数。它们与 CF5.1 是不同
-tags；“都是 principal-looking”不构成等同或抵消证明。
+tags；“都是 principal-looking”不构成等同或抵消证明。CF5B 会在
+不改动这三个系数的前提下作一次精确 centering；它不是把三系数
+强行改成相等。
 
 ### CF5A. quotient 零模的共同二维 divisor 系数
 
@@ -486,6 +488,72 @@ sampling line 与 double-integral correction 具有 CF5 中记录的实际
 这个要求现在是一个明确的 coefficient identity，而不再是含糊的
 “principal-looking”抵消；CF5.16 自身也没有提供 centered power
 saving。
+
+### CF5B. unequal-gcd 双 Poisson 轴的精确共同 centering
+
+上一段所说的物理映射中，有一部分其实可以在不使用任何解析估计时
+完成。固定 \(C\ge1\)，令
+\[
+ g_C=(D,C),\qquad c={C\over g_C},qquad
+ I(F)=\iint_{(0,\infty)^2}F(m,n)\,dm\,dn,
+\]
+其中 \(F\) 连续可积且紧支撑于正象限。定义两条实际 sampling line
+及其零密度中心化为
+\[
+ \begin{aligned}
+ S_c^m(F)&=\sum_{j\ge1}\int_0^\infty F(cj,n)\,dn,&
+ \Lambda_c^m(F)&=S_c^m(F)-{I(F)\over c},\\
+ S_c^n(F)&=\sum_{j\ge1}\int_0^\infty F(m,cj)\,dm,&
+ \Lambda_c^n(F)&=S_c^n(F)-{I(F)\over c}.
+ \end{aligned}                                           \tag{CF5.17}
+\]
+两个和因紧支撑而有限。因为 \(1/(Cc)=g_C/C^2\)，逐 \(C\) 有恒等式
+\[
+ \boxed{\quad
+ {S_c^m(F)+S_c^n(F)\over C}-{g_C\over C^2}I(F)
+ ={\Lambda_c^m(F)+\Lambda_c^n(F)\over C}
+   +{g_C\over C^2}I(F).
+ \quad}                                                   \tag{CF5.18}
+\]
+所以原来负的 double integral 只扣掉两条 sampling line 的两个平均
+副本中的**一个**；另一个平均副本必须保留。把两轴都称为 mean zero
+并同时删掉 integral 会错一个 \(g_C I(F)/C^2\)。CF5.18 对
+\(g_C=1\) 与所有 unequal-gcd 层同时成立，没有平均 gcd 或另付
+\(O(1/p)\)。
+
+更具体地，对任意有限集
+\(\mathcal C\subset\{C:B\mid C,(A,C)=1\}\)，以及每个
+\(C\in\mathcal C\) 的实际权 \(F_C=F_{k,C}\)，令
+\[
+ u_C=c_C(q)\left(C^{-1},C^{-1},g_C C^{-2}\right),\qquad
+ v_C=\left(\Lambda_c^m(F_C),\Lambda_c^n(F_C),I(F_C)\right).
+\]
+在 \(\bigoplus_{C\in\mathcal C}\mathbb C^3\) 中使用第二变量线性的
+标准内积，则完整有限 nonunit-axis 包精确为
+\[
+ \mathcal A_{\mathcal C}
+ ={\mu(A)\over A}\sum_{C\in\mathcal C}\langle u_C,v_C\rangle,
+\]
+从而一次共同 Cauchy 给出
+\[
+ \boxed{
+ |\mathcal A_{\mathcal C}|\le {1\over A}
+ \left\{\sum_{C\in\mathcal C}|c_C(q)|^2
+       \left({2\over C^2}+{g_C^2\over C^4}\right)\right\}^{1/2}
+ \left\{\sum_{C\in\mathcal C}
+  (|\Lambda_c^m(F_C)|^2+|\Lambda_c^n(F_C)|^2+|I(F_C)|^2)
+ \right\}^{1/2}.}                                       \tag{CF5.19}
+\]
+这正是所要求的“同一个不等式”在双 Poisson axes 上的有限版本：
+两条 centered sampling axes、double-integral 留下的常数及全部
+unequal gcd 不再被分别取绝对值。其证明只有 CF5.17、
+\(C=g_Cc\) 与有限维 Cauchy。
+
+CF5.19 没有声称第二个大括号具有所需 power saving。它也没有把
+连续 comb functional 与 CF5.15 的有限 residue kernel 认成同一对象；
+目前只证明二者具有相同的“两条 centered axes 加常数”低秩形状。
+要和 quotient-zero、diagonal、principal residue 发生真正抵消，仍须
+从原 atom 证明共同 \(F_C\)/\(W_s\) 映射及外权完全一致。
 
 ## CF6. 一个不重不漏的 master tag 集
 
@@ -2676,8 +2744,11 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
    证明两个边缘只剩顶 divisor，并在完整剩余类空间把同一 Ramanujan
    核正交分成双中心、左轴、右轴与常数四项；CF5.13--CF5.16 通过
    residue periodization 把任意有限物理权精确放入同一个四项等式与
-   Cauchy 上界。CF5.1 的 centered power saving、额外双 Poisson axes
-   的物理映射及其与 principal/residue 行的共同压缩仍未证明；
+   Cauchy 上界。CF5.17--CF5.19 又把任意 unequal-gcd 双 Poisson
+   三行精确中心化为两条零均值 sampling axes 与一个不可删除的常数，
+   并给出跨全部有限模数的一次共同 Cauchy。CF5.1 的 centered power
+   saving、连续 comb 与有限 residue 空间的共同物理映射及其与
+   diagonal/principal/residue 行的压缩仍未证明；
 5. CF6 给出不允许静默丢项的 master-tag contract；只有 adapter 已验证
    的行才能进入 expanded 分支，其余必须留在 native complement。
    因此本稿不把 CF6.2 对全部原行的等同性列为已证；
