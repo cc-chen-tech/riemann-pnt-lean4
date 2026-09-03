@@ -2329,6 +2329,43 @@ shift term 又返回 \(|m-n|\le R/T\)，在临界点就是 CF8.73 的
 \(|m-n|\le H\) 相关。因此 CF8.77--CF8.80 给出正确的下一估计对象，
 但不把一个等价的 shifted-correlation 难题伪装成已有均值定理。
 
+共同 Mellin 轮廓也精确显示了零点项，因而不能用“低频由 PNT
+处理”把它略去。固定 \(0<\vartheta<1/2\)，先把 CF8.79 的 \(z\)
+积分截在 \(|\Im z|\le U\)，并选择四条边不经过
+\(\zeta(s+z)\) 的零点。把右边从 \(\Re z=c\) 移到
+\(\Re z=-\vartheta\) 时，\(s+z=1\) 处虽然 \(P_o(s+z)\) 有留数
+\(+1\)，但其完整被积函数的相应留数严格为
+\[
+ \widetilde V(1-s)R^{1-s}A_Y(1)E_2(1)=0.             \tag{CF8.82}
+\]
+另一方面，每个矩形内的非平凡 \(m_\xi\) 重零点 \(\xi\) 恰贡献
+\[
+ -m_\xi\,\widetilde V(\xi-s)R^{\xi-s}
+                  A_Y(\xi)E_2(\xi).                  \tag{CF8.83}
+\]
+CF8.82--CF8.83 只是有限矩形的留数定理；令 \(U\to\infty\) 时的
+共同 regulator、水平边和新竖线仍须一致估计，本文没有把它们藏进
+“轮廓可移”。
+
+对构造 \(Y_p\) 所固定的实际零点 \(\rho\)，令
+\[
+ a_p={w(p/P)\over p-1},\quad v_p=p^{1-\rho},\quad
+ D=\sum_pa_p,\quad E=\sum_pa_pv_p,\quad
+ Y_p=a_p(D\overline v_p-\overline E).
+\]
+则完全有限的协方差展开给
+\[
+ A_Y(\rho)=
+ D\sum_pa_p|v_p|^2-|E|^2=:\Delta_\rho>0.              \tag{CF8.84}
+\]
+又因非平凡零点有 \(\Re\rho<1\)，
+\(|2^{1-\rho}|=2^{1-\Re\rho}>1\)，故 \(E_2(\rho)\ne0\)。
+因此 CF8.83 中目标零点的 residue 确实非零；它就是完整响应的一部分，
+不是 prime pole 主项或 prime-power 尾。CF8.80 若要作为上界用于
+反证，必须由不预先删除 CF8.83 的算术/谱估计证明。单独移动
+\(-\zeta'/\zeta\) 的轮廓并假定这些 residue 小，会直接把待证
+零点排除重新作为输入。
+
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
 cancellation，因为在该 squarefree canonical 行上
