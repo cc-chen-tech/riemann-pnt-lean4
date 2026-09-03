@@ -51,10 +51,11 @@ projective 分离，并用 divisor Cauchy 正确支付 \(n=h\delta\) 的合并�
 complete-shift、principal/axes 或 Type-II。CF19Z17 从 pre-Poisson
 格点和重推另一 orientation，证明其外权、共同 test 与远尾具有同一
 预算；沿同一 affine line 的连续换元及逆元互反式进一步证明两个
-Poisson 展开的**每个同编号 Fourier 频率**精确相等。因此任意共同
-频率 packet 可无损换向，并给出 UC22 的反方向物理子包 CF19.151；
-两个不同方向选择函数的并集、两向 signed level 谱行及其余补集仍未
-共同重组。
+Poisson 展开的**每个同编号 raw Fourier 频率**精确相等。因此任意
+共同 raw frequency packet 可无损换向。CF19Z18 同时指出 centered
+UC 包不能直接换向：两方向的 Ramanujan 主值不同，其差精确等于
+CF19.154 的共同 rank-one principal mismatch；这项尚须与完整
+principal/axis ledger 一起压缩。
 反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
@@ -1328,8 +1329,8 @@ dispersion。任何证明都必须同时给出 low-height 行的 CF9.1 预算。
  \sum_{\chi\ ({\rm mod}\ q)}\sum_{\psi\ ({\rm mod}\ p)}
    \chi(pat\bar j)\psi(-qbk\bar j)\\
  &\times\int_0^1
- e\!\left(\alpha\left{
-        \frac{at}{q}-\frac{bk}{p}-\frac{j}{pq}\right}\right)d\alpha .
+ e\!\left(\alpha\left\{
+        \frac{at}{q}-\frac{bk}{p}-\frac{j}{pq}\right\}\right)d\alpha .
 \end{aligned}}                                             \tag{CF11.1}
 \]
 证明如下。角色和先强制
@@ -4899,37 +4900,70 @@ CF19.131--CF19.143 的替换
 分解和 quotient-frequency 远尾，外权仍只有 CF19.148 的
 \(2T/(qRS)\)。
 
-所以“另一 orientation 的 literal 内部 test/尾预算”现已关闭，并且
-CF19.147b 允许对任意**同一个**有限频率 packet 选择较有利的
-orientation，而不产生第一层零模 correction。特别地，主方向的 UC22
-子包仍要求
-\[
- s\ \hbox{squarefree},\quad (\delta,s)=1,\quad
- 0< {|h|\over(s,|h|)}\le U_0,\quad
- \left({s\over(s,|h|)}\right)^2\le R,                 \tag{CF19.150}
-\]
-而把 CF19.147b 的同一频率 packet 写成反方向后，同一份 UC22 证明逐字
-给出对偶子包
-\[
- r\ \hbox{squarefree},\quad (\delta,r)=1,\quad
- 0< {|h|\over(r,|h|)}\le U_0,\quad
- \left({r\over(r,|h|)}\right)^2\le S.                 \tag{CF19.151}
-\]
-系数对只交换为其共轭方向，UC1 已明确允许这一点；同时作
-\(\delta\mapsto-\delta\)，AFE 长度与 dyadic 坐标按 CF19.149 前的
-替换交换，唯一外权仍是 \(2T/(qRS)\)。因此
-CF19.151 是原物理非零频率输出的一个新的无条件、逐频率精确识别的
-UC-covered 子包，不是只在求完整个 \(h\)-和后成立的形式对称。
+所以“另一 orientation 的 literal internal raw test/尾预算”现已
+关闭，并且 CF19.147b 允许对任意**同一个**有限 raw-frequency
+packet 选择较有利的 orientation，而不产生第一层 Poisson 零模
+correction。它本身仍不产生 varying-level power saving。
 
-不过，CF19.150 与 CF19.151 的并集不能仅由两个已有 UC22 界控制：
-若用 inclusion--exclusion，交集上会出现同时依赖两模数及
-\((\delta,r)=(\delta,s)=1\) 的选择权；它不再是 UC2--UC9 所需的共同
-列/模数标量分离。等价地，CF19.147b 允许同一个乘子换向，却不允许
-把主方向乘子和反方向乘子相加后忘掉交叠。因此这里关闭的是反方向
-UC 的物理 adapter 和逐频率 common-test 问题；CF3 endpoint 四行、
-后续 quotient-zero、两轴、principal/residue、两个 UC 子包的共同
-并集压缩及其余补集仍须送入 CF19.L/CF19.C。CF19Z17 本身仍不产生
-varying-level power saving。
+### CF19Z18. simultaneous-gcd 坐标与换向时唯一的 centered mismatch
+
+UC22 不是 raw 指数项的估计，而是先减去 Ramanujan 主值后的 centered
+估计；所以还须核对这个 subtraction 是否由 CF19.147b 保持。假设
+\(r,s\) 平方自由，置（避免与 (4.5) 的外层 gcd 参数混淆）
+\[
+ a=(r,|h|),\quad b=(s,|h|),\quad q_r=r/a,\quad q_s=s/b,
+ \quad u=h/(ab).                                      \tag{CF19.150}
+\]
+因 \((r,s)=1\) 及 squarefreeness，\(a,b,q_r,q_s\) 两两互素，且
+\((u,q_rq_s)=1\)。反之这些条件与 \(h=abu\) 精确恢复两个 gcd。若再有
+\((\delta,q_rq_s)=1\)，则原始与反向的两个 arithmetic phases 分别约化为
+\[
+ e_s(-h\delta\bar r)=e_{q_s}(-u\delta\overline{q_r}),\qquad
+ e_r(h\delta\bar s)=e_{q_r}(u\delta\overline{q_s}).   \tag{CF19.151}
+\]
+同时平方自由 Ramanujan 均值逐素数给
+\[
+ {c_s(h\delta)\over\varphi(s)}={\mu(q_s)\over\varphi(q_s)},
+ \qquad
+ {c_r(h\delta)\over\varphi(r)}={\mu(q_r)\over\varphi(q_r)}. \tag{CF19.152}
+\]
+
+记两个方向的同频 centered 行为
+\[
+ \begin{aligned}
+ C_{q_s}(h)&={1\over s}\left\{
+ e_{q_s}(-u\delta\overline{q_r})-{\mu(q_s)\over\varphi(q_s)}
+ \right\}\widehat f_s(h/s),\\
+ C_{q_r}^\vee(h)&={1\over r}\left\{
+ e_{q_r}(u\delta\overline{q_s})-{\mu(q_r)\over\varphi(q_r)}
+ \right\}\widehat f_r^\vee(h/r).
+ \end{aligned}                                        \tag{CF19.153}
+\]
+CF19.147a--CF19.147b 于是给出精确差值
+\[
+ \boxed{
+ C_{q_s}(h)-C_{q_r}^\vee(h)
+ ={1\over s}\left\{
+ {\mu(q_r)\over\varphi(q_r)}e\!\left(-{u\delta\over q_rq_s}\right)
+ -{\mu(q_s)\over\varphi(q_s)}\right\}
+ \widehat f_s(h/s).}                                  \tag{CF19.154}
+\]
+这不是误差估计，而是换向时全部 centered/principal 差异的 rank-one
+有限恒等式；相位 \(e(-u\delta/(q_rq_s))\) 正是 affine 换元的 Fourier
+补偿，不能删去。
+
+主方向 UC22 控制 \(|au|\le U_0,\ q_s^2\le R\) 的 \(C_{q_s}\)
+子包；交换 \((r,s,M,K,\delta,b)\mapsto(s,r,K,M,-\delta,\bar b)\)
+后，同一证明控制 \(|bu|\le U_0,\ q_r^2\le S\) 的
+\(C_{q_r}^\vee\) 子包，唯一物理外权仍为 \(2T/(q_0RS)\)。但 CF19.154
+表明后一个界**不能直接称为原 centered 输出的上界**：必须在同一
+完整投影中把右边与 quotient-zero、两轴、original principal
+subtraction、Eisenstein residues 共同压缩。两个方向选择函数的并集
+还会引入同时依赖 \((q_r,q_s,u,\delta)\) 的交叠权，也不能由两个 UC22
+绝对值界作 inclusion--exclusion 支付。因此这里关闭的是 raw
+frequencywise common-test adapter，并把 centered 换向义务缩成唯一
+显式标量 CF19.154；CF3 endpoints、完整 principal/axis/residue、
+CF19.L/CF19.C 及其余补集仍开放。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
