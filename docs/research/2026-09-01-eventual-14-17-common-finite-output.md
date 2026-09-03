@@ -55,10 +55,12 @@ Poisson 展开的**每个同编号 raw Fourier 频率**精确相等。因此任�
 共同 raw frequency packet 可无损换向。CF19Z18 同时指出 centered
 UC 包不能直接换向：两方向的 Ramanujan 主值不同，其差精确等于
 CF19.154 的共同 rank-one principal mismatch；这项尚须与完整
-principal/axis ledger 一起压缩。CF19Z19 再算出这个 mismatch 在
-完整 shift residue grid 上的精确平方范数，并对任意有限物理权给出
-一次共同 periodization/Cauchy 不等式；其 physical weight norm 尚未
-装配进全部 boxes。
+principal/axis ledger 一起压缩。CF19Z19--CF19Z20 再算出这个
+mismatch 在完整 shift residue grid 上的精确平方范数，并证明 literal
+internal bulk 的分离物理权满足所需 periodized \(L^2\) 预算。
+CF19Z21 最后把同一 mismatch 正交分成 double-centered、两条 sampling
+axes 与 constant 四项，并在一个不等式中共同控制；跨 levels 的 signed
+assembly 及其余 physical rows 尚未装配。
 反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
@@ -5113,6 +5115,84 @@ cofactors、actual \(b^\sharp\) 列及 complete-shift tags 一起送入
 CF19.L。故当前剩余已缩成跨 levels 的 signed assembly，而不再包含
 internal-bulk shift periodization 这一项。
 
+### CF19Z21. mismatch 的 constant/axis/nonaxis 正交同投影
+
+CF19.156 的总范数还可在**同一个**有限不等式中分出 constant、两轴
+与双中心，而不破坏 CF19.151 的共同系数。仍在
+\((\mathbb Z/N\mathbb Z)^2\) 上使用 normalized counting measure，并令
+\[
+ m(x)={1\over N}\sum_{y\bmod N}M_{r,s}(x,y),\qquad
+ m_0={1\over N}\sum_{x\bmod N}m(x).
+\]
+逐 prime 求和给出
+\[
+ \boxed{
+ m(x)={\bf1}_{s\mid x}
+ \left\{{1\over\varphi(r/(r,x))}-1\right\},\qquad
+ m_0={1\over s}\left\{{2^{\omega(r)}\over r}-1\right\}.} \tag{CF19.161}
+\]
+确切地，第一项在 \(p\mid r\) 的局部 \(y\)-平均，当 \(p\mid x\)
+时为 \(1\)，否则为 \(1/(p-1)\)；在 \(p\mid s\) 处，当且仅当
+\(p\mid x\) 不消失。第二个 Ramanujan 平均恰为
+\({\bf1}_{s\mid x}\)。对 \(x\) 再平均时，每个 \(p\mid r\) 的局部
+均值为 \(2/p\)，证明 CF19.161。因 \(M_{r,s}(x,y)\) 只依赖 \(xy\)，
+列均值也是同一个 \(m(y)\)。此外
+\[
+             M_{r,s}(x,0)=M_{r,s}(0,y)=0              \tag{CF19.162}
+\]
+逐点成立；这保留了 origin 与两条真实坐标轴，而不是在范数后补回。
+
+置
+\[
+ A(x)=m(x)-m_0,\qquad
+ M^\circ(x,y)=M_{r,s}(x,y)-m(x)-m(y)+m_0.
+\]
+则完整四项分解为
+\[
+ \boxed{
+ M_{r,s}(x,y)=M^\circ(x,y)+A(x)+A(y)+m_0,}             \tag{CF19.163}
+\]
+且四项在 normalized \(L^2((\mathbb Z/N\mathbb Z)^2)\) 中正交。记
+\[
+ D={2^{\omega(r)}\over r}+{2^{\omega(s)}\over s}
+       -{2^{\omega(N)+1}\over N},\qquad
+ B={1\over s}\left\{{1\over\varphi(r)}
+              -{2^{\omega(r)+1}\over r}+1\right\}.
+\]
+由 CF19.161 的局部二次矩
+\(\mathbb E_{x\bmod r}\varphi(r/(r,x))^{-2}=1/\varphi(r)\)，
+得到全部正交范数
+\[
+ \boxed{
+ \|A\|_2^2=B-|m_0|^2,\qquad
+ \|M^\circ\|_2^2=D-2B+|m_0|^2,\qquad
+ \|M_{r,s}\|_2^2=D.}                                  \tag{CF19.164}
+\]
+
+最后令 \(W_N\) 是 CF19.157 的任意有限 periodized physical weight，
+并把它在同一个 normalized product space 中正交分成
+\[
+ W_N=W^\circ+X(x)+Y(y)+w_0.
+\]
+CF19.163、正交性及四次 Cauchy 给出一个共同的不等式
+\[
+ \boxed{\begin{aligned}
+ \left|\sum_{x,y\bmod N}W_N(x,y)M_{r,s}(x,y)\right|
+ \le N^2\{&
+ \|W^\circ\|_2(D-2B+|m_0|^2)^{1/2}\\
+ &+(\|X\|_2+\|Y\|_2)(B-|m_0|^2)^{1/2}
+ +|w_0m_0|\}.
+ \end{aligned}}                                      \tag{CF19.165}
+\]
+这里没有分别发明四个 estimates：\(W^\circ,X,Y,w_0\) 是同一个
+\(W_N\) 的正交投影，CF19.165 恰是 CF19.157 的精细化。它因此为
+complete-shift detector 的 double-centered、两条 sampling axes 与
+constant/principal row 提供共同有限 coefficient inequality；实际
+projection top、diagonal 与 residue tags 仍须先由 CF6.2 的物理
+adapter 证明进入这个同一个 \(W_N\)，不能只因 CF19.165 已写出就算
+完成。特别地，CF19.162 只说**换向 mismatch** 在坐标轴上为零，不是
+说原 QCT 的 axis rows 消失。
+
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
 实际 \(b^\sharp\) 证明平方自由 canonical 子域的共同 Mellin columns，
@@ -5357,7 +5437,23 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     B-oldclass dilution 就改成 \(U/B\)。尚未证明的是 actual test 的
     同一 \((C_h,\mathfrak T,\mathfrak Y)\) majorant、其余 quotient
     masks 的重组、解除 regulator，以及 principal/axis/residue 的
-    同投影压缩；这些仍属 CF19.D/CF19.L/CF19.C。
+    同投影压缩；这些仍属 CF19.D/CF19.L/CF19.C。CF19.117--CF19.143
+    又从 literal normalized kernel 证明 Type-I/Type-I internal bulk
+    的 quotient Fourier Sobolev bound、共同 Bessel-test projective
+    分离及 quotient-frequency 远尾，唯一费用仍是原
+    \({\cal A}_{J+3}\)。CF19.144--CF19.149 从 pre-Poisson 格点重推
+    另一 orientation；CF19.147a--CF19.147c 进一步证明两个 raw
+    Poisson 展开的同编号 Fourier 频率逐项相同，而不只是完整频率和
+    相同。CF19.150--CF19.154 对所有 gcd 精确计算 centered 换向差：
+    它只剩一条共同 Ramanujan-principal mismatch；平方自由 unit
+    特例给显式 \(q_r,q_s,u\) 坐标及 affine compensation phase。
+    CF19.155--CF19.160 计算这个 mismatch 的完整 shift-grid 范数，
+    并把 internal-bulk projective physical weight 的 residue
+    periodization 以一次 \(L^2\) 不等式支付。CF19.161--CF19.165
+    再把同一行正交分成 double-centered、两条 axes 与 constant，
+    形成一个共同 ANOVA/Cauchy 界。以上没有支付跨 \((r,s)\) 的 signed
+    level assembly，也没有把 hard endpoints、Type-II、native/nonflat、
+    diagonal 或 Eisenstein residues 自动放入同一个 \(W_N\)。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
