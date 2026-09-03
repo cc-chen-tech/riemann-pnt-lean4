@@ -27,8 +27,11 @@ shell local coefficient 的 CF19.32c 串联，否则单素数局部和精确为�
 谱 regulator 内证明这个 lower-level candidate 逐 datum 精确等于
 unramified oldclass multiplier；CF19Z9 再精确计算 Steinberg rank-one
 行、证明导子指数至少二的正 index 消失，并在有限 regulator 内把全部
-导子模式平方合计为 \(O(A^{-1})\)。共同解除 regulator 与这些模式的
-full-level harmonic assembly 仍保持开放。
+导子模式平方合计为 \(O(A^{-1})\)。CF19Z10 再把这些正交模式组成
+一个算子范数 \(O(A^{-1/2})\) 的对角谱乘子，证明在共同 ambient
+Bessel measure 已经建立时一次标量大筛便足够，不会产生
+\(2^{\omega(A)}\)。actual level traces 到这个共同乘子的物理识别、
+共同解除 regulator 及标量大筛本身仍保持开放。
 反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
@@ -3978,9 +3981,99 @@ CF19.98 是所需 shell half-root 的唯一导子模式来源，不能与 CF19.8
 的辅助 modulus density 相乘，也不能再乘 CF7.1。它仍只是 local
 coefficient Hilbert norm：要进入 actual QCT，须证明所有导子模式的
 shifted Fourier lists 在同一个 full-level harmonic large sieve 中
-保持共同 Bessel/complete-shift 权；逐导子模式分别大筛再相加会重新
-制造 \(2^{\omega(A)}\)。这个 varying-conductor assembly 与连续谱
-principal/axis/residue 的共同 regulator 仍属 CF19.L/CF19.C。
+保持共同 Bessel/complete-shift 权。这里不能对模式先取绝对值再三角
+求和；但在正交谱空间中保留平方和也不会制造
+\(2^{\omega(A)}\)。下一节把这点精确写成一个有限 regulator 引理。
+这个 common-ambient physical adapter 与连续谱 principal/axis/residue
+的共同 regulator 仍属 CF19.L/CF19.C。
+
+### CF19Z10. 导子模式先组成一个对角乘子；一次标量大筛已经足够
+
+先把“导子模式需要新的向量值大筛”这个表述彻底消掉。固定一个有限
+离散谱 regulator，并把 Eisenstein 参数限制在同一个紧集；所得正交
+谱空间记为
+\[
+ {\cal H}_{\cal R}=\widehat\bigoplus_{\sigma\in\Sigma_A}
+                    {\cal H}_{\sigma,\cal R}.         \tag{CF19.99}
+\]
+这里 \(\sigma\) 记录每个 \(p\mid A\) 的 primitive conductor 类型；
+Maaß、holomorphic、Eisenstein cusp label 与 parity 都保留在各自的
+正交直和或直积分中。令 \(P_\sigma\) 是相应正交投影。对每个谱 datum
+\(\pi\in{\cal H}_{\sigma,\cal R}\)，令
+\[
+ m_A(\pi)=\prod_{p\mid A}m_{p,\sigma_p}(\pi),
+ \quad
+ m_{p,0}=D_{p,\pi}(1,0),\qquad
+ m_{p,1}=-C_{p,0}\lambda_\pi(p),\qquad
+ m_{p,\ge2}=0.                                        \tag{CF19.100}
+\]
+CF19.90 说明第一项正是 unramified oldclass 的 exact level-difference
+multiplier；CF19.95 说明第二项正是 Steinberg 行，而不是另一个
+shell 权。定义 \({\cal H}_{\cal R}\) 上的对角算子
+\[
+ (M_A F)(\pi)=m_A(\pi)F(\pi).                         \tag{CF19.101}
+\]
+
+由于 primitive conductor 子空间彼此正交，CF19.97 的逐素数平方和
+张量后严格给
+\[
+ \begin{aligned}
+ \|M_A\|_{\rm op}^2
+ &=\operatorname*{ess\,sup}_{\sigma,\pi}
+        |m_A(\pi)|^2\\
+ &\le \prod_{p\mid A}
+     \operatorname*{ess\,sup}_{\pi}
+       \left(|D_{p,\pi}(1,0)|^2+{C_{p,0}^2\over p}\right)
+ \ll {1\over A}.
+                                                               \tag{CF19.102}
+ \end{aligned}
+\]
+小素数只进入绝对常数；大素数的 Euler correction 是
+\(1+O(p^{-3+2\theta})\)，故乘积一致有界。注意第一行只需
+\(\max_\sigma x_\sigma\le\sum_\sigma x_\sigma\)；没有把不同模式
+的振幅作 \(\ell^1\) 求和。
+
+现在令 \(T_1,T_2\) 是**同一个非负 Bessel regulator/同一个 ambient
+full-level measure** 下的两条 Fourier evaluation map，并假定标量
+大筛给
+\[
+ \|T_i a\|_{{\cal H}_{\cal R}}^2
+ \le L_i\|a\|_2^2\qquad(i=1,2).                      \tag{CF19.103}
+\]
+则普通 Hilbert 空间 Cauchy--Schwarz 与 CF19.102 立即给
+\[
+ \boxed{
+ |\langle M_AT_1a,T_2b\rangle|
+ \ll A^{-1/2}(L_1L_2)^{1/2}\|a\|_2\|b\|_2.}         \tag{CF19.104}
+\]
+这就是所需的一份 conductor half-root；它来自 \(M_A\) 的算子范数，
+不再从调和权、oldspace density 或 CF19.88 复制。证明对紧支撑
+Eisenstein 直积分完全相同，因为 CF19.101 是可测有界乘子且谱测度
+非负；没有交换解除 regulator 的极限。
+
+若有限 local transfer 产生若干 downward-shifted 输入列，也不需要
+逐模式三角。把这些列放入输入 Hilbert 直和；若 \(S_{\sigma,j}\) 是
+相应 index-shift contraction，\(r_{\sigma,j}\) 是其固定系数，则
+CF19.103 逐正交坐标相加后仍成立，而所需且充分的有限账只是
+\[
+ \sum_{\sigma,j}|r_{\sigma,j}|^2
+       \|S_{\sigma,j}a\|_2^2
+ \ll A^{-1}\|a\|_2^2.                               \tag{CF19.105}
+\]
+CF19.105 若由 exact local tensor 给出，CF19.104 原样成立。反之，
+只知道每条 shifted list 分别有界、随后对 \((\sigma,j)\) 作
+\(\ell^1\) 三角，才会产生错误的 \(2^{\omega(A)}\)。
+
+因此 **finite-regulator conductor-pattern aggregation** 已经闭合：
+它只需要一次共同的 scalar ambient large sieve，而不需要另猜一个
+vector-valued spectral theorem。尚未闭合、且不能由 CF19.104 偷换的
+物理命题是：从 actual CF19.80 的全部 level traces 出发，证明其
+zero--zero 行在同一 ambient normalization 中恰成为 CF19.101（或
+满足 CF19.105 的有限 shifted-list 版本），同时 \(T_1,T_2\) 的
+Bessel/AFE/complete-shift 权确实共同满足 CF19.103。principal、两条
+axes、residues、nonflat 与其余 boxes 也必须在解除同一 regulator
+以前放入共同不等式。CF19.104 没有证明这些 adapter，也没有证明
+CF19.L、CF19.C 或 \(14/17\)。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
@@ -4209,10 +4302,14 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     \(1/p\)。CF19.92--CF19.98 又从 conductor-one 的两维 oldbasis 直接算出
     Steinberg rank-one 系数 \(-C_{p,0}\lambda_j\)，证明 conductor
     exponent 至少二在正 index 消失，并利用 primitive-subspace 正交性
-    把全部导子模式平方合计为 \(O(A^{-1})\)。这只给一次
-    \(A^{-1/2}\) local Hilbert norm；把不同导子的 shifted lists 放入
-    同一 full-level harmonic large sieve、共同解除 regulator，以及与
-    principal/axis/residue 的同投影重组仍是 CF19.L/CF19.C 的未证装配。
+    把全部导子模式平方合计为 \(O(A^{-1})\)。CF19.99--CF19.105 随后
+    把这些模式严格组成共同有限谱空间上的对角乘子；其算子范数只有
+    \(O(A^{-1/2})\)，故一旦共同 scalar ambient large sieve 成立，
+    Hilbert 空间 Cauchy 一次就给所需 half-root，不需要新的向量值
+    大筛，也没有 \(2^{\omega(A)}\)。尚未证明的是 actual level traces
+    确实在同一 normalization/Bessel/complete-shift measure 中给出这个
+    乘子（或 CF19.105 的 shifted-list 能量），以及共同解除 regulator
+    和 principal/axis/residue 的同投影重组；这些仍属 CF19.L/CF19.C。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
