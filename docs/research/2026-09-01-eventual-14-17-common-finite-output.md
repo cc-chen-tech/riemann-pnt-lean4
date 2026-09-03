@@ -2219,6 +2219,116 @@ CF8.73 是实际相关减去共同 reference 的 signed 总和，不是逐
 \((p,q,a,b,h)\) 的 Hardy--Littlewood error；后者远强于所需且没有
 在这里被假定。
 
+这里可以同时排除一个看似直接、但尺度上不够的正值筛法。即使先
+**额外赠送**每个固定 \(p\ne q,a,b,h\) 的自然二维上筛尺度
+\[
+ |T_{pq}^{ab}(h)-R_{pq}^{ab}(h)|
+ \ll_\eta {XH\over abpq}P^\eta,                       \tag{CF8.74}
+\]
+再逐行取绝对值，外面的 \(abpq\) 只会把分母完全消掉。由于
+\[
+ \left(\sum_p|Y_p|\right)^2
+ \le Q_P\sum_{P<p\le2P}{1\over p-1}
+ \ll {Q_P\over\log P},
+\]
+其中最后一步只是初等 Chebyshev 素数计数界，且可取的非零整数
+\(h\) 有 \(O(H)\) 个，CF8.72 的这种逐行处理至多给
+\[
+ |\mathfrak E_o|
+ \ll_\eta {XH^2Q_P\over\log P}P^\eta.                 \tag{CF8.75}
+\]
+与 CF8.73 相比仍多出
+\[
+                    {H\over\log P}\asymp {P\over\log P}. \tag{CF8.76}
+\]
+CF8.74 在这里只是假设性地把该策略能使用的局部尺度取到最好，用来
+核算“先逐 \(h,p,q\) 上筛、后求和”这条具体路线；本文不把 CF8.74
+当作已经证明的 prime-pair 定理，也不据 CF8.75 声称任何一般正值
+方法都不可能成功。严格结论只是：这种逐行绝对值装配即使获得
+CF8.74，仍不能推出 CF8.73。所缺的整整一份短移位长度必须来自同一个
+\(h\)-频率中的 signed dispersion（或等价的共同谱投影），而不能把
+CF8.71 对 reference 的 \(H^2\to H\log H\) 消去复制给实际余项。
+
+CF8.73 还有一个必须保持共同截断的乘法频率形式。对
+\(\Re s>1\) 定义
+\[
+ \begin{aligned}
+ A_Y(s)&=\sum_{P<p\le2P}Y_pp^{1-s},\\
+ E_2(s)&=1-2^{1-s},\\
+ P_o(s)&=\sum_{\ell\ {\rm odd\ prime}}(\log\ell)\ell^{-s},\\
+ D_o(s)&=\sum_{n\ge1}{c_o(n)\over n^s}.
+ \end{aligned}
+\]
+把 CF8.59 的有限外和逐项代入即得严格因式分解
+\[
+                    \boxed{\quad D_o(s)=A_Y(s)E_2(s)P_o(s).\quad}
+                                                               \tag{CF8.77}
+\]
+这里不是把四个 parity cross terms 分别估计：\(E_2\) 是两行在
+**取平方以前**的共同因子。Euler 乘积的对数导数在 \(s=1\) 的邻域
+给
+\[
+ P_o(s)=-{\zeta'(s)\over\zeta(s)}
+ -\sum_{r\ge1}{\log2\over2^{rs}}
+ -\sum_{\substack{\ell\ {\rm odd\ prime}\\r\ge2}}
+             {\log\ell\over\ell^{rs}}
+ ={1\over s-1}+G_o(s),                                 \tag{CF8.78}
+\]
+其中 \(G_o\) 在 \(1\) 的一个邻域内解析。另一方面
+\[
+ A_Y(1)=\sum_pY_p=0,\qquad E_2(1)=0.
+\]
+所以 CF8.77 的右端在 \(s=1\) 可去奇点后仍至少有一个零。Riesz
+中心化与 parity 差分各供应一个零，prime pole 只消耗其中一个；
+这正是 CF8.71 所见的低频消去，不能在取绝对值后重新制造。
+
+物理乘积截断也必须共用同一个 Mellin 变量。若
+\(V\in C_c^\infty(0,\infty)\)，
+\(\widetilde V(z)=\int_0^\infty V(u)u^{z-1}du\)，则对任意
+\(\Re s>1\)、\(c>0\)，有限和
+\[
+ D_{o,V,R}(s)=\sum_n{c_o(n)V(n/R)\over n^s}
+\]
+由 Mellin 反演严格满足
+\[
+ D_{o,V,R}(s)
+ ={1\over2\pi i}\int_{(c)}\widetilde V(z)R^z
+       A_Y(s+z)E_2(s+z)P_o(s+z)\,dz.                  \tag{CF8.79}
+\]
+因此把 outer prime、parity 行和 odd-prime quotient 各自 dyadic
+截断后分别 Cauchy，并不等于原对象；共同的 \(z\)-积分是 product
+condition 的一部分。
+
+这也冻结了一个可审计的乘法频率目标。对 \(R\asymp X\) 的有限个
+共同 smooth pieces，所需尺度是
+\[
+ \int_{-T}^{T}|D_{o,V,R}(1+it)|^2dt
+ \ll_{\rho,\eta,V}Q_PP^\eta
+                  \left({T\over R}+{1\over H}\right),
+ \qquad 1\le T\le R.                                  \tag{CF8.80}
+\]
+在 \(T\asymp R/H\) 时右端正是 \(Q_PP^\eta/H\)，即短区间
+Parseval/Perron 归约所需的尺度；在更高 \(T\) 时第一项支付 diagonal。
+但 CF8.80 目前只是候选的**同乘积均方输入**，本文尚未证明从原硬窗口
+\(W_X{\bf1}_{x<n\le x+H}\) 到这些共同 \(V\) 的全尾 adapter，也未证明
+CF8.80 本身。为核对下面的基线，注意在 \(R\asymp X\) 的支撑上
+\(\ell\asymp R/P\gg P\)，所以表示 \(n=ap\ell\) 的 outer prime
+\(p\asymp P\) 与 parity \(a\in\{1,2\}\) 都唯一。于是直接整数计数给
+\[
+ \sum_{n\asymp R}|c_o(n)V(n/R)|^2
+ \ll_V R(\log R)^2\sum_pp|Y_p|^2
+ \ll_V RQ_PP^\eta.
+\]
+一般 Dirichlet 多项式均值定理因而只给
+\[
+ \int_{-T}^{T}|D_{o,V,R}(1+it)|^2dt
+ \ll Q_PP^\eta\left({T\over R}+1\right),              \tag{CF8.81}
+\]
+在 \(T\le R/H\) 恰缺一份 \(H\)。其 improved-mean-value
+shift term 又返回 \(|m-n|\le R/T\)，在临界点就是 CF8.73 的
+\(|m-n|\le H\) 相关。因此 CF8.77--CF8.80 给出正确的下一估计对象，
+但不把一个等价的 shifted-correlation 难题伪装成已有均值定理。
+
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
 cancellation，因为在该 squarefree canonical 行上
