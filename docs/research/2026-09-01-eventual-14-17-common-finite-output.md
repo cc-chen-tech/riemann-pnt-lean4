@@ -1905,6 +1905,73 @@ incidence；同素数的非零短移位也只有一个可能的 Ramanujan spike�
 所需仍是把这些结构与 CF8.44--CF8.46 的 incomplete-cube 系数一起
 保留到一次加权 joint Poisson/dispersion 后，证明 CF8.37。
 
+同素数块可在回到原物理卷积后完整支付。令
+\[
+ \Lambda_2(m)=\Lambda(m)-2{\bf1}_{2\mid m}\Lambda(m/2),
+ \qquad \Lambda(1)=0.                                  \tag{CF8.51}
+\]
+在 CF8.7 的整个实际窗口上 quotient-one 已被排除，所以先对 \(a_N\)
+作有限 divisor sum、再作 parity dilation，逐整数得到
+\[
+ \boxed{\quad
+ c(n)=\sum_{\substack{P<p\le2P\\p\mid n}}
+          pY_p\Lambda_2(n/p).\quad}                    \tag{CF8.52}
+\]
+这与 CF8.18、CF8.21、CF8.43 是同一个有限对象的三种坐标，不是新的
+majorant。特别地，
+\[
+ \mathfrak U_b(P)=
+ \int W_X(x)\left|
+ \sum_p pY_p\sum_{x<pm\le x+H}\Lambda_2(m)\right|^2dx.
+                                                               \tag{CF8.53}
+\]
+
+展开 CF8.53，并把两个 marked primes 相等的部分记为
+\(\mathfrak U_{=}\)。若同一个 \(p\) 的两个 quotients 为 \(m,n\)，
+两个窗口相交只可能在
+\[
+                         |m-n|<H/p\le h_0.
+\]
+而且交集的 \(x\)-测度至多 \(H\)，并由
+\(\omega_K(x/X)\ll_K\omega_K(pm/X)\) 控制。又
+\(|\Lambda_2(m)|\le3\log(2m)\)，且 CF8.10 已使用的同一初等积分比较给
+\[
+ \sum_{m\ge1}\omega_K(pm/X)\{1+\log(2m)\}^2
+ \ll_K {X\over p}(\log P)^2;
+\]
+幂缓冲硬截断只会减小左边。每个 \(m\) 至多有
+\(2\lceil h_0\rceil+1\) 个这样的 \(n\)。因此
+\[
+ \boxed{\quad
+ |\mathfrak U_=|
+ \ll_{h_0,K}XH(\log P)^2\sum_p p|Y_p|^2
+ \ll XH Q_P(\log P)^2.\quad}                          \tag{CF8.54}
+\]
+这里没有使用素数对估计；只用了 \(\Lambda\) 的点态对数界。同一个
+\(p\) 的 \(m=n\) diagonal 与全部
+\(0<|m-n|<h_0\) 行一起包含在 CF8.54 中。
+
+故 CF8.5 还等价于只证明 CF8.53 的 cross-prime 部分
+\[
+ \boxed{\begin{aligned}
+ |\mathfrak U_{\ne}|={}\left|
+ \sum_{\substack{p,q\\p\ne q}}pqY_p\overline{Y_q}
+ \sum_{m,n}\Lambda_2(m)\Lambda_2(n)
+ \int W_X(x){\bf1}_{x<pm\le x+H}
+              {\bf1}_{x<qn\le x+H}\,dx\right|\\
+ \ll_{\rho,\eta}XH Q_PP^\eta .
+ \end{aligned}}                                      \tag{CF8.55}
+\]
+CF8.55 自动含 \( |pm-qn|<H\)、四个 parity combinations、两个硬
+端点及 \(W_X\) 的全部幂缓冲尾。其连续 lattice-density 主项对
+\((p,q)\) 无关时会带
+\(\sum_{p,q}Y_p\overline{Y_q}=|\sum_pY_p|^2=0\)；但这句话本身不是
+误差估计。严格剩余正是把两份 \(\Lambda_2\) 展成 CF8.43 的
+Möbius/complete-shift columns 后，对 \(p\ne q\) 作一次 joint
+dispersion。CF8.49 表明 periodic equal-frequency row 只有 mutual
+incidence；CF8.55 则冻结必须估计的全部 nonzero-mode physical
+correlation。
+
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
 cancellation，因为在该 squarefree canonical 行上
