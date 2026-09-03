@@ -30,8 +30,12 @@ unramified oldclass multiplier；CF19Z9 再精确计算 Steinberg rank-one
 导子模式平方合计为 \(O(A^{-1})\)。CF19Z10 再把这些正交模式组成
 一个算子范数 \(O(A^{-1/2})\) 的对角谱乘子，证明在共同 ambient
 Bessel measure 已经建立时一次标量大筛便足够，不会产生
-\(2^{\omega(A)}\)。actual level traces 到这个共同乘子的物理识别、
-共同解除 regulator 及标量大筛本身仍保持开放。
+\(2^{\omega(A)}\)。CF19Z11 又把 actual zero--zero 行中不含额外
+quotient mask 的 \(A\)-valuation-one 壳精确写成使用同一 Bessel test
+的有限 full-level trace 差，并在共同 regulator 内把它逐 newdatum
+重组为 CF19Z10 的乘子；这关闭了该裸壳的 Maaß/holomorphic/Eisenstein
+归一化，而没有关闭其余 quotient masks、非负 Bessel majorant、
+共同解除 regulator 或标量大筛本身。
 反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
@@ -3928,10 +3932,15 @@ difference 在 valuations \((0,j)\) 上为
  =-C_{p,0}\lambda_j,qquad
  C_{p,0}=1-{p+1\over p^2(p+2)},qquad j\ge1.}           \tag{CF19.95}
 \]
-Kloosterman/spectral kernel 对两个 Fourier indices 对称，所以
-CF19.95 正是 CF19.80 中首 index valuation \(j\ge1\)、第二 index
-valuation zero 的 Steinberg 行。它是一个 rank-one Hecke 列，而
-不是待付的任意二维矩阵；并且
+CF19.95 是尚未乘回 CF3.2 外层 \(\mu(p)=-1\) 的 normalized
+corrected-lift 行。裸 level-
+\(p\) minus level-\(p^2\) kernel 本身则是
+\(\mathcal K_p^{(1)}(0,j)=+C_{p,0}\lambda_j\)；在 actual unit-side
+zero--zero 行中，\(\mu(p)/c_p(1)=1\)，所以最终物理乘子同样取
+\(+C_{p,0}\lambda_j\)，不能把 CF19.95 的中间负号再保留一次。
+Kloosterman/spectral kernel 对两个 Fourier indices 对称，故这是
+CF19.80 中首 index valuation \(j\ge1\)、第二 index valuation zero
+的 Steinberg rank-one Hecke 列，而不是待付的任意二维矩阵；并且
 \[
  0<C_{p,0}<1,qquad
  |C_{p,0}\lambda_1|^2={C_{p,0}^2\over p}\le {1\over p}.
@@ -4004,12 +4013,13 @@ Maaß、holomorphic、Eisenstein cusp label 与 parity 都保留在各自的
  m_A(\pi)=\prod_{p\mid A}m_{p,\sigma_p}(\pi),
  \quad
  m_{p,0}=D_{p,\pi}(1,0),\qquad
- m_{p,1}=-C_{p,0}\lambda_\pi(p),\qquad
+ m_{p,1}=+C_{p,0}\lambda_\pi(p),\qquad
  m_{p,\ge2}=0.                                        \tag{CF19.100}
 \]
 CF19.90 说明第一项正是 unramified oldclass 的 exact level-difference
-multiplier；CF19.95 说明第二项正是 Steinberg 行，而不是另一个
-shell 权。定义 \({\cal H}_{\cal R}\) 上的对角算子
+multiplier；CF19.95 及其后乘回的 \(\mu(p)/c_p(1)=1\) 说明第二项
+正是 actual Steinberg 行，而不是另一个 shell 权。定义
+\({\cal H}_{\cal R}\) 上的对角算子
 \[
  (M_A F)(\pi)=m_A(\pi)F(\pi).                         \tag{CF19.101}
 \]
@@ -4051,29 +4061,166 @@ full-level measure** 下的两条 Fourier evaluation map，并假定标量
 Eisenstein 直积分完全相同，因为 CF19.101 是可测有界乘子且谱测度
 非负；没有交换解除 regulator 的极限。
 
-若有限 local transfer 产生若干 downward-shifted 输入列，也不需要
-逐模式三角。把这些列放入输入 Hilbert 直和；若 \(S_{\sigma,j}\) 是
-相应 index-shift contraction，\(r_{\sigma,j}\) 是其固定系数，则
-CF19.103 逐正交坐标相加后仍成立，而所需且充分的有限账只是
+若有限 local transfer 产生若干 downward-shifted 输入列，也不能仅把
+它们**形式上**放入输入直和便宣称输出正交。若
+\(S_{\sigma,j}\) 是相应 index-shift contraction，
+\(r_{\sigma,j}\) 是固定系数，须先按实际进入同一 conductor subspace
+的方式定义相干 synthesis
 \[
- \sum_{\sigma,j}|r_{\sigma,j}|^2
-       \|S_{\sigma,j}a\|_2^2
- \ll A^{-1}\|a\|_2^2.                               \tag{CF19.105}
+ ({\cal S}a)_\sigma:=\sum_jr_{\sigma,j}S_{\sigma,j}a.
 \]
-CF19.105 若由 exact local tensor 给出，CF19.104 原样成立。反之，
-只知道每条 shifted list 分别有界、随后对 \((\sigma,j)\) 作
-\(\ell^1\) 三角，才会产生错误的 \(2^{\omega(A)}\)。
+所需 finite local 条件是这个真实 synthesis/Gram 算子的范数界
+\[
+ \boxed{
+ \|{\cal S}a\|_{\widehat\oplus_\sigma}^2
+ =\sum_\sigma\sum_{j,j'}r_{\sigma,j}\overline{r_{\sigma,j'}}
+   \langle S_{\sigma,j}a,S_{\sigma,j'}a\rangle
+ \ll A^{-1}\|a\|_2^2.                               \tag{CF19.105}
+ }
+\]
+只有已经证明不同 \(j\) 的**输出**正交时，CF19.105 才退化成
+\(\sum_{\sigma,j}|r_{\sigma,j}|^2\|S_{\sigma,j}a\|^2\)；输入直和本身
+不够。精确反例是同一 \(\sigma\) 中取 \(J\) 个
+\(S_{\sigma,j}=I\)、\(r_{\sigma,j}=1/J\)：逐列平方和为
+\(J^{-1}\|a\|^2\)，而 \(({\cal S}a)_\sigma=a\)。CF19.105 若由
+exact local tensor 的完整 Gram 矩阵给出，CF19.104 才可原样用于
+合成列。反之，逐 shifted list 估计后作 \(\ell^1\) 三角会产生错误的
+\(2^{\omega(A)}\)，只记对角能量又会漏掉相干交叉项。
 
 因此 **finite-regulator conductor-pattern aggregation** 已经闭合：
 它只需要一次共同的 scalar ambient large sieve，而不需要另猜一个
 vector-valued spectral theorem。尚未闭合、且不能由 CF19.104 偷换的
 物理命题是：从 actual CF19.80 的全部 level traces 出发，证明其
 zero--zero 行在同一 ambient normalization 中恰成为 CF19.101（或
-满足 CF19.105 的有限 shifted-list 版本），同时 \(T_1,T_2\) 的
+其 shifted-list synthesis 满足 CF19.105 的完整 Gram 界），同时
+\(T_1,T_2\) 的
 Bessel/AFE/complete-shift 权确实共同满足 CF19.103。principal、两条
 axes、residues、nonflat 与其余 boxes 也必须在解除同一 regulator
 以前放入共同不等式。CF19.104 没有证明这些 adapter，也没有证明
 CF19.L、CF19.C 或 \(14/17\)。
+
+### CF19Z11. 裸 valuation-one 物理壳的共同 test 与 full-spectrum 乘子恒等式
+
+这里精确关闭 CF19Z10 所留 adapter 的一个、也只有一个部分。设
+\(A>1\) 平方自由、\((A,Bkn)=1\)，并令 \(\phi\) 满足 CF19.61c 的
+classical Kuznetsov admissibility。对任意符号 \(\pm\) 定义
+\[
+ {\cal G}_{A,B}^{\pm}(k,n;\phi)
+ :=\sum_{\substack{m\ge1\\(m,A)=1}}
+ {S(Ak,\pm n;ABm)\over ABm}\,
+ \phi\!\left({4\pi\sqrt{A|kn|}\over ABm}\right).
+                                                               \tag{CF19.106}
+\]
+这是 CF19.80 的 zero--zero 行在固定其余 tags 后的**裸
+\(A\)-valuation-one 壳**：outer \(\mu(A)\) 与
+\(c_A(n)^{-1}\) 因 \((A,n)=1\) 精确相消。若原 atom 还含
+\((m,Bq_0)=1\)、character、nonflat 或其他依赖 \(m\) 的 mask，
+CF19.106 只表示把这些另列为固定系数以前的壳；它们不能因本节而
+删除或自动进入谱边。
+
+令 \({\cal K}_N^{\pm}(x,y;\phi)\) 是 ordinary
+\(\infty\)-cusp geometric Kuznetsov 行
+\[
+ {\cal K}_N^{\pm}(x,y;\phi)
+ =\sum_{N\mid c}{S(x,\pm y;c)\over c}
+   \phi\!\left({4\pi\sqrt{|xy|}\over c}\right).
+\]
+对每个 \(c=ABm\)，有限 Möbius 系数恰为
+\(\sum_{d\mid(A,m)}\mu(d)=\mathbf1_{(m,A)=1}\)。因此不取绝对值便有
+\[
+ \boxed{
+ {\cal G}_{A,B}^{\pm}(k,n;\phi)
+ =\sum_{d\mid A}\mu(d)
+   {\cal K}_{ABd}^{\pm}(Ak,n;\phi).}                  \tag{CF19.107}
+\]
+CF19.107 的每个 level 使用**同一个** \(\phi\)：\(d\) 只出现在
+整除条件 \(ABd\mid c\)，没有进入 Bessel argument 或 test。
+这正是 CF19.79--CF19.82 的 common-test 几何事实，不使用被禁止的
+direct cusp identity。若同号公式含 diagonal，它也逐 level 为零，
+因为 \(Ak=n\) 会迫使 \(A\mid n\)，与 \((A,n)=1\)、\(A>1\) 矛盾；
+异号公式本来没有 diagonal。原 AFE diagonal 是 CF6 中另一个 tag，
+不由此删除。
+
+对 CF19.107 的每个 ordinary level 使用同一 normalization 的
+classical Kuznetsov 公式，记全 Maaß/holomorphic/Eisenstein 谱边为
+\(\operatorname{Spec}_{N}^{\pm}\)。则作为 admissible trace
+distribution 有
+\[
+ {\cal G}_{A,B}^{\pm}(k,n;\phi)
+ =\sum_{d\mid A}\mu(d)
+   \operatorname{Spec}_{ABd}^{\pm}(Ak,n;\phi).         \tag{CF19.108}
+\]
+同号保留 holomorphic 行，异号 holomorphic 行为空；Maaß parity、
+all oldforms 与 Eisenstein 的全部 cusp labels 均保留。这里 full-level
+Eisenstein 二次型的 basis independence、primitive newdata 的正交
+分解及 oldclass 正交化可分别使用
+[Young, Proposition 8.2 and Sections 8.1, 8.5](https://arxiv.org/abs/1710.03624)；
+离散 oldclass 使用
+[Blomer--Milićević 的正交 oldform construction](https://arxiv.org/abs/1404.7845)。
+这些只是在每个 full spectrum 内换正交基，并没有把不同 level 的
+谱 datum 逐项强行配对。
+
+现在在 CF19.108 的各谱边采用该 newform/oldform 分解，并先放入同一个
+finite discrete / compact Eisenstein regulator；这里 regulator 必须由
+同一 primitive-newdatum 集、parity 与谱参数 cutoff 在每个 level
+诱导，不能任意截取各 level 的 full-level basis。因为 level 集
+\(\{ABd:d\mid A\}\) 有限，可以先对 level 求和再按 primitive
+conductor pattern 重组。逐个 \(p\mid A\) 的 local difference 只有：
+
+- unramified newdatum 给 CF19.90 的 \(D_{p,\pi}(1,0)\)；
+- conductor-one Steinberg newdatum 给 CF19.95 后乘回
+  \(\mu(p)/c_p(1)\) 的 \(+C_{p,0}\lambda_\pi(p)\)；
+- conductor exponent 至少二的 positive lifted index 为零；
+- trivial-nebentypus Eisenstein 没有 exponent-one pattern，正导子
+  pattern 至少二，故同样为零。
+
+不同 primes 的 degeneracy Gram 矩阵张量化，故整个有限 level 和
+恰成为 CF19.100 的对角乘子。若 \(X_{\pi,k}\)、\(Y_{\pi,n}\) 记
+primitive datum 在 base-
+\(B\) 方向的全部 Fourier/harmonic 因子（含 \(B\)-part native
+measure），而 \(h_\phi^\pm(t_\pi)\) 是共同 Bessel transform，则
+\[
+ \boxed{
+ \sum_{d\mid A}\mu(d)
+   \operatorname{Spec}_{ABd,\cal R}^{\pm}(Ak,n;\phi)
+ =\sum_{\sigma\in\Sigma_A}\int_{{\cal H}_{\sigma,\cal R}}
+ h_\phi^\pm(t_\pi)m_A(\pi)
+ X_{\pi,k}\overline{Y_{\pi,n}}\,d\nu_{B,\sigma}(\pi).}
+                                                               \tag{CF19.109}
+\]
+这里 \(d\nu_{B,\sigma}\) 是正交 newdata 分解实际产生的 **native
+primitive harmonic measure**，不是事后假定所有导子模式具有同一
+数值密度。CF19.109 的共同性是：同一个 \(h_\phi^\pm\) 乘在所有
+pattern 上；pattern 的体积比、oldclass Gram 与 ramified local row
+全部已经进入 \(m_A\) 和 \(d\nu_{B,\sigma}\)。
+
+若写 \(h_\phi^\pm=u_\phi|h_\phi^\pm|\)，\(|u_\phi|=1\) 于非零集，
+则 CF19.109 还能精确写成 native 正测度 Hilbert pairing
+\[
+ \left\langle
+ M_A\bigl(|h_\phi^\pm|^{1/2}X_k\bigr),
+ \overline{u_\phi}\,|h_\phi^\pm|^{1/2}Y_n
+ \right\rangle_{{\cal H}_{\cal R}}.                  \tag{CF19.110}
+\]
+因此 CF19Z10 的“一次 Cauchy、一次 half-root”确实适用于这个裸壳的
+regulated spectral coefficient；不需要 cross-cusp identity，也不需
+按导子模式作 \(\ell^1\) 三角。
+
+CF19.107--CF19.110 **没有**证明 CF19.103 的 scalar large sieve：
+还须证明 actual \(|h_\phi|\) majorant 在全部 AFE/detector/reflection
+tags 上具有统一 normalized seminorm，并把 native measures 的
+Fourier evaluation maps 同时控制。它们也没有处理 CF19.106 刻意
+剥离的 quotient masks。若某个剩余 mask 能由有限 periodic
+inclusion--exclusion 写成 common levels，必须逐项证明其新 levels、
+test 与 local rows 仍满足同一 CF19.109；否则该行继续留在 CF4/native
+complement。最后，从共同 regulator 到完整 trace 的极限、principal、
+两 axes、residues、nonflat、unequal-gcd、endpoints、Type-II 与其余
+boxes 全仍开放。因此本节关闭的是
+\[
+ \boxed{\text{mask-free zero--zero valuation-one shell 的 exact
+ common-test full-spectrum/newdatum normalization},}       \tag{CF19.111}
+\]
+不是 CF19.D、CF19.L、CF19.C 或 \(14/17\)。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
@@ -4300,16 +4447,22 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     multiplier：level difference 的 \(\prod_{p\mid A}D_p(1,0)\) 与
     level-\(B\) odd--Hecke aggregate 精确相同，且没有第二份 harmonic
     \(1/p\)。CF19.92--CF19.98 又从 conductor-one 的两维 oldbasis 直接算出
-    Steinberg rank-one 系数 \(-C_{p,0}\lambda_j\)，证明 conductor
+    除以 \(c_p(1)\) 后的 Steinberg rank-one 系数
+    \(-C_{p,0}\lambda_j\)，并核对乘回 outer \(\mu(p)\) 后 actual
+    乘子为 \(+C_{p,0}\lambda_j\)；同时证明 conductor
     exponent 至少二在正 index 消失，并利用 primitive-subspace 正交性
     把全部导子模式平方合计为 \(O(A^{-1})\)。CF19.99--CF19.105 随后
     把这些模式严格组成共同有限谱空间上的对角乘子；其算子范数只有
     \(O(A^{-1/2})\)，故一旦共同 scalar ambient large sieve 成立，
     Hilbert 空间 Cauchy 一次就给所需 half-root，不需要新的向量值
-    大筛，也没有 \(2^{\omega(A)}\)。尚未证明的是 actual level traces
-    确实在同一 normalization/Bessel/complete-shift measure 中给出这个
-    乘子（或 CF19.105 的 shifted-list 能量），以及共同解除 regulator
-    和 principal/axis/residue 的同投影重组；这些仍属 CF19.L/CF19.C。
+    大筛，也没有 \(2^{\omega(A)}\)。CF19.106--CF19.111 进一步把
+    mask-free actual zero--zero valuation-one 壳精确写成使用同一 test
+    的 full-level trace 差，并在共同 regulator 内把 Maaß、holomorphic、
+    oldforms 与全部 Eisenstein cusp labels 重组为这个 native-measure
+    乘子。尚未证明的是其余 quotient masks 的同一重组、共同
+    nonnegative Bessel majorant/scalar large sieve、解除 regulator，
+    以及 principal/axis/residue 的同投影压缩；这些仍属
+    CF19.D/CF19.L/CF19.C。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
