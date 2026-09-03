@@ -1696,6 +1696,147 @@ actual amplifier prime；所有 \(p\nmid r\) 的 dense common column
 \(p^{-1}\) 行取绝对值。CF8.33--CF8.35 是下一步
 signed level/shift dispersion 的准确输入，不是其上界。
 
+在平方之前还可把九个 \(2\)-adic cross states 精确压成三个物理输出，
+但必须先处理 \(2s\) 与 \(4s\) 的不同高分母阈值。置
+\[
+ \mathcal F_*(n)=
+ \sum_{\substack{s>\sqrt X\\s\ {\rm odd\ squarefree}}}
+ \{U_{2s}(b^\circ)c_{2s}(n)+U_{4s}(b^\circ)c_{4s}(n)\}.
+                                                               \tag{CF8.36}
+\]
+\(S_{>R_0}/\log N\) 与
+\(\sum_{x<n\le x+H}\mathcal F_*(n)\) 的差只含
+\[
+ 2s>R_0,\ s\le\sqrt X,
+ \qquad\hbox{或}\qquad
+ 4s>R_0,\ s\le\sqrt X .
+\]
+这些行的既约分母全都不超过 \(4\sqrt X\)。对这一个**完整差输出**
+在 CF8.26--CF8.27 中取 \(R=\lceil4\sqrt X\rceil\)，便得到
+\(O(XH Q_P(\log P)^6)\)；其内部的 \(2s/4s\) mixed terms 仍由同一次
+大筛平方承担。因此，允许重选常数后，CF8.29 等价于
+\[
+ \boxed{\quad
+ \int W_X(x)\left|(\log N)
+       \sum_{x<n\le x+H}\mathcal F_*(n)\right|^2dx
+ \ll_{\rho,\eta}XH Q_PP^\eta .\quad}                 \tag{CF8.37}
+\]
+这一步解释了为何不能仅写“高分母只有 \(2s,4s\)”便立即配对：被
+CF8.36 删去的阈值带不是零，而是先由一个有限倍 Farey 容量支付。
+
+把 CF8.35 右端除去 \(\sigma_\epsilon\) 后记为
+\[
+ M_\epsilon(p,t)=
+ \sum_{\substack{t\mid m\\m\ {\rm odd},\ (m,p)=1}}
+ {\mu(m)\over m}
+ \left\{p_N(2^\epsilon m)+{1\over p}p_N(2^\epsilon pm)\right\},
+                                                               \tag{CF8.38}
+\]
+并令
+\[
+ \mathcal G_\epsilon(n)=
+ \sum_{\substack{s>\sqrt X\\s\ {\rm odd\ squarefree}}}
+ c_s(n)\sum_{\substack{p\mid s\\P<p\le2P}}
+       Y_pM_\epsilon(p,s/p).
+\]
+因为 \(c_{2s}=c_2c_s\)、\(c_{4s}=c_4c_s\)，且
+\[
+ (c_2(n),c_4(n))=
+ \begin{cases}(-1,0),&v_2(n)=0,\\(1,-2),&v_2(n)=1,\\
+               (1,2),&v_2(n)\ge2,
+ \end{cases}
+\]
+CF8.34--CF8.35 逐项给出
+\[
+ \boxed{\quad
+ \mathcal F_*(n)=-c_2(n)\mathcal G_0(n)
+                  +{c_4(n)\over2}\mathcal G_1(n)
+ =\begin{cases}
+   \mathcal G_0(n),&v_2(n)=0,\\
+   -\mathcal G_0(n)-\mathcal G_1(n),&v_2(n)=1,\\
+   -\mathcal G_0(n)+\mathcal G_1(n),&v_2(n)\ge2.
+  \end{cases}\quad}                                  \tag{CF8.39}
+\]
+这是一条输出层恒等式；它在平方前完成 parity 重组，所以三类之间的
+mixed products 仍在 CF8.37 的同一个模平方内。
+
+更重要的是，CF8.38 与 \(c_s(n)\) 可以在不取绝对值时重组为一个
+真正的 complete-shift detector。对奇平方自由 \(d\)、\((d,p)=1\)
+定义有限系数
+\[
+ \begin{aligned}
+ \mathcal A_\epsilon(p,d)
+ ={}&\sum_{\substack{e,u\ {\rm odd\ squarefree}\\
+          (eu,pd)=1,\ (e,u)=1\\pde>\sqrt X}}
+ {\mu(u)\over eu}
+ \left\{p_N(2^\epsilon deu)
+       +{1\over p}p_N(2^\epsilon pdeu)\right\}.
+                                                               \tag{CF8.40}
+ \end{aligned}
+\]
+事实上，在 CF8.38 写 \(m=tu\)，再用平方自由 \(t\) 的有限恒等式
+\[
+ {\mu(t)c_t(n)\over t}
+   =\sum_{d\mid(t,n)}{\mu(d)d\over t}
+   =\sum_{\substack{t=de\\d\mid n}}{\mu(d)\over e},
+                                                               \tag{CF8.41}
+\]
+便得到
+\[
+ \boxed{\quad
+ \mathcal G_\epsilon(n)=
+ \sum_{P<p\le2P}Y_p
+ \sum_{\substack{d\mid n\\d\ {\rm odd\ squarefree},\ (d,p)=1}}
+ \mu(d)c_p(n)\mathcal A_\epsilon(p,d).
+ \quad}                                                       \tag{CF8.42}
+\]
+这里 \(p\nmid d\)，故在 \(d\mid n\) 的行上
+\(c_p(n)=p{\bf1}_{pd\mid n}-1\)。所以对每个实 \(x\) 又有完全相同
+端点约定下的恒等式
+\[
+ \boxed{\quad
+ \sum_{x<n\le x+H}\mathcal G_\epsilon(n)
+ =\sum_pY_p\sum_d\mu(d)\mathcal A_\epsilon(p,d)
+       \{pD_{pd}(x)-D_d(x)\}.
+ \quad}                                                       \tag{CF8.43}
+\]
+每一括号的 density 精确为零；但 CF8.43 没有逐 \(p,d\) 取范数，
+两侧 \(Y_p\)、\(\mu(d)\) 与两种 parity 输出仍须在 CF8.37 的一个
+quadratic form 中估计。
+
+最后，CF8.40 的 alternating cofactor 也有一个精确的有限 Boolean
+写法。置 \(E_{p,d}=\sqrt X/(pd)\) 及
+\[
+ K_E(v)=\sum_{\substack{e\mid v\\e>E}}\mu(v/e).
+\]
+把 \(v=eu\) 合并，得到
+\[
+ \boxed{\quad
+ \mathcal A_\epsilon(p,d)=
+ \sum_{\substack{v\ {\rm odd\ squarefree}\\(v,pd)=1}}
+ {K_{E_{p,d}}(v)\over v}
+ \left\{p_N(2^\epsilon dv)
+       +{1\over p}p_N(2^\epsilon pdv)\right\}.
+ \quad}                                                       \tag{CF8.44}
+\]
+若 \(pd>\sqrt X\)，完整 cube 已被取尽，
+\(K_E(v)={\bf1}_{v=1}\)，从而
+\[
+ \mathcal A_\epsilon(p,d)
+ =p_N(2^\epsilon d)+p^{-1}p_N(2^\epsilon pd).          \tag{CF8.45}
+\]
+若 \(pd\le\sqrt X\)，则 \(v=1\) 行不存在，而对 \(v>1\)
+\[
+ K_{E_{p,d}}(v)
+ =-\sum_{\substack{e\mid v\\e\le E_{p,d}}}\mu(v/e).   \tag{CF8.46}
+\]
+所以未证的 high output 已严格分成：CF8.45 的 complete-cube
+large-\(d\) 行，与 CF8.46 中保留一个**短 complementary divisor**
+\(e\le\sqrt X/(pd)\) 的 incomplete-cube 行。CF5F 的反例说明后者不能
+逐 dyadic shell 直接换成 \(\prod_{q\mid v}q^{-1}\)；下一步需要对
+CF8.43 的 \(d/e\) 两侧和 marked \(p\)-shift 作一次 joint dispersion。
+这仍是 CF8.37 的同一个完整输出，不是新的条件接口。
+
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
 cancellation，因为在该 squarefree canonical 行上
