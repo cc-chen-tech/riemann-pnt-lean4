@@ -517,7 +517,7 @@ saving。
 上一段所说的物理映射中，有一部分其实可以在不使用任何解析估计时
 完成。固定 \(C\ge1\)，令
 \[
- g_C=(D,C),\qquad c={C\over g_C},qquad
+ g_C=(D,C),\qquad c={C\over g_C},\qquad
  I(F)=\iint_{(0,\infty)^2}F(m,n)\,dm\,dn,
 \]
 其中 \(F\) 连续可积且紧支撑于正象限。定义两条实际 sampling line
@@ -3886,12 +3886,12 @@ CF19Z8 留下的 ramified 局部类型可在当前 zero--zero 方向上继续精
 分类。先取 primitive conductor exponent one。平凡中心特征强制其为
 \(\pi_p=\chi\mathrm{St}\)，其中
 \[
- \lambda_j:=\lambda_\pi(p^j)=\epsilon^jp^{-j/2},qquad
+ \lambda_j:=\lambda_\pi(p^j)=\epsilon^jp^{-j/2},\qquad
  \epsilon\in\{1,-1\}.
 \]
 置
 \[
- q=p+1,qquad r_p={p(p+2)\over q^2}.
+ q=p+1,\qquad r_p={p(p+2)\over q^2}.
 \]
 采用 [Blomer--Milićević, Lemma 2](https://arxiv.org/abs/1404.7845)
 的 exact oldclass convention。取 degeneracy map \(f|_p\) 的 \(L^2\) 归一化，使其 normalized
@@ -3932,8 +3932,8 @@ difference 在 valuations \((0,j)\) 上为
 \[
  \boxed{
  {\mathcal K_p^{(1)}(0,j)\over c_p(1)}
- =-C_{p,0}\lambda_j,qquad
- C_{p,0}=1-{p+1\over p^2(p+2)},qquad j\ge1.}           \tag{CF19.95}
+ =-C_{p,0}\lambda_j,\qquad
+ C_{p,0}=1-{p+1\over p^2(p+2)},\qquad j\ge1.}           \tag{CF19.95}
 \]
 CF19.95 是尚未乘回 CF3.2 外层 \(\mu(p)=-1\) 的 normalized
 corrected-lift 行。裸 level-
@@ -3945,7 +3945,7 @@ Kloosterman/spectral kernel 对两个 Fourier indices 对称，故这是
 CF19.80 中首 index valuation \(j\ge1\)、第二 index valuation zero
 的 Steinberg rank-one Hecke 列，而不是待付的任意二维矩阵；并且
 \[
- 0<C_{p,0}<1,qquad
+ 0<C_{p,0}<1,\qquad
  |C_{p,0}\lambda_1|^2={C_{p,0}^2\over p}\le {1\over p}.
                                                                \tag{CF19.96}
 \]
@@ -4129,7 +4129,7 @@ CF19.106 只表示把这些另列为固定系数以前的壳；它们不能因�
    \phi\!\left({4\pi\sqrt{|xy|}\over c}\right).
 \]
 对每个 \(c=ABm\)，有限 Möbius 系数恰为
-\(\sum_{d\mid(A,m)}\mu(d)=\mathbf1_{(m,A)=1}\)。因此不取绝对值便有
+\(\sum_{d\mid(A,m)}\mu(d)=\mathbf 1_{(m,A)=1}\)。因此不取绝对值便有
 \[
  \boxed{
  {\cal G}_{A,B}^{\pm}(k,n;\phi)
@@ -4390,6 +4390,123 @@ AFE/detector/reflection/physical-shift 核逐导数验算，不能从
 CF19.81a 的 \(L^\infty\) 界倒推。因而这里关闭的只是尺度换元与
 admissibility 层；谱定位、exceptional 的 \({\mathfrak Y}\) 尺度、以及
 CF19.113 的 common-positive-majorant 仍是 CF19.D 的真正未证部分。
+
+### CF19Z14. 真实 Bessel 变换的 tempered 与 exceptional 尺度
+
+CF19Z13 的对数导数可以直接代入一个已有的全谱变换引理，而不是
+再把“standard Bessel decay”当作新 gate。在 trivial nebentypus、权零的
+归一化下记
+\[
+ \begin{aligned}
+ \dot\phi(\ell)&=i^\ell\int_0^\infty
+       J_{\ell-1}(x)\phi(x){dx\over x},\\
+ \widetilde\phi(t)&={i\over2\sinh\pi t}
+       \int_0^\infty\{J_{2it}(x)-J_{-2it}(x)\}
+       \phi(x){dx\over x},\\
+ \check\phi(t)&={2\over\pi}\cosh(\pi t)
+       \int_0^\infty K_{2it}(x)\phi(x){dx\over x}.
+                                                               \tag{CF19.123}
+ \end{aligned}
+\]
+它们分别是 holomorphic，同号 Maaß/Eisenstein 和异号
+Maaß/Eisenstein 变换。
+[Blomer--Harcos--Michel, (2.10)--(2.12) 及 Lemma 1](https://www.numdam.org/item/ASENS_2007_4_40_5_697_0.pdf)
+的假设正是：\(\phi\) 支撑于 \(x\asymp X\)，且
+\(\phi^{(j)}(x)\ll_jX^{-j}\)。它给出，对每个固定 \(C\ge0\)，
+\[
+ |\dot\phi(\ell)|+|\widetilde\phi(t)|+|\check\phi(t)|
+ \ll_C {1+|\log X|\over1+X}
+       \left({1+X\over1+|t|}\right)^C,               \tag{CF19.124}
+\]
+其中 holomorphic 项把 \(|t|\) 读作离散阶 \(\ell\)。同一引理的
+exceptional 部分说，对 \(0<\tau=|\Im t|<1/4\)，
+\[
+ |\widetilde\phi(t)|+|\check\phi(t)|
+ \ll {1+X^{-2\tau}\over1+X}.                          \tag{CF19.125}
+\]
+这两条界与 CF19.123 的三个真实变换同时对齐；它不是只对
+cuspidal 或只对同号行的一条类比。
+
+对 CF19.117 的 \(\phi_X\)，CF19.120--CF19.121 给出
+\(\phi_X^{(j)}(x)\ll_j{\cal A}_jX^{-j}\)。因而对每个固定
+\(C\)，取足够大的有限 \(J=J(C)\)，CF19.124--CF19.125 逐字成为
+\[
+ \begin{aligned}
+ |\dot\phi_X(\ell)|+|\widetilde\phi_X(t)|
+       +|\check\phi_X(t)|
+ &\ll_C {\cal A}_{J(C)}{1+|\log X|\over1+X}
+       \left({1+X\over1+|t|}\right)^C,\\
+ |\widetilde\phi_X(i\tau)|+|\check\phi_X(i\tau)|
+ &\ll {{\cal A}_{J(C)}\over1+X}
+       \{1+X^{-2\tau}\}.
+                                                               \tag{CF19.126}
+ \end{aligned}
+\]
+这里只用有限多个导数；\(C\) 固定后不存在无限 Sobolev 费用。
+
+置
+\[
+ {\mathfrak T}_X=1+X,\qquad
+ {\mathfrak Y}_X=\max(1,X^{-1}),\qquad
+ C_X={{\cal A}_{J(C)}(1+|\log X|)\over1+X}.           \tag{CF19.127}
+\]
+对 \(C>4\)，CF19.126 的 tempered/holomorphic 行可被前缀窗口精确地
+大项控制为
+\[
+ |h_{\phi_X}(t)|
+ \ll C_X\sum_{j\ge0}2^{-jC}
+       {\bf1}_{|t|\le2^{j+1}{\mathfrak T}_X},
+ \qquad
+ |h_{\phi_X}(i\tau)|
+ \ll {2{\cal A}_{J(C)}\over1+X}
+       {\mathfrak Y}_X^{2\tau}.                       \tag{CF19.128}
+\]
+第二式在 \(X\ge1\) 时用 \(1+X^{-2\tau}\le2\)，在 \(X<1\)
+时用 \(1+X^{-2\tau}\le2X^{-2\tau}\)。第一式中大筛容量的
+\(2^{2j}\) 由 \(C>4\) 绝对求和。因此，对一个确实不依赖
+Fourier indices 的共同 \(\phi_X\)，CF19Z12 中所需的谱尺度可以取为
+CF19.127，而不是未定义的“natural Bessel range”。对 CF19.115
+作这一次代入后，标量容量的尺度部分明确为
+\[
+ { {\cal A}_{J(C)}(1+|\log X|)\over1+X}
+ \left\{(1+X)^2+U\max(1,X^{-1})\right\}.             \tag{CF19.129}
+\]
+这里已包含 tempered 前缀窗口的 \(j\)-求和与 exceptional
+权；它没有第二份 shell \(A^{-1/2}\)，后者仍只能从
+CF19.102 的局部乘子范数使用一次。
+
+最后一个量词不能省略：CF19.126 对每个 \((k,n)\) 成立，并不
+自动把一族 \(\phi_{k,n}\) 变成双线性谱和中的同一个 test。甚至
+\(|h_{k,n}(t)|\le H(t)\) 也不足以推出
+\(\sum_{k,n}a_kb_nh_{k,n}(t)\lambda_t(k)\lambda_t(n)\) 的乘积型界。
+有限反例已在一个谱点上出现：取
+\(h_{k,n}=\left(\begin{smallmatrix}1&1\\1&-1\end{smallmatrix}\right)\)，
+\(a=2^{-1/2}(1,1)\)，\(b=(1,0)\)，且所有 Hecke 标签取一。
+此时每个 \(|h_{k,n}|\le1\)，但双线性值为 \(\sqrt2\)，而
+\(\|a\|_2\|b\|_2=1\)。高阶 Hadamard 矩阵把这个缺口扩大为
+\(\sqrt N\)，所以它不是可吸收的常数。
+必须先对原归一化核使用 CF19.9，把其写成
+\[
+ \sum_\nu c_\nu A_\nu(k)B_\nu(n)\phi_\nu(x),\qquad
+ \sum_\nu|c_\nu|\,{\cal N}_{J(C)}(\phi_\nu)
+ \ll P^\varepsilon{\cal S}_{J'}(w),                  \tag{CF19.130}
+\]
+其中对支撑于 \(x\asymp X\) 的项定义
+\({\cal N}_J(\phi)=\max_{0\le j\le J}X^j
+\|\phi^{(j)}\|_\infty\)，而取一个固定的
+\(J'>J(C)+d/2\) 即可。这个加权版仍是 CF19.9 的同一个
+证明：先对 test 坐标微分至多 \(J(C)\) 次，再对全部
+\(d\) 个 torus 坐标用 Cauchy--Schwarz/Parseval；额外的
+\((1+|r_x|)^{J(C)}\) 由这些导数支付。
+\(A_\nu,B_\nu\) 是归一化坐标的 Fourier 单项，因而是两条
+coefficient list 上的模一对角乘子。先在有限 Fourier 截断上
+用谱不等式，再由 CF19.130 的可和右端取极限，不需要逐谱
+交换一个非绝对可和级数。
+然后对每个**共同** \(\phi_\nu\) 用 CF19.128，最后在 \(\nu\) 上用可和
+projective mass。CF19.9 已证这个抽象 Fourier 步；但 actual 核的
+CF19.119/CF19.D 半范数、以及 CF19.130 与 complete-shift/AFE 全列的
+逐项相等仍未证。所以 CF19Z14 关闭了「共同 test 一旦分离后的全谱
+Bessel 尺度」，没有关闭 CF19.D/L，更没有支付其他 boxes。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
