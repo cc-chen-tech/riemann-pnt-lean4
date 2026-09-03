@@ -82,6 +82,11 @@ squarefree \(q_0,r,s\)，另有九个明确的 \(2\)-adic states。这个约化
 Hermitian Gram，并用有限 Ramanujan 坐标与 reciprocal-LCM 正定式
 完整支付所有相同既约有理频率；唯一未证部分因而缩成同一有限
 \(a/r\ne b/s\) 的 signed off-frequency quadratic form。
+CF8.25--CF8.29 再用加权 Farey 大筛支付全部 \(r\le\sqrt X\) 的
+低分母块；取允许的 \(\alpha<1/12\) 后，CF8.30--CF8.35 使用实际
+\(\sum_pY_p=0\) 把高分母所有 \(p\nmid r\) 的 dense common columns
+精确消掉。当前唯一高块因此每行都满足 marked amplifier prime
+\(p\mid r\)，并保留一条显式 Möbius cofactor。
 
 本文不证明这个共同输出的所需上界。最后可选择证明 CF8.5 的更强
 原系数 all-box bound，或 CF9.1 的 dense projected full-output gate；
@@ -1541,6 +1546,155 @@ CF8.8 的未乘 \(\log N\) 系数可写成
 \(a/r\ne b/s\) 的**同一有限 off-rational-frequency quadratic
 form**；两侧 marked primes、Möbius cofactors、九个 \(2\)-adic
 states 与 \(W_X\) 端点权必须保留到一次 signed estimate 之后。
+
+低既约分母的整个 off-frequency 块也可无条件支付。使用
+[Montgomery--Vaughan, *The large sieve*, Mathematika 20 (1973),
+119--134](https://doi.org/10.1112/S0025579300004708)
+的解析大筛：若 \(\theta_\nu\in\mathbb R/\mathbb Z\) 两两距离至少
+\(\delta\)，则每个含 \(L\) 个连续整数的区间都有
+\[
+ \sum_{k=M+1}^{M+L}\left|\sum_\nu c_\nu e(k\theta_\nu)\right|^2
+ \le (L-1+\delta^{-1})\sum_\nu|c_\nu|^2.              \tag{CF8.25}
+\]
+这里使用的是该定理的 finite trigonometric-polynomial 形式，不涉及
+任何素数分布输入。
+
+CF8.25 可直接承受本稿的幂缓冲硬权。固定 \(v\in[0,1)\)，把
+\(k+v\) 按 \(k+v\asymp X2^t\) 分成 \(O(\log P)\) 个 dyadic intervals。
+当 \(t\ge0\) 时
+\(\omega_K((k+v)/X)\ll_K2^{-Kt}\)，当 \(t<0\) 时
+\(\omega_K((k+v)/X)\ll_K2^{Kt}\)。逐段用 CF8.25 后，对 \(t\)
+求和；两边的几何级数分别给
+\[
+ \boxed{\quad
+ \sum_kW_X(k+v)\left|\sum_\nu c_\nu e(k\theta_\nu)\right|^2
+ \ll_K (X+\delta^{-1})\sum_\nu|c_\nu|^2,
+ \quad}                                                \tag{CF8.26}
+\]
+一致于 \(v,P,\alpha\)。特别地，物理支撑长度虽达 \(XP^\alpha\)，
+并未作为大筛容量出现；远端权的 \(K\)-次衰减已经支付它。
+
+令 \(S_{\le R}(x,H)\) 是 CF8.21 中只保留既约分母 \(r\le R\) 的和。
+不同 Farey fractions 的间距至少 \(R^{-2}\)。对固定 \(v\)，
+CF8.21 的 coefficient 是
+\((\log N)U_r(b^\circ)D_{J(v)}(a/r)\)。有限 Parseval 与
+CF8.19 给
+\[
+ \begin{aligned}
+ \sum_{\substack{r\le R\\a\bmod r,\ (a,r)=1}}
+ |U_r(b^\circ)D_{J(v)}(a/r)|^2
+ &\le 2H\sum_{r\le R}r|U_r(b^\circ)|^2\\
+ &\le4H(1+\log R)\mathcal Q(b^\circ).                 \tag{CF8.27}
+ \end{aligned}
+\]
+把 CF8.26 以 \(\delta=R^{-2}\) 代入并对 \(v\in[0,1)\) 积分，再用
+CF8.23，得到
+\[
+ \int W_X(x)|S_{\le R}(x,H)|^2dx
+ \ll (X+R^2)H Q_P(\log P)^6.
+\]
+因此对
+\[
+                         R_0=\lfloor\sqrt X\rfloor
+\]
+有完整低分母界
+\[
+ \boxed{\quad
+ \mathfrak U_{\le R_0}(P)
+ \ll_{\kappa,\alpha,K}XH Q_P(\log P)^6.
+ \quad}                                                \tag{CF8.28}
+\]
+这包含低分母内部的 equal/off-frequency、所有 marked-prime 与
+\(2\)-adic cross terms，不是逐频率绝对值估计。
+
+最后置 \(S_{>R_0}=S_\circ-S_{\le R_0}\)。同一
+\(|u+v|^2\le2|u|^2+2|v|^2\) 双向使用，CF8.28 证明 CF8.5 等价于
+对**同一个**高分母输出
+\[
+ \int W_X(x)|S_{>R_0}(x,H)|^2dx
+ \ll_{\rho,\eta}XH Q_PP^\eta                           \tag{CF8.29}
+\]
+（允许重选常数与起点）。交叉项由这次唯一 Hilbert 三角支付。
+所以当前真正未证叶已经缩成
+\[
+ r,s>\sqrt X,\qquad a/r\ne b/s,
+\]
+并仍保留 CF8.15 的两侧 Möbius cofactors、全部九个 \(2\)-adic
+states 与原硬端点权。普通 Farey 大筛在这里给 \(L_b^2\) 容量，远大于
+\(X\)；下一步必须利用 \(U_r(b^\circ)\) 的 joint Möbius/marked-prime
+结构或对这一个高分母块作 reciprocal/Poisson dispersion，不能再把
+系数扩大为任意向量。
+
+高分母系数还可用 actual Riesz 恒等式进一步精确坍缩。现在固定
+\[
+                         0<\alpha<{1\over12};           \tag{CF8.30}
+\]
+这仍在 XI 所允许的 \(0<\alpha<\kappa-2\) 内。由
+\(N=\lceil(2XP^\alpha+H)/P\rceil\)、\(\kappa=23/6\)，对充分大 \(P\)
+有
+\[
+ {P\sqrt X\over4N}\gg P^{\,2-\kappa/2-\alpha}
+                    =P^{\,1/12-\alpha}\longrightarrow\infty. \tag{CF8.31}
+\]
+所以 \(s>\sqrt X/4\)、\(P<p\le2P\) 时 \(ps>N\)。
+
+把 \(z^\circ\) 按系数指标的 \(2\)-adic valuation 分成 odd/even
+两行，并对奇平方自由 \(s\) 定义
+\[
+ \begin{aligned}
+ Z_{0,s}&=\sum_{\substack{s\mid d\\v_2(d)=0}}{z_d^\circ\over d},&
+ A_0(m)&=a_N(m),\\
+ Z_{1,s}&=\sum_{\substack{2s\mid d\\v_2(d)=1}}{z_d^\circ\over d},&
+ A_1(m)&={a_N(2m)\over2},\\
+ U_{\epsilon,s}&=\sum_{\substack{s\mid m\\m\ {\rm odd}}}{A_\epsilon(m)\over m},&
+ V_{\epsilon,t}^{(p)}
+ &=\sum_{\substack{t\mid m,\ m\ {\rm odd}\\(m,p)=1}}
+                         {A_\epsilon(m)\over m}.
+ \end{aligned}                                        \tag{CF8.32}
+\]
+所有 squarefree 条件已经由 \(a_N\) 与 \(z^\circ\) 强制；在
+\(V^{(p)}\) 中仍显式保留 \((m,p)=1\)，因为它正是删去 marked
+\(p^2\) 指标的条件。
+
+由 \(z_d=\sum_{p\mid d}pY_pa_N(d/p)\)，若 \(p\nmid s\)，
+\(s\mid m\) 且 \(p\mid m\) 会迫使 \(ps\mid m\le N\)，与 CF8.31
+矛盾。因此该行的 coprimality restriction 自动消失，贡献恰为
+\(Y_pU_{\epsilon,s}\)。若 \(p\mid s\)，贡献恰为
+\(Y_pV_{\epsilon,s/p}^{(p)}\)。actual Riesz 权满足
+\(\sum_pY_p=0\)，故对 \(s>\sqrt X/4\) 有
+\[
+ \boxed{\quad
+ Z_{\epsilon,s}
+ =\sum_{\substack{p\mid s\\P<p\le2P}}
+       Y_p\{V_{\epsilon,s/p}^{(p)}-U_{\epsilon,s}\},
+ \qquad\epsilon=0,1.
+ \quad}                                                \tag{CF8.33}
+\]
+而 parity dilation 精确给
+\[
+ U_{2s}(b^\circ)=-Z_{0,s},\qquad
+ U_{4s}(b^\circ)=-Z_{1,s},\qquad
+ U_r(b^\circ)=0\quad(v_2(r)\notin\{1,2\}).             \tag{CF8.34}
+\]
+特别地，CF8.29 的每个非零高分母 \(r\) 的 odd part 必须含至少一个
+actual amplifier prime；所有 \(p\nmid r\) 的 dense common column
+已经在取范数前由 \(\sum Y_p=0\) 精确消失。
+
+为后续 Type 分解记录完全展开的 cofactor。若 \(s=pt\)、\((p,t)=1\)，
+则从 \(\mu(pm)=-\mu(m)\) 逐项得到
+\[
+ V_{\epsilon,t}^{(p)}-U_{\epsilon,pt}
+ =\sigma_\epsilon
+ \sum_{\substack{t\mid m\\m\ {\rm odd},\ (m,p)=1}}
+ {\mu(m)\over m}
+ \left\{p_N(2^\epsilon m)+{1\over p}p_N(2^\epsilon pm)\right\},
+ \quad
+ \sigma_0=1,\quad\sigma_1=-{1\over2}.                 \tag{CF8.35}
+\]
+因此高块仍保留一条真实 Möbius cofactor \(m\)、marked level
+\(p\mid s\) 与两个共同线性 Riesz tapers；没有把 \(Y_p\) 的相位或
+\(p^{-1}\) 行取绝对值。CF8.33--CF8.35 是下一步
+signed level/shift dispersion 的准确输入，不是其上界。
 
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
