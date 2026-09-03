@@ -50,8 +50,10 @@ projective 分离，并用 divisor Cauchy 正确支付 \(n=h\delta\) 的合并�
 它关闭该 literal bulk 的 CF19.130 与 quotient-Fourier 远尾，但不覆盖
 complete-shift、principal/axes 或 Type-II。CF19Z17 从 pre-Poisson
 格点和重推另一 orientation，证明其外权、共同 test 与远尾具有同一
-预算；同时精确显示换向必须携带两个 Poisson 零模之差，故两向 signed
-谱行的共同重组仍未关闭。
+预算；沿同一 affine line 的连续换元又证明两个第一层 Poisson 零模
+精确相等，所以可对每个完整 box 选择 orientation。这个结论只对
+求完全部非零频率的 box 成立，不允许逐频率择优，也没有关闭两向
+signed level 谱行的共同重组。
 反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
@@ -4764,7 +4766,7 @@ quotient masks、另一 orientation、CF3 endpoints、CF5 axes/origin、
 principal/residue、complete-shift detector 与 Type-II 仍须在 CF19.L/CF19.C
 的同一有限输出中重组。
 
-### CF19Z17. 另一 BCR orientation 具有同一预算，但换向必须携带零模差
+### CF19Z17. 另一 BCR orientation 具有同一预算，且完整非零行可逐 box 换向
 
 “另一 orientation 同理”若只针对非零 Poisson 频率是错误的；这里从
 原 pre-Poisson shifted-divisor box 直接推导。原方程
@@ -4801,18 +4803,29 @@ principal/residue、complete-shift detector 与 Type-II 仍须在 CF19.L/CF19.C
  \end{aligned}                                      \tag{CF19.146}
 \]
 因此第一层 Poisson 的分母是 \(1/r\)，不是把原 \(1/s\) 留住后再乘
-一份。令 \(Z_s,\mathcal O_s^{\ne0}\) 表示原 (4.5) orientation 的
-零/非零频率，令 \(Z_r^\vee,\mathcal O_r^{\vee,\ne0}\) 表示
-CF19.146 的零/非零频率。两次 Poisson 都从同一个有限光滑格点和开始，
-故逐 box 有
+一份。令 \(f_s(x)\) 是 CF19.145 前同一个原 integrand 在
+\((m_1,m_2)=((xr+\delta)/s,x)\) 的取值，令
+\(f_r^\vee(y)\) 是它在
+\((m_1,m_2)=(y,(ys-\delta)/r)\) 的取值。换元
+\(y=(xr+\delta)/s\) 保持两个 positivity 条件及全部 dyadic/AFE
+cutoffs，并逐点给出
 \[
- Z_s+\mathcal O_s^{\ne0}
- =Z_r^\vee+\mathcal O_r^{\vee,\ne0},\qquad
- \mathcal O_s^{\ne0}-\mathcal O_r^{\vee,\ne0}
- =Z_r^\vee-Z_s.                                     \tag{CF19.147}
+ f_r^\vee(y)=f_s(x),\qquad dy={r\over s}dx,qquad
+ {1\over r}\widehat f_r^\vee(0)
+ ={1\over s}\widehat f_s(0).                        \tag{CF19.147}
 \]
-这就是换向时必须带入 CF5 origin/axis 账本的精确 correction；两个
-非零行一般不逐频率相等。
+所以若 \(Z_s,\mathcal O_s^{\ne0}\) 表示原 (4.5) orientation 的
+零/非零频率，而 \(Z_r^\vee,\mathcal O_r^{\vee,\ne0}\) 表示
+CF19.146 的零/非零频率，则逐有限 box 精确有
+\[
+ Z_s=Z_r^\vee,qquad
+ \boxed{\mathcal O_s^{\ne0}=\mathcal O_r^{\vee,\ne0}.}
+                                                               \tag{CF19.147a}
+\]
+第二式先用两次完整 Poisson 都等于同一个格点和，再减去 CF19.147 的
+共同零模。它是**求完各自全部非零频率后的 box 恒等式**；它不声称
+单个 \(h\) 与单个 \(j\) 匹配，也不允许在频率和内部逐项换向或先取
+绝对值。
 
 尺度也可从 CF19.145 直接重算。置 \(x=KX,t=T\tau\)，则 kernel 的
 唯一尺度为 \(T\sqrt{R/S}\)。事实上，置
@@ -4869,12 +4882,13 @@ CF19.131--CF19.143 的替换
 分解和 quotient-frequency 远尾，外权仍只有 CF19.148 的
 \(2T/(qRS)\)。
 
-所以“另一 orientation 的 literal 内部 test/尾预算”现已关闭；但
-CF19.147 同时证明，不能在非零行层面任选较有利方向再丢掉
-\(Z_r^\vee-Z_s\)。要把两向 signed level sum 放进同一个谱范数，仍须
-把这项同 CF5 的 quotient-zero、两轴、principal/residue 及 CF3
-endpoints 一起送入 CF19.L/CF19.C。CF19Z17 是这个共同换向恒等式，
-不是 varying-level power saving。
+所以“另一 orientation 的 literal 内部 test/尾预算”现已关闭，并且
+CF19.147a 允许在每个完整有限 box 上选取较有利的 orientation，而不
+产生第一层零模 correction。限制同样精确：必须保留该 box 的全部
+非零频率和原 smooth cutoffs；CF3 endpoint 四行、后续 quotient-zero、
+两轴、principal/residue 仍不能被拆开择向。要把各 box 的 signed level
+sum 放进同一个谱范数，仍须将这些行一起送入 CF19.L/CF19.C。
+CF19Z17 是共同换向恒等式，不是 varying-level power saving。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
