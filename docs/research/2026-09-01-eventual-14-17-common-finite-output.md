@@ -2424,8 +2424,9 @@ CF8.87 还给出一致的临界带正则性。对每个固定 \(m\)，直接对�
  |\partial_v^j\partial_\tau^kK_\delta(v,\tau)|
  \ll_m1.                                               \tag{CF8.89}
 \]
-把 \((v,\tau)\) 延拓到一个固定紧 torus 后，CF19.9 的同一
-Sobolev--Fourier 论证把 \(K_\delta\) 写成
+固定目标阶数 \(m\)，先在 CF8.89 取充分大的
+\(m_1>2m+4\)。把 \((v,\tau)\) 延拓到一个固定紧 torus 后，
+CF19.9 的同一 Sobolev--Fourier 论证把 \(K_\delta\) 写成
 \(\sum_\nu c_\nu V_\nu(v)g_\nu(\tau)\)，其中
 \[
  \sum_\nu|c_\nu|\ll_m1,\qquad
