@@ -16,10 +16,11 @@ cross-prime contraction、短逆边实际 Riesz 平方能量、affine
 physical-shift 导数/尾引理，以及 actual-Riesz 四阶矩的共同 Hilbert
 列扩张；CF19B 还把经典 Andersen--Kıral level reciprocity 的三项
 prime completion 无损张量化到互素平方自由 levels，并证明该
-reciprocity 本身不含第二份 shell half-root；CF19Z--CF19Z2 则在
+reciprocity 本身不含第二份 shell half-root；CF19Z--CF19Z4 则在
 不交换无限谱和的前提下，先直接给出 odd--Hecke 零列的 exact-shell
 几何绝对界，再用一次有限 level Möbius 容斥把该几何边精确识别为
-包含 oldforms 与连续谱的整体 regulated full-spectrum trace。
+包含 oldforms 与连续谱的整体 regulated full-spectrum trace，并在
+真实 dyadic modulus 权下消去 Hecke-index 长度。
 反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
@@ -3420,6 +3421,115 @@ saving 相乘。要接 actual QCT，只需但也必须证明每个对应的模�
 tags。这个任务是 CF19.D 的具体几何版；没有该 seminorm/尺度证明，
 CF19.70 仍只是一个已闭合 supplier。
 
+### CF19Z4. 物理 dyadic 模数权消掉 Hecke-index 长度
+
+CF19.61a 中的尺度在真实 dyadic modulus weight 上还会与
+\((kn)^{1/4}\) 精确抵消。这个事实可完全留在几何侧证明。令
+\(C_0>0\)，并对每个 \(\operatorname{rad}(t)\mid A\) 给一个有界
+函数 \(W_t:(0,\infty)\to\mathbb C\)，满足
+\[
+ \operatorname{supp}W_t\subset[1/2,2],
+ \qquad \sup_t\|W_t\|_\infty\le C_W.
+\]
+定义
+\[
+ \begin{aligned}
+ \mathfrak H_{A,B;C_0}^{\pm}(k,n;\boldsymbol W)
+ :=\sum_{\substack{t\ge1\\\operatorname{rad}(t)\mid A}}
+ {1\over A^2t}
+ \sum_{\substack{r\ge1\\(r,A)=1}}
+ {S(At^2k,\pm n;ABr)\over ABr}\,
+ W_t\!\left({ABr\over C_0}\right).                     \tag{CF19.71}
+ \end{aligned}
+\]
+这里不要求不同 \(t\) 使用同一个函数，也暂不要求 \(W_t\) 光滑。
+固定 \(0<\eta<1/2\)。Weil 界及 CF19Z 中同一个 gcd 恒等式先给
+\[
+ \begin{aligned}
+ &\sum_{\substack{r\ge1\\(r,A)=1}}
+ \left|{S(At^2k,\pm n;ABr)\over ABr}
+ W_t\!\left({ABr\over C_0}\right)\right|\\
+ &\qquad\ll_{\eta}C_W(k,n)^{1/2}(AB)^{-1/2+\eta}
+ \sum_{r\asymp C_0/(AB)}r^{-1/2+\eta}
+ \ll_\eta {C_W(k,n)^{1/2}C_0^{1/2+\eta}\over AB}.
+                                                               \tag{CF19.72}
+ \end{aligned}
+\]
+若 \(C_0/(AB)<1/2\)，内和为空；否则最后一步是一个长度
+\(\asymp C_0/(AB)\) 的初等幂和。关键是
+\((AB)^{-1/2+\eta}(C_0/(AB))^{1/2+\eta}
+=C_0^{1/2+\eta}/(AB)\)：所有 \(\eta\)-幂在 \(AB\) 上也精确抵消。
+于是
+\[
+ \boxed{
+ |\mathfrak H_{A,B;C_0}^{\pm}(k,n;\boldsymbol W)|
+ \ll_\eta
+ {C_W(k,n)^{1/2}C_0^{1/2+\eta}\over A^3B}
+ \prod_{p\mid A}(1-p^{-1})^{-1}
+ \ll_{\varepsilon}
+ {C_W(k,n)^{1/2}C_0^{1/2+\varepsilon}
+  \over B A^{3-\varepsilon}}.}                         \tag{CF19.73}
+\]
+第一界中的 Euler 乘积是精确的 \(t\)-质量：
+\[
+ \sum_{\operatorname{rad}(t)\mid A}{1\over t}
+ =\prod_{p\mid A}(1-p^{-1})^{-1};
+\]
+第二界仍由“有限个小素数吸入常数，其余局部对数至多
+\(\varepsilon\log p\)”得到；非空情形还有 \(C_0\ge AB/2\ge1\)，
+故可取 \(0<\eta\le\varepsilon\) 并把 \(C_0^{1/2+\eta}\) 放宽为
+\(C_0^{1/2+\varepsilon}\)。这里不再出现
+\(\sum_t1\) 或 Hecke-index length，所以没有使用 CF19.32e 中发散的
+大筛权。
+
+若 \(W_t\) 光滑，CF19.71 还可逐 \(t,k,n\) 精确放回 CF19.65。置
+\[
+ X_{t,k,n}={4\pi t\sqrt{Akn}\over C_0},\qquad
+ \phi_{t,k,n}(x)=W_t(X_{t,k,n}/x).
+ \]
+则
+\[
+ \phi_{t,k,n}\!\left({4\pi t\sqrt{Akn}\over ABr}\right)
+ =W_t(ABr/C_0).                                       \tag{CF19.74}
+\]
+因 \(W_t\) 支撑离开零与无穷，\(\phi_{t,k,n}\) 对每个固定
+\((t,k,n)\) 都是 compactly supported Kuznetsov-admissible test；
+其自然尺度正是
+\(X_{t,k,n}=t\{4\pi\sqrt{Akn}/C_0\}\)。此处不能把已经对
+全部 Hecke indices 求和的 CF19.61a 再逐 \(t\) 调用；应回到其
+证明中紧邻 CF19.60 之后、对 \(t\) 求和之前的 fixed--\(t\) 界。
+在该界中代入这个尺度，
+\(t^{-1/2+\eta}X_{t,k,n}^{-1/2-\eta}\) 恰留下
+\(t^{-1}\)，而
+\((kn)^{1/4+\eta/2}X_{0,k,n}^{-1/2-\eta}\) 恰消去全部 \(kn\)
+幂并再给 \(A^{-1/4-\eta/2}C_0^{1/2+\eta}\)；这与直接证明
+CF19.72--CF19.73 完全一致。
+
+最后对 CF19Z3 的 \(\mathcal K,\mathcal N,x_k,y_n\) 用同一个 gcd
+矩阵 Schur test，直接得到
+\[
+ \begin{aligned}
+ \left|\sum_{k\in\mathcal K}\sum_{n\in\mathcal N}
+ x_ky_n\mathfrak H_{A,B;C_0}^{\pm}(k,n;\boldsymbol W)\right|
+ \ll_\varepsilon{}&
+ {C_WC_0^{1/2+\varepsilon}\over BA^{3-\varepsilon}}
+ \{(N_0+K_0^{1/2})(K_0+N_0^{1/2})\}^{1/2}\\
+ &\times\|x\|_2\|y\|_2.                               \tag{CF19.75}
+ \end{aligned}
+\]
+在 CF19.70 的非极端失衡域，长度费用是
+\((K_0N_0)^{1/2+\varepsilon}\)，不是
+\((K_0N_0)^{3/4+\varepsilon}\)。
+
+CF19.73--CF19.75 是 actual dyadic modulus test 可以直接调用的
+zero--zero exact-shell supplier；它允许 \(W_t\) 带全部已经固定的
+AFE/detector/reflection tags，只要求同一 \(\ell^\infty\) 预算。
+它仍不证明原物理系数展开后恰有 CF19.71 的
+\(A^{-2}t^{-1}\)、第一 index \(At^2k\) 与 modulus \(ABr\)，也不估计
+剩余三个 local states、另一 shell、principal/axis/residue 或
+native complement。因此下一项 adapter 已缩成这三个**系数等同性**
+与余下行的共同分账，不能把 CF19.75 称为 CF19.L 或 CF9.1。
+
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
 实际 \(b^\sharp\) 证明平方自由 canonical 子域的共同 Mellin columns，
@@ -3616,6 +3726,14 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     dyadic \(k,n\) 列。在不极端失衡的长度上，全部 index 费用为
     \((K_0N_0)^{3/4+\varepsilon}\)，但 actual 每个模数权具有共同
     \(C_\phi,X_\phi\) 的 normalized-seminorm 仍须由 CF19.D 证明。
+    CF19.71--CF19.75 对真实 \(ABr\asymp C_0\) 权进一步允许 test
+    随 odd--Hecke index \(t\) 变化；直接 Weil 求和使
+    \(t\)-质量精确降为
+    \(\prod_{p\mid A}(1-p^{-1})^{-1}\)，并得到
+    \(C_0^{1/2+\varepsilon}A^{-3+\varepsilon}B^{-1}(k,n)^{1/2}\)。
+    两条非极端失衡 dyadic 列的长度费用随之降为
+    \((K_0N_0)^{1/2+\varepsilon}\)。原物理零列与 CF19.71 的三项
+    系数等同性及其他 local/principal/axis/native 行仍未映射。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
