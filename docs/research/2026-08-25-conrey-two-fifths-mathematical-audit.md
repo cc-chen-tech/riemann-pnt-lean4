@@ -248,17 +248,22 @@ For `alpha=a/L`, `beta=b/L`, define
   (h,k)^{1+\alpha+\beta}.
 \]
 
-Conrey's Lemma 1 gives
+The additive form of Conrey's Lemma 1 needed here is
 
 \[
- \Sigma\sim\frac1{\theta L}
+ \Sigma=\frac1{\theta L}
  \int_0^1(P_1'(x)+a\theta P_1(x))
-          (P_2'(x)+b\theta P_2(x))\,dx.
+          (P_2'(x)+b\theta P_2(x))\,dx+o(1/L).
 \tag{A}
 \]
 
-This is not a bare citation after the present source recovery.  Its proof is
-the gcd/Mobius reindexing from Conrey 1983, Section 6, followed by that
+The remainder must be uniform on the fixed negative-shift bidisc and its
+positive-shift reflection. A relative asymptotic is not enough when the
+displayed integral vanishes; see the 2026-08-30 uniformity audit below.
+
+This identifies the mathematical dependencies, not an already completed
+native proof. The route is the gcd/Mobius reindexing from Conrey 1983,
+Section 6, followed by that
 paper's Lemmas 10 and 11.  Lemma 10 is the contour evaluation of the tapered
 Mobius sum after factoring `1/(zeta(s)F(j,s))`; Lemma 11 is the required
 Euler-product partial sum.  The zero-free line and reciprocal bounds for
@@ -270,8 +275,8 @@ Moving the shifted contour and using the Estermann-type functional equation
 splits the integral into `M_i+R_i+E_i`.  The two `M_i` terms give exactly
 
 \[
-  \frac{\Sigma(b,a,P_1,P_2)
-       -e^{-a-b}\Sigma(-a,-b,P_1,P_2)}{\alpha+\beta},
+  \frac{\Sigma(b/L,a/L,P_1,P_2)
+       -e^{-a-b}\Sigma(-a/L,-b/L,P_1,P_2)}{(a+b)/L},
 \]
 
 which, together with (A), is (G).  The residues `R_i` are rapidly decaying
@@ -329,18 +334,24 @@ Conrey's Lemma 7 bounds the analytic kernel by
  \Delta^{-c-5/2}T^{5/2+\eta+\varepsilon}.
 \]
 
-Combining it with (M8), summing all dyadic boxes, taking
-`Delta=T^(1-delta)` and `eta=epsilon/2`, gives
+Combining it with (M8) requires **independent** small losses in the two
+lemmas, with the arithmetic loss strictly less than `eta` so that the
+infinite dyadic `N` sum converges. The literal same-`epsilon` substitution
+`eta=epsilon/2` from the printed shorthand cannot justify that sum.
+After this correction, taking `Delta=T^(1-delta)` gives the schematic bound
 
 \[
  Z\ll
- \Delta^{-7/2}T^{5/2+o(1)}
+ \Delta^{-7/2}T^{5/2+\varepsilon_*}
  \left(T^{1/2}y^{7/8}+y^{7/4}\right).
 \tag{E}
 \]
 
-For `y=T^theta`, the two powers of `T`, ignoring arbitrarily small positive
-losses, are
+Here `epsilon_*` is a fixed, sufficiently small positive budget (after
+the independent losses have been chosen), not an exponent tending to zero.
+
+For `y=T^theta`, the two base powers of `T`, before the Gaussian and other
+strictly budgeted positive losses, are
 
 \[
  -\frac12+\frac{7\theta}{8},
@@ -353,6 +364,12 @@ Both are negative exactly when
 \[
   \boxed{\theta<\frac47.}
 \]
+
+This is an exponent criterion, not by itself a proved estimate for `Z`.
+The [2026-08-30 uniformity audit](2026-08-30-conrey-long-moment-uniformity-audit.md)
+keeps the full loss `7 delta/2+(1+delta+2 theta) eta+eps_K+eps_M`,
+proves the dyadic envelope converges with independent explicit parameters,
+and retains an `o(T^(-1/4000))` margin at `theta=571/1000`.
 
 The auxiliary assumption `y<=T^(8/13)` in Lemma 8 is weaker because
 `4/7<8/13`.  Thus no endpoint theorem at `theta=4/7` is used: all numerical
@@ -1930,3 +1947,111 @@ The remaining equation-(37) specialization must still construct the finite
 divisor and a right-shifted sequence of zero-free vertical lines for the
 actual product `V_1B` at the two selected horizontal heights.  Equations
 (38)--(41) and the long `theta<4/7` mollified mean square remain downstream.
+
+## 28. Equation-(41) global deleted-level accounting
+
+> **Correction, 2026-08-30:** the proposed positive-jump attribution below
+> cannot be specialized directly to actual eta. Its generic crossing claim
+> has an entire-function counterexample. See
+> [the balanced-argument correction](2026-08-30-conrey-balanced-argument-correction.md).
+> The valid replacement counts strict interior levels componentwise and
+> charges component losses to the zero multiplicity. Equation (41) remains open.
+
+The next equation-(41) audit found that summing the zero-free crossing bound
+component by component is not sharp enough: it pays one floor/ceiling loss on
+each component and then risks charging the critical-line zeros a second time.
+The correct construction first reconciles the component argument lifts across
+an order-`m` zero by a phase bridge of length `m*pi`, then counts the global
+half-odd-integer argument levels only once.
+
+A half-open order-`m` bridge can swallow at most `m` such levels.  Hence the
+critical-line zero multiplicity removes at most `N_{0,eta}` levels, while the
+two global endpoints contribute only one further rounding loss.  The exact
+finite target is
+
+\[
+  \#\{t:\operatorname{Re}\eta(1/2+it)=0,\ \eta(1/2+it)\ne0\}
+  \ge \frac1\pi\Delta\arg\eta-N_{0,\eta}-1.
+\]
+
+The first reusable counting layer is now formalized as
+`argumentCrossingIndices_sdiff_card_lower_bound`: deleting an arbitrary bad
+level finset `B` from the global level interval costs at most `#B`, without
+introducing another componentwise rounding loss.  The independent note
+`2026-08-29-conrey-equation41-global-partition-math.md` records the full
+four-layer design.
+
+The half-open bridge is also now represented by
+`argumentCrossingBridgeIndices alpha m`.  Membership is proved equivalent to
+the geometric half-open phase interval `[alpha, alpha + m*pi)`, and its
+cardinality is exactly `m`, including endpoint-aligned cases.  Thus the first
+two combinatorial layers are closed.
+
+Local analytic phase alignment and global attribution for the actual `eta`
+remain open.  Thus equation (41) and the Conrey simple-zero proportion are not
+yet proved.
+
+The algebraic part of local phase alignment is now specialized to the actual
+degree-one auxiliary function.  The theorem
+`exists_conreyDegreeOneEta_vertical_order_factor` proves that a finite
+order-`m` zero at ordinate `tau` admits an analytic regular factor `h`, nonzero
+both at the zero and throughout a real neighborhood, with
+
+\[
+  \eta(1/2+it)=\bigl(i(t-\tau)\bigr)^m h(1/2+it).
+\]
+
+This closes the analytic-order-to-vertical-factorization step without assuming
+the desired phase jump.  A continuous logarithm of `h` and the exact alignment
+of the two component lifts by `m*pi` are still required before the bridge can
+be inserted into the global argument path.
+
+The explicit singular-power logarithms are also now formalized.  For `r>0`
+their exponentials are exactly `(-I*r)^m` and `(I*r)^m`, and their imaginary
+parts differ by exactly `m*pi`.  Thus the multiplicity-dependent part of the
+phase jump is closed.  What remains locally is to construct one continuous
+logarithm of the nonvanishing regular factor `h` across the zero and add it to
+both explicit power logarithms; the global component attribution is still
+downstream.
+
+That regular-factor logarithm is now constructed.  The generic theorem
+`exists_continuousLogOn_Ioo` uses the exponential covering map on a simply
+connected real interval, so it remains valid when the principal logarithm
+would cross its branch cut.  Its actual `eta` specialization produces
+`delta>0` and one continuous `ell` on `(tau-delta,tau+delta)` with
+`exp (ell t)=h(1/2+it)` everywhere.
+
+The local assembly is now complete in
+`exists_conreyDegreeOneEta_local_argument_bridge`.  On one common shrunken
+interval, adding `ell` to the explicit left and right singular-power
+logarithms exponentiates to the actual `eta(1/2+it)` on both sides, and the
+difference of their imaginary parts tends to exactly `m*pi` at the zero.
+This closes the local analytic phase-alignment layer without selecting the
+principal logarithm.
+
+The equation-(41) gate is therefore now purely global: construct the finite
+ordered zero partition, reconcile all component lifts with the local bridges,
+and inject every remaining global level into a distinct nonzero real-part
+crossing.  The finite cost calculation is now closed independently of that
+analytic gluing: `card_biUnion_argumentCrossingBridgeIndices_le` bounds the
+union of all bridge-level sets by the sum of zero orders (overlap only helps),
+and `argumentCrossingIndices_sdiff_bridgeUnion_card_lower_bound` deletes that
+union while retaining exactly one global endpoint loss.
+
+The abstract nonmonotone gluing and injection are now also closed.
+`ArgumentPhasePartition` alternates genuine component endpoint pairs with
+aligned order bridges.  Its coverage theorem uses unordered component
+intervals, so a component whose net argument decreases is not discarded; a
+bridge's excluded far endpoint is assigned to the next component.
+`exists_argumentCrossing_of_level_mem_uIcc` supplies the local crossing in
+either direction, and
+`ArgumentPhasePartition.exists_injective_component_argumentCrossings`
+assembles all surviving lattice levels into distinct component-tagged
+crossings.
+
+What remains for equation (41) is no longer the abstract finite combinatorics:
+construct this partition from the actual finite critical-line divisor of
+`eta`, choose compatible logarithmic lifts on every complementary interval,
+and prove that its bridge multiplicity sum is the actual `N_{0,eta}` term.
+Equation (41), equations (38)--(40), and the long `theta<4/7` mollified mean
+square remain open, so the Conrey two-fifths claim is still not proved.

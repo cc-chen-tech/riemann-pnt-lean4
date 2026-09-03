@@ -14,6 +14,45 @@ The normalization by `b - a` is kept explicit because this is the form needed
 when a mollified second moment is inserted into Littlewood's lemma.
 -/
 
+/-- Exponential Jensen only needs positivity almost everywhere, provided
+both the function and its logarithm are integrable. It also certifies a
+strictly positive integral before the logarithm of the mean is used. -/
+theorem integral_pos_and_log_le_length_mul_log_mean_of_ae_pos
+    {f : ℝ → ℝ} {a b : ℝ} (hab : a < b)
+    (hf : IntervalIntegrable f volume a b)
+    (hlog : IntervalIntegrable (fun t => Real.log (f t)) volume a b)
+    (hpos : ∀ᵐ t ∂volume.restrict (Ioc a b), 0 < f t) :
+    0 < (∫ t in a..b, f t) ∧
+      (∫ t in a..b, Real.log (f t)) ≤
+        (b - a) * Real.log ((∫ t in a..b, f t) / (b - a)) := by
+  have hlength : 0 < b - a := sub_pos.mpr hab
+  have : IsFiniteMeasure (volume.restrict (uIoc a b)) := by
+    rw [uIoc_of_le hab.le]
+    infer_instance
+  have : NeZero (volume (uIoc a b)) := ⟨by
+    simpa [uIoc_of_le hab.le, Real.volume_Ioc] using hab⟩
+  have h_exp_log : ∀ᵐ t ∂volume.restrict (uIoc a b),
+      Real.exp (Real.log (f t)) = f t := by
+    rw [uIoc_of_le hab.le]
+    filter_upwards [hpos] with t ht
+    exact Real.exp_log ht
+  have hexp : Real.exp (⨍ t in a..b, Real.log (f t)) ≤ ⨍ t in a..b, f t := by
+    calc
+      _ ≤ ⨍ t in a..b, Real.exp (Real.log (f t)) := by
+        exact convexOn_exp.map_average_le Real.continuous_exp.continuousOn
+          isClosed_univ (by simp) hlog.def'
+          ((integrable_congr h_exp_log).mpr hf.def')
+      _ = _ := average_congr h_exp_log
+  have hmeanPos : 0 < (∫ t in a..b, f t) / (b - a) := by
+    rw [← interval_average_eq_div]
+    exact (Real.exp_pos _).trans_le hexp
+  refine ⟨(div_pos_iff_of_pos_right hlength).mp hmeanPos, ?_⟩
+  have havg : (⨍ t in a..b, Real.log (f t)) ≤ Real.log (⨍ t in a..b, f t) := by
+    simpa only [Real.log_exp] using Real.log_le_log (Real.exp_pos _) hexp
+  rw [interval_average_eq_div, interval_average_eq_div] at havg
+  rw [mul_comm]
+  exact (div_le_iff₀ hlength).mp havg
+
 /-- The interval integral of the logarithm of a positive continuous function
 is bounded by the logarithm of its interval average. -/
 theorem integral_log_le_length_mul_log_mean
