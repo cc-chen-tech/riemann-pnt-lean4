@@ -4905,65 +4905,84 @@ CF19.131--CF19.143 的替换
 packet 选择较有利的 orientation，而不产生第一层 Poisson 零模
 correction。它本身仍不产生 varying-level power saving。
 
-### CF19Z18. simultaneous-gcd 坐标与换向时唯一的 centered mismatch
+### CF19Z18. 全 gcd centered 换向只差一个共同 rank-one 行
 
 UC22 不是 raw 指数项的估计，而是先减去 Ramanujan 主值后的 centered
-估计；所以还须核对这个 subtraction 是否由 CF19.147b 保持。假设
-\(r,s\) 平方自由，置（避免与 (4.5) 的外层 gcd 参数混淆）
-\[
- a=(r,|h|),\quad b=(s,|h|),\quad q_r=r/a,\quad q_s=s/b,
- \quad u=h/(ab).                                      \tag{CF19.150}
-\]
-因 \((r,s)=1\) 及 squarefreeness，\(a,b,q_r,q_s\) 两两互素，且
-\((u,q_rq_s)=1\)。反之这些条件与 \(h=abu\) 精确恢复两个 gcd。若再有
-\((\delta,q_rq_s)=1\)，则原始与反向的两个 arithmetic phases 分别约化为
-\[
- e_s(-h\delta\bar r)=e_{q_s}(-u\delta\overline{q_r}),\qquad
- e_r(h\delta\bar s)=e_{q_r}(u\delta\overline{q_s}).   \tag{CF19.151}
-\]
-同时平方自由 Ramanujan 均值逐素数给
-\[
- {c_s(h\delta)\over\varphi(s)}={\mu(q_s)\over\varphi(q_s)},
- \qquad
- {c_r(h\delta)\over\varphi(r)}={\mu(q_r)\over\varphi(q_r)}. \tag{CF19.152}
-\]
-
-记两个方向的同频 centered 行为
+估计；所以还须核对这个 subtraction 是否由 CF19.147b 保持。这个
+核对不需要 squarefreeness 或 unit 条件。对任意 \((r,s)=1\) 定义
 \[
  \begin{aligned}
- C_{q_s}(h)&={1\over s}\left\{
- e_{q_s}(-u\delta\overline{q_r})-{\mu(q_s)\over\varphi(q_s)}
+ C_s(h)&={1\over s}\left\{
+ e_s(-h\delta\bar r)-{c_s(h\delta)\over\varphi(s)}
  \right\}\widehat f_s(h/s),\\
- C_{q_r}^\vee(h)&={1\over r}\left\{
- e_{q_r}(u\delta\overline{q_s})-{\mu(q_r)\over\varphi(q_r)}
+ C_r^\vee(h)&={1\over r}\left\{
+ e_r(h\delta\bar s)-{c_r(h\delta)\over\varphi(r)}
  \right\}\widehat f_r^\vee(h/r).
- \end{aligned}                                        \tag{CF19.153}
+ \end{aligned}                                        \tag{CF19.150}
 \]
-CF19.147a--CF19.147b 于是给出精确差值
+由 CF19.147a--CF19.147b，所有 \(h,\delta\in\mathbb Z\) 都逐项满足
 \[
  \boxed{
- C_{q_s}(h)-C_{q_r}^\vee(h)
+ C_s(h)-C_r^\vee(h)
+ ={1\over s}\left\{
+ {c_r(h\delta)\over\varphi(r)}
+       e\!\left(-{h\delta\over rs}\right)
+ -{c_s(h\delta)\over\varphi(s)}\right\}
+ \widehat f_s(h/s).}                                  \tag{CF19.151}
+\]
+所以 raw 行的逐频率 intertwiner 没有留下 remainder；换向时唯一
+变化正是 CF19.151 的两条 Ramanujan principal rows。它们共享同一个
+原 kernel、同一个频率乘子与同一个 Poisson Jacobian，因而已经是一条
+可直接放入 CF6.2 master tag 的 rank-one 有限恒等式，而不是另一个
+谱估计接口。
+
+平方自由 unit 子域可把这条一般式完全约化。置（避免与 (4.5) 的外层
+gcd 参数混淆）
+\[
+ a=(r,|h|),\quad b=(s,|h|),\quad q_r=r/a,\quad q_s=s/b,
+ \quad u=h/(ab).                                      \tag{CF19.152}
+\]
+若 \(r,s\) 平方自由，则 \(a,b,q_r,q_s\) 两两互素，且
+\((u,q_rq_s)=1\)；反之这些条件与 \(h=abu\) 精确恢复两个 gcd。若再有
+\((\delta,q_rq_s)=1\)，则
+\[
+ \begin{gathered}
+ e_s(-h\delta\bar r)=e_{q_s}(-u\delta\overline{q_r}),\qquad
+ e_r(h\delta\bar s)=e_{q_r}(u\delta\overline{q_s}),\\
+ {c_s(h\delta)\over\varphi(s)}={\mu(q_s)\over\varphi(q_s)},\qquad
+ {c_r(h\delta)\over\varphi(r)}={\mu(q_r)\over\varphi(q_r)}.
+ \end{gathered}                                      \tag{CF19.153}
+\]
+因此 CF19.151 在这一子域精确成为
+\[
+ \boxed{
+ C_s(h)-C_r^\vee(h)
  ={1\over s}\left\{
  {\mu(q_r)\over\varphi(q_r)}e\!\left(-{u\delta\over q_rq_s}\right)
  -{\mu(q_s)\over\varphi(q_s)}\right\}
  \widehat f_s(h/s).}                                  \tag{CF19.154}
 \]
-这不是误差估计，而是换向时全部 centered/principal 差异的 rank-one
-有限恒等式；相位 \(e(-u\delta/(q_rq_s))\) 正是 affine 换元的 Fourier
-补偿，不能删去。
+相位 \(e(-u\delta/(q_rq_s))\) 正是 affine 换元的 Fourier 补偿，
+不能删去。
 
-主方向 UC22 控制 \(|au|\le U_0,\ q_s^2\le R\) 的 \(C_{q_s}\)
-子包；交换 \((r,s,M,K,\delta,b)\mapsto(s,r,K,M,-\delta,\bar b)\)
-后，同一证明控制 \(|bu|\le U_0,\ q_r^2\le S\) 的
-\(C_{q_r}^\vee\) 子包，唯一物理外权仍为 \(2T/(q_0RS)\)。但 CF19.154
-表明后一个界**不能直接称为原 centered 输出的上界**：必须在同一
-完整投影中把右边与 quotient-zero、两轴、original principal
-subtraction、Eisenstein residues 共同压缩。两个方向选择函数的并集
-还会引入同时依赖 \((q_r,q_s,u,\delta)\) 的交叠权，也不能由两个 UC22
-绝对值界作 inclusion--exclusion 支付。因此这里关闭的是 raw
-frequencywise common-test adapter，并把 centered 换向义务缩成唯一
-显式标量 CF19.154；CF3 endpoints、完整 principal/axis/residue、
-CF19.L/CF19.C 及其余补集仍开放。
+主方向 UC22 控制 \(|au|\le U_0,\ q_s^2\le R\) 的 \(C_s\) 子包；
+交换 \((r,s,M,K,\delta,b)\mapsto(s,r,K,M,-\delta,\bar b)\) 后，
+同一证明控制 \(|bu|\le U_0,\ q_r^2\le S\) 的 \(C_r^\vee\) 子包，
+唯一物理外权仍为 \(2T/(q_0RS)\)。但 CF19.151--CF19.154 表明后一个
+界**不能直接称为原 centered 输出的上界**：必须在同一完整投影中
+把右边与 quotient-zero、两轴、original principal subtraction、
+Eisenstein residues 共同压缩。
+
+主笔记 (9.61)--(9.64) 已支付的是先恢复全部 \(h\) 后的 unit-principal
+投影；它不允许插入 UC 的 bounded-quotient frequency selector。
+一般 nonunit principal 又正是 (9.111)--(9.119) 保留的 joint ledger。
+所以既不能用旧 global-principal bound 单独支付 CF19.151，也不能把
+两个方向选择函数的并集用两个 UC22 绝对值界作 inclusion--exclusion：
+交集权同时依赖 \((q_r,q_s,u,\delta)\)，不再具有 UC2--UC9 的共同
+列/模数标量分离。这里关闭的是 raw frequencywise common-test adapter
+及**全部 gcd** 的 exact centered/principal difference，并把解析义务
+缩成这一个共同 rank-one 行的同投影压缩；CF3 endpoints、完整
+principal/axis/residue、CF19.L/CF19.C 及其余补集仍开放。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
