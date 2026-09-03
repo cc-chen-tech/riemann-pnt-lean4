@@ -2366,6 +2366,85 @@ CF8.82--CF8.83 只是有限矩形的留数定理；令 \(U\to\infty\) 时的
 \(-\zeta'/\zeta\) 的轮廓并假定这些 residue 小，会直接把待证
 零点排除重新作为输入。
 
+原硬加法窗口的临界低频 adapter 可以不经乘法窗口近似而精确写出。
+令 \((a_n)\) 是支撑在 \(n>H\) 的任意有限复序列，并置
+\[
+ S_a(x)=\sum_{x<n\le x+H}a_n,\qquad
+ G_a(y)=S_a(e^y).
+\]
+采用 \(\widehat G(t)=\int_{\mathbb R}G(y)e^{-ity}dy\) 的约定，逐个
+\(n\) 积分 \(y\in[\log(n-H),\log n)\) 给
+\[
+ \widehat G_a(t)=\sum_na_nn^{-it}k_H(n,t),\qquad
+ k_H(n,t)={(1-H/n)^{-it}-1\over it},                 \tag{CF8.85}
+\]
+且 \(t=0\) 时右端按连续极限
+\(-\log(1-H/n)\) 解释。因此 Plancherel 严格给
+\[
+ \boxed{\quad
+ \int_0^\infty|S_a(x)|^2{dx\over x}
+ ={1\over2\pi}\int_{\mathbb R}
+     \left|\sum_na_nn^{-it}k_H(n,t)\right|^2dt.\quad} \tag{CF8.86}
+\]
+这对硬窗口是精确恒等式，没有 endpoint 或 Perron 截断误差。
+
+取一个固定 smooth dyadic partition
+\(\sum_jV(n/R_j)=1\)，其中每个 \(V\) 支撑于 \([1,3]\)，并令
+\(a_n=c_o(n)V(n/R)\)。当 \(S_a(x)\ne0\) 时 \(x\asymp R\)；又因
+\(H\ll x\)，每个物理窗口只遇到 \(O(1)\) 个相邻 partition pieces。
+故一次有限 Hilbert 三角把原 \(W_X\)-方差控制在这些共同 smooth
+pieces 的相应方差之和。固定其中一个 \(R\)，置
+\(\delta=H/R\le1/4\)。
+若 \(v=n/R,\tau=tH/R\)，定义
+\[
+ K_\delta(v,\tau)={n\over H}k_H(n,t)
+ ={v\over\delta}\{-\log(1-\delta/v)\}
+   \int_0^1
+    e^{\,i\tau\{-\log(1-\delta/v)\}\theta/\delta}\,d\theta.
+                                                               \tag{CF8.87}
+\]
+于是 CF8.85 的和恰为
+\[
+ H\sum_n{a_n\over n^{1+it}}
+                 K_\delta(n/R,tH/R).
+\]
+因 \(S_a\) 的 \(x\)-支撑仍在 \(x\asymp R\)，CF8.86 给出
+\[
+ \int_0^\infty|S_a(x)|^2dx
+ \ll RH^2\int_{\mathbb R}
+ \left|\sum_n{a_n\over n^{1+it}}
+                 K_\delta(n/R,tH/R)\right|^2dt.       \tag{CF8.88}
+\]
+
+CF8.87 还给出一致的临界带正则性。对每个固定 \(m\)，直接对其
+积分表示求导可得
+\[
+ \sup_{\substack{0<\delta\le1/4,\ 1\le v\le3\\|\tau|\le2}}
+ \sum_{j+k\le m}
+ |\partial_v^j\partial_\tau^kK_\delta(v,\tau)|
+ \ll_m1.                                               \tag{CF8.89}
+\]
+把 \((v,\tau)\) 延拓到一个固定紧 torus 后，CF19.9 的同一
+Sobolev--Fourier 论证把 \(K_\delta\) 写成
+\(\sum_\nu c_\nu V_\nu(v)g_\nu(\tau)\)，其中
+\[
+ \sum_\nu|c_\nu|\ll_m1,\qquad
+ \|V_\nu\|_{C^m}+\|g_\nu\|_\infty\ll_m1.              \tag{CF8.90}
+\]
+所以若 CF8.80 对一个固定有界 \(C^m\) 测试族一致成立，它确实支付
+CF8.88 的临界部分 \(|t|\le2R/H\)，而不逐 \(n\) 或逐 parity
+分离。再按 \(R=2^jX\) 分解 \(I_P\)，
+\(\sum_jR\,\omega_K(R/X)\ll_KX\)，故全部临界 dyadic shells 只付
+\(P^\eta\) 可吸收的 \(O(\log P)\) 个边界重叠。
+
+这里仍有一个明确而非隐藏的余项：CF8.88 的
+\(|t|>2R/H\) 高频尾不在 CF8.89 的紧 \(\tau\)-带内；硬窗口只有
+\(|k_H(n,t)|\le2/|t|\)，逐项均值会重新丢失一份 \(H\)。
+因此 CF8.85--CF8.90 关闭的是**临界低频的共同硬窗 adapter**，
+不是 CF8.80、本节全部高频尾或 CF8.73。高频必须保留
+\(K_\delta\) 后作 dyadic shifted mean value，或返回 CF19 的共同
+Bessel/complete-shift 尾，不能以“Perron 尾标准可忽略”跳过。
+
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
 cancellation，因为在该 squarefree canonical 行上
