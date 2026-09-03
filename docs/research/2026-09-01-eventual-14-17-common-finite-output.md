@@ -23,7 +23,10 @@ reciprocity 本身不含第二份 shell half-root；CF19Z--CF19Z6 则在
 进一步给出一个反向审计修正：这个 exact-shell trace 不能再与已经包含
 shell local coefficient 的 CF19.32c 串联，否则单素数局部和精确为零；
 正确的物理候选必须降到 level \(B\)，相应绝对界只有 \(A^{-2+\varepsilon}\)
-而不是重复壳密度所得的 \(A^{-3+\varepsilon}\)。
+而不是重复壳密度所得的 \(A^{-3+\varepsilon}\)。CF19Z8 再在共同有限
+谱 regulator 内证明这个 lower-level candidate 逐 datum 精确等于
+unramified oldclass multiplier；ramified complement 与共同解除
+regulator 仍保持开放。
 反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
@@ -3808,7 +3811,62 @@ CF19.88 比 CF19.78 少一个 \(A^{-1}\)，正因为 level-\(B\) 几何边
 CF19Z2，而是：CF4 的 completed Maaß/holomorphic/Eisenstein
 normalization 是否把 CF19.80 的 zero--zero oldspace 差核无损降为
 CF19.86，同时把其余 local states、principal、axes 与 residues 留在
-同一个有限系数不等式中。
+同一个有限系数不等式中。下一节先关闭其中逐 datum、共同有限
+regulator 的 unramified oldclass multiplier 部分。
+
+### CF19Z8. unramified oldclass 的 lower-level multiplier 在有限 regulator 内精确相同
+
+上一节的 candidate 至少在每个 unramified oldclass 上可以完全核对，
+不需要猜测 trace 归一化。固定 level \(B\) 的一个 spectral datum
+\(\pi\)；这里可分别取 Maaß、holomorphic 或任一 Eisenstein cusp
+datum，并固定其 parity/cusp label。因 \((A,Bkn)=1\)，对每个
+\(p\mid A\)，\(\pi_p\) unramified，且
+\[
+ \lambda_\pi(At^2k)=\lambda_\pi(At^2)\lambda_\pi(k)
+ \qquad(\operatorname{rad}(t)\mid A).                  \tag{CF19.89}
+\]
+CF7.2--CF7.4 又直接说明：在由这个 \(\pi\) 生成的 level \(ABd\)
+oldclass 中，有限 level difference
+\(\sum_{d\mid A}\mu(d)\operatorname{Spec}_{ABd}\) 的 zero--zero
+局部系数正是 \(\prod_{p\mid A}D_{p,\pi}(1,0)\)。另一方面，
+CF19.32c 是逐 datum 的绝对收敛恒等式
+\[
+ \boxed{
+ \prod_{p\mid A}D_{p,\pi}(1,0)
+ =\sum_{\substack{t\ge1\\\operatorname{rad}(t)\mid A}}
+   {\lambda_\pi(At^2)\over A^2t}.}                    \tag{CF19.90}
+\]
+
+令 \(\mathscr W_\pi(k,n;\phi)\) 表示 CF19.62 的 level-\(B\)
+谱边中这个 datum 的 base harmonic/Fourier/Bessel 权；同一个 test
+意味着它的 Bessel transform 不随 Fourier indices 改变。把
+CF19.89--CF19.90 相乘，在任意有限 discrete spectral regulator 内，
+以及任意 compact Eisenstein regulator 内（其权可积且上面的局部级数
+对 Maaß 用 Kim--Sarnak、对 holomorphic 用 Deligne、对实轴
+Eisenstein 用 \(|\lambda_{it}(p^j)|\le j+1\) 一致控制），有
+\[
+ \begin{aligned}
+ &\sum_\pi \mathscr W_\pi(k,n;\phi)
+       \prod_{p\mid A}D_{p,\pi}(1,0)\\
+ &\qquad=
+ \lim_{\mathcal T}
+ \sum_{t\in\mathcal T}{1\over A^2t}
+ \sum_\pi \mathscr W_\pi(At^2k,n;\phi).              \tag{CF19.91}
+ \end{aligned}
+\]
+这里 \(\mathcal T\) 穷尽全部 \(A\)-smooth 正整数；两边始终使用
+**同一个** regulator，故 CF19.91 没有交换无限 full spectrum 与
+\(t\)-极限。它证明 CF19.85 不是仅凭幂次猜出的替代物：它逐 datum
+精确再现 exact-shell level difference 的 unramified zero--zero
+oldclass 分量，而且 harmonic \(P_1(0,0)\) 已包含在 \(D_p\) 中一次。
+
+CF19.91 仍没有处理 conductor 含某个 \(p\mid A\) 的 ramified
+newspace/oldspace 数据，也没有证明解除共同 regulator 后，actual
+complete-shift 的全部局部状态恰等于 CF19.86 加这些 ramified
+remainder。连续谱的所有 cusp labels 在 CF19.91 中被逐 datum 保留，
+但把它们与 principal/axis/residue 行共同压缩仍属 CF4/CF19.C。
+因此这里关闭的是 **finite-regulator unramified oldclass multiplier**，
+不是 full-spectrum physical adapter。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
@@ -4030,7 +4088,12 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     \(C_WC_0^{1/2+\varepsilon}B^{-1}A^{-2+\varepsilon}(k,n)^{1/2}\)。
     把这个 lower-level candidate 与 actual Maaß/holomorphic/Eisenstein
     harmonic measure、principal/axes/residues 无损对齐，仍是 CF4 的
-    未证命题。
+    未证命题。CF19.89--CF19.91 则在同一个有限 discrete/compact
+    Eisenstein regulator 内逐 datum 完成其中的 unramified oldclass
+    multiplier：level difference 的 \(\prod_{p\mid A}D_p(1,0)\) 与
+    level-\(B\) odd--Hecke aggregate 精确相同，且没有第二份 harmonic
+    \(1/p\)。ramified conductor 数据、共同解除 regulator 及其与
+    principal/axis/residue 的同投影重组仍留在 native remainder。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
