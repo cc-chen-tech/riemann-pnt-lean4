@@ -185,6 +185,9 @@ CF0A.5 逐点给出精确等式
 \(K-q^*G^{-1}q\)；反之，(CF1.5) 是把这个 dense correction 送入
 一次有限系数修正后的精确增广形式，不遗漏长距离 cross terms。
 \(\Delta_z\) 的解析控制不是 (CF1.5) 的前提，也未由 CF0A 证明。
+CF5A 还从 prime-power Ramanujan 和的二维离散差分构造同一个
+quotient-zero divisor 核，使 nonaxis、两条 axis 与 origin 共享一套
+有限系数；这关闭的是有限重组，不是其 signed analytic 上界。
 
 ## CF2. 物理层只展开左上短移位块，外权只出现一次
 
@@ -313,13 +316,80 @@ principal/axis 的共同抵消仍须另证。
  \quad
  \sum_{d,e\mid s}\frac{|b_s(d,e)|}{de}\le\tau(s)^2.   \tag{CF5.2}
 \]
-CF5.2 是必须从每个 prime-power Ramanujan kernel 逐项验证的 contract；
-在完成该验证前，CF5.1 不能换成 complete-residue PP average。
+CF5.2 实际上是一个纯有限恒等式；下面 CF5A 从每个 prime-power
+Ramanujan kernel 重证它。这个证明只授权把 CF5.1 的核改写成共同二维
+divisor 输出；它不估计 CF5.1，也不把它与后面的 Poisson axes 合并。
 
 双 Poisson 的 nonunit axes contract 则含两条 sampling line 与
 一次负的 double integral，其系数分别为 \(1/C,1/C,-g_C/C^2\)。
 当 \(g_C\ne1\) 时不可把它们写成同一系数。它们与 CF5.1 是不同
 tags；“都是 principal-looking”不构成等同或抵消证明。
+
+### CF5A. quotient 零模的共同二维 divisor 系数
+
+令 \(p^a\Vert s\)，并对 \(0\le i,j\le a\) 置
+\[
+ F_{p^a}(i,j)=c_{p^a}(p^{i+j}),
+ \qquad
+ b_{p^a}(p^i,p^j)=\Delta_i\Delta_jF_{p^a}(i,j),          \tag{CF5.3}
+\]
+其中
+\(\Delta_iF(i,j)=F(i,j)-F(i-1,j)\)，负指标的 \(F\) 约定为零。
+Ramanujan 和的 prime-power 公式是
+\[
+ F_{p^a}(i,j)=
+ \begin{cases}
+ 0,&i+j<a-1,\\
+ -p^{a-1},&i+j=a-1,\\
+ p^{a-1}(p-1),&i+j\ge a.
+ \end{cases}                                               \tag{CF5.4}
+\]
+所以二维差分只支撑在三条相邻对角线上，并且精确为
+\[
+ b_{p^a}(p^i,p^j)=
+ \begin{cases}
+ -p^{a-1},&i+j=a-1,\\
+ p^a,&i+j=a,\ \min(i,j)=0,\\
+ p^{a-1}(p+1),&i+j=a,\ i,j\ge1,\\
+ -p^a,&i+j=a+1,\ i,j\ge1,\\
+ 0,&\text{其余情形}.
+ \end{cases}                                               \tag{CF5.5}
+\]
+
+对任意整数 \(h,\delta\)，令
+\(r=\min\{a,v_p(h)\}\)、\(t=\min\{a,v_p(\delta)\}\)，并在
+零整数处采用 \(v_p(0)=+\infty\)。二维 telescoping 给
+\[
+ \sum_{0\le i\le r}\sum_{0\le j\le t}
+      b_{p^a}(p^i,p^j)
+ =F_{p^a}(r,t)=c_{p^a}(h\delta).                            \tag{CF5.6}
+\]
+这里最后一个等号也覆盖 \(h=0\) 或 \(\delta=0\)，因为此时截断
+valuation 为 \(a\)，而 \(c_{p^a}(0)=\varphi(p^a)\)。
+
+现在若
+\(s=\prod_{p^a\Vert s}p^a\)、\(d=\prod p^{i_p}\)、
+\(e=\prod p^{j_p}\)，定义
+\[
+                     b_s(d,e)=\prod_{p^a\Vert s}
+                        b_{p^a}(p^{i_p},p^{j_p}).           \tag{CF5.7}
+\]
+Ramanujan 和的乘法性、CF5.6 与有限乘积的 Fubini 立刻给 CF5.2 的
+第一式。其余两式也可逐 prime 精确核算。由 CF5.5，
+\[
+ \begin{aligned}
+ \sum_{i,j=0}^a{b_{p^a}(p^i,p^j)\over p^{i+j}}
+   &=-a+2+(a-1){p+1\over p}-{a\over p}=1-{1\over p},\\
+ \sum_{i,j=0}^a{|b_{p^a}(p^i,p^j)|\over p^{i+j}}
+   &=2a+1+{2a-1\over p}\le(a+1)^2.
+ \end{aligned}                                             \tag{CF5.8}
+\]
+第一行张量后是 \(\varphi(s)/s\)，第二行张量后至多
+\(\prod_{p^a\Vert s}(a+1)^2=\tau(s)^2\)。因此 CF5.2 的三个陈述
+已经全部证明，而且同一个 \(b_s(d,e)\) 同时覆盖 nonaxis、两条 axis
+与 origin。尚未证明的是 CF5.1 连同 CF3/CF4 的 signed 上界，以及
+CF5.1 与物理 principal/axis/residue 行在 CF19.C 中的共同压缩；不能
+因 CF5.8 的正主质量就分别估计或删除其中任何一行。
 
 ## CF6. 一个不重不漏的 master tag 集
 
@@ -2504,39 +2574,43 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
    abstract rows 逐项识别为公开原 atom 的端点仍是 adapter obligation；
 3. CF4.5：在四行确有同一系数的前提下，PP/PQ/QP/QQ 的有限尾逐项
    抵消。CF4.1--CF4.4 的全谱 normalization 与原 atom 的等同性未证；
-4. CF6 给出不允许静默丢项的 master-tag contract；只有 adapter 已验证
+4. CF5.3--CF5.8：从 prime-power Ramanujan 和作二维差分，自含证明
+   CF5.2 的共同 divisor 展开、精确主质量 \(\varphi(s)/s\) 与绝对质量
+   \(\tau(s)^2\)，并同时覆盖两条 axis 与 origin；CF5.1 的 signed
+   上界及其与物理 principal/residue 行的共同压缩仍未证明；
+5. CF6 给出不允许静默丢项的 master-tag contract；只有 adapter 已验证
    的行才能进入 expanded 分支，其余必须留在 native complement。
    因此本稿不把 CF6.2 对全部原行的等同性列为已证；
-5. CF7A：从 oldspace Gram 定义重证 exact-shell local kernel；CF7.9--
+6. CF7A：从 oldspace Gram 定义重证 exact-shell local kernel；CF7.9--
    CF7.10 只把 \(A^{-1/2}\) half-root 证明为显式 valuation-averaged
    projective mass，并核对它没有与 harmonic/progression 权重复。
    把这份纯 valuation mass 迁移为实际 coefficient/Bessel/complete-shift
    算子界仍是 CF19.D/CF19.L 的开放 adapter；
-6. CF8.1--CF8.3：输出修正到全高度余量的显式接口义务，而非已证
+7. CF8.1--CF8.3：输出修正到全高度余量的显式接口义务，而非已证
    height reassembly；
-7. CF11.1--CF11.3：保留两侧角色与共同 tags 的 exact zero-alias
+8. CF11.1--CF11.3：保留两侧角色与共同 tags 的 exact zero-alias
    Fourier projector 及其无 alias 单边 isometry；
-8. CF13.1--CF13.2：两篇 2025--2026 原始 Kloosterman 定理在真实尺度
+9. CF13.1--CF13.2：两篇 2025--2026 原始 Kloosterman 定理在真实尺度
    的数值与对象适配边界；
-9. CF14.1--CF14.3：任意有限秩中心化后部分匹配算子仍有范数 1 的
+10. CF14.1--CF14.3：任意有限秩中心化后部分匹配算子仍有范数 1 的
     严格 no-free-contraction 引理；
-10. CF15.1--CF15.11：对实际 Riesz 素数权的 varying-prime-modulus
+11. CF15.1--CF15.11：对实际 Riesz 素数权的 varying-prime-modulus
     prime--interval 四阶矩及正交有限标签扩张，准确支付 scalar
     \(P^{-1/12}\) leaf 与一侧 divisor-output；它不正交化物理
     cofactor 的 scalar 求和。
-11. CF16.1--CF16.6：带任意双素数单位相位的 cross-prime mutual-character
+12. CF16.1--CF16.6：带任意双素数单位相位的 cross-prime mutual-character
     operator 是 contraction；双方非主投影后仍成立。CF16.7--CF16.8
     证明一旦 critical cofactor 已成为正交输出，共享 Fourier 相位不再
     产生 zero-alias 长度损失。
-12. CF17.1--CF17.5：乘上短角色和后的算子按 \(q\) 逐块成为 centered
+13. CF17.1--CF17.5：乘上短角色和后的算子按 \(q\) 逐块成为 centered
     multiplicative-incidence 矩阵；非主输入仍能以常数代价承载任意
     \(z_{p,q}\)。因此 CF16 本身没有 coefficient-uniform
     varying-level power saving。
-13. CF18.1--CF18.5：固定 cofactor 的短逆边注入给实际 Riesz 加权
+14. CF18.1--CF18.5：固定 cofactor 的短逆边注入给实际 Riesz 加权
     平方条目能量 \(\ll BA M_YS_Y\)，包括正交有限标签与 exact
     determinant 子支撑；CF18.6 同时证明若先退化成一般算子范数，
     只能得到 \((A/P)^{1/2}\) 而非 \(A/P\)。
-14. CF19.1--CF19.7：cross-prime contraction 的算子值版本、共享乘积
+15. CF19.1--CF19.7：cross-prime contraction 的算子值版本、共享乘积
     Fourier isometry、两侧不同 critical divisor outputs 及 genuine-gcd
     mask 的无固定幂重组。CF19.9 证明归一化 smooth kernel 的核分解
     只付已显示的有限 Sobolev 半范数。CF19.6b 是未对齐基线的形式
