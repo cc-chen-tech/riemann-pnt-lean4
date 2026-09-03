@@ -16,7 +16,7 @@ cross-prime contraction、短逆边实际 Riesz 平方能量、affine
 physical-shift 导数/尾引理，以及 actual-Riesz 四阶矩的共同 Hilbert
 列扩张；CF19B 还把经典 Andersen--Kıral level reciprocity 的三项
 prime completion 无损张量化到互素平方自由 levels，并证明该
-reciprocity 本身不含第二份 shell half-root；CF19Z--CF19Z4 则在
+reciprocity 本身不含第二份 shell half-root；CF19Z--CF19Z5 则在
 不交换无限谱和的前提下，先直接给出 odd--Hecke 零列的 exact-shell
 几何绝对界，再用一次有限 level Möbius 容斥把该几何边精确识别为
 包含 oldforms 与连续谱的整体 regulated full-spectrum trace，并在
@@ -3421,7 +3421,7 @@ saving 相乘。要接 actual QCT，只需但也必须证明每个对应的模�
 tags。这个任务是 CF19.D 的具体几何版；没有该 seminorm/尺度证明，
 CF19.70 仍只是一个已闭合 supplier。
 
-### CF19Z4. 物理 dyadic 模数权消掉 Hecke-index 长度
+### CF19Z4. 固定 dyadic 模数权消掉 Hecke-index 长度
 
 CF19.61a 中的尺度在真实 dyadic modulus weight 上还会与
 \((kn)^{1/4}\) 精确抵消。这个事实可完全留在几何侧证明。令
@@ -3521,14 +3521,78 @@ CF19.72--CF19.73 完全一致。
 \((K_0N_0)^{1/2+\varepsilon}\)，不是
 \((K_0N_0)^{3/4+\varepsilon}\)。
 
-CF19.73--CF19.75 是 actual dyadic modulus test 可以直接调用的
+CF19.73--CF19.75 是固定模数壳、允许 test 随 \(t\) 变化的
 zero--zero exact-shell supplier；它允许 \(W_t\) 带全部已经固定的
 AFE/detector/reflection tags，只要求同一 \(\ell^\infty\) 预算。
-它仍不证明原物理系数展开后恰有 CF19.71 的
+但这还不是“actual common test 直接可用”：同一物理 Bessel test
+在 Hecke index 从 \(Ak\) 改为 \(At^2k\) 时不会自动换成
+\(\phi_{t,k,n}\)。它仍不证明原物理系数展开后恰有 CF19.71 的
 \(A^{-2}t^{-1}\)、第一 index \(At^2k\) 与 modulus \(ABr\)，也不估计
 剩余三个 local states、另一 shell、principal/axis/residue 或
 native complement。因此下一项 adapter 已缩成这三个**系数等同性**
 与余下行的共同分账，不能把 CF19.75 称为 CF19.L 或 CF9.1。
+
+### CF19Z5. actual common test 使 dyadic 模数壳随 \(t\) 移动
+
+上一节的 test--shell 对应必须在物理 common-test 约定下重做。
+设 \(C_0\ge AB/2\)，\(W:(0,\infty)\to\mathbb C\) 有界、
+支撑于 \([1/2,2]\)，且 \(\|W\|_\infty\le C_W\)，并置
+\[
+ X_{k,n}={4\pi\sqrt{Akn}\over C_0},\qquad
+ \phi_{k,n}(x)=W(X_{k,n}/x).                            \tag{CF19.76}
+\]
+下面的几何界只需有界性；若还要以 CF19.65 把它解释成
+full-spectrum trace，则另要求 \(W\) 光滑，使 \(\phi_{k,n}\)
+满足 CF19.61c。
+对 base index \(Ak\)，CF19.76 在 \(c=ABr\) 上恰给
+\(W(c/C_0)\)。但 odd--Hecke 展开后仍使用**同一**
+\(\phi_{k,n}\)；第一 index \(At^2k\) 的 Bessel argument 多一个
+\(t\)，所以精确变成
+\[
+ \phi_{k,n}\!\left({4\pi t\sqrt{Akn}\over ABr}\right)
+   =W\!\left({ABr\over tC_0}\right).                  \tag{CF19.77}
+\]
+因而 actual common test 对应的模数壳是
+\(ABr\asymp tC_0\)，不是 CF19.71 的 \(ABr\asymp C_0\)。
+要在后者中固定 \(C_0\)，必须把 common test 换成
+\(\phi_{t,k,n}(x)=W(tX_{k,n}/x)\)；这一换不是迹公式的
+自动结论。
+
+好消息是，移动壳可以直接求和，不必伪造一族
+\(t\)-dependent tests。在 CF19.59 中代入 CF19.76。对固定
+\(t\)，CF19.72 的同一 Weil 计数只须把 \(C_0\) 换为
+\(tC_0\)；再乘外系数 \(A^{-2}t^{-1}\)，得
+\[
+ {C_W(k,n)^{1/2}C_0^{1/2+\eta}\over A^3B}\,
+ t^{-1/2+\eta}.
+\]
+故对 \(0<\eta<1/2\)，
+\[
+ \boxed{
+ |\mathfrak G_{A,B}^{\pm}(k,n;\phi_{k,n})|
+ \ll_\eta
+ {C_W(k,n)^{1/2}C_0^{1/2+\eta}\over A^3B}
+ \prod_{p\mid A}(1-p^{-1/2+\eta})^{-1}
+ \ll_\varepsilon
+ {C_W(k,n)^{1/2}C_0^{1/2+\varepsilon}
+  \over BA^{3-\varepsilon}}.}                          \tag{CF19.78}
+\]
+第二界取 \(\eta<\min(1/2,\varepsilon)\)，并像 CF19.61 一样
+把有限个小素数吸入常数。这里 \(t\)-质量不是
+CF19.73 的 \(\prod(1-p^{-1})^{-1}\)，而是 CF19.78 显示的
+\(\prod(1-p^{-1/2+\eta})^{-1}\)；两者都只付 \(A^\varepsilon\)，
+但不能在局部账上互换。
+
+对 dyadic \(k,n\) 与一致的 \(\|W_{k,n}\|_\infty\le C_W\)，
+再用 CF19.69 得到与 CF19.75 相同的
+\((K_0N_0)^{1/2+\varepsilon}\) 非极端长度费用。因此
+“common test 导致移动壳”不会恢复 CF19.32e 的发散 length
+费用；它只否定了把 CF19.71 本身逐物理 box 等同的错误。
+仍需 CF19.D 证明原始 quotient-Poisson 核在同一尺度
+\(X_{k,n}\) 上真正可写成 CF19.76，且全部 endpoint/
+reflection tags 具有共同 \(C_W\) 预算。CF19.78 仍只是
+zero--zero exact-shell 的几何 supplier，不估计其他 local states 或
+principal/axis/residue/native 行。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
@@ -3726,14 +3790,18 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     dyadic \(k,n\) 列。在不极端失衡的长度上，全部 index 费用为
     \((K_0N_0)^{3/4+\varepsilon}\)，但 actual 每个模数权具有共同
     \(C_\phi,X_\phi\) 的 normalized-seminorm 仍须由 CF19.D 证明。
-    CF19.71--CF19.75 对真实 \(ABr\asymp C_0\) 权进一步允许 test
+    CF19.71--CF19.75 对固定 \(ABr\asymp C_0\) 权允许 test
     随 odd--Hecke index \(t\) 变化；直接 Weil 求和使
     \(t\)-质量精确降为
     \(\prod_{p\mid A}(1-p^{-1})^{-1}\)，并得到
     \(C_0^{1/2+\varepsilon}A^{-3+\varepsilon}B^{-1}(k,n)^{1/2}\)。
-    两条非极端失衡 dyadic 列的长度费用随之降为
-    \((K_0N_0)^{1/2+\varepsilon}\)。原物理零列与 CF19.71 的三项
-    系数等同性及其他 local/principal/axis/native 行仍未映射。
+    CF19.76--CF19.78 则保持 actual common test，并精确记录
+    它使模数壳移到 \(ABr\asymp tC_0\)；相应
+    \(t\)-质量为 \(\prod_{p\mid A}(1-p^{-1/2+\eta})^{-1}\)，
+    仍只付 \(A^\varepsilon\)。两种对象的非极端 dyadic 列长度费用
+    都为 \((K_0N_0)^{1/2+\varepsilon}\)，但不能在局部账上互换。
+    原物理零列与 CF19.76 的 test/scale 等同性及其他
+    local/principal/axis/native 行仍未映射。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
