@@ -925,13 +925,17 @@ principal completion 的 subtraction 定义成
 
 CF5.45 没有自行证明实际物理权相同。原式的 quotient-zero
 \(\widehat f(0)\) 来自第一条 Poisson/AFE 坐标，而 principal
-subtraction 的 \(\widehat F_{r,s,\delta}(0)\) 来自全非零频率的
-reverse Poisson。必须从 (4.4)--(4.5)、共同 cutoff 与 reflection
-两方向证明它们在 CF6.2 的同一 tag 中逐项相等；若只近似相等，
-则 CF5.45 右边就是必须估计的**唯一 unit 零频 mismatch**。此外
-nonunit reduced-modulus 行仍需 CF5B--CF5C 的 unequal-gcd 映射，AFE
-diagonal 及 Eisenstein residues 也尚未放进 CF5.45。因此这一步关闭
-的是 parity/低秩/principal 的有限系数重组，不是完整 physical ledger。
+subtraction 的 \(\widehat F_{r,s,\delta}(0)\) 来自 reverse Poisson。
+更重要的是，(4.4)--(4.5) 的合法 reflection 顺序必须先在每个有限
+dyadic box 内求完全部 Poisson \(h\)，再恢复整数格、使用共同 cutoff，
+最后把乘积核拉回原 mollifier 坐标；不存在可直接调用的固定 \(h\) 或
+固定 \((s,\delta)\) packetwise 等距 adapter。因此 CF5.45 只能在这个
+全局过程确实供应了共同列 \(z,z'\) 后使用，不能反过来用它证明两列
+相同。若所供应的两列只近似相等，CF5.45 右边是 **unit 零频子账本**
+的全部 mismatch，却不是完整物理余项的唯一 mismatch：延拓补偿、
+nonunit reduced-modulus 行、原 AFE diagonal、archimedean correction、
+Eisenstein residues 及非零频率补集仍全须保留。因此这一步关闭的是
+parity/低秩/principal 的有限系数重组，不是完整 physical ledger。
 
 ## CF6. 一个不重不漏的 master tag 集
 
@@ -3147,8 +3151,10 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
    CF5.43--CF5.45 又证明：放回 CF5.12 的两轴与常数后，unit 行只剩
    \(\mu(s)\)，它和 principal reverse-Poisson subtraction 的标量完全
    相反；若两边零频权相同便逐 tag 精确抵消，一般情形的全部缺口恰是
-   CF5.45 的共同权 mismatch。原 QCT 坐标确实给出同一权仍属
-   CF19.D/CF19.C 的 physical adapter，而不是这条有限恒等式的结论。
+   CF5.45 的共同权 mismatch。原 QCT 只能在先求完 Poisson 频率、恢复
+   整数格、共同截断并作坐标拉回后供应这两个列；固定频率逐 tag 对接
+   并不合法。该全局 physical adapter 及其余补集仍属 CF19.D/CF19.C，
+   而不是这条有限恒等式的结论。
    CF5.1 在复合壳的 signed varying-level saving、零模低秩部分与
    diagonal/principal/residue 行的压缩仍未证明；
 5. CF6 给出不允许静默丢项的 master-tag contract；只有 adapter 已验证
