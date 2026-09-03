@@ -52,10 +52,13 @@ complete-shift、principal/axes 或 Type-II。CF19Z17 从 pre-Poisson
 格点和重推另一 orientation，证明其外权、共同 test 与远尾具有同一
 预算；沿同一 affine line 的连续换元及逆元互反式进一步证明两个
 Poisson 展开的**每个同编号 raw Fourier 频率**精确相等。因此任意
-共同 raw frequency packet 可无损换向。CF19Z18 同时指出 centered
-UC 包不能直接换向：两方向的 Ramanujan 主值不同，其差精确等于
-CF19.154 的共同 rank-one principal mismatch；这项尚须与完整
-principal/axis ledger 一起压缩。CF19Z19--CF19Z20 再算出这个
+共同 raw frequency packet 可无损换向。CF19Z18 同时指出单个
+centered UC 包不能直接换向：两方向的 Ramanujan 主值不同，其差精确
+等于 CF19.154 的共同 rank-one principal mismatch。CF19Z18A 随后
+证明，这个 mismatch 在同一原子的 orientation-doubled 表示上逐对
+严格相消；但主笔记 (9.1032)--(9.1034) 表明两份 AFE 物理方向同号
+增强，且 UC 的有利 selector 不对称，故该恒等式不能冒充物理消去。
+一般复 (b^\sharp) 也不享有实权对称。CF19Z19--CF19Z20 再算出这个
 mismatch 在完整 shift residue grid 上的精确平方范数，并证明 literal
 internal bulk 的分离物理权满足所需 periodized \(L^2\) 预算。
 CF19Z21 最后把同一 mismatch 正交分成 double-centered、两条 sampling
@@ -5039,6 +5042,75 @@ Eisenstein residues 共同压缩。
 及**全部 gcd** 的 exact centered/principal difference，并把解析义务
 缩成这一个共同 rank-one 行的同投影压缩；CF3 endpoints、完整
 principal/axis/residue、CF19.L/CF19.C 及其余补集仍开放。
+
+### CF19Z18A. orientation-doubled mismatch 的精确消去及其物理边界
+
+CF19.151 的 rank-one 行在任意单个 orientation 上一般不为零。先把
+**同一个** literal internal atom 的两种 Poisson 表示作为 bookkeeping
+副本组成 orientation-doubled tag set；这组表示带有 involution
+\[
+ \iota:(r,s,R,S,M,K,\delta,h)
+ \longmapsto(s,r,S,R,K,M,-\delta,h).                 \tag{CF19.154a}
+\]
+其余共同 detector、height tags 不变，并把两个 dyadic labels 与
+Poisson orientation label 一同交换。令
+\(D_\omega(h)=C_s(h)-C_r^\vee(h)\) 是以 tag 中
+\(\delta_\omega\) 代入 CF19.151 得到的**完整 kernel-weighted**
+mismatch。对交换后的 kernel 作
+与 CF19.147a 相同的 affine 变量代换，得到
+\[
+ {1\over r}\widehat f_{\iota\omega}(h/r)
+ =e\!\left(-{h\delta\over rs}\right)
+   {1\over s}\widehat f_\omega(h/s).                 \tag{CF19.154b}
+\]
+把 CF19.151 应用于 \(\iota\omega\)，并用
+\(c_d(-n)=c_d(n)\)，严格得到
+\[
+ \begin{aligned}
+ D_{\iota\omega}(h)
+ &=\left\{{c_s(h\delta)\over\varphi(s)}
+       e\!\left({h\delta\over rs}\right)
+       -{c_r(h\delta)\over\varphi(r)}\right\}
+       {1\over r}\widehat f_{\iota\omega}(h/r)\\
+ &=-D_\omega(h).                                     \tag{CF19.154c}
+ \end{aligned}
+\]
+这里相位与 \(\delta\mapsto-\delta\) 缺一不可；\(\delta=0\) 的固定行
+本身为零，非零 \(\delta\) 的 tags 则逐对相消。
+
+因此若这个 doubled bookkeeping set \(\Omega\) 对 \(\iota\) 稳定，而
+frequency selector 满足
+\(\eta(\iota\omega,h)=\eta(\omega,h)\)，则原实 Möbius/Riesz 系数与
+外层 dyadic cutoffs 给出的权
+\[
+ w_\omega={2\over q_0}
+ {a_N(q_0r_\omega)a_N(q_0s_\omega)
+  F_{R_\omega}(r_\omega)F_{S_\omega}(s_\omega)
+  \over\sqrt{r_\omega s_\omega}}
+\]
+满足 \(w_{\iota\omega}=w_\omega\)，并有精确恒等式
+\[
+ \boxed{\quad
+ \sum_{\omega\in\Omega}\sum_h
+ w_\omega\eta(\omega,h)D_\omega(h)=0.
+ \quad}                                               \tag{CF19.154d}
+\]
+CF19.154d 是正确的有限恒等式，但反向审计表明它**不是物理消去**。
+两个 \(\iota\)-partners 是同一原子的两种坐标表示，并非原式中两个
+可各取一份权重再相消的独立 summands。主笔记 (9.1032)--(9.1034)
+已经从 exact AFE contour identity 证明：展开后两条函数方程方向满足
+\(\mathscr O^- =\mathscr O^+\)，因而 (2.4)、(4.5) 中的因子 (2)
+是同号增强，不是反号选择。把 orientation bookkeeping 的两份各算
+一次会 double count 原子。
+
+还有两个独立边界。第一，UC22 的有利方向需要不对称 selector；若
+\(\eta(\iota\omega,h)\ne\eta(\omega,h))，CF19.154d 不能使用。
+第二，对一般复系数 \(b_r\overline{b_s}\)，交换后系数成为
+\(b_s\overline{b_r}\)，即使人为 doubled 也没有上述实权恒等式。
+所以 CF19.154d 只能验证“共同对称平均不会重复支付 mismatch”，不能
+把 bounded-quotient 的两个互补方向拼成 actual centered upper bound。
+物理上仍须在一次 complete-shift/principal/axis/residue ledger 中支付
+所选方向的 CF19.151，或直接证明 CF8.5 的原系数完整未投影方差。
 
 ### CF19Z19. centered mismatch 的完整 shift-grid 精确范数
 
