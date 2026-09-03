@@ -5055,6 +5055,64 @@ endpoint 与 nonflat tags 求和后落入 CF19.L 的共同 energy，而不能用
 norm；其 physical periodization/level assembly 仍是 CF19.L/CF19.C
 中的同一个开放义务。
 
+### CF19Z20. 分离 physical shift 权的 periodized \(L^2\) 预算
+
+CF19.157 中固定 level 的 periodized-weight norm 可由实际内部 bulk
+的 projective 分离直接支付。先记一个一维初等引理。若 \(v\) 有界且
+支撑在长度至多 \(C_vH\) 的区间中，\(H\ge1/2\)，令
+\[
+ ({\cal P}_Nv)(x)=\sum_{h\equiv x\ ({\rm mod}\ N)}v(h/H).
+\]
+每个剩余类中至多 \(1+C_vH/N\) 个非零样本；先在每个类用 Cauchy，
+再对类求和，得到
+\[
+ \boxed{
+ \sum_{x\bmod N}|({\cal P}_Nv)(x)|^2
+ \ll_v H(1+H/N).}                                    \tag{CF19.158}
+\]
+这里 \(\sum_h|v(h/H)|^2\ll_v H\)，且端点是否命中整数只改变常数，
+所以 CF19.158 不需要整数化 \(H\)。
+
+更一般地，设一个有限权已有共同 projective 表示
+\[
+ W(h,\delta)=\sum_\nu c_\nu
+                 v_\nu(h/H)w_\nu(\delta/L),
+\]
+所有 \(v_\nu,w_\nu\) 的支撑与 sup norm 一致有界，并令
+\({\cal A}=\sum_\nu|c_\nu|\)。两次 CF19.158 与
+\(\ell^2((\mathbb Z/N\mathbb Z)^2)\) 中的三角不等式给
+\[
+ \boxed{
+ \left(\sum_{x,y\bmod N}|W_N(x,y)|^2\right)^{1/2}
+ \ll {\cal A}\{HL(1+H/N)(1+L/N)\}^{1/2}.}             \tag{CF19.159}
+\]
+把它代入 CF19.157，得到固定 coprime squarefree level pair 的
+physical-shift mismatch bound
+\[
+ \boxed{
+ \left|\sum_{h,\delta}W(h,\delta)M_{r,s}(h,\delta)\right|
+ \ll {\cal A}N
+ \left(
+ {2^{\omega(r)}\over r}+{2^{\omega(s)}\over s}
+ -{2^{\omega(N)+1}\over N}\right)^{1/2}
+ \{HL(1+H/N)(1+L/N)\}^{1/2}.}                         \tag{CF19.160}
+\]
+
+在 CF19Z16 的 literal Type-I/Type-I internal bulk 中，固定
+\((r,s)\) 与其余有限 tags 后，CF19.131--CF19.142 正是上述共同
+\((h,\delta)\) projective 表示，且 \({\cal A}\ll{\cal A}_{J+3}\)；
+因此该 bulk 的 CF19.159 已由原 (5.14) seminorm 支付。没有新增一个
+level、Fourier-index 或 Poisson-Jacobian 因子。CF3 hard endpoints、
+Type-II 与尚未映射成同一 projective family 的 nonflat/native rows
+仍不由本节覆盖。
+
+CF19.160 只关闭**固定 level pair** 的 physical periodization。若随后
+逐 \((r,s)\) 取绝对值，所得 level 数量会抹掉完整目标所需的收益；
+必须把 CF19.160 的 residue vectors 在取范数前与 alternating
+cofactors、actual \(b^\sharp\) 列及 complete-shift tags 一起送入
+CF19.L。故当前剩余已缩成跨 levels 的 signed assembly，而不再包含
+internal-bulk shift periodization 这一项。
+
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
 实际 \(b^\sharp\) 证明平方自由 canonical 子域的共同 Mellin columns，
