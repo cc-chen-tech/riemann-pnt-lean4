@@ -613,6 +613,58 @@ CF5.22 不能外推到 \(q\ne0\)。最小反例是
 的真实 shifted kernel；CF5C 只关闭零模的 unequal-gcd coefficient
 adapter。把 CF5.22 用于 CF4 会是可执行有限反例已经排除的错误。
 
+### CF5D. centered Ramanujan 核的精确质量及复合壳障碍
+
+CF5.12 中唯一尚未求值的有限量 \(\|R_s^\circ\|_2\) 也有闭式。
+若 \(p^a\Vert s\)，模 \(p^a\) 的一个剩余类的截断 valuation 为
+\(0\le i\le a\)，其中 \(i<a\) 的类数是
+\(p^{a-i-1}(p-1)\)，而 \(i=a\) 只含零类。于是
+\[
+ \#\{(h,\delta):v_p(h)+v_p(\delta)\ge a\}
+ =p^{a-1}\{a(p-1)+p\},
+\]
+以及
+\[
+ \#\{(h,\delta):v_p(h)+v_p(\delta)=a-1\}
+ =a p^{a-1}(p-1)^2.                                    \tag{CF5.25}
+\]
+把 CF5.4 的两个非零值平方后代入，得到
+\[
+ \mathbb E_{h,\delta\bmod p^a}|c_{p^a}(h\delta)|^2
+ =(a+1)p^{a-2}(p-1)^2.
+\]
+中国剩余定理使不同素数的核与归一化测度都张量分解，故
+\[
+ \boxed{
+ \|R_s\|_2^2
+ =s\tau(s)\left({\varphi(s)\over s}\right)^2.}         \tag{CF5.26}
+\]
+再从 CF5.12 精确扣除两轴与常数，便有
+\[
+ \boxed{
+ \|R_s^\circ\|_2^2
+ =\left({\varphi(s)\over s}\right)^2
+      \{s\tau(s)-2s+1\}.}                              \tag{CF5.27}
+\]
+特别地，\(s=p\) 为素数时
+\(\|R_p^\circ\|_2=(p-1)/p\)，而
+\(\|R_p\|_2\asymp\sqrt{2p}\)：共同两轴 centering 在 prime shell
+上确实给出一个平方根量级的下降。这份下降已经完全包含在
+CF5.27 中，不能再与 valuation-one 或 harmonic normalization 的
+半根相乘一次。
+
+但 CF5.27 也给出不能回避的复合壳反例。若 \(s=pq\) 是两个不同素数
+的乘积，则
+\[
+ {\|R_{pq}^\circ\|_2^2\over\|R_{pq}\|_2^2}
+ ={2pq+1\over4pq}\longrightarrow {1\over2}.             \tag{CF5.28}
+\]
+所以不存在固定 \(\delta>0\)，使所有平方自由 \(s\) 都有
+\(\|R_s^\circ\|_2\ll s^{-\delta}\|R_s\|_2\)。共同投影本身只关闭
+prime-shell 的低秩质量；两个及更多活动素数的 centered bulk 仍必须
+由保留两侧 Möbius 符号的 varying-level dispersion/reciprocity 支付。
+CF5.28 是这个需求的核级反例，不是说实际带符号物理和没有额外抵消。
+
 ## CF6. 一个不重不漏的 master tag 集
 
 在所有有限截断固定后，先按**已经逐项验证的** adapter 作一个互斥
@@ -2807,8 +2859,11 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
    并给出跨全部有限模数的一次共同 Cauchy。CF5.20--CF5.24 在真正
    零模上把全部 nonunit kernels 精确降到 reduced modulus，证明
    residue/sampling/deleted-origin 三种描述的系数一致，并以模 3
-   反例禁止把它外推到非零频率。CF5.1 的 centered power saving、
-   零模与 diagonal/principal/residue 行的压缩仍未证明；
+   反例禁止把它外推到非零频率。CF5.25--CF5.28 求出 centered 核的
+   精确质量：prime shell 有半根下降，但 \(s=pq\) 时 centered/raw
+   比例趋于 \(1/\sqrt2\)，故复合壳不能只靠有限投影取得 power saving。
+   CF5.1 在复合壳的 signed varying-level saving、零模与
+   diagonal/principal/residue 行的压缩仍未证明；
 5. CF6 给出不允许静默丢项的 master-tag contract；只有 adapter 已验证
    的行才能进入 expanded 分支，其余必须留在 native complement。
    因此本稿不把 CF6.2 对全部原行的等同性列为已证；
