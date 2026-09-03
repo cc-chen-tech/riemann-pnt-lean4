@@ -665,6 +665,70 @@ prime-shell 的低秩质量；两个及更多活动素数的 centered bulk 仍�
 由保留两侧 Möbius 符号的 varying-level dispersion/reciprocity 支付。
 CF5.28 是这个需求的核级反例，不是说实际带符号物理和没有额外抵消。
 
+### CF5E. squarefree 壳的四状态张量与 alternating cofactors
+
+CF5D 的复合壳质量还可分解成一套显式正交坐标。对素数 \(p\) 令
+\[
+ f_p(x)={\bf1}_{p\mid x}-{1\over p}qquad(x\bmod p).
+\]
+直接检查 \(p\mid h\delta\) 与 \(p\nmid h\delta\) 两种情形，得到
+\[
+ c_p(h\delta)=-p f_p(h)f_p(\delta)
+ +(p-1)f_p(h)+(p-1)f_p(\delta)+{p-1\over p}.            \tag{CF5.29}
+\]
+其中 \(1\) 与 \(f_p\) 正交，且
+\(\|f_p\|_2^2=(p-1)/p^2\)。若 \(s\) 平方自由，记
+\({\cal P}(s)=\{p:p\mid s\}\)，并对 \(U\subseteq{cal P}(s)\) 置
+\(f_U(x)=\prod_{p\in U}f_p(x_p)\)。由 CRT 与 CF5.29，
+\[
+ \boxed{
+ R_s^\circ(h,\delta)=
+ \sum_{\substack{\varnothing\ne U,V\subseteq{cal P}(s)}}
+ K_s(U,V)f_U(h)f_V(\delta),}                             \tag{CF5.30}
+\]
+其中
+\[
+ K_s(U,V)=
+ \prod_{p\in U\cap V}(-p)
+ \prod_{p\in U\triangle V}(p-1)
+ \prod_{p\in{cal P}(s)\setminus(U\cup V)}{p-1\over p}.
+                                                               \tag{CF5.31}
+\]
+不同 \((U,V)\) 两两正交。CF5.30 的限制 \(U,V\ne\varnothing\) 恰是
+全局双 centering：\(U=\varnothing\) 或 \(V=\varnothing\) 正好是
+CF5.12 已抽出的常数/axis 坐标。将 CF5.31 的平方乘
+\(\|f_U\|_2^2\|f_V\|_2^2\) 后求和，也逐素数重得 CF5.27。
+
+现在固定一个有限素数集 \({\cal P}\)，把每个 \(R_s^\circ\)
+（\(s\mid\prod_{p\in\mathcal P}p\)）按 CRT 提升到共同空间，在
+\(p\nmid s\) 的坐标上取常数。对固定非空 \(U,V\subseteq\mathcal P\)，
+完整 squarefree cofactor cube 的带符号系数为
+\[
+ \boxed{
+ \sum_{\substack{s\mid\prod_{p\in\mathcal P}p\\U\cup V\subseteq
+                    \mathcal P(s)}}
+ \mu(s)K_s(U,V)
+ =(-1)^{|U\triangle V|}
+   \prod_{p\in U\triangle V}(p-1)
+   \prod_{p\in U\cap V}p
+   \prod_{p\in\mathcal P\setminus(U\cup V)}{1\over p}.} \tag{CF5.32}
+\]
+证明完全局部：\(p\in U\cap V\) 时
+\((-1)(-p)=p\)；\(p\in U\triangle V\) 时得到 \(-(p-1)\)；
+而未激活的 \(p\) 在“不进 \(s\)”和“进入 \(s\) 的常数态”之间给
+\[
+                    1-{p-1\over p}={1\over p}.
+\]
+这正是 alternating cofactor 不能在取范数前丢掉的逐素数收益。
+
+CF5.32 不是对实际 dyadic level shell 的估计。它要求同一个提升后的
+列在完整 Boolean cube 上出现；物理的 product interval、taper、
+exact-valuation 条件与 AFE/Bessel 权都会删去或改变部分顶点。真正的
+CF19.L 必须证明这些变化能由共同 Abel/reflection operator 承担，或
+直接对缺顶点的 signed cube 给出同强度界。逐 \(s\) 取绝对值会把
+CF5.32 最后一个 \(1/p\) 精确变回 \(1+(p-1)/p\)，因而不是允许的
+替代证明。
+
 ## CF6. 一个不重不漏的 master tag 集
 
 在所有有限截断固定后，先按**已经逐项验证的** adapter 作一个互斥
@@ -2862,6 +2926,9 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
    反例禁止把它外推到非零频率。CF5.25--CF5.28 求出 centered 核的
    精确质量：prime shell 有半根下降，但 \(s=pq\) 时 centered/raw
    比例趋于 \(1/\sqrt2\)，故复合壳不能只靠有限投影取得 power saving。
+   CF5.29--CF5.32 再把 squarefree centered 核写成四状态正交张量，
+   并证明完整带符号 cofactor cube 中每个未激活素数恰给 \(1/p\)；
+   实际 dyadic shell 的缺顶点/变权迁移仍属 CF19.L。
    CF5.1 在复合壳的 signed varying-level saving、零模与
    diagonal/principal/residue 行的压缩仍未证明；
 5. CF6 给出不允许静默丢项的 master-tag contract；只有 adapter 已验证
