@@ -44,8 +44,11 @@ CF19Z13--CF19Z14 随后把 quotient test 的对数 Sobolev 换元与三类
 MWKF-PHYS-v1 (5.13b)--(5.14) 的 literal normalized 核出发，证明
 Type-I/Type-I 内部 bulk 的 actual quotient Fourier transform 满足
 CF19.119，且不付 Fourier index、level 或第二份 Jacobian。这个结论仍
-不覆盖 quotient endpoints，也不构造跨 \((k,n)\) 的共同 projective
-test 分解 CF19.130。
+不覆盖 quotient endpoints。CF19Z16 再在每个非零 quotient-frequency
+dyadic 壳、三个符号象限内把 \((k,h,\delta)\) 与 Bessel test 作共同
+projective 分离，并用 divisor Cauchy 正确支付 \(n=h\delta\) 的合并；
+它关闭该 literal bulk 的 CF19.130 与 quotient-Fourier 远尾，但不覆盖
+另一 orientation、complete-shift、principal/axes 或 Type-II。
 反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
@@ -4500,13 +4503,33 @@ CF19.102 的局部乘子范数使用一次。
 \]
 其中对支撑于 \(x\asymp X\) 的项定义
 \({\cal N}_J(\phi)=\max_{0\le j\le J}X^j
-\|\phi^{(j)}\|_\infty\)，而取一个固定的
-\(J'>J(C)+d/2\) 即可。这个加权版仍是 CF19.9 的同一个
-证明：先对 test 坐标微分至多 \(J(C)\) 次，再对全部
-\(d\) 个 torus 坐标用 Cauchy--Schwarz/Parseval；额外的
-\((1+|r_x|)^{J(C)}\) 由这些导数支付。
-\(A_\nu,B_\nu\) 是归一化坐标的 Fourier 单项，因而是两条
-coefficient list 上的模一对角乘子。先在有限 Fourier 截断上
+\|\phi^{(j)}\|_\infty\)。这里不能在固定 \(x\) 上使用 CF19.9 后
+交换 \(\sup_x\) 与 \(\sum_\nu\)。正确做法是把 normalized test 坐标
+与 \(d_{\rm coeff}\) 个 coefficient 坐标一起扩成
+\(d_{\rm tot}=d_{\rm coeff}+1\) 维固定 torus，并同时作 Fourier 展开。
+若 \(r_x\) 是 test 坐标频率，取整数
+\(s>d_{\rm tot}/2\)，则
+\[
+ \begin{aligned}
+ \sum_{r\in\mathbb Z^{d_{\rm tot}}}
+   |\widehat\Phi(r)|(1+|r_x|)^J
+ &\le\left(\sum_r(1+|r|^2)^{-s}\right)^{1/2}\\
+ &\quad\times
+ \left(\sum_r(1+|r|^2)^s(1+|r_x|)^{2J}
+              |\widehat\Phi(r)|^2\right)^{1/2}\\
+ &\ll_{d_{\rm tot},J,s}
+   \sum_{|\gamma|\le J+s}\|\partial^\gamma\Phi\|_{L^2}.
+ \end{aligned}                                      \tag{CF19.130a}
+\]
+因此足够的明确阈值是 \(J'=J+s\)，其中
+\(s>(d_{\rm coeff}+1)/2\)。CF19.130a 直接控制
+\(\sum_\nu{\cal N}_J(\phi_\nu)\)，没有经过
+\(\sup_x\sum_\nu\)；test 坐标的额外半维费用不能省略。
+\(A_\nu,B_\nu\) 来自归一化坐标的 Fourier 单项。对一个原生整数
+index 它们是模一对角乘子；若谱 index 是乘积 \(n=h\delta\)，则必须
+先在 \(h,\delta\) 两条原生列上分别使用这些乘子，再用 CF19.142 的
+divisor-convolution 能量界合成 \(n\)-列，不能把合成后的操作误称为
+\(n\)-列 isometry。先在有限 Fourier 截断上
 用谱不等式，再由 CF19.130 的可和右端取极限，不需要逐谱
 交换一个非绝对可和级数。
 然后对每个**共同** \(\phi_\nu\) 用 CF19.128，最后在 \(\nu\) 上用可和
@@ -4544,6 +4567,15 @@ Poisson shift 坐标混进来。先给出所需的一维精确引理。设
 \]
 这条界在全部 \(\xi\in\mathbb R\) 上一致；特别没有
 \(|\xi|^b\)、Fourier index 长度或一个待吸收的低频例外。
+同一证明允许保留原来的两个 shift 坐标。若
+\(f=f(z,u,\alpha,\beta)\)，则
+\[
+ D_z^aD_\xi^bD_\alpha^cD_\beta^d{\cal F}
+ =(-1)^b\int D_z^aE_u^bD_\alpha^cD_\beta^d f(z,u,\alpha,\beta)
+        e(-\xi u)\,du,                               \tag{CF19.133a}
+\]
+并有 CF19.133 的同型界。这里 \(D_\alpha=\alpha\partial_\alpha\)、
+\(D_\beta=\beta\partial_\beta\)；四个算子两两可交换。
 
 现在回到 MWKF-PHYS-v1 的字面原子。只取 CF19.79 的
 expanded--expanded Type-I/Type-I **内部 bulk**，固定
@@ -4611,10 +4643,123 @@ Type-II、quotient \(k=0\)、axes、principal/residue、native complement
 
 最后，CF19.136 是对每个 \((k,n)\) test 的一致 Sobolev 预算，并不
 推翻 CF19Z14 的 Hadamard 反例。它尚未给出 CF19.130 的共同
-projective separation，也未证明 quotient masks、两种 orientation 与
+projective separation；这是本节本身的边界，下一节将对同一内部 bulk
+补上该分离。它也未证明 quotient masks、两种 orientation 与
 complete-shift detector 在同一个谱 Gram 中的逐项相等。因此本节关闭
 的是 CF19.119 的 literal Type-I/Type-I 内部 bulk 叶子，不是
 CF19.D、CF19.L、CF19.C 或全部 QCT boxes。
+
+### CF19Z16. 同一内部 bulk 的共同 Bessel test 分离可在取谱范数前完成
+
+CF19Z14 的 Hadamard 反例要求一个真正的 projective 分解。对上节的
+literal bulk 固定 \(A,B,q_0,R,S,L,H\) 及有限 tags，再固定
+\(k,h,\delta\) 的一个符号象限和非零 dyadic \(k\)-壳
+\(K_0\le |k|\le2K_0\)。这里插入的是一个固定光滑恒等分割
+\(\sum_{K_0\in2^{\mathbb Z}}\chi_k(|k|/K_0)=1\)（\(k\ne0\)）；
+CF19.143 将证明可以把它无损求回。写
+\[
+ y={|k|\over K_0},\qquad a={|\delta|\over L},\qquad
+ b={|h|\over H},\qquad
+ X_0={4\pi\sqrt{A K_0HL}\over C_0},\qquad w={x\over X_0}.
+                                                               \tag{CF19.137}
+\]
+因为 \(n=h\delta\)，CF19.82 中的联合 normalized test 逐字等于
+\[
+ \Phi(y,a,b,w)=\chi_k(y)\Phi_0(y,a,b,w),\qquad
+ \Phi_0(y,a,b,w)={\cal F}\!\left(
+       {\sqrt{yab}\over w},
+       \epsilon_k {K_0R\over C_0}
+          w\sqrt{{y\over ab}},
+       \epsilon_\delta a,\epsilon_h b\right),        \tag{CF19.138}
+\]
+其中最后两变量是 \((\alpha,\beta)\)，
+\(\chi_k\in C_c^\infty([1/2,2])\) 是该 \(k\)-dyadic partition 的
+固定归一化 cutoff，
+\(\epsilon_k,\epsilon_\delta,\epsilon_h\in\{\pm1\}\) 是已固定的符号。这条
+等式同时包含 Bessel argument 的积 \(|kh\delta|\) 与 quotient
+Fourier argument 的比 \(k/(h\delta)\)，没有把其中一个冻结。
+
+置 \(D_y=y\partial_y\) 等。由 CF19.138 的四个单项式坐标，链式
+法在 \(\Phi_0\) 上给出如下精确的常系数算子矩阵：
+\[
+ \begin{aligned}
+ D_y&={1\over2}D_z+{1\over2}D_\xi,\\
+ D_a&={1\over2}D_z-{1\over2}D_\xi+D_\alpha,\\
+ D_b&={1\over2}D_z-{1\over2}D_\xi+D_\beta,\\
+ D_w&=-D_z+D_\xi.
+ \end{aligned}                                      \tag{CF19.139}
+\]
+所有右端算子可交换。\(\chi_k\) 的 normalized derivatives 是固定
+有界常数，故 CF19.133a、CF19.135 与乘积法则给出，对每个固定 \(J\)，
+\[
+ \max_{i+j+r+s\le J}
+ \|D_y^iD_a^jD_b^rD_w^s\Phi\|_\infty
+ \ll_J {\cal A}_J.                                  \tag{CF19.140}
+\]
+此界对 \(K_0,A,C_0,R,L,H\) 一致；这些尺度只出现在
+CF19.138 的 normalized monomials 中，而 CF19.139 的系数与它们无关。
+
+该联合权的支撑在一个与所有尺度无关的固定紧集中：
+\(y,a,b\in[1,2]\)，且 \(z=\sqrt{yab}/w\in[1/2,2]\)强制
+\(w\in[1/2,4\sqrt2]\)。取一个在该集上为一的固定大 cutoff
+\(\chi_w(w)\)，并在另外三个坐标也取固定拼零 cutoff，将 \(\Phi\)
+延拓到固定四维 torus。对它作 Fourier 级数并使用
+CF19.9 的同一 Cauchy--Schwarz/Parseval 论证。每个有限 Fourier
+截断自身是精确的有限 tensor 分解；这些截断在下列加权 projective
+范数中绝对收敛到 \(\Phi\)：
+\[
+ \Phi(y,a,b,w)=\sum_\nu c_\nu
+ A_\nu(y)B_\nu(a)C_\nu(b)\phi_\nu(w),
+ \qquad
+ \sum_\nu|c_\nu|{\cal N}_J(\phi_\nu)
+ \ll_J {\cal A}_{J+3}.                              \tag{CF19.141}
+\]
+这里 \(A_\nu,B_\nu,C_\nu\) 是模一 Fourier 单项，而
+\(\phi_\nu(w)=\chi_w(w)e(r_{w,\nu}w)\)；
+\({\cal N}_J\) 是 CF19.130 的 normalized test 半范数；四维中
+\(3>4/2\) 正使得带 \((1+|r_w|)^J\) 的 Fourier 系数可和。
+将 \(w=x/X_0\) 放回去后，每个 \(\phi_\nu(x/X_0)\) 是一个与
+\((k,h,\delta)\) 无关的**共同** Bessel test。
+
+还必须核对 \(n=h\delta\) 合并后的系数能量，不能把它误称为
+\(n\)-列上的对角相位。对任意两条有限列 \(u_h,v_\delta\)，定义
+\[
+ d_\nu(n)=\sum_{h\delta=n}u_hv_\delta
+       B_\nu(|\delta|/L)C_\nu(|h|/H).
+\]
+因为两个 Fourier 单项的模均为一，除数 Cauchy 精确给出
+\[
+ \sum_n|d_\nu(n)|^2
+ \le \max_{|n|\le4HL}\tau(|n|)
+       \sum_{h,\delta}|u_h|^2|v_\delta|^2
+ \ll_\varepsilon (HL)^\varepsilon
+       \|u\|_2^2\|v\|_2^2.                          \tag{CF19.142}
+\]
+所以 CF19.141 没有偷用一个不存在的 \(n\)-列 isometry；它的唯一
+合并费用是已登记的 divisor \(T^\varepsilon\) 费用。这也修正
+CF19.130 后那句过强的“两条 coefficient list 上的模一对角乘子”：
+\(k\)-列是对角乘子，\(h,\delta\) 两列在合成 \(n\) 前各是对角乘子，
+合成后应用的是 CF19.142。
+
+最后，这个分解不需要把无限 quotient frequency 先绝对值截断。
+对 \(|\xi|\ge1\)，在 CF19.131 中再对 \(u\) 分部积分 \(M\) 次，并对
+CF19.133a 的被积函数做同一操作，得
+\[
+ \sum_\nu|c_\nu|{\cal N}_J(\phi_\nu)
+ \ll_{J,M}{\cal A}_{J+M+3}
+ \left(1+{K_0R\over C_0}\right)^{-M}.               \tag{CF19.143}
+\]
+因而取固定大 \(M\) 后，所有非零 \(k\)-dyadic 壳在加上
+CF19.129 的至多多项式 Bessel capacity 后仍绝对可和。这支付了
+该 literal bulk 的 quotient-Fourier 远尾，但不是 FP2 的全局
+\({\cal R}_{\rm tail}^{(B)}\)；后者还包含非 core boxes 和其他 transform tails。
+
+结论是：CF19.130 所要求的“先分离为共同 test，再用谱范数”
+在 literal Type-I/Type-I 内部 bulk 上已由 CF19.137--CF19.143 严格
+闭合。它不自动把 CF19Z11 的裸 shell 同一化为完整物理谱行；
+quotient masks、另一 orientation、CF3 endpoints、CF5 axes/origin、
+principal/residue、complete-shift detector 与 Type-II 仍须在 CF19.L/CF19.C
+的同一有限输出中重组。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
