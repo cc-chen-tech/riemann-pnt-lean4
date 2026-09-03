@@ -35,7 +35,10 @@ quotient mask 的 \(A\)-valuation-one 壳精确写成使用同一 Bessel test
 的有限 full-level trace 差，并在共同 regulator 内把它逐 newdatum
 重组为 CF19Z10 的乘子；这关闭了该裸壳的 Maaß/holomorphic/Eisenstein
 归一化，而没有关闭其余 quotient masks、非负 Bessel majorant、
-共同解除 regulator 或标量大筛本身。
+共同解除 regulator。CF19Z12 再从公开 PBK 大筛的全正谱证明推出：
+一旦 actual test 供应同一个显式非负 majorant，Maaß、holomorphic、
+Eisenstein 与 exceptional 谱所需的 scalar bound 已成立；但 majorant
+的 \(C_h,\mathfrak T,\mathfrak Y\) 物理尺度仍须由 CF19.D 证明。
 反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
@@ -4073,7 +4076,7 @@ Eisenstein 直积分完全相同，因为 CF19.101 是可测有界乘子且谱�
 \[
  \boxed{
  \|{\cal S}a\|_{\widehat\oplus_\sigma}^2
- =\sum_\sigma\sum_{j,j'}r_{\sigma,j}\overline{r_{\sigma,j'}}
+ =\sum_\sigma\sum_{j,j'}\overline{r_{\sigma,j}}r_{\sigma,j'}
    \langle S_{\sigma,j}a,S_{\sigma,j'}a\rangle
  \ll A^{-1}\|a\|_2^2.                               \tag{CF19.105}
  }
@@ -4198,8 +4201,8 @@ pattern 上；pattern 的体积比、oldclass Gram 与 ramified local row
 则 CF19.109 还能精确写成 native 正测度 Hilbert pairing
 \[
  \left\langle
- M_A\bigl(|h_\phi^\pm|^{1/2}X_k\bigr),
- \overline{u_\phi}\,|h_\phi^\pm|^{1/2}Y_n
+ \overline{u_\phi}\,|h_\phi^\pm|^{1/2}Y_n,\,
+ M_A\bigl(|h_\phi^\pm|^{1/2}X_k\bigr)
  \right\rangle_{{\cal H}_{\cal R}}.                  \tag{CF19.110}
 \]
 因此 CF19Z10 的“一次 Cauchy、一次 half-root”确实适用于这个裸壳的
@@ -4221,6 +4224,109 @@ boxes 全仍开放。因此本节关闭的是
  common-test full-spectrum/newdatum normalization},}       \tag{CF19.111}
 \]
 不是 CF19.D、CF19.L、CF19.C 或 \(14/17\)。
+
+### CF19Z12. common majorant 一旦给出，所需 scalar full-spectrum large sieve 已有
+
+CF19Z11 的 native measures 并不要求再猜一个新的谱大筛，但也不能
+把 full level \(B\) 的 oldclasses 冒充 exact conductor \(B\)。对
+\(\sigma\in\Sigma_A\) 令
+\[
+ c(\sigma)=\prod_{\substack{p\mid A\\\sigma_p=1}}p,
+ \qquad N_{\sigma,B_0}=B_0c(\sigma)\quad(B_0\mid B).   \tag{CF19.112}
+\]
+exponent-two patterns 已由 CF19Z9 消失，所以 \(c(\sigma)\mid A\)。
+把 \(d\nu_{B,\sigma}\) 再按其 \(B\)-part primitive conductor
+\(B_0\mid B\) 作正交直和。每个 summand 由 exact conductor
+\(N_{\sigma,B_0}\) 的 primitive
+Maaß/holomorphic/Eisenstein newdata 及其 \(B/B_0\)-oldclass
+evaluation vector 组成，并按相应 classical projector 的
+\(f_{\sigma,B_0}(1)\) 归一化；CF19.43 与 CF19.95 的
+volume ratios 正是 CF19.109 中采用的 \(A\)-part native
+normalization。primitive newspace 是 full level-
+\(N_{\sigma,B_0}\) 正谱二次型的正交子空间，故其非负二次型可由
+full-level projector 上界。这里的 domination 不是点态猜测：固定
+primitive datum 后，oldclass evaluation vector 是正交 projector
+作用于 Fourier evaluation vector 的一个 block，故其平方范数不超过
+未投影向量平方范数；跨 primes 张量后只留下 divisor-dimensional
+\((AB)^\varepsilon\) multiplicity。这里尚未利用 level \(B\) oldclass
+在更高 ambient level 中可能带来的额外 dilution。
+
+固定 \({\mathfrak T},{\mathfrak Y}\ge1\)。设实际共同 Bessel 权已经
+由一个常数 \(C_h\) 控制如下：tempered Maaß、Eisenstein 与
+holomorphic/discrete-series 部分被 HPY (1.40)/(1.41) 型非负窗口的
+有限正和控制，其 normalized family mass 至多
+\(C_h\mathfrak T^2\)；exceptional Maaß datum \(it_\pi\in(0,1/4)\)
+上的权至多 \(C_h\mathfrak Y^{2it_\pi}\) 乘同一固定 Gaussian。
+这里 \(C_h,\mathfrak T,\mathfrak Y\) 必须由 actual test 给出，不能
+事后藏入 \(P^\varepsilon\)。
+
+对支撑于 \(u\le U\)、\((u,AB)=1\) 的任意有限 Hilbert-valued 系数
+\(a_u\)，逐有限坐标应用
+[Hu--Petrow--Young, Theorem 1.23, Remark 1.24 and Proposition 5.10](https://www.cambridge.org/core/services/aop-cambridge-core/content/view/88D50BBABA259F680EEF50F145BC5E0F/S2050509426101765a.pdf/generalized_mathrmpgl2_peterssonbruggemankuznetsov_formula_for_analytic_applications.pdf)。
+Theorem 1.23 的证明在其 (5.18)--(5.26) 估计的是删去目标 cusp
+子族以前的正
+\(F_0(f)+(\mathrm{cts.})\) 二次型，故 continuous spectrum 也包含在
+同一个界中；Remark 1.24 给独立 holomorphic/Petersson 版本，
+Proposition 5.10 给 exceptional 权。除以 classical
+\(f_{\sigma,B_0}(1)\asymp_\varepsilon
+N_{\sigma,B_0}^{1+O(\varepsilon)}\) 后，它们共同给
+\[
+ \int\left\|\sum_{u\le U}a_u\lambda_\pi(u)\right\|^2
+       d\nu_{B_0,\sigma}^{\,h}(\pi)
+ \ll_{\varepsilon}C_h
+ \left(\mathfrak T^2+{U\mathfrak Y\over B_0c(\sigma)}\right)
+ (UAB\mathfrak T\mathfrak Y)^\varepsilon
+ \sum_{u\le U}\|a_u\|^2.                              \tag{CF19.113}
+\]
+这里 \(d\nu^{h}\) 表示已经乘上上述共同正 majorant 的 measure；
+若无 exceptional spectrum 或其权可取 \(\mathfrak Y=1\)，第二项就是
+usual normalized length cost \(U/(B_0c(\sigma))\)。
+
+现在对 conductor patterns **在正平方范数内**求和。纯有限乘积给
+\[
+ \sum_{\substack{\sigma\in\Sigma_A\\B_0\mid B}}1
+ =2^{\omega(A)}\tau(B)\ll_\varepsilon(AB)^\varepsilon,
+ \qquad
+ \sum_{\substack{\sigma\in\Sigma_A\\B_0\mid B}}
+ {1\over B_0c(\sigma)}
+ =\prod_{p\mid A}(1+p^{-1})\sum_{B_0\mid B}B_0^{-1}
+ \ll_\varepsilon(AB)^\varepsilon.                     \tag{CF19.114}
+\]
+这两个 \((AB)^\varepsilon\) 都只是正谱 family/length capacity；它们没有
+对 signed amplitudes 作 \(\ell^1\) 求和，也没有复制 CF19.102 的
+half-root。将 CF19.113 对 \((\sigma,B_0)\) 相加便得到 CF19.103 所需的
+显式 scalar bound
+\[
+ \boxed{
+ \|T_Ua\|_{{\cal H}_{\cal R}}^2
+ \ll_\varepsilon C_h(AB)^\varepsilon
+ \left(\mathfrak T^2+U\mathfrak Y\right)
+ (UAB\mathfrak T\mathfrak Y)^\varepsilon
+ \sum_{u\le U}\|a_u\|^2.}                            \tag{CF19.115}
+\]
+与 CF19.102--CF19.104 合并，对两条长度 \(U_1,U_2\) 的列严格推出
+\[
+ \boxed{
+ |\langle M_AT_{U_1}a,T_{U_2}b\rangle|
+ \ll_\varepsilon C_hA^{-1/2}(AB)^\varepsilon
+ \prod_{i=1}^2
+ \left(\mathfrak T^2+U_i\mathfrak Y\right)^{1/2}
+ (U_1U_2AB\mathfrak T\mathfrak Y)^\varepsilon
+ \|a\|_2\|b\|_2.}                                    \tag{CF19.116}
+\]
+
+所以 scalar Maaß/holomorphic/Eisenstein large sieve 本身不再是这个
+裸壳的新 conjectural leaf。CF19.116 的适用前提仍是实质性的：actual
+\(|h_\phi|\) 必须由上面的**同一个**正窗口族控制，且
+\(C_h,\mathfrak T,\mathfrak Y\) 的全部 physical scale 必须显式代回；
+两条 Fourier 列须与 \(AB\) 互素，剩余 mask 与 shifted-list synthesis
+须分别满足 CF19.107 和修正后的 CF19.105。CF19.81a 只有几何
+\(L^\infty\) 界，尚未证明这个 spectral majorant。因而当前真正剩余
+的是 CF19.D 的 Bessel/Sobolev envelope 与 CF19.L 的完整物理列映射，
+不是把 CF19.115 当作已经适配 actual atom 的无条件上界。特别地，
+CF19.115 没有 \(U/B\) saving：要恢复它，必须证明所有
+\(B_0\mid B\) oldclasses 在同一个 level-\(B\) normalized projector
+中的 dilution 与 \(m_A\) 无损相容；仅知道 \(B_0\mid B\) 不够。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
@@ -4459,10 +4565,14 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     mask-free actual zero--zero valuation-one 壳精确写成使用同一 test
     的 full-level trace 差，并在共同 regulator 内把 Maaß、holomorphic、
     oldforms 与全部 Eisenstein cusp labels 重组为这个 native-measure
-    乘子。尚未证明的是其余 quotient masks 的同一重组、共同
-    nonnegative Bessel majorant/scalar large sieve、解除 regulator，
-    以及 principal/axis/residue 的同投影压缩；这些仍属
-    CF19.D/CF19.L/CF19.C。
+    乘子。CF19.112--CF19.116 再按 \(B_0\mid B\) 保留全部 base
+    oldclasses，从 HPY 的全正谱证明得到共同 majorant 下的 scalar
+    large sieve；安全 bound 是
+    \(A^{-1/2+\varepsilon}(\mathfrak T^2+U\mathfrak Y)\)，不能未证
+    B-oldclass dilution 就改成 \(U/B\)。尚未证明的是 actual test 的
+    同一 \((C_h,\mathfrak T,\mathfrak Y)\) majorant、其余 quotient
+    masks 的重组、解除 regulator，以及 principal/axis/residue 的
+    同投影压缩；这些仍属 CF19.D/CF19.L/CF19.C。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
