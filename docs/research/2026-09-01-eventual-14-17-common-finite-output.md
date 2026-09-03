@@ -754,10 +754,10 @@ shell。固定 inactive prime 集 \({\cal I}\) 及
 \([1,(1+\epsilon)^r]\) 上恒为一。于是逐顶点精确有
 \[
  F\left({\prod_{p\in T}p\over X^r}\right)
- ={f1}_{|T|=r}.                                       \tag{CF5.34}
+ ={\bf1}_{|T|=r}.                                       \tag{CF5.34}
 \]
 事实上 \(|T|\le r-1\) 时自变量小于 \(1/2\)，\(|T|=r\) 时落在
-上述平台，而 \(|T|\ge r+1\) 时自变量大于 (2\)。所以一个标准
+上述平台，而 \(|T|\ge r+1\) 时自变量大于 \(2\)。所以一个标准
 smooth dyadic shell 可以冻结 \(\mu(\prod_{p\in T}p)=(-1)^r\)，并
 把 CF5.32 所依赖的不同 cardinality 之间抵消全部切断。
 
@@ -767,6 +767,76 @@ smooth dyadic shell 可以冻结 \(\mu(\prod_{p\in T}p)=(-1)^r\)，并
 shift 与 Bessel 相位并产生 dispersion，或证明物理重组在取 shell
 cutoff 前就已把相邻 cardinality 重新耦合。CF5.34 不排除这两种真正
 的 signed analytic 机制。
+
+### CF5G. 分离平滑权把 centered 零模化为倍数采样误差
+
+CF5.1 的实际非零 dyadic \((h,\delta)\)-权是分离的，因而 centered
+bulk 还有一条不需要 level reciprocity 的精确约化。令
+\(v,w\in C_c^1(\mathbb R\setminus\{0\})\)，
+\(H_1,H_2>0\)，并定义
+\[
+ V_d=\sum_{d\mid h}v(h/H_1),\qquad
+ W_e=\sum_{e\mid\delta}w(\delta/H_2),
+\]
+以及相对于完整整数格平均的误差
+\[
+ E_d^v=V_d-{V_1\over d},\qquad
+ E_e^w=W_e-{W_1\over e}.                                \tag{CF5.35}
+\]
+所有和都因紧支撑而有限，且 \(E_1^v=E_1^w=0\)。将 CF5.2 插入
+加权和，并使用 CF5.9 的两个边缘恒等式与 CF5.8 的总质量，逐项展开
+即得
+\[
+ \boxed{
+ \sum_{h,\delta}v(h/H_1)w(\delta/H_2)R_s^\circ(h,\delta)
+ =\sum_{d,e\mid s}b_s(d,e)E_d^vE_e^w.}                 \tag{CF5.36}
+\]
+例如右边展开后的三条校正分别是
+\(-\varphi(s)V_sW_1\)、\(-\varphi(s)V_1W_s\) 与
+\(\varphi(s)V_1W_1/s\)，恰好就是 CF5.11 的两轴与常数；没有
+额外 endpoint remainder。
+
+一维误差有 uniform discrepancy 界。若
+\(u\in C_c^1(\mathbb R\setminus\{0\})\)，
+则存在只依赖 \(u\) 支撑、\(\|u\|_\infty\)、\(\|u\|_1\) 与
+\(\|u'\|_1\) 的常数 \(C_u\)，使所有 \(H>0,d\ge1\) 都有
+\[
+ \boxed{
+ \left|\sum_{d\mid n}u(n/H)-{1\over d}\sum_nu(n/H)\right|
+ \le C_u\min\left(1,{H\over d}\right).}                \tag{CF5.37}
+\]
+证明不使用指数和。把整数按模 \(d\) 的剩余类分组；零类与第 \(r\)
+类逐项平移比较，区间
+\([dk/H,(dk+r)/H]\) 对固定 \(r\) 不交叠，故差至多
+\(\|u'\|_1\)。对所有 \(r\) 平均给 \(O_u(1)\)。若 \(d>H\)，
+因支撑避开零，紧支撑内每个非空采样本身迫使
+\(H/d\gg_u1\)，而采样点数是
+\(O_u(H/d)\)；若采样为空，只剩
+\(d^{-1}\sum_nu(n/H)=O_u(H/d)\)。这给第二个界并与第一个取小。
+
+CF5.36--CF5.37 因而给出完全显式的 centered 零模上界
+\[
+ \boxed{
+ \left|\sum_{h,\delta}v(h/H_1)w(\delta/H_2)R_s^\circ(h,\delta)\right|
+ \ll_{v,w}
+ \sum_{d,e\mid s}|b_s(d,e)|
+ \min\left(1,{H_1\over d}\right)
+ \min\left(1,{H_2\over e}\right).}                    \tag{CF5.38}
+\]
+在 prime shell \(s=p\) 上，\(E_1=0\) 与 CF5.5 只留下
+\(b_p(p,p)=-p\)，所以右边精确缩成
+\[
+ p|E_p^vE_p^w|\ll_{v,w}
+ p\min(1,H_1/p)\min(1,H_2/p),                           \tag{CF5.39}
+\]
+特别在 \(H_1,H_2\le p\) 时为 \(O(H_1H_2/p)\)。
+
+CF5.38 已经证明一个适用于全部模数和端点的 centered analytic bound，
+但尚未证明其 divisor cost 在所有物理复合壳都达到 CF9.1 的指数。
+也没有估计 CF5.12 的两条低秩轴与常数；它们仍须和 CF5B 的 sampling
+axes、diagonal 及 principal/residue ledger 在同一原子中压缩。
+因此这关闭的是“任意平滑权仍需二维 residue 大筛”的假障碍，并把
+真实剩余义务缩成 CF5.38 的复合 divisor cost 加低秩共同 ledger。
 
 ## CF6. 一个不重不漏的 master tag 集
 
@@ -2970,8 +3040,11 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
    实际 dyadic shell 的缺顶点/变权迁移仍属 CF19.L。CF5.33--CF5.34
    构造平滑 product shell 精确冻结固定 \(\omega(s)\) 的反例，否定
    只用完整 cube 加 smooth Abel 迁移该收益的路线，但不否定壳内
-   two-sided dispersion。
-   CF5.1 在复合壳的 signed varying-level saving、零模与
+   two-sided dispersion。CF5.35--CF5.39 对 CF5.1 的实际分离权证明
+   centered 零模的精确倍数采样误差公式及 uniform variation bound；
+   prime shell 在 \(H_1,H_2\le p\) 时降到 \(H_1H_2/p\)，复合 divisor
+   cost 是否逐物理壳达标仍待核算。
+   CF5.1 在复合壳的 signed varying-level saving、零模低秩部分与
    diagonal/principal/residue 行的压缩仍未证明；
 5. CF6 给出不允许静默丢项的 master-tag contract；只有 adapter 已验证
    的行才能进入 expanded 分支，其余必须留在 native complement。
