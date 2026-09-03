@@ -1972,6 +1972,56 @@ dispersion。CF8.49 表明 periodic equal-frequency row 只有 mutual
 incidence；CF8.55 则冻结必须估计的全部 nonzero-mode physical
 correlation。
 
+CF8.55 的 zero determinant 与 nonunit marked shifts 也可完整支付。
+先注意 \(\Lambda_2(r)\ne0\) 只可能在
+\[
+ r=\ell^a,\qquad r=2\ell^a\quad(\ell\ {\rm odd\ prime}),
+ \qquad\hbox{或}\qquad r=2^a.                         \tag{CF8.56}
+\]
+若 \(p\ne q\) 且 \(pm=qn\)，则 \(m=qv,n=pv\)。CF8.56 同时用于
+\(qv\) 与 \(pv\)，迫使 \(v=1\) 或 \(2\)。相应物理整数只有
+\(pq,2pq\ll P^2\)。但 \(W_X\) 的硬支撑从
+\(\tfrac12XP^{-\alpha}\) 开始，而
+\(\kappa-\alpha>15/4>2\)；所以充分大 \(P\) 后，CF8.55 中
+\(pm=qn\) 的 cross-prime 行**精确为零**。
+
+再处理 \(h=pm-qn\ne0\) 且 \(p\mid h\) 的行。因 \(p\nmid q\)，有
+\(n=pv\)，并可写
+\[
+                         m=qv+k,\qquad0<|k|<H/p\le h_0.
+                                                               \tag{CF8.57}
+\]
+固定 \(p,q,k\) 后，窗口交集至多为
+\[
+ C_KH\,\omega_K(pqv/X),
+\]
+而
+\[
+ \sum_{v\ge1}\omega_K(pqv/X)\{1+\log(2pv)+\log(2qv)\}^2
+ \ll_K{X\over pq}(\log P)^2.
+\]
+这里只有 \(O_{h_0}(1)\) 个非零 \(k\)。乘回 CF8.55 的 \(pq\) 后，
+对 \(p,q\) 取绝对值，并使用
+\[
+ \left(\sum_p|Y_p|\right)^2
+ \le Q_P\sum_{P<p\le2P}{1\over p-1}\ll Q_P,
+\]
+得到全部 \(p\mid h\) 行为 \(O(XH Q_P(\log P)^2)\)。交换
+\((p,m)\) 与 \((q,n)\) 同样支付全部 \(q\mid h\) 行；交集只会被这个
+上界重复一次，不影响结论。
+
+所以 CF8.5 最终还等价于 CF8.55 的如下严格子域：
+\[
+ \boxed{\quad
+ p\ne q,\qquad 0<|h|=|pm-qn|<H,\qquad(h,pq)=1.
+ \quad}                                                       \tag{CF8.58}
+\]
+CF8.58 保留两份 \(\Lambda_2\)、\(Y_p\overline{Y_q}\)、原窗口交集与
+全部 parity rows；删去的 zero/nonunit determinant 已由上面同一个
+物理权证明，而不是被称为“negligible”。剩余 unit determinant 才是
+必须用两侧 Möbius signs、prime-level reciprocity 或 joint Poisson
+估计的核心。
+
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
 cancellation，因为在该 squarefree canonical 行上
