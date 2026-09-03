@@ -2446,6 +2446,90 @@ CF8.88 的临界部分 \(|t|\le2R/H\)，而不逐 \(n\) 或逐 parity
 \(K_\delta\) 后作 dyadic shifted mean value，或返回 CF19 的共同
 Bessel/complete-shift 尾，不能以“Perron 尾标准可忽略”跳过。
 
+这个高频义务可进一步冻结为一个同时含四个 endpoint orientations
+的有限系数不等式。沿用 CF8.87 的一个 smooth piece
+\(a_n=c_o(n)V(n/R)\)，定义
+\[
+ F_\epsilon(t)=\sum_na_n(n-\epsilon)^{-it},
+ \qquad \epsilon\in\{0,H\},\qquad
+ \varsigma_H=1,\quad\varsigma_0=-1.
+\]
+CF8.85 逐字等价于
+\[
+ \sum_na_nn^{-it}k_H(n,t)
+ ={F_H(t)-F_0(t)\over it}.                            \tag{CF8.91}
+\]
+特别地，不能只估计 \(F_0\) 后声称平移端相同；平方以前的差分是
+reference 与 axis 消去的一部分。
+
+取一个非负偶函数
+\(\Psi\in C_c^\infty(\{1/2\le|u|\le2\})\)，并令
+\(\Psi_2(u)=\Psi(u)/u^2\)。对任意 \(T>0\)，Fourier 展开严格给
+\[
+ \begin{aligned}
+ {\cal J}_{R,H}(T)
+ &:={}\int_{\mathbb R}{\Psi(t/T)\over t^2}
+                 |F_H(t)-F_0(t)|^2dt\\
+ &={1\over T}
+ \sum_{\epsilon,\epsilon'\in\{0,H\}}
+ \varsigma_\epsilon\varsigma_{\epsilon'}
+ \sum_{m,n}a_m\overline{a_n}\,
+ \widehat{\Psi_2}\!\left(
+ T\log{m-\epsilon\over n-\epsilon'}\right).
+                                                               \tag{CF8.92}
+ \end{aligned}
+\]
+这里 \(\widehat{\Psi_2}(y)=\int\Psi_2(u)e^{-iyu}du\)。CF8.92 的四项
+依次在
+\[
+ m-n\approx0,\qquad m-n\approx H,\qquad
+ m-n\approx-H,\qquad m-n\approx0                     \tag{CF8.93}
+\]
+的同一个尺度
+\[
+                         L={R\over T}                 \tag{CF8.94}
+\]
+上取样，符号为 \(+,-,-,+\)。\(\widehat{\Psi_2}\) 是 Schwartz，
+所以“\(\approx\)”表示带全部快速衰减尾的共同 smooth detector，
+不是删除 \(|m-n|>L\) 的硬截断。
+
+CF8.80 若证明，再经 CF8.85--CF8.90 支付
+\(T\asymp R/H\)、即 \(L\asymp H\) 的临界紧带。另一端
+\(T\ge R\) 可无条件支付：两组频率
+\(\log n,\log(n-H)\) 的间距都为 \(\gg1/R\)，一般 separated-frequency
+均值定理与
+\[
+ \sum_n|a_n|^2\ll RQ_PP^\eta
+\]
+给每个 dyadic \(T\ge R\)
+\[
+ {\cal J}_{R,H}(T)
+ \ll {T+R\over T^2}\sum_n|a_n|^2
+ \ll {RQ_PP^\eta\over T}.
+\tag{CF8.95}
+\]
+求 \(T\ge R\) 的 dyadic 和后乘 CF8.86 局部化产生的外因子 \(R\)，所得
+\(O(RQ_PP^\eta)\) 被目标 \(RHQ_PP^\eta\) 吸收。
+
+故真正剩余的硬窗高频门只在
+\(R/H\le T\le R\)，并可写成同一个四项不等式
+\[
+ \boxed{\quad
+ {\cal J}_{R,H}(T)
+ \ll_{\rho,\eta,V,\Psi}Q_PP^\eta {R\over T}
+ =Q_PP^\eta L.\quad}                                  \tag{CF8.96}
+\]
+对这些 \(T\)，分别对 \(F_H,F_0\) 使用一般均值只能给
+\[
+ {\cal J}_{R,H}(T)\ll Q_PP^\eta L^2,
+\]
+恰多一份当前 shift 长度 \(L\)。CF8.96 对 dyadic
+\(L=H,H/2,\ldots,1\) 求和只付 \(O(H)\)，再由 CF8.86 的局部化得
+\(RHQ_PP^\eta\)。因此 CF8.96 是 complete-shift detector 的共同
+有限系数目标：两个零中心块、两个 \(\pm H\) endpoint blocks、
+对角及全部 Schwartz tails 已在取绝对值以前合并。它尚未证明；
+把 CF8.92 的四项分别上界会精确回到多出的 \(L\)。
+
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
 cancellation，因为在该 squarefree canonical 行上
