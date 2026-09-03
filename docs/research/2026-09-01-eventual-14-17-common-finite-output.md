@@ -60,7 +60,9 @@ mismatch 在完整 shift residue grid 上的精确平方范数，并证明 liter
 internal bulk 的分离物理权满足所需 periodized \(L^2\) 预算。
 CF19Z21 最后把同一 mismatch 正交分成 double-centered、两条 sampling
 axes 与 constant 四项，并在一个不等式中共同控制；跨 levels 的 signed
-assembly 及其余 physical rows 尚未装配。
+assembly 及其余 physical rows 尚未装配。CF19Z22 则给出精确反例：
+固定 \(rs=C\) 时 \(\mu(r)\mu(s)=\mu(C)\) 完全冻结，故左右 Möbius
+符号本身不能产生 varying-level saving。
 反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
@@ -5193,6 +5195,43 @@ adapter 证明进入这个同一个 \(W_N\)，不能只因 CF19.165 已写出就
 完成。特别地，CF19.162 只说**换向 mismatch** 在坐标轴上为零，不是
 说原 QCT 的 axis rows 消失。
 
+### CF19Z22. 固定 product level 上两侧 Möbius 符号精确冻结
+
+CF19.165 的下一步不能只是对左右 level split 再说一次“Möbius
+cancellation”。固定平方自由 \(C\)，遍历所有有序互补分解
+\(rs=C\)。每个 prime 恰在一侧，故逐项
+\[
+                    \mu(r)\mu(s)=\mu(C).              \tag{CF19.166}
+\]
+特别地，若暂时给每个 split 同一个标量权，CF19.155 的完整带符号和
+可以精确求出。写 \(A_d(z)=c_d(z)/\varphi(d)\)，则
+\[
+ \begin{aligned}
+ \sum_{rs=C}\mu(r)\mu(s)M_{r,s}(x,y)
+ &=\mu(C)\{e_C(-xy)-1\}\sum_{r\mid C}A_r(xy)\\
+ &=\boxed{\mu(C)\{e_C(-xy)-1\}
+       \prod_{p\mid C}\left\{1+{c_p(xy)\over p-1}\right\}.}
+                                                               \tag{CF19.167}
+ \end{aligned}
+\]
+第一行第二项只需将 \(r\leftrightarrow s\) 换名；第二行是平方自由
+divisor product。这个和并不具有 uniform power saving。取任意素数
+\(p\ge5\)、\(C=p\)、\(xy=(p-1)/2\)，则 \(p\nmid xy\)，从而
+\[
+ \left|\sum_{rs=p}\mu(r)\mu(s)M_{r,s}(x,y)\right|
+ =2\cos{\pi\over2p}\,{p-2\over p-1}>1.                \tag{CF19.168}
+\]
+
+CF19.168 是一个精确的路线反例：fixed-product shell 内的两侧
+Möbius signs 自身不能供应 CF19.L 的 \(C^{-\delta}\) saving。它不是
+actual physical sum 的 no-go，因为真正的
+\(b^\sharp_{q_0r}\overline{b^\sharp_{q_0s}}\)、Bessel/AFE 权、
+complete-shift tags 与相邻 product shells 都不是 CF19.167 的共同
+常数权。可行路线因而被缩成两类：在 fixed \(C\) 内证明这些实际
+非恒定列与 CF19.163 的 residue vectors 有 signed dispersion，或者
+在施加 product cutoff 前用共同 Abel/reflection 把相邻 \(C\) 壳重新
+耦合。仅引用 \(\mu(r)\mu(s)\) 或左右交换不再是可接受的证明。
+
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
 实际 \(b^\sharp\) 证明平方自由 canonical 子域的共同 Mellin columns，
@@ -5454,6 +5493,10 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     形成一个共同 ANOVA/Cauchy 界。以上没有支付跨 \((r,s)\) 的 signed
     level assembly，也没有把 hard endpoints、Type-II、native/nonflat、
     diagonal 或 Eisenstein residues 自动放入同一个 \(W_N\)。
+    CF19.166--CF19.168 最后证明 fixed-product split 上
+    \(\mu(r)\mu(s)=\mu(rs)\) 是常号，并给出其完整 split sum 的非零
+    乘积公式；因此 two-sided Möbius signs 本身不能代替所缺的实际
+    coefficient/shift dispersion。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
