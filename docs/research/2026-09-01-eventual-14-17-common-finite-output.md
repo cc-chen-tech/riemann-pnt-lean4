@@ -1837,6 +1837,74 @@ large-\(d\) 行，与 CF8.46 中保留一个**短 complementary divisor**
 CF8.43 的 \(d/e\) 两侧和 marked \(p\)-shift 作一次 joint dispersion。
 这仍是 CF8.37 的同一个完整输出，不是新的条件接口。
 
+CF8.43 的 detector 还有一个对**全部短移位**成立的局部正交性。记
+\[
+ \Delta_{p,d}(n)=p{\bf1}_{pd\mid n}-{\bf1}_{d\mid n},
+ \qquad p\nmid d,
+                                                               \tag{CF8.47}
+\]
+并对整数 \(h\) 定义其共同周期平均
+\[
+ \mathscr C_h(p,d;q,e)
+ ={1\over [pd,qe]}\sum_{n\bmod[pd,qe]}
+       \Delta_{p,d}(n)\Delta_{q,e}(n+h).
+\]
+任意正整数 \(a,b\) 满足
+\[
+ {1\over[a,b]}\sum_{n\bmod[a,b]}
+ {\bf1}_{a\mid n}{\bf1}_{b\mid n+h}
+ ={ {\bf1}_{(a,b)\mid h}\over[a,b]}.
+\]
+把 CF8.47 的四项代入，逐素数检查便得到以下完整分类。若 \(p=q\)，
+且 \(g=(d,e)\)，则
+\[
+ \boxed{\quad
+ \mathscr C_h(p,d;p,e)
+ ={ {\bf1}_{g\mid h}\,c_p(h/g)\over[d,e]}.\quad}       \tag{CF8.48}
+\]
+若 \(p\ne q\)，则除非同时 \(q\mid d\) 与 \(p\mid e\)，平均精确为
+零。若这两个交叉整除成立，写 \(d=qd'\)、\(e=pe'\) 及
+\(g=(d',e')\)，则
+\[
+ \boxed{\quad
+ \mathscr C_h(p,qd';q,pe')
+ ={ {\bf1}_{g\mid h}\,c_p(h/g)c_q(h/g)\over[qd',pe']} .
+ \quad}                                                       \tag{CF8.49}
+\]
+例如只有 \(p\mid e\) 而 \(q\nmid d\) 时，四个 CRT densities 按
+\((1,-1,-p^{-1},p^{-1})/[d,e/p]\) 两两抵消；所以不能把单向
+incidence 误算成 surviving axis。
+
+同一事实也可从有限 Fourier support 看出：
+\[
+ \Delta_{p,d}(n)
+ ={1\over d}\sum_{\substack{a\bmod pd\\p\nmid a}}
+                  e(an/(pd)).                                \tag{CF8.50}
+\]
+每个既约频率的分母都含 \(p\)。两个不同 marked primes 的频率要
+相等，其共同既约分母必须同时含 \(p,q\)，这恰好迫使
+\(q\mid d,\ p\mid e\)。因此 CF8.48--CF8.49 的共同周期项正是
+CF8.24 已支付的 equal-rational-frequency Gram；后续不能把它再作为
+额外 saving 使用。
+
+剩余 incidence 图确实稀疏。CF8.40 非零迫使 \(d\le N\)，而
+\[
+ N\ll XP^{\alpha-1}=P^{\kappa+\alpha-1},
+ \qquad \kappa+\alpha-1<{35\over12}<3.
+\]
+所以充分大 \(P\) 时，每个 \(d\) 至多含两个 \((P,2P]\) 内素因子。
+另外，若 \(0<|h|<H=h_0P\)，则对充分大 \(P\)，\(h/g\) 至多含一个
+大于 \(P\) 的素因子；故 CF8.48 中 \(c_p(h/g)=p-1\) 的 spike 对固定
+\((h,g)\) 至多出现一次，而 CF8.49 中两个不同素数同时 spike 根本
+不会出现。\(h=0\) 的全部 spikes 已属于前述 rational diagonal。
+
+于是下一分析叶不是任意 complete-shift family：它是 CF8.43 的
+nonzero spatial Fourier modes，generic \(p\ne q\) 行有精确零周期
+平均，surviving cross-prime 行只有 bounded-degree 的 mutual
+incidence；同素数的非零短移位也只有一个可能的 Ramanujan spike。
+所需仍是把这些结构与 CF8.44--CF8.46 的 incomplete-cube 系数一起
+保留到一次加权 joint Poisson/dispersion 后，证明 CF8.37。
+
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
 cancellation，因为在该 squarefree canonical 行上
