@@ -1930,8 +1930,10 @@ majorant。特别地，
 \(\mathfrak U_{=}\)。若同一个 \(p\) 的两个 quotients 为 \(m,n\)，
 两个窗口相交只可能在
 \[
-                         |m-n|<H/p\le h_0.
+                         |m-n|<H/p<h_0\le1/16.
 \]
+所以整数 \(m,n\) 必须相等；这里没有留下一个未估计的 bounded
+prime-pair shift。
 而且交集的 \(x\)-测度至多 \(H\)，并由
 \(\omega_K(x/X)\ll_K\omega_K(pm/X)\) 控制。又
 \(|\Lambda_2(m)|\le3\log(2m)\)，且 CF8.10 已使用的同一初等积分比较给
@@ -1940,16 +1942,14 @@ majorant。特别地，
  \ll_K {X\over p}(\log P)^2;
 \]
 幂缓冲硬截断只会减小左边。每个 \(m\) 至多有
-\(2\lceil h_0\rceil+1\) 个这样的 \(n\)。因此
+一个这样的 \(n\)。因此
 \[
  \boxed{\quad
  |\mathfrak U_=|
  \ll_{h_0,K}XH(\log P)^2\sum_p p|Y_p|^2
  \ll XH Q_P(\log P)^2.\quad}                          \tag{CF8.54}
 \]
-这里没有使用素数对估计；只用了 \(\Lambda\) 的点态对数界。同一个
-\(p\) 的 \(m=n\) diagonal 与全部
-\(0<|m-n|<h_0\) 行一起包含在 CF8.54 中。
+这里没有使用素数对估计；只用了 \(\Lambda\) 的点态对数界。
 
 故 CF8.5 还等价于只证明 CF8.53 的 cross-prime 部分
 \[
@@ -1985,30 +1985,15 @@ CF8.55 的 zero determinant 与 nonunit marked shifts 也可完整支付。
 \(\kappa-\alpha>15/4>2\)；所以充分大 \(P\) 后，CF8.55 中
 \(pm=qn\) 的 cross-prime 行**精确为零**。
 
-再处理 \(h=pm-qn\ne0\) 且 \(p\mid h\) 的行。因 \(p\nmid q\)，有
-\(n=pv\)，并可写
+再看 \(h=pm-qn\ne0\) 且 \(p\mid h\) 的行。因 \(p\nmid q\)，虽可写
 \[
-                         m=qv+k,\qquad0<|k|<H/p\le h_0.
+ n=pv,\qquad m=qv+k,\qquad0<|k|<H/p<h_0\le1/16,
                                                                \tag{CF8.57}
 \]
-固定 \(p,q,k\) 后，窗口交集至多为
-\[
- C_KH\,\omega_K(pqv/X),
-\]
-而
-\[
- \sum_{v\ge1}\omega_K(pqv/X)\{1+\log(2pv)+\log(2qv)\}^2
- \ll_K{X\over pq}(\log P)^2.
-\]
-这里只有 \(O_{h_0}(1)\) 个非零 \(k\)。乘回 CF8.55 的 \(pq\) 后，
-对 \(p,q\) 取绝对值，并使用
-\[
- \left(\sum_p|Y_p|\right)^2
- \le Q_P\sum_{P<p\le2P}{1\over p-1}\ll Q_P,
-\]
-得到全部 \(p\mid h\) 行为 \(O(XH Q_P(\log P)^2)\)。交换
-\((p,m)\) 与 \((q,n)\) 同样支付全部 \(q\mid h\) 行；交集只会被这个
-上界重复一次，不影响结论。
+但不存在非零整数 \(k\) 满足这一不等式。等价地，
+\(0<|h|<H=h_0P<\min(p,q)\) 本身就排除
+\(p\mid h\) 或 \(q\mid h\)。所以 nonunit marked-shift 行不是
+negligible，而是在实际 \(h_0\le1/16\) 参数域内严格为空。
 
 所以 CF8.5 最终还等价于 CF8.55 的如下严格子域：
 \[
