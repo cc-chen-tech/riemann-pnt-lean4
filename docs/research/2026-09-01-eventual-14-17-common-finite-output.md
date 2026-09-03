@@ -2530,6 +2530,70 @@ CF8.80 若证明，再经 CF8.85--CF8.90 支付
 对角及全部 Schwartz tails 已在取绝对值以前合并。它尚未证明；
 把 CF8.92 的四项分别上界会精确回到多出的 \(L\)。
 
+CF8.96 的 outer-prime diagonal 可以在整个剩余 \(T\)-带内严格
+支付。把 \(a_n=c_o(n)V(n/R)\) 展回 CF8.59，令
+\[
+ Z_{p,\epsilon}(t)=
+ \sum_{r=1}^2\sigma_r\,rp
+ \sum_{\ell\ {\rm odd\ prime}}(\log\ell)
+ V(rp\ell/R)(rp\ell-\epsilon)^{-it},
+ \qquad \epsilon\in\{0,H\}.                           \tag{CF8.97}
+\]
+则
+\[
+ F_\epsilon(t)=\sum_pY_pZ_{p,\epsilon}(t).
+\]
+固定 \(p,\epsilon\) 后，CF8.97 中任意两个不同的 physical integers
+\(rp\ell\) 相差一个非零的 \(p\) 倍，因而至少相差 \(p\)；这同时
+包括 \(r=1\) 与 \(r=2\) 的 mixed parity 行。支撑上
+\(rp\ell\asymp R\)，所以频率
+\(\log(rp\ell-\epsilon)\) 的间距为 \(\gg p/R\)。此外直接计数给
+\[
+ \sum_{r,\ell}|rp\log\ell\,V(rp\ell/R)|^2
+ \ll_V pR(\log R)^2.                                  \tag{CF8.98}
+\]
+
+分别对 \(Z_{p,H}\) 与 \(Z_{p,0}\) 使用 separated-frequency 均值，
+再用 \(t\asymp T\)，得到
+\[
+ \begin{aligned}
+ &\sum_p|Y_p|^2\int{\Psi(t/T)\over t^2}
+             |Z_{p,H}(t)-Z_{p,0}(t)|^2dt\\
+ &\qquad\ll_V
+ {1\over T^2}\sum_p|Y_p|^2
+       \left(T+{R\over p}\right)pR(\log R)^2
+ \ll_{\eta,V}Q_PP^\eta {R\over T}.                    \tag{CF8.99}
+ \end{aligned}
+\]
+最后一步使用
+\(T\ge R/H\)、\(H=h_0P<p\)，故 \(R/p<T\)，以及
+\(\sum_pp|Y_p|^2\ll Q_P\)。这里没有使用 \(\sum_pY_p=0\)，也没有
+使用 prime-pair 或角色估计。
+
+所以 CF8.96 中尚未支付的唯一部分是
+\[
+ \begin{aligned}
+ {\cal J}^{\times}_{R,H}(T)
+ ={}&\int_{\mathbb R}{\Psi(t/T)\over t^2}
+ \sum_{p\ne q}Y_p\overline{Y_q}
+ \{Z_{p,H}(t)-Z_{p,0}(t)\}\\
+ &\hspace{42mm}\times
+ \overline{\{Z_{q,H}(t)-Z_{q,0}(t)\}}\,dt.             \tag{CF8.100}
+ \end{aligned}
+\]
+所需的 signed cross-prime 命题为
+\[
+ \boxed{\quad
+ \Re{\cal J}^{\times}_{R,H}(T)
+ \ll_{\rho,\eta,V,\Psi}Q_PP^\eta {R\over T},
+ \qquad {R\over H}\le T\le R.\quad}                   \tag{CF8.101}
+\]
+绝对值版足够但更强；CF8.101 只要求真实 quadratic form 的上界。
+CF8.92 的两个零中心、两个 \(\pm H\) 中心和全部 parity mixed 行
+都仍在 CF8.100 的同一个 \(p\ne q\) 和中。CF8.99 因而真正关闭了
+equal-prime/outer diagonal，而没有把 cross-prime cancellation
+先平方成 Hilbert--Schmidt 损失。
+
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
 cancellation，因为在该 squarefree canonical 行上
