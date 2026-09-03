@@ -50,10 +50,11 @@ projective 分离，并用 divisor Cauchy 正确支付 \(n=h\delta\) 的合并�
 它关闭该 literal bulk 的 CF19.130 与 quotient-Fourier 远尾，但不覆盖
 complete-shift、principal/axes 或 Type-II。CF19Z17 从 pre-Poisson
 格点和重推另一 orientation，证明其外权、共同 test 与远尾具有同一
-预算；沿同一 affine line 的连续换元又证明两个第一层 Poisson 零模
-精确相等，所以可对每个完整 box 选择 orientation。这个结论只对
-求完全部非零频率的 box 成立，不允许逐频率择优，也没有关闭两向
-signed level 谱行的共同重组。
+预算；沿同一 affine line 的连续换元及逆元互反式进一步证明两个
+Poisson 展开的**每个同编号 Fourier 频率**精确相等。因此任意共同
+频率 packet 可无损换向，并给出 UC22 的反方向物理子包 CF19.151；
+两个不同方向选择函数的并集、两向 signed level 谱行及其余补集仍未
+共同重组。
 反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
@@ -4766,10 +4767,10 @@ quotient masks、另一 orientation、CF3 endpoints、CF5 axes/origin、
 principal/residue、complete-shift detector 与 Type-II 仍须在 CF19.L/CF19.C
 的同一有限输出中重组。
 
-### CF19Z17. 另一 BCR orientation 具有同一预算，且完整非零行可逐 box 换向
+### CF19Z17. 另一 BCR orientation 具有同一预算，且同编号频率逐项 intertwine
 
-“另一 orientation 同理”若只针对非零 Poisson 频率是错误的；这里从
-原 pre-Poisson shifted-divisor box 直接推导。原方程
+不经核变换就写“另一 orientation 同理”没有证明非零 Poisson 频率
+如何对应；这里从原 pre-Poisson shifted-divisor box 直接推导。原方程
 \(m_1s-m_2r=\delta\) 也可写成
 \[
  m_2={m_1s-\delta\over r},\qquad
@@ -4814,18 +4815,34 @@ cutoffs，并逐点给出
  {1\over r}\widehat f_r^\vee(0)
  ={1\over s}\widehat f_s(0).                        \tag{CF19.147}
 \]
-所以若 \(Z_s,\mathcal O_s^{\ne0}\) 表示原 (4.5) orientation 的
-零/非零频率，而 \(Z_r^\vee,\mathcal O_r^{\vee,\ne0}\) 表示
-CF19.146 的零/非零频率，则逐有限 box 精确有
+事实上 CF19.147 还能逐频率加强。按 (4.3b) 的 Fourier 约定，换元
+直接给出
 \[
- Z_s=Z_r^\vee,qquad
- \boxed{\mathcal O_s^{\ne0}=\mathcal O_r^{\vee,\ne0}.}
-                                                               \tag{CF19.147a}
+ \widehat f_r^\vee(j/r)
+ ={r\over s}e\!\left(-{j\delta\over rs}\right)
+                 \widehat f_s(j/s).                    \tag{CF19.147a}
 \]
-第二式先用两次完整 Poisson 都等于同一个格点和，再减去 CF19.147 的
-共同零模。它是**求完各自全部非零频率后的 box 恒等式**；它不声称
-单个 \(h\) 与单个 \(j\) 匹配，也不允许在频率和内部逐项换向或先取
-绝对值。
+而互素 \(r,s\) 的逆元满足
+\[
+ {\bar r\over s}+{\bar s\over r}\equiv {1\over rs}\pmod1.
+\]
+所以对每个 \(j\in\mathbb Z\)（包括 \(j=0\)）都有逐项恒等式
+\[
+ \boxed{
+ {1\over r}e\!\left({j\delta\bar s\over r}\right)
+       \widehat f_r^\vee(j/r)
+ ={1\over s}e\!\left(-{j\delta\bar r\over s}\right)
+       \widehat f_s(j/s).}                              \tag{CF19.147b}
+\]
+这里两边的频率标签是同一个格参数频率 \(j\)，不是两个需要事后配对
+的独立频率。于是逐有限 box 不仅有
+\[
+ Z_s=Z_r^\vee,\qquad
+ \mathcal O_s^{\ne0}=\mathcal O_r^{\vee,\ne0},          \tag{CF19.147c}
+\]
+而且可在两边同时插入任意相同的有限频率乘子
+\(\eta(r,s,\delta,j)\)。这仍不是把一个 orientation 的任意乘子改成
+另一个不同乘子；特别不能用两个不相同的选择函数分别覆盖互补集合。
 
 尺度也可从 CF19.145 直接重算。置 \(x=KX,t=T\tau\)，则 kernel 的
 唯一尺度为 \(T\sqrt{R/S}\)。事实上，置
@@ -4883,12 +4900,36 @@ CF19.131--CF19.143 的替换
 \(2T/(qRS)\)。
 
 所以“另一 orientation 的 literal 内部 test/尾预算”现已关闭，并且
-CF19.147a 允许在每个完整有限 box 上选取较有利的 orientation，而不
-产生第一层零模 correction。限制同样精确：必须保留该 box 的全部
-非零频率和原 smooth cutoffs；CF3 endpoint 四行、后续 quotient-zero、
-两轴、principal/residue 仍不能被拆开择向。要把各 box 的 signed level
-sum 放进同一个谱范数，仍须将这些行一起送入 CF19.L/CF19.C。
-CF19Z17 是共同换向恒等式，不是 varying-level power saving。
+CF19.147b 允许对任意**同一个**有限频率 packet 选择较有利的
+orientation，而不产生第一层零模 correction。特别地，主方向的 UC22
+子包仍要求
+\[
+ s\ \hbox{squarefree},\quad (\delta,s)=1,\quad
+ 0< {|h|\over(s,|h|)}\le U_0,\quad
+ \left({s\over(s,|h|)}\right)^2\le R,                 \tag{CF19.150}
+\]
+而把 CF19.147b 的同一频率 packet 写成反方向后，同一份 UC22 证明逐字
+给出对偶子包
+\[
+ r\ \hbox{squarefree},\quad (\delta,r)=1,\quad
+ 0< {|h|\over(r,|h|)}\le U_0,\quad
+ \left({r\over(r,|h|)}\right)^2\le S.                 \tag{CF19.151}
+\]
+系数对只交换为其共轭方向，UC1 已明确允许这一点；同时作
+\(\delta\mapsto-\delta\)，AFE 长度与 dyadic 坐标按 CF19.149 前的
+替换交换，唯一外权仍是 \(2T/(qRS)\)。因此
+CF19.151 是原物理非零频率输出的一个新的无条件、逐频率精确识别的
+UC-covered 子包，不是只在求完整个 \(h\)-和后成立的形式对称。
+
+不过，CF19.150 与 CF19.151 的并集不能仅由两个已有 UC22 界控制：
+若用 inclusion--exclusion，交集上会出现同时依赖两模数及
+\((\delta,r)=(\delta,s)=1\) 的选择权；它不再是 UC2--UC9 所需的共同
+列/模数标量分离。等价地，CF19.147b 允许同一个乘子换向，却不允许
+把主方向乘子和反方向乘子相加后忘掉交叠。因此这里关闭的是反方向
+UC 的物理 adapter 和逐频率 common-test 问题；CF3 endpoint 四行、
+后续 quotient-zero、两轴、principal/residue、两个 UC 子包的共同
+并集压缩及其余补集仍须送入 CF19.L/CF19.C。CF19Z17 本身仍不产生
+varying-level power saving。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
