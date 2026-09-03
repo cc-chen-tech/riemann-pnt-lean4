@@ -555,6 +555,64 @@ CF5.19 没有声称第二个大括号具有所需 power saving。它也没有把
 要和 quotient-zero、diagonal、principal residue 发生真正抵消，仍须
 从原 atom 证明共同 \(F_C\)/\(W_s\) 映射及外权完全一致。
 
+### CF5C. 真正零模的 nonunit Ramanujan 核精确降到 reduced modulus
+
+CF5B 与 CF5A 在 quotient-zero 上的算术系数可以进一步逐项对齐。
+仍令 \(g=(D,C)\)、\(c=C/g\)。定义 \(C_\parallel\) 为 \(C\) 的最大
+unitary divisor 且 \(C_\parallel\mid g\)，也就是
+\[
+ C_\parallel=\prod_{\substack{p^a\Vert C\\p^a\mid g}}p^a,
+ \qquad g_*=g/C_\parallel,\qquad
+ \kappa(C,g)=\varphi(C_\parallel)g_* .                   \tag{CF5.20}
+\]
+则对每个整数 \(x\) 有
+\[
+ \boxed{\qquad c_C(gx)=\kappa(C,g)c_c(x),\qquad
+              \kappa(C,g)\varphi(c)=\varphi(C).\qquad}  \tag{CF5.21}
+\]
+证明是逐 prime-power 的。若 \(p^a\Vert C\)、\(p^j\Vert g\) 且
+\(j<a\)，Ramanujan 和的三段公式直接给
+\[
+ c_{p^a}(p^jx)=p^j c_{p^{a-j}}(x).
+\]
+若 \(j=a\)，左边恒为 \(\varphi(p^a)\)。将两类局部式相乘得到
+CF5.21；第二式逐素数同样显然。这个证明包含 \(c=1\) 的退化层。
+
+在 nonunit double-Poisson 原式中，\(D/g\) 在模 \(c\) 下可逆；令
+\(\delta(D/g)\equiv1\pmod c\)。又因 \((A,C)=1\)，\(A\delta\) 是
+模 \(c\) 的单位。所以在真正零模 \(q=Lk=0\) 上，CF5.21 给
+\[
+ \boxed{
+ c_C(gA\delta uv)=\kappa(C,g)c_c(uv).}                  \tag{CF5.22}
+\]
+因此对任何有限 dual-frequency 截断，可先把其任意权按
+\((u,v)\bmod c\) periodize，再原样使用 CF5.10--CF5.16；bulk、
+两轴与 origin 都在同一个 reduced-modulus Ramanujan 核中。
+
+这个 finite residue 描述与 CF5B 的 continuous-comb 描述在轴上也
+逐系数吻合。零模轴的 Ramanujan 值为 \(c_C(0)=\varphi(C)\)。原
+nonunit 双变换系数 \(g/C^2\) 在一条轴上作 spacing-\(c\) 的一维
+Poisson 后乘 \(c\)，故
+\[
+ {g\over C^2}\,c\,\varphi(C)={\varphi(C)\over C};       \tag{CF5.23}
+\]
+这正是 CF5B 中 \(c_C(0)/C\) 的 sampling coefficient。被两轴重复
+计入而只应保留一次的 dual origin，其系数则是
+\(g\varphi(C)/C^2\)，正是 CF5B 的 double-integral coefficient。
+所以 zero-frequency 的 finite residue、两条 sampling lines 与
+deleted origin 已经完成 coefficient-level 对齐；没有第二个
+\(g\)、\(C\) 或 \(A^{-1/2}\) 可再收取。
+
+CF5.22 不能外推到 \(q\ne0\)。最小反例是
+\[
+ C=3,\quad g=1,\quad q=1:\qquad
+ (c_3(1+x))_{x=0,1,2}=(-1,-1,2),
+ \quad(c_3(x))_{x=0,1,2}=(2,-1,-1),                    \tag{CF5.24}
+\]
+两向量不成比例。因此 nonzero quotient frequencies 仍必须留在 CF4
+的真实 shifted kernel；CF5C 只关闭零模的 unequal-gcd coefficient
+adapter。把 CF5.22 用于 CF4 会是可执行有限反例已经排除的错误。
+
 ## CF6. 一个不重不漏的 master tag 集
 
 在所有有限截断固定后，先按**已经逐项验证的** adapter 作一个互斥
@@ -2746,9 +2804,11 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
    residue periodization 把任意有限物理权精确放入同一个四项等式与
    Cauchy 上界。CF5.17--CF5.19 又把任意 unequal-gcd 双 Poisson
    三行精确中心化为两条零均值 sampling axes 与一个不可删除的常数，
-   并给出跨全部有限模数的一次共同 Cauchy。CF5.1 的 centered power
-   saving、连续 comb 与有限 residue 空间的共同物理映射及其与
-   diagonal/principal/residue 行的压缩仍未证明；
+   并给出跨全部有限模数的一次共同 Cauchy。CF5.20--CF5.24 在真正
+   零模上把全部 nonunit kernels 精确降到 reduced modulus，证明
+   residue/sampling/deleted-origin 三种描述的系数一致，并以模 3
+   反例禁止把它外推到非零频率。CF5.1 的 centered power saving、
+   零模与 diagonal/principal/residue 行的压缩仍未证明；
 5. CF6 给出不允许静默丢项的 master-tag contract；只有 adapter 已验证
    的行才能进入 expanded 分支，其余必须留在 native complement。
    因此本稿不把 CF6.2 对全部原行的等同性列为已证；
