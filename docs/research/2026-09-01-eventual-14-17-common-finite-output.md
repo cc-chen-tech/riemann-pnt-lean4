@@ -3064,6 +3064,53 @@ test 下，把 CF6.2 的指定同号行逐字写成 CF19.52，并对异号行另
 CF19.49 的 local sieving induction。未完成这一步时，CF19.51 不能
 被称为 varying-level QCT bound。
 
+### CF19C. reciprocity 只删除反对称 test；固定 parity 壳没有 Möbius saving
+
+CF19.51 对 signed level family 的代数作用可以精确求出。记
+\[
+ \mathscr T_\phi(A,N):=\sqrt N\,{\cal M}_g^+(A,N;\phi).
+\]
+则对互素平方自由 \(A,N\)，CF19.51 就是
+\[
+ \boxed{\mathscr T_\phi(A,N)=\mathscr T_\Phi(N,A).}     \tag{CF19.55}
+\]
+令 \(\Omega\) 是任意有限、在 \((A,N)\leftrightarrow(N,A)\) 下不变的
+互素平方自由 pair 集，且 \(w(A,N)=w(N,A)\)。定义
+\[
+ \mathscr S_\phi
+ =\sum_{(A,N)\in\Omega}\mu(A)\mu(N)w(A,N)
+                              \mathscr T_\phi(A,N).
+\]
+由 CF19.55 和换名立刻得到
+\[
+ \boxed{
+ \mathscr S_\phi=\mathscr S_\Phi,
+ \qquad \mathscr S_{\phi-\Phi}=0,
+ \qquad \mathscr S_\phi={1\over2}\mathscr S_{\phi+\Phi}.} \tag{CF19.56}
+\]
+所以真正的 two-sided reciprocity 会**精确删除 test 的反对称部分**；
+它没有估计剩下的对称部分。
+
+这一点在物理 product shell 上不能再借 Möbius 符号补强。若
+\(\omega(A)=r\)、\(\omega(N)=t\) 在 \(\Omega\) 上固定，则
+\[
+ \boxed{\mu(A)\mu(N)=(-1)^{r+t}\quad((A,N)\in\Omega).}  \tag{CF19.57}
+\]
+CF5F 已给出光滑 dyadic product cutoff 精确冻结固定 cardinality 的
+构造；在两侧分别使用该构造即可得到非空、交换不变的 fixed-parity
+壳。于是取任意非负对称 \(w\)，并在纯有限 countermodel 中置
+\(\mathscr T_\phi=\mathscr T_\Phi=1\)，CF19.55 完全成立，而
+\(|\mathscr S_\phi|=\sum_\Omega w\)，没有任何 cancellation。
+
+这个 countermodel 只说明 **CF19.55 这条恒等式本身**不蕴含 family
+saving；它不声称常数 trace 来自真实自守谱。对 actual QCT，CF19.56
+仍可无损删除全局反对称 Bessel-test 分量，但所需幂次必须在剩余的
+对称分量上来自真实 Kloosterman/shift/Type 系数的联合振荡。特别是
+“两侧都有 \(\mu\)”并不足够：在 fixed-\(\omega\) 壳上两侧符号都已
+冻结。可验收的 CF19.L 因而必须直接控制这个 symmetric physical
+family，或证明共同 reflection 把它和邻接 cardinality 壳重新耦合；
+只引用 reciprocity 与 Möbius 符号不能闭合。
+
 这三条是比“另证 continuous spectrum”更准确的剩余 adapter。HPY
 全谱正性已经支付 Maaß--Eisenstein 的抽象 scalar inequality，经典
 投影也精确恢复 CF7.1；但本文尚未证明实际 QCT 同时满足上述三条，
@@ -3240,7 +3287,10 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     提供第二份 \(A^{-1/2}\)。这个子定理仍限于 fixed-\(g\) raw
     \(\widetilde L^2\)、共同 gamma-ratio Bessel transform；actual
     \(b^\sharp\)、generalized 异号 projector 与完整四行共同投影尚未
-    映射。
+    映射。CF19.55--CF19.57 进一步证明 reciprocity 在交换不变的共同
+    和中只删除 test 的反对称部分；fixed-\(\omega\) product shell 上
+    \(\mu(A)\mu(N)\) 是常号，所以对称部分不能仅由“两侧 Möbius
+    符号”获得 saving。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
