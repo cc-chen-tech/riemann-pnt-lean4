@@ -391,6 +391,102 @@ Ramanujan 和的乘法性、CF5.6 与有限乘积的 Fubini 立刻给 CF5.2 的
 CF5.1 与物理 principal/axis/residue 行在 CF19.C 中的共同压缩；不能
 因 CF5.8 的正主质量就分别估计或删除其中任何一行。
 
+CF5.5 还给出比总质量更精确的两个边缘恒等式：对每个 \(d,e\mid s\)，
+\[
+ \boxed{\quad
+ \sum_{e\mid s}{b_s(d,e)\over e}
+   =\varphi(s){\bf1}_{d=s},\qquad
+ \sum_{d\mid s}{b_s(d,e)\over d}
+   =\varphi(s){\bf1}_{e=s}.
+ \quad}                                                     \tag{CF5.9}
+\]
+逐 prime 验证第一式即可；当 \(d=p^i\) 时，CF5.5 的至多三个非零
+项相加，\(i<a\) 时为零，\(i=a\) 时为
+\(p^a-p^a/p=\varphi(p^a)\)。第二式由对称性，随后张量得到一般
+\(s\)。CF5.8 的 signed 总质量也可由 CF5.9 再对 \(d\) 平均得到。
+
+这使“bulk、两轴、origin 必须共同投影”成为一个精确有限正交等式。
+在 \((\mathbb Z/s\mathbb Z)^2\) 上取归一化计数内积，并令
+\(R_s(h,\delta)=c_s(h\delta)\)。直接从 Ramanujan 和的 Fourier 定义
+（或从 CF5.2 与 CF5.9）得到
+\[
+ \mathbb E_\delta R_s(h,\delta)
+   =\varphi(s){\bf1}_{h=0},\qquad
+ \mathbb E_hR_s(h,\delta)
+   =\varphi(s){\bf1}_{\delta=0},\qquad
+ \mathbb E_{h,\delta}R_s={\varphi(s)\over s}.             \tag{CF5.10}
+\]
+故置
+\[
+ R_s^\circ(h,\delta)=R_s(h,\delta)
+  -\varphi(s){\bf1}_{h=0}-\varphi(s){\bf1}_{\delta=0}
+  +{\varphi(s)\over s},                                    \tag{CF5.11}
+\]
+便有精确的共同四项分解
+\[
+ \begin{aligned}
+ R_s={}&R_s^\circ
+ +\varphi(s)\left({\bf1}_{h=0}-{1\over s}\right)
+ +\varphi(s)\left({\bf1}_{\delta=0}-{1\over s}\right)
+ +{\varphi(s)\over s},\\
+ \|R_s\|_2^2={}&\|R_s^\circ\|_2^2
+   +2{\varphi(s)^2(s-1)\over s^2}+{\varphi(s)^2\over s^2}.
+ \end{aligned}                                             \tag{CF5.12}
+\]
+四项两两正交：\(R_s^\circ\) 的两个边缘均为零，两条 axis 函数各只
+依赖一个坐标且均值为零，最后一项为常数。于是任何 complete-shift
+不等式若使用完整 residue projection，必须在**同一个**范数里先放入
+CF5.12 的双中心、两轴和常数，而不能只保留 \(R_s^\circ\) 后把正的
+origin mass 丢掉。
+
+不完整的 \((h,\delta)\) 光滑窗口对 **CF5.1 本身** 也不造成代数
+adapter。对任意有限支撑的复权 \(\Psi(h,\delta)\)，定义其共同
+residue periodization
+\[
+ W_s(a,b)=\sum_{\substack{h\equiv a\pmod s\\
+                           \delta\equiv b\pmod s}}
+                         \Psi(h,\delta).                   \tag{CF5.13}
+\]
+若 \(P_h,P_\delta,P_0\) 分别表示在第二坐标平均、在第一坐标平均及
+全平均，并令
+\[
+ W_s^\circ=(I-P_h)(I-P_\delta)W_s,\quad
+ W_s^h=P_hW_s-P_0W_s,\quad
+ W_s^\delta=P_\delta W_s-P_0W_s,                           \tag{CF5.14}
+\]
+则有限换序与 CF5.12 的正交性给出
+\[
+ \begin{aligned}
+ \sum_{h,\delta\in\mathbb Z}\Psi(h,\delta)c_s(h\delta)
+ =s^2\{&\langle R_s^\circ,W_s^\circ\rangle
+ +\langle \varphi(s)({\bf1}_{h=0}-s^{-1}),W_s^h\rangle\\
+ &+\langle \varphi(s)({\bf1}_{\delta=0}-s^{-1}),
+                         W_s^\delta\rangle
+ +{\varphi(s)\over s}\,P_0W_s\},                         \tag{CF5.15}
+ \end{aligned}
+\]
+其中所有内积使用归一化剩余类测度并在第二变量线性；最后一个
+\(P_0W_s\) 是常数值。特别地，一次共同 Cauchy 给
+\[
+ \begin{aligned}
+ \left|\sum_{h,\delta}\Psi(h,\delta)c_s(h\delta)\right|
+ \le s^2\bigg{&\|R_s^\circ\|_2\|W_s^\circ\|_2
+ +{\varphi(s)\sqrt{s-1}\over s}
+      (\|W_s^h\|_2+\|W_s^\delta\|_2)\\
+ &+{\varphi(s)\over s}|P_0W_s|\bigg\}.                   \tag{CF5.16}
+ \end{aligned}
+\]
+所以 CF5.1 的任意有限 smooth/AFE weight 已经可在**同一个**四项
+不等式中处理；不需要先把窗口补成矩形再分别估计边界。
+
+CF5.15--CF5.16 仍不是整个物理行的闭合。双 Poisson 另外产生的两条
+sampling line 与 double-integral correction 具有 CF5 中记录的实际
+系数。尚须证明这些额外 physical axes 在共同 Abel/Fourier 展开后恰
+映到 CF5.15 的三个低秩分量，或把差项原样留在 CF6 的 native tags。
+这个要求现在是一个明确的 coefficient identity，而不再是含糊的
+“principal-looking”抵消；CF5.16 自身也没有提供 centered power
+saving。
+
 ## CF6. 一个不重不漏的 master tag 集
 
 在所有有限截断固定后，先按**已经逐项验证的** adapter 作一个互斥
@@ -2576,8 +2672,12 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
    抵消。CF4.1--CF4.4 的全谱 normalization 与原 atom 的等同性未证；
 4. CF5.3--CF5.8：从 prime-power Ramanujan 和作二维差分，自含证明
    CF5.2 的共同 divisor 展开、精确主质量 \(\varphi(s)/s\) 与绝对质量
-   \(\tau(s)^2\)，并同时覆盖两条 axis 与 origin；CF5.1 的 signed
-   上界及其与物理 principal/residue 行的共同压缩仍未证明；
+   \(\tau(s)^2\)，并同时覆盖两条 axis 与 origin。CF5.9--CF5.12 再
+   证明两个边缘只剩顶 divisor，并在完整剩余类空间把同一 Ramanujan
+   核正交分成双中心、左轴、右轴与常数四项；CF5.13--CF5.16 通过
+   residue periodization 把任意有限物理权精确放入同一个四项等式与
+   Cauchy 上界。CF5.1 的 centered power saving、额外双 Poisson axes
+   的物理映射及其与 principal/residue 行的共同压缩仍未证明；
 5. CF6 给出不允许静默丢项的 master-tag contract；只有 adapter 已验证
    的行才能进入 expanded 分支，其余必须留在 native complement。
    因此本稿不把 CF6.2 对全部原行的等同性列为已证；
