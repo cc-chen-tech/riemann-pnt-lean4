@@ -879,6 +879,60 @@ CF5.38 的复合 divisor cost 在一个重要物理范围不能继续逐模数�
 偶 parity 见证与另一侧 level 符号、diagonal 或 principal/residue
 ledger 在**取绝对值以前**抵消。该联合抵消现在是零模最窄的开放叶子。
 
+### CF5I. unit 零模与 principal subtraction 的精确共同标量
+
+CF5H 的偶 parity 见证并不允许把 CF5.12 的低秩三项丢掉。对
+\((h\delta,s)=1\)，两条 axis 与常数逐点分别是
+\(-\varphi(s)/s,-\varphi(s)/s,+\varphi(s)/s\)。所以 CF5.40 与
+CF5.12 在 unit 行精确合回
+\[
+ \boxed{
+ R_s(h,\delta)
+ =\left(\mu(s)+{\varphi(s)\over s}\right)
+   -{\varphi(s)\over s}-{\varphi(s)\over s}
+   +{\varphi(s)\over s}
+ =\mu(s).}                                               \tag{CF5.43}
+\]
+也就是说，低秩账本先且只先消掉 CF5H 中的
+\(\varphi(s)/s\)；剩下的 parity 标量是 \(\mu(s)\)。
+
+这正好是 principal reverse-Poisson completion 的零频标量。平方自由
+\(s>1\) 满足纯有限恒等式
+\[
+ \boxed{
+ {1\over\varphi(s)}\sum_{j\mid s}j\mu(j)=\mu(s).}       \tag{CF5.44}
+\]
+现在取任意有限 unit 标签集 \(D_s\)、复系数 \(a_\delta\)，以及两族
+零频标量 \(z_\delta,z'_\delta\)。把已经由 CF5.43 合回的 unit 零模与
+principal completion 的 subtraction 定义成
+\[
+ \begin{aligned}
+ Z_s(z)&=\mu(s)\sum_{\delta\in D_s}a_\delta z_\delta,\\
+ P_s(z')&=-{1\over\varphi(s)}\sum_{\delta\in D_s}a_\delta z'_\delta
+                              \sum_{j\mid s}j\mu(j).
+ \end{aligned}
+\]
+则 CF5.44 立即给出同一个共同恒等式
+\[
+ \boxed{
+ Z_s(z)+P_s(z')
+ =\mu(s)\sum_{\delta\in D_s}a_\delta(z_\delta-z'_\delta).} \tag{CF5.45}
+\]
+特别地，若两处使用同一个零频权，即 \(z_\delta=z'_\delta\)，unit
+零模、两轴、常数和 principal subtraction 的总和逐 \(s,\delta\)
+精确为零；无须对偶数与奇数 \(\omega(s)\) 分开估计，也没有
+\(2^{\omega(s)}\) 成本。
+
+CF5.45 没有自行证明实际物理权相同。原式的 quotient-zero
+\(\widehat f(0)\) 来自第一条 Poisson/AFE 坐标，而 principal
+subtraction 的 \(\widehat F_{r,s,\delta}(0)\) 来自全非零频率的
+reverse Poisson。必须从 (4.4)--(4.5)、共同 cutoff 与 reflection
+两方向证明它们在 CF6.2 的同一 tag 中逐项相等；若只近似相等，
+则 CF5.45 右边就是必须估计的**唯一 unit 零频 mismatch**。此外
+nonunit reduced-modulus 行仍需 CF5B--CF5C 的 unequal-gcd 映射，AFE
+diagonal 及 Eisenstein residues 也尚未放进 CF5.45。因此这一步关闭
+的是 parity/低秩/principal 的有限系数重组，不是完整 physical ledger。
+
 ## CF6. 一个不重不漏的 master tag 集
 
 在所有有限截断固定后，先按**已经逐项验证的** adapter 作一个互斥
@@ -3090,6 +3144,11 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
    才有 \(\sum_{p\mid s}p^{-1}\) 的逐模数小量。因此剩余问题不是再做
    一次单模数 centering，而是把偶 parity 行同另一侧 level 符号、
    diagonal 及 principal/residue ledger 在取绝对值前共同压缩。
+   CF5.43--CF5.45 又证明：放回 CF5.12 的两轴与常数后，unit 行只剩
+   \(\mu(s)\)，它和 principal reverse-Poisson subtraction 的标量完全
+   相反；若两边零频权相同便逐 tag 精确抵消，一般情形的全部缺口恰是
+   CF5.45 的共同权 mismatch。原 QCT 坐标确实给出同一权仍属
+   CF19.D/CF19.C 的 physical adapter，而不是这条有限恒等式的结论。
    CF5.1 在复合壳的 signed varying-level saving、零模低秩部分与
    diagonal/principal/residue 行的压缩仍未证明；
 5. CF6 给出不允许静默丢项的 master-tag contract；只有 adapter 已验证
