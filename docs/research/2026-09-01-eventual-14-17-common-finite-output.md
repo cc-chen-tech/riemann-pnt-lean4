@@ -3261,7 +3261,16 @@ CF19.61 只关闭了这个 adapter **之后**的 exact-shell off-diagonal
 
 CF19.59 的 exact-shell 几何边不需要逐谱猜测一个“valuation-one
 Kuznetsov”。它可由普通 \(\infty\infty\) trace 在**取绝对值前**作
-有限 level 容斥精确产生。为固定归一化，记
+有限 level 容斥精确产生。从本节起，除 CF19.58 的点态界外，另假设
+\(\phi\) 在 \([0,\infty)\) 上光滑、\(\phi(0)=0\)，并且存在
+\(\delta_0>0\) 使
+\[
+ \phi^{(j)}(x)\ll(1+x)^{-2-\delta_0}\qquad(j=0,1,2).
+                                                               \tag{CF19.61c}
+\]
+也就是说，CF19Z 的纯几何结论仍只需 CF19.58，而 CF19Z2 的每一条
+谱恒等式都明确限于同时满足 CF19.61c 的 Kuznetsov-admissible tests。
+为固定归一化，记
 \(\operatorname{Spec}^{\pm}_N(m,n;\phi)\) 为 level \(N\)、trivial
 character、cusp pair \(\infty\infty\) 的完整 Kuznetsov 谱边，约定
 其几何边为
@@ -3290,7 +3299,8 @@ CF19.62 是经典 Bruggeman--Kuznetsov 的精确归一化；例如
 \(\phi^{(j)}(x)\ll(1+x)^{-2-\delta}\), \(j=0,1,2\)，由中值定理在
 \(x\le1\) 给 \(\phi(x)\ll x\)，在 \(x\ge1\) 给
 \(\phi(x)\ll x^{-2-\delta}\)，故满足 CF19.58 的 \(J=1\)、
-\(K=2+\delta\)。
+\(K=2+\delta\)。这里只使用“CF19.61c 蕴含 CF19.58”；点态条件
+CF19.58 绝不反向蕴含 smoothness 或 trace admissibility。
 
 对任意 \(c\)，有限 Möbius 反演给
 \[
@@ -3357,6 +3367,9 @@ CF19.61b 还允许先在几何侧装配全部 \(k,n\)，而不用把 test 强行
 逐 pair 相同。令 \(\mathcal K\subset[K_0,2K_0]\cap\mathbb N\)、
 \(\mathcal N\subset[N_0,2N_0]\cap\mathbb N\)，并令每个
 \(\phi_{k,n}\) 都满足 CF19.61b 的同一 \(J,K,C_\phi,X_\phi\) 界。
+若只调用下面的几何 Schur bound，不需要 CF19.61c；若还要把每项解释为
+CF19.65 的 full-spectrum trace，则每个 \(\phi_{k,n}\) 还必须分别
+满足 CF19.61c。
 对矩阵
 \[
  H_{k,n}=(k,n)^{1/2}
