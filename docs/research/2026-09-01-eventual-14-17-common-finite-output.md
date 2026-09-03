@@ -39,6 +39,13 @@ quotient mask 的 \(A\)-valuation-one 壳精确写成使用同一 Bessel test
 一旦 actual test 供应同一个显式非负 majorant，Maaß、holomorphic、
 Eisenstein 与 exceptional 谱所需的 scalar bound 已成立；但 majorant
 的 \(C_h,\mathfrak T,\mathfrak Y\) 物理尺度仍须由 CF19.D 证明。
+CF19Z13--CF19Z14 随后把 quotient test 的对数 Sobolev 换元与三类
+真实 Bessel 变换的 tempered/exceptional 尺度精确核算；CF19Z15 再从
+MWKF-PHYS-v1 (5.13b)--(5.14) 的 literal normalized 核出发，证明
+Type-I/Type-I 内部 bulk 的 actual quotient Fourier transform 满足
+CF19.119，且不付 Fourier index、level 或第二份 Jacobian。这个结论仍
+不覆盖 quotient endpoints，也不构造跨 \((k,n)\) 的共同 projective
+test 分解 CF19.130。
 反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
@@ -4507,6 +4514,107 @@ projective mass。CF19.9 已证这个抽象 Fourier 步；但 actual 核的
 CF19.119/CF19.D 半范数、以及 CF19.130 与 complete-shift/AFE 全列的
 逐项相等仍未证。所以 CF19Z14 关闭了「共同 test 一旦分离后的全谱
 Bessel 尺度」，没有关闭 CF19.D/L，更没有支付其他 boxes。
+
+### CF19Z15. literal quotient Fourier transform 的对数导数由原核半范数支付
+
+这里可以关闭 CF19.119 的一个真实物理子域，而不把 CF19.D 的第二次
+Poisson shift 坐标混进来。先给出所需的一维精确引理。设
+\(f\in C_c^J((0,\infty)^2)\) 在两个变量
+\((z,u)\) 中支撑于 \([1/2,2]^2\)，并定义
+\[
+ {\cal F}(z,\xi)=\int_{\mathbb R}f(z,u)e(-\xi u)\,du,
+ \qquad E_u g:=\partial_u(ug)=(1+D_u)g.              \tag{CF19.131}
+\]
+所有函数均延拓为零；紧支撑光滑性保证下列分部积分没有端点项。由
+\(\partial_\xi e(-\xi u)=-2\pi iue(-\xi u)\) 逐次得到
+\[
+ \boxed{
+ D_z^aD_\xi^b{\cal F}(z,\xi)
+ =(-1)^b\int_{\mathbb R}
+       D_z^aE_u^bf(z,u)e(-\xi u)\,du .}              \tag{CF19.132}
+\]
+确实，\(b=1\) 时右端在 \(u\) 上分部积分后等于
+\(-2\pi i\xi\int uf(z,u)e(-\xi u)du=D_\xi{\cal F}\)；
+此恒等式可迭代，且 \(D_z\) 与另外两个算子可交换。由于
+\(E_u^b=(1+D_u)^b\) 以及 \([1/2,2]\) 的长度为 \(3/2\)，
+\[
+ \max_{a+b\le J}\|D_z^aD_\xi^b{\cal F}\|_\infty
+ \le {3\over2}\,2^J
+ \max_{a+c\le J}\|D_z^aD_u^cf\|_\infty .          \tag{CF19.133}
+\]
+这条界在全部 \(\xi\in\mathbb R\) 上一致；特别没有
+\(|\xi|^b\)、Fourier index 长度或一个待吸收的低频例外。
+
+现在回到 MWKF-PHYS-v1 的字面原子。只取 CF19.79 的
+expanded--expanded Type-I/Type-I **内部 bulk**，固定
+\(h,\delta\) 及全部有限 AFE/detector/reflection tags，并置
+\[
+ z={s\over S},\qquad u={A\ell\over R},qquad
+ \xi={kR\over As}={kR\over ASz}.                     \tag{CF19.134}
+\]
+把 FP1 中所有依赖 \((A\ell,s)\) 的 archimedean 因子、原
+\(r,s\) dyadic cutoffs 以及该内部 Type 行的 smooth scalar 一起记为
+\(f_{h,\delta,\mathrm{tag}}(z,u)\)。单位条件
+\((A\ell,s)=1\) 不放进 \(f\)：它正是先按剩余类作 (412.2)，再由
+corrected lift (412.4)--(412.6) 处理的算术条件。于是 (412.2) 中出现的
+\(\widehat f_{s,n}(kR/(As))\) 逐字等于 CF19.131 的
+\({\cal F}(z,\xi)\)，而 Poisson Jacobian 仍只是 CF19.80 外面的那一个
+\(R\)。
+
+这里的半范数不是新假设。FP2 把完整 archimedean 因子写成
+\(\Psi(u,z,\delta/L,h/H)\)；定义源 (5.13b) 保留 exact logarithm、
+\(V_{T\tau}\)、\(W\) 与两个 AFE cutoffs，(5.14) 则给出所有固定阶
+ordinary normalized derivatives 的原登记预算 \({\cal A}_J\)。在
+\(u,z\in[1/2,2]\) 上，\(D_u^cD_z^a\) 是系数一致有界的 ordinary
+partial derivatives 的有限线性组合。内部条件还使
+\({\bf1}_{q_0A\ell\le N}\) 恒为一；余下的字面 taper 是
+\[
+ p_N(q_0A\ell)=1-\frac{\log(q_0Ru)}{\log N},
+\]
+其所有正阶 \(D_u\) 导数一致有界（事实上二阶起为零）。另一侧完全
+相同。故乘积法则不会引入 \(N,R,S,A\) 的幂。因此，对每个固定 \(J\)，
+\[
+ \max_{a+c\le J}
+ \|D_z^aD_u^c f_{h,\delta,\mathrm{tag}}\|_\infty
+ \ll_J {\cal A}_J,                                   \tag{CF19.135}
+\]
+其中若内部 Type scalar 另有光滑半范数，就按定义已经乘进右端的
+\({\cal A}_J\)，不能再把它称为常数。PQ10 内部族有
+\({\cal A}_J\ll_{J,W,F}1\)；一般 polylog core 只得到原 (5.14)
+登记的 \(\log(2T)^{O_J(1)}\)，本文不把后者抹去。
+
+定义
+\(F_{\rm phys}(s,\xi)={\cal F}(s/S,\xi)\)，并在其 dyadic 支撑外
+光滑延拓为零。由 CF19.133--CF19.135，\(s=Sz\) 下
+\(D_s=D_z\)，从而 actual quotient Fourier transform
+严格满足
+\[
+ \boxed{
+ \max_{a+b\le J}\sup_{s>0,\,\xi\in\mathbb R}
+ |D_s^aD_\xi^bF_{\rm phys}(s,\xi)|
+ \ll_J {\cal A}_J .}                                 \tag{CF19.136}
+\]
+这正是 CF19.119 在该 literal bulk atom 上的所需结论。将
+\(\kappa=kR/(AS)\) 代入 CF19.117 后，CF19.118--CF19.128 因而可对
+CF19.82 由这个 actual weight 定义出的每个几何 Bessel test 使用，且没有新增
+\(A,B,m,k,n\) 的幂，也没有第二份 \(A^{-1/2}\)、\(R\) 或
+\(1/(As)\)。
+
+端点范围必须明确。上述零延拓之所以光滑，是因为原
+\(F_R,F_S\in C_c^\infty([1/2,2])\)，并且内部 bulk 不触及
+\(q_0r=N\) 或 \(q_0s=N\) 的 mollifier 截断角点；例如 FP3 的 PQ10
+族满足 \(q_0r,q_0s\le N/2\)。一旦截断角点进入 dyadic 支撑，就不能
+在 CF19.132 中悄悄把硬端点当成光滑拼零，而必须先保留 CF3 的四条
+quotient endpoint 行。故 CF19.136 不覆盖这些 endpoint，也不覆盖
+Type-II、quotient \(k=0\)、axes、principal/residue、native complement
+或 transform tails。
+
+最后，CF19.136 是对每个 \((k,n)\) test 的一致 Sobolev 预算，并不
+推翻 CF19Z14 的 Hadamard 反例。它尚未给出 CF19.130 的共同
+projective separation，也未证明 quotient masks、两种 orientation 与
+complete-shift detector 在同一个谱 Gram 中的逐项相等。因此本节关闭
+的是 CF19.119 的 literal Type-I/Type-I 内部 bulk 叶子，不是
+CF19.D、CF19.L、CF19.C 或全部 QCT boxes。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
