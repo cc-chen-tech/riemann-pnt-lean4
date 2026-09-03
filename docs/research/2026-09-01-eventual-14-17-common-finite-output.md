@@ -55,7 +55,10 @@ Poisson 展开的**每个同编号 raw Fourier 频率**精确相等。因此任�
 共同 raw frequency packet 可无损换向。CF19Z18 同时指出 centered
 UC 包不能直接换向：两方向的 Ramanujan 主值不同，其差精确等于
 CF19.154 的共同 rank-one principal mismatch；这项尚须与完整
-principal/axis ledger 一起压缩。
+principal/axis ledger 一起压缩。CF19Z19 再算出这个 mismatch 在
+完整 shift residue grid 上的精确平方范数，并对任意有限物理权给出
+一次共同 periodization/Cauchy 不等式；其 physical weight norm 尚未
+装配进全部 boxes。
 反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
@@ -4983,6 +4986,74 @@ Eisenstein residues 共同压缩。
 及**全部 gcd** 的 exact centered/principal difference，并把解析义务
 缩成这一个共同 rank-one 行的同投影压缩；CF3 endpoints、完整
 principal/axis/residue、CF19.L/CF19.C 及其余补集仍开放。
+
+### CF19Z19. centered mismatch 的完整 shift-grid 精确范数
+
+CF19.151 的 rank-one 行在完整 shift grid 上有可直接计算的共同范数。
+设 \(r,s\) 互素且平方自由，\(N=rs\)，并在
+\((\mathbb Z/N\mathbb Z)^2\) 上定义
+\[
+ M_{r,s}(x,y)=
+ {c_r(xy)\over\varphi(r)}e\!\left(-{xy\over N}\right)
+ -{c_s(xy)\over\varphi(s)}.                            \tag{CF19.155}
+\]
+则
+\[
+ \boxed{
+ {1\over N^2}\sum_{x,y\bmod N}|M_{r,s}(x,y)|^2
+ ={2^{\omega(r)}\over r}+{2^{\omega(s)}\over s}
+ -{2^{\omega(N)+1}\over N}.}                          \tag{CF19.156}
+\]
+证明逐素数且没有估计。对 \(p\mid r\)，
+\[
+ {1\over p^2}\sum_{x,y\bmod p}
+ \left|{c_p(xy)\over p-1}\right|^2={2\over p};
+\]
+\(p\mid xy\) 的 \(2p-1\) 对给值 \(1\)，其余 \((p-1)^2\) 对给
+值 \(1/(p-1)^2\)。第二个平方范数同理。交叉项中
+\(c_r(xy)c_s(xy)=c_N(xy)\)。CRT 把 \(e_N(-xy)\) 在每个
+\(p\mid N\) 上变成一个非零 additive character，而对任意
+\(a\in(\mathbb Z/p\mathbb Z)^\times\)
+\[
+ {1\over p^2}\sum_{x,y\bmod p}
+ {c_p(xy)\over p-1}e_p(-axy)={2\over p}.
+\]
+这里 \(x=0\) 行贡献 \(p\)，每个 \(x\ne0\) 行由
+\(\sum_zc_p(z)e_p(-az)=p\) 贡献 \(p/(p-1)\)；除以 \(p^2\)
+即得。乘遍 \(p\mid N\) 后交叉内积是
+\(2^{\omega(N)}/N\)，而范数展开有两份交叉项，证明 CF19.156。
+这个证明也覆盖 \(r=1\) 或 \(s=1\) 的空乘积边界。
+
+对任意有限复权 \(W(h,\delta)\)，令其共同 residue periodization 为
+\[
+ W_N(x,y)=\sum_{\substack{h\equiv x\ ({\rm mod}\ N)\\
+                          \delta\equiv y\ ({\rm mod}\ N)}}W(h,\delta).
+\]
+有限重排与一次 Cauchy 给出同一个 exact-grid 不等式
+\[
+ \boxed{
+ \left|\sum_{h,\delta}W(h,\delta)M_{r,s}(h,\delta)\right|
+ \le N\left(
+ {2^{\omega(r)}\over r}+{2^{\omega(s)}\over s}
+ -{2^{\omega(N)+1}\over N}\right)^{1/2}
+ \left(\sum_{x,y\bmod N}|W_N(x,y)|^2\right)^{1/2}.}    \tag{CF19.157}
+\]
+所以凡是已经由 CF6.2 的共同 coefficient map 放进同一个 \(W_N\) 的
+projection top、unequal-gcd correction 与两条 principal axes，其
+**换向差异**都可在 CF19.157 中一次 Cauchy，而不必再逐行取绝对值。
+CF19.157 本身尚未证明这些 physical rows 确有这个共同 \(W_N\)；
+该 adapter 仍在下一段保留。右边的 half-root 属于 principal mismatch
+自己的完整-grid 范数；它不能再乘到 CF7 已含一次 valuation-one
+shell half-root 的 centered spectral row 上。
+
+CF19.157 仍不是物理上界。需要从 CF19.137--CF19.143 的同一个
+AFE/Bessel/complete-shift 权证明其 \(W_N\) 范数在全部 dyadic、
+endpoint 与 nonflat tags 求和后落入 CF19.L 的共同 energy，而不能用
+逐 \((r,s)\) 的粗界
+\(\|W_N\|_2\le\|W_N\|_1\)。后一粗界会丢掉 CF19.156 的半根收益。
+因此 CF19.157 关闭的是 principal mismatch 的完整有限 coefficient
+norm；其 physical periodization/level assembly 仍是 CF19.L/CF19.C
+中的同一个开放义务。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
