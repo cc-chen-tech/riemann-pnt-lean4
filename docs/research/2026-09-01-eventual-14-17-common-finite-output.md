@@ -729,6 +729,45 @@ CF19.L 必须证明这些变化能由共同 Abel/reflection operator 承担，�
 CF5.32 最后一个 \(1/p\) 精确变回 \(1+(p-1)/p\)，因而不是允许的
 替代证明。
 
+### CF5F. product shell 可精确冻结 Möbius parity
+
+CF5.32 的完整 cube 收益不能只靠“权很光滑”迁到每个 dyadic product
+shell。固定 inactive prime 集 \({\cal I}\) 及
+\(1\le r\le|\mathcal I|\)，记
+\(r_p=(p-1)/p\)。若一个权只保留 \(|T|=r\) 的顶点，则
+\[
+ \boxed{
+ \sum_{T\subseteq\mathcal I}(-1)^{|T|}
+       \prod_{p\in T}r_p\,{\bf1}_{|T|=r}
+ =(-1)^r e_r((r_p)_{p\in\mathcal I}),}                  \tag{CF5.33}
+\]
+其中 \(e_r\) 是第 \(r\) 个初等对称多项式。右边所有项同号；若
+每个 \(p\ge2\)，其绝对值至少为
+\(2^{-r}\binom{|\mathcal I|}{r}\)。完整 cube 的
+\(\prod_{p\in\mathcal I}p^{-1}\) 在这里完全没有出现。
+
+而 CF5.33 确实能由通常的平滑 product cutoff 实现。取
+\({\cal I}\) 中所有不同素数都在 \([X,(1+\epsilon)X]\)，固定
+\((1+\epsilon)^r<3/2\)，并令 \(X\) 足够大，使
+\((1+\epsilon)^{r-1}/X<1/2\) 且 \(X>2\)。可选
+\(F\in C_c^\infty((1/2,2))\) 在
+\([1,(1+\epsilon)^r]\) 上恒为一。于是逐顶点精确有
+\[
+ F\left({\prod_{p\in T}p\over X^r}\right)
+ ={f1}_{|T|=r}.                                       \tag{CF5.34}
+\]
+事实上 \(|T|\le r-1\) 时自变量小于 \(1/2\)，\(|T|=r\) 时落在
+上述平台，而 \(|T|\ge r+1\) 时自变量大于 (2\)。所以一个标准
+smooth dyadic shell 可以冻结 \(\mu(\prod_{p\in T}p)=(-1)^r\)，并
+把 CF5.32 所依赖的不同 cardinality 之间抵消全部切断。
+
+这是否定一条具体路线，而不是停止点：**complete Boolean cube
++ smooth Abel** 不能单独提供实际 shell 的 varying-level saving。
+后续估计必须在固定 \(\omega(s)=r\) 的同号层内部保留两侧 level、
+shift 与 Bessel 相位并产生 dispersion，或证明物理重组在取 shell
+cutoff 前就已把相邻 cardinality 重新耦合。CF5.34 不排除这两种真正
+的 signed analytic 机制。
+
 ## CF6. 一个不重不漏的 master tag 集
 
 在所有有限截断固定后，先按**已经逐项验证的** adapter 作一个互斥
@@ -2928,7 +2967,10 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
    比例趋于 \(1/\sqrt2\)，故复合壳不能只靠有限投影取得 power saving。
    CF5.29--CF5.32 再把 squarefree centered 核写成四状态正交张量，
    并证明完整带符号 cofactor cube 中每个未激活素数恰给 \(1/p\)；
-   实际 dyadic shell 的缺顶点/变权迁移仍属 CF19.L。
+   实际 dyadic shell 的缺顶点/变权迁移仍属 CF19.L。CF5.33--CF5.34
+   构造平滑 product shell 精确冻结固定 \(\omega(s)\) 的反例，否定
+   只用完整 cube 加 smooth Abel 迁移该收益的路线，但不否定壳内
+   two-sided dispersion。
    CF5.1 在复合壳的 signed varying-level saving、零模与
    diagonal/principal/residue 行的压缩仍未证明；
 5. CF6 给出不允许静默丢项的 master-tag contract；只有 adapter 已验证
