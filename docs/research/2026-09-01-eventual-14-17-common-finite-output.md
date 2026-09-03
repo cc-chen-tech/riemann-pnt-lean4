@@ -16,8 +16,10 @@ cross-prime contraction、短逆边实际 Riesz 平方能量、affine
 physical-shift 导数/尾引理，以及 actual-Riesz 四阶矩的共同 Hilbert
 列扩张；CF19B 还把经典 Andersen--Kıral level reciprocity 的三项
 prime completion 无损张量化到互素平方自由 levels，并证明该
-reciprocity 本身不含第二份 shell half-root；CF19Z 则在不交换无限
-谱和的前提下，直接给出 odd--Hecke 零列的 exact-shell 几何绝对界。
+reciprocity 本身不含第二份 shell half-root；CF19Z--CF19Z2 则在
+不交换无限谱和的前提下，先直接给出 odd--Hecke 零列的 exact-shell
+几何绝对界，再用一次有限 level Möbius 容斥把该几何边精确识别为
+包含 oldforms 与连续谱的整体 regulated full-spectrum trace。
 反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
@@ -3228,6 +3230,100 @@ principal/axis/residue 行在恢复整数格后进入同一个共同账本。
 CF19.61 只关闭了这个 adapter **之后**的 exact-shell off-diagonal
 估计，不支付 adapter 本身，也不支付 CF19.D/CF19.C。
 
+### CF19Z2. 完整谱 exact-shell 由 level Möbius 容斥一次实现
+
+CF19.59 的 exact-shell 几何边不需要逐谱猜测一个“valuation-one
+Kuznetsov”。它可由普通 \(\infty\infty\) trace 在**取绝对值前**作
+有限 level 容斥精确产生。为固定归一化，记
+\(\operatorname{Spec}^{\pm}_N(m,n;\phi)\) 为 level \(N\)、trivial
+character、cusp pair \(\infty\infty\) 的完整 Kuznetsov 谱边，约定
+其几何边为
+\[
+ \begin{aligned}
+ \operatorname{Spec}^{+}_N(m,n;\phi)
+   &=\Delta_\phi{\bf1}_{m=n}
+     +\sum_{\substack{c\ge1\\N\mid c}}
+       {S(m,n;c)\over c}\phi\!\left({4\pi\sqrt{mn}\over c}\right),\\
+ \operatorname{Spec}^{-}_N(m,n;\phi)
+   &=\sum_{\substack{c\ge1\\N\mid c}}
+       {S(m,-n;c)\over c}\phi\!\left({4\pi\sqrt{mn}\over c}\right).
+                                                               \tag{CF19.62}
+ \end{aligned}
+\]
+这里 \(+\) 边包含 Maaß、holomorphic 与全部 cusps 的 Eisenstein
+谱，\(-\) 边包含带 parity 的 Maaß 与全部 Eisenstein 谱而
+holomorphic 边为空；两个式子都使用 level \(N\) 的完整正交空间，
+所以 oldforms 已包括，不能再另加 newform correction。
+\(\Delta_\phi\) 是与 \(N\) 无关的同号 diagonal transform。
+CF19.62 是经典 Bruggeman--Kuznetsov 的精确归一化；例如
+[Andersen--Kıral §3, (3.3)--(3.14)](https://arxiv.org/html/1801.06089)
+先对一般 cusp pair 定义谱边，并在 \(\infty\infty\) 时给
+\(N\mid c\) 的经典 Kloosterman sum。该文 (3.10) 的条件
+\(\phi(0)=0\) 与
+\(\phi^{(j)}(x)\ll(1+x)^{-2-\delta}\), \(j=0,1,2\)，由中值定理在
+\(x\le1\) 给 \(\phi(x)\ll x\)，在 \(x\ge1\) 给
+\(\phi(x)\ll x^{-2-\delta}\)，故满足 CF19.58 的 \(J=1\)、
+\(K=2+\delta\)。
+
+对任意 \(c\)，有限 Möbius 反演给
+\[
+ \sum_{d\mid A}\mu(d){\bf1}_{ABd\mid c}
+={\bf1}_{AB\mid c}\sum_{d\mid(A,c/(AB))}\mu(d)
+ ={\bf1}_{AB\mid c}\,{\bf1}_{(c/(AB),A)=1}.            \tag{CF19.63}
+\]
+由于 \(A>1\)，同号 diagonal 的系数也精确为
+\[
+ \sum_{d\mid A}\mu(d)=0.                               \tag{CF19.64}
+\]
+把 CF19.62--CF19.64 合起，对每个固定
+\(\operatorname{rad}(t)\mid A\) 得到完整谱恒等式
+\[
+ \boxed{
+ \sum_{d\mid A}\mu(d)\,
+ \operatorname{Spec}^{\pm}_{ABd}(At^2k,n;\phi)
+ =
+ \sum_{\substack{r\ge1\\(r,A)=1}}
+ {S(At^2k,\pm n;ABr)\over ABr}
+ \phi\!\left({4\pi t\sqrt{Akn}\over ABr}\right).}       \tag{CF19.65}
+\]
+这一步对 \(+\) 与 \(-\) 都成立；没有把 holomorphic 谱错误贴到
+异号行，也没有遗漏 non-squarefree levels \(ABd\) 上的 oldforms
+或 Eisenstein cusps。它还是一个**有限** level 恒等式，所以没有
+Fubini 或 varying-level 收敛假设。
+
+令 \(\mathcal T\) 递增遍历所有只含 \(A\)-素因子的有限 \(t\) 集。
+将 CF19.65 乘 \(A^{-2}t^{-1}\) 后对 \(t\in\mathcal T\) 求和，得到
+\[
+ \begin{aligned}
+ \sum_{t\in\mathcal T}{1\over A^2t}
+   \sum_{d\mid A}\mu(d)
+     \operatorname{Spec}^{\pm}_{ABd}(At^2k,n;\phi)
+ =\mathfrak G^{\pm}_{A,B;\mathcal T}(k,n;\phi).         \tag{CF19.66}
+ \end{aligned}
+\]
+CF19.61 证明右边在 \(\mathcal T\uparrow
+\{t:\operatorname{rad}(t)\mid A\}\) 时绝对收敛，故左边作为一个**整体
+regulated full-spectrum trace** 有唯一极限，而且该极限就是
+\(\mathfrak G^{\pm}_{A,B}\)，并满足 CF19.61。这里没有把 \(t\)-极限
+分别移入 Maaß、holomorphic 或 Eisenstein 和；CF19.32e 已说明那种
+逐谱交换不能由普通大筛支配。
+
+这也精确标出 Andersen--Kıral reciprocity 不能直接补上的缝。该文
+(3.12)--(3.14) 用于 reciprocity 的 \(0\infty\) 几何核是
+\[
+ \sum_{(c,N)=1}{S(\overline N m,n;c)\over c\sqrt N}
+       \phi\!\left({4\pi\sqrt{mn}\over c\sqrt N}\right),
+                                                               \tag{CF19.67}
+\]
+而 CF19.62--CF19.65 的 \(\infty\infty\) exact shell 要求
+\(AB\mid c\)，归一化是 \(1/c\)，且没有 inverse-\(N\) index。
+所以 CF19.51 的 \(0\infty\) level reciprocity 不能逐项识别为
+CF19.65，也不能据此赠送 \(A^{-1/2}\)。现在已经闭合的是
+“完整谱有限 level 容斥 \(\leftrightarrow\) exact-shell 几何边”
+以及它的 regulated odd--Hecke 极限；仍开放的是原 QCT 反射是否以
+**同一个 regulator 和同一个 \(\infty\infty\) test** 产生 CF19.66，
+以及 principal/axis/residue 四行是否在恢复整数格后进入这份共同账本。
+
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
 实际 \(b^\sharp\) 证明平方自由 canonical 子域的共同 Mellin columns，
@@ -3408,8 +3504,16 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     \(B^{-1}A^{-11/4+\varepsilon}(kn)^{1/4+\varepsilon}(k,n)^{1/2}\)
     的绝对 exact-shell 界，并再次核对 ambient harmonic 权与 shell
     half-root 没有重复计算。有限截断到有理 multiplier 的完整三谱
-    极限、actual common Bessel test 和 principal/axis/residue
-    物理映射仍开放。
+    逐谱极限、actual common Bessel test 和 principal/axis/residue
+    物理映射仍开放。CF19.62--CF19.67 另用
+    \(\sum_{d\mid A}\mu(d)\operatorname{Spec}_{ABd}^{\pm}\) 精确选出
+    \(v_p(c)=1\ (p\mid A)\)：同号 diagonal 由
+    \(\sum_{d\mid A}\mu(d)=0\) 消失，Maaß/holomorphic/Eisenstein
+    与 non-squarefree levels 的 oldforms 全部保留；CF19.61 使其
+    odd--Hecke 截断具有唯一的整体 regulated 极限。这个
+    \(\infty\infty\) 壳与 Andersen--Kıral 的 \(0\infty\)、
+    \((c,N)=1\)、\(1/(c\sqrt N)\) 核不同，故 reciprocity 仍不能
+    逐项移植，点态有理 multiplier 与物理共同 regulator 的识别仍开。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
