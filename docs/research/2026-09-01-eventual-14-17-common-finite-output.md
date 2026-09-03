@@ -669,7 +669,7 @@ CF5.28 是这个需求的核级反例，不是说实际带符号物理和没有�
 
 CF5D 的复合壳质量还可分解成一套显式正交坐标。对素数 \(p\) 令
 \[
- f_p(x)={\bf1}_{p\mid x}-{1\over p}qquad(x\bmod p).
+ f_p(x)={\bf1}_{p\mid x}-{1\over p}\qquad(x\bmod p).
 \]
 直接检查 \(p\mid h\delta\) 与 \(p\nmid h\delta\) 两种情形，得到
 \[
@@ -678,12 +678,12 @@ CF5D 的复合壳质量还可分解成一套显式正交坐标。对素数 \(p\)
 \]
 其中 \(1\) 与 \(f_p\) 正交，且
 \(\|f_p\|_2^2=(p-1)/p^2\)。若 \(s\) 平方自由，记
-\({\cal P}(s)=\{p:p\mid s\}\)，并对 \(U\subseteq{cal P}(s)\) 置
+\(\mathcal P(s)=\{p:p\mid s\}\)，并对 \(U\subseteq\mathcal P(s)\) 置
 \(f_U(x)=\prod_{p\in U}f_p(x_p)\)。由 CRT 与 CF5.29，
 \[
  \boxed{
  R_s^\circ(h,\delta)=
- \sum_{\substack{\varnothing\ne U,V\subseteq{cal P}(s)}}
+ \sum_{\substack{\varnothing\ne U,V\subseteq\mathcal P(s)}}
  K_s(U,V)f_U(h)f_V(\delta),}                             \tag{CF5.30}
 \]
 其中
@@ -691,7 +691,7 @@ CF5D 的复合壳质量还可分解成一套显式正交坐标。对素数 \(p\)
  K_s(U,V)=
  \prod_{p\in U\cap V}(-p)
  \prod_{p\in U\triangle V}(p-1)
- \prod_{p\in{cal P}(s)\setminus(U\cup V)}{p-1\over p}.
+ \prod_{p\in\mathcal P(s)\setminus(U\cup V)}{p-1\over p}.
                                                                \tag{CF5.31}
 \]
 不同 \((U,V)\) 两两正交。CF5.30 的限制 \(U,V\ne\varnothing\) 恰是
