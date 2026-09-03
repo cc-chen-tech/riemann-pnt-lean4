@@ -73,7 +73,11 @@ assembly 及其余 physical rows 尚未装配。CF19Z22 则给出精确反例：
 CF8.4 另外给出一个不经 dense coefficient correction 的充分路线：
 同一个完整投影方差由原 Möbius taper 的完整未投影方差支配。因此
 后续可优先证明 CF8.5 的 all-box bound；这严格覆盖所需投影对象，
-同时保留真正的 Möbius 结构。
+同时保留真正的 Möbius 结构。CF8.6--CF8.13 又在同一未投影范数中
+完整支付所有“系数指标含奇素数平方”的输出，证明 CF8.5 等价于其
+奇部平方自由剩余；genuine-gcd 的 odd part 因而只剩两两互素
+squarefree \(q_0,r,s\)，另有九个明确的 \(2\)-adic states。这个约化
+保留全部 mixed cross terms，不是按输出整数删项。
 
 本文不证明这个共同输出的所需上界。最后可选择证明 CF8.5 的更强
 原系数 all-box bound，或 CF9.1 的 dense projected full-output gate；
@@ -1290,6 +1294,90 @@ XI25 的同一投影下界。此路线仍必须展开并估计 \(\mathfrak U_b\)
 **全部** physical boxes，不能只证明 nonzero-frequency core；但它
 不需要 CF0A.3 的 growing-support 修正、CF8.1 的
 \(\mathfrak M_\sharp\) adapter 或增广残差小量界。
+
+CF8.5 的系数域还可在**同一个未投影范数**中严格缩小。固定
+\[
+ Z=2XP^\alpha+H,\qquad N=\lceil Z/P\rceil,\qquad
+ L_b=\lceil4PN\rceil,\qquad
+ W_X(x)={\bf1}_{x/X\in I_P}\omega_K(x/X),
+\]
+并对 \(P<p\le2P\) 的奇素数定义
+\[
+ a_N(d)=\mu(d){\log(N/d)\over\log N}{\bf1}_{d\le N},\quad
+ z_d=\sum_{p\mid d}pY_pa_N(d/p),\quad
+ b_d=z_d-2{\bf1}_{2\mid d}z_{d/2}.                    \tag{CF8.6}
+\]
+当 \(x/X\in I_P\)、\(x<n\le x+H\) 且 \(P\) 充分大时，所有 quotient
+都在 \((1,N]\)；有限 Möbius 恒等式
+\(\sum_{d\mid m}a_N(d)=\Lambda(m)/\log N\) 因而逐项给出
+\[
+ c(n)=(\log N)\sum_{d\mid n}b_d.                     \tag{CF8.7}
+\]
+这里 \(m=1\) 的除数和等于 \(1\) 而非 \(0\)，但当前支持使该 endpoint
+不会出现；两个 parity 分支都已留在 CF8.6。
+
+令 \(b^\square_d\) 保留被某个奇素数平方整除的系数指标，置
+\(b^\circ=b-b^\square\)，并以 CF8.7 定义相应
+\(c^\square,c^\circ\) 与短和 \(F_\square,F_\circ\)。若
+\(k_p(n)=n/p^{v_p(n)}\)，置
+\[
+ L_{N,p}(n)=
+ \begin{cases}\Lambda(k_p(n)),&k_p(n)>1,\\
+                 \log(N/p),&k_p(n)=1.
+ \end{cases}
+\]
+有限 divisor sum（包括纯 \(p\)-幂尖峰）精确化为
+\[
+ c^\square(n)=-\sum_{p^2\mid n}pY_p
+ \{L_{N,p}(n)-2{\bf1}_{2\mid n}L_{N,p}(n/2)\}.       \tag{CF8.8}
+\]
+因 \(0\le L_{N,p}\le\log N\)，而 \(n\le Z\) 所含不同 \(p^2\) 的
+个数至多 \(\nu=\log Z/(2\log P)=O_{\kappa,\alpha}(1)\)，一次有限
+Cauchy 给
+\[
+ |c^\square(n)|^2\le9\nu(\log N)^2
+                  \sum_{p^2\mid n}p^2|Y_p|^2.         \tag{CF8.9}
+\]
+对 \(\omega_K(y)=y^K/(1+y)^{2K}\)，初等积分比较给所有 \(U>0\)
+都有 \(\sum_{m\ge1}\omega_K(m/U)\le C_KU\)。在 CF8.9 中写
+\(n=p^2m\)，并用
+\(Q_P=\sum_p(p-1)|Y_p|^2\)，得到
+\[
+ \sum_n|c^\square(n)|^2\omega_K(n/X)
+ \ll_{\kappa,\alpha,K}{XQ_P(\log P)^2\over P}.        \tag{CF8.10}
+\]
+每个长度 \(H\) 的窗口至多含 \(2H\) 个整数；若 \(x<n\le x+H\)
+且 \(W_X(x)\ne0\)，则
+\(\omega_K(x/X)\le2^K\omega_K(n/X)\)。于是连同两个硬端点
+\[
+ \boxed{\quad
+ \mathfrak U_{b^\square}(P)
+ =\int_{\mathbb R}W_X(x)|S_\square(x,H)|^2dx
+ \ll XH Q_P(\log P)^2.
+ \quad}                                                \tag{CF8.11}
+\]
+这里仅使用 \(H=h_0P\)；这不是局部 box 或投影后的界。
+
+在同一 Hilbert 空间中 \(F_b=F_\circ+F_\square\)，所以
+\[
+ \mathfrak U_b\le2\mathfrak U_{b^\circ}
+                    +2\mathfrak U_{b^\square},\qquad
+ \mathfrak U_{b^\circ}\le2\mathfrak U_b
+                    +2\mathfrak U_{b^\square}.        \tag{CF8.12}
+\]
+CF8.11 因而证明：允许重选固定 \(C_{\rho,\eta},P_{\rho,\eta}\) 后，
+CF8.5 与把 \(b\) 换成 \(b^\circ\) 的同一陈述等价；所有 mixed cross
+terms 由 CF8.12 支付，并未假装为零。剩余 \(b^\circ_d\ne0\) 必有
+\[
+                 d=2^jm,\qquad0\le j\le2,\quad
+                 m\ {\rm odd\ squarefree}.             \tag{CF8.13}
+\]
+因此其 genuine-gcd 分解的奇部 \(q_0,r,s\) 平方自由且两两互素，
+\(2\)-adic 部分只有
+\((v_2(d),v_2(e))\in\{0,1,2\}^2\) 九种状态。CF8.13 没有删除任何
+odd-squarefree Type-I/II、endpoint、low-height、principal 或 tail；
+它只是把 CF8.5 的完整剩余域严格冻结到 CF3--CF7 所研究的平方自由
+局部几何加九个显式 \(2\)-adic rows。
 
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
