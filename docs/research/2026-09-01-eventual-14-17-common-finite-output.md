@@ -4328,6 +4328,69 @@ CF19.115 没有 \(U/B\) saving：要恢复它，必须证明所有
 \(B_0\mid B\) oldclasses 在同一个 level-\(B\) normalized projector
 中的 dilution 与 \(m_A\) 无损相容；仅知道 \(B_0\mid B\) 不够。
 
+### CF19Z13. quotient test 换元的对数 Sobolev pullback 没有尺度损失
+
+先把“几何 test 是否 admissible”与“其谱变换是否有一个足够小的
+非负 majorant”分开。记 \(D_y=y\partial_y\)。固定其他所有有限
+tags，设原 quotient--Poisson 权在两个 normalized 坐标中是
+\(F(s,\xi)\)，并置
+\[
+ W(z)=F(Sz,\kappa/z),\qquad
+ \phi_X(x)=W(X/x),\qquad X,S>0.                       \tag{CF19.117}
+\]
+这里 \(\kappa\) 可以依赖已固定的 Fourier index；公式不要求
+\(\kappa\) 为整数或非零。链式法则给出两个精确恒等式
+\[
+ D_z^jW(z)
+ =\left.(D_s-D_\xi)^jF(s,\xi)
+   \right|_{s=Sz,\,\xi=\kappa/z},
+ \qquad
+ D_x^j\phi_X(x)=(-1)^j(D_z^jW)(X/x).                 \tag{CF19.118}
+\]
+第一式中 \(D_s,D_\xi\) 可交换，所以没有隐藏 commutator。因此，若
+\[
+ \max_{a+b\le J}\sup_{s,\xi}
+ |D_s^aD_\xi^bF(s,\xi)|\le {\cal A}_J,              \tag{CF19.119}
+\]
+则直接有
+\[
+ \max_{j\le J}\|D_z^jW\|_\infty
+ +\max_{j\le J}\|D_x^j\phi_X\|_\infty
+ \le 2^{J+1}{\cal A}_J.                              \tag{CF19.120}
+\]
+特别地，CF19.120 的对数 Sobolev 费用与 \(X\) 无关；把
+\(X\) 变成 \(tX\) 不会额外产生 \(t^j\)。这一点正是移动模数壳
+CF19.77 所需的尺度核算。
+
+若 \(F(Sz,\kappa/z)\) 在 \(z\in[1/2,2]\) 外为零并在端点光滑拼零，
+则 \(\phi_X\) 支撑于 \([X/2,2X]\)。又因
+\[
+ x^j\phi_X^{(j)}(x)
+ =D_x(D_x-1)\cdots(D_x-j+1)\phi_X(x),                \tag{CF19.121}
+\]
+CF19.120 推出，对任意固定 \(\delta_0>0\)，
+\[
+ \max_{0\le j\le2}\sup_{x\ge0}
+ (1+x)^{2+\delta_0}|\phi_X^{(j)}(x)|
+ \ll_{\delta_0}{\cal A}_2
+ (1+X)^{2+\delta_0}(1+X^{-2}).                       \tag{CF19.122}
+\]
+将 \(\phi_X(0)\) 定义为零后，它因支撑远离零而在
+\([0,\infty)\) 上光滑，并严格满足 CF19.61c。所以一旦
+actual \(F\) 的 CF19.119 与端点拼零已逐字验证，从 CF19.81 到
+classical Kuznetsov 的“每个 test 可容许”不再需要一个额外
+定理；该结论同时适用于同号 Maaß/Eisenstein/holomorphic 行与
+异号 Maaß/Eisenstein 行，因为它只是共同几何 test 的性质。
+
+但 CF19.122 的 ordinary-derivative 常数明确依赖 \(X\)，它不能被隐藏
+到 \(P^\varepsilon\)。更重要的是，CF19.117--CF19.122 没有证明
+\(|h_{\phi_X}^{\pm}|\) 可由 CF19Z12 所需的同一非负 HPY 窗口族控制。
+它也没有证明 actual \(F\) 的 CF19.119；后者仍须由原
+AFE/detector/reflection/physical-shift 核逐导数验算，不能从
+CF19.81a 的 \(L^\infty\) 界倒推。因而这里关闭的只是尺度换元与
+admissibility 层；谱定位、exceptional 的 \({\mathfrak Y}\) 尺度、以及
+CF19.113 的 common-positive-majorant 仍是 CF19.D 的真正未证部分。
+
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
 实际 \(b^\sharp\) 证明平方自由 canonical 子域的共同 Mellin columns，
