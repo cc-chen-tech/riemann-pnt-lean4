@@ -77,7 +77,11 @@ CF8.4 另外给出一个不经 dense coefficient correction 的充分路线：
 完整支付所有“系数指标含奇素数平方”的输出，证明 CF8.5 等价于其
 奇部平方自由剩余；genuine-gcd 的 odd part 因而只剩两两互素
 squarefree \(q_0,r,s\)，另有九个明确的 \(2\)-adic states。这个约化
-保留全部 mixed cross terms，不是按输出整数删项。
+保留全部 mixed cross terms，不是按输出整数删项。CF8.14--CF8.24
+再把剩余写成一张原 marked-prime/Möbius-cofactor complete-shift
+Hermitian Gram，并用有限 Ramanujan 坐标与 reciprocal-LCM 正定式
+完整支付所有相同既约有理频率；唯一未证部分因而缩成同一有限
+\(a/r\ne b/s\) 的 signed off-frequency quadratic form。
 
 本文不证明这个共同输出的所需上界。最后可选择证明 CF8.5 的更强
 原系数 all-box bound，或 CF9.1 的 dense projected full-output gate；
@@ -1378,6 +1382,165 @@ terms 由 CF8.12 支付，并未假装为零。剩余 \(b^\circ_d\ne0\) 必有
 odd-squarefree Type-I/II、endpoint、low-height、principal 或 tail；
 它只是把 CF8.5 的完整剩余域严格冻结到 CF3--CF7 所研究的平方自由
 局部几何加九个显式 \(2\)-adic rows。
+
+这个剩余还能在不作 AFE 或逐 box 投影时写成一张共同
+complete-shift Gram。令
+\(p_N(u)=\log(N/u)/\log N\)（\(u\le N\)）并在其余处置零。对
+奇平方自由 \(n\)、\((n,2p)=1\) 定义
+\[
+ \kappa_0(n)=p_N(n),\qquad
+ \kappa_1(n)=-p_N(2n)-2p_N(n),\qquad
+ \kappa_2(n)=2p_N(2n).                                \tag{CF8.14}
+\]
+直接把 CF8.6 的三个 \(2\)-adic cases 展开，得到完整系数恒等式
+\[
+ \boxed{\quad
+ b_d^\circ=
+ \sum_{\substack{0\le j\le2,\ P<p\le2P,\ n\ {\rm odd\ squarefree}\\
+                   (n,p)=1,\ d=2^jpn}}
+       pY_p\mu(n)\kappa_j(n).
+ \quad}                                                \tag{CF8.15}
+\]
+若 \(d\) 含多个 amplifier primes，CF8.15 对每个可能的 marked \(p\)
+各保留一项；没有把它们误认成互斥。三行分别来自
+\(z_{pn}\)、\(z_{2pn}-2z_{pn}\) 与 \(-2z_{2pn}\)，所以符号与
+parity factor 都已固定。
+
+对 \(d\ge1\) 置完整窗口计数与其 centered 版本
+\[
+ D_d(x)=\sum_{k\ge1}{\bf1}_{x<dk\le x+H},\qquad
+ E_d(x)=D_d(x)-{H\over d}.                             \tag{CF8.16}
+\]
+odd-square mask 在乘除 \(2\) 下不变，故
+\(b^\circ=z^\circ-2T_2z^\circ\)，其中
+\((T_2z)_{2d}=z_d\)。于是
+\(\sum_db_d^\circ/d=0\)。结合 CF8.7 与 CF8.15，逐 \(x\) 精确有
+\[
+ F_\circ(x/X)
+ =(\log N)\sum_{j=0}^2\sum_p
+   \sum_{\substack{n\ {\rm odd\ squarefree}\\(n,p)=1}}
+ pY_p\mu(n)\kappa_j(n)E_{2^jpn}(x).                  \tag{CF8.17}
+\]
+所有和有限；减去的 density 是在**总和内**由 reciprocal mean zero
+消失的，不是逐 marked row 假定为零。
+
+在 \(L^2(\mathbb R,W_Xdx)\) 使用第二变量线性的内积。平方 CF8.17
+只作有限换序，得到
+\[
+ \boxed{\begin{aligned}
+ {\mathfrak U_{b^\circ}(P)\over(\log N)^2}
+ ={}&\sum_{j,k=0}^2\sum_{p,q}pq\,\overline{Y_p}Y_q
+ \sum_{\substack{n,m\ {\rm odd\ squarefree}\\(n,p)=(m,q)=1}}
+ \mu(n)\mu(m)\kappa_j(n)\kappa_k(m)\\
+ &\hspace{28mm}\times
+ \langle E_{2^jpn},E_{2^kqm}\rangle_{W_X}.
+ \end{aligned}}                                       \tag{CF8.18}
+\]
+这是一张 Hermitian positive-semidefinite Gram 的**一次**带符号
+quadratic form。\(d=e\) 对角、unequal gcd、两个 parity axes、所有
+短移位、硬窗口端点与不同 marked primes 的 cross terms 都已经在
+CF8.18 内；没有另立 principal 或 projection subtraction。
+
+同一 Gram 还有完全有限的既约有理频率坐标。对任意有限系数 \(u\)
+定义
+\[
+ U_r(u)=\sum_{r\mid d}{u_d\over d},\qquad
+ \mathcal Q(u)=\sum_{d,e}{u_d\overline{u_e}\over[d,e]}
+              =\sum_r\varphi(r)|U_r(u)|^2.             \tag{CF8.19}
+\]
+最后一式只用
+\((d,e)=\sum_{r\mid d,e}\varphi(r)\) 的有限换序。有限字符正交又给
+\[
+ \sum_{d\mid n}u_d=\sum_rU_r(u)c_r(n).                \tag{CF8.20}
+\]
+对 \(u=b^\circ\)，CF8.17 前的 reciprocal mean zero 正是
+\(U_1(b^\circ)=0\)。令
+\[
+ \Theta_{L_b}=\{a/r:2\le r\le L_b,\ 1\le a<r,\ (a,r)=1\}.
+\]
+若 \(x=\lfloor x\rfloor+v\)、\(0\le v<1\)，置
+\(J(v)=\lfloor v+H\rfloor\)、
+\(D_j(\theta)=\sum_{m=1}^je(m\theta)\) 及
+\[
+ g_\theta(x)=e(\theta\lfloor x\rfloor)D_{J(v)}(\theta).
+\]
+把 CF8.20 在同一个半开窗口内求和，端点逐整数检查便得到
+\[
+ \boxed{\quad
+ S_\circ(x,H)=(\log N)
+     \sum_{\theta=a/r\in\Theta_{L_b}}U_r(b^\circ)g_\theta(x).
+ \quad}                                                \tag{CF8.21}
+\]
+\(H\) 不必为整数；\(J(v)\) 自动同时处理两个硬端点。
+
+先证明所需 LCM 预算，避免把它当作外部接口。对 CF8.6 的 \(a_N\)
+置 \(u_r=U_r(a_N)\)、\(S_Y=\sum_pY_p\)。有限卷积逐 \(r\) 给
+\[
+ U_r(z)=S_Yu_r+\sum_{p\mid r}Y_p(u_{r/p}-u_r).         \tag{CF8.22}
+\]
+因为 \(|a_N|\le1\)，有
+\(|u_r|\le(1+\log N)/r\)；一个 \(r\le L_b\) 至多含
+\(O_{\kappa,\alpha}(1)\) 个 \((P,2P]\) 内素因子。对 CF8.22 作加权
+Cauchy，并用
+\[
+ |S_Y|^2\le Q_P\sum_p{1\over p-1}\ll Q_P,\qquad
+ \sum_{\substack{r\le L_b\\p\mid r}}{\varphi(r)\over r^2}
+       \ll{\log L_b\over p},
+\]
+得到
+\(\mathcal Q(z)\ll Q_P(1+\log L_b)^3\)。若
+\((T_2z)_{2d}=z_d\)，则
+\(\mathcal Q(2T_2z)=2\mathcal Q(z)\)，故
+\(\mathcal Q(b)\le(1+\sqrt2)^2\mathcal Q(z)\)。另一方面，
+CF8.8 的未乘 \(\log N\) 系数可写成
+\[
+ b^\square=-\sum_ppY_pT_{p^2}u^{(p)}
+              +2\sum_ppY_pT_{2p^2}u^{(p)},\qquad
+ u^{(p)}_m=\mu(m)p_N(pm){\bf1}_{(m,p)=1},\quad
+ |u^{(p)}_m|\le1,
+\]
+而无权 dilation 满足
+\(\mathcal Q(T_j u)=\mathcal Q(u)/j\)。范数三角、
+\(\mathcal Q(u^{(p)})\le(1+\log L_b)^3\)（因为
+\(|U_r(u^{(p)})|\le(1+\log L_b)/r\) 且
+\(\sum_{r\le L_b}\varphi(r)/r^2\le1+\log L_b\)）与
+\((\sum_p|Y_p|)^2\ll Q_P\) 给
+\(\mathcal Q(b^\square)\ll Q_P(1+\log L_b)^3\)。再作一次范数三角，
+\[
+ \boxed{\qquad
+ \mathcal Q(b^\circ)\ll_{\kappa,\alpha}
+                 Q_P(1+\log L_b)^3.\qquad}             \tag{CF8.23}
+\]
+
+现在只取 CF8.21 平方中相同的既约频率。若 \(j=qr+s\)、
+\(0\le s<r\)，有限 Parseval 给
+\[
+ \sum_{\substack{a\bmod r\\(a,r)=1}}|D_j(a/r)|^2
+ \le rs-s^2\le rj.
+\]
+又由有限 Euler 乘积
+\[
+ {r\over\varphi(r)}
+ =\prod_{p\mid r}(1+p^{-1})\prod_{p\mid r}(1-p^{-2})^{-1}
+ \le2\sum_{d\mid\operatorname{rad}(r)}{1\over d}
+ \le2(1+\log r),
+\]
+并且 \(J(v)\le H+1\le2H\)，而
+\(\int W_X=X\int_{I_P}\omega_K\ll_KX\)。因此 CF8.19 与 CF8.23
+严格给出
+\[
+ \boxed{\quad
+ \mathfrak D_{\rm rat}(b^\circ)
+ \ll_{\kappa,\alpha,K}XH Q_P(\log P)^6.
+ \quad}                                                \tag{CF8.24}
+\]
+这里 \(\mathfrak D_{\rm rat}\) 包含所有相同既约频率
+\(a/r=b/s\)（包括不同原 divisor indices）的共同 Gram；它不是原展开
+的物理 \(n=m\) 对角，二者不能再分别扣除。CF8.24 已达到 CF8.5 的
+允许预算。故 CF8.5 的唯一未证部分可冻结为 CF8.21 中
+\(a/r\ne b/s\) 的**同一有限 off-rational-frequency quadratic
+form**；两侧 marked primes、Möbius cofactors、九个 \(2\)-adic
+states 与 \(W_X\) 端点权必须保留到一次 signed estimate 之后。
 
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
