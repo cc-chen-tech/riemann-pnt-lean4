@@ -25,8 +25,10 @@ shell local coefficient 的 CF19.32c 串联，否则单素数局部和精确为�
 正确的物理候选必须降到 level \(B\)，相应绝对界只有 \(A^{-2+\varepsilon}\)
 而不是重复壳密度所得的 \(A^{-3+\varepsilon}\)。CF19Z8 再在共同有限
 谱 regulator 内证明这个 lower-level candidate 逐 datum 精确等于
-unramified oldclass multiplier；ramified complement 与共同解除
-regulator 仍保持开放。
+unramified oldclass multiplier；CF19Z9 再精确计算 Steinberg rank-one
+行、证明导子指数至少二的正 index 消失，并在有限 regulator 内把全部
+导子模式平方合计为 \(O(A^{-1})\)。共同解除 regulator 与这些模式的
+full-level harmonic assembly 仍保持开放。
 反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
@@ -3868,6 +3870,118 @@ remainder。连续谱的所有 cusp labels 在 CF19.91 中被逐 datum 保留，
 因此这里关闭的是 **finite-regulator unramified oldclass multiplier**，
 不是 full-spectrum physical adapter。
 
+### CF19Z9. Steinberg 行是 rank one；全部导子模式只给一份 shell half-root
+
+CF19Z8 留下的 ramified 局部类型可在当前 zero--zero 方向上继续精确
+分类。先取 primitive conductor exponent one。平凡中心特征强制其为
+\(\pi_p=\chi\mathrm{St}\)，其中
+\[
+ \lambda_j:=\lambda_\pi(p^j)=\epsilon^jp^{-j/2},qquad
+ \epsilon\in\{1,-1\}.
+\]
+置
+\[
+ q=p+1,qquad r_p={p(p+2)\over q^2}.
+\]
+采用 [Blomer--Milićević, Lemma 2](https://arxiv.org/abs/1404.7845)
+的 exact oldclass convention。取 degeneracy map \(f|_p\) 的 \(L^2\) 归一化，使其 normalized
+Fourier coefficient 为 \(\sqrt p\,\lambda_{j-1}\)。局部 Hecke
+double-coset 内积直接给
+\[
+ \|f\|=\|f|_p\|=1,
+ \qquad \langle f|_p,f\rangle={\epsilon\over p+1}.
+\]
+因此 Gram--Schmidt 说明 level \(p^2\) 的完整两维 oldclass 正交基
+是原 newvector \(f\) 与
+\[
+ f^{(p)}=r_p^{-1/2}\left(f|_p-{\epsilon\over q}f\right).
+                                                               \tag{CF19.92}
+\]
+在 normalized Fourier coefficients 中，第二个向量在 valuation
+\(j\) 的系数为
+\[
+ U(j)=r_p^{-1/2}
+ \left(\sqrt p\,\lambda_{j-1}-{\epsilon\over q}\lambda_j\right),
+ \qquad \lambda_{-1}=0.                                \tag{CF19.93}
+\]
+直接代入 \(\lambda_j=\epsilon^jp^{-j/2}\)，对 \(j\ge1\) 得
+\[
+ {U(0)U(j)\over\lambda_j}=-{pq-1\over q^2r_p}.          \tag{CF19.94}
+\]
+
+因为 \([\Gamma_0(p):\Gamma_0(p^2)]=p\)，level \(p\) newvector
+trace 与 level \(p^2\) oldclass trace 的 ambient harmonic
+normalization 比是 \(1:p^{-1}\)。故其 exact level
+difference 在 valuations \((0,j)\) 上为
+\[
+ \mathcal K_p^{(1)}(0,j)
+ =\lambda_j-{1\over p}\{\lambda_j+U(0)U(j)\}.
+\]
+当前 corrected lift 的 denominator 是 unit-side 的
+\(c_p(1)=-1\)。由 CF19.94 清分母得到
+\[
+ \boxed{
+ {\mathcal K_p^{(1)}(0,j)\over c_p(1)}
+ =-C_{p,0}\lambda_j,qquad
+ C_{p,0}=1-{p+1\over p^2(p+2)},qquad j\ge1.}           \tag{CF19.95}
+\]
+Kloosterman/spectral kernel 对两个 Fourier indices 对称，所以
+CF19.95 正是 CF19.80 中首 index valuation \(j\ge1\)、第二 index
+valuation zero 的 Steinberg 行。它是一个 rank-one Hecke 列，而
+不是待付的任意二维矩阵；并且
+\[
+ 0<C_{p,0}<1,qquad
+ |C_{p,0}\lambda_1|^2={C_{p,0}^2\over p}\le {1\over p}.
+                                                               \tag{CF19.96}
+\]
+
+primitive conductor exponent 至少二时，local standard Euler factor
+在 \(p\) 处 degree zero，所以 \(\lambda_\pi(p^j)=0\ (j\ge1)\)；
+当前 lifted first index 含 \(p\)，故该行逐 Fourier coefficient 为零。
+对 trivial-nebentypus Eisenstein newdata，primitive character pair
+的两个 local conductor exponents 相同，所以没有 exponent-one
+Eisenstein 类型；正 exponent 类型至少二，也由同一正 index 消失。
+
+最后可把全部 primitive-conductor patterns 在取绝对值前正交合计。
+在每个 \(p\mid A\)，非零选择只有 unramified 与 Steinberg 两个互相
+正交的 primitive subspaces，其 zero--zero 局部平方质量为
+\[
+ |D_p(1,0)|^2+{C_{p,0}^2\over p}.
+\]
+由 CF19.31、Kim--Sarnak \(|\lambda_1|\le p^\theta+p^{-\theta}\)
+及 \(\inf_p\rho_p>0\)，
+\[
+ p|D_p(1,0)|^2\ll p^{-3+2\theta},
+\]
+而 CF19.96 给
+\[
+ |D_p(1,0)|^2+{C_{p,0}^2\over p}
+ \le {1\over p}\{1+O(p^{-3+2\theta})\}.               \tag{CF19.97}
+\]
+因为 \(\theta=7/64<1/2\)，右边的 Euler correction 绝对可积。
+所以对任意 squarefree \(A\)，同一个有限谱 regulator 内导子模式的
+Hilbert 平方和（各 primitive subspace 使用自身的 native harmonic
+measure）满足
+\[
+ \boxed{
+ \sum_{\mathfrak c\mid A}
+   |\text{zero--zero local coefficient at conductor }\mathfrak c|^2
+ \ll {1\over A},
+ \qquad
+ \|\text{all conductor patterns}\|\ll A^{-1/2}.}      \tag{CF19.98}
+\]
+这里 \(\mathfrak c\) 只记录 \(A\)-部分的 primitive conductor；
+exponent-two 行已为零。CF19.98 先用 primitive subspace 正交性求平方
+和，绝不对 \(2^{\omega(A)}\) 个模式作三角不等式。
+
+CF19.98 是所需 shell half-root 的唯一导子模式来源，不能与 CF19.88
+的辅助 modulus density 相乘，也不能再乘 CF7.1。它仍只是 local
+coefficient Hilbert norm：要进入 actual QCT，须证明所有导子模式的
+shifted Fourier lists 在同一个 full-level harmonic large sieve 中
+保持共同 Bessel/complete-shift 权；逐导子模式分别大筛再相加会重新
+制造 \(2^{\omega(A)}\)。这个 varying-conductor assembly 与连续谱
+principal/axis/residue 的共同 regulator 仍属 CF19.L/CF19.C。
+
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
 实际 \(b^\sharp\) 证明平方自由 canonical 子域的共同 Mellin columns，
@@ -4092,8 +4206,13 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     Eisenstein regulator 内逐 datum 完成其中的 unramified oldclass
     multiplier：level difference 的 \(\prod_{p\mid A}D_p(1,0)\) 与
     level-\(B\) odd--Hecke aggregate 精确相同，且没有第二份 harmonic
-    \(1/p\)。ramified conductor 数据、共同解除 regulator 及其与
-    principal/axis/residue 的同投影重组仍留在 native remainder。
+    \(1/p\)。CF19.92--CF19.98 又从 conductor-one 的两维 oldbasis 直接算出
+    Steinberg rank-one 系数 \(-C_{p,0}\lambda_j\)，证明 conductor
+    exponent 至少二在正 index 消失，并利用 primitive-subspace 正交性
+    把全部导子模式平方合计为 \(O(A^{-1})\)。这只给一次
+    \(A^{-1/2}\) local Hilbert norm；把不同导子的 shifted lists 放入
+    同一 full-level harmonic large sieve、共同解除 regulator，以及与
+    principal/axis/residue 的同投影重组仍是 CF19.L/CF19.C 的未证装配。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
