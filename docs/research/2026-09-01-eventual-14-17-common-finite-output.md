@@ -2007,6 +2007,77 @@ CF8.58 保留两份 \(\Lambda_2\)、\(Y_p\overline{Y_q}\)、原窗口交集与
 必须用两侧 Möbius signs、prime-level reciprocity 或 joint Poisson
 估计的核心。
 
+还可把两份 \(\Lambda_2\) 的高次 prime-power 尾从同一个 Hilbert
+输出中安全分离。令
+\[
+ \Lambda_o(m)=
+ \begin{cases}\log m,&m\ {\rm odd\ prime},\\0,&\text{otherwise},
+ \end{cases}
+\]
+并置 \(\sigma_1=1,\sigma_2=-1\) 及
+\[
+ c_o(n)=\sum_p\sum_{a=1}^2
+   \sigma_a\,apY_p{\bf1}_{ap\mid n}\Lambda_o(n/(ap)),
+ \qquad c_{\rm pp}=c-c_o.                              \tag{CF8.59}
+\]
+因此 \(c_o\) 同时保留 odd-prime quotient 与 twice-odd-prime
+quotient，符号和 Jacobian 分别是 \(1,-2\)；没有把四个 parity
+cross terms拆开取模。
+
+对 \(R\ge2\)，逐 dyadic 区间作整数计数给
+\[
+ \sum_{\substack{\ell\ {\rm prime}\\j\ge2}}
+  (\log\ell)^2\omega_K(\ell^j/R)
+ \ll_K R^{1/2}\log^3(2R).                              \tag{CF8.60}
+\]
+事实上，在 \([U,2U]\) 内每个 \(j\ge2\) 至多有
+\((2U)^{1/2}\) 个可能底数，且
+\(j\le\log_2(2U)\)；乘 \(\log^2(2U)\) 后，对
+\(U=2^kR\) 使用 \(\omega_K\le\min(y^K,y^{-K})\)，两端几何级数
+均收敛。底数 \(2\)、quotient \(2\) 与固定有限小值由同一个上界
+吸收。
+
+在实际 \(n\gg P^2\) 支撑上，唯一分解保证 \(c_{\rm pp}(n)\) 至多
+含同一个 outer prime 的两个 parity 项；先用
+\(|u+v|^2\le2|u|^2+2|v|^2\)，再像 CF8.11 一样对每个窗口用加权
+Cauchy 和 CF8.60，得到
+\[
+ \begin{aligned}
+ \int W_X(x)\left|\sum_{x<n\le x+H}c_{\rm pp}(n)\right|^2dx
+ &\ll_K H^2\sum_p p^2|Y_p|^2
+                (X/p)^{1/2}\log^3(2X)\\
+ &\ll_K XH Q_P\,P^{-5/12}\log^3P,
+ \end{aligned}                                        \tag{CF8.61}
+\]
+因为 \(H=h_0P,\ X=P^{23/6}\)。这里的 \(H^2\) 是窗口 Cauchy 的
+真实费用；\(P^{-5/12}\) 来自 prime-power 稀疏性，未挪用任何 shell
+half-root。
+
+对 \(F_b=F_o+F_{\rm pp}\) 在同一 \(L^2(W_Xdx)\) 中双向使用一次
+Hilbert 三角，CF8.61 证明 CF8.5 等价于 \(F_o\) 的同一上界。结合
+CF8.54--CF8.58，唯一未证物理和因而可写成
+\[
+ \boxed{\begin{aligned}
+ \mathfrak R_o={}&
+ \sum_{\substack{p\ne q\\a,b\in\{1,2\}}}
+ \sigma_a\sigma_b\,abpqY_p\overline{Y_q}
+ \sum_{\substack{m,n\ {\rm odd\ prime}\\
+       0<|apm-bqn|<H}}
+ (\log m)(\log n)\,\Phi_{apm-bqn}(apm),\\
+ \Phi_h(u)={}&\int_{\mathbb R}W_X(x)
+ {\bf1}_{x<u\le x+H}{\bf1}_{x<u-h\le x+H}\,dx,
+ \end{aligned}}                                      \tag{CF8.62}
+\]
+且所需恰为
+\[
+                   |\mathfrak R_o|
+       \ll_{\rho,\eta}XH Q_PP^\eta.                   \tag{CF8.63}
+\]
+因 \(H<\min(p,q)\)，CF8.62 的每个非零 determinant 自动与 \(pq\)
+互素。CF8.62 是四个 parity branches **先相加后的同一个 signed
+correlation**；下一步可以从中减去并精确支付共同 singular reference，
+但不能把 Hardy--Littlewood 预测直接当作 \(\mathfrak R_o\) 的估计。
+
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
 cancellation，因为在该 squarefree canonical 行上
