@@ -3514,7 +3514,7 @@ CF19.72--CF19.73 完全一致。
  \ll_\varepsilon{}&
  {C_WC_0^{1/2+\varepsilon}\over BA^{3-\varepsilon}}
  \{(N_0+K_0^{1/2})(K_0+N_0^{1/2})\}^{1/2}\\
- &\times\|x\|_2\|y\|_2.                               \tag{CF19.75}
+ &\times(K_0N_0)^\varepsilon\|x\|_2\|y\|_2.           \tag{CF19.75}
  \end{aligned}
 \]
 在 CF19.70 的非极端失衡域，长度费用是
@@ -3593,6 +3593,96 @@ CF19.73 的 \(\prod(1-p^{-1})^{-1}\)，而是 CF19.78 显示的
 reflection tags 具有共同 \(C_W\) 预算。CF19.78 仍只是
 zero--zero exact-shell 的几何 supplier，不估计其他 local states 或
 principal/axis/residue/native 行。
+
+### CF19Z6. 原 Type-I/Type-I bulk 的几何 test/scale 映射
+
+现在只返回 MWKF-PHYS-v1 的字面原子，不借用 CF4 的未证
+全谱等同。在一个 Type-I/Type-I expanded--expanded bulk 行中写
+\[
+ r=A\ell,\qquad s=Bm,\qquad (A,Bm)=1,\qquad n=h\delta,
+                                                               \tag{CF19.79}
+\]
+其中 \(A,B\) 平方自由，\(\ell,m\) 是展开后的无权 quotient。
+固定 \(s,h,\delta\) 及其他有限 tags，把原 CF2.1 中依赖
+\(r=A\ell\) 的全部 archimedean/taper 因子（显式
+\((A\ell,s)=1\) mask 除外）写成支撑于
+\(u=A\ell/R\asymp1\) 的光滑函数 \(f_{s,n}(u)\)。
+主笔记 §412 的精确 quotient Poisson
+与 corrected lift 给
+\[
+ R\sum_{k\in\mathbb Z}
+ \widehat f_{s,n}\!\left({kR\over As}\right)
+ {S(Ak,-n;As)\over As\,c_A(n)}.                       \tag{CF19.80}
+\]
+这里 \(R\) 是 CF2.3 中唯一的 Poisson Jacobian；
+\(1/(As)\) 已是 classical trace 的 \(1/c\)，不允许再加
+\(\sqrt{As}\) 或第二份 \(R\)。CF3.2 中的 \(\mu(A)\) 与
+CF19.80 的 \(c_A(n)^{-1}\) 合并且只合并一次，成为 CF7.5 的
+\(\mu(A)/c_A(n)\)；\(\mu(B)\) 与原 mollifier/taper 标量仍留在外面。
+CF19.80 只冻结
+Kloosterman 行的 Jacobian、indices 与 modulus。
+
+令 \(c=As=ABm\) 及 \(C_0=AS\)。因 \(B\mid s\) 且
+\(s\le2S\)，有 \(C_0\ge AB/2\)，正满足 CF19Z5 的尺度前提。
+由原 \(s\asymp S\) 的光滑
+dyadic cutoff，zero--zero 子行中余下的完整几何权可定义为
+\[
+ W_{k,n}(z):=
+   \bigl[\text{CF2.1 的余下 normalized weight 及
+   quotient Fourier transform}\bigr]_{\,s=Sz,\;
+          \xi=kR/(C_0z)}.                               \tag{CF19.81}
+\]
+这不是一个代理权：括号内是原有限 atom 逐字节在
+\(s=Sz\) 的取值。它支撑于 \(z\in[1/2,2]\)。且由
+\[
+ |\widehat f_{s,n}(\xi)|\le\|f_{s,n}\|_1
+\]
+及 \(u\) 的固定紧支撑，对每个已经固定的 literal atom 有
+\[
+ \sup_{k,n}\|W_{k,n}\|_\infty
+ \ll \mathcal A_0(\text{该 atom}).                     \tag{CF19.81a}
+\]
+这句话不把 \(\mathcal A_0\) 宣称为绝对常数：MWKF-PHYS-v1 §3 的
+内部族有一致 \(O_{W,F}(1)\) 预算，更大的 core 必须保留原登记的
+\(\mathcal A_J\) 费用。若把有限 AFE/detector/reflection tags 一起
+取最大值，CF19.81a 仍只支付该最大值，没有新增 \(A,B,m\) 幂。
+这里“没有新增”是指除 \(\mathcal A_J\) 已显式登记的参数依赖外，
+不再复制一份隐藏费用。
+原域若还保留 \((m,Bq_0)=1\) 或其他 quotient mask，它们不塞进
+\(W_{k,n}\)：CF19.78 的纯几何绝对界对删项仍成立，但 CF19.65 的
+完整谱恒等式不能据此忽略这些 mask；其精确 inclusion--exclusion
+仍归 CF4。
+若还要求统一的 spectral derivative seminorm，则必须对 CF19.81 的
+\(z\)-导数逐项证明原核的 Sobolev pullback 并再用 CF19.9；这部分
+仍属 CF19.D，不由上面的 \(L^\infty\) 界自动推出。
+
+对 \(k,n\ne0\) 取绝对值并把符号放入 \(\pm\) Kloosterman 行。
+在 zero--zero 局部状态中
+\((A,|kn|)=1\)，因而置
+\[
+ X_{k,n}={4\pi\sqrt{A|kn|}\over C_0},\qquad
+ \phi_{k,n}(x)=W_{k,n}(X_{k,n}/x)
+\]
+就有字面恒等式
+\[
+ W_{k,n}(c/C_0)
+ =\phi_{k,n}\!\left({4\pi\sqrt{A|kn|}\over c}\right).
+                                                               \tag{CF19.82}
+\]
+所以 Type-I/Type-I bulk 的**几何** common test、尺度
+\(C_0=AS\)、base index \(Ak\) 与 modulus \(ABm\) 已逐项对上
+CF19.76。
+
+然而 CF19.80 本身没有 \(A^{-2}t^{-1}\)。该系数只在先用
+CF4 把 actual exact shell 识别为 ambient oldspace 核，再对其
+zero--zero local state 应用 CF19.31--CF19.32c 后出现。若这个尚未证的
+谱适配成立，则 CF19.32c 给 \(A^{-2}t^{-1}\) 和 \(At^2k\)，
+CF19.80 给 \(ABm\) 及唯一外因子 \(R\)，CF19.77--CF19.78
+则支付 common-test moving shell。在 CF4 闭合前，不能把这三条拼成
+已证的 actual spectral bound。而且 CF19.79--CF19.82 只处理
+expanded--expanded Type-I/Type-I 的非零 bulk；四个 quotient endpoint、
+Type-II、\(k=0\)、axes、principal/residue 与 native complement 均未因此获得
+新覆盖。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
@@ -3802,6 +3892,11 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     都为 \((K_0N_0)^{1/2+\varepsilon}\)，但不能在局部账上互换。
     原物理零列与 CF19.76 的 test/scale 等同性及其他
     local/principal/axis/native 行仍未映射。
+    CF19.79--CF19.82 进一步从主笔记 §412 的字面 quotient Poisson
+    证明 Type-I/Type-I bulk 的几何尺度 \(C_0=AS\)、base index
+    \(Ak\)、modulus \(ABm\) 与唯一 Jacobian \(R\)；但
+    \(A^{-2}t^{-1}\) 仍只在尚未闭合的 CF4 ambient-oldspace 识别后由
+    CF19.32c 产生，所以没有据此新增 actual spectral coverage。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
