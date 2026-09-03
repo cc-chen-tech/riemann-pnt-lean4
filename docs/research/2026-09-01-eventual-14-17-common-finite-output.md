@@ -838,6 +838,47 @@ axes、diagonal 及 principal/residue ledger 在同一原子中压缩。
 因此这关闭的是“任意平滑权仍需二维 residue 大筛”的假障碍，并把
 真实剩余义务缩成 CF5.38 的复合 divisor cost 加低秩共同 ledger。
 
+### CF5H. 短于最小素因子的偶 parity 零模见证
+
+CF5.38 的复合 divisor cost 在一个重要物理范围不能继续逐模数改善。
+设 \(s>1\) 平方自由，并记 \(P^-(s)=\min_{p\mid s}p\)。若
+\((h\delta,s)=1\)，则 Ramanujan 和等于 \(c_s(h\delta)=\mu(s)\)，
+而 CF5.11 的两个 residue axes 均为零。因此
+\[
+ \boxed{
+ R_s^\circ(h,\delta)=\mu(s)+{\varphi(s)\over s}
+ \qquad((h\delta,s)=1).}                                \tag{CF5.40}
+\]
+若 CF5G 的权支撑还满足：每个被采样的非零整数 \(h,\delta\) 都有
+\(|h|,|\delta|<P^-(s)\)，则它们自动与 \(s\) 互素，故整个矩形上
+逐项相同，得到精确式
+\[
+ \boxed{
+ \sum_{h,\delta}v(h/H_1)w(\delta/H_2)R_s^\circ(h,\delta)
+ =\left(\mu(s)+{\varphi(s)\over s}\right)V_1W_1.}       \tag{CF5.41}
+\]
+这也可从 CF5.36 看出：所有 \(d,e>1\) 的倍数采样为零，故
+\(E_d^v=-V_1/d\)、\(E_e^w=-W_1/e\)，而 CF5.9 给
+\[
+ \sum_{\substack{d,e\mid s\\d,e>1}}{b_s(d,e)\over de}
+ =\mu(s)+{\varphi(s)\over s}.
+\]
+
+于是 parity 的差别是结构性的：
+\[
+ \begin{cases}
+ \mu(s)+\varphi(s)/s>1,&\omega(s)\text{ 为偶数},\\
+ |\mu(s)+\varphi(s)/s|
+ =1-\prod_{p\mid s}(1-p^{-1})\le\sum_{p\mid s}p^{-1},
+   &\omega(s)\text{ 为奇数}.
+ \end{cases}                                             \tag{CF5.42}
+\]
+所以即使已经共同删除两轴与常数，短矩形上的偶 prime-factor 层仍有
+一个与 \(V_1W_1\) 同量级的真实 centered 零模。CF5.42 否定的是
+“每个复合模数单独由 centering 获得 power saving”；它不排除这个
+偶 parity 见证与另一侧 level 符号、diagonal 或 principal/residue
+ledger 在**取绝对值以前**抵消。该联合抵消现在是零模最窄的开放叶子。
+
 ## CF6. 一个不重不漏的 master tag 集
 
 在所有有限截断固定后，先按**已经逐项验证的** adapter 作一个互斥
@@ -3043,7 +3084,12 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
    two-sided dispersion。CF5.35--CF5.39 对 CF5.1 的实际分离权证明
    centered 零模的精确倍数采样误差公式及 uniform variation bound；
    prime shell 在 \(H_1,H_2\le p\) 时降到 \(H_1H_2/p\)，复合 divisor
-   cost 是否逐物理壳达标仍待核算。
+   cost 是否逐物理壳达标仍待核算。CF5.40--CF5.42 进一步证明：当
+   平方自由模数的最小素因子大于两条 shift 支撑时，双中心零模在
+   偶数素因子层仍精确保留与 \(V_1W_1\) 同量级的常数见证；奇数层
+   才有 \(\sum_{p\mid s}p^{-1}\) 的逐模数小量。因此剩余问题不是再做
+   一次单模数 centering，而是把偶 parity 行同另一侧 level 符号、
+   diagonal 及 principal/residue ledger 在取绝对值前共同压缩。
    CF5.1 在复合壳的 signed varying-level saving、零模低秩部分与
    diagonal/principal/residue 行的压缩仍未证明；
 5. CF6 给出不允许静默丢项的 master-tag contract；只有 adapter 已验证
