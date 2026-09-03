@@ -3215,6 +3215,33 @@ valuation one；所以 CF19.59 真的是 exact valuation-one shell，而
    \over B A^{11/4-\varepsilon}}.}                    \tag{CF19.61}
 \]
 
+CF19.58 把 test 的自然尺度归一为一；物理使用时不能把变化尺度藏入
+\(C_\phi\)。更一般地，若存在 \(X_\phi>0\) 使
+\[
+ |\phi(x)|\le C_\phi
+ \min\{(x/X_\phi)^J,(x/X_\phi)^{-K}\},
+\]
+就在 CF19.60 中改置
+\(Y=4\pi t\sqrt{Akn}/(ABX_\phi)\)。同一证明逐字给
+\[
+ |\mathfrak G_{A,B}^{\pm}(k,n;\phi)|
+ \ll { C_\phi(k,n)^{1/2}\over B}\,
+ X_\phi^{-1/2-\eta}
+ A^{-11/4+\eta/2}(kn)^{1/4+\eta/2}
+ \prod_{p\mid A}(1-p^{-1/2+\eta})^{-1}.               \tag{CF19.61a}
+\]
+因此对每个 \(\varepsilon>0\)，CF19.61a 可简写为
+\[
+ |\mathfrak G_{A,B}^{\pm}(k,n;\phi)|
+ \ll {C_\phi\over B\sqrt{X_\phi}}\,
+ \max(1,X_\phi^{-\varepsilon})
+ A^{-11/4+\varepsilon}(kn)^{1/4+\varepsilon}(k,n)^{1/2}.
+                                                               \tag{CF19.61b}
+\]
+只有已经证明 \(X_\phi\) 位于物理参数的多项式范围时，才可把
+\(\max(1,X_\phi^{-\varepsilon})\) 放入统一的 \(T^\varepsilon\)；
+CF19.61 的 unit-scale 写法本身不授权这一步。
+
 CF19.61 同时说明任一有限 odd--Hecke 截断的几何边在截断参数上一致
 可和；而 \(A>1\)、\((A,n)=1\) 还使第一 index \(At^2k\) 与第二
 index \(n\) 永不相等，所以对应 primitive trace 的 Kronecker
@@ -3323,6 +3350,62 @@ CF19.65，也不能据此赠送 \(A^{-1/2}\)。现在已经闭合的是
 以及它的 regulated odd--Hecke 极限；仍开放的是原 QCT 反射是否以
 **同一个 regulator 和同一个 \(\infty\infty\) test** 产生 CF19.66，
 以及 principal/axis/residue 四行是否在恢复整数格后进入这份共同账本。
+
+### CF19Z3. 两条 dyadic Hecke 列的一次 Schur 装配
+
+CF19.61b 还允许先在几何侧装配全部 \(k,n\)，而不用把 test 强行改成
+逐 pair 相同。令 \(\mathcal K\subset[K_0,2K_0]\cap\mathbb N\)、
+\(\mathcal N\subset[N_0,2N_0]\cap\mathbb N\)，并令每个
+\(\phi_{k,n}\) 都满足 CF19.61b 的同一 \(J,K,C_\phi,X_\phi\) 界。
+对矩阵
+\[
+ H_{k,n}=(k,n)^{1/2}
+\]
+有
+\[
+ \begin{aligned}
+ \sup_{k\in\mathcal K}\sum_{n\in\mathcal N}H_{k,n}
+ &\le\sup_k\sum_{d\mid k}d^{1/2}(2N_0/d+1)
+ \ll_\varepsilon(N_0+K_0^{1/2})(K_0N_0)^\varepsilon,\\
+ \sup_{n\in\mathcal N}\sum_{k\in\mathcal K}H_{k,n}
+ &\ll_\varepsilon(K_0+N_0^{1/2})(K_0N_0)^\varepsilon.
+                                                               \tag{CF19.68}
+ \end{aligned}
+\]
+第一行只用
+\((k,n)^{1/2}\le\sum_{d\mid(k,n)}d^{1/2}\)、
+\(\sigma_{-1/2}(k),\tau(k)\ll_\varepsilon k^\varepsilon\)；
+第二行对称。Schur test 因而给
+\[
+ \|H\|_{\ell^2(\mathcal N)\to\ell^2(\mathcal K)}
+ \ll_\varepsilon
+ \{(N_0+K_0^{1/2})(K_0+N_0^{1/2})\}^{1/2}
+ (K_0N_0)^\varepsilon.                                \tag{CF19.69}
+\]
+对任意有限标量列 \(x_k,y_n\)，CF19.61b、逐项 domination 与
+CF19.69 遂给
+\[
+ \begin{aligned}
+ \left|\sum_{k\in\mathcal K}\sum_{n\in\mathcal N}
+ x_k y_n\mathfrak G_{A,B}^{\pm}(k,n;\phi_{k,n})\right|
+ \ll_\varepsilon{}&
+ {C_\phi A^{-11/4+\varepsilon}\over B\sqrt{X_\phi}}\,
+ \max(1,X_\phi^{-\varepsilon})(K_0N_0)^{1/4+\varepsilon}\\
+ &\times
+ \{(N_0+K_0^{1/2})(K_0+N_0^{1/2})\}^{1/2}
+ \|x\|_2\|y\|_2.                                     \tag{CF19.70}
+ \end{aligned}
+\]
+特别地，若 \(K_0^{1/2}\le N_0\) 且 \(N_0^{1/2}\le K_0\)，长度费用
+简化为 \((K_0N_0)^{3/4+\varepsilon}\)。
+
+CF19.70 的优点是允许 \(\phi_{k,n}\) 随 pair 变化；代价是已经对
+\(k,n\) 取 pointwise majorant，不能再把这个 bound 与另一份谱大筛
+saving 相乘。要接 actual QCT，只需但也必须证明每个对应的模数权能
+写成 CF19.59 的 rescaled test，且**同一个**
+\(C_\phi,X_\phi\) 一致控制全部 AFE、detector、reflection 与 endpoint
+tags。这个任务是 CF19.D 的具体几何版；没有该 seminorm/尺度证明，
+CF19.70 仍只是一个已闭合 supplier。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
@@ -3514,6 +3597,12 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     \(\infty\infty\) 壳与 Andersen--Kıral 的 \(0\infty\)、
     \((c,N)=1\)、\(1/(c\sqrt N)\) 核不同，故 reciprocity 仍不能
     逐项移植，点态有理 multiplier 与物理共同 regulator 的识别仍开。
+    CF19.61a--CF19.61b 把变化 Bessel 尺度
+    \(X_\phi^{-1/2-\eta}\) 显式恢复，禁止把它藏进 test 常数；
+    CF19.68--CF19.70 再以 gcd 矩阵的一次 Schur test 装配任意两条
+    dyadic \(k,n\) 列。在不极端失衡的长度上，全部 index 费用为
+    \((K_0N_0)^{3/4+\varepsilon}\)，但 actual 每个模数权具有共同
+    \(C_\phi,X_\phi\) 的 normalized-seminorm 仍须由 CF19.D 证明。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
