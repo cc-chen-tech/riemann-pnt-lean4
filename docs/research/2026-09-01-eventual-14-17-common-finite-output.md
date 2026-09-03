@@ -16,7 +16,9 @@ cross-prime contraction、短逆边实际 Riesz 平方能量、affine
 physical-shift 导数/尾引理，以及 actual-Riesz 四阶矩的共同 Hilbert
 列扩张；CF19B 还把经典 Andersen--Kıral level reciprocity 的三项
 prime completion 无损张量化到互素平方自由 levels，并证明该
-reciprocity 本身不含第二份 shell half-root。反向审计同时撤回一个
+reciprocity 本身不含第二份 shell half-root；CF19Z 则在不交换无限
+谱和的前提下，直接给出 odd--Hecke 零列的 exact-shell 几何绝对界。
+反向审计同时撤回一个
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
 
@@ -3103,9 +3105,12 @@ CF5F 已给出光滑 dyadic product cutoff 精确冻结固定 cardinality 的
 \(|\mathscr S_\phi|=\sum_\Omega w\)，没有任何 cancellation。
 
 这个 countermodel 只说明 **CF19.55 这条恒等式本身**不蕴含 family
-saving；它不声称常数 trace 来自真实自守谱。对 actual QCT，CF19.56
-仍可无损删除全局反对称 Bessel-test 分量，但所需幂次必须在剩余的
-对称分量上来自真实 Kloosterman/shift/Type 系数的联合振荡。特别是
+saving；它不声称常数 trace 来自真实自守谱。只有先证明 actual QCT
+的共同 Bessel/physical-shift adapter 确实把同一有限求和域识别成
+CF19.55 的交换不变对象，并证明其权关于交换对称，CF19.56 才能无损
+删除该 QCT 输出的全局反对称 Bessel-test 分量。即使这个 adapter
+成立，所需幂次仍必须在剩余的对称分量上来自真实
+Kloosterman/shift/Type 系数的联合振荡。特别是
 “两侧都有 \(\mu\)”并不足够：在 fixed-\(\omega\) 壳上两侧符号都已
 冻结。可验收的 CF19.L 因而必须直接控制这个 symmetric physical
 family，或证明共同 reflection 把它和邻接 cardinality 壳重新耦合；
@@ -3115,6 +3120,113 @@ family，或证明共同 reflection 把它和邻接 cardinality 壳重新耦合�
 全谱正性已经支付 Maaß--Eisenstein 的抽象 scalar inequality，经典
 投影也精确恢复 CF7.1；但本文尚未证明实际 QCT 同时满足上述三条，
 所以 CF19.41--CF19.44 仍不能宣布 CF19.L 闭合。
+
+### CF19Z. odd--Hecke 零列的 exact-shell 几何界
+
+CF19.32c 的普通系数平方质量有限，而带 Hecke-index 长度权的质量在
+CF19.32e 发散；所以把它直接塞进普通谱大筛不是合法的极限过程。
+不过，在几何侧可以先把同一个 odd--Hecke 列完整求和，而且得到比
+逐谱绝对值强得多的**无条件壳界**。下面先把对象和所用假设冻结。
+
+令 \(A,B,k,n\) 为正整数，\(A\) squarefree，
+\[
+ A>1,\qquad (A,B)=(A,kn)=1.
+\]
+令 \(\phi:(0,\infty)\to\mathbb C\) 满足：存在
+\(J>1/2\)、\(K>0\) 与 \(C_\phi\)，使对所有 \(x>0\)
+\[
+ |\phi(x)|\le C_\phi\min(x^J,x^{-K}).                 \tag{CF19.58}
+\]
+对任一符号 \(\pm\)，定义
+\[
+ \begin{aligned}
+ \mathfrak G_{A,B}^{\pm}(k,n;\phi)
+ :=\sum_{\substack{t\ge1\\\operatorname{rad}(t)\mid A}}
+ {1\over A^2t}
+ \sum_{\substack{r\ge1\\(r,A)=1}}
+ {S(At^2k,\pm n;ABr)\over ABr}\,
+ \phi\!\left({4\pi t\sqrt{Akn}\over ABr}\right).
+                                                               \tag{CF19.59}
+ \end{aligned}
+\]
+因 \((A,B)=(A,r)=1\)，每个 \(p\mid A\) 在模数 \(ABr\) 中恰有
+valuation one；所以 CF19.59 真的是 exact valuation-one shell，而
+不是放宽后的全模数和。其系数 \(A^{-2}t^{-1}\) 正是 CF19.32c
+已经恢复 ambient harmonic kernel 后的系数，不能再另乘一份
+\(p^{-1}\) 或 shell half-root。
+
+对任意 \(0<\eta<J-1/2\) 和 \(Y>0\)，分 \(r\le Y\) 与 \(r>Y\)
+（若 \(Y<1\)，前者为空），两个幂级数分别给
+\[
+ \sum_{r\ge1}r^{-1/2+\eta}
+       \min\{(Y/r)^J,(Y/r)^{-K}\}
+ \ll_{J,K,\eta}Y^{1/2+\eta}.                          \tag{CF19.60}
+\]
+这里在 \(r\le Y\) 用 \((Y/r)^{-K}\)，所得和为
+\(Y^{-K}\sum_{r\le Y}r^{K-1/2+\eta}\ll Y^{1/2+\eta}\)；
+在 \(r>Y\) 用 \((Y/r)^J\)，而
+\(J>1/2+\eta\) 使尾和收敛并同样为 \(O(Y^{1/2+\eta})\)。这也覆盖
+\(Y<1\)，因为此时 \(Y^J\le Y^{1/2+\eta}\)。
+
+现在用 Weil 界的准确 gcd 形式
+\[
+ |S(a,b;c)|\le\tau(c)(a,b,c)^{1/2}c^{1/2}.
+\]
+由于 \(t\) 的每个素因子都整除 \(A\)，而 \((A,kn)=1\)，有
+\[
+ (At^2k,n,ABr)=(k,n,ABr)\le(k,n).
+\]
+再用 \(\tau(m)\ll_\eta m^\eta\)，并在 CF19.60 中置
+\[
+ Y={4\pi t\sqrt{Akn}\over AB},
+\]
+便得到固定 \(t\) 的内和绝对值至多
+\[
+ \begin{aligned}
+ &\ll_{J,K,\eta,C_\phi}
+ (k,n)^{1/2}(AB)^{-1/2+\eta}Y^{1/2+\eta},
+ \end{aligned}
+\]
+从而乘上 \(A^{-2}t^{-1}\) 后为
+\[
+ \ll (k,n)^{1/2}B^{-1}
+ A^{-11/4+\eta/2}(kn)^{1/4+\eta/2}t^{-1/2+\eta}.
+\]
+最后
+\[
+ \sum_{\operatorname{rad}(t)\mid A}t^{-1/2+\eta}
+ =\prod_{p\mid A}(1-p^{-1/2+\eta})^{-1}
+ \ll_{\varepsilon,\eta}A^\varepsilon
+\]
+（先吸收有限个小素数；对其余素数用
+\(-\log(1-p^{-1/2+\eta})\le\varepsilon\log p\)）。选取
+\[
+ 0<\eta<\min\{1/4,(J-1/2)/2,\varepsilon/4\},
+\]
+并把上一个 Euler 乘积中的幂取为至多 \(A^{\varepsilon/2}\)，便证明
+双重级数绝对收敛且
+\[
+ \boxed{
+ |\mathfrak G_{A,B}^{\pm}(k,n;\phi)|
+ \ll_{J,K,\varepsilon,C_\phi}
+ { (k,n)^{1/2}(kn)^{1/4+\varepsilon}
+   \over B A^{11/4-\varepsilon}}.}                    \tag{CF19.61}
+\]
+
+CF19.61 同时说明任一有限 odd--Hecke 截断的几何边在截断参数上一致
+可和；而 \(A>1\)、\((A,n)=1\) 还使第一 index \(At^2k\) 与第二
+index \(n\) 永不相等，所以对应 primitive trace 的 Kronecker
+diagonal 逐项为零。这是 CF19.33 的几何强化，并且 Maaß、holomorphic、
+Eisenstein 的区分在这条纯 Kloosterman 估计中没有出现。
+
+但 CF19.61 **尚不是** actual QCT 的全谱界。要使用它，仍须在同一个
+共同 Bessel test 下证明：有限 odd--Hecke 截断的完整 classical
+Kuznetsov/Petersson 三谱迹趋于 CF19.31 的有理 multiplier；极限可与
+全部 Maaß、holomorphic、oldform 与 cusp--Eisenstein 和交换；其几何
+模数、正负号和归一化恰为 CF19.59；并且原 complete-shift 的
+principal/axis/residue 行在恢复整数格后进入同一个共同账本。
+CF19.61 只关闭了这个 adapter **之后**的 exact-shell off-diagonal
+估计，不支付 adapter 本身，也不支付 CF19.D/CF19.C。
 
 因此 generic expanded shell 的局部 varying-level 问题已缩成
 CF19.30 这一条 reciprocal Hecke--Möbius 零列。若未来从 CF0A.3 的
@@ -3290,7 +3402,14 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     映射。CF19.55--CF19.57 进一步证明 reciprocity 在交换不变的共同
     和中只删除 test 的反对称部分；fixed-\(\omega\) product shell 上
     \(\mu(A)\mu(N)\) 是常号，所以对称部分不能仅由“两侧 Möbius
-    符号”获得 saving。
+    符号”获得 saving。CF19.58--CF19.61 随后直接在几何侧求和
+    CF19.32c 的整个 odd--Hecke 列：Weil 界、模数分段和 restricted
+    Euler 乘积给出
+    \(B^{-1}A^{-11/4+\varepsilon}(kn)^{1/4+\varepsilon}(k,n)^{1/2}\)
+    的绝对 exact-shell 界，并再次核对 ambient harmonic 权与 shell
+    half-root 没有重复计算。有限截断到有理 multiplier 的完整三谱
+    极限、actual common Bessel test 和 principal/axis/residue
+    物理映射仍开放。
 
 仍未证明：CF9.1 的 signed analytic bound、low-height expanding band、
 CF19.D 的完整 physical-shift 核 pullback、CF19.L 所要求的两侧
