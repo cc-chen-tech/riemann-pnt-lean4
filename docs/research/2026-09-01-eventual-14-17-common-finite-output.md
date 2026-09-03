@@ -67,9 +67,15 @@ assembly 及其余 physical rows 尚未装配。CF19Z22 则给出精确反例：
 错误推断：这些 norm-one/isometry supplier 本身不产生所需
 \(P^{-1/12}\) centered contraction。
 
-本文不证明这个共同输出的所需上界。最后剩下的命题准确等于 CF9.1，
-而不是一个较窄的 balanced fixed-level core。因而本文不证明高高度或
-全高度 \(14/17\) 零点区域，也不进入 Lean。
+CF8.4 另外给出一个不经 dense coefficient correction 的充分路线：
+同一个完整投影方差由原 Möbius taper 的完整未投影方差支配。因此
+后续可优先证明 CF8.5 的 all-box bound；这严格覆盖所需投影对象，
+同时保留真正的 Möbius 结构。
+
+本文不证明这个共同输出的所需上界。最后可选择证明 CF8.5 的更强
+原系数 all-box bound，或 CF9.1 的 dense projected full-output gate；
+二者都不是较窄的 balanced fixed-level core。因而本文不证明高高度
+或全高度 \(14/17\) 零点区域，也不进入 Lean。
 
 ## CF0. 冻结来源与符号纪律
 
@@ -1256,12 +1262,48 @@ projection top block 便先以 CF1.5 的增广 Gram
 精确出现，再通过唯一 \(b^\sharp\) 修正与显式残差进入 CF8.3。
 它既未被删除，也未被错误送进一个只有短 shift support 的 QCT box。
 
-## CF9. 当前唯一充分上界及其量词
+还有一条更强、但保留原 Möbius 系数的充分路线。XI24 的
+\(\Pi_P\) 是同一个 Hilbert 空间中的正交投影，故不需要先构造
+\(b^\sharp\) 就有
+\[
+ \boxed{
+ \mathcal E_{\rho,P,\mathcal L}
+ =X\|(I-\Pi_P)F_b\|_2^2
+ \le X\|F_b\|_2^2=:\mathfrak U_b(P).}                 \tag{CF8.4}
+\]
+这不是把投影输出换成一个孤立子核，而是对**同一个完整投影输出**
+使用正交压缩性；右边是更强的完整未投影方差，包含它自己的 diagonal、
+全部 shift、端点与低/高 height 行。因而下面的直接上界已经充分：
+\[
+ \boxed{
+ \forall\eta>0\ \exists C_{\rho,\eta},P_{\rho,\eta}\quad
+ \forall P\ge P_{\rho,\eta},\qquad
+ \mathfrak U_b(P)\le C_{\rho,\eta}XH Q_P P^\eta.}      \tag{CF8.5}
+\]
+这里 \(b\) 是隔离构造原来的 Möbius/Riesz taper；没有
+\(B(d)=\mu(d)b_d^\sharp\) 的形式重写，也没有 dense projection
+correction。若从原 QCT/MWKF atom 证明 CF8.5，CF8.4 立即把它接到
+XI25 的同一投影下界。此路线仍必须展开并估计 \(\mathfrak U_b\) 的
+**全部** physical boxes，不能只证明 nonzero-frequency core；但它
+不需要 CF0A.3 的 growing-support 修正、CF8.1 的
+\(\mathfrak M_\sharp\) adapter 或增广残差小量界。
+
+CF8.5 也解释了 signed dispersion 的正确系数纪律。对
+\(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
+cancellation，因为在该 squarefree canonical 行上
+\(\mu B=\mu^2b^\sharp=b^\sharp\)；相反，原 \(b\) 自身的
+Möbius taper 才是可供 joint level/shift estimate 使用的结构。
+所以后续优先目标可取 CF8.5。只有若直接未投影 bound 太强而失败，
+才需要退回 CF8.1--CF9.1 的 dense common-projection 路线。
+
+## CF9. 两条充分上界及其量词
 
 固定一个假设零点 \(\rho=\beta+i\gamma\)、\(\beta>14/17\)，置
 \[
  g=(17\beta-14)/3>0,\qquad \eta=g/4.
 \]
+CF8.5 是保留原 Möbius taper 的较强充分门。另一条较弱、但需承担
+dense projection adapter 的门如下。
 先按 CF0A 的参数顺序选择固定 \(K,r_{\rm cut}\)，再固定由此得到的同一个
 \(b^\sharp\)。所需且尚未证明的命题是：存在
 \(C=C(\rho,\mathcal L,w,\alpha,K,h_0,\eta)\) 与
@@ -1277,7 +1319,8 @@ projection top block 便先以 CF1.5 的增广 Gram
  \le C Q_PT_*P^\eta .
  \quad}                                                   \tag{CF9.1}
 \]
-这就是本文自含定义的最终 full-output upper gate。特别地：
+这就是本文自含定义的 projected full-output upper gate；CF8.5 与它
+任一成立都足以接入同一个 XI 下界。特别地：
 
 - \(P\) 必须可在固定 \(\rho\) 后独立趋于无穷；不得只取
   \(P=|\gamma|^{6/17}\)；
@@ -1287,13 +1330,19 @@ projection top block 便先以 CF1.5 的增广 Gram
   transform tails、连续谱 residues 以及未适配的 native complement
   均已是 \(\Omega^{\rm bad}\) 的明示坐标，不能从求和号中静默删除。
 
-若 CF9.1 成立，则 CF8.3 与 XI 的同一输出下界
+若 CF8.5 成立，则先用 CF8.4；若 CF9.1 成立，则用 CF8.3。两种情形
+都与 XI 的同一输出下界
 \[
  \mathcal E/(XHQ_P)\ge c_\rho P^g/\log P
 \]
-矛盾。固定零点后 \(C,P_0\) 依赖该零点是允许的；若要推出统一的
-“充分大高度”定理，仍须证明 CF9.1 的适用阈值可由
-\(|\gamma|\ge T_0\) 的统一条件给出，并说明 \(T_0\) 是否有效。
+矛盾。固定零点后 \(C,P_0\) 依赖该零点是允许的，且**不需要**对
+所有零点统一：反证中先固定 \(\rho\)，再取
+\(P\ge P_{\rho,\eta}\) 即可。要推出“充分大高度”定理，只需存在一个
+统一的结构适用阈值 \(T_{\rm base}\)，使 CF8.5 或 CF9.1 对每个
+\(|\gamma|\ge T_{\rm base}\) 的固定 \(\rho\) 都成立；随后逐零点反证，
+可取 \(T_0=T_{\rm base}\)。\(T_0\) 是否有效，只取决于这个共同
+height-applicability 输入及所引用解析常数是否有效，不取决于
+\(P_{\rho,\eta}\) 能否对 \(\rho\) 统一。
 
 ## CF10. 对 signed reciprocity/dispersion 的精确输入
 
@@ -5329,7 +5378,9 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
    把这份纯 valuation mass 迁移为实际 coefficient/Bessel/complete-shift
    算子界仍是 CF19.D/CF19.L 的开放 adapter；
 7. CF8.1--CF8.3：输出修正到全高度余量的显式接口义务，而非已证
-   height reassembly；
+   height reassembly。CF8.4--CF8.5 另给一个无需 \(b^\sharp\) 的更强
+   充分门：同一个投影输出由原 Möbius taper 的完整未投影方差支配；
+   该方差的 all-box QCT bound 仍未证明；
 8. CF11.1--CF11.3：保留两侧角色与共同 tags 的 exact zero-alias
    Fourier projector 及其无 alias 单边 isometry；
 9. CF13.1--CF13.2：两篇 2025--2026 原始 Kloosterman 定理在真实尺度
