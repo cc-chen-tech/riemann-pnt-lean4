@@ -1,11 +1,13 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualCarlsonDyadicReciprocalCount
+import PrimeNumberTheorem.ZeroDensityLayerBudgetMultiplicityWeightedKernel
 
 /-!
 # Actual Carlson dyadic shell mass
 
-This module partitions the actual Carlson zero finsets into dyadic ordinate
-shells and transfers reciprocal-count summability to the genuine analytic
-multiplicity-over-norm mass used by explicit-formula coefficients.
+The explicit formula weights a zero by its analytic multiplicity divided by
+its norm.  This module partitions the actual Carlson zero finsets into dyadic
+ordinate shells and transfers reciprocal-count summability to the genuine
+multiplicity-weighted shell coefficient mass.
 -/
 
 namespace PrimeNumberTheorem
@@ -30,7 +32,7 @@ theorem actualCarlsonDyadicZeroShell_im_gt
   exact ZeroDensity.mem_zeroDensityZerosFinset.mpr
     ⟨hup.1, hup.2.1, le_of_not_gt hle, hup.2.2.2⟩
 
-/-- Reciprocal-norm analytic multiplicity mass of one dyadic shell. -/
+/-- Genuine reciprocal-norm analytic multiplicity mass of one dyadic shell. -/
 noncomputable def actualCarlsonDyadicShellMultiplicityMass
     (sigma : ℝ) (n : ℕ) : ℝ :=
   ∑ rho ∈ actualCarlsonDyadicZeroShell sigma n,
@@ -42,6 +44,8 @@ theorem actualCarlsonDyadicShellMultiplicityMass_nonneg
   unfold actualCarlsonDyadicShellMultiplicityMass
   positivity
 
+/-- One shell's reciprocal-norm multiplicity mass is bounded by the cumulative
+Carlson count at the upper endpoint divided by the lower dyadic height. -/
 theorem actualCarlsonDyadicShellMultiplicityMass_le_count_div
     (sigma : ℝ) (n : ℕ) :
     actualCarlsonDyadicShellMultiplicityMass sigma n ≤
@@ -80,6 +84,8 @@ theorem actualCarlsonDyadicShellMultiplicityMass_le_count_div
     _ ≤ actualCarlsonDyadicCount sigma (n + 1) / (2 : ℝ) ^ n :=
       div_le_div_of_nonneg_right hmass (by positivity)
 
+/-- The lower-endpoint reciprocal count is twice the shifted upper-endpoint
+normalized count. -/
 theorem actualCarlsonDyadicCount_div_lower_eq_two_mul_weighted_succ
     (sigma : ℝ) (n : ℕ) :
     actualCarlsonDyadicCount sigma (n + 1) / (2 : ℝ) ^ n =

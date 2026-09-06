@@ -1,0 +1,11 @@
+import HardyTheorem.SelbergS12CoprimeDirichlet
+
+#check HardyTheorem.selbergPrincipalCharacter
+#check HardyTheorem.selbergS12CoprimeCoeff
+#check HardyTheorem.selbergS12CoprimeCoeff_of_coprime
+#check HardyTheorem.selbergS12CoprimeCoeff_of_not_coprime
+#check HardyTheorem.LSeriesSummable_selbergS12CoprimeCoeff
+#check HardyTheorem.selbergS12CoprimeDirichletSeries
+#check HardyTheorem.selbergS12CoprimeDirichletSeries_sq_eq_inv_principalLSeries
+#check HardyTheorem.selbergPrincipalLSeries_eq_zeta_mul_eulerFactors
+#check HardyTheorem.selbergS12CoprimeDirichletSeries_sq_eq_explicit

@@ -180,8 +180,7 @@ example (x y : ℤ) (h1 : x = -3) (h2 : y = 10) : 2*x = -6 := by
   additive_combination (norm := skip) 2*h1
   simp
 
-axiom qc : ℚ
-axiom hqc : qc = 2*qc
+variable (qc : ℚ) (hqc : qc = 2*qc)
 
 example (a b : ℚ) (h : ∀ p q : ℚ, p = q) : 3*a + qc = 3*b + 2*qc := by
   additive_combination 3 * h a b + hqc

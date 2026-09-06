@@ -1,0 +1,8 @@
+import HardyTheorem.SelbergJDiagonalRayEquiv
+
+open HardyTheorem
+
+#check selbergDiagonalRayIndex
+#check selbergDiagonalRayScale
+#check selbergDiagonalRayScale_spec
+#check selbergDiagonalRayEquiv

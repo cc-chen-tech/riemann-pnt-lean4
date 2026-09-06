@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergS13BoundedSmoothBridge
+
+#check HardyTheorem.selbergS13BoundedSmoothPairs
+#check HardyTheorem.selbergS13BoundedSmoothPairMass
+#check HardyTheorem.selbergS13BoundedSmoothPairMass_eq_outer_sum
+#check HardyTheorem.selbergS13BoundedSmoothPairMass_le_grouped

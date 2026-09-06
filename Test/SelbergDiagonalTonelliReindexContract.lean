@@ -1,0 +1,25 @@
+import HardyTheorem.SelbergDiagonalTonelliReindex
+
+open MeasureTheory Set
+
+namespace HardyTheorem
+
+#check selbergFloorCutoffSummand
+#check tsum_selbergFloorCutoffSummand
+#check selbergDiagonalTonelliSummand
+#check tsum_selbergDiagonalTonelliSummand_eq_floorKernelIntegrand
+#check selbergDiagonalScale_mul_x
+#check selbergDiagonalCutoff_iff_closedTail
+#check selbergDiagonalClosedTailSummand
+#check selbergDiagonalTonelliSummand_eq_closedTail
+#check summable_selbergFloorCutoffSummand
+#check summable_selbergDiagonalClosedTailSummand
+#check selbergDiagonalClosedTailSummand_nonneg
+#check integrable_selbergDiagonalClosedTailSummand
+#check tsum_selbergDiagonalClosedTailSummand_eq_floorKernelIntegrand
+#check hasSum_integral_selbergDiagonalClosedTailSummand
+#check integral_selbergDiagonalClosedTailSummand_Ioi
+#check hasSum_integral_selbergDiagonalOriginalIntegrand
+#check tsum_integral_selbergDiagonalOriginalIntegrand_eq_floorKernel
+
+end HardyTheorem

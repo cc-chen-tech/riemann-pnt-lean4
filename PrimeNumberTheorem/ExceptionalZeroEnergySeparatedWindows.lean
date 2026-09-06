@@ -107,6 +107,8 @@ private theorem integrableOn_rightHigherSeparatedEnergyIntegrand
     continuous_normalizedRightHigherComplement S Told sigma T beta
   have hcontinuous : Continuous
       (rightHigherSeparatedEnergyIntegrand S Told sigma T beta m a) := by
+    change Continuous
+      (fun y : ℝ => rightHigherSeparatedEnergyIntegrand S Told sigma T beta m a y)
     dsimp [rightHigherSeparatedEnergyIntegrand]
     exact hgaussian.mul (hcomplement.norm.pow 2)
   exact
@@ -125,6 +127,8 @@ private theorem integrableOn_rightHigherSeparatedCapacityIntegrand
   have hmass := continuous_rightHigherAbsoluteMass S Told sigma T beta
   have hcontinuous : Continuous
       (rightHigherSeparatedCapacityIntegrand S Told sigma T beta m a) := by
+    change Continuous
+      (fun y : ℝ => rightHigherSeparatedCapacityIntegrand S Told sigma T beta m a y)
     dsimp [rightHigherSeparatedCapacityIntegrand]
     exact hgaussian.mul (hmass.pow 2)
   exact

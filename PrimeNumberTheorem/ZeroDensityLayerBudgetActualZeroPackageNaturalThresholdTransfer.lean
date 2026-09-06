@@ -67,20 +67,26 @@ theorem actualZeroPackage_thresholds_naturalLowerTransfer_of_nontrivialZero
       selection input kappa
       (equalRealPartZeroPackage_isConjugationInvariant T rho.re)
       hfixedSigma hkappa hnorm hre hreal
+  have hheight_eq :
+      actualSelectedHeightFiniteStripChosenHeight rho.re sigma tau
+          hzero.2.1 hzero.2.2 hsigma hsigmaOne hthreshold selection =
+        selectedUniformGoodHeight alpha selection := by
+    funext x
+    simp only [actualSelectedHeightFiniteStripChosenHeight, alpha]
   have hheight :
       Tendsto
         (actualSelectedHeightFiniteStripChosenHeight rho.re sigma tau
           hzero.2.1 hzero.2.2 hsigma hsigmaOne hthreshold selection)
         atTop atTop := by
-    simpa [actualSelectedHeightFiniteStripChosenHeight, alpha] using
-      selectedUniformGoodHeight_tendsto_atTop halpha'.1 selection
+    rw [hheight_eq]
+    exact selectedUniformGoodHeight_tendsto_atTop halpha'.1 selection
   have remainderCertificate :
       ActualSelectedHeightNaturalPointRemainderCertificate rho.re
         (actualSelectedHeightFiniteStripChosenHeight rho.re sigma tau
           hzero.2.1 hzero.2.2 hsigma hsigmaOne hthreshold selection) := by
-    simpa [actualSelectedHeightFiniteStripChosenHeight, alpha] using
-      selectedUniformGoodHeight_actualNaturalRemainderCertificate
-        hzero.2.1 halpha'.1 halpha'.2.1 halpha'.2.2 selection
+    rw [hheight_eq]
+    exact selectedUniformGoodHeight_actualNaturalRemainderCertificate
+      hzero.2.1 halpha'.1 halpha'.2.1 halpha'.2.2 selection
   rcases exists_actualEqualRealPartZeroPackageEnergy_pos_of_nontrivialZero
       hzero hT with ⟨L, hL, henergy⟩
   exact ⟨L, hL,

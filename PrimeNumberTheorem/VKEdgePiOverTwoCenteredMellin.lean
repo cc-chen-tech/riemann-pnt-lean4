@@ -206,10 +206,10 @@ private theorem integrable_rightEdgeMellinProductAtCenter
       Complex.exp
         (((Real.log x : ℝ) : ℂ) * (-(s0 + 1)))
   have hP : Integrable P := by
-    dsimp [P, rightEdgeGaussianFactorAtCenter]
-    convert
+    change Integrable (fun t : ℝ => rightEdgeGaussianFactorAtCenter q A m w t) volume
+    simpa [rightEdgeGaussianFactorAtCenter] using
       integrable_verticalPolynomialGaussian_add_mul
-        A hm w 2 (q * m) using 1
+        A hm w 2 (q * m)
   have hs0 : 1 < s0.re := by
     dsimp [s0]
     linarith

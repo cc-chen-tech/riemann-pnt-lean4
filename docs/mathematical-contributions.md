@@ -326,6 +326,16 @@ moving-height ordinary-PNT estimate, de la Vallee Poussin-form `psi` and
 Further work concerns power-saving estimates, stronger zero-free regions, and
 numerically explicit constants.
 
+## Native Selberg positive-proportion theorem (2026-08)
+
+The short-mollifier Fourier--Mellin S1--S5 chain proves
+`HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline` without
+Zeta23. It uses a square-root-zeta mollifier of length `T^(1/32)`, obtains the
+signed second moment, absolute-window second moment, and first absolute moment,
+then transfers positive measure of strict-cancellation starts through the
+odd-zero cover to the `c T log T` count. The separate `N=T^3` long-mollifier
+off-diagonal problem remains open and is not an input to this theorem.
+
 ## External SOTA Merge: Anthropic zeta-23-lean (2026-08)
 
 As a separate, independently kernel-checked artifact, Anthropic's
@@ -337,15 +347,24 @@ verified the artifact: full `lake build` passed and the bridge input theorem
 `[propext, Classical.choice, Quot.sound]` (see
 [zeta23-external-verification.md](research/zeta23-external-verification.md)).
 
-Consequence for this repository's open targets:
+Independent additional consequence for this repository's Selberg target and
+legacy compatibility surface:
 `HardyTheorem.Zeta23SelbergBridge` vendors the axiom-clean `Zeta23` library
 and closes `selberg_odd_zero_proportion_target` and
 `KnownResults.conrey_40_percent_zeros_on_critical_line_target` inside this
 repository's kernel through a definition-level bridge (simple zeros are a
 subset of odd-multiplicity zeros; the counting functions coincide; the
-Conrey target follows through the repo's existing implication lemmas) -- no
-new analytic mathematics is required.  The explicit proportion constant is
-`7/48`.  The classical rank--trace method boundary and what the external
-closure supersedes are documented in
+Conrey-named target is only a historical, definitionally Selberg alias) -- no
+new analytic mathematics is required for that alias.  The explicit proportion
+constant is `7/48`.
+
+This does **not** prove or supersede Conrey's genuine strict `> 2/5`
+simple-zero result.  The independent route now has the genuine target
+`HardyTheorem.conreyTwoFifthsSimpleZerosTarget`, an exact formal certificate
+for Conrey's displayed double integral, and the explicit remaining interface
+`HardyTheorem.conreyExplicitAnalyticLowerBound`.  The missing mathematics is
+the long-mollifier mean-square/off-diagonal estimate and its argument-principle
+transfer.  The classical rank--trace method boundary and the exact scope of
+the external closure are documented in
 [zeta23-selberg-bridge.md](research/zeta23-selberg-bridge.md) and
 [rank-trace-method-boundary.md](research/rank-trace-method-boundary.md).

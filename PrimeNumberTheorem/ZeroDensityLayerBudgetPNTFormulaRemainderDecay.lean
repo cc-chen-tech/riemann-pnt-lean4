@@ -302,7 +302,7 @@ theorem cofinalPNTZeroDepthRelativeRemainderMajorant_tendsto
       Tendsto
         (fun m : ℕ => Real.log (m : ℝ) / (m : ℝ))
         atTop (nhds 0) := by
-    simpa using
+    simpa [Function.comp_def, id_eq, neg_mul] using
       (Real.tendsto_pow_log_div_mul_add_atTop 1 0 1 one_ne_zero).comp
         tendsto_natCast_atTop_atTop
   have hsqrtdiv :

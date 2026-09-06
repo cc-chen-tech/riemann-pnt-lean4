@@ -59,15 +59,20 @@ theorem actualCarlsonSelectedHeightOutsideClusterComplement_targetNegligible
     actualCarlsonSelectedHeightFullZeroNormalizedSum_tendsto_zero
       input i hS hHle hHtop hhalf hone hkappa hnorm hreLow hlowCover
       halpha hepsilon hmargin hreHigh hreReal
+  change Tendsto
+    (fun m : ℕ =>
+      ‖∑ rho ∈ nontrivialZerosOutsideClusterFinset (H (m : ℝ)) S,
+          pntRelativeZeroContribution (m : ℝ) rho‖ /
+        targetZeroPowerAmplitude beta (m : ℝ))
+    atTop (nhds 0) at hfull
   have hfullNegligible :
       NaturalPointTargetAmplitudeNegligible
         (fun m => targetZeroPowerAmplitude beta (m : ℝ))
         (fun m =>
           dynamicFullOutsideClusterPNTZeroTailNorm H S (m : ℝ)) := by
     rw [NaturalPointTargetAmplitudeNegligible]
-    simpa [
-      actualCarlsonSelectedHeightFullZeroNormalizedSum,
-      dynamicFullOutsideClusterPNTZeroTailNorm, abs_of_nonneg] using hfull
+    simpa only [dynamicFullOutsideClusterPNTZeroTailNorm,
+      abs_of_nonneg (norm_nonneg _)] using hfull
   exact
     NaturalPointTargetAmplitudeNegligible.of_eventually_abs_le
       (eventually_naturalPoint_pos_of_eventually_pos

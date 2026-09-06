@@ -276,6 +276,22 @@ Thus (4.3a) has exactly four sectors and no remainder.  At the balanced
 box, the exponent of \(d\) is in \([0,1]\) in denominator Type I and in
 \([1,2]\) in denominator Type II.
 
+At this stage the phase has not been separated or majorized.  Every finite
+summand still has the form
+
+\[
+ c_{U_R}(a)\mu(b)c_{U_S}(c)\mu(d)
+ e\!\left(-\frac{h\delta\bar r}{s}\right),
+ \qquad ab=r,\quad cd=s.
+\tag{4.3a'}
+\]
+
+The helper \`coupled_product_double_mobius_certificate\` verifies (4.3a')
+with exact integer arithmetic for independent cutoffs on the two sides.
+It records the same normalized reciprocal phase in all four sectors and
+checks that their signed sum is exactly \(\mu(r)\mu(s)\).  This is an exact
+reindexing certificate only; it supplies no analytic saving.
+
 Fixing \(c\sim C_0\) in the denominator split gives Wright's parameters
 
 \[
@@ -1544,6 +1560,42 @@ deficit \(-37/8\) at (1.2).  Therefore the last arrow in (4.3) is a new
 spectral proposition, not a routine adapter.
 
 **new spectral proposition status: unproved.**
+
+### 4.8 A boundary-safe Drappeau subcell, but a hard-box no-go
+
+The published-coverage note now records a theorem adapter that is valid only
+after the exact Type identity.  In the notation
+(r=b_rd_re_r), (s=b_sd_se_s), it sends the unsigned quotients
+((e_r,e_s)) to Drappeau's smooth variables and the two signed products
+((b_rd_r,b_sd_s)), together with (n=-h\delta), to the arbitrary
+coefficient.  The reciprocal phase and coprimality condition are literal
+identities, so neither Möbius side nor the product frequency is separated.
+
+The sharp condition (d_re_r>U_r) is harmless only on a dyadic exponent
+cell with the two strict inequalities
+
+\[
+ \log_T d_r<\log_T U_r
+ <\log_T d_r+\log_T e_r
+\]
+
+by a fixed positive amount, and likewise on the (s)-side.  Equality is a
+distinct uncovered boundary face.  This strict partition yields genuine
+published coverage for some short-product cells; the exact witness and all
+three terms of Drappeau's (K^2) are in Section 3.12 of the coverage note.
+
+For the hard box, however, the theorem output has the exact global lower
+bound (33/4), while the local target is (5999/1000).  No choice of the
+two smooth quotient scales can repair the hard face, even before its
+boundary cells are considered.  The hard task is therefore still the
+pre-Cauchy outer-scale/slope-family cancellation isolated in Sections
+4.67--4.68 of the alternative-routes note.
+
+The finite helpers `drappeau_double_quotient_phase`,
+`drappeau_double_quotient_audit`, and `drappeau_type_subcell_audit` keep the
+algebraic phase, analytic exponent, and sharp-hyperbola status as separate
+certificates.  A favourable exponent is never promoted to coverage on an
+equality boundary.
 
 ## 5. Tail and final-theorem boundary
 

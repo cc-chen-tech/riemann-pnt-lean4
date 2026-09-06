@@ -1,0 +1,8 @@
+import HardyTheorem.SelbergFourierEnergyTransport
+
+open HardyTheorem
+
+#check integral_normSq_fourier_selberg_Ioc_eq
+#check integral_normSq_fourier_selberg_div_sq_Ioi_eq
+#check integral_normSq_selbergFourierLp_abs_le_eq
+#check integral_normSq_selbergFourierLp_abs_gt_eq

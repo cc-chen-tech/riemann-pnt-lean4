@@ -1,0 +1,8 @@
+import HardyTheorem.SelbergJKernelMassBridge
+
+open HardyTheorem
+
+#check selbergResidueInverseFourierKernel
+#check selbergNonconstantInverseFourierKernel
+#check selbergExplicitInverseFourierKernel_eq_residue_add_nonconstant
+#check normSq_selbergNonconstantInverseFourierKernel_log

@@ -160,10 +160,11 @@ theorem
       input kappa hS hfixedSigma hkappa hnorm hre hreal
   have remainderCertificate :
       ActualSelectedHeightNaturalPointRemainderCertificate beta H := by
-    simpa [H, alpha,
-      actualSelectedHeightFiniteStripWeightedBalancedGoodHeight] using
-      selectedUniformGoodHeight_actualNaturalRemainderCertificate
-        hbeta halpha halphaOne hmargin selection
+    change
+      ActualSelectedHeightNaturalPointRemainderCertificate beta
+        (selectedUniformGoodHeight alpha selection)
+    exact selectedUniformGoodHeight_actualNaturalRemainderCertificate
+      hbeta halpha halphaOne hmargin selection
   have hresidual :
       ∀ᶠ m : ℕ in atTop,
         |actualPNTClosedRealAxisRelativeTerm (m : ℝ) +

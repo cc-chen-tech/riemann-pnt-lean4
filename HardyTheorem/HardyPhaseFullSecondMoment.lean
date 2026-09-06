@@ -472,19 +472,15 @@ theorem integral_normSq_sum_hardyPhaseShortIntegral_eq_diagonal_add_offDiagonal
             (D m + ∑ n ∈ s \ {m}, O m n) := by
           apply Finset.sum_congr rfl
           intro m hm
-          rw [Finset.sum_eq_add_sum_diff_singleton m
-            (fun n => if m = n then D n else O m n)]
-          · simp only [if_pos]
+          rw [← Finset.add_sum_erase s
+            (fun n => if m = n then D n else O m n) (a := m) hm]
+          · simp only [if_pos, Finset.sdiff_singleton_eq_erase]
             congr 1
             apply Finset.sum_congr rfl
             intro n hn
             have hne : m ≠ n := by
-              intro heq
-              subst n
-              exact (Finset.mem_sdiff.mp hn).2 (Finset.mem_singleton_self m)
+              exact (Finset.mem_erase.mp hn).1.symm
             simp only [hne, ↓reduceIte]
-          · intro hnot
-            exact (hnot hm).elim
         _ = (∑ m ∈ s, D m) +
             ∑ m ∈ s, ∑ n ∈ s \ {m}, O m n := by
           rw [Finset.sum_add_distrib]
@@ -493,18 +489,14 @@ theorem integral_normSq_sum_hardyPhaseShortIntegral_eq_diagonal_add_offDiagonal
           congr 1
           apply Finset.sum_congr rfl
           intro m hm
-          rw [Finset.sum_eq_add_sum_diff_singleton m
-            (fun n => if m = n then 0 else O m n)]
-          · simp only [if_pos, zero_add]
+          rw [← Finset.add_sum_erase s
+            (fun n => if m = n then 0 else O m n) (a := m) hm]
+          · simp only [if_pos, zero_add, Finset.sdiff_singleton_eq_erase]
             apply Finset.sum_congr rfl
             intro n hn
             have hne : m ≠ n := by
-              intro heq
-              subst n
-              exact (Finset.mem_sdiff.mp hn).2 (Finset.mem_singleton_self m)
+              exact (Finset.mem_erase.mp hn).1.symm
             simp only [hne, ↓reduceIte]
-          · intro hnot
-            exact (hnot hm).elim
     rw [hsplit]
     dsimp only [D, O]
     congr 1

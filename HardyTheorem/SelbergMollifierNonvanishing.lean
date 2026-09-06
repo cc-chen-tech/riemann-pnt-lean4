@@ -110,7 +110,7 @@ theorem analyticOnNhd_selbergMollifier_vertical
   have haffine :
       AnalyticOnNhd ℂ (fun z : ℂ => (1 / 2 : ℂ) + I * z) Set.univ :=
     analyticOnNhd_const.add (analyticOnNhd_const.mul analyticOnNhd_id)
-  simpa only [Function.comp_apply] using
+  simpa only [Function.comp_def, Function.comp_apply] using
     (analyticOnNhd_selbergMollifier X coeff).comp haffine
       (Set.mapsTo_univ _ _)
 
@@ -166,7 +166,8 @@ theorem exists_selbergMollifier_criticalLine_ne_zero_Ioo
       constructor <;> linarith
     constructor
     · simpa only [u, Complex.ofReal_add, Complex.ofReal_div,
-        Complex.ofReal_natCast, Complex.ofReal_one] using hnone _ huIoo
+        Complex.ofReal_natCast, Complex.ofReal_one, Set.mem_setOf_eq]
+        using hnone _ huIoo
     · intro heq
       have hre := congr_arg Complex.re heq
       simp only [u, Complex.ofReal_re] at hre
@@ -188,7 +189,11 @@ theorem exists_selbergMollifier_criticalLine_ne_zero_Ioo
     dsimp only [z]
     ring_nf
     simp
-  exact hs (by simpa only [harg] using hident (Set.mem_univ z))
+  exact hs (by
+    have hz : selbergMollifier X coeff s = 0 := by
+      rw [← harg]
+      simpa using hident (Set.mem_univ z)
+    simpa [hz])
 
 /-- The corresponding mollified Hardy function is nonzero somewhere in
 every nonempty interval. -/

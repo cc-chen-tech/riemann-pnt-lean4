@@ -1,0 +1,17 @@
+import HardyTheorem.SelbergDiagonalGaussianScalar
+
+open MeasureTheory Set
+
+namespace HardyTheorem
+
+#check selbergWeightedGaussian
+#check integral_selbergWeightedGaussian_Ioi
+#check intervalIntegral_selbergGaussian_zero_le
+#check intervalIntegral_selbergGaussian_le_length
+#check intervalIntegral_selbergWeightedGaussian_zero_le
+#check intervalIntegral_selbergWeightedGaussian_le_rpow
+#check selbergDiagonalK1
+#check selbergDiagonalK1_signed_identity
+#check abs_selbergDiagonalK1_le
+
+end HardyTheorem

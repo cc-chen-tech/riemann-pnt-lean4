@@ -232,7 +232,7 @@ theorem exists_selbergMoebiusAbsShortIntegral_ge_sub_shortDirichlet :
       _ = C / Real.sqrt T *
           (∑ n ∈ Finset.Icc 1 X, (Real.sqrt n)⁻¹) ^ 2 := by ring
   have hMcont : Continuous M := by
-    simpa only [M] using
+    simpa only [M, selbergMoebiusMollifier] using
       continuous_selbergMollifier_criticalLine X
         (fun n => (selbergMoebiusCoeff X n : ℂ))
   have hPolyCont : Continuous (fun u : ℝ =>

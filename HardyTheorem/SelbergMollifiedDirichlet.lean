@@ -84,11 +84,7 @@ private theorem selbergMoebius_doubleSum_eq_convolutionSum
           (1 / (m * n : ℂ) ^ s)) = ∑ p ∈ P, f p := by
       dsimp only [P, f, g]
       symm
-      simpa only [Nat.cast_mul] using
-        (Finset.sum_product (Finset.Icc 1 N) (Finset.Icc 1 X)
-          (fun p : ℕ × ℕ =>
-            (selbergMoebiusCoeff X p.2 : ℂ) *
-              (1 / (p.1 * p.2 : ℂ) ^ s)))
+      simpa [Finset.sum_product]
     _ = ∑ k ∈ K, ∑ p ∈ P.filter (fun p => g p = k), f p := hfiber
     _ = ∑ k ∈ K,
         (selbergMollifiedDirichletCoeff N X k : ℂ) *

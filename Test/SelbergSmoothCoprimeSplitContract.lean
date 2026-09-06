@@ -1,0 +1,9 @@
+import HardyTheorem.SelbergSmoothCoprimeSplit
+
+open scoped BigOperators
+
+#check HardyTheorem.selbergSupportedPart_mul_coprimePart
+#check HardyTheorem.selbergSupportedPart_mem_factoredNumbers
+#check HardyTheorem.selbergCoprimePart_coprime
+#check HardyTheorem.selbergSmoothCoprime_decomposition_unique
+#check HardyTheorem.selbergSqrtZetaCoeff_supportedPart_mul_coprimePart

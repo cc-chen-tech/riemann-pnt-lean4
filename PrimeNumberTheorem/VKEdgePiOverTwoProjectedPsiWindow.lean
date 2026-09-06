@@ -803,7 +803,7 @@ theorem tendsto_projectedPsiTailRemainder
     exists_projectedPsiTailRemainder_exp_bound A hu hu1
   have htwoBot :
       Tendsto (fun m : ℝ => -2 * m) atTop atBot := by
-    simpa only [neg_mul] using
+    simpa [Function.comp_def, id_eq, neg_mul] using
       tendsto_neg_atTop_atBot.comp
         (tendsto_id.const_mul_atTop (by norm_num : 0 < (2 : ℝ)))
   have hupper :

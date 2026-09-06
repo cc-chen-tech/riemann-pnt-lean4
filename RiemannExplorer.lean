@@ -229,9 +229,11 @@ theorem infinitely_many_nontrivial_zeros_on_critical_line_of_integral_asymptotic
   infinitely_many_nontrivial_zeros_on_critical_line
     (HardyTheorem.hardy_theorem_target_of_integral_asymptotic_one_two h1 h2)
 
-/-- Target statement for Conrey's theorem that a positive proportion of zeros
-lie on the critical line.  This project does not currently formalize the
-zero-counting machinery needed to state the exact 40% theorem. -/
+/-- Legacy positive-proportion target retained for compatibility.  Despite its
+historical name, this is definitionally Selberg's target and is not the genuine
+Conrey simple-zero `> 2/5` statement.  The multiplicity-sensitive target is
+`HardyTheorem.conreyTwoFifthsSimpleZerosTarget`, exported by
+`RiemannExplorer.Conrey40`. -/
 def conrey_40_percent_zeros_on_critical_line_target : Prop :=
     ∃ c > (0 : ℝ), ∃ T0 : ℝ, ∀ T ≥ T0,
       (HardyTheorem.zeroCountOnCriticalLine T : ℝ) ≥

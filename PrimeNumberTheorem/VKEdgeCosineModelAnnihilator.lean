@@ -75,6 +75,8 @@ theorem annihilatedNormalizedPsiError_eq_modelResidual
   have htarget :
       symmetricFrequencyAnnihilator h rho.im
           (normalizedCosineModelPair rho) y = 0 := by
+    change symmetricFrequencyAnnihilator h rho.im
+        (fun z : ℝ => normalizedCosineModelPair rho z) y = 0
     simpa only [normalizedCosineModelPair] using
       symmetricFrequencyAnnihilator_cosineModelPair_eq_zero
         h rho.im (analyticOrderNatAt riemannZeta rho : ℝ) rho.arg y

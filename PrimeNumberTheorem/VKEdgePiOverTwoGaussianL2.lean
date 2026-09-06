@@ -11,6 +11,7 @@ noncomputable section
 private theorem measurable_normalizedPsiError_l2 (rho : ℂ) :
     Measurable (normalizedPsiError rho) := by
   have hpsi : Measurable chebyshevPsi := by
+    change Measurable (Chebyshev.psi : ℝ → ℝ)
     simpa only [chebyshevPsi_eq_mathlib] using
       Chebyshev.psi_mono.measurable
   unfold normalizedPsiError
@@ -42,8 +43,11 @@ theorem CenteredLocalizedContourData.eventually_secondMoment_gt
       ((data.signal_tendsto.sub data.remainder_tendsto).pow 2).div
         data.coefficient_tendsto hlimitDenom
     convert h using 1
-    field_simp
-    ring
+    · ext m
+      simp [Pi.div_apply]
+    · congr 1
+      field_simp
+      ring
   have hratioLower :
       ∀ᶠ m : ℝ in atTop,
         C2 <

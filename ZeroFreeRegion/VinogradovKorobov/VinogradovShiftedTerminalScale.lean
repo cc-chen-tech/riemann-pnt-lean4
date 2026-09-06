@@ -45,7 +45,7 @@ theorem primePower_dvd_vinogradovShiftedCenterDifferenceNat_of_terminal
         vinogradovCenterValue z.1 -
           (vinogradovCenterValue z.2 - (p : ℤ) ^ b) := by
     have hself : (p : ℤ) ^ b ∣ (p : ℤ) ^ b := dvd_refl _
-    convert hunshifted.add hself using 1 <;> ring
+    convert hunshifted.add hself using 1 <;> (try rfl) <;> ring
   rw [← intCast_vinogradovShiftedCenterDifferenceNat p b z] at hshifted
   exact_mod_cast hshifted
 

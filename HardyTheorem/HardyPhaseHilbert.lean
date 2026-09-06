@@ -138,8 +138,8 @@ private theorem hasDerivAt_hardyCorrelationAmplitude
       hcomp.congr_deriv hscalar
   have harg := hcast.const_mul I
   have hexp := harg.cexp
-  simpa only [hardyCorrelationAmplitude,
-    hardyCorrelationAmplitudeDerivative] using hexp
+  unfold hardyCorrelationAmplitude hardyCorrelationAmplitudeDerivative
+  simpa [hardyCorrelationAmplitude] using hexp
 
 private theorem continuousAt_hardyCorrelationAmplitudeDerivative
     {v w t : ℝ} (htv : 0 < t + v) (htw : 0 < t + w) :

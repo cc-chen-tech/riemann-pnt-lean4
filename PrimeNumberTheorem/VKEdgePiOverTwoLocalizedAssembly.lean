@@ -79,6 +79,7 @@ theorem LocalizedContourData.eventually_exists_normalizedPsiError_gt
       (data.signal_tendsto.sub data.remainder_tendsto).div
         data.coefficient_tendsto hmeanTwo
     convert h using 1
+    · rfl
     · congr 1
       field_simp
       ring

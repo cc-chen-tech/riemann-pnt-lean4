@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergJDiagonalFixedBridge
+
+open HardyTheorem
+
+#check selbergJDiagonalDoubleSeries
+#check selbergJDiagonalDoubleSeries_eq_originalRay

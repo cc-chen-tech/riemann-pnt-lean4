@@ -50,21 +50,18 @@ theorem
   have halpha : 0 < alpha := hspec.2.1
   have hselected :
       ∀ᶠ x : ℝ in atTop,
-        actualSelectedHeightFiniteStripWeightedBalancedGoodHeight
-            beta sigma tau selection x ∈
-          Set.Icc
-            (actualCarlsonPolynomialGoodHeightBase alpha x)
-            (actualCarlsonPolynomialGoodHeightBase alpha x + 1) := by
-    simpa [alpha,
-      actualSelectedHeightFiniteStripWeightedBalancedGoodHeight,
-      actualCarlsonPolynomialGoodHeightBase] using
-      eventually_selectedUniformGoodHeight_mem halpha selection
+        selectedUniformGoodHeight alpha selection x ∈
+          Set.Icc (x ^ alpha - 1) (x ^ alpha) :=
+    eventually_selectedUniformGoodHeight_mem halpha selection
   have hheight :
       ∀ᶠ x : ℝ in atTop,
         actualSelectedHeightFiniteStripWeightedBalancedGoodHeight
             beta sigma tau selection x ≤
           carlsonPolynomialHeight alpha x :=
-    eventually_selectedHeight_le_carlsonPolynomialHeight hselected
+    by
+      filter_upwards [hselected] with x hx
+      change selectedUniformGoodHeight alpha selection x ≤ x ^ alpha
+      exact hx.2
   rcases
       nonempty_carlsonPolynomialFiniteStripCountCoefficientCertificate
         sigma hsigma hsigmaOne halpha with

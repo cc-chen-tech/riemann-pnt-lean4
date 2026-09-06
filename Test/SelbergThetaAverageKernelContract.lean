@@ -1,0 +1,8 @@
+import HardyTheorem.SelbergThetaAverageKernel
+
+open HardyTheorem
+
+#check selbergThetaAverageKernel
+#check selbergThetaAverageKernel_eq
+#check one_sub_two_div_exp_one_pos
+#check one_sub_two_div_exp_one_div_sq_le_selbergThetaAverageKernel

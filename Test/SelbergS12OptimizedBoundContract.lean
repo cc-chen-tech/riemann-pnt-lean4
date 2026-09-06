@@ -1,0 +1,4 @@
+import HardyTheorem.SelbergS12OptimizedBound
+
+#check HardyTheorem.exists_norm_selbergS12WeightedCoprimeSum_optimized_le
+#check HardyTheorem.exists_norm_selbergS12WeightedCoprimeSum_s12_le

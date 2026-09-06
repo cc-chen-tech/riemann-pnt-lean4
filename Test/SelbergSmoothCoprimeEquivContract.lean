@@ -1,0 +1,4 @@
+import HardyTheorem.SelbergSmoothCoprimeEquiv
+
+#check HardyTheorem.selbergSmoothCoprimeEquiv
+#check HardyTheorem.selbergSmoothCoprimeEquiv_apply_product

@@ -1,0 +1,31 @@
+import HardyTheorem.SelbergOffDiagonalTwoSides
+
+namespace HardyTheorem
+
+#check one_half_le_cos_of_mem_unitInterval
+#check inv_pi_mul_cos_le_one_of_mem_unitInterval
+#check selbergOffDiagonalOneSideUniformMajorant
+#check tsum_fixedSide_le_two_oneSideUniformMajorant
+#check selbergOffDiagonalUniformL
+#check selbergOffDiagonalUniformW
+#check tsum_fixedSide_le_two_oneSideUniform
+#check selbergOffDiagonalReverseOuterMajorant
+#check selbergOffDiagonalReverseOuterMajorant_eq
+#check selbergOffDiagonalTwoSideOuterMajorant
+#check selbergOffDiagonalPositiveSquareSum
+#check selbergOffDiagonalReverseSquareSum
+#check selbergOffDiagonalTwoSideSquareSum
+#check selbergOffDiagonalPositiveSquareSum_le
+#check selbergOffDiagonalReverseSquareSum_le
+#check selbergOffDiagonalTwoSideSquareSum_le
+#check selbergOffDiagonalUniformL_nonneg
+#check selbergOffDiagonalUniformW_nonneg
+#check selbergOffDiagonalTwoSideSquareSum_le_explicit
+#check selbergOffDiagonalTwoSideOuterMajorant_eq
+#check selbergOffDiagonalTwoSideOuterMajorant_le
+#check selberg_oscillatory_prefactor_le_two
+#check selbergOffDiagonalOscillatoryMajorant
+#check selbergOffDiagonalTwoSideSquareSum_nonneg
+#check selbergOffDiagonalOscillatoryMajorant_le_explicit
+
+end HardyTheorem

@@ -56,7 +56,7 @@ private theorem tendsto_leftGapSelectedEnergyEnvelope
   have hexp :
       Tendsto (fun Y : ℝ => Real.exp (-delta * Real.log Y))
         atTop (nhds 0) := by
-    simpa only [neg_mul] using
+    simpa [Function.comp_def, id_eq, neg_mul] using
       Real.tendsto_exp_neg_atTop_nhds_zero.comp hlinear
   have hmul :
       Tendsto

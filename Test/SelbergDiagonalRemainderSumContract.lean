@@ -1,0 +1,16 @@
+import HardyTheorem.SelbergDiagonalRemainderSum
+
+open HardyTheorem
+
+#check selbergDiagonalMollifierBase
+#check norm_selbergDiagonalMollifierBase_le_one
+#check selbergArithmeticDiagonalGcd_le_sq
+#check selbergDiagonalPhysicalRemainderPairTerm
+#check norm_selbergDiagonalPhysicalRemainderPairTerm_le
+#check selbergDiagonalPhysicalRemainderSum
+#check norm_selbergDiagonalPhysicalRemainderSum_le
+#check selbergDiagonalPhysicalFloorKernelSum
+#check selbergDiagonalPhysicalFloorKernelSum_eq_main_add_remainder
+#check exists_norm_selbergDiagonalPhysicalFloorKernelSum_le
+#check selbergDiagonalPhysicalOriginalSum
+#check selbergDiagonalPhysicalOriginalSum_eq_floorKernelSum

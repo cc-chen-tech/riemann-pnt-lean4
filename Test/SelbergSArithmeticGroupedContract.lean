@@ -1,0 +1,7 @@
+import HardyTheorem.SelbergSArithmeticGrouped
+
+open scoped BigOperators
+
+#check HardyTheorem.selberg_sum_sigma_pair_factor
+#check HardyTheorem.selbergArithmeticGroupedSum
+#check HardyTheorem.selbergArithmeticPairSum_eq_grouped

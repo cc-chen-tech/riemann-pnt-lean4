@@ -1,0 +1,10 @@
+import HardyTheorem.SelbergPerronLSeries
+
+#check HardyTheorem.selbergPerronLSeriesTerm
+#check HardyTheorem.selbergPerronLSeriesIntegrand
+#check HardyTheorem.selbergPerronLSeriesIntegrand_eq_tsum
+#check HardyTheorem.integrable_selbergPerronLSeriesTerm
+#check HardyTheorem.summable_integral_norm_selbergPerronLSeriesTerm
+#check HardyTheorem.integral_selbergPerronLSeriesIntegrand_eq_tsum_integral
+#check HardyTheorem.normalized_integral_selbergPerronLSeriesTerm_eq
+#check HardyTheorem.normalized_integral_selbergPerronLSeries_eq

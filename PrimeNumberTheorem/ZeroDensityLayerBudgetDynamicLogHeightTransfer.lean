@@ -201,10 +201,15 @@ theorem
           actualSelectedHeightStripCarlsonSlope]
         ring]
     simpa [alpha] using hraw
-  simpa [alpha,
-    actualSelectedHeightFiniteStripWeightedBalancedGoodHeight] using
-    tendsto_selectedUniformGoodHeight_carlsonStripLogMajorant_zero
-      halpha selection hmargin
+  change
+    Tendsto
+      (dynamicLogHeightMajorant
+        (selectedUniformGoodHeight alpha selection)
+        (tau i - beta)
+        (actualSelectedHeightStripCarlsonSlope (sigma i)))
+      atTop (nhds 0)
+  exact tendsto_selectedUniformGoodHeight_carlsonStripLogMajorant_zero
+    halpha selection hmargin
 
 /-- Weighted finite aggregation of dynamic Carlson strip majorants.  Fixed
 strip constants may encode density, kernel, or multiplicity coefficients. -/

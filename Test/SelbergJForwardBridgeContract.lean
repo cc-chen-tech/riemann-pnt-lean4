@@ -1,0 +1,10 @@
+import HardyTheorem.SelbergJForwardBridge
+
+open HardyTheorem
+
+#check selbergJIntegratedExpandedPair_eq_offDiagonalPairContribution
+#check selbergJForwardFixedPairSeries
+#check selbergJForwardFixedPairSeries_eq_physicalForwardFixedSum
+#check selbergJForwardDoubleSeries
+#check selbergJForwardDoubleSeries_eq_physicalForwardRaySum
+#check selbergJForwardPart_eq_physicalPositiveOffDiagonalSum

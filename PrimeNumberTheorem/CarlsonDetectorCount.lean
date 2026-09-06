@@ -623,8 +623,10 @@ theorem regularizedCarlsonDetectorRectangleRegularPart_eq_logDeriv_sub_principal
           (analyticOrderNatAt (regularizedCarlsonZeroDetector X))
   have hrawAnalytic : AnalyticAt ℂ raw z := by
     have hlog : AnalyticAt ℂ
-        (logDeriv (regularizedCarlsonZeroDetector X)) z :=
-      (hf z hz).deriv.div (hf z hz) hne
+        (fun w : ℂ => logDeriv (regularizedCarlsonZeroDetector X) w) z := by
+      change AnalyticAt ℂ (deriv (regularizedCarlsonZeroDetector X) /
+        regularizedCarlsonZeroDetector X) z
+      exact (hf z hz).deriv.div (hf z hz) hne
     have hsum : AnalyticAt ℂ
         (fun w : ℂ =>
           ∑ u ∈ P,
@@ -640,7 +642,7 @@ theorem regularizedCarlsonDetectorRectangleRegularPart_eq_logDeriv_sub_principal
             hX hsigma hz).mp (by simpa [P] using hu))
       exact analyticAt_const.mul
         ((analyticAt_id.sub analyticAt_const).inv (sub_ne_zero.mpr hzu))
-    simpa [raw] using hlog.sub hsum
+    convert hlog.sub hsum using 1 <;> (try rfl)
   have hregular :
       regularizedCarlsonDetectorRectangleRegularPart
           X sigma alpha a b z = raw z := by

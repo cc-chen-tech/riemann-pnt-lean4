@@ -89,7 +89,7 @@ theorem exists_carlson_uniform_pointwise_count_certificate :
   have hsquare : (4 - x0) ^ 2 ≤ 16 := by
     have hfour0 : 0 ≤ 4 - x0 := sub_nonneg.mpr hx04.le
     have hfour : 4 - x0 ≤ 4 := by linarith [hx0Half]
-    convert pow_le_pow_left₀ hfour0 hfour 2 using 1 <;> norm_num
+    convert pow_le_pow_left₀ hfour0 hfour 2 using 1 <;> (try rfl) <;> norm_num
   have hhorizontalSum :
       regularizedCarlsonHorizontalLogDerivMajorant
             C₁ C₂ (carlsonMollifierLength sigma T) 5 +
@@ -120,7 +120,7 @@ theorem exists_carlson_uniform_pointwise_count_certificate :
       calc
         _ ≤ 32 * carlsonHorizontalMajorantCoefficient *
               carlsonAmbientLogCube T := by
-            convert hfirst using 1 <;> ring
+            convert hfirst using 1 <;> (try rfl) <;> ring
         _ ≤ (32 * carlsonHorizontalMajorantCoefficient) *
               (carlsonAmbientLogCube T *
                 T ^ (4 * sigma * (1 - sigma))) := by

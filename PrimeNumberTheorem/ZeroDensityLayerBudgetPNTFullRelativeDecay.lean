@@ -226,8 +226,8 @@ theorem FixedRatePNTUpperSchedule.relativeBudget_tendsto
   unfold FixedRatePNTUpperSchedule.relativeBudget
   simpa only [
       naturalPointPintzPNTHybridCeilingRelativeUpperBudget,
-      singletonZeroThresholdBucketInput_sigma, add_div, add_assoc, mul_zero,
-      zero_add] using
+      singletonZeroThresholdBucketInput, add_div, add_assoc, mul_zero, zero_add]
+    using
     ((hdensityNat.const_mul 2).add hfixed).add hremainder
 
 /-- A vanishing complete schedule budget transfers to the actual relative PNT

@@ -1,0 +1,8 @@
+import HardyTheorem.SelbergJDiagonalTermBridge
+
+open HardyTheorem
+
+#check selbergPhysicalPairMollifierCoefficient_eq_diagonalBase
+#check selbergPhysicalPairDamping_on_gcdRay
+#check selbergPhysicalPairSignedFrequency_on_gcdRay
+#check selbergPhysicalPairIntegrand_on_gcdRay

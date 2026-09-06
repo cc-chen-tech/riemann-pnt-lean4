@@ -6461,6 +6461,39 @@ The sum over \(v,j\) in (4.450) is infinite and exact; the derivative
 bounds of \(\Psi_{q,k}\) give arbitrary-power decay outside the dual
 boxes below.
 
+The role of the original AFE product \(a=h\delta\) can be audited before
+any scale estimate.  On one complete \(h\)-residue class, the dual mode
+\(v\) gives
+
+\[
+ \boxed{
+ \sum_{h\bmod s}e_s\!\left(h(v-\delta\bar w)\right)
+ =s\,\mathbf1_{v\equiv\delta\bar w\;({\rm mod}\ s)}.}
+ \tag{4.450a}
+\]
+
+Because \(w\) is a unit modulo \(s\), the surviving condition is exactly
+
+\[
+ \boxed{
+ v\equiv\delta\bar w\pmod s
+ \quad\Longleftrightarrow\quad
+ wv-js=\delta\text{ for one }j\in\mathbb Z.}
+ \tag{4.450b}
+\]
+
+Thus retaining \(h\delta\) before Poisson is essential for deriving the
+correct incidence relation, but after dualization the \(h\)-variable has
+been eliminated: there is no second residual \(h\delta\)-oscillator on
+the same dual mode.  The Fourier transform
+\(\widehat\phi_{s,w,\delta}(Hv/s)\) still carries the smooth
+\(\delta\)-dependence and every outer packet label, so (4.450a)--(4.450b)
+do not decouple the kernel or prove cancellation.  They rule out only the
+double counting of an automatic half-power from the already-spent product
+phase.  The helper h_product_phase_character_orthogonality verifies this
+equivalence over exact finite residue data and keeps
+automatic_power_saving_from_product_frequency false.
+
 On the boundary dual box the variables have the scales
 
 \[
@@ -6864,15 +6897,53 @@ has uniform square-root-range saving \(T^{1/100-o(1)}\).  Its deficit is
 \]
 
 Pascadi,
-[arXiv:2511.08445v1](https://arxiv.org/abs/2511.08445), obtains the
-larger saving \(T^{1/12-o(1)}\) for products of two primes of comparable
-size.  This is not uniform over the determinant moduli in (4.471), and
-even on that favorable family the deficit remains
+[arXiv:2511.08445v2](https://arxiv.org/abs/2511.08445), Theorem 1.1,
+now gives a uniform all-modulus saving \(T^{1/700-o(1)}\) for arbitrary
+sequences in the square-root range.  If one coefficient sequence is
+1-bounded, its second assertion improves this to \(T^{1/276-o(1)}\).
+The corresponding optimistic deficits are
+
+\[
+ \boxed{
+  \frac12-\frac1{700}=\frac{349}{700},
+  \qquad
+  \frac12-\frac1{276}=\frac{137}{276}.}
+\tag{4.481a}
+\]
+
+Theorem 1.2 obtains the larger saving \(T^{1/12-o(1)}\) for favorable
+factorable moduli, including products of two primes of comparable size.
+Even on that favorable family the deficit remains
 
 \[
  \boxed{\frac12-\frac1{12}=\frac5{12}.}
 \tag{4.482}
 \]
+
+The same v2 paper contains an averaged-modulus result, Corollary 1.4.
+It does not supply the missing outer determinant average here.  The top
+primitive determinant shell imposes no common divisor of all moduli beyond
+\(q=1\).  Substituting \(q=d=d'=e=f=1\) into that corollary gives the
+factor
+
+\[
+ \left(
+  \frac{1}{\min(C,1)+\min(1,C)}
+ \right)^{1/6}=2^{-1/6},
+\tag{4.482a}
+\]
+
+which is constant and therefore supplies no power saving in \(C\asymp T\).
+The exact published-exponent ledger on the critical shell is consequently
+
+| input | theorem-level saving | deficit from (4.476) | actual adapter |
+|---|---:|---:|---|
+| Blomer--Pascadi, uniform | \(1/32\) | \(15/32\) | kernel not separated |
+| Milićević--Qin--Wu, uniform | \(1/100\) | \(49/100\) | kernel not separated |
+| Pascadi v2, arbitrary sequences | \(1/700\) | \(349/700\) | uniform in the modulus, kernel not separated |
+| Pascadi v2, one side 1-bounded | \(1/276\) | \(137/276\) | 1-bounded packet hypothesis not verified |
+| Pascadi v2, favorable factorable modulus | \(1/12\) | \(5/12\) | not uniform on the determinant shell |
+| Pascadi v2, Corollary 1.4 with common \(q=1\) | \(0\) | \(1/2\) | genuine modulus average but no power saving |
 
 These comparisons already grant more than the present kernel justifies.
 In (4.472), the modulus \(\Delta\), the two recovered Cramer
@@ -6899,7 +6970,8 @@ can turn these published exponents into (4.473); a genuinely stronger
 use of the simultaneous Möbius structure is necessary.
 
 The adapter transition_published_kloosterman_entry_audit records
-(4.477)--(4.483), including the optimistic hypothesis failures.  It
+(4.477)--(4.483), including the v2 uniform and averaged-modulus fields
+and the optimistic hypothesis failures.  It
 keeps standard_kloosterman_kernel_verified=False,
 coefficients_separate_from_matrix_entries=False,
 fixed_modulus_before_entry_sum_verified=False, and
@@ -8115,6 +8187,72 @@ published_mixed_fourth_moment_proved=False and
 whole_line_family_covered=False.  Thus Section 4.61 changes the analytic
 language of the obstruction, but does not declare M4\(_\gamma\) proved.
 
+#### 4.61.1 Recent fourth-moment papers do not cover the top Möbius gate
+
+The most recent amplified fourth-moment result must be compared with
+(4.562) at the level of the theorem statement, not only by the words
+"fourth moment" and "mollifier".  Theorem 1.1 of
+[Bui--Hall--Subira Jorge](https://arxiv.org/html/2511.14415) evaluates
+
+\[
+ \int |\zeta(1/2+it)|^4 |A(1/2+it)|^4 w(t/T)\,dt,
+ \qquad
+ A(s)=\sum_{n\le T^\vartheta}
+ {d_r(n)P(\log(T^\vartheta/n)/\log T^\vartheta)\over n^s},
+\tag{4.564a}
+\]
+
+under the strict hypothesis
+
+\[
+ \boxed{\vartheta<\frac18.}
+\tag{4.564b}
+\]
+
+The top member (4.562), in contrast, has length exponent \(1\), Möbius
+coefficients, and no factor \(|\zeta|^4\).  Hence the three independent
+interface tests are
+
+\[
+ \underbrace{1<\frac18}_{\text{length: false}},\qquad
+ \underbrace{\mu(n)=d_r(n)P(\cdot)}_{\text{coefficient: false}},\qquad
+ \underbrace{\int|D_\mu|^4=\int|\zeta|^4|A|^4}_{\text{integrand: false}}.
+\tag{4.564c}
+\]
+
+In particular, the length deficit is exactly \(1-1/8=7/8\).  Positivity
+does not repair the third test: an upper bound with the nonnegative weight
+\(|\zeta(1/2+it)|^4\) gives no upper bound for the unweighted integral
+without a uniform positive lower bound for \(|\zeta|\), which is false at
+its zeros.  The 2026 two-piece amplified-moment framework of
+[Durkan--Page](https://arxiv.org/html/2606.27323) likewise uses short
+amplifiers inside zeta moments; its twisted fourth-moment range
+\(\vartheta_k<1/(4k)\) does not supply the pure length-\(T\) Möbius moment.
+
+There is also a recent result with the exact word "Möbius" in its title,
+but it is a different Fourier geometry.  Theorem 4.1 of
+[Verjovsky](https://arxiv.org/html/2607.25002) concerns the additive
+polynomial
+
+\[
+ P_N(x)=N^{-1/2}\sum_{n\le N}\mu(n)e(nx)
+\tag{4.564d}
+\]
+
+on arcs of radius \(c/N\).  It states that subpolynomial growth of all
+finite local moments is equivalent to RH.  It is therefore neither an
+unconditional input nor a theorem about the multiplicative frequencies
+\(n^{-it}\) in (4.562).  It is useful as a depth warning, not as coverage.
+
+The finite adapter
+`published_mobius_fourth_moment_coverage_audit` records the target
+exponents \(1,1,1\), the strict \(1/8\) source ceiling, the exact \(7/8\)
+length deficit, and the two further interface failures in (4.564c).  It
+also records the additive/multiplicative distinction and the RH-equivalent
+status of (4.564d).  Its final field is
+`direct_published_coverage=False`.  This is a finite coverage proposition,
+not a claim that either cited theorem is false or weak in its own setting.
+
 ### 4.62 Exact amplitude ledger for the stronger top fourth-moment route
 
 The sufficient componentwise estimate (4.562) can itself be tested against
@@ -8145,7 +8283,7 @@ Plancherel--Pólya sampling inequality for exponential polynomials,
 followed by dyadic layer cake, shows that (4.566) follows from
 
 \[
- \sum_{V\ {\rm dyadic}}R_\mu(V;T,U)V^4
+ \sum_{V\ \mathrm{dyadic}}R_\mu(V;T,U)V^4
  \ll T^3(\log T)^{1+o(1)}.
 \tag{4.567}
 \]
@@ -8906,14 +9044,17 @@ The finite helpers `mobius_unsigned_sector_recombination` and
 `four_mobius_unsigned_sector_recombination` verify (4.613)--(4.617) on
 integer fixtures.  The adapter
 `transition_bblr_hard_unsigned_cell_audit` records (4.618)--(4.621) with
-`Fraction`.  This is a no-go result only for cellwise use of BBLR.  It is
-not a lower bound for the original signed sum.  The two remaining logical
-options are now disjoint:
+`Fraction`.  This is a no-go result only for the Watt-first, cellwise use of
+BBLR.  It is not a lower bound for the original signed sum.  At that stage
+the two visible global options were:
 
 1. prove a BBLR-strength joint estimate after summing all outer scales in
    (4.616), before any triangle inequality; or
 2. return to the pre-Cauchy slope family (4.457), where cancellation among
    slopes need not pass through the positive DCV square function.
+
+
+LCM 路线在此处分叉：其 §4.68.1–§4.79 及独立公式编号见 [LCM continuation](2026-08-31-mwkf-lcm-route-continuation.md)。下面保留 #483 的 canonical 编号，二者不能按同号公式拼接。
 
 ### 4.69 The actual delta-lattice zero mode is a Gram form
 
@@ -25062,6 +25203,7 @@ which gains a full \(T\) beyond (4.860), together with the inherited
 coprimality and ratio tensors of (4.768).  The adapter
 `robles_balanced_product_fourier_audit` records (4.857)--(4.861) and
 keeps the centering, signed-correlation, and coverage flags false.
+
 
 
 ## 5. Route C: endpoint-to-all-length interpolation

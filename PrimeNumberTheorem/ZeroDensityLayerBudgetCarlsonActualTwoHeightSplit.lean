@@ -232,12 +232,18 @@ theorem sum_norm_actualPositiveCarlsonStrip_le_twoHeightBudget
   exact add_le_add
     (sum_norm_actualPositiveCarlsonLowStrip_le hx hsigma)
     (by
-      simpa [actualCarlsonTwoHeightHighBudget,
-        polynomialOrdinateRectangleKernel] using
-        (sum_norm_actualPositiveCarlsonHighRectangle_le
-          (sigma := sigma) (tau := tau)
-          (U := carlsonPolynomialHeight gamma x)
-          (T := carlsonPolynomialHeight alpha x) hx hU))
+      change
+        (∑ rho ∈ actualPositiveCarlsonHighRectangle sigma tau
+            (carlsonPolynomialHeight gamma x)
+            (carlsonPolynomialHeight alpha x),
+            ‖pntRelativeZeroContribution x rho‖) ≤
+          x ^ (tau - 1) / carlsonPolynomialHeight gamma x *
+            (ZeroDensity.zeroDensityCount sigma
+              (carlsonPolynomialHeight alpha x) : ℝ)
+      exact sum_norm_actualPositiveCarlsonHighRectangle_le
+        (sigma := sigma) (tau := tau)
+        (U := carlsonPolynomialHeight gamma x)
+        (T := carlsonPolynomialHeight alpha x) hx hU)
 
 theorem tendsto_actualCarlsonTwoHeightLowBudget
     {sigma tau gamma epsilon : ℝ}
@@ -277,12 +283,18 @@ theorem tendsto_actualCarlsonTwoHeightHighBudget
     Tendsto
       (actualCarlsonTwoHeightHighBudget sigma tau alpha gamma)
       atTop (nhds 0) := by
-  simpa [actualCarlsonTwoHeightHighBudget, mul_comm,
-    carlsonTwoHeightHighExponent] using
-    (tendsto_dynamicCarlsonCount_mul_polynomialOrdinateRectangleKernel
+  change
+    Tendsto
+      (fun x =>
+        polynomialOrdinateRectangleKernel tau gamma x *
+          (ZeroDensity.zeroDensityCount sigma
+            (carlsonPolynomialHeight alpha x) : ℝ))
+      atTop (nhds 0)
+  simpa only [mul_comm] using
+    tendsto_dynamicCarlsonCount_mul_polynomialOrdinateRectangleKernel
       (sigma := sigma) (tau := tau) (alpha := alpha) (gamma := gamma)
       hsigma hsigmaOne halpha hepsilon (by
-        simpa [carlsonTwoHeightHighExponent] using hmargin))
+        simpa [carlsonTwoHeightHighExponent] using hmargin)
 
 /-- The actual multiplicity-weighted zeta kernels in the whole real strip
 decay under the two-height exponent conditions. -/

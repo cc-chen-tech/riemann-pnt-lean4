@@ -63,8 +63,12 @@ theorem
   have hrealTendsto :
       Tendsto (dynamicRealOrdinatePNTZeroTailNorm H)
         atTop (nhds 0) := by
-    simpa [targetZeroPowerAmplitude,
-      dynamicRealOrdinatePNTZeroTailNorm] using hnegligible
+    have habs : Tendsto
+        (fun x : ℝ => |dynamicRealOrdinatePNTZeroTailNorm H x|)
+        atTop (nhds 0) := by
+      simpa [targetZeroPowerAmplitude] using hnegligible
+    apply tendsto_zero_iff_norm_tendsto_zero.mpr
+    simpa only [Real.norm_eq_abs] using habs
   exact hrealTendsto.comp tendsto_natCast_atTop_atTop
 
 /-- Complete finite zeta-zero tail decay at a selected moving Carlson height. -/
@@ -187,8 +191,9 @@ theorem
           actualPNTClosedRealAxisRelativeTerm (m : ℝ))
         atTop (nhds 0) := by
     apply tendsto_zero_iff_norm_tendsto_zero.mpr
-    simpa [Real.norm_eq_abs] using
-      hclosedAbs.comp tendsto_natCast_atTop_atTop
+    apply (hclosedAbs.comp tendsto_natCast_atTop_atTop).congr'
+    filter_upwards with m
+    rfl
   have hremainderNegligible := hremainder.negligible
   unfold NaturalPointTargetAmplitudeNegligible at hremainderNegligible
   have hremainderAbs :
@@ -268,8 +273,9 @@ theorem tendsto_relativeChebyshevPsi0Error_of_dynamicFullPNTZeroTailNorm
           actualPNTClosedRealAxisRelativeTerm (m : ℝ))
         atTop (nhds 0) := by
     apply tendsto_zero_iff_norm_tendsto_zero.mpr
-    simpa [Real.norm_eq_abs] using
-      hclosedAbs.comp tendsto_natCast_atTop_atTop
+    apply (hclosedAbs.comp tendsto_natCast_atTop_atTop).congr'
+    filter_upwards with m
+    rfl
   have hremainderNegligible := hremainder.negligible
   unfold NaturalPointTargetAmplitudeNegligible at hremainderNegligible
   have hremainderAbs :

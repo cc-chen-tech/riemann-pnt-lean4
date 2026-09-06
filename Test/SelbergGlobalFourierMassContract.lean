@@ -1,0 +1,16 @@
+import HardyTheorem.SelbergGlobalFourierMass
+
+open Complex FourierTransform MeasureTheory Set
+open scoped FourierTransform
+
+namespace HardyTheorem
+
+#check integral_normSq_selbergNonconstantInverseFourierKernel_Ioi_log
+#check integrableOn_normSq_selbergNonconstantInverseFourierKernel_Ioi_zero
+#check exists_integral_normSq_selbergNonconstantInverseFourierKernel_positive_le
+#check exists_integral_normSq_selbergExplicitInverseFourierKernel_positive_le
+#check exists_integral_normSq_selbergCompletedMollifiedF_global_le
+
+#print axioms exists_integral_normSq_selbergCompletedMollifiedF_global_le
+
+end HardyTheorem

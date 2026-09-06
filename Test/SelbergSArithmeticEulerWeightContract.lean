@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergSArithmeticEulerWeight
+
+#check HardyTheorem.selbergSArith_local_fourth_le_nine
+#check HardyTheorem.selbergSArithEulerWeight
+#check HardyTheorem.selbergSArithEulerWeight_le_nineProduct

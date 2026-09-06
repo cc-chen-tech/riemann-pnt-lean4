@@ -1,0 +1,9 @@
+import HardyTheorem.SelbergDiagonalScaleParameter
+
+open HardyTheorem
+
+#check selbergDiagonalThetaScale_identity
+#check selbergDiagonalThetaScale_le
+#check selbergDiagonalMainGate_of_parameters
+#check selbergDiagonalSZeroContribution_le
+#check selbergDiagonalSThetaContribution_le

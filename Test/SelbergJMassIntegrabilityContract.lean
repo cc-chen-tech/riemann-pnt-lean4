@@ -1,0 +1,7 @@
+import HardyTheorem.SelbergJMassIntegrability
+
+open HardyTheorem
+
+#check integrableOn_selbergJ_weightedPhysicalNormSq
+#check integrableOn_selbergPhysicalThetaKernel_normSq
+#check aestronglyMeasurableOn_selbergPhysicalThetaKernel_normSq

@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.SharpWitnessTransfer
+
+#print axioms PrimeNumberTheorem.triangleWeight_nonneg
+#print axioms PrimeNumberTheorem.integral_triangleWeight_le_two
+#print axioms PrimeNumberTheorem.triangleEnergy_le_two_mul_supSq
+#print axioms PrimeNumberTheorem.exists_pointwise_witness_of_triangleEnergy
+#print axioms PrimeNumberTheorem.triangleEnergy_transfer_lower
+#print axioms PrimeNumberTheorem.triangleEnergy_le_two_add_two
+#print axioms PrimeNumberTheorem.forcingLowerCount_of_energyTransfer
+#print axioms PrimeNumberTheorem.forcingLowerCount_clean_of_residualDominated

@@ -149,7 +149,7 @@ theorem boundaryRectIntegral_regularizedCarlsonZeroDetector_eq_zeroMultiplicityS
       ([[x0, x1]] ×ℂ [[y0, y1]]) := by
     intro z hz
     have hzx : z.re ∈ Set.Icc x0 x1 := by
-      simpa only [uIcc_of_le hx01.le] using hz.1
+      simpa only [uIcc_of_le hx01.le, Set.mem_preimage] using hz.1
     have hzre : x0 ≤ z.re := hzx.1
     exact analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
       (theta := (0 : ℝ)) le_rfl X z (hx0.trans_le hzre)
@@ -581,9 +581,9 @@ theorem neg_integral_log_norm_regularizedCarlson_fixedRight_le_with_subOne
         ∫ y in y0..y1,
           Real.log ‖regularizedCarlsonZeroDetector X
             ((4 : ℂ) + (y : ℂ) * I)‖ := by
-    simpa only [mul_comm I] using hlower
+    simpa [mul_comm] using hlower
   have hneg := neg_le_neg hlower
-  simpa only [neg_add, neg_mul] using hneg
+  simpa [neg_add, neg_mul] using hneg
 
 /-- The inverse-square majorant used on the far-right horizontal extension
 has an exact elementary integral. -/
@@ -598,7 +598,7 @@ theorem integral_inv_sq_sub_one_eq {R : ℝ} (hR : 4 ≤ R) :
       exact hx.1
     have hxne : x - 1 ≠ 0 := by linarith
     have h := (((hasDerivAt_id x).sub_const 1).inv hxne).neg
-    convert h using 1
+    convert h using 1 <;> (try rfl)
     simp only [id_eq]
     field_simp
   have hint : IntervalIntegrable (fun x : ℝ => 1 / (x - 1) ^ 2)

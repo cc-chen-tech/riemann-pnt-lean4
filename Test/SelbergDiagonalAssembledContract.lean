@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergDiagonalAssembled
+
+open HardyTheorem
+
+#check exists_norm_selbergDiagonalPhysicalOriginalSum_le_of_scales

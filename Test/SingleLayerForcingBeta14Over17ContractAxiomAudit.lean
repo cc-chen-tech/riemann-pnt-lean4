@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.SingleLayerForcingBeta14Over17Contract
+
+#print axioms PrimeNumberTheorem.no_nontrivial_zero_re_gt_14_over_17_of_certificates
+#print axioms PrimeNumberTheorem.eventually_log_rpow_neg_ge_rpow_neg
+#print axioms PrimeNumberTheorem.singleLayerWindowForcing_tendsto_gap
+#print axioms PrimeNumberTheorem.singleLayerWindowForcing_carlson_contradiction

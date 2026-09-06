@@ -118,7 +118,7 @@ private theorem tendsto_exp_neg_mul_lowHeightEnergy
       atTop (nhds 0) := by
   have hlinear : Tendsto (fun a : ℝ => beta * a) atTop atTop := by
     simpa [mul_comm] using tendsto_id.atTop_mul_const hbeta
-  simpa only [neg_mul] using
+  simpa [Function.comp_def, id_eq, neg_mul] using
     Real.tendsto_exp_neg_atTop_nhds_zero.comp hlinear
 
 /-- One fixed off-line zeta zero with real part greater than `2 / 3` forces a

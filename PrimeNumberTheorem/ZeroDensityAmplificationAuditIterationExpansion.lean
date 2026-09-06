@@ -46,7 +46,8 @@ theorem iterativeWindowLayer_qpow_lowerBound
   induction n with
   | zero =>
       filter_upwards [C.hroots_nonempty] with T hroot
-      simpa using hroot
+      change 1 ≤ (C.roots T).card
+      exact hroot
   | succ n ih =>
       have hn' : n < C.depth := Nat.lt_of_lt_of_le (Nat.lt_succ_self n) hn
       have hq : ∀ᶠ T in Filter.atTop,

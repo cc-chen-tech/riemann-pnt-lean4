@@ -97,7 +97,7 @@ theorem hasDerivAt_deriv_thetaModel {t : ℝ} (ht : 0 < t) :
   have harg_ne : t / (2 * Real.pi) ≠ 0 :=
     div_ne_zero ht.ne' hden
   have hlog := (harg.log harg_ne).const_mul (1 / 2 : ℝ)
-  convert hlog using 1
+  convert hlog using 1 <;> (try rfl)
   field_simp [ht.ne', hden]
 
 /-- The exact derivative value of the slowly varying window coefficient. -/
@@ -165,7 +165,7 @@ theorem hasDerivAt_hardyPhaseWindowCoeff
         HasDerivAt
           (fun y : ℝ => I * (((deriv thetaModel y - Real.log n) * v : ℝ) : ℂ))
           (I * ((v / (2 * x) : ℝ) : ℂ)) x := by
-      convert hreal.const_mul I using 1
+      convert hreal.const_mul I using 1 <;> (try rfl)
       · push_cast
         ring
     simpa only [F, F', mul_comm, mul_left_comm, mul_assoc] using harg.cexp

@@ -179,14 +179,13 @@ theorem exists_integral_hardyShortIntegral_sq_le_mul
           4 * Complex.normSq (hardyPhaseLinearizedSum T delta t) +
             4 * B ^ 2 := by
       convert mul_le_mul_of_nonneg_left hphaseSq (by norm_num : (0 : ℝ) ≤ 2)
-        using 1
-      all_goals ring
+        using 1 <;> (try rfl) <;> ring
     have herrors : 4 * B ^ 2 + 2 * A ^ 2 ≤ K := by
       dsimp only [K]
       convert add_le_add
         (mul_le_mul_of_nonneg_left hBsq (by norm_num : (0 : ℝ) ≤ 4))
-        (mul_le_mul_of_nonneg_left hAsq (by norm_num : (0 : ℝ) ≤ 2)) using 1
-      all_goals ring
+        (mul_le_mul_of_nonneg_left hAsq (by norm_num : (0 : ℝ) ≤ 2)) using 1 <;>
+        (try rfl) <;> ring
     calc
       (hardyShortIntegral delta t) ^ 2 ≤
           2 * (hardyFirstModelShortIntegral kappa T delta t) ^ 2 +

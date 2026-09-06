@@ -69,7 +69,7 @@ example (sigma : ℝ) (n : ℕ) :
 example (q : ℝ) (n : ℕ) :
     (((2 : ℝ) ^ n) ^ q) / (2 : ℝ) ^ n =
       Real.exp ((q - 1) * Real.log 2) ^ n :=
-  dyadic_rpow_div_eq_carlsonDyadicReciprocalRatio q n
+  dyadic_rpow_div_eq_pntDyadicReciprocalDensityRatio q n
 
 example (C sigma : ℝ) (n : ℕ) :
     (C * ‖

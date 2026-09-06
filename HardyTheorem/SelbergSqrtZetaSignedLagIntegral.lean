@@ -26,6 +26,8 @@ theorem selbergSqrtZetaSignedShortIntegral_eq_slidingWindowMass
 theorem continuous_selbergSqrtZetaSignedShortIntegral
     (X : ℕ) (H : ℝ) :
     Continuous (selbergSqrtZetaSignedShortIntegral X H) := by
+  change Continuous
+    (fun t : ℝ => selbergSqrtZetaSignedShortIntegral X H t)
   simpa only [selbergSqrtZetaSignedShortIntegral_eq_slidingWindowMass] using
     MathlibAux.continuous_slidingWindowMass_of_continuous
       (continuous_selbergSqrtZetaMollifiedHardyZ X) H

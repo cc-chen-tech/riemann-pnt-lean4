@@ -1,0 +1,14 @@
+import HardyTheorem.SelbergDiagonalKernelPointwise
+
+namespace HardyTheorem
+
+#check selbergDiagonalFloorKernelIntegrand
+#check selbergDiagonalEulerMainIntegrand
+#check selbergDiagonalEulerConstantIntegrand
+#check selbergDiagonalEulerErrorIntegrand
+#check selbergDiagonalFloorKernelIntegrand_decomposition
+#check selberg_rpow_floor_error_algebra
+#check selbergEtaSqrtCancellation
+#check abs_selbergDiagonalEulerErrorIntegrand_le
+
+end HardyTheorem

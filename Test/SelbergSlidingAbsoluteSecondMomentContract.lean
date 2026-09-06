@@ -1,0 +1,12 @@
+import HardyTheorem.SelbergSlidingAbsoluteSecondMoment
+
+open Complex MeasureTheory Set
+open scoped Interval
+
+namespace HardyTheorem
+
+#check exists_integral_sq_abs_selbergCompletedMollifiedF_sliding_le
+
+#print axioms exists_integral_sq_abs_selbergCompletedMollifiedF_sliding_le
+
+end HardyTheorem

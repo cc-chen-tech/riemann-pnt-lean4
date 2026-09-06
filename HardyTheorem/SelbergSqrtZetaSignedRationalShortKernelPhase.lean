@@ -66,6 +66,15 @@ theorem deriv_selbergSqrtZetaSignedRationalShortKernelPhase
             selbergSqrtZetaSignedRationalFrequency q -
           ((1 / 2 : ℝ) * Real.log ((t + v) / (2 * Real.pi)) +
             selbergSqrtZetaSignedRationalFrequency r)) t := by
+    change HasDerivAt
+      (((fun x : ℝ => thetaModel (x + w)) +
+          fun x : ℝ => selbergSqrtZetaSignedRationalFrequency q * (x + w)) -
+        ((fun x : ℝ => thetaModel (x + v)) +
+          fun x : ℝ => selbergSqrtZetaSignedRationalFrequency r * (x + v)))
+      ((1 / 2 : ℝ) * Real.log ((t + w) / (2 * Real.pi)) +
+          selbergSqrtZetaSignedRationalFrequency q -
+        ((1 / 2 : ℝ) * Real.log ((t + v) / (2 * Real.pi)) +
+          selbergSqrtZetaSignedRationalFrequency r)) t
     simpa only [Pi.add_apply, Pi.sub_apply] using hphase
   unfold selbergSqrtZetaSignedRationalShortKernelPhase
   rw [hphase'.deriv]
@@ -112,6 +121,11 @@ theorem iteratedDeriv_two_selbergSqrtZetaSignedRationalShortKernelPhase
           HasDerivAt linear
             (selbergSqrtZetaSignedRationalFrequency q -
               selbergSqrtZetaSignedRationalFrequency r) x := by
+        change HasDerivAt
+          ((fun y : ℝ => selbergSqrtZetaSignedRationalFrequency q * (y + w)) -
+            fun y : ℝ => selbergSqrtZetaSignedRationalFrequency r * (y + v))
+          (selbergSqrtZetaSignedRationalFrequency q -
+            selbergSqrtZetaSignedRationalFrequency r) x
         simpa only [linear, id_eq, Pi.sub_apply, mul_one] using
           (((hasDerivAt_id x).add_const w).const_mul
             (selbergSqrtZetaSignedRationalFrequency q)).sub

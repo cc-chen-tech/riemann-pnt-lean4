@@ -80,6 +80,11 @@ theorem dynamicExplicitFormulaUpperBudgetAlong_tendsto_zero
       (dynamicExplicitFormulaUpperBudgetAlong
         layers height layerTerm truncation compact)
       Filter.atTop (nhds 0) := by
+  change Filter.Tendsto
+    (fun x : ℝ =>
+      dynamicExplicitFormulaUpperBudgetAlong
+        layers height layerTerm truncation compact x)
+    Filter.atTop (nhds 0)
   simpa [dynamicExplicitFormulaUpperBudgetAlong] using
     layerDecay.total_tendsto_zero.add htruncation |>.add hcompact
 

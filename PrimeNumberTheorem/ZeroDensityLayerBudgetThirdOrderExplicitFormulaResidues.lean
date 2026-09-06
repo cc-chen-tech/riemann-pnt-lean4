@@ -97,7 +97,7 @@ theorem exists_explicitFormula_regularization_without_zero
   · have hinv : AnalyticOnNhd ℂ (fun z : ℂ => z⁻¹) K :=
       analyticOnNhd_id.inv hzero
     by_cases h0 : 0 ∈ poles0
-    · simpa [g, h0, baseR] using
+    · simpa [g, h0, baseR] using!
         hanalytic.add (hinv.mul analyticOnNhd_const)
     · simpa [g, h0, baseR] using hanalytic
   · intro z hzK hzPoles
@@ -208,7 +208,8 @@ theorem exists_boundaryRectIntegral_thirdOrderExplicitFormulaIntegrand_eq_residu
     (x0 := a) (x1 := c) (y0 := -W) (y1 := W) (fun z hzK hzBoundary => by
       apply heq z hzK
       intro hzPole
-      exact hzBoundary (hpolesInterior z hzPole))
+      apply hzBoundary
+      exact hpolesInterior z hzPole)
   exact hcongr.trans hregularized
 
 noncomputable def thirdOrderContourRemainder (x a c W : ℝ) : ℂ :=

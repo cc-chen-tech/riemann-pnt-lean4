@@ -88,8 +88,8 @@ private theorem
             Complex.exp
               (I * (((omega - nu) * q.2 : ℝ) : ℂ))) p := by
         fun_prop
-      simpa only [ofReal_sub, ofReal_mul] using
-        (hleft.mul hright).mul hosc
+      simpa [ContinuousAt, Pi.mul_def, Pi.mul_apply, ofReal_sub, ofReal_mul]
+        using (hleft.mul hright).mul hosc
   have hproduct : ContinuousAt
       (fun q : (ℝ × ℝ) × ℝ =>
         hardyCorrelationAmplitude q.1.1 q.1.2 q.2 *

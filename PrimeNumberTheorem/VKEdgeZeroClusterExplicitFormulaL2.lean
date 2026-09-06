@@ -130,6 +130,7 @@ private theorem measurable_normalizedChebyshevPsiErrorAtExponent
     (beta : ℝ) :
     Measurable (normalizedChebyshevPsiErrorAtExponent beta) := by
   have hpsi : Measurable chebyshevPsi := by
+    change Measurable (Chebyshev.psi : ℝ → ℝ)
     simpa only [chebyshevPsi_eq_mathlib] using
       Chebyshev.psi_mono.measurable
   unfold normalizedChebyshevPsiErrorAtExponent

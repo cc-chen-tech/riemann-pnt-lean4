@@ -11,8 +11,8 @@ Canonical text: the paper.
 PRINCIPLE: the fields of PaperInputs are PUBLISHED, CLASSICAL inputs,
 stated in the paper's own form with the paper's equation labels. Everything the paper itself derives
 (lem:poisson, prop:block, prop:tail, [eq:PiPfacts], [eq:Bdef], prop:trace, thm:traces, §6, taper facts
-[eq:phinorms]–[eq:psiints], …) is a proof obligation and must NOT be added here. There are NO Lean
-axiom declarations anywhere in this project: hypotheses are fields of the Prop-valued structure
+[eq:phinorms]–[eq:psiints], …) is a proof obligation and must NOT be added here. No declarations use
+Lean's `axiom` command anywhere in this project: hypotheses are fields of the Prop-valued structure
 PaperInputs, which every headline theorem takes as an explicit argument, so #print axioms stays at
 {propext, Classical.choice, Quot.sound} and the trust boundary is exactly this file.
 

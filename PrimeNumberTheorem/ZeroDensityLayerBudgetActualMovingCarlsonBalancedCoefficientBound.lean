@@ -61,8 +61,15 @@ theorem actualMovingCarlsonBalancedPointwiseCoefficient_le_quadratic
     have hscale : 0 ≤
         125 * CarlsonZeroDensity.carlsonFinalCoefficient A
           (1 - 2 * delta) := mul_nonneg (by norm_num) hK
-    have := mul_le_mul_of_nonneg_left hcutDiv hscale
-    convert this using 1 <;> ring
+    calc
+      _ = (125 * CarlsonZeroDensity.carlsonFinalCoefficient A
+              (1 - 2 * delta)) *
+            ((carlsonTwoHeightBalancedCut (1 - 2 * delta) alpha) ^
+              (4 : ℕ) / (1 - 2 * delta)) := by ring
+      _ ≤ (125 * CarlsonZeroDensity.carlsonFinalCoefficient A
+              (1 - 2 * delta)) * (2 * alpha ^ (4 : ℕ)) :=
+        mul_le_mul_of_nonneg_left hcutDiv hscale
+      _ = _ := by ring
   have hcombined :
       actualMovingCarlsonBalancedPointwiseCoefficient A alpha delta ≤
         375 * CarlsonZeroDensity.carlsonFinalCoefficient A (1 - 2 * delta) *

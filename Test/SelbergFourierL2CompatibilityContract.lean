@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergFourierL2Compatibility
+
+open HardyTheorem
+
+#check selbergFourierLp_ae_eq_sqrt_mul_explicitKernel

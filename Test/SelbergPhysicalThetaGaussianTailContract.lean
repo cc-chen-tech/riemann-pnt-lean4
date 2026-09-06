@@ -1,0 +1,19 @@
+import HardyTheorem.SelbergPhysicalThetaGaussianTail
+
+open Complex MeasureTheory Set
+
+namespace HardyTheorem
+
+#check selbergS3GaussianScale
+#check norm_selbergPhysicalGaussianTerm_le_s3Mass
+#check tsum_selbergGaussianMass_le_eight_mul_exp_half
+#check norm_selbergPhysicalThetaRay_le_s3
+#check normSq_selbergPhysicalThetaKernel_le_s3
+#check integral_normSq_selbergPhysicalThetaKernel_delta_tail_le_raw
+#check selbergS3GaussianScale_delta_endpoint
+#check selbergS3_raw_tail_rhs_eq
+#check exists_integral_normSq_selbergPhysicalThetaKernel_delta_tail_le
+
+#print axioms exists_integral_normSq_selbergPhysicalThetaKernel_delta_tail_le
+
+end HardyTheorem

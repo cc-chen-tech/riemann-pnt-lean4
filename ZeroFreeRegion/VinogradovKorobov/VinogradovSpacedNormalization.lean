@@ -129,7 +129,7 @@ theorem exists_vinogradovTranslatedSpacedSystem_normalForm
       (show (p : ℤ) ∣ (p : ℤ) ^ c by exact dvd_pow_self _ hc.ne')
   refine ⟨A, χ, θ', hAc, hA, ?_⟩
   intro i
-  simpa only [A, Matrix.of_apply] using hnormal i
+  convert hnormal i using 1 <;> (try rfl)
 
 end
 

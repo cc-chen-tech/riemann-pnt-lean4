@@ -1,0 +1,8 @@
+import HardyTheorem.SelbergS12KernelIntegral
+
+#check HardyTheorem.selbergS12BaseKernel
+#check HardyTheorem.integrable_selbergS12BaseKernel
+#check HardyTheorem.selbergS12ScaledKernel_eq
+#check HardyTheorem.integrable_selbergS12ScaledKernel
+#check HardyTheorem.integral_selbergS12ScaledKernel_eq
+#check HardyTheorem.exists_integrable_integral_selbergS12Kernel_le

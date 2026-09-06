@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergSArithmeticLogTail
+
+open scoped BigOperators
+
+#check HardyTheorem.exists_selbergNineProduct_logTail_le

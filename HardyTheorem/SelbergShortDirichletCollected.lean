@@ -67,7 +67,8 @@ theorem selbergShortDirichletTriplePolynomial_eq_collectedPolynomial
   have hmaps : ∀ p ∈ P, g p ∈ K := by
     intro p hp
     rcases Finset.mem_product.mp (by simpa only [P,
-        selbergShortDirichletTripleSupport] using hp) with ⟨hpN, hpXX⟩
+        selbergShortDirichletTripleSupport, Finset.product_eq_sprod]
+        using hp) with ⟨hpN, hpXX⟩
     rcases Finset.mem_product.mp hpXX with ⟨hpnX, hplX⟩
     rcases Finset.mem_Icc.mp hpN with ⟨hm1, hmN⟩
     rcases Finset.mem_Icc.mp hpnX with ⟨hn1, hnX⟩

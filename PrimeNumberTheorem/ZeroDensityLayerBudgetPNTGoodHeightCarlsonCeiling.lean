@@ -186,9 +186,10 @@ theorem exists_pintzConstant_exactHeight_classicalDensityTerm_tendsto
       layers sigma hσ hσ1 rates with ⟨c, hc, htransfer⟩
   refine ⟨c, hc, ?_⟩
   intro selectRate hselect hratesPos hratesGap
-  simpa only [pintzCarlsonActualDensityBudget,
-    pintzCarlsonClassicalAggregatedDensityLayerTerm,
-    pintzCarlsonAggregatedDensityLayerTerm] using
-      htransfer selectRate hselect hratesPos hratesGap
+  change Tendsto
+    (fun x => pintzCarlsonActualDensityBudget layers
+      (fun i T => (ZeroDensity.zeroDensityCount (sigma i) T : ℝ))
+      selectRate x) atTop (𝓝 0)
+  exact htransfer selectRate hselect hratesPos hratesGap
 
 end PrimeNumberTheorem

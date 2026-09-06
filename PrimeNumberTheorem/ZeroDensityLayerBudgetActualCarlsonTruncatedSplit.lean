@@ -66,8 +66,15 @@ theorem sum_actualHighPositiveZeroSubtypeFinset
       ∑ rho ∈ actualHighPositiveZerosOutsideClusterFinset sigma T S,
         f rho := by
   rw [actualHighPositiveZeroSubtypeFinset, Finset.sum_map]
-  simpa [actualHighPositiveZeroSubtypeEmbedding] using
-    (actualHighPositiveZerosOutsideClusterFinset sigma T S).sum_attach f
+  calc
+    _ = ∑ rho ∈
+          (actualHighPositiveZerosOutsideClusterFinset sigma T S).attach,
+          f (rho : ℂ) := by
+        apply Finset.sum_congr rfl
+        intro rho _
+        rfl
+    _ = _ :=
+      (actualHighPositiveZerosOutsideClusterFinset sigma T S).sum_attach f
 
 theorem actualHighPositiveZeroSubtypeFinset_outside
     {sigma T : ℝ} {S : Finset ℂ}

@@ -37,7 +37,7 @@ theorem fourierKernel_normalizedGaussian
     intro hv0
     have : (v : ℝ) = 0 :=
       congrArg (fun z : NNReal => (z : ℝ)) hv0
-    dsimp [v] at this
+    change (2 * m : ℝ) = 0 at this
     linarith
   have hpim : 0 < Real.pi * m := mul_pos Real.pi_pos hm
   have hsqrt :
@@ -47,14 +47,14 @@ theorem fourierKernel_normalizedGaussian
       (mul_nonneg (by norm_num) (Real.sqrt_nonneg _))).mp
     rw [Real.sq_sqrt (by positivity),
       mul_pow, Real.sq_sqrt hpim.le]
-    dsimp [v]
+    change 2 * Real.pi * (2 * m : ℝ) = 2 ^ 2 * (Real.pi * m)
     ring
   have hpdf (x : ℝ) :
       gaussianPDFReal 0 v x = normalizedGaussian m x := by
     unfold gaussianPDFReal normalizedGaussian
     rw [hsqrt]
     have hdenom : (2 * (v : ℝ)) = 4 * m := by
-      dsimp [v]
+      change (2 * (2 * m : ℝ)) = 4 * m
       ring
     rw [hdenom]
     simp only [sub_zero]
@@ -79,10 +79,13 @@ theorem fourierKernel_normalizedGaussian
     _ = Complex.exp (xi * 0 * Complex.I -
           (v : ℝ) * xi ^ 2 / 2) := hchar
     _ = (Real.exp (-m * xi ^ 2) : ℂ) := by
-      dsimp [v]
+      have hv_real : (v : ℝ) = 2 * m := by
+        dsimp [v]
+        rfl
+      rw [hv_real]
       rw [ofReal_exp]
       congr 1
-      push_cast
+      norm_num
       ring
 
 /-- Twisting every coefficient by its phase at `a` translates the finite

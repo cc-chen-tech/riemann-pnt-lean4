@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergJDiagonalRay
+
+open HardyTheorem
+
+#check selberg_diagonal_equation_iff_unique_gcd_ray

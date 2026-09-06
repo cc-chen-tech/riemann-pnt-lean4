@@ -1,0 +1,15 @@
+import PrimeNumberTheorem.LittlewoodRectangle
+
+open Complex Set
+open scoped BigOperators Interval
+
+namespace PrimeNumberTheorem.CarlsonZeroDensity
+
+#check littlewoodRectangle_zeroMultiplicityWeightedRealSum_eq_logNormEdges
+#check zeroMultiplicityMassAtOrRight
+#check sub_mul_zeroMultiplicityMassAtOrRight_le_weightedRealSum
+
+#print axioms littlewoodRectangle_zeroMultiplicityWeightedRealSum_eq_logNormEdges
+#print axioms sub_mul_zeroMultiplicityMassAtOrRight_le_weightedRealSum
+
+end PrimeNumberTheorem.CarlsonZeroDensity

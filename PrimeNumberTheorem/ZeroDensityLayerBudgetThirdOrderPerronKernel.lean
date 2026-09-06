@@ -56,17 +56,17 @@ theorem integral_sq_div_two_mul_cexp_Ioi (a : ℂ) (ha : a.re < 0) :
           (a * Complex.exp (a * (u : ℂ))) (u : ℂ) := by
         convert (Complex.hasDerivAt_exp (a * (u : ℂ))).comp (u : ℂ)
             ((hasDerivAt_id (u : ℂ)).const_mul a) using 1 <;>
-          ring
+          (try rfl) <;> ring
       have hpolyD : HasDerivAt
           (fun z : ℂ => a ^ 2 * z ^ 2 - 2 * a * z + 2)
           (2 * a ^ 2 * (u : ℂ) - 2 * a) (u : ℂ) := by
         convert (((((hasDerivAt_id (u : ℂ)).pow 2).const_mul (a ^ 2)).sub
           ((hasDerivAt_id (u : ℂ)).const_mul (2 * a))).add_const 2) using 1 <;>
-          simp only [id_eq] <;> ring
+          (try rfl) <;> simp only [id_eq] <;> ring
       have hprodD := hexpD.mul hpolyD
       have hdivD := hprodD.div_const (2 * a ^ 3)
       dsimp [H]
-      convert hdivD using 1 <;> field_simp [ha0] <;> ring
+      convert hdivD using 1 <;> (try rfl) <;> field_simp [ha0] <;> ring
     simpa [F, H] using hH.comp_ofReal
   have hexp : Tendsto (fun u : ℝ => Complex.exp (a * u)) atTop (nhds 0) := by
     simpa [Complex.tendsto_exp_nhds_zero_iff] using

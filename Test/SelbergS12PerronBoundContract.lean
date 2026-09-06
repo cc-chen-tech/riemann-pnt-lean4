@@ -1,0 +1,6 @@
+import HardyTheorem.SelbergS12PerronBound
+
+#check HardyTheorem.norm_selbergS12PerronKernel_eq
+#check HardyTheorem.selbergS12PerronSeriesArgument_eq_stripPoint
+#check HardyTheorem.norm_selbergS12PerronIntegrand_eq
+#check HardyTheorem.exists_norm_selbergS12WeightedCoprimeSum_le

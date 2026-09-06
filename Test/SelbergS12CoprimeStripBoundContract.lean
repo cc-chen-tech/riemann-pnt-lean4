@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergS12CoprimeStripBound
+
+#check HardyTheorem.norm_inv_one_sub_prime_cpow_le
+#check HardyTheorem.norm_selbergS12CoprimeEulerFactors_inv_le
+#check HardyTheorem.exists_norm_selbergS12CoprimeDirichletSeries_strip_le

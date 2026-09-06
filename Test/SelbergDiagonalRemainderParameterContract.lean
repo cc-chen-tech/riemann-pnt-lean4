@@ -1,0 +1,8 @@
+import HardyTheorem.SelbergDiagonalRemainderParameter
+
+open HardyTheorem
+
+#check delta_div_fourth_le_selbergDiagonalGaussianParameter
+#check delta_le_two_pi_mul_sin
+#check inv_selbergDiagonalGaussianParameter_le
+#check log_two_add_inv_selbergDiagonalGaussianParameter_le

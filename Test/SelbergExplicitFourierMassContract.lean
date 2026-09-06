@@ -1,0 +1,7 @@
+import HardyTheorem.SelbergExplicitFourierMass
+
+open HardyTheorem
+
+#check normSq_selbergExplicitInverseFourierKernel_le
+#check exists_integral_normSq_selbergExplicitInverseFourierKernel_low_le
+#check exists_integral_normSq_selbergExplicitInverseFourierKernel_high_le

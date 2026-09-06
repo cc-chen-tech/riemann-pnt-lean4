@@ -442,7 +442,7 @@ theorem exists_analytic_nonzero_factor_log_norm_logDeriv_pointwise_of_ne_zero
         fun w => fac w * g w := by
       apply hza.meromorphicAt.eventuallyEq_nhdsNE_of_eventuallyEq_codiscreteWithin
         hrhsa.meromorphicAt hzU hacc
-      simpa [fac, D, U, Pi.smul_apply', smul_eq_mul] using hfactor
+      convert hfactor using 1 <;> (try rfl)
     have hfactorN : f =ᶠ[nhds z] fun w => fac w * g w :=
       (hza.continuousAt.eventuallyEq_nhds_iff_eventuallyEq_nhdsNE
         hrhsa.continuousAt).mp hfactorNE
@@ -453,8 +453,8 @@ theorem exists_analytic_nonzero_factor_log_norm_logDeriv_pointwise_of_ne_zero
       hfaca.differentiableAt (hg z hzU).differentiableAt
     have hfaclog : logDeriv fac z =
         ∑ᶠ u, (D u : ℂ) * (z - u)⁻¹ := by
-      simpa [fac] using
-        ZeroFreeRegion.logDeriv_finprod_sub_zpow_eq_finsum_mul_inv hfinite hsep
+      convert ZeroFreeRegion.logDeriv_finprod_sub_zpow_eq_finsum_mul_inv
+        hfinite hsep using 1 <;> (try rfl)
     calc
       logDeriv f z = logDeriv (fun w => fac w * g w) z := hlogeq
       _ = logDeriv fac z + logDeriv g z := hmul

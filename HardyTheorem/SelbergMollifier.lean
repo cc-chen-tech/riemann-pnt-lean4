@@ -114,8 +114,7 @@ theorem continuous_selbergMollifiedHardyZ
 
 theorem continuous_selbergMoebiusMollifiedHardyZ (X : ℕ) :
     Continuous (selbergMoebiusMollifiedHardyZ X) := by
-  change Continuous (selbergMollifiedHardyZ X
-    (fun n => (selbergMoebiusCoeff X n : ℂ)))
+  unfold selbergMoebiusMollifiedHardyZ
   exact continuous_selbergMollifiedHardyZ X
     (fun n => (selbergMoebiusCoeff X n : ℂ))
 

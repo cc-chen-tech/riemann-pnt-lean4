@@ -63,9 +63,14 @@ theorem actualCarlsonDynamicRealOrdinateNormalizedSum_tendsto_zero
       dynamicRealOrdinateOutsideClusterPNTZeroTailNorm, abs_of_nonneg] using
       (dynamicRealOrdinateOutsideClusterPNTZeroTailNorm_carlsonPolynomial_negligible
         (alpha := alpha) (beta := beta) (S := S) hre)
-  simpa [actualCarlsonDynamicRealOrdinateNormalizedSum,
-    dynamicRealOrdinateOutsideClusterPNTZeroTailNorm, Function.comp_def] using
-    hreal.comp (tendsto_natCast_atTop_atTop (R := ℝ))
+  change Tendsto
+    (fun m : ℕ =>
+      ‖∑ rho ∈ realOrdinateNontrivialZerosOutsideClusterFinset
+            (carlsonPolynomialHeight alpha (m : ℝ)) S,
+          pntRelativeZeroContribution (m : ℝ) rho‖ /
+        targetZeroPowerAmplitude beta (m : ℝ))
+    atTop (𝓝 0)
+  exact hreal.comp (tendsto_natCast_atTop_atTop (R := ℝ))
 
 /-- The complete actual zeta-zero residual outside a conjugation-invariant
 finite cluster is negligible at the target amplitude.

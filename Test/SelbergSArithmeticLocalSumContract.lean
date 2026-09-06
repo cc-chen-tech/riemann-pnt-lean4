@@ -1,0 +1,8 @@
+import HardyTheorem.SelbergSArithmeticLocalSum
+
+open scoped BigOperators
+
+#check HardyTheorem.selbergSmoothOuterIndex
+#check HardyTheorem.selbergCoprimeFiberIndex
+#check HardyTheorem.selbergSplitIndexSigmaEquiv
+#check HardyTheorem.selbergCoprimeFiberSum_eq_weightedCoprimeSumReal

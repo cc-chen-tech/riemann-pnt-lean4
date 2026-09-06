@@ -85,7 +85,7 @@ theorem vinogradovTranslatedSpacedSolutionPairSet_subset_farScale
   have hi := (hfar i).add_right
     (vinogradovPowerSumInt (vinogradovFinTupleInt y) i)
   simpa only [vinogradovPowerSumDifferenceInt, vinogradovPowerSumInt,
-    sub_add_cancel, zero_add] using hi
+    sub_add_cancel, zero_add, vinogradovFinTupleInt, Nat.cast_pow] using hi
 
 /-- The translated-spaced solution count is bounded by the ordinary modular
 Vinogradov solution count at the far scale. -/

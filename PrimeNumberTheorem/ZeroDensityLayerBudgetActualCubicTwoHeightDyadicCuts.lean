@@ -65,14 +65,14 @@ theorem tendsto_actualCubicDyadicPolynomialCut_atTop
 theorem tendsto_actualCubicLowDyadicCut_atTop
     {gammaLow : ℝ} (hgammaLow : 0 < gammaLow) :
     Tendsto (actualCubicLowDyadicCut gammaLow) atTop atTop := by
-  simpa [actualCubicLowDyadicCut] using
-    tendsto_actualCubicDyadicPolynomialCut_atTop hgammaLow
+  change Tendsto (actualCubicDyadicPolynomialCut gammaLow) atTop atTop
+  exact tendsto_actualCubicDyadicPolynomialCut_atTop hgammaLow
 
 theorem tendsto_actualCubicOuterDyadicCut_atTop
     {alpha : ℝ} (halpha : 0 < alpha) :
     Tendsto (actualCubicOuterDyadicCut alpha) atTop atTop := by
-  simpa [actualCubicOuterDyadicCut] using
-    tendsto_actualCubicDyadicPolynomialCut_atTop halpha
+  change Tendsto (actualCubicDyadicPolynomialCut alpha) atTop atTop
+  exact tendsto_actualCubicDyadicPolynomialCut_atTop halpha
 
 /-- If the detector exponent does not exceed the contour exponent, then its
 dyadic cut is eventually no larger than the contour cut. -/

@@ -79,9 +79,23 @@ lemma tendsto_classicalDyadicCarlsonClosedFormFullPNTErrorMajorant_zero
   have hremainder : Tendsto
       (classicalAdmissibleClosedFormNaturalRemainderMajorant b selection)
       atTop (nhds 0) := by
-    simpa [classicalAdmissibleClosedFormNaturalRemainderMajorant] using
+    change Tendsto
+      (fun m : ℕ =>
+        cofinalPNTZeroDepthRelativeRemainderMajorant selection.constant
+            (classicalAdmissibleBalancedRate b) m +
+          classicalClosedLogRelativeMajorant m)
+      atTop (nhds 0)
+    simpa only [add_zero] using
       hcontour.add tendsto_classicalClosedLogRelativeMajorant_zero
-  simpa [classicalDyadicCarlsonClosedFormFullPNTErrorMajorant] using
+  change Tendsto
+    (fun m : ℕ =>
+      classicalDyadicCarlsonFullZeroTailMajorant
+          E eta C kappa D rate m +
+        |actualPNTClosedRealAxisRelativeTerm (m : ℝ)| +
+        classicalAdmissibleClosedFormNaturalRemainderMajorant
+          b selection m)
+    atTop (nhds 0)
+  simpa only [add_zero] using
     (hzeros.add tendsto_abs_actualPNTClosedRealAxisRelativeTerm_natural_zero).add
       hremainder
 

@@ -1,8 +1,9 @@
 /-
-# Conrey 40% 零点占比目标别名 (D 链)
+# 旧版 Conrey 名称兼容别名（实际是 Selberg 正比例目标）
 
-本文件为 Conrey 2003 证明(临界线 `Re(s) = 1/2` 上非平凡零点的密度 ≥ 40%)
-的**目标声明别名 + equivalence lemma**接口。`HardyTheorem.lean:1319` 处的
+本文件只保留历史调用接口。这里的命题要求临界线上存在某个正比例，
+并且定义上等同于 Selberg 目标；它**不是** Conrey 1989 年关于简单零点
+严格超过 `2/5` 的定理。`HardyTheorem.lean:1319` 处的
 `HardyTheorem.zeroCountOnCriticalLine T` 统计 `Im(s) ∈ [0, T]` 区间内
 `Re(s) = 1/2` 上的非平凡零点个数。
 
@@ -14,17 +15,16 @@
     c * T / (2 * Real.pi) * Real.log T
 ```
 
-Conrey 2003 给出此下界中的 `c` 不低于 `0.4017...`(实际是若干常量
-与 L-function 矩估计的复合;项目形式化阶段不要求精确常数,只要求 `c > 0` 的存在)。
+真正的 Conrey 目标现在定义为
+`HardyTheorem.conreyTwoFifthsSimpleZerosTarget`：分子只计简单临界线零点，
+分母 `riemannZeroCount` 按解析重数计全部非平凡零点，并要求 `c > 2/5`。
 
 ## 与 Selberg 1962 的关系
 
-Conrey 40% 占比强于 Selberg 1962(Selberg 给出临界线零点占比的 0% 下界,即
-密度正;Conrey 给出 40% 量化下界)。在 `RiemannExplorer.lean` 中,
-`conrey_40_percent_zeros_on_critical_line_target` 已以真实 statement 形式
-声明并通过若干等价定理与 `HardyTheorem.selberg_zero_proportion_target`
-互推。本文件是**子模块别名接口**:与上层 `KnownResults` 中同名目标
-statement 保持定义等价,Phase 4 接手实际证明时无需再次调整调用方。
+Conrey 的简单零点定理确实强于 Selberg 正比例定理，但本文件中的旧命名
+没有表达这一区别。它与 `HardyTheorem.selberg_zero_proportion_target`
+互推仅仅因为二者定义相同。本文件继续保留该别名，避免静默破坏调用方；
+新证明必须使用上面的 multiplicity-sensitive 目标。
 
 ## 前置依赖(已存在,本文件不重新实现)
 
@@ -45,13 +45,14 @@ statement 保持定义等价,Phase 4 接手实际证明时无需再次调整调�
 -/
 
 import RiemannExplorer
+import HardyTheorem.ConreyTwoFifthsBridge
 
 namespace RiemannExplorer
 namespace Conrey40
 
 /-! ## 核心 def(Prop 目标别名) -/
 
-/-- Conrey 40% 零点占比目标别名。
+/-- 历史名称兼容别名；数学内容只是 Selberg 正比例目标。
 
 **完整 statement**(数学含义,见本文件顶部 doc-comment):
 
@@ -66,7 +67,7 @@ namespace Conrey40
 
 本目标不再使用 `True` 占位；它直接别名到上层
 `KnownResults.conrey_40_percent_zeros_on_critical_line_target` 的真实
-statement。Conrey 40% 占比本身仍是深分析目标，实际证明留 Phase 4。 -/
+statement，但不能据此称为真正的 Conrey `> 2/5` 定理。 -/
 def conrey_40_percent_zeros_on_critical_line_target : Prop :=
   KnownResults.conrey_40_percent_zeros_on_critical_line_target
 

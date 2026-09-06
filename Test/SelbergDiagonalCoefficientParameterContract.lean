@@ -1,0 +1,7 @@
+import HardyTheorem.SelbergDiagonalCoefficientParameter
+
+open HardyTheorem
+
+#check Real.rpow_le_rpow_of_le_of_nonpos
+#check abs_selbergDiagonalSZeroCoefficient_le
+#check abs_selbergDiagonalSThetaCoefficient_le

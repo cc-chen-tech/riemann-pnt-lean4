@@ -243,10 +243,11 @@ theorem
         rfl
   have hremainder :
       ActualSelectedHeightNaturalPointRemainderCertificate beta H := by
-    simpa [H, alpha,
-      actualSelectedHeightFiniteStripWeightedBalancedGoodHeight] using
-      selectedUniformGoodHeight_actualNaturalRemainderCertificate
-        hbeta hspec.2.1 hspec.2.2.1.le hspec.2.2.2.1 selection
+    change
+      ActualSelectedHeightNaturalPointRemainderCertificate beta
+        (selectedUniformGoodHeight alpha selection)
+    exact selectedUniformGoodHeight_actualNaturalRemainderCertificate
+      hbeta hspec.2.1 hspec.2.2.1.le hspec.2.2.2.1 selection
   have hamplitudeNat :
       ∀ᶠ m : ℕ in atTop,
         0 < targetZeroPowerAmplitude beta (m : ℝ) :=

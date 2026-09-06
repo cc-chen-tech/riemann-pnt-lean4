@@ -202,6 +202,7 @@ theorem integral_sweptGaussianEnvelope_le
 private theorem measurable_normalizedPsiError_swept (rho : ℂ) :
     Measurable (normalizedPsiError rho) := by
   have hpsi : Measurable chebyshevPsi := by
+    change Measurable (Chebyshev.psi : ℝ → ℝ)
     simpa only [chebyshevPsi_eq_mathlib] using
       Chebyshev.psi_mono.measurable
   unfold normalizedPsiError
@@ -524,7 +525,7 @@ theorem ordinarySecondMoment_linear_lower_of_sweptWeightedLower
             f y * |kernel m y|) ≤
           ∫ y in localizedGaussianLogWindow q d m,
             f y * K * sweptGaussianEnvelope q M R m y := by
-      apply integral_mono_ae (by simpa [f] using hweightedInt m hm)
+      apply integral_mono_ae (by simpa [f, IntegrableOn] using hweightedInt m hm)
         hlocalMajorInt
       filter_upwards [
         ae_restrict_mem measurableSet_Icc] with y hy
@@ -897,7 +898,8 @@ theorem exists_eventually_ordinarySecondMoment_in_epsilonLogWindow_gt_linear
             (localizedGaussianLogWindow q d m) := by
     filter_upwards [hweighted, data.eventually_second_moment_integrable] with
       m hm hInt
-    exact ⟨hm, by simpa [data] using hInt⟩
+    exact ⟨hm, by
+      simpa [data, sharpenedCenteredLocalizedContourData] using hInt⟩
   rcases (eventually_atTop.1 hall) with ⟨m0, hm0⟩
   have hscale :
       Tendsto (epsilonGaussianScale (ε / 2) ·) atTop atTop :=

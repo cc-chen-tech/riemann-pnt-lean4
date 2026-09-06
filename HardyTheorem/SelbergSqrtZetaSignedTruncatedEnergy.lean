@@ -100,7 +100,7 @@ theorem
   let N : ℕ := firstZetaApproximationCutoff T
   let K : Finset ℝ :=
     selbergSqrtZetaSignedCollectedFrequencySupport N X
-  let a : ℝ → ℂ := selbergSqrtZetaSignedCollectedCoeff N X
+  let a : ℝ → ℂ := fun omega => selbergSqrtZetaSignedCollectedCoeff N X omega
   let Q : ℝ → ℂ :=
     selbergSqrtZetaSignedCollectedTriplePolynomial N X
   have hbase :=

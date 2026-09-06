@@ -1,9 +1,9 @@
-# Unproved Target Statements and Missing Chains
+# Target Statements and Missing Chains
 
 This file is the authoritative classification of `def ... : Prop` statements
-(as of `2026-07-30`) in this Lean checkout.  It separates genuinely unproved
-mathematical targets from reusable predicates that already have theorem-level
-proofs.
+(as of `2026-08-26`) in this Lean checkout. It separates genuinely unproved
+mathematical targets from target-shaped interfaces discharged by named theorems
+and from reusable predicates that already have theorem-level proofs.
 
 ## How to Read This Inventory
 
@@ -32,22 +32,26 @@ PNT-error oscillation with a linear local second-moment lower bound
 
 ## Target count
 
-- `HardyTheorem` namespace: 3
+- `HardyTheorem` namespace: 4
 - `HardyTheorem.Details` namespace: 3
+- `FiniteSpectrumGap` namespace: 2
 - `PrimeNumberTheorem` namespace: 4
 - `KnownResults` namespace: 1
 - `ZeroFreeRegion` namespace: 0
 - global namespace: 1
 
-Total: **12**.
+Total: **15**. The Selberg odd-zero and legacy top-level Conrey-named target
+shapes are closed by the verified Zeta23 bridge but remain classified here
+because their `def ... : Prop` declarations are still part of the public
+interface. The independent `conreyTwoFifthsSimpleZerosTarget` remains open.
 
 For the chain accounting:
 
-- Quantitative zero-free region chain: 1
+- Quantitative zero-free region chain: 3
 - Explicit formula chain: 0 (the principal-value target is proved; the separate
   quantitative truncated-error statement remains a route interface)
 - RH/prime-counting error chain: 4
-- Quantitative critical-line extension chain: 7 (3 in `HardyTheorem`, 3 in `HardyTheorem.Details`,
+- Quantitative critical-line extension chain: 8 (4 in `HardyTheorem`, 3 in `HardyTheorem.Details`,
   1 in `KnownResults`)
 
 ## Chain 1: Quantitative zero-free region
@@ -55,6 +59,8 @@ For the chain accounting:
 ### Target declarations
 
 - `vinogradov_korobov_zero_free_region`
+- `FiniteSpectrumGap.finiteSpectrumGapTarget`
+- `FiniteSpectrumGap.kappaFormTarget`
 
 ### Current verified anchor theorems
 
@@ -73,12 +79,18 @@ For the chain accounting:
 - `ZeroFreeRegion.classical_zero_free_region_of_vinogradov_korobov`
 - `ZeroFreeRegion.VinogradovKorobov.vinogradovMixedNormalizedResidueMoment_one_to_raw`
 - `ZeroFreeRegion.VinogradovKorobov.vinogradovMixedRawResidueNormMoment_one_le_refinement_via_normalized`
+- `FiniteSpectrumGap.bM_pos`
+- `FiniteSpectrumGap.etaM_pos`
+- `FiniteSpectrumGap.dM_pos`
+- `FiniteSpectrumGap.deltaM_pos`
 
 ### Missing mathlib/analytic infrastructure
 
 1. Vinogradov-Korobov exponential-sum estimates;
 2. the corresponding stronger zeta growth and logarithmic-derivative bounds;
-3. assembly of those bounds into the `2/3`-power logarithmic zero-free width.
+3. assembly of those bounds into the `2/3`-power logarithmic zero-free width;
+4. the missing-odd-harmonic finite-spectrum inequality that upgrades the
+   proved explicit constants to `finiteSpectrumGapTarget`/`kappaFormTarget`.
 
 The merged residue-mass audit is diagnostic rather than a substitute for
 item 1: for constant coefficients on complete prime-power blocks it recovers
@@ -218,22 +230,31 @@ analytic-multiplicity counts and proves
 Hardy-Littlewood and Selberg statements use the odd-order count supplied by
 the sign-change method. The Hardy-Littlewood linear lower bound is now proved.
 
-**Closure of the Selberg/Conrey proportion targets (2026-08, in-repo via
-verified external artifact):** `HardyTheorem.selberg_odd_zero_proportion_target`
-and `KnownResults.conrey_40_percent_zeros_on_critical_line_target` are now
-proved inside this repository's kernel by
+**Native closure of the Selberg target (2026-08):**
+`HardyTheorem.selberg_odd_zero_proportion_target` is proved inside this
+repository's kernel by
+`HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline`, using the
+short-mollifier Fourier--Mellin S1--S5 chain. The separate `N=T^3`
+long-mollifier/MWKF asymptotic remains open and is not required by this proof.
+
+**Independent Zeta23 closure and legacy Conrey-named compatibility alias:**
 `HardyTheorem.Zeta23SelbergBridge.selberg_odd_zero_proportion_target_of_zeta23`
-(resp. `..._conrey_40_percent_zeros_on_critical_line_target_of_zeta23`),
-which combine the independently verified Anthropic `zeta-23-lean` Theorem B
+and `...conrey_40_percent_zeros_on_critical_line_target_of_zeta23` combine the
+independently verified Anthropic `zeta-23-lean` Theorem B
 (`Zeta23.thmB₀_mult_cumulative`: at least 2/3 of the zeta zeros are simple
 and on the critical line; kernel-checked with `#print axioms` =
 `[propext, Classical.choice, Quot.sound]`) with this repository's own
 all-height Riemann–von Mangoldt lower bound.  Simple zeros are a subset of
 odd-multiplicity zeros, so the odd-proportion target closes with the explicit
-constant `c = (2/3 − 1/12) · 1/4 = 7/48`; the Conrey target follows through
+constant `c = (2/3 − 1/12) · 1/4 = 7/48`; the legacy alias follows through
 the repo's existing `selberg_zero_proportion_target_of_odd` and
 `conrey_40_percent_zeros_on_critical_line_target_of_selberg` lemmas (see
-[zeta23-selberg-bridge.md](research/zeta23-selberg-bridge.md)).
+[zeta23-selberg-bridge.md](research/zeta23-selberg-bridge.md)).  This is not
+Conrey's genuine simple-zero theorem with a strict constant above `2/5`.
+That independent target is
+`HardyTheorem.conreyTwoFifthsSimpleZerosTarget`; its exact explicit-integral
+certificate is proved, while `HardyTheorem.conreyExplicitAnalyticLowerBound`
+records the remaining mollified mean-square/argument-principle input.
 
 ### Current verified anchor theorems
 
@@ -249,6 +270,7 @@ the repo's existing `selberg_zero_proportion_target_of_odd` and
 - `HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved`
 - `HardyTheorem.criticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure`
 - `HardyTheorem.selberg_odd_zero_proportion_target_of_log_good_window_measure`
+- `HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline`
 - `HardyTheorem.integral_normSq_selbergMoebiusMollifier_le_one_add_log`
 - `HardyTheorem.criticalLineDirichletPolynomial_mul_selbergMoebiusMollifier_eq_convolutionSum`
 - `HardyTheorem.selbergMollifiedDirichletCoeff_eq_vonMangoldt_div_log`
@@ -353,7 +375,7 @@ the repo's existing `selberg_zero_proportion_target_of_odd` and
 ## Complementary computational line: Weil extremal-kernel certificates
 
 This line has no Lean `def ... : Prop` target yet and is not counted in the
-12-target Lean inventory above. It is registered here so the certificate
+15-target Lean inventory above. It is registered here so the certificate
 chain has an entry in the same index as the proved chains; its governing
 documents are `docs/research/weil-extremal-kernel-preregistration.md` and
 `docs/research/weil-interval-assembly-design.md`.
@@ -403,7 +425,12 @@ target counts in this file.
 - `KnownResults.conrey_40_percent_zeros_on_critical_line_target`
   is the upper-level Conrey target form.  The submodule declaration
   `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`
-  is only a route-interface alias to this target.
+  is only a route-interface alias to this target. The upper-level target is
+  discharged natively by composing
+  `HardyTheorem.selberg_zero_proportion_target_proved_mainline` with
+  `KnownResults.conrey_40_percent_zeros_on_critical_line_target_of_selberg`;
+  the named Zeta23 bridge theorem is an independent closure. Neither route
+  proves the genuine Conrey strict `> 2/5` simple-zero target.
 - `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum` is a route
   interface with a real statement body.  It marks the missing rectangle
   contour/residue theorem and is not counted as a mathematical target.

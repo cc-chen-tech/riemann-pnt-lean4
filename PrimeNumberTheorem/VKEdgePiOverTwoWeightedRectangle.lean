@@ -133,7 +133,8 @@ theorem boundaryRectIntegral_mul_analyticWeight_eq_residue_sum
     have hzp : ∀ p ∈ poles, z ≠ p := by
       intro p hp h
       subst z
-      exact hzboundary (hpoles p hp)
+      apply hzboundary
+      exact hpoles p hp
     dsimp [G]
     rw [mul_add, Finset.mul_sum]
     calc

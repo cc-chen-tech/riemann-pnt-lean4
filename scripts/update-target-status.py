@@ -32,9 +32,9 @@ CHAIN_SUMMARY = [
     },
     {
         "name": "Quantitative critical-line extensions",
-        "target": "selberg_odd_zero_proportion_target",
-        "status": "Hardy's theorem and the Hardy-Littlewood linear lower bounds for distinct and odd-multiplicity critical-line zeros are proved; Selberg and Conrey counts remain open",
-        "next_step": "obtain the logarithmic gain needed for Selberg's T log T critical-line count, then develop Conrey-style percentage estimates",
+        "target": "conreyTwoFifthsSimpleZerosTarget",
+        "status": "Hardy's theorem and the Hardy-Littlewood lower bounds are proved; the native Selberg Fourier-Mellin mainline proves the odd-zero proportion target independently of Zeta23, while Conrey's genuine strict two-fifths simple-zero target remains open",
+        "next_step": "prove the long-mollifier mean square at length T^(4/7-epsilon) and transfer it through the argument principle to discharge conreyExplicitAnalyticLowerBound",
     },
 ]
 
@@ -65,6 +65,19 @@ PROVED_REUSABLE_PREDICATES = {
         "HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved",
     "HardyTheorem.hardy_littlewood_odd_lower_bound_target":
         "HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved",
+}
+
+PROVED_MATHEMATICAL_TARGETS = {
+    "HardyTheorem.selberg_odd_zero_proportion_target":
+        "HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline",
+    "KnownResults.conrey_40_percent_zeros_on_critical_line_target":
+        "HardyTheorem.selberg_zero_proportion_target_proved_mainline + "
+        "KnownResults.conrey_40_percent_zeros_on_critical_line_target_of_selberg",
+}
+
+INDEPENDENTLY_CLOSED_BY_ZETA23_BRIDGE = {
+    "HardyTheorem.selberg_odd_zero_proportion_target",
+    "KnownResults.conrey_40_percent_zeros_on_critical_line_target",
 }
 
 
@@ -100,7 +113,7 @@ def build_status() -> dict[str, object]:
     for record in math_targets:
         namespace = _namespace_of(record.qualified_name)
         grouped.setdefault(namespace, []).append(
-            {
+            ({
                 "name": record.name,
                 "qualified_name": record.qualified_name,
                 "file": str(record.file.relative_to(ROOT)),
@@ -110,7 +123,11 @@ def build_status() -> dict[str, object]:
                     previous_shapes.get(record.name, "<unknown>"),
                 ),
                 "depends_on": [],
-            }
+            } | ({"proved_by": PROVED_MATHEMATICAL_TARGETS[record.qualified_name]}
+                 if record.qualified_name in PROVED_MATHEMATICAL_TARGETS else {})
+              | ({"independently_closed_by_zeta23_bridge": True}
+                 if record.qualified_name in INDEPENDENTLY_CLOSED_BY_ZETA23_BRIDGE
+                 else {}))
         )
 
     return {

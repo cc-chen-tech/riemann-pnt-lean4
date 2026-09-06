@@ -154,8 +154,8 @@ theorem vinogradovIntSolutionPairSet_oneBased_eq_solutionPairSetMod
   rcases xy with ⟨x, y⟩
   rw [mem_vinogradovIntSolutionPairSet_iff,
     mem_vinogradovSolutionPairSetMod_iff]
-  simpa [vinogradovFinTupleInt] using
-    (isVinogradovSolutionIntMod_finTupleInt_iff Q k s X x y)
+  convert (isVinogradovSolutionIntMod_finTupleInt_iff Q k s X x y)
+    using 1 <;> (try rfl)
 
 /-- The real one-based integer moment is the norm of the existing standard
 complex Vinogradov moment. -/

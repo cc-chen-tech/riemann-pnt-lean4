@@ -26,7 +26,11 @@ theorem Summable.tendsto_summableNatTail_zero
   have hpartial := hmass.tendsto_sum_tsum_nat
   have hconst : Tendsto (fun _ : ℕ => ∑' n : ℕ, mass n) atTop
       (nhds (∑' n : ℕ, mass n)) := tendsto_const_nhds
-  simpa [summableNatTail] using (hconst.sub hpartial)
+  change Tendsto
+    (fun N : ℕ =>
+      (∑' n : ℕ, mass n) - ∑ n ∈ Finset.range N, mass n)
+    atTop (nhds 0)
+  simpa only [sub_self] using hconst.sub hpartial
 
 /-- The actual cubic coefficient-square tail after deleting a finite set. -/
 noncomputable def actualCubicDyadicStripSquareCapacityExcludingTail

@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergS12CoeffBound
+
+#check HardyTheorem.selbergSqrtZetaInverseLocalCoeff_le_one
+#check HardyTheorem.selbergSqrtZetaInverseCoeff_le_one
+#check HardyTheorem.abs_selbergSqrtZetaCoeff_le_one_light

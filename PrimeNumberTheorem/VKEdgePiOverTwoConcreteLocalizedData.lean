@@ -151,7 +151,10 @@ theorem tendsto_localizedRightEdgeGaussianUpperBound
   have hsqrt :
       Tendsto (fun m : ℝ => Real.sqrt (Real.pi / (m / 2)))
         atTop (𝓝 0) := by
-    simpa using (Real.continuous_sqrt.tendsto 0).comp hquot
+    simpa [Function.comp_def] using (Real.continuous_sqrt.tendsto 0).comp hquot
+  change Tendsto
+    (fun m : ℝ => localizedRightEdgeGaussianUpperBound A m)
+    atTop (𝓝 0)
   simpa [localizedRightEdgeGaussianUpperBound, C] using
     hsqrt.const_mul C
 
@@ -261,7 +264,7 @@ noncomputable def localizedContourData_of_concreteZetaContour
         Tendsto
           (fun m => ‖selectedLocalizedContourRemainder A u v m‖)
           atTop (𝓝 0) := by
-      simpa using
+      simpa [Function.comp_def] using
         (tendsto_norm.comp
           (tendsto_selectedLocalizedContourRemainder A hu hu1 v))
     simpa [remainder] using hnorm.div_const Real.pi
@@ -372,7 +375,7 @@ noncomputable def localizedContourData_of_concreteZetaContourLimit
     have hnorm :
         Tendsto (fun m => ‖zeroSum m‖)
           atTop (𝓝 ‖(multiplicity : ℂ)‖) := by
-      simpa [zeroSum] using tendsto_norm.comp hzero
+      simpa [zeroSum, Function.comp_def] using tendsto_norm.comp hzero
     rw [hmultNorm] at hnorm
     exact tendsto_const_nhds.mul hnorm
   have hremainder :
@@ -382,7 +385,7 @@ noncomputable def localizedContourData_of_concreteZetaContourLimit
     have hnorm :
         Tendsto (fun m => ‖contourRemainder m‖)
           atTop (𝓝 0) := by
-      simpa [contourRemainder] using
+      simpa [contourRemainder, Function.comp_def] using
         (tendsto_norm.comp
           (tendsto_selectedLocalizedContourRemainder A hu hu1 v))
     simpa using hnorm.div_const Real.pi
@@ -484,7 +487,7 @@ noncomputable def localizedContourData_of_concreteZetaContourProjectedLimit
   have hsignalRe :
       Tendsto (fun m => (zeroSum m).re)
         atTop (𝓝 multiplicity) := by
-    simpa [zeroSum] using
+    simpa [zeroSum, Function.comp_def] using
       Complex.continuous_re.continuousAt.tendsto.comp hzero
   have hsignal :
       Tendsto (fun m => 2 * (zeroSum m).re)
@@ -497,7 +500,7 @@ noncomputable def localizedContourData_of_concreteZetaContourProjectedLimit
     have hnorm :
         Tendsto (fun m => ‖contourRemainder m‖)
           atTop (𝓝 0) := by
-      simpa [contourRemainder] using
+      simpa [contourRemainder, Function.comp_def] using
         (tendsto_norm.comp
           (tendsto_selectedLocalizedContourRemainder A hu hu1 v))
     simpa using hnorm.div_const Real.pi
