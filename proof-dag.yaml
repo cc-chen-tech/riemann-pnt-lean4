@@ -100,11 +100,83 @@ nodes:
       - README.md
       - docs/carlson-zero-density-chain.md
 
+  - id: conrey-kernel-bridge
+    type: theorem
+    status: open
+    summary: Conrey kernel and argument-principle bridge work package
+    dependencies:
+    - hardy-littlewood
+    - carlson
+    owner: null
+    worktree: null
+    source_paths:
+      - HardyTheorem/ConreySimpleZeroCount.lean
+      - HardyTheorem/ConreyTwoFifthsBridge.lean
+      - Test/ConreyHorizontalJensenCountContract.lean
+    acceptance_command: lake env lean Test/ConreyHorizontalJensenCountContract.lean
+    evidence:
+      - docs/missing-chains-index.md
+      - docs/mathematical-contributions.md
+
+  - id: selberg-lcm-type-ii
+    type: audit
+    status: open
+    summary: Selberg LCM main term and Type-II off-diagonal work package
+    dependencies:
+    - hardy-littlewood
+    - riemann-von-mangoldt
+    owner: null
+    worktree: null
+    source_paths:
+      - docs/research/2026-08-24-selberg-mobius-lcm-main-term.md
+      - docs/research/2026-08-24-mobius-weighted-off-diagonal.md
+      - Test/SelbergOffDiagonalArithmeticContract.lean
+    acceptance_command: lake env lean Test/SelbergOffDiagonalArithmeticContract.lean
+    evidence:
+      - docs/research/2026-08-24-selberg-mobius-lcm-main-term.md
+      - docs/research/2026-08-24-mobius-weighted-off-diagonal.md
+
+  - id: carlson-improvement
+    type: theorem
+    status: open
+    summary: Carlson zero-density improvement and quantitative margin work package
+    dependencies:
+    - pnt
+    - riemann-von-mangoldt
+    owner: null
+    worktree: null
+    source_paths:
+      - PrimeNumberTheorem/CarlsonTwoThirdsHalfRangeExponent.lean
+      - PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonUnifiedContract.lean
+      - Test/CarlsonTwoThirdsDIExponentContract.lean
+    acceptance_command: lake env lean Test/CarlsonTwoThirdsDIExponentContract.lean
+    evidence:
+      - docs/carlson-zero-density-chain.md
+      - docs/missing-chains-index.md
+
+  - id: fourteen-seventeenths-projection
+    type: theorem
+    status: open
+    summary: 14/17 projection and zero-density transfer work package
+    dependencies:
+    - carlson
+    owner: null
+    worktree: null
+    source_paths:
+      - Test/SingleLayerForcingBeta14Over17ContractAxiomAudit.lean
+      - PrimeNumberTheorem/SingleLayerForcingSeparatedDensity.lean
+      - docs/missing-chains-index.md
+    acceptance_command: lake env lean Test/SingleLayerForcingBeta14Over17ContractAxiomAudit.lean
+    evidence:
+      - docs/missing-chains-index.md
+      - docs/carlson-zero-density-chain.md
+
   - id: selberg-mobius
     type: audit
     status: blocked
     summary: Selberg–Möbius LCM and varying-level off-diagonal route
     dependencies:
+    - selberg-lcm-type-ii
     - hardy-littlewood
     - riemann-von-mangoldt
     owner: null
@@ -120,6 +192,7 @@ nodes:
     status: open
     summary: Genuine Conrey strict simple-zero lower-bound route
     dependencies:
+    - conrey-kernel-bridge
     - hardy-littlewood
     - selberg-mobius
     - carlson
@@ -137,6 +210,7 @@ nodes:
     status: open
     summary: 14/17 zero-density target and quantitative closure
     dependencies:
+    - fourteen-seventeenths-projection
     - carlson
     - conrey
     owner: null
