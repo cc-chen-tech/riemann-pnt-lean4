@@ -2,19 +2,23 @@
 
 set -eu
 
-if [ "$#" -ne 1 ]; then
-    printf '%s\n' "usage: $0 proof-dag.yaml" >&2
+write_target=
+if [ "$#" -eq 1 ]; then
+    manifest=$1
+elif [ "$#" -eq 3 ] && [ "$1" = "--write" ]; then
+    write_target=$2
+    manifest=$3
+else
+    printf '%s\n' "usage: $0 [--write DAG.md] proof-dag.yaml" >&2
     exit 2
 fi
-
-manifest=$1
 
 if [ ! -r "$manifest" ]; then
     printf 'error: cannot read manifest: %s\n' "$manifest" >&2
     exit 2
 fi
 
-awk '
+awk -v write_target="$write_target" '
 function trim(value) {
     sub(/^[[:space:]]+/, "", value)
     sub(/[[:space:]]+$/, "", value)
@@ -39,6 +43,12 @@ function set_field(field, value) {
         }
         owner_seen[current] = 1
         owner[current] = value
+    } else if (field == "worktree") {
+        if (worktree_seen[current]) {
+            report_error("node " node_id[current] " has duplicate worktree fields")
+        }
+        worktree_seen[current] = 1
+        worktree[current] = value
     } else if (field == "summary") {
         summary[current] = value
     }
@@ -68,16 +78,70 @@ function visit(node_number_arg, dependency_index, dependency) {
     visited[node_number_arg] = 1
 }
 
+function mermaid_identifier(node_number_arg, safe, candidate, suffix) {
+    safe = node_id[node_number_arg]
+    gsub(/[^[:alnum:]_]/, "_", safe)
+    if (safe == "") {
+        safe = "node"
+    }
+    candidate = "node_" safe
+    suffix = 1
+    while (used_mermaid_identifier[candidate]) {
+        suffix++
+        candidate = "node_" safe "_" suffix
+    }
+    used_mermaid_identifier[candidate] = 1
+    mermaid_id[node_number_arg] = candidate
+}
+
+function mermaid_escape(value) {
+    gsub(/&/, "and", value)
+    gsub(/"/, "_", value)
+    gsub(/</, "(", value)
+    gsub(/>/, ")", value)
+    gsub(/\[/, "", value)
+    gsub(/\]/, "", value)
+    gsub(/\{/, "", value)
+    gsub(/\}/, "", value)
+    gsub(/\|/, "/", value)
+    gsub(/`/, "_", value)
+    gsub(/[[:cntrl:]]/, " ", value)
+    return value
+}
+
+function display_field(seen, value) {
+    if (!seen || value == "" || value == "null") {
+        return "(unassigned)"
+    }
+    return value
+}
+
 BEGIN {
     nodes_seen = 0
     in_nodes = 0
     current = 0
     errors = 0
+    manifest_version = ""
+    generated_from = ""
 }
 
 {
     sub(/\r$/, "", $0)
     if ($0 ~ /^[[:space:]]*$/ || $0 ~ /^[[:space:]]*#/) {
+        next
+    }
+
+    if ($0 ~ /^version:/) {
+        value = $0
+        sub(/^version:[[:space:]]*/, "", value)
+        manifest_version = trim(value)
+        next
+    }
+
+    if ($0 ~ /^generated_from:/) {
+        value = $0
+        sub(/^generated_from:[[:space:]]*/, "", value)
+        generated_from = trim(value)
         next
     }
 
@@ -112,6 +176,7 @@ BEGIN {
         node_id[current] = raw_id
         status_seen[current] = 0
         owner_seen[current] = 0
+        worktree_seen[current] = 0
         dependency_declared[current] = 0
         dependency_count[current] = 0
         evidence_declared[current] = 0
@@ -175,7 +240,7 @@ BEGIN {
         next
     }
 
-    if ($0 ~ /^    status:/ || $0 ~ /^    owner:/ || $0 ~ /^    summary:/) {
+    if ($0 ~ /^    status:/ || $0 ~ /^    owner:/ || $0 ~ /^    worktree:/ || $0 ~ /^    summary:/) {
         if (current == 0) {
             report_error("node field appears outside a node")
             next
@@ -187,6 +252,9 @@ BEGIN {
         } else if (field_line ~ /^    owner:/) {
             field = "owner"
             sub(/^    owner:[[:space:]]*/, "", field_line)
+        } else if (field_line ~ /^    worktree:/) {
+            field = "worktree"
+            sub(/^    worktree:[[:space:]]*/, "", field_line)
         } else {
             field = "summary"
             sub(/^    summary:[[:space:]]*/, "", field_line)
@@ -332,6 +400,74 @@ END {
     }
     if (claimed_count == 0) {
         print "  none"
+    }
+
+    if (write_target != "") {
+        for (i = 1; i <= node_number; i++) {
+            mermaid_identifier(i)
+            status_count[status[i]]++
+        }
+
+        print "# Proof DAG" > write_target
+        print "" > write_target
+        print "_Generated from proof-dag.yaml by scripts/dag_status.sh; edit the manifest and regenerate this file._" > write_target
+        print "" > write_target
+        print "## Snapshot" > write_target
+        print "" > write_target
+        print "- Validation: `ok`" > write_target
+        printf "- Nodes: `%d`\n", node_number > write_target
+        printf "- Dependency edges: `%d`\n", edge_count > write_target
+        printf "- Status counts: `open=%d`, `claimed=%d`, `blocked=%d`, `verified=%d`\n", status_count["open"], status_count["claimed"], status_count["blocked"], status_count["verified"] > write_target
+        if (manifest_version != "") {
+            printf "- Manifest version: `%s`\n", mermaid_escape(manifest_version) > write_target
+        }
+        if (generated_from != "") {
+            printf "- Generated from: `%s`\n", mermaid_escape(generated_from) > write_target
+        }
+        print "" > write_target
+        print "> Warning: branch and worktree names are execution metadata. They identify the current coordination context; they are not proof evidence or theorem status." > write_target
+        print "" > write_target
+        print "## Operating instructions" > write_target
+        print "" > write_target
+        print "1. Treat `proof-dag.yaml` as the canonical state; do not edit this generated snapshot directly." > write_target
+        print "2. Inspect the current state with `scripts/dag_status.sh proof-dag.yaml`." > write_target
+        print "3. Regenerate this view after a validated manifest change with `scripts/dag_status.sh --write DAG.md proof-dag.yaml`." > write_target
+        print "4. An open node is claimable only when every dependency is `verified`; a verified node requires named acceptance evidence." > write_target
+        print "" > write_target
+        print "## Status legend" > write_target
+        print "" > write_target
+        print "The node colors correspond to the manifest status: `open`, `claimed`, `blocked`, and `verified`." > write_target
+        print "" > write_target
+        print "## Graph" > write_target
+        print "" > write_target
+        print "```mermaid" > write_target
+        print "flowchart TD" > write_target
+        for (i = 1; i <= node_number; i++) {
+            label = mermaid_escape(node_id[i]) "<br/>status: " mermaid_escape(status[i])
+            label = label "<br/>owner: " mermaid_escape(display_field(owner_seen[i], owner[i]))
+            label = label "<br/>worktree: " mermaid_escape(display_field(worktree_seen[i], worktree[i]))
+            if (summary[i] != "") {
+                label = label "<br/>" mermaid_escape(summary[i])
+            }
+            printf "    %s[\"%s\"]\n", mermaid_id[i], label > write_target
+        }
+        for (i = 1; i <= node_number; i++) {
+            for (j = 1; j <= dependency_count[i]; j++) {
+                dependency = dependency_at[i, j]
+                printf "    %s --> %s\n", mermaid_id[node_index[dependency]], mermaid_id[i] > write_target
+            }
+        }
+        print "" > write_target
+        print "    classDef open fill:#fff2cc,stroke:#bf9000,color:#000;" > write_target
+        print "    classDef claimed fill:#cfe2f3,stroke:#3d85c6,color:#000;" > write_target
+        print "    classDef blocked fill:#f4cccc,stroke:#cc0000,color:#000;" > write_target
+        print "    classDef verified fill:#d9ead3,stroke:#38761d,color:#000;" > write_target
+        for (i = 1; i <= node_number; i++) {
+            printf "    class %s %s;\n", mermaid_id[i], status[i] > write_target
+        }
+        print "```" > write_target
+        close(write_target)
+        printf "graph=%s\n", write_target
     }
 }
 ' "$manifest"
