@@ -17,8 +17,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Set up Lean
         uses: leanprover/lean-action@v1
-        with:
-          lake-manifest: lake-manifest.json
       - name: Build Lean project
         run: lake build
       - name: Run Python tests
