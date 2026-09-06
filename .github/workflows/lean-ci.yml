@@ -1,0 +1,25 @@
+name: Lean CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Lean
+        uses: leanprover/lean-action@v1
+        with:
+          lake-manifest: lake-manifest.json
+      - name: Build Lean project
+        run: lake build
+      - name: Run Python tests
+        run: python3 -m pytest
