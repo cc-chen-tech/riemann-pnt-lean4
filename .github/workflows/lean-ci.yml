@@ -15,6 +15,11 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+      - name: Restore pinned Mathlib checkout
+        run: |
+          git clone --filter=blob:none --no-checkout https://github.com/leanprover-community/mathlib4.git vendor/mathlib
+          git -C vendor/mathlib fetch --depth 1 origin 51e6992efd06126df61a496bebf8f49482a4e129
+          git -C vendor/mathlib checkout --detach 51e6992efd06126df61a496bebf8f49482a4e129
       - name: Set up Lean
         uses: leanprover/lean-action@v1
       - name: Build Lean project
