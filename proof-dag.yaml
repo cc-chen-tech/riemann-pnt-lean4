@@ -1,0 +1,170 @@
+version: 1
+generated_from: docs/superpowers/specs/2026-09-06-local-proof-dag-coordination-design.md
+nodes:
+  - id: main-foundation
+    type: theorem
+    status: verified
+    summary: Mainline analytic-number-theory foundation and RH interface
+    dependencies: []
+    owner: mainline
+    worktree: codex/local-proof-dag-coordination
+    source_paths:
+      - ZeroFreeRegion.lean
+      - PrimeNumberTheorem.lean
+    acceptance_command: lake env lean RiemannPNT.lean
+    evidence:
+      - README.md
+      - docs/rh-error-equivalence-chain.md
+
+  - id: explicit-formula
+    type: theorem
+    status: verified
+    summary: Mainline explicit-formula interface for von Mangoldt sums
+    dependencies:
+    - main-foundation
+    owner: mainline
+    worktree: codex/local-proof-dag-coordination
+    source_paths:
+      - PrimeNumberTheorem.lean
+      - PrimeNumberTheorem/ExplicitFormulaAllHeights.lean
+      - PrimeNumberTheorem/ExplicitFormulaTruncated.lean
+    acceptance_command: lake env lean PrimeNumberTheorem.lean
+    evidence:
+      - README.md
+      - docs/rh-error-equivalence-chain.md
+
+  - id: pnt
+    type: theorem
+    status: verified
+    summary: Prime number theorem interface
+    dependencies:
+    - explicit-formula
+    owner: mainline
+    worktree: codex/local-proof-dag-coordination
+    source_paths:
+      - PrimeNumberTheorem.lean
+      - RiemannPNT.lean
+    acceptance_command: lake env lean RiemannPNT.lean
+    evidence:
+      - README.md
+      - docs/mathematical-contributions.md
+
+  - id: riemann-von-mangoldt
+    type: theorem
+    status: verified
+    summary: Riemann–von Mangoldt zero-counting formula
+    dependencies:
+    - explicit-formula
+    - pnt
+    owner: mainline
+    worktree: codex/local-proof-dag-coordination
+    source_paths:
+      - PrimeNumberTheorem/RiemannVonMangoldt.lean
+      - PrimeNumberTheorem.lean
+    acceptance_command: lake env lean PrimeNumberTheorem/RiemannVonMangoldt.lean
+    evidence:
+      - README.md
+      - docs/riemann-von-mangoldt-chain.md
+
+  - id: hardy-littlewood
+    type: theorem
+    status: verified
+    summary: Hardy–Littlewood linear lower bound on critical-line zeros
+    dependencies:
+    - main-foundation
+    owner: mainline
+    worktree: codex/local-proof-dag-coordination
+    source_paths:
+      - HardyTheorem.lean
+      - HardyTheorem/HardyIntegralContradiction.lean
+      - HardyTheorem/HardyLittlewoodTheorem.lean
+    acceptance_command: lake env lean HardyTheorem/HardyLittlewoodTheorem.lean
+    evidence:
+      - README.md
+      - docs/hardy-theorem-chain.md
+
+  - id: carlson
+    type: theorem
+    status: verified
+    summary: Fixed-sigma Carlson zero-density interface
+    dependencies:
+    - pnt
+    - riemann-von-mangoldt
+    owner: mainline
+    worktree: codex/local-proof-dag-coordination
+    source_paths:
+      - PrimeNumberTheorem/CarlsonAsymptotic.lean
+      - PrimeNumberTheorem/CarlsonTwoThirdsHalfRangeExponent.lean
+    acceptance_command: lake env lean PrimeNumberTheorem/CarlsonAsymptotic.lean
+    evidence:
+      - README.md
+      - docs/carlson-zero-density-chain.md
+
+  - id: selberg-mobius
+    type: audit
+    status: blocked
+    summary: Selberg–Möbius LCM and varying-level off-diagonal route
+    dependencies:
+    - hardy-littlewood
+    - riemann-von-mangoldt
+    owner: null
+    worktree: null
+    source_paths:
+      - docs/research/2026-08-24-selberg-mobius-lcm-main-term.md
+      - docs/research/2026-08-24-mobius-weighted-off-diagonal.md
+    acceptance_command: scripts/dag_status.sh proof-dag.yaml
+    evidence: []
+
+  - id: conrey
+    type: theorem
+    status: open
+    summary: Genuine Conrey strict simple-zero lower-bound route
+    dependencies:
+    - hardy-littlewood
+    - selberg-mobius
+    - carlson
+    owner: null
+    worktree: null
+    source_paths:
+      - HardyTheorem/ConreySimpleZeroCount.lean
+      - HardyTheorem/ConreyTwoFifthsBridge.lean
+      - docs/missing-chains-index.md
+    acceptance_command: lake env lean HardyTheorem/ConreyTwoFifthsBridge.lean
+    evidence: []
+
+  - id: fourteen-seventeenths
+    type: theorem
+    status: open
+    summary: 14/17 zero-density target and quantitative closure
+    dependencies:
+    - carlson
+    - conrey
+    owner: null
+    worktree: null
+    source_paths:
+      - docs/missing-chains-index.md
+      - docs/carlson-zero-density-chain.md
+    acceptance_command: scripts/dag_status.sh proof-dag.yaml
+    evidence: []
+
+  - id: audit-integration
+    type: integration
+    status: open
+    summary: Cross-chain audit and integration gate for the RH proof DAG
+    dependencies:
+    - main-foundation
+    - explicit-formula
+    - pnt
+    - riemann-von-mangoldt
+    - hardy-littlewood
+    - carlson
+    - selberg-mobius
+    - conrey
+    - fourteen-seventeenths
+    owner: null
+    worktree: null
+    source_paths:
+      - README.md
+      - docs/missing-chains-index.md
+    acceptance_command: scripts/dag_status.sh proof-dag.yaml
+    evidence: []
