@@ -10,13 +10,13 @@ The first version tracks theorem, lemma, audit, and integration nodes; dependenc
 
 ## Architecture
 
-`proof-dag.yaml` is the canonical state file. `DAG.md` is a generated snapshot for humans and agents. `agents/README.md` documents the protocol for claiming and completing nodes, while `scripts/dag_status.sh` validates the graph and prints actionable open nodes. Agent-specific evidence is stored under `agents/runs/` as append-only Markdown records, avoiding concurrent edits to one large log.
+`proof-dag.yaml` is the canonical state file. `DAG.md` is a generated snapshot for humans and agents. `agents/README.md` documents the protocol for claiming and completing nodes, while `scripts/dag_status.sh` uses Ruby's standard Psych YAML parser to validate the graph and print actionable open nodes. Agent-specific evidence is stored under `agents/runs/` as append-only Markdown records, avoiding concurrent edits to one large log.
 
 Every node has a stable id, a semantic type, a status, dependencies, owner, worktree, source files, acceptance command, and evidence. A node is claimable only when all dependencies are `verified`; a node is `verified` only when its evidence names a successful acceptance command. Existing Git worktrees remain execution contexts, not proof nodes.
 
 ## State model
 
-Allowed statuses are `open`, `claimed`, `blocked`, and `verified`. The validator rejects unknown statuses, duplicate ids, missing dependencies, self-dependencies, cycles, claimed nodes without an owner, and verified nodes without evidence. It reports blocked descendants but does not mutate state.
+Allowed statuses are `open`, `claimed`, `blocked`, and `verified`. Every node must contain all documented schema fields. The validator rejects malformed YAML, duplicate keys or ids, missing source files, absent acceptance commands, unknown statuses or types, missing dependencies, self-dependencies, cycles, claimed nodes without an owner, and verified nodes without evidence. It reports blocked descendants but does not mutate state.
 
 ## Initial data
 

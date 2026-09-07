@@ -6,7 +6,7 @@
 
 **Architecture:** Keep `proof-dag.yaml` as the canonical graph and generate `DAG.md` plus status output from it. Store agent protocol and append-only run records separately so agents can coordinate without editing the same state document concurrently.
 
-**Tech Stack:** YAML-like manifest parsed by a dependency-free shell/awk validator, Markdown, Mermaid, Git, Lean project paths.
+**Tech Stack:** YAML manifest parsed by Ruby's standard Psych parser, a POSIX shell entry point, Python standard-library regression tests, Markdown, Mermaid, Git, Lean project paths.
 
 **Spec:** `docs/superpowers/specs/2026-09-06-local-proof-dag-coordination-design.md`
 
@@ -47,7 +47,7 @@
 
 - [x] **Step 1: Implement strict structural checks**
 
-  Validate ids, statuses, dependency references, self-edges, and duplicate ids using POSIX shell and awk. Exit nonzero on malformed state.
+  Parse real YAML and validate required fields, source paths, ids, statuses, dependency references, self-edges, and duplicate keys or ids. Exit nonzero on malformed state.
 
 - [x] **Step 2: Implement claimable-node output**
 
