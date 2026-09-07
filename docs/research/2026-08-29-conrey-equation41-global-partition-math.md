@@ -1,0 +1,503 @@
+# Conrey equation (41): global argument partition
+
+> **2026-08-30 数学勘误：下文的正跳跃全局计数设计不能直接用于实际 η。**
+> `D+ = Dseg + πM`；采用含正跳跃的 `D+` 时，原先的非零 crossing 下界
+> 有整函数反例。Sections 1–5 的全局解释已被
+> [分段变幅修正](2026-08-30-conrey-balanced-argument-correction.md) 取代。
+> 有限集合、局部因子化与 logarithm 引理仍可复用；式 (41) 尚未证明。
+
+## 1. Exact target
+
+Put
+
+\[
+  \gamma(t)=\eta(1/2+it),\qquad 2\le t\le T.
+\]
+
+Conrey's equation (41) uses the assertion that the number of distinct
+ordinates satisfying
+
+\[
+  \operatorname{Re}\gamma(t)=0,\qquad \gamma(t)\ne0
+\]
+
+is bounded below, up to the harmless absolute endpoint loss, by
+
+\[
+  \frac1\pi\Delta\arg\gamma-N_{0,\eta}(T).
+\tag{1}
+\]
+
+The exact finite statement to formalize is therefore
+
+\[
+  \#\{t:\operatorname{Re}\gamma(t)=0,\ \gamma(t)\ne0\}
+  \ge
+  \frac1\pi\Delta\arg\gamma-N_{0,\eta}(T)-1.
+\tag{2}
+\]
+
+The final `-1` is the single floor/ceiling loss for the two global endpoints;
+it is absorbed by Conrey's existing `O(T)` term.  Dropping it as an exact
+finite assertion would be false: an argument increase strictly between zero
+and `pi` need not cross a half-odd-integer multiple of `pi`.
+
+## 2. Why componentwise summation is insufficient
+
+Let the critical-line zeros of `eta` in `(2,T)` be
+
+\[
+  \tau_1<\cdots<\tau_r
+\]
+
+with analytic orders `m_1,...,m_r`.  Applying the existing zero-free crossing
+theorem separately on the `r+1` complementary components gives one endpoint
+rounding loss on every component.  This only yields
+
+\[
+  \#\text{crossings}
+  \ge \frac1\pi\sum_j\Delta_j-(r+1),
+\]
+
+and a later subtraction of the zero multiplicity would charge the same
+partition twice.  This is not the structure of (1).
+
+The component lifts must instead be reconciled before the integer levels are
+counted.
+
+## 3. Local phase jump at a zero
+
+Near a zero `tau_j` of order `m_j`, analyticity gives
+
+\[
+  \gamma(t)=(i(t-\tau_j))^{m_j}h_j(t),
+  \qquad h_j(\tau_j)\ne0.
+\tag{3}
+\]
+
+Choose continuous arguments of `h_j` on a small neighborhood.  The argument
+on the component to the right of `tau_j` can then be shifted by an integral
+multiple of `2 pi` so that its limiting value is the left limiting value plus
+exactly
+
+\[
+  m_j\pi.
+\tag{4}
+\]
+
+Thus the zero contributes a phase bridge of length `m_j pi`.  A half-open
+interval of that length contains exactly `m_j` levels of the lattice
+
+\[
+  \frac\pi2+\pi\mathbb Z.
+\tag{5}
+\]
+
+The half-open convention is essential: a closed bridge can contain
+`m_j+1` lattice levels when both endpoints lie on the lattice, while an
+endpoint level realized on a neighboring nonzero component is already a
+genuine real-part crossing and must not be charged to the zero.
+
+## 4. Global level attribution
+
+After aligning all component lifts by (4), insert one artificial phase bridge
+at each zero.  The resulting real-valued path is continuous and joins the two
+global endpoint arguments.  Every lattice level between those endpoints is
+therefore attained by the intermediate value theorem.
+
+Attribute each attained level as follows.
+
+1. If it is attained on a genuine nonzero component, choose a time there.
+   The exponential identity shows that the real part of `gamma` vanishes at
+   that time.  Distinct lattice levels give distinct times.
+2. Otherwise attribute it to the first zero bridge on which it is attained.
+   By (5), the bridge at `tau_j` receives at most `m_j` levels.
+
+The global lattice contains at least
+
+\[
+  \frac1\pi\Delta\arg\gamma-1
+\]
+
+levels.  At most `sum_j m_j=N_{0,eta}(T)` of them are charged to zero bridges.
+The remaining levels inject into distinct nonzero real-part crossings, proving
+(2).
+
+This is the non-duplicative accounting required by equation (41): zero
+multiplicity pays only for phase levels swallowed by the zero bridges, while
+endpoint rounding is paid once globally.
+
+### 4.1 Nonmonotone-component correction
+
+No zero-free component argument is known to be monotone, and even its net
+endpoint change can be negative.  Therefore the finite gluing statement must
+not require a level on a genuine component to lie in the directed interval
+`Icc(alpha,beta)`.  The correct component range is the unordered interval
+
+\[
+  [[\alpha,\beta]]=[\min(\alpha,\beta),\max(\alpha,\beta)].
+\]
+
+The intermediate value theorem then produces the crossing whether the
+component lift rises or falls.  For example, a phase chain with vertices
+`0,10,-10,5` still covers every level between the global endpoints `0` and
+`5`, although its middle component is decreasing.  Any proof that discards
+that component because `10>-10` is invalid.
+
+The finite invariant is an alternating chain
+
+\[
+  [a_0,b_0],\ [b_0,b_0+m_0\pi),\
+  [[a_1,b_1]],\ldots,[[a_r,b_r]],
+  \qquad a_{j+1}=b_j+m_j\pi,
+\]
+
+where genuine components use closed unordered intervals and zero bridges use
+positive half-open intervals.  Repeated use of
+
+\[
+  [[x,z]]\subset [[x,y]]\cup[[y,z]]
+\]
+
+shows that every global endpoint level lies either on a genuine component or
+on a bridge.  At the exceptional far endpoint `b_j+m_j*pi`, the half-open
+bridge does not contain the level, but the next genuine component does.  This
+is precisely why the half-open convention is compatible with arbitrary
+nonmonotone component arguments.
+
+This last statement is only an abstract closed-component statement.  The
+actual complementary intervals of `eta` are open at their zero endpoints.
+Their logarithms have one-sided limits there, but `eta` itself vanishes at the
+endpoint, so they cannot be supplied directly as nonvanishing closed curves
+to `exists_argumentCrossing_of_level_mem_uIcc`.  In particular, membership of
+the limiting phase in the closed unordered endpoint interval does not by
+itself prove that the level is attained at a nonzero interior point.  The
+actual specialization must use strict interior levels and the balanced
+component variation, as explained in Section 9 below; treating the limiting
+endpoint as an ordinary component point would leave a genuine endpoint gap.
+
+## 5. Lean decomposition
+
+The proof should be split into four reusable layers.
+
+1. **Deleted-level cardinality.**  For the existing global level finset
+   `argumentCrossingIndices alpha beta` and any bad-level finset `B`, prove
+
+   \[
+     (\beta-\alpha)/\pi-1-\#B
+     \le \#(K(\alpha,\beta)\setminus B).
+   \]
+
+2. **Order-`m` bridge capacity.**  Prove that a half-open interval of length
+   `m*pi` contains exactly `m` half-odd-integer levels.  This must retain the
+   half-open endpoint convention explicitly.
+3. **Analytic local factorization.**  Specialize the analytic-order API to the
+   vertical restriction `t -> eta(1/2+it)` and obtain the phase alignment (4).
+4. **Global attribution.**  Build the aligned piecewise phase path, define the
+   bad levels charged to bridges, prove their total cardinality is at most
+   `N_{0,eta}(T)`, and inject every remaining level into a genuine crossing.
+
+Layers 1 and 2 are now formalized in `MathlibAux/ArgumentCrossing.lean` as
+`argumentCrossingIndices_sdiff_card_lower_bound`,
+`mem_argumentCrossingBridgeIndices_iff`, and
+`argumentCrossingBridgeIndices_card`.  Layer 3 is now formalized for the
+actual `eta` by the vertical order factorization, the continuous logarithm of
+its regular factor, and `exists_conreyDegreeOneEta_local_argument_bridge`.
+The finite cardinality part of Layer 4 is also exact:
+`card_biUnion_argumentCrossingBridgeIndices_le` shows that the union of all
+local bridge-level sets costs at most the sum of their multiplicities, without
+requiring the bridges to be disjoint, and
+`argumentCrossingIndices_sdiff_bridgeUnion_card_lower_bound` preserves the
+single global endpoint loss after deleting this union.
+
+The abstract gluing part of Layer 4 is now formalized without a monotonicity
+assumption.  `ArgumentPhasePartition` records an alternating finite list of
+genuine components and aligned half-open order bridges.
+`ArgumentPhasePartition.exists_component_or_bridge` proves global coverage,
+including the far-endpoint routing described in Section 4.1;
+`exists_argumentCrossing_of_level_mem_uIcc` handles both increasing and
+decreasing component arguments; and
+`ArgumentPhasePartition.exists_injective_component_argumentCrossings` sends
+all surviving levels injectively to component-tagged real-part crossings.
+
+The remaining equation-(41) gate is the actual-`eta` specialization: construct
+this finite partition from the critical-line divisor, choose compatible lifts
+on every complementary interval, and identify the resulting bridge list and
+sum of orders with the existing `eta` zero count.  No equation-(41) or Conrey
+simple-zero proportion claim should be made before that specialization is
+proved.
+
+## 6. Analytic-order specialization on the critical line
+
+Mathlib's exact local-order interface already supplies the algebraic part of
+Layer 3.  If `rho=1/2+i*tau` and
+
+\[
+  \operatorname{analyticOrderAt}(\eta,\rho)=m<\infty,
+\]
+
+then there is a function `h`, analytic at `rho` and nonzero there, such that
+
+\[
+  \eta(z)=(z-\rho)^m h(z)
+\]
+
+throughout a neighborhood of `rho`.  Restricting this neighborhood identity
+along `z=1/2+i*t` gives the exact real-parameter factorization
+
+\[
+  \eta(1/2+it)=\bigl(i(t-\tau)\bigr)^m h(1/2+it).
+\tag{6}
+\]
+
+Continuity and `h(rho) != 0` also make the restricted regular factor nonzero
+on a sufficiently small real neighborhood of `tau`.  Thus every local zero
+on the critical line is isolated there and its entire singular phase is
+carried by the explicit power in (6).
+
+To finish Layer 3, choose a continuous logarithm of the regular factor on that
+small interval.  Its argument has the same left and right limit, whereas
+`i(t-tau)` changes from argument `-pi/2` to `pi/2`.  The aligned right-hand
+lift is therefore the left-hand lift plus exactly `m*pi`.  This final logarithm
+and lift-alignment statement is not implied merely by (6) and remains the next
+formal checkpoint.
+
+The singular-power part of that statement is now exact.  The definitions
+`verticalPowerLeftLog m r` and `verticalPowerRightLog m r` exponentiate, for
+`r>0`, to `(-I*r)^m` and `(I*r)^m`, respectively, and Lean proves
+
+\[
+  \operatorname{Im}L_{\mathrm{right}}(m,r)
+  -\operatorname{Im}L_{\mathrm{left}}(m,r)=m\pi.
+\tag{7}
+\]
+
+The common `m*log r` term cancels in (7).  It remains to add the same local
+continuous logarithm of the regular factor `h` to both sides and connect the
+resulting component lifts to the global path.
+
+The regular-factor logarithm is now constructed without choosing the
+principal branch.  First, `exists_continuousLogOn_Ioo` proves that every
+nonvanishing continuous complex curve on a real open interval has a continuous
+lift `ell` through `Complex.exp`; the proof uses convexity of the interval,
+contractibility, simple connectedness, and the exponential covering map.
+
+The actual specialization
+`exists_conreyDegreeOneEta_regularFactor_continuousLog` then shrinks the
+analytic/nonzero neighborhood of `h` to a symmetric interval
+`(tau-delta,tau+delta)` and supplies
+
+\[
+  e^{\ell(t)}=h(1/2+it)
+\]
+
+throughout that interval.  Consequently the local branch-cut problem is
+closed.
+
+The final local assembly is now exact in
+`exists_conreyDegreeOneEta_local_argument_bridge`.  After one common
+shrinking, the two functions
+
+\[
+  L_-(r)=L_{\mathrm{left}}(m,r)+\ell(\tau-r),\qquad
+  L_+(r)=L_{\mathrm{right}}(m,r)+\ell(\tau+r)
+\]
+
+exponentiate to the actual values of `eta` on the two sides of the zero, and
+
+\[
+  \operatorname{Im}L_+(r)-\operatorname{Im}L_-(r)\longrightarrow m\pi
+  \qquad(r\downarrow0).
+\]
+
+Thus Layer 3 is closed without a principal-log branch assumption.  The
+remaining work is to order the actual finite divisor, build the zero-free
+component curves and compatible endpoint lifts, and instantiate
+`ArgumentPhasePartition`.  Once instantiated, the abstract theorem already
+injects every uncharged global level into a distinct component-tagged nonzero
+real-part crossing, and the bridge union is already bounded by the sum of zero
+orders even when bridge-level sets overlap.
+
+## 7. The actual finite critical-line divisor
+
+The first global-specialization step no longer uses an abstract list of zeros.
+For fixed `T`, let
+
+\[
+  K_T=\{1/2+it:0\le t\le T\}.
+\]
+
+This is compact.  Since `conreyDegreeOneEta g g0 g1 L` is analytic on a
+neighborhood of `K_T` and is not identically zero when `g != 0`, its analytic
+divisor has finite support on `K_T`.  Filtering to positive imaginary part and
+projecting to ordinates therefore gives an actual finite set
+`conreyEtaCriticalZeroOrdinates`.  Lean proves the exact membership statement
+
+\[
+ t\in Z_\eta(T)
+ \quad\Longleftrightarrow\quad
+ 0<t\le T\ \text{ and }\ \eta(1/2+it)=0.
+\tag{8}
+\]
+
+No mollifier parameter enters this definition or equivalence.  Thus the
+finiteness/enumeration source required by equation (41) is now tied directly
+to the actual degree-one eta function.
+
+The finite set is now canonically sorted into a strictly increasing list.
+For every ordinate `t` in that list, Lean also proves
+
+\[
+  0<\operatorname{analyticOrderNatAt}(\eta,1/2+it)<\infty.
+\tag{9}
+\]
+
+The upper finiteness in (9) uses global nontriviality of the entire eta
+function from `g != 0`; positivity uses both analyticity and the exact zero
+membership (8).  Consequently every listed zero carries the correct positive
+finite bridge multiplicity.
+
+The interior complementary intervals are now exact as well.  If `a<b` are
+listed ordinates with no listed ordinate strictly between them, then (8)
+forces
+
+\[
+  \eta(1/2+it)\ne0 \qquad (a<t<b).
+\tag{10}
+\]
+
+The actual eta curve is continuous there, so the covering-map argument gives
+one continuous logarithm on the whole open component `(a,b)`.  This is a
+genuine component argument lift, not a family of unrelated local logarithms.
+
+There is also no hidden branch-choice obstruction when this component lift is
+compared with a local zero bridge.  If `ell_1` and `ell_2` are two continuous
+logarithms of the same curve on a real open interval, then
+
+\[
+  \ell_1(t)=\ell_2(t)+2\pi i k
+  \quad\text{for every }t
+\tag{11}
+\]
+
+for one fixed integer `k`.  Indeed, their difference lies in the discrete
+deck group `2*pi*i*Z`, and a continuous map from a connected interval to this
+discrete group is constant.  The formal theorem
+`exists_int_continuousLogs_eq_add_two_pi_I` proves (11).  Hence a component
+lift can be normalized against a local bridge by one global deck
+transformation; the integer cannot drift along the overlap.
+
+At this stage the finite global assembly reduces to endpoint components,
+actual overlap alignment, and recursive construction of
+`ArgumentPhasePartition`; Section 8 records the later specialization and
+endpoint progress.  Until the final assembly identifies the bridge-order sum
+with the intended critical-line zero count, equation (41) and the two-fifths
+conclusion remain open.
+
+## 8. Correct interval and count in Conrey's equation (41)
+
+The original paper ([Conrey 1989, pp. 7--8](https://aimath.org/~kaur/publications/24.pdf))
+fixes the argument interval at `2 <= t <= T`, not at
+`0 <= t <= T`.  Its equation (41) has left-hand side
+
+\[
+  {1\over\pi}\Delta\arg\eta(1/2+it)\big|_2^T-N_{0,\eta}(T),
+\tag{12}
+\]
+
+and immediately states that (12) is a lower bound for the number of
+`t in (2,T)` for which
+
+\[
+  \operatorname{Re}\eta(1/2+it)=0,
+  \qquad \eta(1/2+it)\ne0.
+\tag{13}
+\]
+
+Equation (42), with `Q` of degree one, then turns every point in (13) into a
+simple critical-line zero of `xi`; equation (43) is the resulting simple-zero
+proportion inequality.  The same lower endpoint `2` occurs in the mollified
+mean square.
+
+Accordingly, the actual formal object must be parameterized by a lower endpoint
+`U` and specialize to `(U,T]=(2,T]`.  Moreover, the bridge loss at a zero of
+analytic order `m` is `m`, so the exact `N_{0,eta}` object used by the phase
+partition is the sum of `analyticOrderNatAt eta` over this finite set.  A mere
+finset cardinality would undercharge multiple zeros and cannot justify (12).
+The endpoint values of eta must also be nonzero when endpoint arguments are
+used; endpoint avoidance or an admissible-height replacement is a separate
+later step, not an implicit convention.
+
+The consecutive-gap result has now also been specialized to this exact
+`(U,T]` zero list.  Thus two consecutive entries of the sorted equation-(41)
+list bound an open interval on which the actual eta restriction is nonzero and
+admits one continuous logarithm on the entire interval.  The next paragraph
+closes the two endpoint components; recursive alignment remains afterward.
+
+The endpoint components are now closed under the hypotheses actually needed
+to speak about endpoint arguments.  A nonzero value of eta at an ordinate
+extends to a nonzero real open neighborhood.  If the `(U,T]` zero list is
+nonempty and eta is nonzero at `U`, the interval from `U` to the first listed
+zero has one continuous logarithm on an open domain containing `U`.  Dually,
+if eta is nonzero at `T`, the interval from the last listed zero to `T` has one
+continuous logarithm on an open domain containing `T`; the hypotheses force
+the last zero to lie strictly below `T`.
+
+Consequently, when the list is nonempty and both endpoint values are nonzero,
+all first, interior, and last components required by (12) now exist as actual
+eta logarithm domains.
+
+The zero-list empty base case is now closed too.  If `U <= T`, eta is nonzero
+at both endpoints, and the `(U,T]` zero finset is empty, the endpoint
+neighborhoods and the empty-zero condition combine into one zero-free open
+interval containing both `U` and `T`; eta has one continuous logarithm there.
+This supplies the data for `ArgumentPhasePartition.single` without inventing
+any bridge.
+
+Thus every component-existence branch is now available.  The remaining
+equation-(41) topology is the finite recursive choice and normalization of
+these logarithms using (11), extraction of the local `m*pi` bridge endpoints,
+and construction of one compatible `ArgumentPhasePartition` whose bridge
+multiplicity sum is exactly `conreyEtaCriticalZeroMultiplicityMassBetween`.
+
+## 9. Source convention and the open-endpoint correction
+
+The source definition omitted from the short discussion around equation (41)
+is in [Conrey 1983, Section 4, p. 58](https://aimath.org/~kaur/publications/3.pdf).
+For a zero `1/2+i*t_0` of `Q_m` of multiplicity `n`, Conrey defines
+
+\[
+  \arg Q_m(1/2+i t_0^+)
+  =\arg Q_m(1/2+i t_0^-)+n\pi.
+\tag{14}
+\]
+
+This positive-jump convention must not be silently identified with the
+balanced variation in the 1989 equation-(32) boundary-half-weight formula.
+If `Dseg` is the sum of the open-component phase increments and `M` the zero
+multiplicity mass, the positive-jump variation is `Dplus = Dseg + pi*M`.
+The entire-function counterexample in the
+[balanced-argument correction](2026-08-30-conrey-balanced-argument-correction.md)
+disproves the old generic bound `crossings >= Dplus/pi-M-1`.  The valid
+replacement is a componentwise strict-interior count in terms of `Dseg`.
+
+The local Lean theorem has accordingly been strengthened.  Besides the
+difference limit, `exists_conreyDegreeOneEta_local_argument_endpoint_limits`
+now gives the two one-sided limits separately:
+
+\[
+  \theta_-(\tau)=\operatorname{Im}\ell(\tau)-{m\pi\over2},\qquad
+  \theta_+(\tau)=\operatorname{Im}\ell(\tau)+{m\pi\over2},
+\tag{15}
+\]
+
+and proves `theta_+(tau)=theta_-(tau)+m*pi`, while returning the two
+`exp = actual eta` identities for the same `ell`.  These limits transfer to
+any chosen component logarithm by a constant deck transformation; recursive
+positive-jump alignment is not needed for the balanced sum.  The new
+`ArgumentCrossingOpen` module proves the finite genuine-point count for
+disjoint open components.  The existing `ArgumentPhasePartition` remains a
+valid finite closed-curve combinatorial theorem, but it is not an
+actual-`eta` specialization.  Equation (41) remains open until the actual
+component limits and multiplicity budget are supplied and the balanced sum
+is identified with the actual boundary-half-weight contour formula.

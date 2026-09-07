@@ -7,10 +7,10 @@ import HardyTheorem.ConreyRightArgument
 This module simultaneously selects a bottom and a top horizontal edge for
 the actual mollified product and combines their weighted logarithmic-
 derivative bounds with the global moving-right-edge logarithmic and argument
-bounds.  It deliberately stops before applying Littlewood's lemma: the
-current exact rectangle theorem requires a zero-free left edge, whereas the
-classical equation-(37) argument must permit zeros on that edge by a limiting
-convention.
+bounds. It stops before applying Littlewood's lemma. The downstream
+`ConreySelectedHeightCount` module uses the left-boundary limiting theorem,
+permits zeros on the left edge, and constructs all three other zero-free
+edges at these same selected heights.
 -/
 
 open Complex Set
