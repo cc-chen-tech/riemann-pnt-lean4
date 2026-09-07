@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.MWKFCubicAFECompletedHeight
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms cubicAFEPhysicalHeightMass_nonneg
+#print axioms norm_cubicAFECompletedPhysicalSummand_le_heightMass
+#print axioms measurable_cubicAFEProgressionPhysicalSummand
+#print axioms tendsto_cubicAFECompletedPhysicalSummand_height
+#print axioms tendsto_cubicAFECompletedPhysicalIntegral_height
+#print axioms cubicAFECompletionWeight_zero_outside_domain
+#print axioms tendsto_cubicAFECompletedPhysicalIntegral_wholeLine

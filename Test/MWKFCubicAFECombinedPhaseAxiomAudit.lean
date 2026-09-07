@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.MWKFCubicAFECombinedPhase
+
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFECombinedArithmeticFactor_eq_exp
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFECombinedArithmeticFactor_eq_on_diagonal

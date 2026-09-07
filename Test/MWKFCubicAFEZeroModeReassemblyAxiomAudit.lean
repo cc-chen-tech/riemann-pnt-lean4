@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.MWKFCubicAFEZeroModeReassembly
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms norm_cubicAFEBoundaryPhysicalKernel
+#print axioms norm_cubicAFEBoundaryPhysicalKernel_le
+#print axioms integrable_cubicAFEBoundaryPhysicalKernel
+#print axioms summable_integral_norm_cubicAFEProgressionDyadicKernel
+#print axioms hasSum_cubicAFEZeroModeBoxFinite
+#print axioms summable_cubicAFENonzeroModeBoxFinite
+#print axioms tsum_cubicAFEFrequencyBoxFinite_eq_zero_add_nonzero

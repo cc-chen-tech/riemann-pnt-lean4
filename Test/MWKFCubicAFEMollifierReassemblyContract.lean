@@ -1,0 +1,20 @@
+import PrimeNumberTheorem.MWKFCubicAFEMollifierReassembly
+
+namespace PrimeNumberTheorem.MWKFCubic
+
+#check cubicAFEMollifiedApproximation
+#check cubicAFEMollifiedMomentFinite
+#check cubicAFEMollifiedApproximation_eq_zero_of_not_mem
+#check hasCompactSupport_cubicAFEMollifiedApproximation
+#check cubicAFEMollifierPairApproximation
+#check tendsto_cubicAFEMollifiedApproximation
+#check cubicAFEMollifiedApproximation_eq_pairSum
+#check summable_cubicAFEWeightFinite
+#check cubicAFECombinedSummandFinite
+#check summable_cubicAFECombinedSummandFinite
+#check cubicAFEMollifierPairApproximation_eq_tsum
+#check cubicAFEMollifiedApproximation_eq_tripleSum
+#check cubicAFECombinedSummandFinite_eq_exp
+#check cubicAFECombinedSummandFinite_eq_on_diagonal
+
+end PrimeNumberTheorem.MWKFCubic

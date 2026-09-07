@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.MWKFCubicAFEFrequencySummability
+
+#print axioms PrimeNumberTheorem.MWKFCubic.summable_integral_cubicAFEProgressionFourier
+#print axioms PrimeNumberTheorem.MWKFCubic.norm_cubicAFEFrequencyCoefficient
+#print axioms PrimeNumberTheorem.MWKFCubic.summable_norm_cubicAFEFrequencyCoefficient
+#print axioms PrimeNumberTheorem.MWKFCubic.summable_cubicAFEFrequencyCoefficient

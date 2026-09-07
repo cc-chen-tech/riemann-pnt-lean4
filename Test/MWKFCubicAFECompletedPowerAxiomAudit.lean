@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.MWKFCubicAFECompletedPower
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms cubicAFECompletionLowerEndpoint_pos
+#print axioms cubicAFECompletionWeight_zero_of_first_le
+#print axioms cubicAFECompletionWeight_zero_of_second_le
+#print axioms cubicAFECompletionWeight_nonneg
+#print axioms cubicAFECompletionWeight_le_one
+#print axioms cubicAFECompletedHalfLinePower_nonneg
+#print axioms integrable_cubicAFECompletedHalfLinePower
+#print axioms cubicAFECompletionWeight_mul_product_rpow_le

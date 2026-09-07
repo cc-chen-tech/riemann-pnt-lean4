@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.MWKFCubicAFEIntegralLimit
+
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEMollifiedApproximation_sub_eq
+#print axioms PrimeNumberTheorem.MWKFCubic.exists_integrable_cubicAFE_error_envelope
+#print axioms PrimeNumberTheorem.MWKFCubic.tendsto_cubicAFEMollifiedMomentFinite

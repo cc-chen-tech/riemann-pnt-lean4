@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.MWKFCubicAFECompletedTime
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms integrable_cubicAFECompletedPhysicalMajorant
+#print axioms measurable_cubicAFEProgressionPhysicalSummand_joint
+#print axioms integrable_cubicAFECompletedPhysicalKernelFinite
+#print axioms stronglyMeasurable_cubicAFECompletedPhysicalKernelVertical
+#print axioms norm_cubicAFECompletedPhysicalKernelVertical_le
+#print axioms integrable_cubicAFECompletedPhysicalKernelVertical
+#print axioms tendsto_cubicAFECompletedPhysicalDoubleIntegral_height
+#print axioms tendsto_cubicAFECompletedZeroMode_height

@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.MWKFCubicAFEWeightEndpoint
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms stronglyMeasurable_cubicAFERealProductWeightVertical
+#print axioms norm_cubicAFERealProductWeightVertical_le_of_le_one
+#print axioms integrableOn_cubicAFERealProductWeightVertical_weighted

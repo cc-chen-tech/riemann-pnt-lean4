@@ -1,0 +1,15 @@
+import PrimeNumberTheorem.MWKFCubicAFEArithmetic
+
+open Complex
+open scoped Interval
+
+namespace PrimeNumberTheorem.MWKFCubic
+
+#check cubicAFEPositiveIndexProduct
+#check cubicAFEDirichletTerm_eq_zero_mul_product
+#check cubicAFEDirichletTerm_zero_eq_exp
+#check cubicAFEProductWeightFinite
+#check cubicAFEWeightFinite_eq_arithmetic_mul_productWeight
+#check cubicAFEDoubleSumFinite_eq_arithmetic
+
+end PrimeNumberTheorem.MWKFCubic

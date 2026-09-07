@@ -1,0 +1,5 @@
+import MathlibAux.GammaVerticalStripBound
+
+#print axioms MathlibAux.norm_Gamma_le_Gamma_re
+#print axioms MathlibAux.exists_norm_Gamma_le_on_positive_reIcc
+#print axioms MathlibAux.exists_norm_Gammaℝ_le_on_positive_reIcc

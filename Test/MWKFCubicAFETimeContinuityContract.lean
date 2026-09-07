@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.MWKFCubicAFETimeContinuity
+
+namespace PrimeNumberTheorem.MWKFCubic
+
+#check cubicAFENormalizedVerticalIntegrand
+#check continuous_cubicAFENormalizedVerticalIntegrand
+#check continuous_cubicAFEDoubleSumFinite_time
+#check continuous_cubicAFEMollifiedApproximation
+#check integrable_cubicAFEMollifiedApproximation
+
+end PrimeNumberTheorem.MWKFCubic

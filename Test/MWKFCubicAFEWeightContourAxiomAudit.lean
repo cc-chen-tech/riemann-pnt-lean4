@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.MWKFCubicAFEWeightContour
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms differentiableOn_cubicAFEWeightMellinNumerator
+#print axioms cubicAFEWeightMellinNumerator_zero
+#print axioms cubicAFEWeightMellinKernel_eq_div
+#print axioms differentiableOn_cubicAFEWeightMellinRemainder
+#print axioms cubicAFEWeightMellinKernel_eq_remainder_add
+#print axioms boundaryRectIntegral_cubicAFEWeightMellinKernel

@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.MWKFCubicAFEProgressionPoisson
+
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionLattice_injective
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionLattice_index
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionLattice_toNat_mem
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionCutoffSummand_eq_zero_of_not_domain
+#print axioms PrimeNumberTheorem.MWKFCubic.tsum_cubicAFEProgressionCutoff_eq_lattice
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEShiftFiberCutoff_poisson

@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.MWKFCubicAFEPhysicalEndpoint
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms cubicAFEProgressionPhysicalSummandVertical
+#print axioms tendsto_cubicAFEProgressionPhysicalSummand_height
+#print axioms integrableOn_cubicAFEProgressionPhysicalSummandVertical
+#print axioms tendsto_cubicAFECompletedPhysicalIntegral

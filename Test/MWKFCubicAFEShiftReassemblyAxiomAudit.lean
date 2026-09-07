@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.MWKFCubicAFEShiftReassembly
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms summable_integral_norm_cubicAFEBoundaryPhysicalKernel
+#print axioms summable_shift_cubicAFEZeroModeBoxFinite
+#print axioms summable_shift_cubicAFENonzeroModeBoxFinite
+#print axioms tsum_shift_cubicAFEFrequencyBoxFinite_eq_zero_add_nonzero

@@ -81,3 +81,8 @@ def test_native_endpoint_contracts_are_default_lake_roots():
     lakefile = (ROOT / "lakefile.lean").read_text(encoding="utf-8")
     assert "`Test.SelbergStrictCancellationZeroCoverContract" in lakefile
     assert "`Test.ExponentialPolynomialFirstMomentContract" in lakefile
+
+
+def test_mwkf_gamma_vertical_strip_bound_is_a_default_lake_root():
+    lakefile = (ROOT / "lakefile.lean").read_text(encoding="utf-8")
+    assert "`MathlibAux.GammaVerticalStripBound," in lakefile
