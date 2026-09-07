@@ -4,10 +4,10 @@ import HardyTheorem.ConreyMollifiedMeanSquare
 /-!
 # Local finite simple-zero witnesses with the actual mean square
 
-UNCOMPILED / UNVERIFIED DRAFT. 尚未编译、未验证。
-Source preparation only, under the exclusive-build resource restriction.
+局部有限单零点见证；不包含实际均方渐近式或最终零点比例。
+This local witness theorem does not supply a final mean-square estimate.
 
-Unlike the existing canonical-count wrapper, this draft preserves the
+Unlike the existing canonical-count wrapper, this theorem preserves the
 finite set in (U,T). Its members are actual simple zeta zeros. The full
 eta multiplicity, twice the complete non-left remainder and endpoint
 loss one are retained. No final mean-square estimate is supplied.
@@ -51,7 +51,7 @@ private theorem exists_local_simpleZero_finset_of_eta_edges_mollified_full
   refine ⟨S, hS, ?_⟩
   linarith only [hmass, hcountE]
 
-/-- Draft local finite witness theorem. The shifted left edge may contain
+/-- Local finite witness theorem. The shifted left edge may contain
 zeros; the positive actual moment and the witnesses are constructed from
 the same function and rectangle, not passed as analytic assumptions. -/
 theorem exists_conrey_local_simpleZero_finset_lower_bound_meanSquare
@@ -112,7 +112,7 @@ theorem exists_conrey_local_simpleZero_finset_lower_bound_meanSquare
       ((T - U) * Real.log (M / (T - U)) + 2 * B) / (2 * d) := by
     calc
       _ = (2 * Ilog + 2 * B) / (2 * d) := by
-        field_simp [hd.ne'] <;> ring
+        field_simp [hd.ne']
       _ ≤ _ := div_le_div_of_nonneg_right (by linarith only [hlog])
         (mul_pos (by norm_num : (0 : ℝ) < 2) hd).le
   refine ⟨S, hS, hJ.1, ?_⟩

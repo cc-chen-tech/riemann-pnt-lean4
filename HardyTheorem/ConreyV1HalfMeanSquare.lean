@@ -3,8 +3,8 @@ import HardyTheorem.ConreyV1MeanSquareTransfer
 /-!
 # Same-parameter half-interval V1 transfer
 
-UNCOMPILED / UNVERIFIED DRAFT. 尚未编译、未验证。
-Source preparation only, under the exclusive-build resource restriction.
+局部有限均方转移；不包含实际长均方渐近式或最终零点比例。
+This finite transfer does not supply a long-moment asymptotic.
 
 The mathematics is the specialization in #552, Section 2. The split point
 is the lower endpoint T/2, so the low integral is exactly zero. No bound
@@ -24,9 +24,10 @@ private theorem comparisonCoefficient_half {L : ℝ} (hL : 0 < L) :
     conreyV1ComparisonCoefficient L (1 - Real.log 2 / L) =
       conreyV1HalfIntervalComparisonNumerator / L := by
   unfold conreyV1ComparisonCoefficient conreyV1HalfIntervalComparisonNumerator
-  field_simp [hL.ne'] <;> ring
+  field_simp [hL.ne']
+  ring
 
-/-- Draft finite transfer for the actual original mollifier, on its upper
+/-- Finite transfer for the actual original mollifier, on its upper
 half-interval. The right side contains only the two actual half moments. -/
 theorem conreyMollifiedV1_half_meanSquare_le_V_and_zeta
     {T sigma : ℝ} {Y : ℕ} {P : ℝ → ℝ}
@@ -49,7 +50,7 @@ theorem conreyMollifiedV1_half_meanSquare_le_V_and_zeta
     calc
       Real.exp ((1 - Real.log 2 / L) * L) = Real.exp (L - Real.log 2) := by
         congr 1
-        field_simp [hL.ne'] <;> ring
+        field_simp [hL.ne']
       _ = T / 2 := by
         rw [Real.exp_sub]
         dsimp only [L]

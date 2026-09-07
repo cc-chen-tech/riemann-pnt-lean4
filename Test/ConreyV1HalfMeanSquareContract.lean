@@ -1,8 +1,7 @@
 import HardyTheorem.ConreyV1HalfMeanSquare
 
 /-!
-UNCOMPILED / UNVERIFIED DRAFT. 尚未编译、未验证。
-Written before the implementation; no red/green run is authorized yet.
+同参数半段转移的完整字面契约；不添加实际均方渐近假设。
 The literal contract must retain the original T, log T, sigma, Y and P,
 with no low-height moment and no extra analytic hypothesis.
 -/

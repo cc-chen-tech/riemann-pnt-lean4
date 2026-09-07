@@ -1,8 +1,7 @@
 import HardyTheorem.ConreyLocalSimpleZeroWitness
 
 /-!
-UNCOMPILED / UNVERIFIED DRAFT. 尚未编译、未验证。
-Written before the implementation; no red/green run is authorized yet.
+实际局部单零点见证的完整字面契约；不输入现成均方上界。
 This contract would reject a global count in place of local witnesses,
 loss of simplicity or open-interval location, or a supplied moment bound.
 -/
