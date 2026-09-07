@@ -114,6 +114,53 @@ def test_carlson_unconditional_density_and_forcing_are_audited():
     assert required <= check_axiom_allowlist.EXPECTED_DECLARATIONS
 
 
+def test_selberg_strict_cancellation_zero_cover_is_continuously_audited():
+    module = "Test.SelbergStrictCancellationZeroCoverContract"
+    declarations = {
+        "HardyTheorem.measure_strictCancellationStarts_selbergCompleted_le_oddZeroCount_mul",
+        "HardyTheorem.exists_pos_mul_log_le_criticalLineOddZeroCount_two_mul_selberg",
+        "HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline",
+        "HardyTheorem.selberg_zero_proportion_target_proved_mainline",
+    }
+
+    assert module in check_axiom_allowlist.AXIOM_AUDIT_MODULES
+    assert declarations <= check_axiom_allowlist.EXPECTED_DECLARATIONS
+
+    standard_reports = {
+        declaration: {"propext", "Classical.choice", "Quot.sound"}
+        for declaration in declarations
+    }
+    assert check_axiom_allowlist.validate_axioms(
+        standard_reports,
+        expected_declarations=declarations,
+        allowed_axioms=check_axiom_allowlist.ALLOWED_AXIOMS,
+    ) == []
+
+    missing = dict(standard_reports)
+    missing.pop("HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline")
+    assert check_axiom_allowlist.validate_axioms(
+        missing,
+        expected_declarations=declarations,
+        allowed_axioms=check_axiom_allowlist.ALLOWED_AXIOMS,
+    ) == [
+        "missing axiom report for "
+        "HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline"
+    ]
+
+    bad = dict(standard_reports)
+    bad["HardyTheorem.selberg_zero_proportion_target_proved_mainline"] = {
+        "Bad.mock_axiom"
+    }
+    assert check_axiom_allowlist.validate_axioms(
+        bad,
+        expected_declarations=declarations,
+        allowed_axioms=check_axiom_allowlist.ALLOWED_AXIOMS,
+    ) == [
+        "HardyTheorem.selberg_zero_proportion_target_proved_mainline "
+        "uses unexpected axioms: Bad.mock_axiom"
+    ]
+
+
 def test_conrey_local_contracts_are_continuously_audited():
     modules = {
         "Test.ConreyV1HalfMeanSquareContract",

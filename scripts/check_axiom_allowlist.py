@@ -13,6 +13,7 @@ ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 AXIOM_AUDIT_MODULES = [
     "Test.CarlsonTwoThirdsImprovementAxiomAudit",
     "Test.MultiplicityAxiomAudit",
+    "Test.SelbergStrictCancellationZeroCoverContract",
     "Test.VKEdgePiOverTwoOrdinaryL2AxiomAudit",
     "Test.VKEdgePiOverTwoSweptL2AxiomAudit",
     "Test.VKEdgePiOverTwoFixedProportionAxiomAudit",
@@ -744,6 +745,10 @@ AXIOM_AUDIT_MODULES = list(
 EXPECTED_DECLARATIONS = {
     "HardyTheorem.conreyMollifiedV1_half_meanSquare_le_V_and_zeta",
     "HardyTheorem.exists_conrey_local_simpleZero_finset_lower_bound_meanSquare",
+    "HardyTheorem.measure_strictCancellationStarts_selbergCompleted_le_oddZeroCount_mul",
+    "HardyTheorem.exists_pos_mul_log_le_criticalLineOddZeroCount_two_mul_selberg",
+    "HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline",
+    "HardyTheorem.selberg_zero_proportion_target_proved_mainline",
     "PrimeNumberTheorem.carlson_halfRange_closed_zeroDensity_isBigO",
     "PrimeNumberTheorem.carlson_halfRange_zeroDensity_isBigO",
     "PrimeNumberTheorem.exists_carlson_halfRange_densityCertificate",
