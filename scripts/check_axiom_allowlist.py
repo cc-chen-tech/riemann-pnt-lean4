@@ -13,6 +13,8 @@ ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 AXIOM_AUDIT_MODULES = [
     "Test.CarlsonTwoThirdsImprovementAxiomAudit",
     "Test.MultiplicityAxiomAudit",
+    "Test.ConreyV1HalfMeanSquareContract",
+    "Test.ConreyLocalSimpleZeroWitnessContract",
     "Test.VKEdgePiOverTwoOrdinaryL2AxiomAudit",
     "Test.VKEdgePiOverTwoSweptL2AxiomAudit",
     "Test.VKEdgePiOverTwoFixedProportionAxiomAudit",
