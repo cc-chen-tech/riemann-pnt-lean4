@@ -7,7 +7,7 @@ _Generated from proof-dag.yaml by scripts/dag_status.sh; edit the manifest and r
 - Validation: `ok`
 - Nodes: `14`
 - Dependency edges: `33`
-- Status counts: `open=7`, `claimed=0`, `blocked=1`, `verified=6`
+- Status counts: `open=13`, `claimed=0`, `blocked=1`, `verified=0`
 - Manifest version: `1`
 - Generated from: `docs/superpowers/specs/2026-09-06-local-proof-dag-coordination-design.md`
 
@@ -28,12 +28,12 @@ The node colors correspond to the manifest status: `open`, `claimed`, `blocked`,
 
 ```mermaid
 flowchart TD
-    node_main_foundation["main-foundation<br/>status: verified<br/>owner: mainline<br/>worktree: codex/local-proof-dag-coordination<br/>Mainline analytic-number-theory foundation and RH interface"]
-    node_explicit_formula["explicit-formula<br/>status: verified<br/>owner: mainline<br/>worktree: codex/local-proof-dag-coordination<br/>Mainline explicit-formula interface for von Mangoldt sums"]
-    node_pnt["pnt<br/>status: verified<br/>owner: mainline<br/>worktree: codex/local-proof-dag-coordination<br/>Prime number theorem interface"]
-    node_riemann_von_mangoldt["riemann-von-mangoldt<br/>status: verified<br/>owner: mainline<br/>worktree: codex/local-proof-dag-coordination<br/>Riemann–von Mangoldt zero-counting formula"]
-    node_hardy_littlewood["hardy-littlewood<br/>status: verified<br/>owner: mainline<br/>worktree: codex/local-proof-dag-coordination<br/>Hardy–Littlewood linear lower bound on critical-line zeros"]
-    node_carlson["carlson<br/>status: verified<br/>owner: mainline<br/>worktree: codex/local-proof-dag-coordination<br/>Fixed-sigma Carlson zero-density interface"]
+    node_main_foundation["main-foundation<br/>status: open<br/>owner: (unassigned)<br/>worktree: (unassigned)<br/>Mainline analytic-number-theory foundation and RH interface"]
+    node_explicit_formula["explicit-formula<br/>status: open<br/>owner: (unassigned)<br/>worktree: (unassigned)<br/>Mainline explicit-formula interface for von Mangoldt sums"]
+    node_pnt["pnt<br/>status: open<br/>owner: (unassigned)<br/>worktree: (unassigned)<br/>Prime number theorem interface"]
+    node_riemann_von_mangoldt["riemann-von-mangoldt<br/>status: open<br/>owner: (unassigned)<br/>worktree: (unassigned)<br/>Riemann–von Mangoldt zero-counting formula"]
+    node_hardy_littlewood["hardy-littlewood<br/>status: open<br/>owner: (unassigned)<br/>worktree: (unassigned)<br/>Hardy–Littlewood linear lower bound on critical-line zeros"]
+    node_carlson["carlson<br/>status: open<br/>owner: (unassigned)<br/>worktree: (unassigned)<br/>Fixed-sigma Carlson zero-density interface"]
     node_conrey_kernel_bridge["conrey-kernel-bridge<br/>status: open<br/>owner: (unassigned)<br/>worktree: (unassigned)<br/>Conrey kernel and argument-principle bridge work package"]
     node_selberg_lcm_type_ii["selberg-lcm-type-ii<br/>status: open<br/>owner: (unassigned)<br/>worktree: (unassigned)<br/>Selberg LCM main term and Type-II off-diagonal work package"]
     node_carlson_improvement["carlson-improvement<br/>status: open<br/>owner: (unassigned)<br/>worktree: (unassigned)<br/>Carlson zero-density improvement and quantitative margin work package"]
@@ -80,12 +80,12 @@ flowchart TD
     classDef claimed fill:#cfe2f3,stroke:#3d85c6,color:#000;
     classDef blocked fill:#f4cccc,stroke:#cc0000,color:#000;
     classDef verified fill:#d9ead3,stroke:#38761d,color:#000;
-    class node_main_foundation verified;
-    class node_explicit_formula verified;
-    class node_pnt verified;
-    class node_riemann_von_mangoldt verified;
-    class node_hardy_littlewood verified;
-    class node_carlson verified;
+    class node_main_foundation open;
+    class node_explicit_formula open;
+    class node_pnt open;
+    class node_riemann_von_mangoldt open;
+    class node_hardy_littlewood open;
+    class node_carlson open;
     class node_conrey_kernel_bridge open;
     class node_selberg_lcm_type_ii open;
     class node_carlson_improvement open;

@@ -12,6 +12,8 @@ generated_from: README.md
 nodes:
   - id: sample
     type: theorem
+    proof_category: lean_theorem
+    closure_state: closed
     status: verified
     summary: Minimal valid node
     dependencies: []
@@ -21,7 +23,12 @@ nodes:
       - README.md
     acceptance_command: test -f README.md
     evidence:
-      - README.md
+      - path: README.md
+        commit: "0000000000000000000000000000000000000000"
+        command: test -f README.md
+        exit_code: 0
+        proof_category: lean_theorem
+        claim_scope: Minimal test fixture only
 """
 
 
@@ -80,6 +87,8 @@ class DagStatusTests(unittest.TestCase):
     def test_requires_every_documented_node_field(self) -> None:
         fields = {
             "type": "    type: theorem\n",
+            "proof_category": "    proof_category: lean_theorem\n",
+            "closure_state": "    closure_state: closed\n",
             "status": "    status: verified\n",
             "summary": "    summary: Minimal valid node\n",
             "dependencies": "    dependencies: []\n",
@@ -87,11 +96,11 @@ class DagStatusTests(unittest.TestCase):
             "worktree": "    worktree: codex/test\n",
             "source_paths": "    source_paths:\n      - README.md\n",
             "acceptance_command": "    acceptance_command: test -f README.md\n",
-            "evidence": "    evidence:\n      - README.md\n",
+            "evidence": "    evidence:\n      - path: README.md\n        commit: \"0000000000000000000000000000000000000000\"\n        command: test -f README.md\n        exit_code: 0\n        proof_category: lean_theorem\n        claim_scope: Minimal test fixture only\n",
         }
         for field, declaration in fields.items():
             with self.subTest(field=field):
-                result = self.run_manifest(VALID_MANIFEST.replace(declaration, ""))
+                result = self.run_manifest(VALID_MANIFEST.replace(declaration, "", 1))
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn(
                     f"node sample is missing required field: {field}", result.stdout
@@ -100,6 +109,55 @@ class DagStatusTests(unittest.TestCase):
         result = self.run_manifest(VALID_MANIFEST.replace("  - id: sample\n", "  -\n", 1))
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("node entry 1 is missing required field: id", result.stdout)
+
+    def test_rejects_dag_self_check_as_theorem_closure(self) -> None:
+        manifest = VALID_MANIFEST.replace(
+            "test -f README.md", "scripts/dag_status.sh proof-dag.yaml"
+        )
+
+        result = self.run_manifest(manifest)
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("cannot use structure", result.stdout)
+
+    def test_rejects_axiom_audit_as_theorem_closure(self) -> None:
+        manifest = VALID_MANIFEST.replace(
+            "test -f README.md", "lake env lean Test/ExampleAxiomAudit.lean"
+        )
+
+        result = self.run_manifest(manifest)
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("cannot use structure", result.stdout)
+
+    def test_rejects_conditional_interface_as_closed_theorem(self) -> None:
+        manifest = VALID_MANIFEST.replace(
+            "proof_category: lean_theorem", "proof_category: conditional_interface"
+        )
+
+        result = self.run_manifest(manifest)
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("cannot close proof_category conditional_interface", result.stdout)
+
+    def test_rejects_untraceable_verified_evidence(self) -> None:
+        manifest = VALID_MANIFEST.replace(
+            'commit: "0000000000000000000000000000000000000000"',
+            'commit: "short-sha"',
+        )
+
+        result = self.run_manifest(manifest)
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("must name a full commit SHA", result.stdout)
+
+    def test_rejects_missing_verified_evidence_path(self) -> None:
+        manifest = VALID_MANIFEST.replace("path: README.md", "path: missing-evidence.log")
+
+        result = self.run_manifest(manifest)
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("references missing path", result.stdout)
 
 
 if __name__ == "__main__":

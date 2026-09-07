@@ -14,7 +14,15 @@ making agents share a mutable log.
   build for you.
 - A node is `open`, `claimed`, `blocked`, or `verified`. An `open` node is
   claimable only when every dependency is `verified`. A `verified` node must
-  have named acceptance evidence in the manifest and in a run record.
+  have structured acceptance evidence in the manifest and in a run record.
+- Manifest validation is structural only. It never means that an acceptance
+  command ran or that a mathematical target closed. `proof_category` records
+  what kind of result exists, while `closure_state` records whether the exact
+  target remains open, is partial, or is closed.
+- A DAG self-check, finite computation, axiom audit, contract compilation, or
+  conditional interface cannot close a theorem node. Only `lean_theorem` or
+  `paper_proof` evidence may accompany `status: verified`, and every dependency
+  must already be verified.
 - Branch and worktree names identify execution context. They are not proof
   evidence and do not establish theorem status.
 - Each run record is a new Markdown file under `agents/runs/`. Existing run
@@ -84,13 +92,15 @@ metadata:
   checks changed or inspected. State assumptions, unresolved gaps, and the
   proof category (for example, Lean theorem, paper-only audit, finite check,
   or conditional interface).
-- **Evidence:** record the exact acceptance command from the manifest, the
-  commit or worktree at which it ran, its exit code, and raw output or a stable
-  linked evidence file. A passing command is evidence only for the proposition
+- **Evidence:** record the exact acceptance command from the manifest, the full
+  source commit at which it ran, its exit code, proof category, claim scope,
+  and raw output in a repository evidence file. The manifest evidence item must
+  repeat those fields and point to that file. A passing command is evidence only for the proposition
   and scope it actually tests; a finite computation, an axiom audit, or an
   interface theorem is not silently promoted to a stronger theorem.
 - **Completion:** the owner may change a node to `verified` only after the
-  acceptance command succeeds and the run record names the resulting evidence.
+  acceptance command succeeds, the exact target is closed, every dependency is
+  verified, and the run record names the resulting structured evidence.
   The owner may use `blocked` when a concrete missing proposition or external
   dependency prevents progress, and must state that checkpoint. Do not mark a
   node verified because a branch is clean, a process exited, a CI check is

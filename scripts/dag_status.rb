@@ -5,8 +5,13 @@ require "set"
 
 STATUSES = %w[open claimed blocked verified].freeze
 TYPES = %w[theorem lemma audit integration].freeze
-NODE_FIELDS = %w[id type status summary dependencies owner worktree source_paths acceptance_command evidence].freeze
+PROOF_CATEGORIES = %w[lean_theorem paper_proof paper_only finite_check conditional_interface axiom_audit coordination].freeze
+CLOSURE_STATES = %w[open partial closed].freeze
+CLOSING_PROOF_CATEGORIES = %w[lean_theorem paper_proof].freeze
+EVIDENCE_FIELDS = %w[path commit command exit_code proof_category claim_scope].freeze
+NODE_FIELDS = %w[id type proof_category closure_state status summary dependencies owner worktree source_paths acceptance_command evidence].freeze
 ID_PATTERN = /\A[[:alnum:]][[:alnum:]_-]*\z/
+COMMIT_PATTERN = /\A[0-9a-f]{40}\z/
 
 def usage
   warn "usage: scripts/dag_status.sh [--write DAG.md] proof-dag.yaml"
@@ -229,6 +234,12 @@ nodes.each_with_index do |node, index|
   end
 
   errors << "node #{node_name} has invalid type: #{node['type']}" if node.key?("type") && !TYPES.include?(node["type"])
+  if node.key?("proof_category") && !PROOF_CATEGORIES.include?(node["proof_category"])
+    errors << "node #{node_name} has invalid proof_category: #{node['proof_category']}"
+  end
+  if node.key?("closure_state") && !CLOSURE_STATES.include?(node["closure_state"])
+    errors << "node #{node_name} has invalid closure_state: #{node['closure_state']}"
+  end
   errors << "node #{node_name} has invalid status: #{node['status']}" if node.key?("status") && !STATUSES.include?(node["status"])
   if node.key?("summary") && !present_string?(node["summary"])
     errors << "node #{node_name} must have a non-empty summary"
@@ -268,20 +279,75 @@ nodes.each_with_index do |node, index|
     end
   end
 
-  if node.key?("acceptance_command") && !present_string?(node["acceptance_command"])
-    errors << "node #{node_name} must have a non-empty acceptance_command"
+  if node.key?("acceptance_command") && !node["acceptance_command"].nil? && !present_string?(node["acceptance_command"])
+    errors << "node #{node_name} acceptance_command must be null or a non-empty string"
   end
   evidence = node["evidence"]
   if node.key?("evidence") && !evidence.is_a?(Array)
     errors << "node #{node_name} evidence must be a sequence"
   elsif evidence.is_a?(Array)
-    evidence.each { |item| errors << "node #{node_name} has an empty evidence item" unless present_string?(item) }
+    evidence.each_with_index do |item, evidence_index|
+      next if node["status"] != "verified" && present_string?(item)
+
+      unless item.is_a?(Hash)
+        errors << "verified node #{node_name} evidence item #{evidence_index + 1} must be a mapping"
+        next
+      end
+      EVIDENCE_FIELDS.each do |field|
+        errors << "node #{node_name} evidence item #{evidence_index + 1} is missing field: #{field}" unless item.key?(field)
+      end
+      evidence_path = source_file(repo_root, item["path"])
+      if evidence_path.nil?
+        errors << "node #{node_name} evidence item #{evidence_index + 1} has invalid path: #{item['path']}"
+      elsif !File.file?(evidence_path)
+        errors << "node #{node_name} evidence item #{evidence_index + 1} references missing path: #{item['path']}"
+      end
+      unless present_string?(item["commit"]) && COMMIT_PATTERN.match?(item["commit"])
+        errors << "node #{node_name} evidence item #{evidence_index + 1} must name a full commit SHA"
+      end
+      unless present_string?(item["command"])
+        errors << "node #{node_name} evidence item #{evidence_index + 1} must name the executed command"
+      end
+      unless item["exit_code"].is_a?(Integer)
+        errors << "node #{node_name} evidence item #{evidence_index + 1} exit_code must be an integer"
+      end
+      unless PROOF_CATEGORIES.include?(item["proof_category"])
+        errors << "node #{node_name} evidence item #{evidence_index + 1} has invalid proof_category"
+      end
+      unless present_string?(item["claim_scope"])
+        errors << "node #{node_name} evidence item #{evidence_index + 1} must state claim_scope"
+      end
+    end
   end
   if node["status"] == "claimed" && !present_string?(node["owner"])
     errors << "claimed node #{node_name} must have an owner"
   end
-  if node["status"] == "verified" && (!evidence.is_a?(Array) || evidence.empty?)
-    errors << "verified node #{node_name} must have evidence"
+  if node["status"] == "verified"
+    errors << "verified node #{node_name} must have closure_state closed" unless node["closure_state"] == "closed"
+    unless CLOSING_PROOF_CATEGORIES.include?(node["proof_category"])
+      errors << "verified node #{node_name} cannot close proof_category #{node['proof_category']}"
+    end
+    unless present_string?(node["acceptance_command"])
+      errors << "verified node #{node_name} must have a non-empty acceptance_command"
+    end
+    if present_string?(node["acceptance_command"]) && node["acceptance_command"].match?(/dag_status|AxiomAudit|Contract/)
+      errors << "verified node #{node_name} cannot use structure, axiom-audit, or contract compilation as closure acceptance"
+    end
+    if !evidence.is_a?(Array) || evidence.empty?
+      errors << "verified node #{node_name} must have structured evidence"
+    elsif evidence.all? { |item| item.is_a?(Hash) }
+      evidence.each_with_index do |item, evidence_index|
+        if item["command"] != node["acceptance_command"]
+          errors << "node #{node_name} evidence item #{evidence_index + 1} command does not match acceptance_command"
+        end
+        errors << "node #{node_name} evidence item #{evidence_index + 1} did not exit 0" unless item["exit_code"] == 0
+        if item["proof_category"] != node["proof_category"]
+          errors << "node #{node_name} evidence item #{evidence_index + 1} proof_category does not match node"
+        end
+      end
+    end
+  elsif node["closure_state"] == "closed"
+    errors << "non-verified node #{node_name} cannot claim closure_state closed"
   end
 end
 
@@ -295,6 +361,12 @@ nodes.each do |node|
       errors << "node #{node['id']} references missing dependency: #{dependency}"
     end
   end
+end
+nodes.each do |node|
+  next unless node.is_a?(Hash) && node["status"] == "verified" && node["dependencies"].is_a?(Array)
+
+  unverified = node["dependencies"].reject { |dependency| nodes_by_id[dependency]&.fetch("status", nil) == "verified" }
+  errors << "verified node #{node['id']} has unverified dependencies: #{unverified.join(', ')}" unless unverified.empty?
 end
 detect_cycles(nodes_by_id).each { |node_id| errors << "dependency cycle includes node #{node_id}" } if errors.empty?
 

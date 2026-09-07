@@ -3,11 +3,13 @@ generated_from: docs/superpowers/specs/2026-09-06-local-proof-dag-coordination-d
 nodes:
   - id: main-foundation
     type: theorem
-    status: verified
+    proof_category: conditional_interface
+    closure_state: open
+    status: open
     summary: Mainline analytic-number-theory foundation and RH interface
     dependencies: []
-    owner: mainline
-    worktree: codex/local-proof-dag-coordination
+    owner: null
+    worktree: null
     source_paths:
       - ZeroFreeRegion.lean
       - PrimeNumberTheorem.lean
@@ -18,12 +20,14 @@ nodes:
 
   - id: explicit-formula
     type: theorem
-    status: verified
+    proof_category: lean_theorem
+    closure_state: open
+    status: open
     summary: Mainline explicit-formula interface for von Mangoldt sums
     dependencies:
     - main-foundation
-    owner: mainline
-    worktree: codex/local-proof-dag-coordination
+    owner: null
+    worktree: null
     source_paths:
       - PrimeNumberTheorem.lean
       - PrimeNumberTheorem/ExplicitFormulaAllHeights.lean
@@ -35,12 +39,14 @@ nodes:
 
   - id: pnt
     type: theorem
-    status: verified
+    proof_category: lean_theorem
+    closure_state: open
+    status: open
     summary: Prime number theorem interface
     dependencies:
     - explicit-formula
-    owner: mainline
-    worktree: codex/local-proof-dag-coordination
+    owner: null
+    worktree: null
     source_paths:
       - PrimeNumberTheorem.lean
       - RiemannPNT.lean
@@ -51,13 +57,15 @@ nodes:
 
   - id: riemann-von-mangoldt
     type: theorem
-    status: verified
+    proof_category: lean_theorem
+    closure_state: open
+    status: open
     summary: Riemann–von Mangoldt zero-counting formula
     dependencies:
     - explicit-formula
     - pnt
-    owner: mainline
-    worktree: codex/local-proof-dag-coordination
+    owner: null
+    worktree: null
     source_paths:
       - PrimeNumberTheorem/RiemannVonMangoldt.lean
       - PrimeNumberTheorem.lean
@@ -68,12 +76,14 @@ nodes:
 
   - id: hardy-littlewood
     type: theorem
-    status: verified
+    proof_category: lean_theorem
+    closure_state: open
+    status: open
     summary: Hardy–Littlewood linear lower bound on critical-line zeros
     dependencies:
     - main-foundation
-    owner: mainline
-    worktree: codex/local-proof-dag-coordination
+    owner: null
+    worktree: null
     source_paths:
       - HardyTheorem.lean
       - HardyTheorem/HardyIntegralContradiction.lean
@@ -85,13 +95,15 @@ nodes:
 
   - id: carlson
     type: theorem
-    status: verified
+    proof_category: conditional_interface
+    closure_state: open
+    status: open
     summary: Fixed-sigma Carlson zero-density interface
     dependencies:
     - pnt
     - riemann-von-mangoldt
-    owner: mainline
-    worktree: codex/local-proof-dag-coordination
+    owner: null
+    worktree: null
     source_paths:
       - PrimeNumberTheorem/CarlsonAsymptotic.lean
       - PrimeNumberTheorem/CarlsonTwoThirdsHalfRangeExponent.lean
@@ -102,6 +114,8 @@ nodes:
 
   - id: conrey-kernel-bridge
     type: theorem
+    proof_category: conditional_interface
+    closure_state: open
     status: open
     summary: Conrey kernel and argument-principle bridge work package
     dependencies:
@@ -120,6 +134,8 @@ nodes:
 
   - id: selberg-lcm-type-ii
     type: audit
+    proof_category: paper_only
+    closure_state: open
     status: open
     summary: Selberg LCM main term and Type-II off-diagonal work package
     dependencies:
@@ -138,6 +154,8 @@ nodes:
 
   - id: carlson-improvement
     type: theorem
+    proof_category: conditional_interface
+    closure_state: open
     status: open
     summary: Carlson zero-density improvement and quantitative margin work package
     dependencies:
@@ -156,6 +174,8 @@ nodes:
 
   - id: fourteen-seventeenths-projection
     type: theorem
+    proof_category: axiom_audit
+    closure_state: open
     status: open
     summary: 14/17 projection and zero-density transfer work package
     dependencies:
@@ -173,6 +193,8 @@ nodes:
 
   - id: selberg-mobius
     type: audit
+    proof_category: paper_only
+    closure_state: open
     status: blocked
     summary: Selberg–Möbius LCM and varying-level off-diagonal route
     dependencies:
@@ -184,11 +206,13 @@ nodes:
     source_paths:
       - docs/research/2026-08-24-selberg-mobius-lcm-main-term.md
       - docs/research/2026-08-24-mobius-weighted-off-diagonal.md
-    acceptance_command: scripts/dag_status.sh proof-dag.yaml
+    acceptance_command: null
     evidence: []
 
   - id: conrey
     type: theorem
+    proof_category: conditional_interface
+    closure_state: open
     status: open
     summary: Genuine Conrey strict simple-zero lower-bound route
     dependencies:
@@ -207,6 +231,8 @@ nodes:
 
   - id: fourteen-seventeenths
     type: theorem
+    proof_category: paper_only
+    closure_state: open
     status: open
     summary: 14/17 zero-density target and quantitative closure
     dependencies:
@@ -218,11 +244,13 @@ nodes:
     source_paths:
       - docs/missing-chains-index.md
       - docs/carlson-zero-density-chain.md
-    acceptance_command: scripts/dag_status.sh proof-dag.yaml
+    acceptance_command: null
     evidence: []
 
   - id: audit-integration
     type: integration
+    proof_category: coordination
+    closure_state: open
     status: open
     summary: Cross-chain audit and integration gate for the RH proof DAG
     dependencies:
@@ -240,5 +268,5 @@ nodes:
     source_paths:
       - README.md
       - docs/missing-chains-index.md
-    acceptance_command: scripts/dag_status.sh proof-dag.yaml
+    acceptance_command: null
     evidence: []
