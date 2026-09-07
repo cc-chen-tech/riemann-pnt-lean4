@@ -93,6 +93,25 @@ CF8.25--CF8.29 再用加权 Farey 大筛支付全部 \(r\le\sqrt X\) 的
 二者都不是较窄的 balanced fixed-level core。因而本文不证明高高度
 或全高度 \(14/17\) 零点区域，也不进入 Lean。
 
+当前中频主攻是 CF8.101 的 cross-prime quadratic form。CF8H 从
+原有限素数对及 Selberg 上筛证明整个中频带的基准
+\(Q_P\{L+L^2/\log P\}\)，包括四个移位中心和全部尾；它只在
+\(L\lesssim\log P\) 直接达到所需尺度，较长 \(L\) 的带符号收益和
+CF8.80 的低频界均未证明。
+CF8I 再使用实际 \(\sum_pY_p=0\) 及整数差的有界素因数个数，
+支付同一中频 detector 的全部奇异 reference，包括远尾的 unit masks。
+因此较长 \(L\) 的未付对象可精确取为 CF8.116 的真实相关误差。
+CF8J 又以 Fourier 反演、变换坐标的 Plancherel 和全部带外尾，
+将平移端无 \(H/L\) 损失地转移到稍扩大的未平移频带；所需均值
+正是已有 CF8.80 的高频部分，算术均值本身仍开放。
+CF8K 在同一个 Mellin 乘积积分中支付放大多项式正常大小的部分及
+全部 Mellin 尾；大值集合的未加权矩界也成立，但该集合上与长素数商
+多项式的联合加权均方 CF8.132 尚未证明，不能以小测度代替它。
+CF8L 随后从原乘积截断作奇数商 Poisson，并以相同有理频率的 gcd
+能量及一次 Plancherel，支付 CF8.134 范围内的整个短 Type-I。
+同频 prime-power 差项也已支付；Vaughan 分解留下 CF8.144 的完整
+双长项，未把该双长均值或低频界当作已经成立。
+
 ## CF0. 冻结来源与符号纪律
 
 使用以下已审计对象，不沿用错误的 direct cusp identity (4.845ap)：
@@ -2593,6 +2612,642 @@ CF8.92 的两个零中心、两个 \(\pm H\) 中心和全部 parity mixed 行
 都仍在 CF8.100 的同一个 \(p\ne q\) 和中。CF8.99 因而真正关闭了
 equal-prime/outer diagonal，而没有把 cross-prime cancellation
 先平方成 Hilbert--Schmidt 损失。
+
+### CF8H. 中频交叉项的无条件上筛基准与其剩余损失
+
+这里直接估计 CF8.100 的实际有限和。固定 \(V\in C_c^\infty(0,\infty)\)
+和 CF8.92 的 \(\Psi\)，固定 \(\delta>0,B>2+\delta\)，并要求
+\(P^{2+\delta}\le R\le P^B\)、\(0<H\le P/16\)、
+\(R/H\le T\le R\)。充分大 \(P\) 的门槛允许依赖这些固定数据。
+这包含当前 \(R\asymp P^{23/6}\) 的中频问题。对任意复系数
+\(Y_p\)（这里甚至不要求 \(\sum_pY_p=0\)），有
+\[
+ \boxed{\quad
+ |\mathcal J^\times_{R,H}(T)|
+ \ll_{\delta,B,V,\Psi}Q_P
+       \left(L+\frac{L^2}{\log P}\right),
+ \qquad L=R/T.\quad}                                  \tag{CF8.102}
+\]
+此界在 \(L\ll\log P\) 支付 CF8.101；在 \(L=P^\lambda\)、固定
+\(\lambda>0\) 时仍没有供应任意 \(\eta>0\) 所需的幂次节省。
+下面分别证明素数对、奇异因子和共同 detector 的费用。
+
+设 \(p\ne q\)、\(r,s\in\{1,2\}\)，实际整数差为
+\(h=rp\ell-sqm\)，其中 \(\ell,m\) 是奇素数，两个物理整数都在
+\(V(\cdot/R)\) 的支撑中。充分大 \(P\) 后 \(\ell,m>2P\)，故
+\[
+                         h\ne0,\qquad(h,pq)=1.        \tag{CF8.103}
+\]
+例如 \(p\mid h\) 会迫使 \(m=p\)，与 \(m>2P\) 矛盾；对 \(q\)
+同理。这覆盖 detector 的全部尾，并不要求 \(|h|<H\)。
+
+令 \(\mathfrak s(h)=\prod_{\ell_0\mid h,\,\ell_0>2}
+(\ell_0-1)/(\ell_0-2)=s_o(h)/C_o\)，其中乘积只取素数。
+对任意满足 CF8.103 的非零整数 \(h\)，有统一的实际素数对上界
+\[
+ \sum_{\substack{\ell,m\ {\rm odd\ prime}\\rp\ell-sqm=h\\
+                         rp\ell,\,sqm\in[cR,CR]}}
+                  (\log\ell)(\log m)
+ \ll_{c,C,\delta,B}\frac R{pq}\mathfrak s(h).          \tag{CF8.104}
+\]
+这里 \(0<c<C\) 固定，可包住 \(V\) 的支撑。证明如下。置
+\(g=(r,s)\)。若 \(g\nmid h\) 则和为空；否则令
+\(a=rp/g,b=sq/g,h'=h/g\)。因 \((a,b)=1\)，所有整数解恰为
+\(\ell=\ell_0+bk,m=m_0+ak\)，且 \(a\ell_0-bm_0=h'\)。
+物理支撑给 \(k\) 的一个区间，长度至多 \(C_1R/(pq)\)。将它扩到
+长度 \(N=C_2R/(pq)\) 的实区间，不改变以下上界。
+
+只筛奇素数 \(v\)。两线性式模 \(v\) 的根并集大小 \(\nu_v\)
+在 \(v\nmid pqh\) 时为二，在 \(v\mid pqh\) 时为一。
+尤其 \(0<\nu_v<v\)。对奇平方自由 \(d\)，CRT 给余项
+\(R_d=O(\nu(d))\)，其中 \(\nu(d)=\prod_{v\mid d}\nu_v\)：
+每个剩余类的区间整数数目与 \(N/d\) 相差至多一。
+使用 [Heath--Brown, *Lectures on sieves*, Section 2,
+Fundamental Theorem for Selberg's sieve, printed pp. 11--12](https://arxiv.org/pdf/math/0209360)，
+取 \(z=N^{1/8},\xi=z\)，其有限 Selberg 二次式界为
+\[
+ S\le\frac N{G(z,z)}
+       +O\!\left(\sum_{d<z^2}\mu^2(d)6^{\omega(d)}\right),
+ \qquad
+ G(z,z)=\sum_{\substack{d<z\\d\mid\prod_{2<v<z}v}}
+                  \prod_{v\mid d}\frac{\nu_v}{v-\nu_v}.
+                                                               \tag{CF8.105}
+\]
+素数值 \(\ell,m\asymp R/P\) 都大于 \(z\)，所以实际素数对包含在
+这张筛的存活集合中。此处没有使用素数对渐近或其误差猜想。
+
+为统一证明分母下界，取一个足够小的绝对常数 \(c_0>0\)，令
+\(w=z^{c_0}\)，在 \(2<v\le w\) 上使用有限乘积质量
+\[
+ \mathcal Z_w=\prod_{2<v\le w}\frac{v}{v-\nu_v},
+ \qquad
+ \frac1{\mathcal Z_w}\sum_{d\mid\prod_{2<v\le w}v}
+       \left(\prod_{v\mid d}\frac{\nu_v}{v-\nu_v}\right)\log d
+       =\sum_{2<v\le w}\frac{\nu_v\log v}{v}
+       \le C_3\log w.                                \tag{CF8.106}
+\]
+最后的绝对界只用 Chebyshev：由 \(\binom{2n}{n}\le4^n\) 得
+\(\sum_{n<v\le2n}\log v\ll n\)，对二进区间求和及分部求和即可。
+取 \(0<c_0<1\) 且 \(C_3c_0<1/2\)，Markov 不等式表明至少一半有限乘积质量位于
+\(d<z\)，所以 \(G(z,z)\ge\mathcal Z_w/2\)。当 \(\nu_v\) 从二
+变成一时，局部质量恰乘 \((v-2)/(v-1)\)。又
+\((1-2/v)^{-1}\ge(1-1/v)^{-2}\)，而
+\(\prod_{2<v\le w}(1-v^{-1})^{-1}
+=\tfrac12\prod_{v\le w}(1-v^{-1})^{-1}
+\ge\tfrac12\sum_{n\le w}n^{-1}\)（\(w\ge2\)），故
+\[
+ G(z,z)\gg
+ \frac{(\log w)^2}{r_pr_q\mathfrak s(h)}
+ \gg\frac{(\log N)^2}{\mathfrak s(h)}.               \tag{CF8.107}
+\]
+在此将坏素数的有限子积扩成全积只会减小右边；\(r_p,r_q\ll1\)。
+而 \(\mu^2(d)6^{\omega(d)}\le d_6(d)\)，逐一求和六个因子给
+\(\sum_{d<U}d_6(d)\le U(1+\log U)^5\)。所以 CF8.105 的余项
+至多 \(N^{1/4}(1+\log N)^5\)，被 \(N/(\log N)^2\) 吸收。
+最后 \(\mathfrak s(h)\ge1\)，且参数域保证
+\(\log(R/P)\asymp_{\delta,B}\log N\asymp_{\delta,B}\log P\)。
+乘回两份素数对数便证明 CF8.104，常数对 \(p,q,h\) 一致。
+
+奇异因子必须先对真实整数差求和。对任意实数 \(a\)、\(L\ge1\)、
+\(M\ge2\) 和固定 \(A>2\)，CF8.70 的非负除数展开给
+\[
+ \begin{aligned}
+ &\sum_{0<|h|\le M}\mathfrak s(h)
+            (1+|h-a|/L)^{-A}\\
+ &\quad\ll_A\sum_{d\le M}a(d)(1+L/d)
+ \ll_A L+\log(2M).                                  \tag{CF8.108}
+ \end{aligned}
+\]
+第一步使用每个平移格 \(d\mathbb Z\) 的 Schwartz 权总量
+\(O_A(1+L/d)\)，正负差一起计数。第二步中
+\(\sum_da(d)/d<\infty\) 直接来自 Euler 乘积，而
+\(da(d)\le\sum_{k\mid d}b(k)\)、\(\sum_kb(k)/k<\infty\) 给
+\(\sum_{d\le M}a(d)\ll\log(2M)\)。因此这个界对两个实中心
+\(a=\pm H\) 同样统一，不要求 \(H\) 是整数。
+
+最后将 CF8.100 按 CF8.92 展开。在支撑上两个端点平移后的整数均
+\(\asymp R\)，均值定理和 Schwartz 衰减给
+\[
+ \left|\widehat{\Psi_2}\left(T\log
+       \frac{rp\ell-\epsilon}{sqm-\epsilon'}\right)\right|
+ \ll_{A,V,\Psi}
+       (1+|h-(\epsilon-\epsilon')|/L)^{-A}.
+\]
+对每一对 \(p\ne q\) 和每一 parity/endpoint 行，使用 CF8.104，
+乘回唯一外系数 \(rspq\) 后，再由 CF8.108 以 \(M=C_4R\) 求和。
+这仍包括全部物理差，未删掉远中心的尾。由原外因子 \(1/T\) 得
+\[
+ |\mathcal J^\times_{R,H}(T)|
+ \ll\frac RT(L+\log(2R))\left(\sum_p|Y_p|\right)^2
+ \ll Q_P L\frac{L+\log(2R)}{\log P}.                 \tag{CF8.109}
+\]
+最后用 CF8.75 前的加权 Cauchy--Chebyshev 界；由于 \(\log R\ll_B
+\log P\)，这就是 CF8.102。该证明在四项精确展开后作绝对上界，
+没有对真实相关使用 reference 的符号抵消。
+
+因此可以明确把中频未付区间集中到 \(L\gg\log P\)。固定
+\(\eta>0\) 时 CF8.102 还支付 \(L\ll P^\eta\log P\)，但这是
+预算中的 \(P^\eta\) 吸收，不能登记成对固定幂次 \(L=P^\lambda\)
+的新幂次消去。主攻余项仍是 CF8.100 中这个较长 \(L\) 区域的
+共同带符号振荡；CF8.80、CF8.73、全部 boxes 和零点排除均保持开放。
+
+### CF8I. 同一中频 detector 的完整奇异主项已支付
+
+现在使用实际系数的额外恒等式 \(\sum_pY_p=0\)。沿用 CF8H 的参数域，
+对每个非零整数 \(h\) 定义一个包含四种 endpoint orientations 的
+**共同**连续权
+\[
+ \begin{aligned}
+ K_{R,H,T}(h)={1\over T}\int_{\mathbb R}
+  &V(x/R)\overline{V((x-h)/R)}
+  \sum_{\epsilon,\epsilon'\in\{0,H\}}
+       \varsigma_\epsilon\varsigma_{\epsilon'}\\
+  &{}\times\widehat{\Psi_2}\left(
+       T\log{\,x-\epsilon\,\over x-h-\epsilon'}\right)\,dx .
+                                                               \tag{CF8.110}
+ \end{aligned}
+\]
+积分只在两个 \(V\) 同时非零的支撑上计算，故分子分母严格为正；
+其余地方定义 integrand 为零。特别地 \(K(h)=0\) 当
+\(|h|>C_VR\)。由 CF8H 的同一 Schwartz majorant 有
+\[
+ |K_{R,H,T}(h)|\ll_{A,V,\Psi}
+ L\sum_{a\in\{0,H,-H\}}(1+|h-a|/L)^{-A}.             \tag{CF8.111}
+\]
+两个零中心的重数已包含在常数中；定义 CF8.110 本身仍保留四项。
+
+将每个 \(p\ne q,r,s,h\) 的实际素数对格点计数换为 CF8.65
+定义的连续奇异密度，并保持 CF8.110 的同一个权。这只定义一个
+reference，不假设任何 Hardy--Littlewood 渐近。CF8.66--67 的局部
+计算对所有非零 \(h\) 给出其精确合计
+\[
+ \begin{aligned}
+ \mathcal J_{\rm ref}(T)&=
+ \sum_{h\ne0}s_o(h)F(h)K_{R,H,T}(h)\,\mathcal B_Y(h),\\
+ \mathcal B_Y(h)&=
+ \sum_{\substack{p\ne q\\(h,pq)=1}}
+     r_pr_qY_p\overline{Y_q}.
+ \end{aligned}                                                \tag{CF8.112}
+\]
+在 \(p\mid h\) 的行上，一条 primitive 线性式模 \(p\) 恒为零，
+故局部根并集有 \(p\) 个元素，奇异密度为零；\(q\mid h\) 同理。
+所以这里的 unit mask 是原局部密度的一部分，不能在远尾删除。
+在 unit 行，\(g/(rspq)\) 的格密度乘回原 \(rspq\) 后只留 \(g\)，
+四个 \(2\)-处局部因子仍恰合成 CF8.67 的 \(F(h)\)；没有额外 Jacobian。
+实际 \(h=0\) 的跨素数行由 CF8.103 为空，reference 也定义为零，
+不对 \(h=0\) 写发散的奇异乘积。
+
+完整 unit mask 并不破坏外层的小量。记
+\[
+ E_Y=\sum_p{Y_p\over p-2}=\sum_pr_pY_p,\quad
+ B_Y(h)=\sum_{p\mid h}r_pY_p,\quad
+ S_r=\sum_pr_p^2|Y_p|^2 .
+\]
+有限平方展开精确给
+\[
+ \mathcal B_Y(h)=|E_Y-B_Y(h)|^2
+               -S_r+\sum_{p\mid h}r_p^2|Y_p|^2.     \tag{CF8.113}
+\]
+若 \(0<|h|\le C_VR\le P^{B+1}\)，则整除 \(h\) 的
+\((P,2P]\) 素数个数至多一个仅依赖 \(B\) 的常数 \(k_B\)。
+因此 \(|B_Y(h)|^2\le k_B S_r\)。另一方面
+\[
+ S_r\ll Q_P/P,\qquad
+ |E_Y|^2\le Q_P\sum_{P<p\le2P}
+            {1\over(p-1)(p-2)^2}\ll Q_P/P^2.
+\]
+第二个界连 Chebyshev 都不需要，直接用至多 \(2P\) 个整数即可。
+在 CF8.113 中将最后两项写成
+\(-\sum_{p\nmid h}r_p^2|Y_p|^2\)，于是得到
+\[
+ \boxed{\quad
+ |\mathcal B_Y(h)|\ll_B Q_P/P
+ \qquad(0<|h|\le C_VR).\quad}                         \tag{CF8.114}
+\]
+这是对实际整数差的统一界。它没有把 dependent divisor masks
+当作独立随机变量，也没有先对 \(p,q\) 取绝对值。
+
+现在将 CF8.108、CF8.111 与 \(|F(h)|\le6\) 一次代入 CF8.112：
+\[
+ \boxed{\quad
+ |\mathcal J_{\rm ref}(T)|
+ \ll_{\delta,B,V,\Psi}{Q_P\over P}L\{L+\log(2R)\}
+ \ll Q_PL,\qquad R/H\le T\le R.\quad}                 \tag{CF8.115}
+\]
+最后一步用 \(L\le H\le P/16\) 和 \(\log R\ll_B\log P\)。
+所以这次真正关闭的是 CF8.101 内同一 detector 的**整个**奇异
+reference：全部 parity、四个中心以及 unit-mask 远尾都已包含。
+
+精确定义
+\[
+ \mathcal J_{\rm err}(T)=
+       \mathcal J^\times_{R,H}(T)-\mathcal J_{\rm ref}(T).
+                                                               \tag{CF8.116}
+\]
+CF8.115 说明 CF8.101 等价于
+\(\Re\mathcal J_{\rm err}(T)\ll Q_PP^\eta L\)；
+这张误差表必须由实际素数对减去 CF8.112 的同一密度得到。
+CF8.104 只是上筛，不能将它解释为该差的带符号小量。CF8.114 的
+取消也只作用于 reference 已有的 \(r_pr_q\) 分离列，不能赋予尚未
+分离的实际素数相关。因而 CF8.116 的较长 \(L\) 误差仍未估计，
+CF8.80、全部输出与 \(14/17\) 结论继续开放。
+
+### CF8J. 平移端向共同未平移频带的 \(L^2\) 转移无 \(H/L\) 损失
+
+这里证明一个解析引理，补上不能直接把 \(F_H\) 当作 \(F_0\) 的步骤。
+令任意有限复系数 \(a_n\) 支撑于 \(cR\le n\le CR\)，其中
+\(0<c<C\) 固定。令 \(0<H\le cR/4\)、\(T\ge1\)，并定义
+\[
+ F_\epsilon(t)=\sum_na_n(n-\epsilon)^{-it},\quad
+ A_1=\sum_n|a_n|,\quad
+ I_T=\{T/2\le|t|\le2T\},\quad
+ I_T^*=\{T/4\le|t|\le8T\}.
+\]
+则对每个整数 \(N\ge2\) 有
+\[
+ \|F_H-F_0\|_{L^2(I_T)}
+ \le2\|F_0\|_{L^2(I_T^*)}
+       +C_{N,c,C}A_1T^{3/2-N}.                       \tag{CF8.117}
+\]
+常数对 \(R,H,T\) 一致。特别地，它没有 \(TH/R=H/L\) 的隐含费用。
+
+取固定 \(\chi\in C_c^\infty(\mathbb R)\)，满足 \(0\le\chi\le1\)，
+在 \([\log c,\log C]\) 上等于一，且支撑在
+\((\log(c/2),\log(2C))\) 中。置 \(a=H/R\) 和
+\(f_a(x)=\log(e^x-a)\)。在 \(\chi\) 的支撑上
+\[
+ 1\le f_a'(x)={e^x\over e^x-a}\le2,                  \tag{CF8.118}
+\]
+各固定阶导数亦一致有界。定义
+\[
+ K_a(t,u)={1\over2\pi}\int\chi(x)
+           e^{-it f_a(x)+iux}\,dx,\qquad
+ \widetilde F_\epsilon(t)=R^{it}F_\epsilon(t).
+\]
+对每个固定 \(t\)，\(K_a(t,\cdot)\) 为 Schwartz；对紧支撑光滑
+函数 \(\chi(x)e^{-itf_a(x)}\) 作 Fourier 反演，再对有限个 \(n\)
+求和，严格得到
+\[
+ \widetilde F_H(t)
+       =\int_{\mathbb R}K_a(t,u)\widetilde F_0(u)\,du. \tag{CF8.119}
+\]
+右侧绝对收敛；此处无需假定离散指数和在整个实轴上属于 \(L^2\)。
+
+核 \(K_a\) 定义的算子在全线 \(L^2\) 上为压缩。事实上，先令
+\(G(u)=\int g(x)e^{-iux}dx\)，其中 \(g\) 为 Schwartz。其输出是
+\(\int\chi(x)g(x)e^{-itf_a(x)}dx\)。换元 \(y=f_a(x)\) 并使用
+Plancherel，输出范数平方恰为
+\[
+ 2\pi\int {|\chi(x)g(x)|^2\over f_a'(x)}\,dx
+       \le2\pi\int|g(x)|^2dx=\|G\|_2^2.              \tag{CF8.120}
+\]
+由稠密性延拓到全 \(L^2\)。因此对
+\({\bf1}_{I_T^*}\widetilde F_0\) 可直接使用这个算子界。
+
+还必须支付带外部分。若 \(t\in I_T,u\notin I_T^*\)，CF8.118 给
+\(|u-tf_a'(x)|\gg T+|u|\)。以 \(T+|u|\) 归一化相位
+\(ux-tf_a(x)\) 后，其一阶导数一致离零，各阶导数一致有界：
+这里 \(|t|/(T+|u|)\le2\)。对紧支撑 \(x\) 积分反复使用
+\((i(u-tf_a'(x)))^{-1}\partial_x\)，所有边界项为零，得到
+\[
+ |K_a(t,u)|\le C_{N,c,C}(T+|u|)^{-N}
+       \quad(t\in I_T,\ u\notin I_T^*).              \tag{CF8.121}
+\]
+积分于 \(u\) 给带外输出点态界 \(C_N A_1T^{1-N}\)，再在长度
+\(O(T)\) 的 \(I_T\) 上取 \(L^2\) 范数，便是
+\(C_NA_1T^{3/2-N}\)。与 CF8.120、CF8.119 合并，再减去
+\(F_0\)，即证明 CF8.117。这个证明同时覆盖正负频带及非整数 \(H\)。
+
+回到 CF8.91 的实际 \(a_n=c_o(n)V(n/R)\)。因为
+\(\Psi(t/T)/t^2\ll_\Psi T^{-2}{\bf1}_{I_T}\)，故
+\[
+ \mathcal J_{R,H}(T)
+ \ll_\Psi {1\over T^2}\int_{I_T^*}|F_0(u)|^2du
+       +C_{N,V,\Psi}A_1^2T^{1-2N}.                  \tag{CF8.122}
+\]
+原系数的直接整数计数与加权 Cauchy 给
+\(A_1\ll_V R\log(2R)\sum_p|Y_p|\ll_V R\log(2R)\sqrt{Q_P}\)。
+在 CF8H 参数域中 \(T\ge R/H\ge R/P\ge\sqrt R\)，所以对任意
+固定 \(D>0\)，取充分大的整数 \(N\)，CF8.122 的第二项为
+\(O_{D,V,\Psi}(Q_PR^{-D})\)。这里没有丢掉 Fourier 带外尾。
+
+于是对任意固定 \(V\) 的未平移均值
+\[
+ \int_{I_T^*}\left|\sum_nc_o(n)V(n/R)n^{-iu}\right|^2du
+       \ll_{\rho,\eta,V}Q_PRT\,P^\eta                \tag{CF8.123}
+\]
+若能证明，就足以支付整个硬窗口中频及 CF8.101：
+\(\mathcal J^\times=\mathcal J-\mathcal J_{\rm diag}\)，且
+\(\mathcal J_{\rm diag}\ge0\)。**CF8.123 仍未证明**，而且是一个
+充分条件，不能反向称为 CF8.101 的等价命题。已证的是 CF8.117–122
+这一步对实际有限系数的统一解析转移；不再需要以逐项高阶求导
+的方式为平移 chirp 支付 \(H/L\)，也没有预先删除零点响应。
+CF8.80 的低频目标依然单独开放。
+
+这里的未平移均值并非另一条新算术接口。令 \(W(v)=vV(v)\)，则
+逐系数精确有
+\[
+ F_0(u)=R\,D_{o,W,R}(1+iu),\qquad
+ {Q_PRT\over R^2}=Q_P{T\over R}.                     \tag{CF8.124}
+\]
+对 \(8T\le R\)，CF8.80 在高度 \(8T\) 的右端满足
+\(Q_PP^\eta(8T/R+1/H)\ll Q_PP^\eta T/R\)，因为
+\(T\ge R/H\)。它因而直接蕴含 CF8.123。当 \(8T>R\) 时，
+\(T\asymp R\)，整个扩大频带可用一般 separated-frequency 均值
+和 \(\sum|a_n|^2\ll RQ_PP^\eta\) 支付。因此 CF8J 完整证明了：
+既有 CF8.80 的相应高频均值若成立，便可用于同一个硬窗口的全部
+中频端点，无须另外假设一个高频平移 adapter；它没有证明该均值。
+
+### CF8K. 共同乘积均值的正常大小部分已付，大值加权部分仍开
+
+本节沿用 CF8H 的 \(P^{2+\delta}\le R\le P^B\)、
+\(0<H\le P/16\)、\(R/H\le T\le R\) 参数域，
+\(\delta>0,B>2+\delta\) 固定。以下仍估计 CF8.124 的同一个有限多项式。
+令 \(M=R/P\)，设
+\(\operatorname{supp}V\subset[c,C]\)。固定
+\(U\in C_c^\infty(0,\infty)\)，在 \([c/4,C]\) 上为一，并置
+\[
+ A(v)=\sum_pY_pp^{-iv},\qquad
+ B_M(v)=\sum_{\ell\ {\rm odd\ prime}}
+       {\log\ell\over\ell}U(\ell/M)\ell^{-iv},\qquad
+ E(v)=1-2^{-iv}.
+\]
+写 \(\mathcal V(\tau)=\int_0^\infty V(x)x^{i\tau}\,dx/x\)。
+对原有限 \(p,r,\ell\) 和作一次 Mellin 反演，严格得到
+\[
+ D_{o,V,R}(1+it)
+ ={1\over2\pi}\int_{\mathbb R}
+       \mathcal V(\tau)R^{i\tau}
+       E(t+\tau)A(t+\tau)B_M(t+\tau)\,d\tau.          \tag{CF8.125}
+\]
+这里 \(U(\ell/M)=1\) 覆盖所有原乘积支撑，且与 \(p,r,t,\tau\)
+无关。原 \(rp\) 在除以 \(n=rp\ell\) 时抵消，故 \(B_M\) 只有
+\(\log\ell/\ell\)，\(A\) 没有额外 \(p\)。两种 parity 在积分内
+始终共用 \(E(t+\tau)\)。三个因子共用同一个 \(t+\tau\)，没有改成
+三个独立的频率积分。
+
+若 \(Q_P=0\) 则所有输出为零，以下设 \(Q_P>0\)。固定
+\(\vartheta>0\)，定义实际放大多项式的大值集合
+\[
+ \mathcal B_\vartheta
+   =\{v\in\mathbb R:|A(v)|^2>(Q_P/P)P^\vartheta\}.
+                                                               \tag{CF8.126}
+\]
+在 CF8.125 中先按 \(|\tau|\le T/8\) 与其补集分开；在前者内部，
+再按 \(t+\tau\notin\mathcal B_\vartheta\) 或属于该集合分开，所得
+三个函数依次记为 \(D_{\rm good},D_{\rm bad},D_{\rm tail}\)。这是
+同一个 Mellin 积分的精确分解
+\[
+ D_{o,V,R}(1+it)=D_{\rm good}(t)+D_{\rm bad}(t)
+                                  +D_{\rm tail}(t). \tag{CF8.127}
+\]
+它不是按原 \(t\) 删除一个物理子和；集合判据施加在共同的 \(t+\tau\)。
+因此重新装配时保留三项，再使用 Hilbert 三角或
+\(|u+v+w|^2\le3(|u|^2+|v|^2+|w|^2)\)，无需另设 mixed-term
+输入；但 \(D_{\rm bad}\) 的平方范数仍须估计。
+
+对 \(t\in I_T^*\)、\(|\tau|\le T/8\)，有 \(|t+\tau|\le9T\)。
+Chebyshev 的 \(\sum_{\ell\le x}\log\ell\ll x\) 及
+\(\pi(x)\ll x/\log x\) 分别给
+\[
+ \|B_M\|_\infty\ll_U1,\qquad
+ \sum_\ell\left|{\log\ell\over\ell}U(\ell/M)\right|^2
+                 \ll_U{\log(2M)\over M}.            \tag{CF8.128}
+\]
+利用长度 \(O_U(M)\) 的有限 Dirichlet 多项式均值公式
+\(\int_{-9T}^{9T}|\sum b_n n^{-iv}|^2dv
+\ll(T+M)\sum|b_n|^2\)（亦见
+[Matomäki--Teräväinen, Lemma 3.2](https://arxiv.org/pdf/2207.05038)），
+以及 \(T\ge R/H\ge16M\)，对每个 \(\tau\) 得
+\[
+ \int_{I_T^*}{\bf1}_{t+\tau\notin\mathcal B_\vartheta}
+       |E(t+\tau)A(t+\tau)B_M(t+\tau)|^2dt
+ \ll_U {Q_PT\over R}P^\vartheta\log(2R).
+\]
+最后对同一个 \(\tau\) 积分使用 Minkowski；因为
+\(\|\mathcal V\|_1<\infty\)，没有频率长度的额外因子。于是
+\[
+ \boxed{\quad
+ \int_{I_T^*}|D_{\rm good}(t)|^2dt
+ \ll_{V,U}{Q_PT\over R}P^\vartheta\log(2R).\quad}      \tag{CF8.129}
+\]
+取 \(0<\vartheta<\eta\)，对数由余下的 \(P^{\eta-\vartheta}\) 吸收，
+故这一部分达到所需尺度。
+
+全部 Mellin 尾也已支付。加权 Cauchy 给
+\(\|A\|_\infty\ll\sqrt{Q_P}\)；CF8.128 与
+\(|E|\le2\) 因而给
+\(|D_{\rm tail}(t)|\ll_{K,V,U}\sqrt{Q_P}T^{-K}\)，任意固定 \(K\) 均可，
+因为 \(\mathcal V\) 为 Schwartz。再由 \(|I_T^*|=O(T)\) 和
+\(T\ge\sqrt R\)，对任意固定 \(D>0\) 可取 \(K\) 使
+\[
+ \int_{I_T^*}|D_{\rm tail}(t)|^2dt\ll_{D,V,U}Q_PR^{-D}.
+                                                               \tag{CF8.130}
+\]
+这使用有限阶的 \(V\) 导数，阶数固定后不随 \(P,T\) 增长。
+
+大值集合的**未加权测度**可同时严格估计。令 \(S_Y=\sum_p|Y_p|^2\)。
+对固定整数 \(k\ge1\)，素数唯一分解把 \(A(v)^k\) 写成长度
+\((2P)^k\) 的有限 Dirichlet 多项式。每个 prime multiset 的系数是
+\(k!/\prod_pm_p!\) 乘 \(\prod_pY_p^{m_p}\)。因为该 multinomial
+系数至多 \(k!\)，其系数平方和至多 \(k!S_Y^k\)。再用上述均值公式，
+\[
+ \int_{-9T}^{9T}|A(v)|^{2k}dv
+        \ll_k(T+P^k)S_Y^k,\qquad
+ |\mathcal B_\vartheta\cap[-9T,9T]|
+        \ll_k(T+P^k)P^{-k\vartheta}.                 \tag{CF8.131}
+\]
+第二式使用对实数 \(P\ge2\) 一致有效的安全界
+\(S_Y\le2Q_P/P\)，该绝对常数吸收进固定 \(k\) 的常数即可。
+当前 \(R\asymp P^{23/6}\) 与
+\(H\le P/16\) 保证 \(T\gg P^{17/6}>P^2\)，故 \(k=2\) 给相对
+测度 \(O(P^{-2\vartheta})\)；当 \(T\ge P^3\) 时还可使用 \(k=3\)。
+
+这个测度结果不能替代加权均值。当前充分的剩余任务仍是
+\[
+ \boxed{\quad
+ \int_{I_T^*}|D_{\rm bad}(t)|^2dt
+             \ll_{\rho,\eta,V} {Q_PT\over R}P^\eta.\quad}        \tag{CF8.132}
+\]
+为明确一条失败的装配步骤：仅以 \(\|B_M\|_\infty\ll1\) 和
+CF8.131 控制共同 bad integrand，直接给出的界为
+\[
+ \int_{I_T^*}|D_{\rm bad}(t)|^2dt
+ \ll_{k,V,U}{Q_P\over P}(T+P^k)P^{-(k-1)\vartheta}.
+                                                               \tag{CF8.133}
+\]
+相对 \(Q_PT/R\)，这份上界仍有
+\((R/P)(1+P^k/T)P^{-(k-1)\vartheta}\) 的费用。例如最困难一端
+\(R=P^{23/6},T\asymp P^{17/6}\)，\(k=2\) 仍为
+\(P^{17/6-\vartheta}\)。这只是这种“矩估计加商多项式最大值”
+策略的成本，绝不是实际相关的下界或一般不可行性定理。
+必须估计同一大值集合上的两个实际多项式的联合集中；
+CF8.129--131 未供应 CF8.132，也未证明 CF8.101 或 CF8.80。
+
+### CF8L. 原乘积截断下的整个短 Type-I 均值与双长余项
+
+这里推进 CF8.123 的充分路线，不将它改称 CF8.101 的必要条件。
+仍用 CF8H 的参数域，令 \(M=R/P\)，固定
+\(\operatorname{supp}V\subset[c,C]\subset(0,\infty)\)。存在仅依赖
+该支撑的 \(c_V>0\)，使下列命题成立。若
+\[
+ 1\le D\le P/4,\qquad P^2D^2\le R,\qquad TD\le c_VR,
+ \qquad |a_d|\le A_0\quad(d\le D),                    \tag{CF8.134}
+\]
+可取 \(c_V=\min(1/16,\pi c/128)\)。对 \(b=0,1\)、任意有限复
+\(Y_p\)，定义同乘积 Type-I 多项式
+\[
+ \mathcal T_{a,b}(t)=
+ \sum_pY_p\sum_{r=1}^2\sigma_r(rp)^{-it}
+ \sum_{\substack{d\le D\\d\ {\rm odd}}}{a_d\over d^{1+it}}
+ \sum_{q\ {\rm odd}}{(\log q)^b\over q^{1+it}}V(rpdq/R).
+                                                               \tag{CF8.135}
+\]
+整数均为正；\(b=0\) 时约定 \((\log1)^0=1\)。则
+\[
+ \boxed{\quad
+ \int_{I_T^*}|\mathcal T_{a,b}(t)|^2dt
+ \ll_{V,b} A_0^2\,{Q_PT\over R}\log^{2b+4}(2R).
+ \quad}                                                       \tag{CF8.136}
+\]
+证明先合并相同的有理频率，不是逐 \(d,p\) 块界相加。
+
+**共同核与全部尾。** 商变量的函数在正半轴外延拓为零后为 Schwartz，
+奇数格点 Poisson 给
+\(\sum_{q\ {\rm odd}}f(q)=\tfrac12\sum_{k\in\mathbb Z}(-1)^k
+\widehat f(k/2)\)。换元 \(u=rpdq/R\)，CF8.135 精确等于
+\[
+ {R^{-it}\over2}\sum_{p,r,d}{\sigma_rY_pa_d\over d}
+ \sum_{k\in\mathbb Z}(-1)^k
+ \int_0^\infty {V(u)\over u}
+  \left(\log{Ru\over rpd}\right)^b
+  e^{-it\log u}e\!\left(-{kRu\over2rpd}\right)du .     \tag{CF8.137}
+\]
+这里没有额外 \(p,d\) Jacobian，\(1/2\)、\((-1)^k\) 及两 parity
+均保留。\(b=1\) 只把对数分成 \(\log(R/(rpd))+\log u\) 两项，
+前者为 \(O_V(\log(2R))\)，后者属于固定 smooth test。
+
+置 \(\theta=k/(rpd)\)。取偶 smooth \(0\le\chi\le1\)，在
+\(1/(8\pi C)\le|z|\le16/(\pi c)\) 上为一，支撑在此环带向两侧
+各扩大二倍的集合内。在 CF8.137 插入唯一共同截断
+\(\chi(R\theta/T)+(1-\chi(R\theta/T))=1\)。对补集、
+\(t\in I_T^*\)、\(u\in[c,C]\)，有
+\[
+ \left|-{t\over u}-\pi R\theta\right|
+                      \gg_{c,C}T+R|\theta|.           \tag{CF8.138}
+\]
+反复积分分部给核
+\(O_{N,V}(\log^b(2R)(T+R|\theta|)^{-N})\)。全部整数 \(k\) 的和
+至多 \(O_N(T^{-N}(1+Trpd/R))\)。因为 \(T\ge16M\)，括号内的一
+由第二项吸收。再求 \(d\le D\)、\(p\)，使用
+\(\sum_p|Y_p|\ll\sqrt{Q_P}\)、\(D/M\le1\)，得到
+\[
+ |\mathcal T_{\rm far}(t)|
+ \ll_{N,V,b}A_0\sqrt{Q_P}\log^b(2R)T^{1-N}.           \tag{CF8.139}
+\]
+因 \(T\ge\sqrt R\)，其 \(I_T^*\) 平方范数为
+\(O_{J,V,b}(A_0^2Q_PR^{-J})\)，任意固定 \(J\) 均可。它包含
+\(k=0\)、两个符号及全部无限尾；每次所需的 test 导数阶数固定。
+
+**相同频率先合并。** 近部 \(0<|k|\ll_V Tpd/R\)。把 \(c_V\)
+取充分小，CF8.134 保证所有近部 \(0<|k|<p\)。若 \(p\ne p'\)
+且 \(k/(rpd)=k'/(r'p'd')\)，因 \(r'd'\le2D<p\)，必须
+\(p\mid k\)，矛盾。因此不同 outer primes 的近频不能精确相等；
+这一步不需要 \(\sum_pY_p=0\)。
+
+同一个 \(p\) 内全部相等频率必须合并。写
+\(g=\gcd(rd,r'd')\)，解为 \(k=jrd/g,k'=jr'd'/g\)，近频允许的
+非零 \(j\) 数至多 \(O_V(Tpg/R)\)。因为 \(Tp/R\ge16\)，整数
+计数中的一可吸收；奇数 \(d,d'\) 又给 \(g\le2\gcd(d,d')\)。
+令 \(C_\theta\) 为近部同一 \(\theta\) 的全部系数之和，含
+\(\sigma_r,(-1)^k,1/2,\chi\)。对 \(b=0\)，有限展开给
+\[
+ \begin{aligned}
+ \sum_\theta|C_\theta|^2
+ &\ll_V A_0^2\sum_p|Y_p|^2{Tp\over R}
+          \sum_{d,d'\le D}{\gcd(d,d')\over dd'}\\
+ &\ll_V A_0^2{Q_PT\over R}\log^3(2D).                \tag{CF8.140}
+ \end{aligned}
+\]
+最后一步用 \(\gcd(d,d')=\sum_{h\mid d,d'}\varphi(h)\)，故 gcd
+和等于 \(\sum_{h\le D}\varphi(h)h^{-2}
+(\sum_{j\le D/h}j^{-1})^2\ll\log^3(2D)\)。\(b=1\) 的两份分解
+分别至多再付 \(\log^2(2R)\)。
+
+**一次 Plancherel。** 不同 \(\theta\) 的分母至多 \(4PD\)，
+所以 \(\lambda_\theta=R\theta/2\) 两两距离至少
+\(R/(32P^2D^2)\)。近部表示总数为
+\(O_V(TP^2D^2/R)\ll_V T\)，故频率数 \(N_f\ll_V T\)。直接
+积分指数函数，再对按大小排列的频率作 Schur 求和，得到
+\[
+ \int_c^C\left|\sum_\theta C_\theta e(-\lambda_\theta u)\right|^2du
+ \ll_{c,C}\left(1+{P^2D^2\over R}\log(2+N_f)\right)
+                     \sum_\theta|C_\theta|^2.         \tag{CF8.141}
+\]
+具体地，非对角积分至多 \(1/(\pi|\lambda-\lambda'|)\)；每行
+第 \(j\) 个邻居距离至少 \(j\delta\)，故行和为
+\(O(\delta^{-1}\sum_{j\le N_f}1/j)\)。没有在此假设新的带权大筛。
+对近部 CF8.137 以 \(x=\log u\) 用完整实线 Plancherel，其
+\(t\)-平方积分为
+\(2\pi\int |V(u)|^2|\sum C_\theta e(-\lambda_\theta u)|^2du/u\)，
+该正积分控制 \(I_T^*\)。由 CF8.134、140–141 即得 CF8.136。
+\(b=1\) 的两份 test、以及近远两部，各只使用一次 Hilbert 三角；
+没有丢弃 mixed terms。空近频集合时该部分直接为零。
+
+**实际素数商的迁移。** 把 CF8.59 中 \(\Lambda_o(n)\) 替换为
+\(\Lambda^{\rm odd}(n)=\Lambda(n){\bf1}_{n\ {\rm odd}}\)，记所得
+有限多项式为 \(D_{\Lambda,V,R}\)。差项只含
+\(n=rp\ell^j\)、\(j\ge2\)、\(\ell\) 奇素数。CF8.60 的整数
+计数，配合表示唯一性（不同 \(p\) 会迫使 prime exponents 同时等于
+一，矛盾），给差项 Dirichlet 系数平方和
+\(\ll_V(Q_P/P)M^{-3/2}\log^3(2R)\)。有限多项式均值因而给
+\[
+ \int_{I_T^*}|D_{\Lambda,V,R}(1+it)-D_{o,V,R}(1+it)|^2dt
+ \ll_V{Q_PT\over R}\,{1+R/T\over\sqrt M}\log^3(2R).
+                                                               \tag{CF8.142}
+\]
+这不是把 CF8.61 的物理窗口范数直接挪来。在当前
+\(R\asymp P^{23/6}, H\le P/16\) 中，额外因子
+\((1+R/T)/\sqrt M\ll P^{-5/12}\)，因此已付；不对 CF8H 中所有
+较小 \(R\) 自动断言同样结论。
+
+在奇数正整数的 Dirichlet 卷积代数内，取
+\(U_0,V_0\ge1,U_0V_0\le D\)，有有限 Vaughan 恒等式
+\[
+ \Lambda=\Lambda_{\le V_0}+\mu_{\le U_0}*\log
+ -\mu_{\le U_0}*1*\Lambda_{\le V_0}
+ +\mu_{>U_0}*1*\Lambda_{>V_0}.                        \tag{CF8.143}
+\]
+证明只用 \(1*\Lambda=\log\)、\(\mu*1=\varepsilon\)：在
+\(\mu*\log\) 中先分 \(\mu\)，再分 \(\Lambda\)，整理即得。
+所有函数只在奇数上取值，不对无权商补加单位或平方自由 mask。
+在当前 \(R\asymp P^{23/6}\) 支撑内，充分大 \(P\) 后首项为空。
+第二项为 CF8.135 的 \(b=1,a_d=\mu(d){\bf1}_{d\le U_0}\)；第三项
+为 \(b=0,a_d=\sum_{uv=d,u\le U_0,v\le V_0}\mu(u)\Lambda(v)\)，
+有 \(|a_d|\le\log d\) 且 \(d\le D\)。所以 CF8.136 支付两份完整
+Type-I，包括全部 parity、共同乘积截断及全部 Poisson 尾。
+
+剩余商项精确为
+\[
+ \begin{aligned}
+ \mathcal T_{\rm II}(t)={}&\sum_pY_p\sum_{r=1}^2\sigma_r(rp)^{-it}
+ \sum_{\substack{d>U_0,\ m>V_0\\d,m\ {\rm odd}}}
+ {\mu(d)b_{V_0}(m)\over(dm)^{1+it}}V(rpdm/R),\\
+ b_{V_0}(m)={}&\sum_{\substack{v\mid m\\v>V_0}}\Lambda(v),
+ \qquad0\le b_{V_0}(m)\le\log m .                     \tag{CF8.144}
+ \end{aligned}
+\]
+在 CF8.134 与当前物理尺度内，CF8.142–143 及双向 Hilbert 三角
+说明：CF8.124 的中频均值界等价于
+\(\int_{I_T^*}|\mathcal T_{\rm II}(t)|^2dt
+\ll_{\rho,\eta,V}Q_PT P^\eta/R\)。这个双长均值仍未证明。
+在最困难端 \(T\asymp R/P\)，可取固定小常数倍
+\(D=P^{11/12},U_0=V_0=\sqrt D\)。较高频率必须保留
+\(TD\le c_VR\)，不能沿用同一个较大的 \(D\)。
+具体可取 \(D=\min(P/4,\sqrt R/P,c_VR/T)\)，前提是该数至少为一。
+若它小于一，充分大 \(P\) 后只能是 \(L=R/T<1/c_V\)，这已由
+CF8H 的固定长 \(L\) 界支付；无需为这端另设 Type-II 输入。
+本节未关闭双长项、CF8.101 全中频、CF8.80 低频或全零点目标。
 
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
