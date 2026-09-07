@@ -98,6 +98,12 @@ CF8.25--CF8.29 再用加权 Farey 大筛支付全部 \(r\le\sqrt X\) 的
 \(Q_P\{L+L^2/\log P\}\)，包括四个移位中心和全部尾；它只在
 \(L\lesssim\log P\) 直接达到所需尺度，较长 \(L\) 的带符号收益和
 CF8.80 的低频界均未证明。
+CF8I 再使用实际 \(\sum_pY_p=0\) 及整数差的有界素因数个数，
+支付同一中频 detector 的全部奇异 reference，包括远尾的 unit masks。
+因此较长 \(L\) 的未付对象可精确取为 CF8.116 的真实相关误差。
+CF8J 又以 Fourier 反演、变换坐标的 Plancherel 和全部带外尾，
+将平移端无 \(H/L\) 损失地转移到稍扩大的未平移频带；所需均值
+正是已有 CF8.80 的高频部分，算术均值本身仍开放。
 
 ## CF0. 冻结来源与符号纪律
 
@@ -2737,6 +2743,213 @@ Fundamental Theorem for Selberg's sieve, printed pp. 11--12](https://arxiv.org/p
 预算中的 \(P^\eta\) 吸收，不能登记成对固定幂次 \(L=P^\lambda\)
 的新幂次消去。主攻余项仍是 CF8.100 中这个较长 \(L\) 区域的
 共同带符号振荡；CF8.80、CF8.73、全部 boxes 和零点排除均保持开放。
+
+### CF8I. 同一中频 detector 的完整奇异主项已支付
+
+现在使用实际系数的额外恒等式 \(\sum_pY_p=0\)。沿用 CF8H 的参数域，
+对每个非零整数 \(h\) 定义一个包含四种 endpoint orientations 的
+**共同**连续权
+\[
+ \begin{aligned}
+ K_{R,H,T}(h)={1\over T}\int_{\mathbb R}
+  &V(x/R)\overline{V((x-h)/R)}
+  \sum_{\epsilon,\epsilon'\in\{0,H\}}
+       \varsigma_\epsilon\varsigma_{\epsilon'}\\
+  &{}\times\widehat{\Psi_2}\left(
+       T\log{\,x-\epsilon\,\over x-h-\epsilon'}\right)\,dx .
+                                                               \tag{CF8.110}
+ \end{aligned}
+\]
+积分只在两个 \(V\) 同时非零的支撑上计算，故分子分母严格为正；
+其余地方定义 integrand 为零。特别地 \(K(h)=0\) 当
+\(|h|>C_VR\)。由 CF8H 的同一 Schwartz majorant 有
+\[
+ |K_{R,H,T}(h)|\ll_{A,V,\Psi}
+ L\sum_{a\in\{0,H,-H\}}(1+|h-a|/L)^{-A}.             \tag{CF8.111}
+\]
+两个零中心的重数已包含在常数中；定义 CF8.110 本身仍保留四项。
+
+将每个 \(p\ne q,r,s,h\) 的实际素数对格点计数换为 CF8.65
+定义的连续奇异密度，并保持 CF8.110 的同一个权。这只定义一个
+reference，不假设任何 Hardy--Littlewood 渐近。CF8.66--67 的局部
+计算对所有非零 \(h\) 给出其精确合计
+\[
+ \begin{aligned}
+ \mathcal J_{\rm ref}(T)&=
+ \sum_{h\ne0}s_o(h)F(h)K_{R,H,T}(h)\,\mathcal B_Y(h),\\
+ \mathcal B_Y(h)&=
+ \sum_{\substack{p\ne q\\(h,pq)=1}}
+     r_pr_qY_p\overline{Y_q}.
+ \end{aligned}                                                \tag{CF8.112}
+\]
+在 \(p\mid h\) 的行上，一条 primitive 线性式模 \(p\) 恒为零，
+故局部根并集有 \(p\) 个元素，奇异密度为零；\(q\mid h\) 同理。
+所以这里的 unit mask 是原局部密度的一部分，不能在远尾删除。
+在 unit 行，\(g/(rspq)\) 的格密度乘回原 \(rspq\) 后只留 \(g\)，
+四个 \(2\)-处局部因子仍恰合成 CF8.67 的 \(F(h)\)；没有额外 Jacobian。
+实际 \(h=0\) 的跨素数行由 CF8.103 为空，reference 也定义为零，
+不对 \(h=0\) 写发散的奇异乘积。
+
+完整 unit mask 并不破坏外层的小量。记
+\[
+ E_Y=\sum_p{Y_p\over p-2}=\sum_pr_pY_p,\quad
+ B_Y(h)=\sum_{p\mid h}r_pY_p,\quad
+ S_r=\sum_pr_p^2|Y_p|^2 .
+\]
+有限平方展开精确给
+\[
+ \mathcal B_Y(h)=|E_Y-B_Y(h)|^2
+               -S_r+\sum_{p\mid h}r_p^2|Y_p|^2.     \tag{CF8.113}
+\]
+若 \(0<|h|\le C_VR\le P^{B+1}\)，则整除 \(h\) 的
+\((P,2P]\) 素数个数至多一个仅依赖 \(B\) 的常数 \(k_B\)。
+因此 \(|B_Y(h)|^2\le k_B S_r\)。另一方面
+\[
+ S_r\ll Q_P/P,\qquad
+ |E_Y|^2\le Q_P\sum_{P<p\le2P}
+            {1\over(p-1)(p-2)^2}\ll Q_P/P^2.
+\]
+第二个界连 Chebyshev 都不需要，直接用至多 \(2P\) 个整数即可。
+在 CF8.113 中将最后两项写成
+\(-\sum_{p\nmid h}r_p^2|Y_p|^2\)，于是得到
+\[
+ \boxed{\quad
+ |\mathcal B_Y(h)|\ll_B Q_P/P
+ \qquad(0<|h|\le C_VR).\quad}                         \tag{CF8.114}
+\]
+这是对实际整数差的统一界。它没有把 dependent divisor masks
+当作独立随机变量，也没有先对 \(p,q\) 取绝对值。
+
+现在将 CF8.108、CF8.111 与 \(|F(h)|\le6\) 一次代入 CF8.112：
+\[
+ \boxed{\quad
+ |\mathcal J_{\rm ref}(T)|
+ \ll_{\delta,B,V,\Psi}{Q_P\over P}L\{L+\log(2R)\}
+ \ll Q_PL,\qquad R/H\le T\le R.\quad}                 \tag{CF8.115}
+\]
+最后一步用 \(L\le H\le P/16\) 和 \(\log R\ll_B\log P\)。
+所以这次真正关闭的是 CF8.101 内同一 detector 的**整个**奇异
+reference：全部 parity、四个中心以及 unit-mask 远尾都已包含。
+
+精确定义
+\[
+ \mathcal J_{\rm err}(T)=
+       \mathcal J^\times_{R,H}(T)-\mathcal J_{\rm ref}(T).
+                                                               \tag{CF8.116}
+\]
+CF8.115 说明 CF8.101 等价于
+\(\Re\mathcal J_{\rm err}(T)\ll Q_PP^\eta L\)；
+这张误差表必须由实际素数对减去 CF8.112 的同一密度得到。
+CF8.104 只是上筛，不能将它解释为该差的带符号小量。CF8.114 的
+取消也只作用于 reference 已有的 \(r_pr_q\) 分离列，不能赋予尚未
+分离的实际素数相关。因而 CF8.116 的较长 \(L\) 误差仍未估计，
+CF8.80、全部输出与 \(14/17\) 结论继续开放。
+
+### CF8J. 平移端向共同未平移频带的 \(L^2\) 转移无 \(H/L\) 损失
+
+这里证明一个解析引理，补上不能直接把 \(F_H\) 当作 \(F_0\) 的步骤。
+令任意有限复系数 \(a_n\) 支撑于 \(cR\le n\le CR\)，其中
+\(0<c<C\) 固定。令 \(0<H\le cR/4\)、\(T\ge1\)，并定义
+\[
+ F_\epsilon(t)=\sum_na_n(n-\epsilon)^{-it},\quad
+ A_1=\sum_n|a_n|,\quad
+ I_T=\{T/2\le|t|\le2T\},\quad
+ I_T^*=\{T/4\le|t|\le8T\}.
+\]
+则对每个整数 \(N\ge2\) 有
+\[
+ \|F_H-F_0\|_{L^2(I_T)}
+ \le2\|F_0\|_{L^2(I_T^*)}
+       +C_{N,c,C}A_1T^{3/2-N}.                       \tag{CF8.117}
+\]
+常数对 \(R,H,T\) 一致。特别地，它没有 \(TH/R=H/L\) 的隐含费用。
+
+取固定 \(\chi\in C_c^\infty(\mathbb R)\)，满足 \(0\le\chi\le1\)，
+在 \([\log c,\log C]\) 上等于一，且支撑在
+\((\log(c/2),\log(2C))\) 中。置 \(a=H/R\) 和
+\(f_a(x)=\log(e^x-a)\)。在 \(\chi\) 的支撑上
+\[
+ 1\le f_a'(x)={e^x\over e^x-a}\le2,                  \tag{CF8.118}
+\]
+各固定阶导数亦一致有界。定义
+\[
+ K_a(t,u)={1\over2\pi}\int\chi(x)
+           e^{-it f_a(x)+iux}\,dx,\qquad
+ \widetilde F_\epsilon(t)=R^{it}F_\epsilon(t).
+\]
+对每个固定 \(t\)，\(K_a(t,\cdot)\) 为 Schwartz；对紧支撑光滑
+函数 \(\chi(x)e^{-itf_a(x)}\) 作 Fourier 反演，再对有限个 \(n\)
+求和，严格得到
+\[
+ \widetilde F_H(t)
+       =\int_{\mathbb R}K_a(t,u)\widetilde F_0(u)\,du. \tag{CF8.119}
+\]
+右侧绝对收敛；此处无需假定离散指数和在整个实轴上属于 \(L^2\)。
+
+核 \(K_a\) 定义的算子在全线 \(L^2\) 上为压缩。事实上，先令
+\(G(u)=\int g(x)e^{-iux}dx\)，其中 \(g\) 为 Schwartz。其输出是
+\(\int\chi(x)g(x)e^{-itf_a(x)}dx\)。换元 \(y=f_a(x)\) 并使用
+Plancherel，输出范数平方恰为
+\[
+ 2\pi\int {|\chi(x)g(x)|^2\over f_a'(x)}\,dx
+       \le2\pi\int|g(x)|^2dx=\|G\|_2^2.              \tag{CF8.120}
+\]
+由稠密性延拓到全 \(L^2\)。因此对
+\({\bf1}_{I_T^*}\widetilde F_0\) 可直接使用这个算子界。
+
+还必须支付带外部分。若 \(t\in I_T,u\notin I_T^*\)，CF8.118 给
+\(|u-tf_a'(x)|\gg T+|u|\)。以 \(T+|u|\) 归一化相位
+\(ux-tf_a(x)\) 后，其一阶导数一致离零，各阶导数一致有界：
+这里 \(|t|/(T+|u|)\le2\)。对紧支撑 \(x\) 积分反复使用
+\((i(u-tf_a'(x)))^{-1}\partial_x\)，所有边界项为零，得到
+\[
+ |K_a(t,u)|\le C_{N,c,C}(T+|u|)^{-N}
+       \quad(t\in I_T,\ u\notin I_T^*).              \tag{CF8.121}
+\]
+积分于 \(u\) 给带外输出点态界 \(C_N A_1T^{1-N}\)，再在长度
+\(O(T)\) 的 \(I_T\) 上取 \(L^2\) 范数，便是
+\(C_NA_1T^{3/2-N}\)。与 CF8.120、CF8.119 合并，再减去
+\(F_0\)，即证明 CF8.117。这个证明同时覆盖正负频带及非整数 \(H\)。
+
+回到 CF8.91 的实际 \(a_n=c_o(n)V(n/R)\)。因为
+\(\Psi(t/T)/t^2\ll_\Psi T^{-2}{\bf1}_{I_T}\)，故
+\[
+ \mathcal J_{R,H}(T)
+ \ll_\Psi {1\over T^2}\int_{I_T^*}|F_0(u)|^2du
+       +C_{N,V,\Psi}A_1^2T^{1-2N}.                  \tag{CF8.122}
+\]
+原系数的直接整数计数与加权 Cauchy 给
+\(A_1\ll_V R\log(2R)\sum_p|Y_p|\ll_V R\log(2R)\sqrt{Q_P}\)。
+在 CF8H 参数域中 \(T\ge R/H\ge R/P\ge\sqrt R\)，所以对任意
+固定 \(D>0\)，取充分大的整数 \(N\)，CF8.122 的第二项为
+\(O_{D,V,\Psi}(Q_PR^{-D})\)。这里没有丢掉 Fourier 带外尾。
+
+于是对任意固定 \(V\) 的未平移均值
+\[
+ \int_{I_T^*}\left|\sum_nc_o(n)V(n/R)n^{-iu}\right|^2du
+       \ll_{\rho,\eta,V}Q_PRT\,P^\eta                \tag{CF8.123}
+\]
+若能证明，就足以支付整个硬窗口中频及 CF8.101：
+\(\mathcal J^\times=\mathcal J-\mathcal J_{\rm diag}\)，且
+\(\mathcal J_{\rm diag}\ge0\)。**CF8.123 仍未证明**，而且是一个
+充分条件，不能反向称为 CF8.101 的等价命题。已证的是 CF8.117–122
+这一步对实际有限系数的统一解析转移；不再需要以逐项高阶求导
+的方式为平移 chirp 支付 \(H/L\)，也没有预先删除零点响应。
+CF8.80 的低频目标依然单独开放。
+
+这里的未平移均值并非另一条新算术接口。令 \(W(v)=vV(v)\)，则
+逐系数精确有
+\[
+ F_0(u)=R\,D_{o,W,R}(1+iu),\qquad
+ {Q_PRT\over R^2}=Q_P{T\over R}.                     \tag{CF8.124}
+\]
+对 \(8T\le R\)，CF8.80 在高度 \(8T\) 的右端满足
+\(Q_PP^\eta(8T/R+1/H)\ll Q_PP^\eta T/R\)，因为
+\(T\ge R/H\)。它因而直接蕴含 CF8.123。当 \(8T>R\) 时，
+\(T\asymp R\)，整个扩大频带可用一般 separated-frequency 均值
+和 \(\sum|a_n|^2\ll RQ_PP^\eta\) 支付。因此 CF8J 完整证明了：
+既有 CF8.80 的相应高频均值若成立，便可用于同一个硬窗口的全部
+中频端点，无须另外假设一个高频平移 adapter；它没有证明该均值。
 
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
