@@ -152,12 +152,27 @@ def test_conrey_local_contracts_are_continuously_audited():
 
 
 def test_all_conrey_contract_axiom_prints_are_continuously_audited():
-    expected_modules = {
+    named_modules = {
         ".".join(path.relative_to(check_axiom_allowlist.ROOT).with_suffix("").parts)
         for path in check_axiom_allowlist.ROOT.glob("Test/Conrey*Contract.lean")
         if "#print axioms" in path.read_text(encoding="utf-8")
     }
+    stack_modules = set(check_axiom_allowlist.CONREY_STACK_AXIOM_AUDIT_MODULES)
+    expected_modules = named_modules | stack_modules
 
     assert expected_modules == set(check_axiom_allowlist.CONREY_AXIOM_AUDIT_MODULES)
     assert expected_modules <= set(check_axiom_allowlist.AXIOM_AUDIT_MODULES)
-    assert len(check_axiom_allowlist.CONREY_PRINTED_DECLARATIONS) == 217
+    assert len(stack_modules) == 45
+    assert all(
+        path.is_file()
+        for path in check_axiom_allowlist.CONREY_STACK_AXIOM_AUDIT_PATHS
+    )
+    expected_prints = [
+        declaration
+        for path in check_axiom_allowlist.CONREY_AXIOM_AUDIT_PATHS
+        for declaration in check_axiom_allowlist.re.findall(
+            r"#print\s+axioms\s+([A-Za-z0-9_'.]+)",
+            path.read_text(encoding="utf-8"),
+        )
+    ]
+    assert expected_prints == check_axiom_allowlist.CONREY_PRINTED_DECLARATIONS

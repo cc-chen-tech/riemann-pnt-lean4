@@ -670,7 +670,61 @@ AXIOM_AUDIT_MODULES = [
     "Test.WindowedMellinResponseIdentityAxiomAudit",
 ]
 
-CONREY_AXIOM_AUDIT_PATHS = sorted(ROOT.glob("Test/Conrey*Contract.lean"))
+CONREY_STACK_AXIOM_AUDIT_MODULES = [
+    "Test.ArgumentCrossingContract",
+    "Test.ArgumentCrossingDeletedLevelsContract",
+    "Test.ArgumentCrossingOpenContract",
+    "Test.BoundaryRootArgumentContract",
+    "Test.ConreyArgumentEndpointsContract",
+    "Test.ConreyArithmeticEulerFactorContract",
+    "Test.ConreyBalancedGlobalCountContract",
+    "Test.ConreyBalancedTraceCountContract",
+    "Test.ConreyComponentSimpleZerosContract",
+    "Test.ConreyCoprimeEulerBoundContract",
+    "Test.ConreyCoprimeMobiusHighRectangleContract",
+    "Test.ConreyCoprimeMobiusHorizontalBoundContract",
+    "Test.ConreyCoprimeMobiusLeftBoundContract",
+    "Test.ConreyCoprimeMobiusPerronContract",
+    "Test.ConreyCoprimeMobiusPerronTailContract",
+    "Test.ConreyCoprimeMobiusRectangleContract",
+    "Test.ConreyCoprimeMobiusResidueContract",
+    "Test.ConreyEquation41IntervalContract",
+    "Test.ConreyEtaArgumentMainContract",
+    "Test.ConreyEtaRectangleZerosContract",
+    "Test.ConreyEtaVerticalOrderFactorContract",
+    "Test.ConreyFiniteContourCountContract",
+    "Test.ConreyHorizontalArgumentContract",
+    "Test.ConreyLongMomentErrorBudgetContract",
+    "Test.ConreyMollifiedContourCountContract",
+    "Test.ConreyMollifiedFullCountContract",
+    "Test.ConreyMollifiedLittlewoodContract",
+    "Test.ConreyMollifiedMeanSquareContract",
+    "Test.ConreyMollifiedRectangleZerosContract",
+    "Test.ConreyReciprocalZetaStripContract",
+    "Test.ConreySelectedEtaMainCountContract",
+    "Test.ConreySelectedHeightCountContract",
+    "Test.ConreySelectedMeanSquareContract",
+    "Test.ConreyShiftedHContract",
+    "Test.ConreyV1MeanSquareTransferContract",
+    "Test.ContinuousLogDerivativeContract",
+    "Test.ContinuousLogPhaseLimitsContract",
+    "Test.FiniteZeroComponentIntegralContract",
+    "Test.FiniteZeroComponentsContract",
+    "Test.HalfBoundaryArgumentPrincipleContract",
+    "Test.LeftRegularizedLogDerivContract",
+    "Test.LittlewoodFiniteZeroTableContract",
+    "Test.LogMeanSquareAEContract",
+    "Test.LogPowerMajorantsContract",
+    "Test.RectangleCauchyDerivativeContract",
+]
+CONREY_STACK_AXIOM_AUDIT_PATHS = [
+    ROOT.joinpath(*module.split(".")).with_suffix(".lean")
+    for module in CONREY_STACK_AXIOM_AUDIT_MODULES
+]
+CONREY_AXIOM_AUDIT_PATHS = sorted(
+    set(ROOT.glob("Test/Conrey*Contract.lean"))
+    | set(CONREY_STACK_AXIOM_AUDIT_PATHS)
+)
 CONREY_AXIOM_AUDIT_MODULES = [
     ".".join(path.relative_to(ROOT).with_suffix("").parts)
     for path in CONREY_AXIOM_AUDIT_PATHS
@@ -684,7 +738,9 @@ CONREY_PRINTED_DECLARATIONS = [
         path.read_text(encoding="utf-8"),
     )
 ]
-AXIOM_AUDIT_MODULES.extend(CONREY_AXIOM_AUDIT_MODULES)
+AXIOM_AUDIT_MODULES = list(
+    dict.fromkeys(AXIOM_AUDIT_MODULES + CONREY_AXIOM_AUDIT_MODULES)
+)
 EXPECTED_DECLARATIONS = {
     "HardyTheorem.conreyMollifiedV1_half_meanSquare_le_V_and_zeta",
     "HardyTheorem.exists_conrey_local_simpleZero_finset_lower_bound_meanSquare",
