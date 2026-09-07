@@ -93,6 +93,12 @@ CF8.25--CF8.29 再用加权 Farey 大筛支付全部 \(r\le\sqrt X\) 的
 二者都不是较窄的 balanced fixed-level core。因而本文不证明高高度
 或全高度 \(14/17\) 零点区域，也不进入 Lean。
 
+当前中频主攻是 CF8.101 的 cross-prime quadratic form。CF8H 从
+原有限素数对及 Selberg 上筛证明整个中频带的基准
+\(Q_P\{L+L^2/\log P\}\)，包括四个移位中心和全部尾；它只在
+\(L\lesssim\log P\) 直接达到所需尺度，较长 \(L\) 的带符号收益和
+CF8.80 的低频界均未证明。
+
 ## CF0. 冻结来源与符号纪律
 
 使用以下已审计对象，不沿用错误的 direct cusp identity (4.845ap)：
@@ -2593,6 +2599,144 @@ CF8.92 的两个零中心、两个 \(\pm H\) 中心和全部 parity mixed 行
 都仍在 CF8.100 的同一个 \(p\ne q\) 和中。CF8.99 因而真正关闭了
 equal-prime/outer diagonal，而没有把 cross-prime cancellation
 先平方成 Hilbert--Schmidt 损失。
+
+### CF8H. 中频交叉项的无条件上筛基准与其剩余损失
+
+这里直接估计 CF8.100 的实际有限和。固定 \(V\in C_c^\infty(0,\infty)\)
+和 CF8.92 的 \(\Psi\)，固定 \(\delta>0,B>2+\delta\)，并要求
+\(P^{2+\delta}\le R\le P^B\)、\(0<H\le P/16\)、
+\(R/H\le T\le R\)。充分大 \(P\) 的门槛允许依赖这些固定数据。
+这包含当前 \(R\asymp P^{23/6}\) 的中频问题。对任意复系数
+\(Y_p\)（这里甚至不要求 \(\sum_pY_p=0\)），有
+\[
+ \boxed{\quad
+ |\mathcal J^\times_{R,H}(T)|
+ \ll_{\delta,B,V,\Psi}Q_P
+       \left(L+\frac{L^2}{\log P}\right),
+ \qquad L=R/T.\quad}                                  \tag{CF8.102}
+\]
+此界在 \(L\ll\log P\) 支付 CF8.101；在 \(L=P^\lambda\)、固定
+\(\lambda>0\) 时仍没有供应任意 \(\eta>0\) 所需的幂次节省。
+下面分别证明素数对、奇异因子和共同 detector 的费用。
+
+设 \(p\ne q\)、\(r,s\in\{1,2\}\)，实际整数差为
+\(h=rp\ell-sqm\)，其中 \(\ell,m\) 是奇素数，两个物理整数都在
+\(V(\cdot/R)\) 的支撑中。充分大 \(P\) 后 \(\ell,m>2P\)，故
+\[
+                         h\ne0,\qquad(h,pq)=1.        \tag{CF8.103}
+\]
+例如 \(p\mid h\) 会迫使 \(m=p\)，与 \(m>2P\) 矛盾；对 \(q\)
+同理。这覆盖 detector 的全部尾，并不要求 \(|h|<H\)。
+
+令 \(\mathfrak s(h)=\prod_{\ell_0\mid h,\,\ell_0>2}
+(\ell_0-1)/(\ell_0-2)=s_o(h)/C_o\)，其中乘积只取素数。
+对任意满足 CF8.103 的非零整数 \(h\)，有统一的实际素数对上界
+\[
+ \sum_{\substack{\ell,m\ {\rm odd\ prime}\\rp\ell-sqm=h\\
+                         rp\ell,\,sqm\in[cR,CR]}}
+                  (\log\ell)(\log m)
+ \ll_{c,C,\delta,B}\frac R{pq}\mathfrak s(h).          \tag{CF8.104}
+\]
+这里 \(0<c<C\) 固定，可包住 \(V\) 的支撑。证明如下。置
+\(g=(r,s)\)。若 \(g\nmid h\) 则和为空；否则令
+\(a=rp/g,b=sq/g,h'=h/g\)。因 \((a,b)=1\)，所有整数解恰为
+\(\ell=\ell_0+bk,m=m_0+ak\)，且 \(a\ell_0-bm_0=h'\)。
+物理支撑给 \(k\) 的一个区间，长度至多 \(C_1R/(pq)\)。将它扩到
+长度 \(N=C_2R/(pq)\) 的实区间，不改变以下上界。
+
+只筛奇素数 \(v\)。两线性式模 \(v\) 的根并集大小 \(\nu_v\)
+在 \(v\nmid pqh\) 时为二，在 \(v\mid pqh\) 时为一。
+尤其 \(0<\nu_v<v\)。对奇平方自由 \(d\)，CRT 给余项
+\(R_d=O(\nu(d))\)，其中 \(\nu(d)=\prod_{v\mid d}\nu_v\)：
+每个剩余类的区间整数数目与 \(N/d\) 相差至多一。
+使用 [Heath--Brown, *Lectures on sieves*, Section 2,
+Fundamental Theorem for Selberg's sieve, printed pp. 11--12](https://arxiv.org/pdf/math/0209360)，
+取 \(z=N^{1/8},\xi=z\)，其有限 Selberg 二次式界为
+\[
+ S\le\frac N{G(z,z)}
+       +O\!\left(\sum_{d<z^2}\mu^2(d)6^{\omega(d)}\right),
+ \qquad
+ G(z,z)=\sum_{\substack{d<z\\d\mid\prod_{2<v<z}v}}
+                  \prod_{v\mid d}\frac{\nu_v}{v-\nu_v}.
+                                                               \tag{CF8.105}
+\]
+素数值 \(\ell,m\asymp R/P\) 都大于 \(z\)，所以实际素数对包含在
+这张筛的存活集合中。此处没有使用素数对渐近或其误差猜想。
+
+为统一证明分母下界，取一个足够小的绝对常数 \(c_0>0\)，令
+\(w=z^{c_0}\)，在 \(2<v\le w\) 上使用有限乘积质量
+\[
+ \mathcal Z_w=\prod_{2<v\le w}\frac{v}{v-\nu_v},
+ \qquad
+ \frac1{\mathcal Z_w}\sum_{d\mid\prod_{2<v\le w}v}
+       \left(\prod_{v\mid d}\frac{\nu_v}{v-\nu_v}\right)\log d
+       =\sum_{2<v\le w}\frac{\nu_v\log v}{v}
+       \le C_3\log w.                                \tag{CF8.106}
+\]
+最后的绝对界只用 Chebyshev：由 \(\binom{2n}{n}\le4^n\) 得
+\(\sum_{n<v\le2n}\log v\ll n\)，对二进区间求和及分部求和即可。
+取 \(0<c_0<1\) 且 \(C_3c_0<1/2\)，Markov 不等式表明至少一半有限乘积质量位于
+\(d<z\)，所以 \(G(z,z)\ge\mathcal Z_w/2\)。当 \(\nu_v\) 从二
+变成一时，局部质量恰乘 \((v-2)/(v-1)\)。又
+\((1-2/v)^{-1}\ge(1-1/v)^{-2}\)，而
+\(\prod_{2<v\le w}(1-v^{-1})^{-1}
+=\tfrac12\prod_{v\le w}(1-v^{-1})^{-1}
+\ge\tfrac12\sum_{n\le w}n^{-1}\)（\(w\ge2\)），故
+\[
+ G(z,z)\gg
+ \frac{(\log w)^2}{r_pr_q\mathfrak s(h)}
+ \gg\frac{(\log N)^2}{\mathfrak s(h)}.               \tag{CF8.107}
+\]
+在此将坏素数的有限子积扩成全积只会减小右边；\(r_p,r_q\ll1\)。
+而 \(\mu^2(d)6^{\omega(d)}\le d_6(d)\)，逐一求和六个因子给
+\(\sum_{d<U}d_6(d)\le U(1+\log U)^5\)。所以 CF8.105 的余项
+至多 \(N^{1/4}(1+\log N)^5\)，被 \(N/(\log N)^2\) 吸收。
+最后 \(\mathfrak s(h)\ge1\)，且参数域保证
+\(\log(R/P)\asymp_{\delta,B}\log N\asymp_{\delta,B}\log P\)。
+乘回两份素数对数便证明 CF8.104，常数对 \(p,q,h\) 一致。
+
+奇异因子必须先对真实整数差求和。对任意实数 \(a\)、\(L\ge1\)、
+\(M\ge2\) 和固定 \(A>2\)，CF8.70 的非负除数展开给
+\[
+ \begin{aligned}
+ &\sum_{0<|h|\le M}\mathfrak s(h)
+            (1+|h-a|/L)^{-A}\\
+ &\quad\ll_A\sum_{d\le M}a(d)(1+L/d)
+ \ll_A L+\log(2M).                                  \tag{CF8.108}
+ \end{aligned}
+\]
+第一步使用每个平移格 \(d\mathbb Z\) 的 Schwartz 权总量
+\(O_A(1+L/d)\)，正负差一起计数。第二步中
+\(\sum_da(d)/d<\infty\) 直接来自 Euler 乘积，而
+\(da(d)\le\sum_{k\mid d}b(k)\)、\(\sum_kb(k)/k<\infty\) 给
+\(\sum_{d\le M}a(d)\ll\log(2M)\)。因此这个界对两个实中心
+\(a=\pm H\) 同样统一，不要求 \(H\) 是整数。
+
+最后将 CF8.100 按 CF8.92 展开。在支撑上两个端点平移后的整数均
+\(\asymp R\)，均值定理和 Schwartz 衰减给
+\[
+ \left|\widehat{\Psi_2}\left(T\log
+       \frac{rp\ell-\epsilon}{sqm-\epsilon'}\right)\right|
+ \ll_{A,V,\Psi}
+       (1+|h-(\epsilon-\epsilon')|/L)^{-A}.
+\]
+对每一对 \(p\ne q\) 和每一 parity/endpoint 行，使用 CF8.104，
+乘回唯一外系数 \(rspq\) 后，再由 CF8.108 以 \(M=C_4R\) 求和。
+这仍包括全部物理差，未删掉远中心的尾。由原外因子 \(1/T\) 得
+\[
+ |\mathcal J^\times_{R,H}(T)|
+ \ll\frac RT(L+\log(2R))\left(\sum_p|Y_p|\right)^2
+ \ll Q_P L\frac{L+\log(2R)}{\log P}.                 \tag{CF8.109}
+\]
+最后用 CF8.75 前的加权 Cauchy--Chebyshev 界；由于 \(\log R\ll_B
+\log P\)，这就是 CF8.102。该证明在四项精确展开后作绝对上界，
+没有对真实相关使用 reference 的符号抵消。
+
+因此可以明确把中频未付区间集中到 \(L\gg\log P\)。固定
+\(\eta>0\) 时 CF8.102 还支付 \(L\ll P^\eta\log P\)，但这是
+预算中的 \(P^\eta\) 吸收，不能登记成对固定幂次 \(L=P^\lambda\)
+的新幂次消去。主攻余项仍是 CF8.100 中这个较长 \(L\) 区域的
+共同带符号振荡；CF8.80、CF8.73、全部 boxes 和零点排除均保持开放。
 
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
