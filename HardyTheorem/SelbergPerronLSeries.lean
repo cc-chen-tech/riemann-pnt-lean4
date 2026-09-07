@@ -145,6 +145,45 @@ theorem integral_selbergPerronLSeriesIntegrand_eq_tsum_integral
     (fun n => integrable_selbergPerronLSeriesTerm coeff hY hsigma n)
     (summable_integral_norm_selbergPerronLSeriesTerm coeff hY hsigma hsum)).symm
 
+/-- Absolute integrability of the actual full-line integrand, not just its
+totalized integral. The same summable coefficient majorant works at every height. -/
+theorem integrable_selbergPerronLSeriesIntegrand
+    (coeff : ℕ → ℂ) {Y sigma : ℝ} (hY : 0 < Y) (hsigma : 0 < sigma)
+    (hsum : LSeriesSummable coeff (sigma : ℂ)) :
+    Integrable (selbergPerronLSeriesIntegrand coeff Y sigma) := by
+  have hterms (t : ℝ) :
+      Summable (fun n => selbergPerronLSeriesTerm coeff Y sigma n t) := by
+    have hline : LSeriesSummable coeff (selbergPerronLine sigma t) :=
+      hsum.of_re_le_re (by simp [selbergPerronLine])
+    exact (hline.mul_left ((Y : ℂ) ^ selbergPerronLine sigma t)).mul_right
+      (1 / selbergPerronLine sigma t ^ 2)
+  have hmeas : AEStronglyMeasurable
+      (selbergPerronLSeriesIntegrand coeff Y sigma) := by
+    apply aestronglyMeasurable_of_tendsto_ae atTop
+      (f := fun N t => ∑ n ∈ Finset.range N, selbergPerronLSeriesTerm coeff Y sigma n t)
+    · intro N
+      exact (continuous_finsetSum _ fun n _ =>
+        continuous_selbergPerronLSeriesTerm coeff hY hsigma n).aestronglyMeasurable
+    · exact Eventually.of_forall fun t => by
+        rw [selbergPerronLSeriesIntegrand_eq_tsum]
+        exact (hterms t).hasSum.tendsto_sum_nat
+  have hkernel : Integrable (fun t : ℝ =>
+      (1 / selbergPerronLine sigma t ^ 2 : ℂ)) := by
+    have h := verticalIntegrable_inv_sq hsigma
+    unfold VerticalIntegrable at h
+    simpa [selbergPerronLine, one_div] using h
+  apply (hkernel.norm.const_mul
+    (Y ^ sigma * ∑' n, ‖LSeries.term coeff (sigma : ℂ) n‖)).mono' hmeas
+  exact Eventually.of_forall fun t => by
+    rw [selbergPerronLSeriesIntegrand_eq_tsum]
+    calc
+      ‖∑' n, selbergPerronLSeriesTerm coeff Y sigma n t‖ ≤
+          ∑' n, ‖selbergPerronLSeriesTerm coeff Y sigma n t‖ :=
+        norm_tsum_le_tsum_norm (hterms t).norm
+      _ = _ := by
+        simp_rw [norm_selbergPerronLSeriesTerm_eq coeff hY]
+        rw [tsum_mul_right, tsum_mul_left]
+
 theorem normalized_integral_selbergPerronLSeriesTerm_eq
     (coeff : ℕ → ℂ) {Y sigma : ℝ} (hY : 0 < Y) (hsigma : 0 < sigma) (n : ℕ) :
     (1 / (2 * Real.pi) : ℂ) *

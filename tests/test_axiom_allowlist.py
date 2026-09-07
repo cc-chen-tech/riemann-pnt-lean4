@@ -31,6 +31,14 @@ def test_parse_axiom_report_handles_lean_names_ending_in_prime():
     }
 
 
+def test_parse_axiom_report_handles_declarations_without_axioms():
+    output = "'Example.unconditional' does not depend on any axioms"
+
+    assert check_axiom_allowlist.parse_axiom_report(output) == {
+        "Example.unconditional": set(),
+    }
+
+
 def test_validate_axioms_rejects_missing_declarations_and_unexpected_axioms():
     reports = {
         "Example.first": {"propext", "Classical.choice", "Quot.sound", "Bad.axiom"},
@@ -61,6 +69,38 @@ def test_validate_axioms_accepts_the_standard_lean_allowlist():
     ) == []
 
 
+def test_validate_axioms_rejects_bad_axioms_outside_selected_expectations():
+    errors = check_axiom_allowlist.validate_axioms(
+        {"HardyTheorem.unlisted": {"Bad.mock_axiom"}},
+        expected_declarations=set(),
+        allowed_axioms=check_axiom_allowlist.ALLOWED_AXIOMS,
+    )
+
+    assert errors == [
+        "HardyTheorem.unlisted uses unexpected axioms: Bad.mock_axiom"
+    ]
+
+
+def test_validate_axioms_requires_each_conrey_print_report():
+    reports = {
+        "HardyTheorem.first": {"propext"},
+        "HardyTheorem.second": {"Classical.choice"},
+    }
+
+    assert check_axiom_allowlist.validate_axioms(
+        reports,
+        expected_declarations=set(),
+        allowed_axioms=check_axiom_allowlist.ALLOWED_AXIOMS,
+        required_printed_declarations={"first", "second"},
+    ) == []
+    assert check_axiom_allowlist.validate_axioms(
+        {"HardyTheorem.first": {"propext"}},
+        expected_declarations=set(),
+        allowed_axioms=check_axiom_allowlist.ALLOWED_AXIOMS,
+        required_printed_declarations={"first", "second"},
+    ) == ["missing Conrey axiom report for second"]
+
+
 def test_carlson_unconditional_density_and_forcing_are_audited():
     assert "Test.CarlsonTwoThirdsImprovementAxiomAudit" in check_axiom_allowlist.AXIOM_AUDIT_MODULES
     required = {
@@ -72,3 +112,114 @@ def test_carlson_unconditional_density_and_forcing_are_audited():
         "PrimeNumberTheorem.no_nontrivial_zero_re_ge_14_over_17_of_seed_forcing_halfRange",
     }
     assert required <= check_axiom_allowlist.EXPECTED_DECLARATIONS
+
+
+def test_selberg_strict_cancellation_zero_cover_is_continuously_audited():
+    module = "Test.SelbergStrictCancellationZeroCoverContract"
+    declarations = {
+        "HardyTheorem.measure_strictCancellationStarts_selbergCompleted_le_oddZeroCount_mul",
+        "HardyTheorem.exists_pos_mul_log_le_criticalLineOddZeroCount_two_mul_selberg",
+        "HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline",
+        "HardyTheorem.selberg_zero_proportion_target_proved_mainline",
+    }
+
+    assert module in check_axiom_allowlist.AXIOM_AUDIT_MODULES
+    assert declarations <= check_axiom_allowlist.EXPECTED_DECLARATIONS
+
+    standard_reports = {
+        declaration: {"propext", "Classical.choice", "Quot.sound"}
+        for declaration in declarations
+    }
+    assert check_axiom_allowlist.validate_axioms(
+        standard_reports,
+        expected_declarations=declarations,
+        allowed_axioms=check_axiom_allowlist.ALLOWED_AXIOMS,
+    ) == []
+
+    missing = dict(standard_reports)
+    missing.pop("HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline")
+    assert check_axiom_allowlist.validate_axioms(
+        missing,
+        expected_declarations=declarations,
+        allowed_axioms=check_axiom_allowlist.ALLOWED_AXIOMS,
+    ) == [
+        "missing axiom report for "
+        "HardyTheorem.selberg_odd_zero_proportion_target_proved_mainline"
+    ]
+
+    bad = dict(standard_reports)
+    bad["HardyTheorem.selberg_zero_proportion_target_proved_mainline"] = {
+        "Bad.mock_axiom"
+    }
+    assert check_axiom_allowlist.validate_axioms(
+        bad,
+        expected_declarations=declarations,
+        allowed_axioms=check_axiom_allowlist.ALLOWED_AXIOMS,
+    ) == [
+        "HardyTheorem.selberg_zero_proportion_target_proved_mainline "
+        "uses unexpected axioms: Bad.mock_axiom"
+    ]
+
+
+def test_conrey_local_contracts_are_continuously_audited():
+    modules = {
+        "Test.ConreyV1HalfMeanSquareContract",
+        "Test.ConreyLocalSimpleZeroWitnessContract",
+    }
+    declarations = {
+        "HardyTheorem.conreyMollifiedV1_half_meanSquare_le_V_and_zeta",
+        "HardyTheorem.exists_conrey_local_simpleZero_finset_lower_bound_meanSquare",
+    }
+
+    assert modules <= set(check_axiom_allowlist.AXIOM_AUDIT_MODULES)
+    assert declarations <= check_axiom_allowlist.EXPECTED_DECLARATIONS
+
+    standard_reports = {
+        declaration: {"propext", "Classical.choice", "Quot.sound"}
+        for declaration in declarations
+    }
+    assert check_axiom_allowlist.validate_axioms(
+        standard_reports,
+        expected_declarations=declarations,
+        allowed_axioms=check_axiom_allowlist.ALLOWED_AXIOMS,
+    ) == []
+
+    bad_reports = dict(standard_reports)
+    bad_reports[
+        "HardyTheorem.conreyMollifiedV1_half_meanSquare_le_V_and_zeta"
+    ] = {"Bad.mock_axiom"}
+    assert check_axiom_allowlist.validate_axioms(
+        bad_reports,
+        expected_declarations=declarations,
+        allowed_axioms=check_axiom_allowlist.ALLOWED_AXIOMS,
+    ) == [
+        "HardyTheorem.conreyMollifiedV1_half_meanSquare_le_V_and_zeta "
+        "uses unexpected axioms: Bad.mock_axiom"
+    ]
+
+
+def test_all_conrey_contract_axiom_prints_are_continuously_audited():
+    named_modules = {
+        ".".join(path.relative_to(check_axiom_allowlist.ROOT).with_suffix("").parts)
+        for path in check_axiom_allowlist.ROOT.glob("Test/Conrey*Contract.lean")
+        if "#print axioms" in path.read_text(encoding="utf-8")
+    }
+    stack_modules = set(check_axiom_allowlist.CONREY_STACK_AXIOM_AUDIT_MODULES)
+    expected_modules = named_modules | stack_modules
+
+    assert expected_modules == set(check_axiom_allowlist.CONREY_AXIOM_AUDIT_MODULES)
+    assert expected_modules <= set(check_axiom_allowlist.AXIOM_AUDIT_MODULES)
+    assert len(stack_modules) == 45
+    assert all(
+        path.is_file()
+        for path in check_axiom_allowlist.CONREY_STACK_AXIOM_AUDIT_PATHS
+    )
+    expected_prints = [
+        declaration
+        for path in check_axiom_allowlist.CONREY_AXIOM_AUDIT_PATHS
+        for declaration in check_axiom_allowlist.re.findall(
+            r"#print\s+axioms\s+([A-Za-z0-9_'.]+)",
+            path.read_text(encoding="utf-8"),
+        )
+    ]
+    assert expected_prints == check_axiom_allowlist.CONREY_PRINTED_DECLARATIONS
