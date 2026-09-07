@@ -13,8 +13,6 @@ ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 AXIOM_AUDIT_MODULES = [
     "Test.CarlsonTwoThirdsImprovementAxiomAudit",
     "Test.MultiplicityAxiomAudit",
-    "Test.ConreyV1HalfMeanSquareContract",
-    "Test.ConreyLocalSimpleZeroWitnessContract",
     "Test.VKEdgePiOverTwoOrdinaryL2AxiomAudit",
     "Test.VKEdgePiOverTwoSweptL2AxiomAudit",
     "Test.VKEdgePiOverTwoFixedProportionAxiomAudit",
@@ -671,6 +669,22 @@ AXIOM_AUDIT_MODULES = [
     "Test.WindowedMellinL3AxiomAudit",
     "Test.WindowedMellinResponseIdentityAxiomAudit",
 ]
+
+CONREY_AXIOM_AUDIT_PATHS = sorted(ROOT.glob("Test/Conrey*Contract.lean"))
+CONREY_AXIOM_AUDIT_MODULES = [
+    ".".join(path.relative_to(ROOT).with_suffix("").parts)
+    for path in CONREY_AXIOM_AUDIT_PATHS
+    if "#print axioms" in path.read_text(encoding="utf-8")
+]
+CONREY_PRINTED_DECLARATIONS = [
+    declaration
+    for path in CONREY_AXIOM_AUDIT_PATHS
+    for declaration in re.findall(
+        r"#print\s+axioms\s+([A-Za-z0-9_'.]+)",
+        path.read_text(encoding="utf-8"),
+    )
+]
+AXIOM_AUDIT_MODULES.extend(CONREY_AXIOM_AUDIT_MODULES)
 EXPECTED_DECLARATIONS = {
     "HardyTheorem.conreyMollifiedV1_half_meanSquare_le_V_and_zeta",
     "HardyTheorem.exists_conrey_local_simpleZero_finset_lower_bound_meanSquare",
@@ -3534,6 +3548,10 @@ def parse_axiom_report(output: str) -> Dict[str, Set[str]]:
             if axiom.strip()
         }
         reports[declaration] = axioms
+    for declaration in re.findall(
+        r"'([^']+)' does not depend on any axioms", output
+    ):
+        reports[declaration] = set()
     return reports
 
 
@@ -3542,13 +3560,20 @@ def validate_axioms(
     *,
     expected_declarations: Iterable[str],
     allowed_axioms: Set[str],
+    required_printed_declarations: Iterable[str] = (),
 ) -> List[str]:
     expected = set(expected_declarations)
     errors = [
         f"missing axiom report for {declaration}"
         for declaration in sorted(expected - reports.keys())
     ]
-    for declaration in sorted(expected & reports.keys()):
+    for declaration in required_printed_declarations:
+        if not any(
+            report == declaration or report.endswith(f".{declaration}")
+            for report in reports
+        ):
+            errors.append(f"missing Conrey axiom report for {declaration}")
+    for declaration in sorted(reports):
         unexpected = reports[declaration] - allowed_axioms
         if unexpected:
             errors.append(
@@ -3574,6 +3599,7 @@ def main() -> int:
         reports,
         expected_declarations=EXPECTED_DECLARATIONS,
         allowed_axioms=ALLOWED_AXIOMS,
+        required_printed_declarations=CONREY_PRINTED_DECLARATIONS,
     )
     if errors:
         for error in errors:
@@ -3582,7 +3608,9 @@ def main() -> int:
 
     print(
         "[axiom-allowlist] checked "
-        f"{len(EXPECTED_DECLARATIONS)} declarations; only standard axioms are used"
+        f"{len(reports)} reports including "
+        f"{len(CONREY_PRINTED_DECLARATIONS)} Conrey print directives; "
+        "only standard axioms are used"
     )
     return 0
 
