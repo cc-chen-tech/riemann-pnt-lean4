@@ -672,6 +672,8 @@ AXIOM_AUDIT_MODULES = [
     "Test.WindowedMellinResponseIdentityAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "HardyTheorem.conreyMollifiedV1_half_meanSquare_le_V_and_zeta",
+    "HardyTheorem.exists_conrey_local_simpleZero_finset_lower_bound_meanSquare",
     "PrimeNumberTheorem.carlson_halfRange_closed_zeroDensity_isBigO",
     "PrimeNumberTheorem.carlson_halfRange_zeroDensity_isBigO",
     "PrimeNumberTheorem.exists_carlson_halfRange_densityCertificate",

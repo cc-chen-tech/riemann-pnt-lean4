@@ -72,3 +72,40 @@ def test_carlson_unconditional_density_and_forcing_are_audited():
         "PrimeNumberTheorem.no_nontrivial_zero_re_ge_14_over_17_of_seed_forcing_halfRange",
     }
     assert required <= check_axiom_allowlist.EXPECTED_DECLARATIONS
+
+
+def test_conrey_local_contracts_are_continuously_audited():
+    modules = {
+        "Test.ConreyV1HalfMeanSquareContract",
+        "Test.ConreyLocalSimpleZeroWitnessContract",
+    }
+    declarations = {
+        "HardyTheorem.conreyMollifiedV1_half_meanSquare_le_V_and_zeta",
+        "HardyTheorem.exists_conrey_local_simpleZero_finset_lower_bound_meanSquare",
+    }
+
+    assert modules <= set(check_axiom_allowlist.AXIOM_AUDIT_MODULES)
+    assert declarations <= check_axiom_allowlist.EXPECTED_DECLARATIONS
+
+    standard_reports = {
+        declaration: {"propext", "Classical.choice", "Quot.sound"}
+        for declaration in declarations
+    }
+    assert check_axiom_allowlist.validate_axioms(
+        standard_reports,
+        expected_declarations=declarations,
+        allowed_axioms=check_axiom_allowlist.ALLOWED_AXIOMS,
+    ) == []
+
+    bad_reports = dict(standard_reports)
+    bad_reports[
+        "HardyTheorem.conreyMollifiedV1_half_meanSquare_le_V_and_zeta"
+    ] = {"Bad.mock_axiom"}
+    assert check_axiom_allowlist.validate_axioms(
+        bad_reports,
+        expected_declarations=declarations,
+        allowed_axioms=check_axiom_allowlist.ALLOWED_AXIOMS,
+    ) == [
+        "HardyTheorem.conreyMollifiedV1_half_meanSquare_le_V_and_zeta "
+        "uses unexpected axioms: Bad.mock_axiom"
+    ]
