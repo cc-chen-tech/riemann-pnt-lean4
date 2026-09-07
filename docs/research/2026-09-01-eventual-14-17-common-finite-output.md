@@ -104,6 +104,9 @@ CF8I 再使用实际 \(\sum_pY_p=0\) 及整数差的有界素因数个数，
 CF8J 又以 Fourier 反演、变换坐标的 Plancherel 和全部带外尾，
 将平移端无 \(H/L\) 损失地转移到稍扩大的未平移频带；所需均值
 正是已有 CF8.80 的高频部分，算术均值本身仍开放。
+CF8K 在同一个 Mellin 乘积积分中支付放大多项式正常大小的部分及
+全部 Mellin 尾；大值集合的未加权矩界也成立，但该集合上与长素数商
+多项式的联合加权均方 CF8.132 尚未证明，不能以小测度代替它。
 
 ## CF0. 冻结来源与符号纪律
 
@@ -2950,6 +2953,132 @@ CF8.80 的低频目标依然单独开放。
 和 \(\sum|a_n|^2\ll RQ_PP^\eta\) 支付。因此 CF8J 完整证明了：
 既有 CF8.80 的相应高频均值若成立，便可用于同一个硬窗口的全部
 中频端点，无须另外假设一个高频平移 adapter；它没有证明该均值。
+
+### CF8K. 共同乘积均值的正常大小部分已付，大值加权部分仍开
+
+本节沿用 CF8H 的 \(P^{2+\delta}\le R\le P^B\)、
+\(0<H\le P/16\)、\(R/H\le T\le R\) 参数域，
+\(\delta>0,B>2+\delta\) 固定。以下仍估计 CF8.124 的同一个有限多项式。
+令 \(M=R/P\)，设
+\(\operatorname{supp}V\subset[c,C]\)。固定
+\(U\in C_c^\infty(0,\infty)\)，在 \([c/4,C]\) 上为一，并置
+\[
+ A(v)=\sum_pY_pp^{-iv},\qquad
+ B_M(v)=\sum_{\ell\ {\rm odd\ prime}}
+       {\log\ell\over\ell}U(\ell/M)\ell^{-iv},\qquad
+ E(v)=1-2^{-iv}.
+\]
+写 \(\mathcal V(\tau)=\int_0^\infty V(x)x^{i\tau}\,dx/x\)。
+对原有限 \(p,r,\ell\) 和作一次 Mellin 反演，严格得到
+\[
+ D_{o,V,R}(1+it)
+ ={1\over2\pi}\int_{\mathbb R}
+       \mathcal V(\tau)R^{i\tau}
+       E(t+\tau)A(t+\tau)B_M(t+\tau)\,d\tau.          \tag{CF8.125}
+\]
+这里 \(U(\ell/M)=1\) 覆盖所有原乘积支撑，且与 \(p,r,t,\tau\)
+无关。原 \(rp\) 在除以 \(n=rp\ell\) 时抵消，故 \(B_M\) 只有
+\(\log\ell/\ell\)，\(A\) 没有额外 \(p\)。两种 parity 在积分内
+始终共用 \(E(t+\tau)\)。三个因子共用同一个 \(t+\tau\)，没有改成
+三个独立的频率积分。
+
+若 \(Q_P=0\) 则所有输出为零，以下设 \(Q_P>0\)。固定
+\(\vartheta>0\)，定义实际放大多项式的大值集合
+\[
+ \mathcal B_\vartheta
+   =\{v\in\mathbb R:|A(v)|^2>(Q_P/P)P^\vartheta\}.
+                                                               \tag{CF8.126}
+\]
+在 CF8.125 中先按 \(|\tau|\le T/8\) 与其补集分开；在前者内部，
+再按 \(t+\tau\notin\mathcal B_\vartheta\) 或属于该集合分开，所得
+三个函数依次记为 \(D_{\rm good},D_{\rm bad},D_{\rm tail}\)。这是
+同一个 Mellin 积分的精确分解
+\[
+ D_{o,V,R}(1+it)=D_{\rm good}(t)+D_{\rm bad}(t)
+                                  +D_{\rm tail}(t). \tag{CF8.127}
+\]
+它不是按原 \(t\) 删除一个物理子和；集合判据施加在共同的 \(t+\tau\)。
+因此重新装配时保留三项，再使用 Hilbert 三角或
+\(|u+v+w|^2\le3(|u|^2+|v|^2+|w|^2)\)，无需另设 mixed-term
+输入；但 \(D_{\rm bad}\) 的平方范数仍须估计。
+
+对 \(t\in I_T^*\)、\(|\tau|\le T/8\)，有 \(|t+\tau|\le9T\)。
+Chebyshev 的 \(\sum_{\ell\le x}\log\ell\ll x\) 及
+\(\pi(x)\ll x/\log x\) 分别给
+\[
+ \|B_M\|_\infty\ll_U1,\qquad
+ \sum_\ell\left|{\log\ell\over\ell}U(\ell/M)\right|^2
+                 \ll_U{\log(2M)\over M}.            \tag{CF8.128}
+\]
+利用长度 \(O_U(M)\) 的有限 Dirichlet 多项式均值公式
+\(\int_{-9T}^{9T}|\sum b_n n^{-iv}|^2dv
+\ll(T+M)\sum|b_n|^2\)（亦见
+[Matomäki--Teräväinen, Lemma 3.2](https://arxiv.org/pdf/2207.05038)），
+以及 \(T\ge R/H\ge16M\)，对每个 \(\tau\) 得
+\[
+ \int_{I_T^*}{\bf1}_{t+\tau\notin\mathcal B_\vartheta}
+       |E(t+\tau)A(t+\tau)B_M(t+\tau)|^2dt
+ \ll_U {Q_PT\over R}P^\vartheta\log(2R).
+\]
+最后对同一个 \(\tau\) 积分使用 Minkowski；因为
+\(\|\mathcal V\|_1<\infty\)，没有频率长度的额外因子。于是
+\[
+ \boxed{\quad
+ \int_{I_T^*}|D_{\rm good}(t)|^2dt
+ \ll_{V,U}{Q_PT\over R}P^\vartheta\log(2R).\quad}      \tag{CF8.129}
+\]
+取 \(0<\vartheta<\eta\)，对数由余下的 \(P^{\eta-\vartheta}\) 吸收，
+故这一部分达到所需尺度。
+
+全部 Mellin 尾也已支付。加权 Cauchy 给
+\(\|A\|_\infty\ll\sqrt{Q_P}\)；CF8.128 与
+\(|E|\le2\) 因而给
+\(|D_{\rm tail}(t)|\ll_{K,V,U}\sqrt{Q_P}T^{-K}\)，任意固定 \(K\) 均可，
+因为 \(\mathcal V\) 为 Schwartz。再由 \(|I_T^*|=O(T)\) 和
+\(T\ge\sqrt R\)，对任意固定 \(D>0\) 可取 \(K\) 使
+\[
+ \int_{I_T^*}|D_{\rm tail}(t)|^2dt\ll_{D,V,U}Q_PR^{-D}.
+                                                               \tag{CF8.130}
+\]
+这使用有限阶的 \(V\) 导数，阶数固定后不随 \(P,T\) 增长。
+
+大值集合的**未加权测度**可同时严格估计。令 \(S_Y=\sum_p|Y_p|^2\)。
+对固定整数 \(k\ge1\)，素数唯一分解把 \(A(v)^k\) 写成长度
+\((2P)^k\) 的有限 Dirichlet 多项式。每个 prime multiset 的系数是
+\(k!/\prod_pm_p!\) 乘 \(\prod_pY_p^{m_p}\)。因为该 multinomial
+系数至多 \(k!\)，其系数平方和至多 \(k!S_Y^k\)。再用上述均值公式，
+\[
+ \int_{-9T}^{9T}|A(v)|^{2k}dv
+        \ll_k(T+P^k)S_Y^k,\qquad
+ |\mathcal B_\vartheta\cap[-9T,9T]|
+        \ll_k(T+P^k)P^{-k\vartheta}.                 \tag{CF8.131}
+\]
+第二式使用对实数 \(P\ge2\) 一致有效的安全界
+\(S_Y\le2Q_P/P\)，该绝对常数吸收进固定 \(k\) 的常数即可。
+当前 \(R\asymp P^{23/6}\) 与
+\(H\le P/16\) 保证 \(T\gg P^{17/6}>P^2\)，故 \(k=2\) 给相对
+测度 \(O(P^{-2\vartheta})\)；当 \(T\ge P^3\) 时还可使用 \(k=3\)。
+
+这个测度结果不能替代加权均值。当前充分的剩余任务仍是
+\[
+ \boxed{\quad
+ \int_{I_T^*}|D_{\rm bad}(t)|^2dt
+             \ll_{\rho,\eta,V} {Q_PT\over R}P^\eta.\quad}        \tag{CF8.132}
+\]
+为明确一条失败的装配步骤：仅以 \(\|B_M\|_\infty\ll1\) 和
+CF8.131 控制共同 bad integrand，直接给出的界为
+\[
+ \int_{I_T^*}|D_{\rm bad}(t)|^2dt
+ \ll_{k,V,U}{Q_P\over P}(T+P^k)P^{-(k-1)\vartheta}.
+                                                               \tag{CF8.133}
+\]
+相对 \(Q_PT/R\)，这份上界仍有
+\((R/P)(1+P^k/T)P^{-(k-1)\vartheta}\) 的费用。例如最困难一端
+\(R=P^{23/6},T\asymp P^{17/6}\)，\(k=2\) 仍为
+\(P^{17/6-\vartheta}\)。这只是这种“矩估计加商多项式最大值”
+策略的成本，绝不是实际相关的下界或一般不可行性定理。
+必须估计同一大值集合上的两个实际多项式的联合集中；
+CF8.129--131 未供应 CF8.132，也未证明 CF8.101 或 CF8.80。
 
 CF8.5 也解释了 signed dispersion 的正确系数纪律。对
 \(b^\sharp\) 形式写 \(B=\mu b^\sharp\) 不会凭空创造 Möbius
