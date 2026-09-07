@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.MWKFCubicAFEScalarDecay
+
+#print axioms PrimeNumberTheorem.MWKFCubic.norm_cubicAFEKernelG_le
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEVerticalGaussianMajorant_nonneg
+#print axioms PrimeNumberTheorem.MWKFCubic.norm_cubicAFEKernelG_vertical_le
+#print axioms PrimeNumberTheorem.MWKFCubic.integrable_cubicAFEVerticalGaussianMajorant
+#print axioms PrimeNumberTheorem.MWKFCubic.continuous_cubicAFEScalar_vertical_of_halfPlane
+#print axioms PrimeNumberTheorem.MWKFCubic.exists_norm_cubicAFEScalar_vertical_le
+#print axioms PrimeNumberTheorem.MWKFCubic.integrable_cubicAFEScalar_vertical

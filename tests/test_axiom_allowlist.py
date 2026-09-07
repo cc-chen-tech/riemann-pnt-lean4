@@ -59,3 +59,16 @@ def test_validate_axioms_accepts_the_standard_lean_allowlist():
         expected_declarations=set(reports),
         allowed_axioms={"propext", "Classical.choice", "Quot.sound"},
     ) == []
+
+
+def test_carlson_unconditional_density_and_forcing_are_audited():
+    assert "Test.CarlsonTwoThirdsImprovementAxiomAudit" in check_axiom_allowlist.AXIOM_AUDIT_MODULES
+    required = {
+        "PrimeNumberTheorem.carlson_halfRange_closed_zeroDensity_isBigO",
+        "PrimeNumberTheorem.carlson_halfRange_zeroDensity_isBigO",
+        "PrimeNumberTheorem.exists_carlson_halfRange_densityCertificate",
+        "PrimeNumberTheorem.singleLayerForcing_halfRange_contradiction",
+        "PrimeNumberTheorem.no_nontrivial_zero_re_gt_14_over_17_of_forcing_halfRange",
+        "PrimeNumberTheorem.no_nontrivial_zero_re_ge_14_over_17_of_seed_forcing_halfRange",
+    }
+    assert required <= check_axiom_allowlist.EXPECTED_DECLARATIONS

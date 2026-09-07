@@ -1,0 +1,11 @@
+import HardyTheorem.SelbergMollifiedDualPolynomial
+
+open HardyTheorem
+
+#check selbergMollifiedDualSupport
+#check selbergMollifiedDualCoeff
+#check selbergMollifiedDualMass
+#check selbergMollifiedDualFrequency
+#check selbergMollifiedDualPolynomial
+#check norm_selbergMollifiedDualCoeff_le_mass
+#check dualCriticalLineDirichletPolynomial_mul_selbergMoebiusMollifier_eq_exponentialPolynomial

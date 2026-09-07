@@ -3148,6 +3148,30 @@ def equal_zeta_index_gcd_factorization_sides(
     return gcd_side, square_side
 
 
+def equal_index_geometric_gram_rank_ledger(
+    adjacent_correlation: Fraction,
+) -> tuple[Fraction, Fraction, int]:
+    """Exact 3-by-3 rank obstruction for product-density centering.
+
+    For the Gaussian kernel on the geometric indices ``1, 2, 4``, put
+    ``u=exp(-T^2*log(2)^2/2)``.  Adjacent entries equal ``u`` and the
+    distance-two entry equals ``u^4``.  The full determinant is
+    ``(1-u^2)^3*(1+u^2)``; after deleting the diagonal it is ``2*u^6``.
+    Both are nonzero for ``0<u<1``, whereas a row-plus-column-minus-grand
+    projection has rank at most two.
+
+    The rational input is a finite formal proxy for ``u``.  No numerical
+    approximation to the Gaussian is used in the determinant identities.
+    """
+
+    u = Fraction(adjacent_correlation)
+    if not 0 < u < 1:
+        raise ValueError("the adjacent correlation must lie strictly in (0,1)")
+    full_determinant = (1 - u**2) ** 3 * (1 + u**2)
+    off_diagonal_determinant = 2 * u**6
+    return full_determinant, off_diagonal_determinant, 2
+
+
 def formal_mobius_log_divisor_coefficients(n: int) -> dict[int, int]:
     """Coefficients of ``-sum_{d|n} mu(d) log d`` in the ``log p`` basis.
 
@@ -6454,6 +6478,66 @@ class LongPolynomialMeanValueLedger:
 
 
 @dataclass(frozen=True)
+class PerronZetaRatioLedger:
+    """Power ledger for the Perron representation of a tapered mollifier.
+
+    On the critical line the absolutely convergent Dirichlet-series
+    representation starts at the limiting contour ``Re(w)=1/2``.  Squaring
+    ``N**w`` costs ``N**(2*Re(w))`` in the moment.  Moving far enough left to
+    remove that power crosses poles of ``1/zeta(s+w)`` produced by zeta zeros;
+    this ledger records the resulting proof obligation but does not assert it.
+    """
+
+    cutoff_exponent: Fraction
+    time_exponent: Fraction
+    contour_real_part: Fraction
+    absolute_series_contour_floor: Fraction
+    contour_square_cost: Fraction
+    direct_moment_bound: Fraction
+    target_moment_bound: Fraction
+    direct_gap: Fraction
+    target_contour_ceiling: Fraction
+    shift_enters_possible_zero_region: bool
+    potential_residue_has_inverse_zeta_derivative: bool
+    unconditional_negative_moment_input: bool
+
+
+@dataclass(frozen=True)
+class RhPerronNegativeMomentLedger:
+    """Conditional exponent ledger using shifted negative zeta moments."""
+
+    cutoff_exponent: Fraction
+    target_epsilon: Fraction
+    contour_real_part: Fraction
+    perron_square_cost: Fraction
+    ratio_moment_exponent: Fraction
+    conditional_moment_exponent: Fraction
+    target_moment_exponent: Fraction
+    power_margin: Fraction
+    positive_moment_order: int
+    negative_moment_order: int
+    negative_moment_k: Fraction
+    fixed_shift_theorem_range: bool
+    rh_required: bool
+    conditional_power_covered: bool
+    unconditional_power_covered: bool
+
+
+@dataclass(frozen=True)
+class LongMollifierZeroFreeLedger:
+    """Bettin--Gonek zero-free consequences of a long-mollifier bound."""
+
+    cutoff_exponent: Fraction
+    initial_interval_zero_free_boundary: Fraction
+    dyadic_interval_zero_free_boundary: Fraction
+    initial_interval_nontrivial: bool
+    dyadic_interval_nontrivial: bool
+    dyadic_nontrivial_cutoff_threshold: Fraction
+    requires_uniformity_in_all_shorter_cutoffs: bool
+    theta_infinity_limit: Fraction
+
+
+@dataclass(frozen=True)
 class BlomerPascadiUnbalancedLedger:
     """Exponent ledger for Blomer--Pascadi Theorem 5.5."""
 
@@ -6761,6 +6845,136 @@ def long_polynomial_mean_value_ledger(
             polynomial_length >= time_length
         ),
         published_mobius_specific_saving=False,
+    )
+
+
+def perron_zeta_ratio_ledger(
+    cutoff_exponent: Fraction,
+    time_exponent: Fraction,
+    contour_real_part: Fraction,
+    allowed_power_loss: Fraction = Fraction(0),
+) -> PerronZetaRatioLedger:
+    """Return the exact power loss in the critical-line Perron route.
+
+    Write ``N=T**cutoff_exponent`` and integrate on ``Re(w)=c``.  The
+    absolutely convergent Dirichlet-series contour has limiting value
+    ``c=1/2`` (the actual Perron line is strictly to its right).  A direct
+    second-moment bound therefore has exponent
+
+    ``time_exponent + 2*cutoff_exponent*c``.
+
+    To stay within ``allowed_power_loss`` of the target time exponent one
+    needs ``c <= allowed_power_loss/(2*cutoff_exponent)``.  When this lies
+    left of ``1/2``, a contour shift enters a region where off-critical-line
+    zeta zeros are not unconditionally excluded.  Any simple-zero residue
+    encountered contains ``1/zeta'(rho)``; no unconditional input controlling
+    the required full family of inverse derivatives is encoded.
+    """
+
+    if cutoff_exponent <= 0 or time_exponent <= 0:
+        raise ValueError("the cutoff and time exponents must be positive")
+    if allowed_power_loss < 0:
+        raise ValueError("the allowed power loss must be nonnegative")
+    absolute_series_contour_floor = Fraction(1, 2)
+    if contour_real_part < absolute_series_contour_floor:
+        raise ValueError(
+            "the direct Dirichlet-series contour must be at least its "
+            "critical-line limiting value 1/2"
+        )
+    contour_square_cost = 2 * cutoff_exponent * contour_real_part
+    direct_moment_bound = time_exponent + contour_square_cost
+    target_moment_bound = time_exponent + allowed_power_loss
+    target_contour_ceiling = allowed_power_loss / (2 * cutoff_exponent)
+    return PerronZetaRatioLedger(
+        cutoff_exponent=cutoff_exponent,
+        time_exponent=time_exponent,
+        contour_real_part=contour_real_part,
+        absolute_series_contour_floor=absolute_series_contour_floor,
+        contour_square_cost=contour_square_cost,
+        direct_moment_bound=direct_moment_bound,
+        target_moment_bound=target_moment_bound,
+        direct_gap=direct_moment_bound - target_moment_bound,
+        target_contour_ceiling=target_contour_ceiling,
+        shift_enters_possible_zero_region=(
+            target_contour_ceiling < absolute_series_contour_floor
+        ),
+        potential_residue_has_inverse_zeta_derivative=True,
+        unconditional_negative_moment_input=False,
+    )
+
+
+def rh_perron_negative_moment_ledger(
+    cutoff_exponent: Fraction,
+    target_epsilon: Fraction,
+) -> RhPerronNegativeMomentLedger:
+    """Audit the fixed-shift Perron route conditional on RH.
+
+    Choose ``c=epsilon/(4*theta)`` for ``N=T**theta``.  The factor
+    ``N**(2*c)`` then costs only ``T**(epsilon/2)``.  Under RH, shifting to
+    ``Re(w)=c>0`` crosses no zeta zeros.  For fixed ``c``, Bui--Florea
+    Theorem 1.2 with ``k=2`` supplies a polylogarithmic fourth negative
+    moment of ``zeta(1/2+c+it)``.  Holder with the classical positive fourth
+    moment leaves ratio second-moment exponent one; logarithms are omitted
+    from this rational power ledger.
+
+    The function records a conditional implication only.  It does not turn
+    the RH-dependent negative-moment theorem into an unconditional input.
+    """
+
+    if cutoff_exponent <= 0 or target_epsilon <= 0:
+        raise ValueError("the cutoff exponent and target epsilon must be positive")
+    contour_real_part = target_epsilon / (4 * cutoff_exponent)
+    perron_square_cost = 2 * cutoff_exponent * contour_real_part
+    ratio_moment_exponent = Fraction(1)
+    conditional_moment_exponent = ratio_moment_exponent + perron_square_cost
+    target_moment_exponent = ratio_moment_exponent + target_epsilon
+    power_margin = target_moment_exponent - conditional_moment_exponent
+    return RhPerronNegativeMomentLedger(
+        cutoff_exponent=cutoff_exponent,
+        target_epsilon=target_epsilon,
+        contour_real_part=contour_real_part,
+        perron_square_cost=perron_square_cost,
+        ratio_moment_exponent=ratio_moment_exponent,
+        conditional_moment_exponent=conditional_moment_exponent,
+        target_moment_exponent=target_moment_exponent,
+        power_margin=power_margin,
+        positive_moment_order=4,
+        negative_moment_order=4,
+        negative_moment_k=Fraction(2),
+        fixed_shift_theorem_range=True,
+        rh_required=True,
+        conditional_power_covered=(power_margin > 0),
+        unconditional_power_covered=False,
+    )
+
+
+def long_mollifier_zero_free_ledger(
+    cutoff_exponent: Fraction,
+) -> LongMollifierZeroFreeLedger:
+    """Return the zero-free boundaries in Bettin--Gonek Theorems 1--2.
+
+    Their hypothesis is the ``T**(1+epsilon)`` mollified second-moment bound
+    uniformly for every cutoff ``2 <= N <= T**theta``.  On ``[0,T]`` it
+    excludes zeros to the right of ``1/2+1/(2*theta)``.  On ``[T,2T]`` the
+    boundary is the weaker ``1/2+2/theta``, which enters the critical strip
+    only for ``theta>4``.  These are consequences of the desired bound, not
+    estimates proving it.
+    """
+
+    if cutoff_exponent <= 0:
+        raise ValueError("the cutoff exponent must be positive")
+    half = Fraction(1, 2)
+    initial_boundary = half + Fraction(1, 2) / cutoff_exponent
+    dyadic_boundary = half + Fraction(2) / cutoff_exponent
+    return LongMollifierZeroFreeLedger(
+        cutoff_exponent=cutoff_exponent,
+        initial_interval_zero_free_boundary=initial_boundary,
+        dyadic_interval_zero_free_boundary=dyadic_boundary,
+        initial_interval_nontrivial=(initial_boundary < 1),
+        dyadic_interval_nontrivial=(dyadic_boundary < 1),
+        dyadic_nontrivial_cutoff_threshold=Fraction(4),
+        requires_uniformity_in_all_shorter_cutoffs=True,
+        theta_infinity_limit=half,
     )
 
 

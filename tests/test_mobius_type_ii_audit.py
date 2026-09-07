@@ -2419,6 +2419,17 @@ def test_equal_zeta_index_gcd_sum_is_a_literal_mollifier_square() -> None:
     assert abs(gcd_side - square_side) < 1e-9
 
 
+def test_equal_index_gaussian_gram_exceeds_row_column_projection_rank() -> None:
+    """On 1,2,4 the full and diagonal-removed kernels both have rank three."""
+    full_determinant, off_diagonal_determinant, projection_rank_cap = (
+        audit.equal_index_geometric_gram_rank_ledger(F(1, 2))
+    )
+
+    assert full_determinant == F(135, 256)
+    assert off_diagonal_determinant == F(1, 32)
+    assert projection_rank_cap == 2
+
+
 def test_selberg_convolution_is_formally_von_mangoldt_below_cutoff() -> None:
     assert audit.formal_mobius_log_divisor_coefficients(1) == {}
     for prime in (2, 3, 5, 7, 11):
@@ -2623,6 +2634,58 @@ def test_long_polynomial_large_values_leave_the_same_coherence_loss() -> None:
     assert ledger.required_coefficient_saving == F(2)
     assert ledger.guth_maynard_reduces_to_classical
     assert not ledger.published_mobius_specific_saving
+
+
+def test_perron_ratio_route_must_control_possible_zero_residues() -> None:
+    ledger = audit.perron_zeta_ratio_ledger(
+        cutoff_exponent=F(3),
+        time_exponent=F(1),
+        contour_real_part=F(1, 2),
+    )
+
+    assert ledger.absolute_series_contour_floor == F(1, 2)
+    assert ledger.contour_square_cost == F(3)
+    assert ledger.direct_moment_bound == F(4)
+    assert ledger.target_moment_bound == F(1)
+    assert ledger.direct_gap == F(3)
+    assert ledger.target_contour_ceiling == F(0)
+    assert ledger.shift_enters_possible_zero_region
+    assert ledger.potential_residue_has_inverse_zeta_derivative
+    assert not ledger.unconditional_negative_moment_input
+
+
+def test_rh_negative_moment_perron_route_has_theta_three_power_margin() -> None:
+    ledger = audit.rh_perron_negative_moment_ledger(
+        cutoff_exponent=F(3),
+        target_epsilon=F(1, 100),
+    )
+
+    assert ledger.contour_real_part == F(1, 1200)
+    assert ledger.perron_square_cost == F(1, 200)
+    assert ledger.ratio_moment_exponent == F(1)
+    assert ledger.conditional_moment_exponent == F(201, 200)
+    assert ledger.target_moment_exponent == F(101, 100)
+    assert ledger.power_margin == F(1, 200)
+    assert ledger.positive_moment_order == 4
+    assert ledger.negative_moment_order == 4
+    assert ledger.negative_moment_k == F(2)
+    assert ledger.fixed_shift_theorem_range
+    assert ledger.rh_required
+    assert ledger.conditional_power_covered
+    assert not ledger.unconditional_power_covered
+
+
+def test_bettin_gonek_dyadic_theta_three_consequence_is_vacuous() -> None:
+    ledger = audit.long_mollifier_zero_free_ledger(F(3))
+
+    assert ledger.cutoff_exponent == F(3)
+    assert ledger.initial_interval_zero_free_boundary == F(2, 3)
+    assert ledger.dyadic_interval_zero_free_boundary == F(7, 6)
+    assert ledger.initial_interval_nontrivial
+    assert not ledger.dyadic_interval_nontrivial
+    assert ledger.dyadic_nontrivial_cutoff_threshold == F(4)
+    assert ledger.requires_uniformity_in_all_shorter_cutoffs
+    assert ledger.theta_infinity_limit == F(1, 2)
 
 
 def test_all_balanced_dual_blocks_have_at_most_the_same_near_gap() -> None:

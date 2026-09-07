@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.MWKFCubicAFEScalarTime
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms continuous_cubicAFEGammaProduct_zero_inv
+#print axioms continuous_cubicAFEScalar_joint_of_halfPlane
+#print axioms exists_norm_cubicAFEScalar_vertical_le_on_compact
+#print axioms continuous_cubicAFEWeightNormMass
+#print axioms integrable_cubicAFEPhysicalHeightMass

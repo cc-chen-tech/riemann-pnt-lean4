@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.MWKFCubicAFEProgression
+
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgression_mem_iff_residue
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionPair_mem
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionPair_second_cast
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionEquiv
+#print axioms PrimeNumberTheorem.MWKFCubic.tsum_cubicAFEShiftFiber_eq_progression
+#print axioms PrimeNumberTheorem.MWKFCubic.summable_integral_cubicAFE_progression
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEMollifiedMomentFinite_eq_diagonal_add_progression
+#print axioms PrimeNumberTheorem.MWKFCubic.tendsto_cubicAFEDiagonal_add_progression

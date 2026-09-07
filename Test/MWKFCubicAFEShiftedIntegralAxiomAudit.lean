@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.MWKFCubicAFEShiftedIntegral
+
+#print axioms PrimeNumberTheorem.MWKFCubic.gcd_mul_cubicAFEReducedShift
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEReducedShift_zero_iff
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFECombinedLogPhase_eq_reducedShift
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEReducedShift_logArgument_pos
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFECombinedSummandFinite_eq_reducedShift
+#print axioms PrimeNumberTheorem.MWKFCubic.hasSum_integral_cubicAFE_shiftFibers
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEOffDiagonalMomentFinite_eq_shifted
+#print axioms PrimeNumberTheorem.MWKFCubic.tendsto_cubicAFEDiagonal_add_shifted

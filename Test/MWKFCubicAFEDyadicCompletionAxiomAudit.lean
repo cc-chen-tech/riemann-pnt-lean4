@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.MWKFCubicAFEDyadicCompletion
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms cubicAFEDyadicCompletionWeight_zero
+#print axioms hasSum_cubicAFEDyadicCompletionWeight
+#print axioms cubicAFEDyadicCompletionWeight_eq_one_of_one_le
+#print axioms eventually_cubicAFEDyadicCompletionWeight_eq_one
+#print axioms cubicAFEDyadicCompletionCorrection_eq_zero_on_progression
+#print axioms cubicAFEDyadicCompletionKernel_eq_boundary_add_correction

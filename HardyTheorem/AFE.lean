@@ -15,20 +15,16 @@
    的 `Complex.exp_eq_exp_iff_exists_int` 证明)。
 
 2. `zeta_critical_afe_target`:  AFE(approximate functional equation)目标。
-   与 `HardyTheorem.Details.approximate_functional_equation_target` 等价的
-   Phase 2 入口,放在 `HardyTheorem.AFE` 命名空间下;形式上把相位项
-   `exp(I · thetaPhase t)` 替换为 `exp(I · unwrappedRiemannSiegelTheta t)`,
-   二者数学上等价(由 `thetaPhase_unwrapped_relation` 给出)。这样
-   下游可以按 AFE 中心 `exp(-2I · θ(t))` 的"未包装"视角统一处理,
-   而不必关心 principal branch 的 2π 跳跃。
+   临界线函数方程的 dual multiplier 是
+   `exp(-2 * I * thetaPhase t)`,不是 `exp(I * thetaPhase t)`。本文件先从
+   已证明的 `Gammaℝ` 相位公式推出这个归一化恒等式,再用它声明正确的
+   AFE 目标。目标本身仍只是 `def ... : Prop`,没有把 AFE 当成公理或定理。
 
-## 与既有 `HardyTheorem.Details.approximate_functional_equation_target` 的关系
+## 与旧 AFE placeholder 的关系
 
-- 内容等价:本文件 `zeta_critical_afe_target` 与
-  `HardyTheorem.Details.approximate_functional_equation_target` 表达的是
-  同一个 AFE 命题(`∃ C > 0, ∀ t > 1, ∃ R, ‖R‖ ≤ C * t^(-1/4)`)。
-- 形式区别:本目标用 `unwrappedRiemannSiegelTheta` 替换了 `thetaPhase`,
-  下游可以按"未包装的相位"统一处理。
+- 旧 placeholder 使用 `exp(I * thetaPhase t)`,其相位不正确,不能作为
+  square-root AFE 使用。
+- 本文件中的目标使用精确的 `exp(-2 * I * thetaPhase t)` multiplier。
 - 短期不需要证明(本任务为"目标声明"占位),故本文件不写证明,
   只声明 `def ... : Prop`。
 -/
@@ -36,6 +32,7 @@
 import HardyTheorem
 
 open Complex Asymptotics Filter
+open scoped ComplexConjugate
 
 namespace HardyTheorem.AFE
 
@@ -70,25 +67,116 @@ lemma thetaPhase_unwrapped_relation (t : ℝ) :
     Complex.exp (I * (unwrappedRiemannSiegelTheta t : ℂ)) =
       Complex.exp (I * (thetaPhase t : ℂ)) := rfl
 
-/-! ## 2. 校正的 AFE 目标 -/
+/-! ## 2. Exact normalization of the critical-line dual phase -/
+
+/-- The unit phase of `Gammaℝ (1/2 + I*t)` is `exp (I * thetaPhase t)`.
+
+This repackages the already proved real/imaginary-part theorem in a form that
+can be used without choosing an argument branch. -/
+theorem criticalGamma_div_norm_eq_exp (t : ℝ) :
+    Gammaℝ ((1 / 2 : ℂ) + I * t) /
+        ‖Gammaℝ ((1 / 2 : ℂ) + I * t)‖ =
+      Complex.exp (I * (thetaPhase t : ℂ)) := by
+  let s : ℂ := (1 / 2 : ℂ) + I * t
+  have hGamma : Gammaℝ s ≠ 0 := by
+    apply Gammaℝ_ne_zero_of_re_pos
+    simp [s]
+  have hnorm : (‖Gammaℝ s‖ : ℂ) ≠ 0 := by
+    exact_mod_cast (norm_pos_iff.mpr hGamma).ne'
+  have hcomponents := Gammaℝ_re_im_arg t
+  have hexpRe :
+      (Complex.exp (I * (thetaPhase t : ℂ))).re =
+        Real.cos (thetaPhase t) := by
+    rw [show I * (thetaPhase t : ℂ) = (thetaPhase t : ℂ) * I by ring]
+    exact Complex.exp_ofReal_mul_I_re _
+  have hexpIm :
+      (Complex.exp (I * (thetaPhase t : ℂ))).im =
+        Real.sin (thetaPhase t) := by
+    rw [show I * (thetaPhase t : ℂ) = (thetaPhase t : ℂ) * I by ring]
+    exact Complex.exp_ofReal_mul_I_im _
+  have hGammaEq :
+      Gammaℝ s = (‖Gammaℝ s‖ : ℂ) *
+        Complex.exp (I * (thetaPhase t : ℂ)) := by
+    apply Complex.ext
+    · simpa [s, hexpRe] using hcomponents.1
+    · simpa [s, hexpIm] using hcomponents.2
+  change Gammaℝ s / (‖Gammaℝ s‖ : ℂ) = _
+  apply (div_eq_iff hnorm).2
+  simpa [mul_comm] using hGammaEq
+
+/-- The exact dual multiplier in the critical-line approximate functional
+equation.  The factor `-2` is essential. -/
+noncomputable def criticalAfeDualPhase (t : ℝ) : ℂ :=
+  Complex.exp (-2 * I * (unwrappedRiemannSiegelTheta t : ℂ))
+
+/-- The dual phase is independent of replacing the principal theta by the
+currently chosen unwrapped representative. -/
+theorem criticalAfeDualPhase_eq_exp_neg_two_thetaPhase (t : ℝ) :
+    criticalAfeDualPhase t =
+      Complex.exp (-2 * I * (thetaPhase t : ℂ)) := by
+  rfl
+
+/-- On the critical line the ratio
+`conj (Gammaℝ s) / Gammaℝ s` is exactly the AFE dual phase
+`exp (-2 * I * thetaPhase t)`.
+
+This proves the normalization only; it does not prove an approximate
+functional equation or a remainder estimate. -/
+theorem criticalGamma_conj_div_gamma_eq_dualPhase (t : ℝ) :
+    conj (Gammaℝ ((1 / 2 : ℂ) + I * t)) /
+        Gammaℝ ((1 / 2 : ℂ) + I * t) =
+      criticalAfeDualPhase t := by
+  let s : ℂ := (1 / 2 : ℂ) + I * t
+  have hGamma : Gammaℝ s ≠ 0 := by
+    apply Gammaℝ_ne_zero_of_re_pos
+    simp [s]
+  have hnorm : (‖Gammaℝ s‖ : ℂ) ≠ 0 := by
+    exact_mod_cast (norm_pos_iff.mpr hGamma).ne'
+  have hunit := criticalGamma_div_norm_eq_exp t
+  change conj (Gammaℝ s) / Gammaℝ s = _
+  change Gammaℝ s / (‖Gammaℝ s‖ : ℂ) = _ at hunit
+  have hGammaEq :
+      Gammaℝ s = (‖Gammaℝ s‖ : ℂ) *
+        Complex.exp (I * (thetaPhase t : ℂ)) := by
+    have h := (div_eq_iff hnorm).mp hunit
+    simpa [mul_comm] using h
+  have hconjExp :
+      conj (Complex.exp (I * (thetaPhase t : ℂ))) =
+        Complex.exp (-I * (thetaPhase t : ℂ)) := by
+    rw [← Complex.exp_conj]
+    congr 1
+    simp
+  rw [hGammaEq]
+  rw [map_mul, Complex.conj_ofReal, hconjExp]
+  apply (div_eq_iff (mul_ne_zero hnorm (Complex.exp_ne_zero _))).2
+  calc
+    (‖Gammaℝ s‖ : ℂ) *
+          Complex.exp (-I * (thetaPhase t : ℂ)) =
+        (‖Gammaℝ s‖ : ℂ) *
+          (criticalAfeDualPhase t *
+            Complex.exp (I * (thetaPhase t : ℂ))) := by
+      congr 1
+      rw [criticalAfeDualPhase_eq_exp_neg_two_thetaPhase, ← Complex.exp_add]
+      congr 1
+      ring
+    _ = criticalAfeDualPhase t *
+          ((‖Gammaℝ s‖ : ℂ) *
+            Complex.exp (I * (thetaPhase t : ℂ))) := by ring
+
+/-! ## 3. Corrected AFE target -/
 
 /-- Approximate functional equation 目标(Phase 2 校正版)。
 
 形式:`∃ R > 0, ∀ t > 1, ∃ R' : ℂ, ζ(1/2 + I·t) = finite_sum + R' ∧ ‖R'‖ ≤ R · t^(-1/4)`,
-其中 finite_sum 包含 `θ(t)` 一侧的相位项(此处用 `unwrappedRiemannSiegelTheta`
-替换 `thetaPhase`,数学等价)。
-
-本目标是 `HardyTheorem.Details.approximate_functional_equation_target`
-的 Phase 2 入口,语义一致,仅相位项使用 unwrapped 版本。
-
-下游可以按 AFE 中心 `exp(-2I · θ_unwrapped t)` 的"未包装"视角统一处理
-hardyZ 矩估计的输入,不需关心 principal branch 的 2π 跳跃。-/
+其中 dual sum 的相位是上面已证明的
+`criticalAfeDualPhase t = exp(-2I · thetaPhase t)`。此定义只声明
+待证命题;它不向下游提供任何未证明的 analytic input。-/
 def zeta_critical_afe_target : Prop :=
     ∃ R > (0 : ℝ), ∀ t : ℝ, t > 1 → ∃ R' : ℂ,
       (riemannZeta ((1 / 2 : ℂ) + I * t) =
         (∑ n ∈ Finset.range (Nat.floor (Real.sqrt (t / (2 * Real.pi)))),
             1 / ((n + 1 : ℂ) ^ ((1 / 2 : ℂ) + I * t))
-         + Complex.exp (I * (unwrappedRiemannSiegelTheta t : ℂ)) *
+         + criticalAfeDualPhase t *
             ∑ n ∈ Finset.range (Nat.floor (Real.sqrt (t / (2 * Real.pi)))),
               1 / ((n + 1 : ℂ) ^ ((1 / 2 : ℂ) - I * t))
          + R')) ∧
@@ -101,7 +189,7 @@ lemma zeta_critical_afe_target_of
       (riemannZeta ((1 / 2 : ℂ) + I * t) =
         (∑ n ∈ Finset.range (Nat.floor (Real.sqrt (t / (2 * Real.pi)))),
             1 / ((n + 1 : ℂ) ^ ((1 / 2 : ℂ) + I * t))
-         + Complex.exp (I * (unwrappedRiemannSiegelTheta t : ℂ)) *
+         + criticalAfeDualPhase t *
             ∑ n ∈ Finset.range (Nat.floor (Real.sqrt (t / (2 * Real.pi)))),
               1 / ((n + 1 : ℂ) ^ ((1 / 2 : ℂ) - I * t))
          + R')) ∧

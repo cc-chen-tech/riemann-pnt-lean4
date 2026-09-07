@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.MWKFCubicAFEDiagonalSplit
+
+#print axioms PrimeNumberTheorem.MWKFCubic.tsum_cubicAFEDiagonal_eq_ray
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFECombinedSummandFinite_diagonalRay
+#print axioms PrimeNumberTheorem.MWKFCubic.summable_integral_cubicAFE_diagonal_and_offDiagonal
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEMollifiedMomentFinite_eq_diagonal_add_offDiagonal
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEDiagonalMomentFinite_eq_ray
+#print axioms PrimeNumberTheorem.MWKFCubic.tendsto_cubicAFEDiagonal_add_offDiagonal

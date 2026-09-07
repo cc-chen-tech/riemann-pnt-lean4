@@ -1,0 +1,14 @@
+import HardyTheorem.SelbergMollifiedDualRational
+
+open HardyTheorem
+
+#check selbergMollifiedDualRationalKey
+#check selbergMollifiedDualRationalSupport
+#check selbergMollifiedDualRationalCoeff
+#check selbergMollifiedDualRationalMass
+#check selbergMollifiedDualRationalFrequency
+#check selbergMollifiedDualPolynomial_eq_rationalCollectedPolynomial
+#check norm_selbergMollifiedDualRationalCoeff_le_mass
+#check one_div_nat_mul_le_abs_sub_dualRationalFrequency
+#check neg_log_X_le_dualRationalFrequency
+#check integral_gaussian_normSq_selbergMollifiedDualPolynomial_le_rationalMassEnergy

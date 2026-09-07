@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.MWKFCubicAFETimeContinuity
+
+#print axioms PrimeNumberTheorem.MWKFCubic.continuous_cubicAFEDoubleSumFinite_time
+#print axioms PrimeNumberTheorem.MWKFCubic.integrable_cubicAFEMollifiedApproximation

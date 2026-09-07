@@ -1,0 +1,6 @@
+import HardyTheorem.AFECriticalDyadicMaximalPointwise
+
+#check HardyTheorem.AFE.dyadicMovingPrefixMollifiedPolynomial
+#check HardyTheorem.AFE.normSq_dyadicMovingPrefixMollifiedPolynomial_le_tree
+
+#print axioms HardyTheorem.AFE.normSq_dyadicMovingPrefixMollifiedPolynomial_le_tree

@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.MWKFCubicAFECompletedBoundary
+
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFECompletedLowerScale_index_bound
+#print axioms PrimeNumberTheorem.MWKFCubic.exists_cubicAFECompletedLowerScale_bound
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionCompletedCutoff_zero_outside_lowerBoxes

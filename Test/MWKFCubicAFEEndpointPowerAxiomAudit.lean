@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.MWKFCubicAFEEndpointPower
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms cubicAFEEndpointPower_nonneg
+#print axioms measurable_cubicAFEEndpointPower
+#print axioms cubicAFEEndpointPower_small
+#print axioms cubicAFEEndpointPower_large
+#print axioms integrable_cubicAFEEndpointPower
+#print axioms norm_cubicAFEWeightedProduct_le_endpointPower
+#print axioms integrableOn_cubicAFEEndpointPower_quadratic

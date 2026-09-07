@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.MWKFCubicAFEDiagonalMellinKernel
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms cubicAFEDiagonal_sqrt_normalization
+#print axioms cubicAFEDiagonalMellinMonomial_eq
+#print axioms hasSum_cubicAFEDiagonalMellinMonomial

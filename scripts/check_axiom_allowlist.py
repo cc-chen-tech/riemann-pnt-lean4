@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 AXIOM_AUDIT_MODULES = [
+    "Test.CarlsonTwoThirdsImprovementAxiomAudit",
     "Test.MultiplicityAxiomAudit",
     "Test.VKEdgePiOverTwoOrdinaryL2AxiomAudit",
     "Test.VKEdgePiOverTwoSweptL2AxiomAudit",
@@ -669,6 +670,12 @@ AXIOM_AUDIT_MODULES = [
     "Test.WindowedMellinResponseIdentityAxiomAudit",
 ]
 EXPECTED_DECLARATIONS = {
+    "PrimeNumberTheorem.carlson_halfRange_closed_zeroDensity_isBigO",
+    "PrimeNumberTheorem.carlson_halfRange_zeroDensity_isBigO",
+    "PrimeNumberTheorem.exists_carlson_halfRange_densityCertificate",
+    "PrimeNumberTheorem.singleLayerForcing_halfRange_contradiction",
+    "PrimeNumberTheorem.no_nontrivial_zero_re_gt_14_over_17_of_forcing_halfRange",
+    "PrimeNumberTheorem.no_nontrivial_zero_re_ge_14_over_17_of_seed_forcing_halfRange",
     "PrimeNumberTheorem.VKEdgePiOverTwo.zetaRightDyadicPositiveMassSquareExcluding_eq_sum_image",
     "PrimeNumberTheorem.VKEdgePiOverTwo.zetaDyadicBaseMassAt_sq_le_capacity_weight",
     "PrimeNumberTheorem.VKEdgePiOverTwo.zetaRightDyadicPositiveZerosExcluding_subset_adjacentCarlson",

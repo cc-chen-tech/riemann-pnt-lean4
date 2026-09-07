@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.MWKFCubicAFEPhysicalKernel
+
+#print axioms PrimeNumberTheorem.MWKFCubic.isOpen_cubicAFEProgressionDomain
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionRealProduct_pos
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgression_logArgument_pos
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgression_natCast_mem_domain
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionRealProduct_natCast
+#print axioms PrimeNumberTheorem.MWKFCubic.cubicAFEProgressionPhysicalSummand_eq_discrete
+#print axioms PrimeNumberTheorem.MWKFCubic.contDiffOn_cubicAFEProgressionPhysicalSummand

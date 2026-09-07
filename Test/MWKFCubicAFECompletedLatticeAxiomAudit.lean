@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.MWKFCubicAFECompletedLattice
+
+open PrimeNumberTheorem.MWKFCubic
+
+#print axioms measurable_cubicAFECompletedHalfLinePower
+#print axioms cubicAFECompletedHalfLinePower_le_endpoint
+#print axioms cubicAFECompletedLatticeConstant_nonneg
+#print axioms summable_cubicAFECompletedLatticePower
+#print axioms tsum_cubicAFECompletedLatticePower_le

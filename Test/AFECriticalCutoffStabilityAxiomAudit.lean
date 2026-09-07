@@ -1,0 +1,4 @@
+import HardyTheorem.AFECriticalCutoffStability
+
+#print axioms HardyTheorem.AFE.natFloor_eq_floor_or_succ_of_mem_unitWindow
+#print axioms HardyTheorem.AFE.criticalAfeCutoff_eq_left_or_succ_of_mem_interval
