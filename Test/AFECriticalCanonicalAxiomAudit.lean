@@ -1,0 +1,6 @@
+import HardyTheorem.AFECriticalCanonical
+
+#print axioms HardyTheorem.AFE.zeta_critical_afe_target_iff_canonical_remainder
+#print axioms HardyTheorem.AFE.criticalAfe_product_decomposition
+#print axioms HardyTheorem.AFE.norm_criticalAfeCanonicalRemainder_mul_selbergMoebiusMollifier_le
+#print axioms HardyTheorem.linearLogSelbergMollifier_eq_selbergMoebiusMollifier

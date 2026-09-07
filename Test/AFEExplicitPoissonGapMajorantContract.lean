@@ -1,0 +1,7 @@
+import HardyTheorem.AFEExplicitPoissonGapMajorant
+
+open HardyTheorem AFE
+
+#check norm_explicitPoissonSecondQuotientDerivative_le_gapMajorant
+
+#print axioms norm_explicitPoissonSecondQuotientDerivative_le_gapMajorant

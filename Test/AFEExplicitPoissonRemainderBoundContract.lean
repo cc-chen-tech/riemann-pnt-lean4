@@ -1,0 +1,7 @@
+import HardyTheorem.AFEExplicitPoissonRemainderBound
+
+open HardyTheorem AFE
+
+#check norm_explicitPoissonSecondQuotientDerivative_le_majorant
+
+#print axioms norm_explicitPoissonSecondQuotientDerivative_le_majorant

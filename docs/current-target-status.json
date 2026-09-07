@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-28",
+  "timestamp": "2026-08-31",
   "status": "not-yet-complete",
   "completed_without_sorry": true,
   "remaining_prop_targets": {
@@ -145,7 +145,7 @@
       "name": "zeta_critical_afe_target",
       "qualified_name": "HardyTheorem.AFE.zeta_critical_afe_target",
       "file": "HardyTheorem/AFE.lean",
-      "line": 86,
+      "line": 174,
       "chain": "Quantitative critical-line extensions",
       "body": "real_statement"
     },
@@ -192,6 +192,12 @@
     }
   ],
   "reusable_predicates": [
+    {
+      "name": "zeta_critical_unitPhase_logAfe_target",
+      "qualified_name": "HardyTheorem.AFE.zeta_critical_unitPhase_logAfe_target",
+      "file": "HardyTheorem/AFECriticalUnitPhaseLog.lean",
+      "line": 24
+    },
     {
       "name": "hardy_littlewood_multiplicity_lower_bound_target",
       "qualified_name": "HardyTheorem.hardy_littlewood_multiplicity_lower_bound_target",
@@ -1438,7 +1444,7 @@
   "mathematical_target_count": 15,
   "route_interface_count": 6,
   "route_interface_true_body_count": 0,
-  "reusable_predicate_count": 197,
+  "reusable_predicate_count": 198,
   "unclassified_prop_def_count": 0,
-  "all_scanned_prop_defs_count": 218
+  "all_scanned_prop_defs_count": 219
 }

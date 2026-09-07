@@ -1,0 +1,8 @@
+import MathlibAux.GaussianExponentialIntegral
+
+open Complex MeasureTheory
+
+#check MathlibAux.integral_shiftedGaussian_mul_cexp
+#check MathlibAux.integrable_shiftedGaussian_mul_cexp
+#print axioms MathlibAux.integral_shiftedGaussian_mul_cexp
+#print axioms MathlibAux.integrable_shiftedGaussian_mul_cexp

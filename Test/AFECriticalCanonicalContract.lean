@@ -1,0 +1,8 @@
+import HardyTheorem.AFECriticalCanonical
+
+#check HardyTheorem.AFE.zeta_critical_afe_target_iff_canonical_remainder
+#check HardyTheorem.AFE.norm_criticalAfeDualPhase
+#check HardyTheorem.AFE.criticalAfe_product_decomposition
+#check HardyTheorem.AFE.norm_criticalAfeCanonicalRemainder_mul_selbergMoebiusMollifier_le
+#check HardyTheorem.linearLogSelbergMollifier_eq_selbergMoebiusMollifier
+#check HardyTheorem.norm_selbergMoebiusMollifier_criticalLine_le_two_sqrt

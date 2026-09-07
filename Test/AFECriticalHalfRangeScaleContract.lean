@@ -1,0 +1,9 @@
+import HardyTheorem.AFECriticalHalfRangeScale
+
+#check HardyTheorem.AFE.criticalHalfRange_sqrt_scale_bounds
+#check HardyTheorem.AFE.four_mul_sqrt_scale_mul_length_le_halfRangeDelta
+#check HardyTheorem.AFE.setIntegral_gaussian_normSq_criticalAfeProduct_le_halfRange_scale
+
+#print axioms HardyTheorem.AFE.criticalHalfRange_sqrt_scale_bounds
+#print axioms HardyTheorem.AFE.four_mul_sqrt_scale_mul_length_le_halfRangeDelta
+#print axioms HardyTheorem.AFE.setIntegral_gaussian_normSq_criticalAfeProduct_le_halfRange_scale

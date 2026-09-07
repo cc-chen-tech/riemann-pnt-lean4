@@ -1,0 +1,6 @@
+import MathlibAux.HadamardBoundaryLimit
+
+open Set
+
+#check MathlibAux.le_endpoint_interp_of_continuousOn_of_inner_interp
+#print axioms MathlibAux.le_endpoint_interp_of_continuousOn_of_inner_interp

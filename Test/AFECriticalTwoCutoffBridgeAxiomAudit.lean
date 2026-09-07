@@ -1,0 +1,4 @@
+import HardyTheorem.AFECriticalTwoCutoffBridge
+
+#print axioms HardyTheorem.AFE.criticalAfeFixedPolynomialEnergy_nonneg
+#print axioms HardyTheorem.AFE.normSq_criticalAfeProduct_le_three_twoCutoffEnergies

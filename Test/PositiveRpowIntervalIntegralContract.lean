@@ -1,0 +1,10 @@
+import MathlibAux.PositiveRpowIntervalIntegral
+
+#check MathlibAux.intervalIntegrable_rpow_of_pos
+#check MathlibAux.intervalIntegral_rpow_eq_of_pos
+#check MathlibAux.intervalIntegral_rpow_le_right_endpoint
+#check MathlibAux.intervalIntegral_rpow_le_left_endpoint
+
+#print axioms MathlibAux.intervalIntegral_rpow_eq_of_pos
+#print axioms MathlibAux.intervalIntegral_rpow_le_right_endpoint
+#print axioms MathlibAux.intervalIntegral_rpow_le_left_endpoint
