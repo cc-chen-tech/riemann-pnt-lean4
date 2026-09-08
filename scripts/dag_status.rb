@@ -48,7 +48,7 @@ end
 
 def load_yaml(path)
   source = File.read(path)
-  tree = Psych.parse_stream(source, path)
+  tree = Psych.parse_stream(source, filename: path)
   errors = duplicate_keys(tree)
   data = Psych.safe_load(
     source,
