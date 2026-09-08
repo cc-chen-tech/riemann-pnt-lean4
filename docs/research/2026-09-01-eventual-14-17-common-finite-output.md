@@ -25,8 +25,9 @@ shell local coefficient 的 CF19.32c 串联，否则单素数局部和精确为�
 正确的物理候选必须降到 level \(B\)，相应绝对界只有 \(A^{-2+\varepsilon}\)
 而不是重复壳密度所得的 \(A^{-3+\varepsilon}\)。CF19Z8 再在共同有限
 谱 regulator 内证明这个 lower-level candidate 逐 datum 精确等于
-unramified oldclass multiplier；CF19Z9 再精确计算 Steinberg rank-one
-行、证明导子指数至少二的正 index 消失，并在有限 regulator 内把全部
+unramified oldclass multiplier；CF19Z9 更正 ramified Gram 内积为
+\(\epsilon/p\)、Steinberg rank-one 常数为 \(C_{p,0}=1\)，并证明
+导子指数至少二的正 index 消失，在有限 regulator 内把全部
 导子模式平方合计为 \(O(A^{-1})\)。CF19Z10 再把这些正交模式组成
 一个算子范数 \(O(A^{-1/2})\) 的对角谱乘子，证明在共同 ambient
 Bessel measure 已经建立时一次标量大筛便足够，不会产生
@@ -5925,33 +5926,53 @@ CF19Z8 留下的 ramified 局部类型可在当前 zero--zero 方向上继续精
 \]
 置
 \[
- q=p+1,\qquad r_p={p(p+2)\over q^2}.
+ r_p=1-p^{-2}.
 \]
-采用 [Blomer--Milićević, Lemma 2](https://arxiv.org/abs/1404.7845)
-的 exact oldclass convention。取 degeneracy map \(f|_p\) 的 \(L^2\) 归一化，使其 normalized
-Fourier coefficient 为 \(\sqrt p\,\lambda_{j-1}\)。局部 Hecke
-double-coset 内积直接给
+取同一个 ambient level \(p^2\) 中范数为一的 \(f,f|_p\)，使
+\(f|_p\) 的 normalized Fourier coefficient 为
+\(\sqrt p\,\lambda_{j-1}\)。[Humphries, Lemma 3.13, p. 1590](https://msp.org/ant/2018/12-7/ant-v12-n7-p02-s.pdf#page=11)
+给出相邻 degeneracy 向量的内积
+\[
+ {\lambda_\pi(p)\over
+   \sqrt p(1+\chi_{0,N_\pi}(p)/p)}.
+\]
+这里 \(N_\pi\) 是 primitive level，\(p\mid N_\pi\)，故
+\(\chi_{0,N_\pi}(p)=0\)：分母是 \(\sqrt p\)，不能使用
+unramified 的额外 \(1+1/p\)。于是
 \[
  \|f\|=\|f|_p\|=1,
- \qquad \langle f|_p,f\rangle={\epsilon\over p+1}.
+ \qquad \langle f|_p,f\rangle={\epsilon\over p}.
 \]
+holomorphic 情形由 [Schulze-Pillot--Yenirce, Theorem 6 (2.3) 与
+Theorem 8(a) (3.1)](https://arxiv.org/pdf/1602.01803) 得到相同公式：
+将其 Hecke eigenvalue 除以 \(p^{(k-1)/2}\)，并取范数为一的
+\(p^{k/2}V_p f\)，内积同样为 \(\lambda_\pi(p)/\sqrt p=\epsilon/p\)。
+
+最小负例是 \(p=2,\epsilon=1\)：旧向量 \(f|_2-f/3\) 与 \(f\) 的
+内积为 \(1/2-1/3=1/6\ne0\)，所以旧 Gram 基并不正交。
 因此 Gram--Schmidt 说明 level \(p^2\) 的完整两维 oldclass 正交基
 是原 newvector \(f\) 与
 \[
- f^{(p)}=r_p^{-1/2}\left(f|_p-{\epsilon\over q}f\right).
+ f^{(p)}=r_p^{-1/2}\left(f|_p-{\epsilon\over p}f\right).
                                                                \tag{CF19.92}
 \]
 在 normalized Fourier coefficients 中，第二个向量在 valuation
 \(j\) 的系数为
 \[
  U(j)=r_p^{-1/2}
- \left(\sqrt p\,\lambda_{j-1}-{\epsilon\over q}\lambda_j\right),
+ \left(\sqrt p\,\lambda_{j-1}-{\epsilon\over p}\lambda_j\right),
  \qquad \lambda_{-1}=0.                                \tag{CF19.93}
 \]
 直接代入 \(\lambda_j=\epsilon^jp^{-j/2}\)，对 \(j\ge1\) 得
 \[
- {U(0)U(j)\over\lambda_j}=-{pq-1\over q^2r_p}.          \tag{CF19.94}
+ {U(0)U(j)\over\lambda_j}
+ =-{(\epsilon/p)\epsilon(p-p^{-1})\over1-p^{-2}}
+ =-1.                                                  \tag{CF19.94}
 \]
+
+因此完整 level \(p^2\) oldclass 的混合 valuation 条目
+\(\lambda_j+U(0)U(j)=0\ (j\ge1)\)。这里只指 \((0,j)\) 及其对称
+条目 \((j,0)\)，不声称所有 valuation 条目为零。
 
 因为 \([\Gamma_0(p):\Gamma_0(p^2)]=p\)，level \(p\) newvector
 trace 与 level \(p^2\) oldclass trace 的 ambient harmonic
@@ -5959,7 +5980,7 @@ normalization 比是 \(1:p^{-1}\)。故其 exact level
 difference 在 valuations \((0,j)\) 上为
 \[
  \mathcal K_p^{(1)}(0,j)
- =\lambda_j-{1\over p}\{\lambda_j+U(0)U(j)\}.
+ =\lambda_j-{1\over p}\{\lambda_j+U(0)U(j)\}=\lambda_j.
 \]
 当前 corrected lift 的 denominator 是 unit-side 的
 \(c_p(1)=-1\)。由 CF19.94 清分母得到
@@ -5967,20 +5988,22 @@ difference 在 valuations \((0,j)\) 上为
  \boxed{
  {\mathcal K_p^{(1)}(0,j)\over c_p(1)}
  =-C_{p,0}\lambda_j,\qquad
- C_{p,0}=1-{p+1\over p^2(p+2)},\qquad j\ge1.}           \tag{CF19.95}
+ C_{p,0}=1,\qquad j\ge1.}                              \tag{CF19.95}
 \]
+旧值 \(1-(p+1)/(p^2(p+2))\) 撤回；它在 \(p=2\) 给 \(13/16\)，
+而正确值为 \(1\)。把错误 Gram 当输入的旧有限测试不认证该归一化。
 CF19.95 是尚未乘回 CF3.2 外层 \(\mu(p)=-1\) 的 normalized
 corrected-lift 行。裸 level-
 \(p\) minus level-\(p^2\) kernel 本身则是
-\(\mathcal K_p^{(1)}(0,j)=+C_{p,0}\lambda_j\)；在 actual unit-side
+\(\mathcal K_p^{(1)}(0,j)=+\lambda_j\)；在 actual unit-side
 zero--zero 行中，\(\mu(p)/c_p(1)=1\)，所以最终物理乘子同样取
-\(+C_{p,0}\lambda_j\)，不能把 CF19.95 的中间负号再保留一次。
+\( +\lambda_j\)，不能把 CF19.95 的中间负号再保留一次。
 Kloosterman/spectral kernel 对两个 Fourier indices 对称，故这是
 CF19.80 中首 index valuation \(j\ge1\)、第二 index valuation zero
 的 Steinberg rank-one Hecke 列，而不是待付的任意二维矩阵；并且
 \[
- 0<C_{p,0}<1,\qquad
- |C_{p,0}\lambda_1|^2={C_{p,0}^2\over p}\le {1\over p}.
+ C_{p,0}=1,\qquad
+ |C_{p,0}\lambda_1|^2={1\over p}.
                                                                \tag{CF19.96}
 \]
 
@@ -5995,7 +6018,7 @@ Eisenstein 类型；正 exponent 类型至少二，也由同一正 index 消失�
 在每个 \(p\mid A\)，非零选择只有 unramified 与 Steinberg 两个互相
 正交的 primitive subspaces，其 zero--zero 局部平方质量为
 \[
- |D_p(1,0)|^2+{C_{p,0}^2\over p}.
+ |D_p(1,0)|^2+{1\over p}.
 \]
 由 CF19.31、Kim--Sarnak \(|\lambda_1|\le p^\theta+p^{-\theta}\)
 及 \(\inf_p\rho_p>0\)，
@@ -6004,7 +6027,7 @@ Eisenstein 类型；正 exponent 类型至少二，也由同一正 index 消失�
 \]
 而 CF19.96 给
 \[
- |D_p(1,0)|^2+{C_{p,0}^2\over p}
+ |D_p(1,0)|^2+{1\over p}
  \le {1\over p}\{1+O(p^{-3+2\theta})\}.               \tag{CF19.97}
 \]
 因为 \(\theta=7/64<1/2\)，右边的 Euler correction 绝对可积。
@@ -6019,6 +6042,10 @@ measure）满足
  \qquad
  \|\text{all conductor patterns}\|\ll A^{-1/2}.}      \tag{CF19.98}
 \]
+本次纠正改变精确局部等式，不改变 CF19.98 的 \(O(A^{-1/2})\)
+量级；它不支付共同 regulator、物理其余行或全 boxes，
+高高度 \(14/17\) 零点定理仍未闭合。
+
 这里 \(\mathfrak c\) 只记录 \(A\)-部分的 primitive conductor；
 exponent-two 行已为零。CF19.98 先用 primitive subspace 正交性求平方
 和，绝不对 \(2^{\omega(A)}\) 个模式作三角不等式。
@@ -6050,7 +6077,7 @@ Maaß、holomorphic、Eisenstein cusp label 与 parity 都保留在各自的
  m_A(\pi)=\prod_{p\mid A}m_{p,\sigma_p}(\pi),
  \quad
  m_{p,0}=D_{p,\pi}(1,0),\qquad
- m_{p,1}=+C_{p,0}\lambda_\pi(p),\qquad
+ m_{p,1}=+\lambda_\pi(p),\qquad
  m_{p,\ge2}=0.                                        \tag{CF19.100}
 \]
 CF19.90 说明第一项正是 unramified oldclass 的 exact level-difference
@@ -6070,7 +6097,7 @@ multiplier；CF19.95 及其后乘回的 \(\mu(p)/c_p(1)=1\) 说明第二项
         |m_A(\pi)|^2\\
  &\le \prod_{p\mid A}
      \operatorname*{ess\,sup}_{\pi}
-       \left(|D_{p,\pi}(1,0)|^2+{C_{p,0}^2\over p}\right)
+       \left(|D_{p,\pi}(1,0)|^2+{1\over p}\right)
  \ll {1\over A}.
                                                                \tag{CF19.102}
  \end{aligned}
@@ -6206,7 +6233,7 @@ conductor pattern 重组。逐个 \(p\mid A\) 的 local difference 只有：
 
 - unramified newdatum 给 CF19.90 的 \(D_{p,\pi}(1,0)\)；
 - conductor-one Steinberg newdatum 给 CF19.95 后乘回
-  \(\mu(p)/c_p(1)\) 的 \(+C_{p,0}\lambda_\pi(p)\)；
+  \(\mu(p)/c_p(1)\) 的 \(+\lambda_\pi(p)\)；
 - conductor exponent 至少二的 positive lifted index 为零；
 - trivial-nebentypus Eisenstein 没有 exponent-one pattern，正导子
   pattern 至少二，故同样为零。
@@ -7539,8 +7566,8 @@ CF19.4 相对于**同一 coefficient energy**的 \(A_t/q\) 比较中出现。
     level-\(B\) odd--Hecke aggregate 精确相同，且没有第二份 harmonic
     \(1/p\)。CF19.92--CF19.98 又从 conductor-one 的两维 oldbasis 直接算出
     除以 \(c_p(1)\) 后的 Steinberg rank-one 系数
-    \(-C_{p,0}\lambda_j\)，并核对乘回 outer \(\mu(p)\) 后 actual
-    乘子为 \(+C_{p,0}\lambda_j\)；同时证明 conductor
+    \(-\lambda_j\)（更正后 \(C_{p,0}=1\)），并核对乘回 outer
+    \(\mu(p)\) 后 actual 乘子为 \(+\lambda_j\)；同时证明 conductor
     exponent 至少二在正 index 消失，并利用 primitive-subspace 正交性
     把全部导子模式平方合计为 \(O(A^{-1})\)。CF19.99--CF19.105 随后
     把这些模式严格组成共同有限谱空间上的对角乘子；其算子范数只有
