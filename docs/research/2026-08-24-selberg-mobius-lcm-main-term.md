@@ -734,6 +734,28 @@ LCM-log 核取绝对值，先得到更强的系数 \(4\)，然后推出上面记
 固定点的无序乘积收敛；尚未证明该乘积在多变量开集上的局部一致收敛或
 全纯性，也没有完成无限 Euler 乘积与有限双 Perron 和之间的交换。
 
+### 命题 F11：开条带上的局部一致 Euler 乘积
+
+在三变量开条带
+
+\[
+ \Omega_\eta=\{(s,t,w):\Re s,\Re t,\Re w>-\eta\},
+ \qquad \eta<1/4,
+\]
+
+F10 使用的同一个 \(p^{-2+4\eta}\) majorant 与变量无关。Lean 先在
+较宽条件 \(\eta<1/2\) 下证明每个 \(H_p\) 在 \(\Omega_\eta\) 上连续，
+再应用无穷乘积的 Weierstrass M-test，得到
+
+\[
+ \prod_p H_p(s,t,w)
+\]
+
+在 \(\Omega_\eta\) 上局部一致收敛到 `mwkfEulerCorrection`。形式接口为
+`hasProdLocallyUniformlyOn_mwkfPrimeCorrectionFactor`。这一命题建立了
+局部一致收敛，但尚未形式化每个局部因子的 Fréchet 解析性，也尚未由
+局部一致极限定理推出全局 correction 的多变量全纯性。
+
 ## 7. 与现有仓库结构的接口
 
 - `HardyTheorem/SelbergMollifier.lean` 已定义 `selbergMoebiusCoeff` 并证明
@@ -758,7 +780,10 @@ LCM-log 核取绝对值，先得到更强的系数 \(4\)，然后推出上面记
 - `PrimeNumberTheorem/MWKFCubicEulerSummability.lean` 已证明
   \(\eta<1/4\) 条带内每个固定点的 correction 误差绝对可和、无序
   Euler 乘积存在，并且全局 correction 在原点等于 1。
-- 尚未形式化的是上述 Euler 乘积的局部一致收敛与多变量全纯性、轮廓移线及 Selberg--Perron
+- `PrimeNumberTheorem/MWKFCubicEulerLocalUniform.lean` 已证明相应开条带、
+  每个局部 correction 的连续性，以及 Euler 乘积在该开条带上的局部
+  一致收敛。
+- 尚未形式化的是上述 Euler 乘积的多变量全纯性、轮廓移线及 Selberg--Perron
   渐近；上述精确等式和上界不能替代 \(Q(T)\to4/3\)，也不能提供
   \(R(T)=o(T)\)。
 
