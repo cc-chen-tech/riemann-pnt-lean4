@@ -1,0 +1,13 @@
+import PrimeNumberTheorem.MWKFCubicEulerSeparateHolomorphic
+
+open PrimeNumberTheorem.MWKFCubic
+
+#check analyticOnNhd_mwkfEulerCorrection_comp
+#check analyticOnNhd_mwkfEulerCorrection_in_first
+#check analyticOnNhd_mwkfEulerCorrection_in_second
+#check analyticOnNhd_mwkfEulerCorrection_in_third
+
+#print axioms analyticOnNhd_mwkfEulerCorrection_comp
+#print axioms analyticOnNhd_mwkfEulerCorrection_in_first
+#print axioms analyticOnNhd_mwkfEulerCorrection_in_second
+#print axioms analyticOnNhd_mwkfEulerCorrection_in_third
