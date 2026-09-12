@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.MWKFCubicEulerAnalytic
+
+open PrimeNumberTheorem.MWKFCubic
+
+#check analyticOnNhd_mwkfPrimeCorrectionFactor_openStrip
+
+#print axioms analyticOnNhd_mwkfPrimeCorrectionFactor_openStrip
