@@ -546,11 +546,12 @@ twisted-moment 定理。任选
 
 `MathlibAux/GcdLcmLogQuadratic.lean` 现已在 Lean 中证明下面的 F2--F5，
 `MathlibAux/GcdLcmLogBound.lean` 证明 F6，并同时给出一般双线性
-reciprocal-LCM 恒等式。证明只使用有限除数和、Möbius 反演、Euler
-totient 恒等式和调和数上界；它不包含第 4 节的 Selberg--Perron
-渐近，也不提供 cubic off-diagonal 的 `o(T)` 估计。
+reciprocal-LCM 恒等式。`PrimeNumberTheorem/MWKFCubicDoublePerron.lean`
+进一步证明 F7：实际 cubic taper 与两个完整垂直 Perron 积分的精确对应。
+这些结果不包含第 4 节所需的轮廓移线和余项渐近，也不提供 cubic
+off-diagonal 的 `o(T)` 估计。
 
-以下命题均不涉及渐近、无限级数或复分析。
+以下 F1--F6 均不涉及渐近、无限级数或复分析。
 
 ### 命题 F1：一般 reciprocal-LCM 平方和
 
@@ -633,6 +634,33 @@ totient 恒等式和调和数上界；它不包含第 4 节的 Selberg--Perron
 LCM-log 核取绝对值，先得到更强的系数 \(4\)，然后推出上面记账用的
 系数 \(6\)。这一步不使用 `gcdLogWeight` 的 Euler 乘积或任何渐近输入。
 
+### 命题 F7：实际 cubic 核的精确双 Perron 表示
+
+令 \(N=\lfloor T^3\rfloor\)、\(\sigma>0\)，并记
+
+\[
+ K_{N,\sigma}(n)=\frac1{2\pi}\int_{\mathbb R}
+ \frac{N^{\sigma+it}}{n^{\sigma+it}}
+ \frac{dt}{(\sigma+it)^2}.
+\]
+
+形式化的完整 Mellin 反演给出
+
+\[
+ K_{N,\sigma}(n)=\log(N/n)\qquad(1\le n\le N),
+\]
+
+从而实际系数精确满足
+
+\[
+ a_n=\mu(n)\frac{K_{N,\sigma}(n)}{\log N}.
+\]
+
+将此恒等式逐项代入有限双和，得到 `cubicReciprocalLcmQuadratic` 与
+`cubicReciprocalLcmLogKernel` 的精确双 Perron 表示，分母均为
+\((\log N)^2\)。这里没有 Perron 截断误差，也没有交换无限和；但尚未
+证明 (4.3) 的 Euler 分解、PNT 轮廓移线或 (4.11)--(4.12) 的极限。
+
 ## 7. 与现有仓库结构的接口
 
 - `HardyTheorem/SelbergMollifier.lean` 已定义 `selbergMoebiusCoeff` 并证明
@@ -646,8 +674,11 @@ LCM-log 核取绝对值，先得到更强的系数 \(4\)，然后推出上面记
 - `MathlibAux/GcdLcmLogBound.lean` 已证明一般系数的 F6；
   `PrimeNumberTheorem/MWKFCubicDiagonalLogBound.lean` 将它精确实例化到
   `cubicMollifierCoefficient T` 与 `floor(T^3)`。
-- 尚未形式化的是第 4 节的 Selberg--Perron 渐近；上述有限等式和上界
-  不能替代 \(Q(T)\to4/3\)，也不能提供 \(R(T)=o(T)\)。
+- `PrimeNumberTheorem/MWKFCubicDoublePerron.lean` 已把实际 cubic 系数和
+  两个全高 Perron 核精确接入上述两个 LCM 形式。
+- 尚未形式化的是第 4 节的 Euler 乘积、轮廓移线及 Selberg--Perron
+  渐近；上述精确等式和上界不能替代 \(Q(T)\to4/3\)，也不能提供
+  \(R(T)=o(T)\)。
 
 ## 8. 参考核对
 
