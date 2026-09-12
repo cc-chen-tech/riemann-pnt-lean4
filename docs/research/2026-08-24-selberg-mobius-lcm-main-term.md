@@ -545,9 +545,10 @@ twisted-moment 定理。任选
 ## 6. 已形式化的有限和命题
 
 `MathlibAux/GcdLcmLogQuadratic.lean` 现已在 Lean 中证明下面的 F2--F5，
-并同时给出一般双线性 reciprocal-LCM 恒等式。证明只使用有限除数和、
-Möbius 反演和 Euler totient 恒等式；它不包含第 4 节的
-Selberg--Perron 渐近，也不提供 cubic off-diagonal 的 `o(T)` 估计。
+`MathlibAux/GcdLcmLogBound.lean` 证明 F6，并同时给出一般双线性
+reciprocal-LCM 恒等式。证明只使用有限除数和、Möbius 反演、Euler
+totient 恒等式和调和数上界；它不包含第 4 节的 Selberg--Perron
+渐近，也不提供 cubic off-diagonal 的 `o(T)` 估计。
 
 以下命题均不涉及渐近、无限级数或复分析。
 
@@ -626,6 +627,12 @@ Selberg--Perron 渐近，也不提供 cubic off-diagonal 的 `o(T)` 估计。
 
 再调用 `harmonic_le_one_add_log` 得到闭式 bound。
 
+两个版本均已形式化。`MathlibAux` 层的主定理是
+`abs_sum_reciprocal_lcm_log_kernel_le_harmonic` 和
+`abs_sum_reciprocal_lcm_log_kernel_le_log_cube_six`。实际证明直接对原始
+LCM-log 核取绝对值，先得到更强的系数 \(4\)，然后推出上面记账用的
+系数 \(6\)。这一步不使用 `gcdLogWeight` 的 Euler 乘积或任何渐近输入。
+
 ## 7. 与现有仓库结构的接口
 
 - `HardyTheorem/SelbergMollifier.lean` 已定义 `selbergMoebiusCoeff` 并证明
@@ -636,8 +643,11 @@ Selberg--Perron 渐近，也不提供 cubic off-diagonal 的 `o(T)` 估计。
   精确实例化到 `cubicMollifierCoefficient T` 与
   `cubicMollifierLength T = floor(T^3)`，得到 actual cubic cutoff 下的
   `cubicMollifierDivisorMass`、`cubicMollifierLogDivisorMass` 单和公式。
-- 尚未形式化的是 F6 的显式 bound，以及第 4 节的 Selberg--Perron
-  渐近；上述 actual-coefficient 实例化只是有限等式，不能替代它们。
+- `MathlibAux/GcdLcmLogBound.lean` 已证明一般系数的 F6；
+  `PrimeNumberTheorem/MWKFCubicDiagonalLogBound.lean` 将它精确实例化到
+  `cubicMollifierCoefficient T` 与 `floor(T^3)`。
+- 尚未形式化的是第 4 节的 Selberg--Perron 渐近；上述有限等式和上界
+  不能替代 \(Q(T)\to4/3\)，也不能提供 \(R(T)=o(T)\)。
 
 ## 8. 参考核对
 
