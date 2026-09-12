@@ -1,0 +1,15 @@
+import PrimeNumberTheorem.MWKFCubicZetaPoleFactorization
+
+open PrimeNumberTheorem.MWKFCubic
+
+#check mwkfEulerPoleUnitCore
+#check mwkfEulerPoleModel
+#check mwkfEulerPoleUnitCore_zero
+#check analyticAt_mwkfEulerPoleUnitCore_in_third_zero
+#check mwkfZetaRatio_mul_correction_eq_poleModel
+#check deriv_mwkfEulerPoleModel_in_third_zero
+
+#print axioms mwkfEulerPoleUnitCore_zero
+#print axioms analyticAt_mwkfEulerPoleUnitCore_in_third_zero
+#print axioms mwkfZetaRatio_mul_correction_eq_poleModel
+#print axioms deriv_mwkfEulerPoleModel_in_third_zero
