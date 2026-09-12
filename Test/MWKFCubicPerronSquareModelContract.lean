@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.MWKFCubicPerronSquareModel
+
+open PrimeNumberTheorem.MWKFCubic
+
+#check cubicPerronSquareKernel
+#check cubicPerronSquareModelIntegral
+#check cubicPerronSquareModelIntegral_eq_log_sq
+
+#print axioms cubicPerronSquareModelIntegral_eq_log_sq
