@@ -823,6 +823,28 @@ $U(0,0,0)=1$。但导数公式假设 $s+t\ne0$，因此排除了中心点；要�
 留数或极限论证中合法取中心值。本命题本身不完成这一步，也不包含把
 右式沿 PNT 轮廓积分所需的统一界、边界消失或留数求和。
 
+### 命题 F15：平方双 Perron 主模型的精确积分
+
+对自然数 $N\ge1$ 和 $\sigma>0$，令
+
+\[
+ K_{N,\sigma}(u)=
+ \frac{N^{\sigma+iu}}{(\sigma+iu)^2}.
+\]
+
+Lean 直接对字面迭代积分证明
+
+\[
+ \frac1{(2\pi)^2}\int_{\mathbb R}\int_{\mathbb R}
+ K_{N,\sigma}(u)K_{N,\sigma}(v)\,dv\,du
+ = (\log N)^2.
+\]
+
+证明对两个变量分别使用已经形式化的完整 Mellin--Perron 反演，再用
+Bochner 积分的常数乘法规则分离两个一维积分。这正是式 (4.10)，包括
+参数化垂直线后精确的 $1/(2\pi)^2$ 归一化；它不使用 zeta 换线，也不
+估计式 (4.8) 中 pole-unit core 偏离中心值后的余项。
+
 ## 7. 与现有仓库结构的接口
 
 - `HardyTheorem/SelbergMollifier.lean` 已定义 `selbergMoebiusCoeff` 并证明
@@ -860,6 +882,9 @@ $U(0,0,0)=1$。但导数公式假设 $s+t\ne0$，因此排除了中心点；要�
   \((s+w)(t+w)/(s+t)\) 与中心值为一的 pole-unit core，并证明第三变量
   的局部解析性及 $w=0$ 导数公式；从 $U(s,t,0)$ 到中心值 $1$ 的联合
   极限/留数步骤仍未形式化。
+- `PrimeNumberTheorem/MWKFCubicPerronSquareModel.lean` 已证明式 (4.10) 的
+  字面迭代双垂直积分等于 $(\log N)^2$，并保留精确的
+  $1/(2\pi)^2$ 归一化。
 - 尚未形式化的是具体 Perron 被积函数的轮廓移线、边界消失、留数及 Selberg--Perron
   渐近；上述精确等式和上界不能替代 \(Q(T)\to4/3\)，也不能提供
   \(R(T)=o(T)\)。
