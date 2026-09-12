@@ -1,0 +1,17 @@
+import PrimeNumberTheorem.MWKFCubicEulerCorrection
+
+open PrimeNumberTheorem.MWKFCubic
+
+#check mwkfPrimeCorrectionFactor_sub_one
+#check norm_mwkfPrimeCorrectionFactor_sub_one_le
+#check norm_mwkfPrimeCorrectionFactor_sub_one_le_of_norm_le
+#check norm_prime_cpow_neg_one_add_le
+#check norm_mwkfPrimeCorrectionFactor_sub_one_le_on_strip
+#check mwkfPrimeCorrectionFactor_zero
+
+#print axioms mwkfPrimeCorrectionFactor_sub_one
+#print axioms norm_mwkfPrimeCorrectionFactor_sub_one_le
+#print axioms norm_mwkfPrimeCorrectionFactor_sub_one_le_of_norm_le
+#print axioms norm_prime_cpow_neg_one_add_le
+#print axioms norm_mwkfPrimeCorrectionFactor_sub_one_le_on_strip
+#print axioms mwkfPrimeCorrectionFactor_zero
