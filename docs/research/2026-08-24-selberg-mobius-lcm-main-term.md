@@ -845,6 +845,29 @@ Bochner 积分的常数乘法规则分离两个一维积分。这正是式 (4.10
 参数化垂直线后精确的 $1/(2\pi)^2$ 归一化；它不使用 zeta 换线，也不
 估计式 (4.8) 中 pole-unit core 偏离中心值后的余项。
 
+### 命题 F16：pole-unit core 的联合中心极限
+
+对任意 \(\eta<1/4\)，F11 的局部一致 Euler 乘积与所有有限素数
+乘积的连续性给出
+
+\[
+ (s,t,w)\longmapsto H(s,t,w)
+\]
+
+在开条带 \(\Omega_\eta\) 上的三变量联合连续性。再与
+`riemannZetaPoleUnitAtOne` 在 1 处的解析性及非零中心值结合，Lean
+证明 F14 的完整 pole-unit core 在 \((0,0,0)\) 联合连续。因此
+
+\[
+ \lim_{(s,t)\to(0,0)}U(s,t,0)=U(0,0,0)=1.
+\]
+
+形式接口依次为 `continuousOn_mwkfEulerCorrection_openStrip`、
+`continuousAt_mwkfEulerPoleUnitCore_zero` 与
+`tendsto_mwkfEulerPoleUnitCore_in_third_zero_at_pair_zero`。这补上了 F14
+评审指出的局部联合极限本身，但仍没有证明可把该极限交换进具体
+Perron 轮廓积分或留数求和，也没有给出所需统一支配界。
+
 ## 7. 与现有仓库结构的接口
 
 - `HardyTheorem/SelbergMollifier.lean` 已定义 `selbergMoebiusCoeff` 并证明
@@ -885,6 +908,10 @@ Bochner 积分的常数乘法规则分离两个一维积分。这正是式 (4.10
 - `PrimeNumberTheorem/MWKFCubicPerronSquareModel.lean` 已证明式 (4.10) 的
   字面迭代双垂直积分等于 $(\log N)^2$，并保留精确的
   $1/(2\pi)^2$ 归一化。
+- `PrimeNumberTheorem/MWKFCubicEulerJointContinuity.lean` 已由局部一致
+  Euler 乘积证明 correction 在开条带上的三变量联合连续性，并推出
+  $U(s,t,0)\to1$ 的联合中心极限；把该极限送入具体轮廓/留数仍需
+  独立的统一支配和换序论证。
 - 尚未形式化的是具体 Perron 被积函数的轮廓移线、边界消失、留数及 Selberg--Perron
   渐近；上述精确等式和上界不能替代 \(Q(T)\to4/3\)，也不能提供
   \(R(T)=o(T)\)。
