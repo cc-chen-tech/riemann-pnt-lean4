@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.MWKFCubicMixedPerronInner
+
+open Filter
+open PrimeNumberTheorem.MWKFCubic
+
+#check tendsto_cubicMixedPerronInnerKernel_atTop
+#check integrable_cubicMixedPerronInnerLimit
+#check integral_cubicMixedPerronInnerLimit_eq
+
+#print axioms tendsto_cubicMixedPerronInnerKernel_atTop
+#print axioms integrable_cubicMixedPerronInnerLimit
+#print axioms integral_cubicMixedPerronInnerLimit_eq

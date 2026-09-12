@@ -909,6 +909,49 @@ Perron 截断提供严格前置工具，但本命题还没有完成式 (4.9) 的
 极限、外层二阶 Perron 积分或其换序，更不提供 \(Q(T)\to4/3\) 与
 \(R(T)=o(T)\)。
 
+### 命题 F18：混合双 Perron 核的迭代主值
+
+取 \(\sigma>0\)、\(L>0\)，并令
+
+\[
+ s=\sigma+2\pi i x,\qquad t=\sigma+2\pi i y.
+\]
+
+Lean 对每个固定外层纵坐标 \(x\) 证明
+
+\[
+ \lim_{W\to\infty}
+ \int_{-W}^{W}\frac{e^{(s+t)L}}{st(s+t)}\,dy
+ =\frac{e^{sL}-1}{s^2}.
+\]
+
+证明先在有限区间上使用精确恒等式
+
+\[
+ \frac{1}{st(s+t)}
+ =\frac{1}{s^2}\left(\frac1t-\frac1{s+t}\right),
+\]
+
+把第一项交给普通对称一阶 Perron 反演；第二项写成实部
+\(2\sigma\)、平移量 \(x\) 的一阶 Perron 核，再使用 F17。两个核的
+参数都是 \(L>0\)，故半阶跃值均为 1。形式接口为
+`tendsto_cubicMixedPerronInnerKernel_atTop`。
+
+所得函数是两个二阶 Perron 核之差，因而在 \(x\) 上绝对可积；再次
+使用二阶 Perron 反演得到
+
+\[
+ \int_{\mathbb R}
+ \frac{e^{(\sigma+2\pi ix)L}-1}{(\sigma+2\pi ix)^2}\,dx=L.
+\]
+
+形式接口为 `integrable_cubicMixedPerronInnerLimit` 与
+`integral_cubicMixedPerronInnerLimit_eq`。这给出式 (4.9) 的指数形式、
+按“先内层对称主值、再外层绝对积分”解释的精确值。尚未证明矩形双
+截断、联合极限或任意换序与该迭代主值相同，也尚未把
+\(L=\log N\) 的指数核逐项接回有限 Euler/Perron 和。因此它仍不提供
+\(Q(T)\to4/3\) 或 \(R(T)=o(T)\)。
+
 ## 7. 与现有仓库结构的接口
 
 - `HardyTheorem/SelbergMollifier.lean` 已定义 `selbergMoebiusCoeff` 并证明
@@ -957,6 +1000,11 @@ Perron 截断提供严格前置工具，但本命题还没有完成式 (4.9) 的
   Perron 核在任意固定平移后的对称截断仍趋于同一个半阶跃极限，证明
   保留了有限端点尾差及显式 \(O(|a|/W)\) 界；式 (4.9) 的双重极限仍需
   将该引理与外层二阶 Perron 核精确组合。
+- `PrimeNumberTheorem/MWKFCubicMixedPerronInner.lean` 已把式 (4.9) 的
+  条件收敛内层对称主值精确化为
+  \((e^{(\sigma+2\pi ix)L}-1)/(\sigma+2\pi ix)^2\)，证明该函数绝对
+  可积并把外层全高积分计算为 \(L\)；与联合矩形截断、其他换序及
+  有限算术和的连接尚需独立证明。
 - 尚未形式化的是具体 Perron 被积函数的轮廓移线、边界消失、留数及 Selberg--Perron
   渐近；上述精确等式和上界不能替代 \(Q(T)\to4/3\)，也不能提供
   \(R(T)=o(T)\)。
