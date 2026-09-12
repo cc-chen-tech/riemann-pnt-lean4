@@ -772,6 +772,22 @@ F10 使用的同一个 \(p^{-2+4\eta}\) majorant 与变量无关。Lean 先在
 一起已经给出“解析局部因子 + 局部一致乘积”，但把这两个输入提升成
 全局乘积的三变量 `AnalyticOnNhd` 仍需单独形式化相应极限定理。
 
+### 命题 F13：全局 correction 的单变量解析性
+
+对任意 \(\eta<1/4\)，若固定的另外两个坐标实部都大于
+\(-\eta\)，则全局 Euler correction 在剩余坐标的半平面
+\(\Re z>-\eta\) 上解析。Lean 先把 F11 的局部一致 Euler 乘积沿任意
+解析切片拉回，再对同一个有限素数集合网应用复 Weierstrass 定理；F12
+保证每个有限乘积解析。通用切片接口为
+`analyticOnNhd_mwkfEulerCorrection_comp`，三个顺序换线接口分别为
+`analyticOnNhd_mwkfEulerCorrection_in_first`、
+`analyticOnNhd_mwkfEulerCorrection_in_second` 和
+`analyticOnNhd_mwkfEulerCorrection_in_third`。
+
+这证明的是实际顺序换线需要的 separate holomorphy，不声称已经建立
+三变量局部一致极限的 Fréchet 解析定理，也不包含换线边界积分、留数或
+Selberg--Perron 误差估计。
+
 ## 7. 与现有仓库结构的接口
 
 - `HardyTheorem/SelbergMollifier.lean` 已定义 `selbergMoebiusCoeff` 并证明
@@ -801,7 +817,10 @@ F10 使用的同一个 \(p^{-2+4\eta}\) majorant 与变量无关。Lean 先在
   一致收敛。
 - `PrimeNumberTheorem/MWKFCubicEulerAnalytic.lean` 已证明每个单素数
   correction 在较宽的 \(\eta<1/2\) 开条带上是三变量 Fréchet analytic。
-- 尚未形式化的是由局部一致乘积推出全局 Euler correction 的多变量全纯性、轮廓移线及 Selberg--Perron
+- `PrimeNumberTheorem/MWKFCubicEulerSeparateHolomorphic.lean` 已证明沿任意
+  解析一维切片的全局 correction 解析性，并给出三个坐标半平面上的
+  顺序换线接口。
+- 尚未形式化的是具体 Perron 被积函数的轮廓移线、边界消失、留数及 Selberg--Perron
   渐近；上述精确等式和上界不能替代 \(Q(T)\to4/3\)，也不能提供
   \(R(T)=o(T)\)。
 
