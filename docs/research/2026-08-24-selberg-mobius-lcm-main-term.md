@@ -772,6 +772,57 @@ F10 使用的同一个 \(p^{-2+4\eta}\) majorant 与变量无关。Lean 先在
 一起已经给出“解析局部因子 + 局部一致乘积”，但把这两个输入提升成
 全局乘积的三变量 `AnalyticOnNhd` 仍需单独形式化相应极限定理。
 
+### 命题 F13：全局 correction 的单变量解析性
+
+对任意 \(\eta<1/4\)，若固定的另外两个坐标实部都大于
+\(-\eta\)，则全局 Euler correction 在剩余坐标的半平面
+\(\Re z>-\eta\) 上解析。Lean 先把 F11 的局部一致 Euler 乘积沿任意
+解析切片拉回，再对同一个有限素数集合网应用复 Weierstrass 定理；F12
+保证每个有限乘积解析。通用切片接口为
+`analyticOnNhd_mwkfEulerCorrection_comp`，三个顺序换线接口分别为
+`analyticOnNhd_mwkfEulerCorrection_in_first`、
+`analyticOnNhd_mwkfEulerCorrection_in_second` 和
+`analyticOnNhd_mwkfEulerCorrection_in_third`。
+
+这证明的是实际顺序换线需要的 separate holomorphy，不声称已经建立
+三变量局部一致极限的 Fréchet 解析定理，也不包含换线边界积分、留数或
+Selberg--Perron 误差估计。
+
+### 命题 F14：实际 zeta 比值的 pole-unit 分解
+
+记 $Q(z)=(z-1)\zeta(z)$ 的解析延拓，即仓库中的
+`riemannZetaPoleUnitAtOne`，并定义
+
+\[
+ U(s,t,w)=
+ \frac{Q(1+s+t)}{Q(1+s+w)Q(1+t+w)}H(s,t,w).
+\]
+
+Lean 证明 $U(0,0,0)=1$。对 $0<\eta<1/4$、
+$\Re s,\Re t>-\eta$，只要两个分母 pole unit 在 $w=0$ 非零，
+$w\mapsto U(s,t,w)$ 在零点解析。并且在三个显式线性因子非零、
+三个移位后的 zeta 参数不为零、两个分母 zeta 值非零时，有逐点恒等式
+
+\[
+ \frac{\zeta(1+s+t)}{\zeta(1+s+w)\zeta(1+t+w)}H(s,t,w)
+ =\frac{(s+w)(t+w)}{s+t}U(s,t,w).
+\]
+
+最后，固定 $s+t\ne0$ 并假设 $U(s,t,\cdot)$ 在零点解析，Lean
+直接计算
+
+\[
+ \left.\partial_w\left(
+   \frac{(s+w)(t+w)}{s+t}U(s,t,w)\right)\right|_{w=0}
+ =U(s,t,0)+\frac{st}{s+t}\,\partial_wU(s,t,0).
+\]
+
+这把式 (4.5)--(4.6) 的首项精确化为 $U(s,t,0)$，并另行给出中心归一化
+$U(0,0,0)=1$。但导数公式假设 $s+t\ne0$，因此排除了中心点；要把首项
+真正变成最终常数 $1$，还必须证明相应的联合连续延拓/局部展开，并在
+留数或极限论证中合法取中心值。本命题本身不完成这一步，也不包含把
+右式沿 PNT 轮廓积分所需的统一界、边界消失或留数求和。
+
 ## 7. 与现有仓库结构的接口
 
 - `HardyTheorem/SelbergMollifier.lean` 已定义 `selbergMoebiusCoeff` 并证明
@@ -801,7 +852,15 @@ F10 使用的同一个 \(p^{-2+4\eta}\) majorant 与变量无关。Lean 先在
   一致收敛。
 - `PrimeNumberTheorem/MWKFCubicEulerAnalytic.lean` 已证明每个单素数
   correction 在较宽的 \(\eta<1/2\) 开条带上是三变量 Fréchet analytic。
-- 尚未形式化的是由局部一致乘积推出全局 Euler correction 的多变量全纯性、轮廓移线及 Selberg--Perron
+- `PrimeNumberTheorem/MWKFCubicEulerSeparateHolomorphic.lean` 已证明沿任意
+  解析一维切片的全局 correction 解析性，并给出三个坐标半平面上的
+  顺序换线接口。
+- `PrimeNumberTheorem/MWKFCubicZetaPoleFactorization.lean` 已把实际 zeta
+  比值精确分解为显式因子
+  \((s+w)(t+w)/(s+t)\) 与中心值为一的 pole-unit core，并证明第三变量
+  的局部解析性及 $w=0$ 导数公式；从 $U(s,t,0)$ 到中心值 $1$ 的联合
+  极限/留数步骤仍未形式化。
+- 尚未形式化的是具体 Perron 被积函数的轮廓移线、边界消失、留数及 Selberg--Perron
   渐近；上述精确等式和上界不能替代 \(Q(T)\to4/3\)，也不能提供
   \(R(T)=o(T)\)。
 
