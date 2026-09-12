@@ -288,6 +288,8 @@ The following steps now have kernel-checked Lean proofs with no project axiom,
 | exact finite sum--integral interchange into genuine twisted zeta moments | `cubicComplexMollifiedSecondMoment_eq_twisted_sum` |
 | exact final `4/3` reassembly | `cubic_long_mollifier_asymptotic_of_exact_inputs` |
 | final reassembly specialized to the literal integral | `cubic_actual_long_mollifier_asymptotic_of_exact_inputs` |
+| total exact literal-moment decomposition for any finite depth schedule `J(T)` | `cubicMollifiedSecondMoment_eq_completionSchedule_principal_remainder` |
+| final literal-moment reassembly with the exact decomposition discharged | `cubic_actual_long_mollifier_asymptotic_of_completionSchedule_estimates` |
 
 The axiom-audit modules report only Lean/Mathlib's standard foundational
 axioms (`propext`, `Classical.choice`, and `Quot.sound`).
@@ -1606,9 +1608,12 @@ needed convergence arguments, prove the reciprocal-LCM main-term asymptotic
 and every analytic tail estimate, and especially supply the required cubic
 Mobius decorrelation estimate with its full physical weights and outer sums.
 Calling that pending estimate an MRSTT input does not make it an applicable
-published theorem. The final facade therefore keeps
-`hexact`, `hmain`, and `hrem` as theorem hypotheses.  They are local binders,
-not global axioms.
+published theorem. `MWKFCubicAFEExactDecomposition.lean` now chooses the
+admissible line `X=1`, permits any finite completion-depth schedule `J(T)`,
+and patches only `T=0`. It thereby supplies `hexact` for the literal moment
+from the proved completed-mode identity. The final scheduled facade retains
+exactly `hmain` and `hrem`; these are local binders, not global axioms. No
+choice of schedule proves either estimate by definition.
 
 Consequently the accurate status is:
 
@@ -1653,8 +1658,9 @@ Consequently the accurate status is:
   height, original completed zero-mode all-shift height limit, separate
   completed-mode shift summability, full completed zero-mode moment height
   limit, independent actual diagonal time/height L1 and height limit,
-  the original full nonzero-mode height limit and fixed-depth exact
-  infinite-height decomposition of the literal real moment;
+  the original full nonzero-mode height limit, fixed-depth exact
+  infinite-height decomposition of the literal real moment, and its total
+  exact specialization for an arbitrary finite depth schedule `J(T)`;
 - full end-to-end proof and Lean formalization still require the actual
   main-term limit, uniform tails and full cubic Mobius remainder estimate;
   no complete applicable external theorem is being assumed here.
