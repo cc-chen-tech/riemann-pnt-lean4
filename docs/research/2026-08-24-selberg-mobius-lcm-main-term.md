@@ -710,6 +710,30 @@ LCM-log 核取绝对值，先得到更强的系数 \(4\)，然后推出上面记
 这一层提供了后续素数求和的定量输入，但本命题本身仍未建立素数求和的
 可加性、无限乘积的局部一致收敛或多变量全纯性。
 
+### 命题 F10：素数 correction 的绝对可和性与逐点 Euler 乘积
+
+令 \(\eta<1/4\)，并固定满足
+\(\Re s,\Re t,\Re w\ge-\eta\) 的一点。F9 的界与
+\(p\ge2\) 给出一个只依赖 \(\eta\) 的常数 \(C_\eta\)，使得
+
+\[
+ |H_p(s,t,w)-1|
+ \le C_\eta p^{-2+4\eta}.
+\]
+
+由于 \(-2+4\eta<-1\)，Lean 证明
+
+\[
+ \sum_{p}|H_p(s,t,w)-1|<\infty,
+ \qquad
+ \prod_p H_p(s,t,w)\ \text{收敛}.
+\]
+
+全局逐点乘积记为 `mwkfEulerCorrection s t w`，其 `HasProd` 接口和
+中心值 `mwkfEulerCorrection 0 0 0 = 1` 均已形式化。这里证明的是每个
+固定点的无序乘积收敛；尚未证明该乘积在多变量开集上的局部一致收敛或
+全纯性，也没有完成无限 Euler 乘积与有限双 Perron 和之间的交换。
+
 ## 7. 与现有仓库结构的接口
 
 - `HardyTheorem/SelbergMollifier.lean` 已定义 `selbergMoebiusCoeff` 并证明
@@ -731,7 +755,10 @@ LCM-log 核取绝对值，先得到更强的系数 \(4\)，然后推出上面记
 - `PrimeNumberTheorem/MWKFCubicEulerCorrection.lean` 已证明局部 correction
   减去 1 后的精确二次分子、固定常数 \(4\) 的范数界、实部条带上的
   显式素数幂界与 \(H_p(0,0,0)=1\)。
-- 尚未形式化的是第 4 节的素数求和与无限 Euler 乘积收敛、全纯余因子、轮廓移线及 Selberg--Perron
+- `PrimeNumberTheorem/MWKFCubicEulerSummability.lean` 已证明
+  \(\eta<1/4\) 条带内每个固定点的 correction 误差绝对可和、无序
+  Euler 乘积存在，并且全局 correction 在原点等于 1。
+- 尚未形式化的是上述 Euler 乘积的局部一致收敛与多变量全纯性、轮廓移线及 Selberg--Perron
   渐近；上述精确等式和上界不能替代 \(Q(T)\to4/3\)，也不能提供
   \(R(T)=o(T)\)。
 

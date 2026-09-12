@@ -1,0 +1,16 @@
+import PrimeNumberTheorem.MWKFCubicEulerSummability
+
+open PrimeNumberTheorem.MWKFCubic
+
+#check summable_prime_rpow_sq
+#check summable_norm_mwkfPrimeCorrectionFactor_sub_one_on_strip
+#check multipliable_mwkfPrimeCorrectionFactor_on_strip
+#check mwkfEulerCorrection
+#check hasProd_mwkfPrimeCorrectionFactor_on_strip
+#check mwkfEulerCorrection_zero
+
+#print axioms summable_prime_rpow_sq
+#print axioms summable_norm_mwkfPrimeCorrectionFactor_sub_one_on_strip
+#print axioms multipliable_mwkfPrimeCorrectionFactor_on_strip
+#print axioms hasProd_mwkfPrimeCorrectionFactor_on_strip
+#print axioms mwkfEulerCorrection_zero
