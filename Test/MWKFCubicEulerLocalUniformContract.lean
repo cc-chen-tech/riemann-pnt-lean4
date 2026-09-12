@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.MWKFCubicEulerLocalUniform
+
+open PrimeNumberTheorem.MWKFCubic
+
+#check mwkfEulerOpenStrip
+#check isOpen_mwkfEulerOpenStrip
+#check continuousOn_mwkfPrimeCorrectionFactor_openStrip
+#check hasProdLocallyUniformlyOn_mwkfPrimeCorrectionFactor
+
+#print axioms isOpen_mwkfEulerOpenStrip
+#print axioms continuousOn_mwkfPrimeCorrectionFactor_openStrip
+#print axioms hasProdLocallyUniformlyOn_mwkfPrimeCorrectionFactor
