@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.MWKFCubicEulerJointContinuity
+
+open Filter
+open PrimeNumberTheorem.MWKFCubic
+
+#check continuousOn_mwkfEulerCorrection_openStrip
+#check continuousAt_mwkfEulerPoleUnitCore_zero
+#check tendsto_mwkfEulerPoleUnitCore_in_third_zero_at_pair_zero
+
+#print axioms continuousOn_mwkfEulerCorrection_openStrip
+#print axioms continuousAt_mwkfEulerPoleUnitCore_zero
+#print axioms tendsto_mwkfEulerPoleUnitCore_in_third_zero_at_pair_zero
