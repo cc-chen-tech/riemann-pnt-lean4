@@ -542,9 +542,14 @@ twisted-moment 定理。任选
 | 主常数 \(1+1/\theta\) | 二变量 Selberg--Perron 求值，或等价的 Selberg sieve 渐近 | 可以；固定 \(\theta>0\) 无长度障碍 |
 | 完整 twisted moment 在 \(\theta=3\) 的渐近 | off-diagonal Kloosterman/移位卷积估计 | 本文不提供；这正是剩余困难 |
 
-## 6. 可直接形式化的有限和命题
+## 6. 已形式化的有限和命题
 
-以下命题均不涉及渐近、无限级数或复分析，适合作为 Lean 的第一批接口。
+`MathlibAux/GcdLcmLogQuadratic.lean` 现已在 Lean 中证明下面的 F2--F5，
+并同时给出一般双线性 reciprocal-LCM 恒等式。证明只使用有限除数和、
+Möbius 反演和 Euler totient 恒等式；它不包含第 4 节的
+Selberg--Perron 渐近，也不提供 cubic off-diagonal 的 `o(T)` 估计。
+
+以下命题均不涉及渐近、无限级数或复分析。
 
 ### 命题 F1：一般 reciprocal-LCM 平方和
 
@@ -558,7 +563,8 @@ twisted-moment 定理。任选
 \]
 
 仓库中的 `MathlibAux.sum_reciprocal_lcm_quadratic_eq_totient_squares`
-已经给出此命题。
+给出此命题；新模块中的
+`MathlibAux.sum_reciprocal_lcm_bilinear_eq_totient_products` 给出其双线性版。
 
 ### 命题 F2：有限 gcd-log Möbius反演
 
@@ -599,6 +605,7 @@ twisted-moment 定理。任选
 
 把 F1、F3、F4 线性组合，得到 (2.10) 的 `Finset.Icc 1 N` 版本。
 此命题应对任意实系数成立；Selberg Möbius 系数只在后续 bound 中实例化。
+其 Lean 名称为 `MathlibAux.sum_reciprocal_lcm_log_kernel_eq`。
 
 ### 命题 F6：有限显式 bound
 
