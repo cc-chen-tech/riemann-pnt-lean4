@@ -1,0 +1,18 @@
+import PrimeNumberTheorem.MWKFCubicEulerLocalFactor
+
+open PrimeNumberTheorem.MWKFCubic
+
+#check mwkfPrimePowerPairTerm
+#check mwkfPrimePowerPairLocalSum
+#check mwkfPrimeLocalFactor
+#check mwkfPrimeLocalFactorStandard
+#check mwkfPrimePowerPairLocalSum_eq_factor
+#check mwkfPrimeLocalFactor_eq_standard
+#check mwkfPrimePowerPairLocalSum_eq_standard
+#check mwkfPrimeCorrectionFactor
+#check mwkfPrimeLocalFactor_eq_zetaRatio_mul_correction
+
+#print axioms mwkfPrimePowerPairLocalSum_eq_factor
+#print axioms mwkfPrimeLocalFactor_eq_standard
+#print axioms mwkfPrimePowerPairLocalSum_eq_standard
+#print axioms mwkfPrimeLocalFactor_eq_zetaRatio_mul_correction
