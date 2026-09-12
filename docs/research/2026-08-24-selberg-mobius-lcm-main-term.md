@@ -684,6 +684,32 @@ LCM-log 核取绝对值，先得到更强的系数 \(4\)，然后推出上面记
 **单素数代数层**：它不声明无限乘积收敛，也不提供 \(H\) 在多圆盘上的
 绝对收敛、全纯性或任何轮廓移线。
 
+### 命题 F9：局部 correction 的二阶消去与显式界
+
+记
+
+\[
+ A=p^{-(1+s+w)},\qquad B=p^{-(1+t+w)},\qquad C=p^{-(1+s+t)}.
+\]
+
+对 \((1-A)(1-B)\ne0\)，局部 correction 满足精确恒等式
+
+\[
+ H_p-1=\frac{AC+BC-C^2-AB}{(1-A)(1-B)}.
+\]
+
+因此若 \(|A|,|B|,|C|\le r<1\)，则无隐含常数地
+
+\[
+ |H_p-1|\le \frac{4r^2}{(1-r)^2}.
+\]
+
+特别地，在对称实部条带
+\(\Re s,\Re t,\Re w\ge-\eta\), \(\eta<1/2\) 上，可取
+\(r=p^{-1+2\eta}\)。Lean 还证明中心点精确值 \(H_p(0,0,0)=1\)。
+这一层提供了后续素数求和的定量输入，但本命题本身仍未建立素数求和的
+可加性、无限乘积的局部一致收敛或多变量全纯性。
+
 ## 7. 与现有仓库结构的接口
 
 - `HardyTheorem/SelbergMollifier.lean` 已定义 `selbergMoebiusCoeff` 并证明
@@ -702,7 +728,10 @@ LCM-log 核取绝对值，先得到更强的系数 \(4\)，然后推出上面记
 - `PrimeNumberTheorem/MWKFCubicEulerLocalFactor.lean` 已证明第 4.1 节的
   四个素数局部项、分离逆幂与合并指数形式的一致性，以及三个局部
   zeta 因子的精确代数抽取。
-- 尚未形式化的是第 4 节的无限 Euler 乘积收敛与全纯余因子、轮廓移线及 Selberg--Perron
+- `PrimeNumberTheorem/MWKFCubicEulerCorrection.lean` 已证明局部 correction
+  减去 1 后的精确二次分子、固定常数 \(4\) 的范数界、实部条带上的
+  显式素数幂界与 \(H_p(0,0,0)=1\)。
+- 尚未形式化的是第 4 节的素数求和与无限 Euler 乘积收敛、全纯余因子、轮廓移线及 Selberg--Perron
   渐近；上述精确等式和上界不能替代 \(Q(T)\to4/3\)，也不能提供
   \(R(T)=o(T)\)。
 
