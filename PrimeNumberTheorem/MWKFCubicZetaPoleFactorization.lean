@@ -11,9 +11,10 @@ namespace PrimeNumberTheorem.MWKFCubic
 This file inserts the analytic pole unit at `1` into the actual zeta quotient
 from the cubic Selberg--Perron series.  The three linear factors
 `s + t`, `s + w`, and `t + w` are thereby separated from a unit core whose
-central value is exactly one.  This identifies, without an asymptotic
-argument, the algebraic source of the extra constant in the differentiated
-diagonal term.
+central value is exactly one.  This is the algebraic input for extracting the
+extra constant in the differentiated diagonal term.  Turning the leading
+value `U(s,t,0)` below into `1` still requires a joint limiting or residue
+argument, because the derivative identity assumes `s + t != 0`.
 
 No contour displacement, boundary decay, residue summation, or off-diagonal
 estimate is asserted here.
@@ -129,9 +130,10 @@ theorem mwkfZetaRatio_mul_correction_eq_poleModel
   rw [hqSt', hqSw', hqTw']
   field_simp [hst, hsw, htw, hzSw, hzTw]
 
-/-- Differentiating the pole model in `w` at zero exposes a leading copy of
-the unit core.  Since that core equals one at the center, this is the exact
-algebraic source of the extra `1` in the cubic diagonal main term. -/
+/-- Differentiating the pole model in `w` at zero exposes the leading value
+`U(s,t,0)`.  The separate theorem `mwkfEulerPoleUnitCore_zero` normalizes the
+excluded central pair to one, but identifying the leading value with that
+central value requires an additional joint limit or residue argument. -/
 theorem deriv_mwkfEulerPoleModel_in_third_zero
     {s t : ℂ} (hst : s + t ≠ 0)
     (hcore : AnalyticAt ℂ (fun w ↦ mwkfEulerPoleUnitCore s t w) 0) :
