@@ -631,9 +631,13 @@ Selberg--Perron 渐近，也不提供 cubic off-diagonal 的 `o(T)` 估计。
 - `HardyTheorem/SelbergMollifier.lean` 已定义 `selbergMoebiusCoeff` 并证明
   区间内绝对值不超过 1。
 - `MathlibAux/GcdLcmQuadratic.lean` 已证明 F1。
-- 建议未来新增独立的 `MathlibAux/GcdLcmLogQuadratic.lean` 实现 F2--F5，
-  再由 Hardy 层实例化 F6；不要把一般有限算术恒等式塞进 mollifier 的分析模块。
-- 本文没有修改上述仓库文件。
+- `MathlibAux/GcdLcmLogQuadratic.lean` 已证明 F2--F5；
+  `PrimeNumberTheorem/MWKFCubicDiagonalLogKernel.lean` 进一步把 F1 和 F5
+  精确实例化到 `cubicMollifierCoefficient T` 与
+  `cubicMollifierLength T = floor(T^3)`，得到 actual cubic cutoff 下的
+  `cubicMollifierDivisorMass`、`cubicMollifierLogDivisorMass` 单和公式。
+- 尚未形式化的是 F6 的显式 bound，以及第 4 节的 Selberg--Perron
+  渐近；上述 actual-coefficient 实例化只是有限等式，不能替代它们。
 
 ## 8. 参考核对
 
