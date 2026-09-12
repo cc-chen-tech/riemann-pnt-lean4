@@ -756,6 +756,22 @@ F10 使用的同一个 \(p^{-2+4\eta}\) majorant 与变量无关。Lean 先在
 局部一致收敛，但尚未形式化每个局部因子的 Fréchet 解析性，也尚未由
 局部一致极限定理推出全局 correction 的多变量全纯性。
 
+### 命题 F12：单素数 correction 的三变量解析性
+
+对每个素数 \(p\) 与 \(\eta<1/2\)，Lean 直接在复 Banach 空间
+\(\mathbb C^3\) 上证明
+
+\[
+ (s,t,w)\longmapsto H_p(s,t,w)
+\]
+
+在 \(\Omega_\eta\) 上 Fréchet analytic。证明把三个固定正底数复幂
+分别写成乘积坐标的解析复合，并用 F9 的条带范数界排除两个有理分母
+为零。形式接口为
+`analyticOnNhd_mwkfPrimeCorrectionFactor_openStrip`。F11 与 F12 合在
+一起已经给出“解析局部因子 + 局部一致乘积”，但把这两个输入提升成
+全局乘积的三变量 `AnalyticOnNhd` 仍需单独形式化相应极限定理。
+
 ## 7. 与现有仓库结构的接口
 
 - `HardyTheorem/SelbergMollifier.lean` 已定义 `selbergMoebiusCoeff` 并证明
@@ -783,7 +799,9 @@ F10 使用的同一个 \(p^{-2+4\eta}\) majorant 与变量无关。Lean 先在
 - `PrimeNumberTheorem/MWKFCubicEulerLocalUniform.lean` 已证明相应开条带、
   每个局部 correction 的连续性，以及 Euler 乘积在该开条带上的局部
   一致收敛。
-- 尚未形式化的是上述 Euler 乘积的多变量全纯性、轮廓移线及 Selberg--Perron
+- `PrimeNumberTheorem/MWKFCubicEulerAnalytic.lean` 已证明每个单素数
+  correction 在较宽的 \(\eta<1/2\) 开条带上是三变量 Fréchet analytic。
+- 尚未形式化的是由局部一致乘积推出全局 Euler correction 的多变量全纯性、轮廓移线及 Selberg--Perron
   渐近；上述精确等式和上界不能替代 \(Q(T)\to4/3\)，也不能提供
   \(R(T)=o(T)\)。
 
