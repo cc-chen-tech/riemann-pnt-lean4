@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.ShiftedFirstOrderPerron
+
+open Filter
+open PrimeNumberTheorem
+
+#check tendsto_translated_truncated_firstOrderPerronKernel_atTop
+
+#print axioms tendsto_translated_truncated_firstOrderPerronKernel_atTop
